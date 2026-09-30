@@ -5,7 +5,21 @@ ARCH ?= x86
 
 CXX ?= $(CROSS_COMPILE)g++
 
-CXXFLAGS = -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp
+ifeq ($(UNAME_S),Darwin)
+# macOS: Apple clang ships no OpenMP runtime and rejects a bare -fopenmp,
+# so use Homebrew's libomp (brew install libomp). Homebrew GCC is not an
+# option here: Homebrew's jsoncpp is built against libc++, so a
+# libstdc++ (GCC) build fails to link Json::Value/StyledWriter symbols.
+CXX = clang++
+LIBOMP_PREFIX ?= $(shell brew --prefix libomp 2>/dev/null || echo /opt/homebrew/opt/libomp)
+OPENMP_CXXFLAGS = -Xpreprocessor -fopenmp -I$(LIBOMP_PREFIX)/include
+OPENMP_LIB = -L$(LIBOMP_PREFIX)/lib -lomp
+else
+OPENMP_CXXFLAGS = -fopenmp
+OPENMP_LIB =
+endif
+
+CXXFLAGS = -std=c++11 $(OPENMP_CXXFLAGS) -O2 -ffloat-store -I/usr/include/jsoncpp
 ifeq ($(ARCH),x86)
 CXXFLAGS += -march=native
 endif
@@ -14,7 +28,7 @@ endif
 #CXXFLAGS = -g -Wno-padded -Wno-disabled-macro-expansion -Wno-gnu-statement-expression -Wno-bad-function-cast -fopenmp -O1 -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fdenormal-fp-math=ieee -msse2 -march=native -I/usr/include/jsoncpp
 #static analysis in clang using
 #scan-build-15 --use-c++=/usr/bin/clang++-15 make
-LIB = -lbz2 -lpthread -ldivsufsort -ldivsufsort64
+LIB = -lbz2 -lpthread -ldivsufsort -ldivsufsort64 $(OPENMP_LIB)
 COND_LIB = -lmpfr -lgmp
 SHARED_LIB = -ljsoncpp -lcrypto
 INC =
