@@ -6,7 +6,13 @@ This directory preserves independent audit work against [`usnistgov/SP800-90B_En
 
 Nothing here is an official NIST conclusion. The reports are historical records: they must not be rewritten. New evidence or status belongs in new files, or in the tracker.
 
-- Tracked files under `audits/`: **584**, including this README.
+**Operational purpose.** This archive exists to keep every confirmed defect in SP800-90B_EntropyAssessment actionable until it is actually fixed, whatever happens to the corresponding upstream issue or pull request.
+
+- [`2026-09-30/FINDINGS-TRACKER.md`](2026-09-30/FINDINGS-TRACKER.md) is the canonical defect work queue. It opens with an **AI Repair Queue**.
+- [`BUG-REPAIR-GUIDE.md`](BUG-REPAIR-GUIDE.md) is the permanent procedure for agents working that queue: states, reproduction, when to fix in the fork, and how to record a repair.
+- An upstream issue being closed does not mean the bug is resolved.
+
+- Tracked files under `audits/`: **585**, including this README.
 - Tracked subdirectories: **118**.
 - Documents are described individually below. Evidence files are described per directory here and per file in the two `MANIFEST.md` files (original path, SHA-256, finding supported).
 
@@ -45,8 +51,9 @@ Nothing here is an official NIST conclusion. The reports are historical records:
 
 | Path | Kind | Contents |
 |---|---|---|
+| [`BUG-REPAIR-GUIDE.md`](BUG-REPAIR-GUIDE.md) | repair procedure | Permanent instructions for agents processing the tracker's repair queue |
 | `2026-09-30/README.md` | index | Scope, baseline, filed vs audit-only, layout changes, reproduction steps, and what was deliberately not committed |
-| `2026-09-30/FINDINGS-TRACKER.md` | tracker | One table per series: F01–F30, N-01–N-11, R-1–R-3, NOVEL-01–NOVEL-03. Columns: category, direction, repro/regression status, upstream issue/PR, status read from GitHub on 2026-09-30, fork fix branch, evidence path |
+| `2026-09-30/FINDINGS-TRACKER.md` | tracker | Canonical defect work queue. Opens with the AI Repair Queue; each confirmed finding has an operational state, source location, reproduction, evidence path, verification command, upstream issue/PR and status, fork status and next action. Unconfirmed and spec-level items are listed separately. |
 | `2026-09-30/novel-findings/MANIFEST.md` | manifest | Every file of the novel-findings tree (original path, bytes, SHA-256, finding supported, description), plus the provenance table for the removed upstream duplicates |
 | `2026-09-30/phase2-focused/MANIFEST.md` | manifest | The same for the phase-2 tree, plus regeneration commands and the original SHA-256 of every regenerable dataset |
 | `2026-09-30/novel-findings/BRIEF.md` | historical brief | The shared instructions given to the seven parallel auditors: scope, hard rules, known-issue dedup set, report format. It contains absolute `/tmp` paths of the original workspace |
