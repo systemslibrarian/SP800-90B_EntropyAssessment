@@ -1,0 +1,65 @@
+In file included from non_iid_main.cpp:3:
+./shared/utils.h:309:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  309 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:309:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:177:15: note: declared here
+  177 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:184:69: warning: expression result unused [-Wunused-value]
+  184 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:226:51: warning: expression result unused [-Wunused-value]
+  226 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:476:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  476 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:476:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:358:15: note: declared here
+  358 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:364:69: warning: expression result unused [-Wunused-value]
+  364 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:391:63: warning: expression result unused [-Wunused-value]
+  391 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from non_iid_main.cpp:4:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from non_iid_main.cpp:12:
+./non_iid/multi_mcw_test.h:13:26: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:26: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                      ^
+./non_iid/multi_mcw_test.h:13:58: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:58: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:47: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                      ^
+In file included from non_iid_main.cpp:13:
+./non_iid/compression_test.h:97:20: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   97 |         unsigned int dict[alph_size];
+      |                           ^~~~~~~~~
+./non_iid/compression_test.h:97:20: note: read of non-const variable 'alph_size' is not allowed in a constant expression
+./non_iid/compression_test.h:96:22: note: declared here
+   96 |         unsigned int block, alph_size = 1 << b; 
+      |                             ^
+12 warnings generated.

@@ -1,0 +1,172 @@
+Opening file: 'ones_3162.bin' (SHA-256 hash f536163021246545560583453fc1f6bcef4d7fed699992d6327a163fe7ba454b)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+Calculating baseline statistics...
+	Raw Mean: 0.003162
+	Median: 0.500000
+	Binary: true
+
+Literal MCV Estimate: mode = 996838, p-hat = 0.996838, p_u = 0.99698261406104016
+H_original: 0.004360
+Chi square independence
+	score = 0.000000
+	degrees of freedom = 0
+	p-value = 1.000000
+
+Chi square goodness of fit
+	score = 7.574869
+	degrees of freedom = 9
+	p-value = 0.577490
+
+** Passed chi square tests
+
+Literal Longest Repeated Substring results
+	P_col: 0.993696
+	Length of LRS: 2776
+	Pr(X >= 1): 1.000000
+** Passed length of longest repeated substring test
+
+Beginning initial tests...
+
+Initial test results
+              excursion: 33.0038
+     numDirectionalRuns: 6079
+     lenDirectionalRuns: 339
+  numIncreasesDecreases: 121959
+          numRunsMedian: 6297
+          lenRunsMedian: 2716
+           avgCollision: 2.05105
+           maxCollision: 4
+         periodicity(1): 118919
+         periodicity(2): 118902
+         periodicity(8): 118910
+        periodicity(16): 118887
+        periodicity(32): 118868
+          covariance(1): 83
+          covariance(2): 71
+          covariance(8): 88
+         covariance(16): 72
+         covariance(32): 73
+            compression: 6641
+
+Beginning permutation tests... these may take some time
+  0.01% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.02% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.03% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.04% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.05% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.06% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.07% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.08% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.09% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.10% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.11% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.12% of Permutation test rounds,  15.79% of Permutation tests (Core 1/1, passed_count 3)
+  0.13% of Permutation test rounds,  21.05% of Permutation tests (Core 0/1, passed_count 4)
+  0.14% of Permutation test rounds,  26.32% of Permutation tests (Core 1/1, passed_count 5)
+  0.15% of Permutation test rounds,  26.32% of Permutation tests (Core 0/1, passed_count 5)
+  0.16% of Permutation test rounds,  26.32% of Permutation tests (Core 1/1, passed_count 5)
+  0.17% of Permutation test rounds,  26.32% of Permutation tests (Core 0/1, passed_count 5)
+  0.18% of Permutation test rounds,  42.11% of Permutation tests (Core 1/1, passed_count 8)
+  0.19% of Permutation test rounds,  47.37% of Permutation tests (Core 0/1, passed_count 9)
+  0.20% of Permutation test rounds,  52.63% of Permutation tests (Core 1/1, passed_count 10)
+  0.21% of Permutation test rounds,  52.63% of Permutation tests (Core 0/1, passed_count 10)
+  0.22% of Permutation test rounds,  52.63% of Permutation tests (Core 1/1, passed_count 10)
+  0.23% of Permutation test rounds,  52.63% of Permutation tests (Core 0/1, passed_count 10)
+  0.24% of Permutation test rounds,  57.89% of Permutation tests (Core 1/1, passed_count 11)
+  0.25% of Permutation test rounds,  63.16% of Permutation tests (Core 0/1, passed_count 12)
+  0.26% of Permutation test rounds,  73.68% of Permutation tests (Core 1/1, passed_count 14)
+  0.27% of Permutation test rounds,  73.68% of Permutation tests (Core 0/1, passed_count 14)
+  0.28% of Permutation test rounds,  73.68% of Permutation tests (Core 1/1, passed_count 14)
+  0.29% of Permutation test rounds,  73.68% of Permutation tests (Core 0/1, passed_count 14)
+  0.30% of Permutation test rounds,  73.68% of Permutation tests (Core 1/1, passed_count 14)
+  0.31% of Permutation test rounds,  73.68% of Permutation tests (Core 0/1, passed_count 14)
+  0.32% of Permutation test rounds,  73.68% of Permutation tests (Core 1/1, passed_count 14)
+  0.33% of Permutation test rounds,  73.68% of Permutation tests (Core 0/1, passed_count 14)
+  0.34% of Permutation test rounds,  73.68% of Permutation tests (Core 1/1, passed_count 14)
+  0.35% of Permutation test rounds,  78.95% of Permutation tests (Core 0/1, passed_count 15)
+  0.36% of Permutation test rounds,  78.95% of Permutation tests (Core 1/1, passed_count 15)
+  0.37% of Permutation test rounds,  78.95% of Permutation tests (Core 0/1, passed_count 15)
+  0.38% of Permutation test rounds,  78.95% of Permutation tests (Core 1/1, passed_count 15)
+  0.39% of Permutation test rounds,  78.95% of Permutation tests (Core 0/1, passed_count 15)
+  0.40% of Permutation test rounds,  78.95% of Permutation tests (Core 1/1, passed_count 15)
+  0.41% of Permutation test rounds,  78.95% of Permutation tests (Core 0/1, passed_count 15)
+  0.42% of Permutation test rounds,  84.21% of Permutation tests (Core 1/1, passed_count 16)
+  0.43% of Permutation test rounds,  84.21% of Permutation tests (Core 0/1, passed_count 16)
+  0.44% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.45% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.46% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.47% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.48% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.49% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.50% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.51% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.52% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.53% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.54% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.55% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.56% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.57% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.58% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.59% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.60% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.61% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.62% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.63% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.64% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.65% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.66% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.67% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.68% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.69% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.70% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.71% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.72% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.73% of Permutation test rounds,  89.47% of Permutation tests (Core 0/1, passed_count 17)
+  0.74% of Permutation test rounds,  89.47% of Permutation tests (Core 1/1, passed_count 17)
+  0.75% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.76% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.77% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.78% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.79% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.80% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.81% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.82% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.83% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.84% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.85% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.86% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.87% of Permutation test rounds,  94.74% of Permutation tests (Core 0/1, passed_count 18)
+  0.88% of Permutation test rounds,  94.74% of Permutation tests (Core 1/1, passed_count 18)
+  0.89% of Permutation test rounds, 100.00% of Permutation tests (Core 0/1, passed_count 19)
+ 50.50% of Permutation test rounds, 100.00% of Permutation tests (Core 1/1, passed_count 19)
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion      83       0       6
+       numDirectionalRuns      12       1       5
+       lenDirectionalRuns       6       0       6
+    numIncreasesDecreases       5       1      12
+            numRunsMedian      13       3       3
+            lenRunsMedian       6       0       6
+             avgCollision       5       1      14
+             maxCollision      69       6       0
+           periodicity(1)       6       0      18
+           periodicity(2)       7       0       6
+           periodicity(8)       6       0      19
+          periodicity(16)       6       0       6
+          periodicity(32)       6       0       8
+            covariance(1)       6       0      12
+            covariance(2)      20       1       5
+            covariance(8)       5       1      29
+           covariance(16)      36       1       5
+           covariance(32)      20       1       5
+              compression       6       0      38
+(* denotes failed test)
+
+** Passed IID permutation tests
+
+
+real	1m20.142s
+user	0m30.917s
+sys	0m0.252s

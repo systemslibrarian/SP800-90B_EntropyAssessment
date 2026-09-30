@@ -1,0 +1,11 @@
+--- up/cpp/selftest/refdata/biased-random-bits.res	2026-05-26 14:57:01.000000000 +0000
++++ st2/refdata/biased-random-bits.res	2026-09-30 17:23:20.312420015 +0000
+@@ -2,7 +2,7 @@
+ Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+ Literal Most Common Value Estimate: Mode count = 979988
+ Literal Most Common Value Estimate: p-hat = 0.97998799999999997
+-Literal Most Common Value Estimate: p_u = 0.98034872224294312
++Literal Most Common Value Estimate: p_u = 0.9
+ Literal Most Common Value Estimate: min entropy = 0.028633069781464748
+ Literal Collision Estimate: v = 490415
+ Literal Collision Estimate: Sum t_i = 999999

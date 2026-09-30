@@ -1,0 +1,199 @@
+######## #28 [ISSUE closed] Binary independence iid test problems (5.2.3)
+by joshuaehill 2017-01-11
+The independence test appears to fail much more commonly than expected (a type-1 error of approximately 3%, roughly a factor of 30x above the intended value).
+
+In 5.2.3, the test uses overlapping bit patterns, so each pattern is not independent of the prior patterns. Because of this overlapping, the expected distribution isn't the one that we're testing against. The actual expected distribution is rather difficult to characterize, so my proposed fix is to use non-overlapping symbols. Secondly, the parameter p_0 (or interchangeably, p_1) is estimated using the test data, which should be reflected by deducting one degree of freedom for the reference chi-square distribution (thus, this should be conducted with respect to a chi-square distribution with 2^m - 2 degrees of freedom rather than 2^m - 1).
+
+Here is some code that accomplishes this:
+```
+# Testing independence for Binary Data - Section 5.2.3
+#Only results in a chi-square distribution if they are non-overlapping
+#symbols -- JEH
+def binary_chi_square_independence(s):
+    L = len(s)
+
+    # 1. Let p0 and p1 be the proportion of zeroes and ones in S
+    p0 = s.count(0)/float(L)
+    p1 = s.count(1)/float(L)
+
+    # 2. Find the maximum integer m such that p0**m > 5/L and p1**m < 5/L.
+    #    If m is greater than 11, assign m to 11. If m is 1, the test fails.
+    m = 11
+    while m > 1:
+        if math.pow(p0,m)>(5.0/L) and math.pow(p1,m)>(5.0/L):
+            break
+        else:
+            m -= 1
+
+    # Apply the test if m >= 2
+    if m > 1:
+        # Initialize T to 0.
+        T = 0
+
+        # 2. for each possible m-bit tuple
+        # 2a. Let o be the number of times that the pattern occurs in the
+        #     input sequence S. Note that the tuples are not allowed to overlap.
+        m_tuples = itertools.product([0,1], repeat=m)
+        M = math.floor(L / m)
+        o = {}
+        for i in range(0, L, m):
+            t = tuple(s[i:i+m])
+            o[t] = o.get(t, 0) + 1
+
+        for t in m_tuples:
+            # 2b. Let w be the number of ones in the tuple
+            w = sum(t)
+
+            # 2c. Let e = p_1**w * p_0**(m-w) * (M)
+            e = math.pow(p1,w)*math.pow(p0,m-w)*(M)
+
+            #update T
+            T += math.pow(o.get(tuple(t),0)-e,2)/float(e)
+
+        return T, math.pow(2,m)-2
+
+    else:
+        return None, None
+```
+
+--- comment joshuaehill 2018-09-05:
+This is addressed in the final SP800-90B document.
+
+
+######## #29 [ISSUE closed] Binary goodness-of-fit test problems (5.2.4)
+by joshuaehill 2017-01-12
+In 5.2.4, the test is based on the hypothesis that the count of 1s (and thus 0s) in non-overlapping subsequences can be tested using the chi square distribution with 1 degree of freedom. The full test statistic (T) is the sum of 10 random variables, each of which is intended to be well-modeled as chi-square distributions with 1 degree of freedom; we would generally expect this sum to be a chi-square distribution with 10 degrees of freedom, but because we estimated p using this data, we should reduce the degrees of freedom by 1 (this is already done).
+
+The problem in this case was that the calculation of T doesn't add in the contribution for the 0s, so each of the values added isn't well modeled by a chi square distribution with 1 degree of freedom. Instead, if we refer to the observed number of 1s as o_1 (rather than o), the observed number of 0s as o_0, the expected number of 1s as e_1 (rather than e), and the observed number of 0s as e_0, then line 1271 of the 2016 draft of SP800-90B should be:
+T = T + (o_1 - e_1)^2 / e_1 + (o_0 - e_0)^2 / e_0
+
+Here is some code that accomplishes this:
+```
+# Testing Goodness-of-fit for Binary Data - Section 5.2.4
+# This test checks the distribution of the number of ones in non-overlapping
+# intervals of the input data to determine whether the distribution of the
+# ones remains the same throughout the sequence.
+def binary_goodness_of_fit(subsets):
+    assert len(subsets) == 10
+
+    # 1. Let p be the proportion of ones in S, i.e., p = (the number of ones in S)/ L.
+    c = [sum(s) for s in subsets] # number of ones in all 10 subsets
+    L = sum([len(s) for s in subsets]) # number of elements in all 10 subsets
+    p = sum(c)/float(L) #proportion
+    #Note, this proportion is ultimately based on number of 1s over all,
+    #so reduces the degrees of freedom by 1
+
+
+    # 2. Partition S into ten non-overlapping sub-sequences of length floor(L/10).
+    #   (Data already split before callint this function)
+
+    # 3.Initialize T to 0.
+    T = 0
+
+    # 4. Let the expected number of ones in each sub-sequence S_d be e=p*floor(L/10)
+    M = math.floor(L/10)
+    e1 = p*M
+    e0 = M - e1
+
+    # 5. for d = 0 to 9
+    for d in range(10):
+        # 5a. Let o_i be the number of ones in S_d
+        o1 = sum(subsets[d])
+        o0 = M - o1
+
+        # 5b. update the test statistic, T
+        T += float(o1 - e1)**2/e1 + float(o0 - e0)**2/e0
+
+    # T is a chi-square random variable with 9 degrees of freedom.
+    return T, 9
+```
+
+--- comment joshuaehill 2018-09-05:
+This is addressed in the final SP800-90B document.
+
+
+######## #60 [ISSUE closed] A table of chi square critical values isn't necessary
+by joshuaehill 2018-09-22
+It's easy to calculate the p-value directly from the chi square statistic, and it's probably a better idea to calculate this p-value, and compare this against 0.001.
+
+In the Chi-squared test, the CDF of the Chi-squared distribution is based on the lower regularized gamma function. See https://en.wikipedia.org/wiki/Chi-squared_distribution#Cumulative_distribution_function.
+Thus, the p-value is just 1-P(k/2,x/2)=Q(k/2,x/2), where P and Q denote the lower and upper regularized gamma functions (respectively), k is the degrees of freedom, and x is the calculated chi-squared test statistic.
+
+--- comment joshuaehill 2018-10-09:
+I fixed this in my reference branch:
+https://github.com/joshuaehill/SP800-90B_EntropyAssessment/tree/2018UL
+
+--- comment joshuaehill 2019-02-05:
+This was addressed in pull request #98.
+
+
+######## #61 [ISSUE closed] Some of the iid permutation tests are not invariant under translation
+by joshuaehill 2018-09-22
+The translation that is used retains relative ordering, but nothing else. Some of the results of the permutation tests have different results when applied to translated or non-translated data. As such, these tests should be applied to the original data, not the translated data.
+
+The Excursion test statistic (SP800-90B section 5.1.1), covariance test statistic (SP800-90B section 5.1.10), and compression test (SP800-90B section 5.1.11) aren't invariant under translation, so it's not clear that it's appropriate to use a translated version of the data set for these tests.
+
+_Merged with duplicate issue #76 ._
+
+--- comment joshuaehill 2018-10-09:
+This is fixed by pull request #80.
+
+
+######## #62 [ISSUE closed] IID test independence test for non-binary data test sets expectation incorrectly
+by joshuaehill 2018-09-22
+The number of samples is floor(L/2), not L/2. Thus, the code in `calc_expectations` that says
+`
+double exp = p[i] * p[j] * sample_size * 0.5;
+`
+should instead be
+`
+double exp = p[i] * p[j] * floor(sample_size * 0.5);
+`
+
+
+--- comment joshuaehill 2018-10-09:
+This is fixed by pull request #80.
+
+--- comment joshuaehill 2019-02-05:
+Pull request 80 was accepted.
+
+
+######## #63 [ISSUE closed] The sort used in the non-binary chi square tests do not make the test well defined
+by joshuaehill 2018-09-22
+The ordering of the equal-expectation isn't defined, so different groupings are possible. The sort should be sorted by expectation, and secondly sorted lexicographically.
+
+--- comment joshuaehill 2018-10-09:
+I fixed this in my reference branch:
+https://github.com/joshuaehill/SP800-90B_EntropyAssessment/tree/2018UL
+
+--- comment joshuaehill 2019-02-05:
+This was resolved in one of the accepted pull requests that were applied.
+
+
+######## #76 [ISSUE closed] Some permutation tests are not invariant under translation
+by joshuaehill 2018-09-28
+The translation that is used retains relative ordering, but nothing else. Some of the results of the permutation tests have different results when applied to translated or non-translated data. As such, these tests should be applied to the original data, not the translated data.
+
+These tests include the excursion test (5.1.1), covariance test (5.1.10), and compression test (5.1.11).
+
+--- comment joshuaehill 2018-09-30:
+Gah! This is a duplicate of #61. Sorry for the duplicate issue.
+
+
+######## #79 [ISSUE closed] The compression permutation test returns nonsense
+by joshuaehill 2018-09-29
+There are a few issues here.
+
+First, the use of the resize() method doesn't do what you want it to (the current use seems to presume that it just pre-allocates a bunch of memory). When you call "resize" in this way, it appends null characters to the string, until it is as long as you specify (strings in C++ are allowed to contain NULL characters!) When you then append values to the string, they are added _after_ the NULL characters that you added. So, when you access the string using the c_str method and then extract the length of the string using strlen(), you get 0 (as this string starts with NULL characters). As a consequence, you're just asking the BZ2 function to compress an empty string.
+
+Next, the output buffer is not adequately large for most data sets (all datasets with more than 10 symbols would have problems.) The bz2 library manual indicates that this buffer should be at least 1% larger than the input size, plus 600.  (http://linux.math.tifr.res.in/manuals/html/manual_3.html#SEC36)
+
+--- comment joshuaehill 2018-10-01:
+It appears that the "resize" method should have instead been "reserve". I've update my pull request to use this method.
+
+--- comment joshuaehill 2018-10-01:
+I adjusted the parameters to the compression permutation test so that it can reserve a data-specific amount of space for the compression string.
+
+I also replaced uses of strlen with calls to the .length() string method. This should be faster, as it doesn't need to iterate through the string to establish its length.
+
+

@@ -1,0 +1,255 @@
+bin_0.bin rc=255 |  |  |  | Error: 'bin_0.bin' is empty
+bin_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+bin_2.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_3.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_4.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+bin_5.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_6.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_7.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_8.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_9.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+bin_10.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_11.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_12.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_13.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_14.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_15.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_16.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_17.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_18.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_19.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_20.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_21.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_22.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_23.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_24.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_25.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_26.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_27.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_28.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_29.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_30.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_31.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_32.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_33.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_34.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_35.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_36.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_37.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_38.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_39.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_40.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_47.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_48.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_63.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_64.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_100.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+bin_255.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+bin_256.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+bin_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+bin_300.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+bin_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+const_0.bin rc=255 |  |  |  | Error: 'const_0.bin' is empty
+const_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_2.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_3.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_4.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_5.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_6.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_7.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_8.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_9.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_10.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_11.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_12.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_13.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_14.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_15.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_16.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_17.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_18.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_19.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_20.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_21.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_22.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_23.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_24.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_25.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_26.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_27.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_28.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_29.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_30.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_31.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_32.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_33.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_34.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_35.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_36.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_37.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_38.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_39.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_40.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_47.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_48.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_63.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_64.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_100.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_255.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_256.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_257.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_300.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_1000.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+distinct_0.bin rc=255 |  |  |  | Error: 'distinct_0.bin' is empty
+distinct_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+distinct_2.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+distinct_3.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_4.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_5.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_6.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_7.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_8.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_9.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+distinct_10.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_11.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_12.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_13.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_14.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_15.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_16.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_17.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_18.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_19.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_20.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_21.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_22.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_23.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_24.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_25.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_26.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_27.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_28.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_29.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_30.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_31.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_32.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_33.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_34.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_35.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_36.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_37.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_38.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_39.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_40.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_47.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_48.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_63.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_64.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_100.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_255.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_256.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Failed | 
+distinct_300.bin rc=0 | Chi square tests: Failed | Length of longest repeated substring test: Failed | IID permutation tests: Failed | 
+distinct_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Failed | IID permutation tests: Failed | 
+rand8_0.bin rc=255 |  |  |  | Error: 'rand8_0.bin' is empty
+rand8_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+rand8_2.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+rand8_3.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_4.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_5.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_6.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_7.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_8.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_9.bin rc=134 |  |  |  | iid/chi_square_tests.h:439:45: runtime error: division by zero
+rand8_10.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_11.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_12.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_13.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_14.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_15.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_16.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_17.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_18.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_19.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_20.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_21.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_22.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_23.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_24.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_25.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_26.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_27.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_28.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_29.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_30.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_31.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_32.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_33.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_34.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_35.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_36.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_37.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_38.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_39.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_40.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_47.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_48.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_63.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_64.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_100.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_255.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_256.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_300.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+two_0.bin rc=255 |  |  |  | Error: 'two_0.bin' is empty
+two_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+two_2.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+two_3.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+two_4.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+two_5.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+two_6.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+two_7.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+two_8.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+two_9.bin rc=134 |  |  |  | iid/chi_square_tests.h:589:25: runtime error: division by zero
+two_10.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_11.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_12.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_13.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_14.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_15.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_16.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_17.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_18.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_19.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_20.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_21.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_22.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_23.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_24.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_25.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_26.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_27.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_28.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_29.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_30.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_31.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_32.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_33.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_34.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_35.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_36.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_37.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_38.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_39.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_40.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_47.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_48.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_63.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_64.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_100.bin rc=134 |  |  |  | shared/utils.h:839:20: runtime error: division by zero
+two_255.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+two_256.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+two_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | shared/utils.h:839:20: runtime error: division by zero
+two_300.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Failed | shared/utils.h:839:20: runtime error: division by zero
+two_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 

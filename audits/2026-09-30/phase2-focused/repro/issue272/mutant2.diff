@@ -1,0 +1,13 @@
+--- up/cpp/non_iid_main.cpp	2026-05-26 14:57:01.000000000 +0000
++++ mut2/cpp/non_iid_main.cpp	2026-09-30 17:37:49.722435671 +0000
+@@ -492,9 +492,7 @@
+         h_assessed = min(h_assessed, H_bitstring * data.word_size);
+     }
+ 
+-    if (initial_entropy) {
+-        h_assessed = min(h_assessed, H_original);
+-    }
++    /* MUTANT 2: H_original not folded into h_assessed */
+ 
+     if ((verbose == 1) || (verbose == 2)) {
+         if (initial_entropy) {

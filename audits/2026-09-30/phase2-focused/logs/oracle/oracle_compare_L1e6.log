@@ -1,0 +1,4 @@
+fair_1000000.bin: compared 29 values, worst rel 2.24e-16; issues=0
+b09_1000000.bin: compared 30 values, worst rel 3.74e-11; issues=0
+sk3_1000000.bin: compared 22 values, worst rel 1.29e-16; issues=0
+u8_1000000.bin: compared 22 values, worst rel 0; issues=0

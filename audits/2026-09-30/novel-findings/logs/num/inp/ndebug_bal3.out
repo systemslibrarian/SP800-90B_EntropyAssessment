@@ -1,0 +1,77 @@
+Opening file: 'bal3.bin' (SHA-256 hash c846814d581b3719e5972ff1adb8af39f188007b0910bf21a7b125a64c237d72)
+Loaded 1000002 samples of 3 distinct 2-bit-wide symbols
+Number of Binary samples: 2000004
+
+Samples have been translated
+Raw Mean = 1
+Median = 1
+Binary = false
+Literal Most Common Value Estimate: Mode count = 333334
+Literal Most Common Value Estimate: p-hat = 0.33333333333333331
+Literal Most Common Value Estimate: p_u = 0.33454759030468395
+Literal Most Common Value Estimate: min entropy = 1.5797166421285016
+Bitstring Most Common Value Estimate: Mode count = 1333336
+Bitstring Most Common Value Estimate: p-hat = 0.66666666666666663
+Bitstring Most Common Value Estimate: p_u = 0.66752527579055965
+Bitstring Most Common Value Estimate: min entropy = 0.58310562952191347
+H_bitstring = 0.58310562952191347
+H_bitstring Per Symbol = 1.1662112590438269
+H_original = 1.5797166421285016
+Assessed min entropy: 1.1662112590438269
+Chi square independence: T = 5.1559456881086243
+Chi square independence: df = 6
+Chi square independence: P-value = 0.52397332155789411
+Chi square goodness of fit: T = 15.374540000000001
+Chi square goodness of fit: df = 18
+Chi square goodness of fit: P-value = 0.63610968463490614
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.333333333333333296344
+Literal Longest Repeated Substring results: W = 28
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.02161800397110152525872
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 491
+Permutation testing: Unpermuted result numDirectionalRuns = 592973
+Permutation testing: Unpermuted result lenDirectionalRuns = 15
+Permutation testing: Unpermuted result numIncreasesDecreases = 666466
+Permutation testing: Unpermuted result numRunsMedian = 444435
+Permutation testing: Unpermuted result lenRunsMedian = 34
+Permutation testing: Unpermuted result avgCollision = 2.889524904790249593134
+Permutation testing: Unpermuted result maxCollision = 4
+Permutation testing: Unpermuted result periodicity(1) = 333206
+Permutation testing: Unpermuted result periodicity(2) = 333175
+Permutation testing: Unpermuted result periodicity(8) = 332776
+Permutation testing: Unpermuted result periodicity(16) = 333174
+Permutation testing: Unpermuted result periodicity(32) = 332815
+Permutation testing: Unpermuted result covariance(1) = 999664
+Permutation testing: Unpermuted result covariance(2) = 1000746
+Permutation testing: Unpermuted result covariance(8) = 999795
+Permutation testing: Unpermuted result covariance(16) = 999681
+Permutation testing: Unpermuted result covariance(32) = 1000120
+Permutation testing: Unpermuted result compression = 223118
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion      20       1       5
+       numDirectionalRuns       6       0      15
+       lenDirectionalRuns       9       4       2
+    numIncreasesDecreases       8       0       6
+            numRunsMedian       9       0       6
+            lenRunsMedian       5       1      15
+             avgCollision       6       0       7
+             maxCollision       0       6       0
+           periodicity(1)       6       0       6
+           periodicity(2)       9       0       6
+           periodicity(8)      32       0       6
+          periodicity(16)       6       0       6
+          periodicity(32)      89       0       6
+            covariance(1)      14       0       6
+            covariance(2)       6       0      48
+            covariance(8)      13       0       6
+           covariance(16)      13       0       6
+           covariance(32)       6       0      17
+              compression      30       0       6
+(* denotes failed test)
+
+IID permutation tests: Passed
+exit=0

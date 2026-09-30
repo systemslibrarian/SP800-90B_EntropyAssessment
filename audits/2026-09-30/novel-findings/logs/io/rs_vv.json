@@ -1,0 +1,78 @@
+{
+   "IID" : false,
+   "commandline" : "./r_restart -vv -o rs_vv.json /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_1bit.bin 1 0.8",
+   "dateTimeStamp" : "20260930154907",
+   "errorLevel" : 0,
+   "filename" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_1bit.bin",
+   "sha256" : "f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313",
+   "testCases" : [
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99504301513122573,
+         "h_r" : 0.99504301513122573,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.90169638931404217,
+         "h_r" : 0.90093572690824753,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99742392717241501,
+         "h_r" : 0.99848647555611059,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.84966750984366213,
+         "h_r" : 0.82967708323411438,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.93805159541601091,
+         "h_r" : 0.91422636745977404,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.89804235004803878,
+         "h_r" : 0.98581833722719769,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99622088796111374,
+         "h_r" : 0.99697224801623707,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.9943286302313854,
+         "h_r" : 0.99829166636629973,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99493086910181083,
+         "h_r" : 0.99665994380395218,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99624975551787953,
+         "h_r" : 0.99705004757897153,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "h_c" : 0.84966750984366213,
+         "h_i" : 0.80000000000000004,
+         "h_r" : 0.82967708323411438,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

@@ -1,0 +1,11 @@
+{
+   "IID" : true,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -i -o /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/data/e_i_nonexist.bin.json nonexist.bin 1 0.5",
+   "dateTimeStamp" : "20260930153924",
+   "errorLevel" : 0,
+   "filename" : "nonexist.bin",
+   "sha256" : "\u0232\ufffdW",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

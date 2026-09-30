@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/bae8c694-6a48-4fd3-83f6-685460129aee/scratchpad/up/cpp/ea_restart -o zero.bin.json zero.bin 8 4",
+   "dateTimeStamp" : "20260930162353",
+   "errorLevel" : -1,
+   "errorMessage" : "Symbol alphabet consists of 1 symbol. No entropy awarded...",
+   "filename" : "zero.bin",
+   "sha256" : "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

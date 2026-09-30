@@ -1,0 +1,12 @@
+{
+   "IID" : true,
+   "commandline" : "./r_restart -i -o ri3.json short3.bin 8 1",
+   "dateTimeStamp" : "20260930153054",
+   "errorLevel" : -1,
+   "errorMessage" : "*** Error: data (len = 3) does not contain 1000000 samples ***",
+   "filename" : "short3.bin",
+   "sha256" : "039058c6f2c0cb492c533b0a4d14ef77cc0f78abccced5287d84a1a2011cfb81",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

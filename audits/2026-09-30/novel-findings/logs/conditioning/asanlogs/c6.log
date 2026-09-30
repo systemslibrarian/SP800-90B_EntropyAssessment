@@ -1,0 +1,15 @@
+n_in = 8
+n_out = 8
+nw = 8
+h_in = 9.999999999999999999696e-4901
+Attempting to compute entropy with 106 bits of precision.
+Attempting to compute entropy with 212 bits of precision.
+Attempting to compute entropy with 424 bits of precision.
+Attempting to compute entropy with 848 bits of precision.
+Attempting to compute entropy with 1696 bits of precision.
+Attempting to compute entropy with 3392 bits of precision.
+Attempting to compute entropy with 6784 bits of precision.
+Attempting to compute entropy with 13568 bits of precision.
+Attempting to compute entropy with 27136 bits of precision.
+Output_Entropy(*) = 9.960784313725490195741e-4901
+(Vetted) h_out = 9.960784313725490195741e-4901

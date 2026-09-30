@@ -1,0 +1,21 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_conditioning -n 512 256 256 300 -i diff/tr1.bin -o diff/tr1.bin.json",
+   "dateTimeStamp" : "20260930153709",
+   "errorLevel" : 0,
+   "filename" : "diff/tr1.bin",
+   "sha256" : "f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313",
+   "testCases" : [
+      {
+         "h_in" : 300.0,
+         "h_out" : 212.39733330793325,
+         "h_p" : 0.82967708323411426,
+         "n_in" : 512.0,
+         "n_out" : 256.0,
+         "nw" : 256.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Conditioning"
+}

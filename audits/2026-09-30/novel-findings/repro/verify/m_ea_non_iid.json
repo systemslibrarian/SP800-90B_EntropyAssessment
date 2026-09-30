@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_non_iid -o m_ea_non_iid.json nope.bin",
+   "dateTimeStamp" : "20260930161133",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: could not open '%s'\n",
+   "filename" : "nope.bin",
+   "sha256" : "\ufffd\u0011",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

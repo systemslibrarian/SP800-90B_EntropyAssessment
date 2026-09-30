@@ -1,0 +1,9 @@
+### bnd23
+Opening file: 'bnd23.bin' (SHA-256 hash 9e43b17ca1e52a5c41d7910d547addc18215914b2a5ef798be2dea4298d6ea96)
+Loaded 1000000 samples made up of 256 distinct 8-bit-wide symbols.
+H_I: 7.500000
+ALPHA: 5.0251553006530614e-06, X_cutoff: 22
+X_max: 23
+
+*** Restart Sanity Check Failed ***
+exit=255

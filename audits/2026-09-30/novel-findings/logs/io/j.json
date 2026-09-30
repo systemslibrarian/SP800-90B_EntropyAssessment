@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "./a_restart -o j.json /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_1bit.bin 1 1.5",
+   "dateTimeStamp" : "20260930155820",
+   "errorLevel" : -1,
+   "errorMessage" : "H_I (1.500000) must be at most 'bits_per_symbol' (1).",
+   "filename" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_1bit.bin",
+   "sha256" : "f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

@@ -1,0 +1,383 @@
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 4 at 0x7fffffffc8b0 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:663 (ea_iid_tsan+0x17e6f) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 4 at 0x7fffffffc8b0 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:663 (ea_iid_tsan+0x17e7e) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f8b0)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:663 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 4 at 0x7fffffffc8bc by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:663 (ea_iid_tsan+0x17e7e) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous read of size 4 at 0x7fffffffc8bc by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:669 (ea_iid_tsan+0x17e8a) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f8bc)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:663 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 4 at 0x7fffffffc8d0 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e47) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 4 at 0x7fffffffc8d0 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e5c) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f8d0)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:667 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 4 at 0x7fffffffc91c by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:669 (ea_iid_tsan+0x17e8a) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 4 at 0x7fffffffc91c by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:663 (ea_iid_tsan+0x17e7e) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f91c)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:669 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 4 at 0x7fffffffc944 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:669 (ea_iid_tsan+0x17e98) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 4 at 0x7fffffffc944 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:665 (ea_iid_tsan+0x17f62) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f944)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:669 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 8 at 0x7fffffffc818 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:676 (ea_iid_tsan+0x17dcf) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 8 at 0x7fffffffc818 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:676 (ea_iid_tsan+0x17dde) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f818)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:676 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 4 at 0x7fffffffc8b0 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:663 (ea_iid_tsan+0x17e7e) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous write of size 4 at 0x7fffffffc8b0 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:663 (ea_iid_tsan+0x17e7e) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f8b0)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:663 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 4 at 0x7fffffffc960 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e5c) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 4 at 0x7fffffffc960 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e5c) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f960)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:667 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 4 at 0x7fffffffc8dc by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e47) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous write of size 4 at 0x7fffffffc8dc by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e5c) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f8dc)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:667 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 4 at 0x7fffffffc8f0 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:665 (ea_iid_tsan+0x17f62) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous write of size 4 at 0x7fffffffc8f0 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:665 (ea_iid_tsan+0x17f62) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f8f0)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:665 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 8 at 0x7fffffffc818 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:676 (ea_iid_tsan+0x17dde) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous write of size 8 at 0x7fffffffc818 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:676 (ea_iid_tsan+0x17dde) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f818)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:676 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 4 at 0x7fffffffc984 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:669 (ea_iid_tsan+0x17eb2) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous write of size 4 at 0x7fffffffc984 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e5c) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f984)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:669 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 4 at 0x7fffffffc954 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:667 (ea_iid_tsan+0x17e5c) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous read of size 4 at 0x7fffffffc954 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:669 (ea_iid_tsan+0x17eb2) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f954)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:667 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Read of size 1 at 0x7fffffffc881 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:661 (ea_iid_tsan+0x17f0a) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous write of size 1 at 0x7fffffffc881 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:670 (ea_iid_tsan+0x17ecd) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f881)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:661 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 1 at 0x7fffffffc87a by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:670 (ea_iid_tsan+0x17ecd) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Previous read of size 1 at 0x7fffffffc87a by thread T1:
+    #0 periodicity_tests(unsigned char const*, int, int, long double*, bool const*) iid/permutation_tests.h:411 (ea_iid_tsan+0x8951) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 run_tests(data_t const*, unsigned char const*, unsigned char const*, double, double, long double*, bool const*) iid/permutation_tests.h:450 (ea_iid_tsan+0x1773d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #2 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:655 (ea_iid_tsan+0x17aaa) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #3 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f87a)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:670 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 8 at 0x7fffffffc818 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:676 (ea_iid_tsan+0x17dde) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Previous atomic write of size 8 at 0x7fffffffc818 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:719 (ea_iid_tsan+0x17e38) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 GOMP_parallel <null> (libgomp.so.1+0x18976) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1f818)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race iid/permutation_tests.h:676 in permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0]
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=99761)
+  Write of size 8 at 0x7fffffffca20 by main thread:
+    #0 void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) /usr/include/c++/13/bits/basic_string.tcc:225 (ea_iid_tsan+0x1fc47) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) /usr/include/c++/13/bits/basic_string.h:551 (ea_iid_tsan+0x1fc47)
+    #2 TestCaseBase::TestCaseBase(TestCaseBase const&) shared/../shared/test_case_base.h:10 (ea_iid_tsan+0x1fc47)
+    #3 IidTestCase::IidTestCase(IidTestCase const&) iid/iid_test_case.h:13 (ea_iid_tsan+0x1fc47)
+    #4 void std::__new_allocator<IidTestCase>::construct<IidTestCase, IidTestCase const&>(IidTestCase*, IidTestCase const&) /usr/include/c++/13/bits/new_allocator.h:191 (ea_iid_tsan+0x201bc) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #5 void std::allocator_traits<std::allocator<IidTestCase> >::construct<IidTestCase, IidTestCase const&>(std::allocator<IidTestCase>&, IidTestCase*, IidTestCase const&) /usr/include/c++/13/bits/alloc_traits.h:538 (ea_iid_tsan+0x201bc)
+    #6 void std::vector<IidTestCase, std::allocator<IidTestCase> >::_M_realloc_insert<IidTestCase const&>(__gnu_cxx::__normal_iterator<IidTestCase*, std::vector<IidTestCase, std::allocator<IidTestCase> > >, IidTestCase const&) /usr/include/c++/13/bits/vector.tcc:468 (ea_iid_tsan+0x201bc)
+    #7 std::vector<IidTestCase, std::allocator<IidTestCase> >::push_back(IidTestCase const&) /usr/include/c++/13/bits/stl_vector.h:1292 (ea_iid_tsan+0x1bf89) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #8 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:369 (ea_iid_tsan+0x1bf89)
+
+  Previous read of size 8 at 0x7fffffffca20 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&) [clone ._omp_fn.0] iid/permutation_tests.h:662 (ea_iid_tsan+0x17f1f) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+    #1 <null> <null> (libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x1fa20)
+
+  Thread T1 (tid=99855, running) created by main thread at:
+    #0 pthread_create ../../../../src/libsanitizer/tsan/tsan_interceptors_posix.cpp:1022 (libtsan.so.2+0x5ac1a) (BuildId: 2a13a7710e361d06f7babbea53065ca2be93f738)
+    #1 <null> <null> (libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/tsan/iid_main.cpp:352 (ea_iid_tsan+0x1be4d) (BuildId: 6ed4150ab069e83efda258fe487f75485823466a)
+
+SUMMARY: ThreadSanitizer: data race /usr/include/c++/13/bits/basic_string.tcc:225 in void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag)
+==================
+ThreadSanitizer: reported 17 warnings

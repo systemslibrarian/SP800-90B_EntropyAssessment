@@ -1,0 +1,7 @@
+n_in = 1
+n_out = 8
+nw = 1
+h_in = 1
+Attempting to compute entropy with 106 bits of precision.
+Output_Entropy(*) = -0
+(Vetted) h_out = -0

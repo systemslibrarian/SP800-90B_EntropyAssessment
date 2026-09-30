@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -n -o s999999-n.json s999999.bin 1 1",
+   "dateTimeStamp" : "20260930155027",
+   "errorLevel" : -1,
+   "errorMessage" : "*** Error: data (len = 999999) does not contain 1000000 samples ***",
+   "filename" : "s999999.bin",
+   "sha256" : "406d0bb868be73fcf13d425a8a64f4a874ef85234d6ceb60699db16d36da302e",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

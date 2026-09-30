@@ -1,0 +1,28 @@
+restart_main.cpp:132:23: runtime error: -nan is outside the range of representable values of type 'int'
+restart_main.cpp:92:26: runtime error: -nan is outside the range of representable values of type 'int'
+restart_main.cpp:92:67: runtime error: index -2147483648 out of bounds for type 'short unsigned int [256]'
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==62903==ERROR: AddressSanitizer: SEGV on unknown address 0x7c5380bcf020 (pc 0x556c8d72cc81 bp 0x7c5481aceb70 sp 0x7c5481ace870 T1)
+==62903==The signal is caused by a READ memory access.
+AddressSanitizer:DEADLYSIGNAL
+    #0 0x556c8d72cc81 in simulateCount(int, double, unsigned long*) /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/restart_main.cpp:92
+    #1 0x556c8d72d3dc in simulateBound(double, int, double, unsigned long) [clone ._omp_fn.0] /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/restart_main.cpp:147
+    #2 0x7c5485fcb79e  (/lib/x86_64-linux-gnu/libgomp.so.1+0x2279e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #3 0x7c548693da41 in asan_thread_start ../../../../src/libsanitizer/asan/asan_interceptors.cpp:234
+    #4 0x7c54857edb83 in start_thread nptl/pthread_create.c:447
+    #5 0x7c548587ad6b in clone3 ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/restart_main.cpp:92 in simulateCount(int, double, unsigned long*)
+Thread T1 created by T0 here:
+    #0 0x7c54869d41f9 in pthread_create ../../../../src/libsanitizer/asan/asan_interceptors.cpp:245
+    #1 0x7c5485fcbe1e  (/lib/x86_64-linux-gnu/libgomp.so.1+0x22e1e) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #2 0x7c5485fc1971 in GOMP_parallel (/lib/x86_64-linux-gnu/libgomp.so.1+0x18971) (BuildId: fa0c1b446610c4b7aca51e1183050acf5aa79503)
+    #3 0x556c8d7648f7 in simulateBound(double, int, double, unsigned long) /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/restart_main.cpp:137
+    #4 0x556c8d76daa3 in main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/restart_main.cpp:445
+    #5 0x7c548577b1c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #6 0x7c548577b28a in __libc_start_main_impl ../csu/libc-start.c:360
+    #7 0x556c8d715604 in _start (/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/ea_restart+0x133604) (BuildId: c522383631c665fbc20278891dcc60997f512ef1)
+
+==62903==ABORTING

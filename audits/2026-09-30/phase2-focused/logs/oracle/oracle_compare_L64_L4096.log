@@ -1,0 +1,8 @@
+fair_64.bin: compared 25 values, worst rel 1.93e-16; issues=0
+fair_4096.bin: compared 29 values, worst rel 3.49e-16; issues=0
+b09_64.bin: compared 29 values, worst rel 1.3e-15; issues=0
+b09_4096.bin: compared 30 values, worst rel 1.62e-12; issues=0
+sk3_64.bin: compared 22 values, worst rel 3.97e-16; issues=0
+sk3_4096.bin: compared 22 values, worst rel 4.83e-16; issues=0
+u8_64.bin: compared 18 values, worst rel 0; issues=0
+u8_4096.bin: compared 19 values, worst rel 2.86e-12; issues=0

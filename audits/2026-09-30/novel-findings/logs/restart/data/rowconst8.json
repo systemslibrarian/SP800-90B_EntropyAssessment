@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -n -v -o /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/data/rowconst8.json rowconst8.bin 8 7.5",
+   "dateTimeStamp" : "20260930153113",
+   "errorLevel" : -1,
+   "errorMessage" : "Restart Sanity Check Failed.",
+   "filename" : "rowconst8.bin",
+   "sha256" : "d40d3434a649df7326f364222f7d29b622c4177311a2ec07376afb903dc74a53",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

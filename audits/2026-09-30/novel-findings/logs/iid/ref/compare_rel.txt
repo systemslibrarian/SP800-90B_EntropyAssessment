@@ -1,0 +1,57 @@
+r8_300 indep_df [-151.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r3_300 indep_df [6.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r4_300 indep_df [12.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+bin_300 indep_df [6.0] m 3 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+binb_300 indep_df [2.0] m 2 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+two_300 indep_df [6.0] m 3 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+geo_300 indep_df [7.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+per_300 indep_df [0.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+MISMATCH drift_300 lrs: tool [0.007022222222222223] [3.0] [0.015206988851525141] ref 0.007022222222222223 3 0.015206988852597525
+drift_300 indep_df [-151.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Passed; IID permutation tests: Failed | 
+binper_300 indep_df [6.0] m 3 | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+r8_1001 indep_df [-155.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r3_1001 indep_df [6.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r4_1001 indep_df [65.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+bin_1001 indep_df [30.0] m 5 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+binb_1001 indep_df [2.0] m 2 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+MISMATCH two_1001 lrs: tool [0.5003637720920439] [18.0] [0.8457590505932943] ref 0.5003637720920439 18 0.8457590505947655
+two_1001 indep_df [30.0] m 5 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+MISMATCH geo_1001 lrs: tool [0.14765354525594285] [7.0] [0.5307576570120561] ref 0.14765354525594285 7 0.5307576570169336
+geo_1001 indep_df [33.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+per_1001 indep_df [64.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+drift_1001 indep_df [-152.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+binper_1001 indep_df [30.0] m 5 | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+r8_4007 indep_df [143.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+MISMATCH r3_4007 lrs: tool [0.33386962134956116] [14.0] [0.8182488095847501] ref 0.3338696213495612 14 0.8182488096242353
+r3_4007 indep_df [6.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r4_4007 indep_df [240.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+MISMATCH bin_4007 lrs: tool [0.5000339124525592] [23.0] [0.612397520772344] ref 0.5000339124525592 23 0.6123975206588996
+bin_4007 indep_df [62.0] m 6 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+binb_4007 indep_df [6.0] m 3 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+MISMATCH two_4007 lrs: tool [0.5002466671595236] [22.0] [0.8525407993468525] ref 0.5002466671595236 22 0.8525407993437153
+two_4007 indep_df [62.0] m 6 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+geo_4007 indep_df [85.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+MISMATCH per_4007 excursion: tool=None ref=20.988520089842776
+MISMATCH per_4007 numDirectionalRuns: tool=None ref=3591
+MISMATCH per_4007 lenDirectionalRuns: tool=None ref=2
+MISMATCH per_4007 numIncreasesDecreases: tool=None ref=2211
+MISMATCH per_4007 numRunsMedian: tool=None ref=3592
+MISMATCH per_4007 lenRunsMedian: tool=None ref=2
+MISMATCH per_4007 avgCollision: tool=None ref=30.0
+MISMATCH per_4007 maxCollision: tool=None ref=30
+MISMATCH per_4007 periodicity(1): tool=None ref=0
+MISMATCH per_4007 periodicity(2): tool=None ref=0
+MISMATCH per_4007 periodicity(8): tool=None ref=0
+MISMATCH per_4007 periodicity(16): tool=None ref=0
+MISMATCH per_4007 periodicity(32): tool=None ref=0
+MISMATCH per_4007 covariance(1): tool=None ref=649152
+MISMATCH per_4007 covariance(2): tool=None ref=909182
+MISMATCH per_4007 covariance(8): tool=None ref=656071
+MISMATCH per_4007 covariance(16): tool=None ref=822155
+MISMATCH per_4007 covariance(32): tool=None ref=679682
+MISMATCH per_4007 compression: tool=None ref=153
+Traceback (most recent call last):
+  File "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/iid/ref/compare.py", line 44, in <module>
+    if abs(Ti[0]-rT)>1e-7*max(1,rT) or dfi[0]!=rdf: mism+=1; print(f'MISMATCH {name} indep: tool T={Ti} df={dfi} ref T={rT} df={rdf}')
+           ~~^^^
+IndexError: list index out of range

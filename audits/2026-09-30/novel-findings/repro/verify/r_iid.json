@@ -1,0 +1,11 @@
+{
+   "IID" : true,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -i -o r_iid.json unreadable.bin 8 4",
+   "dateTimeStamp" : "20260930161656",
+   "errorLevel" : 0,
+   "filename" : "unreadable.bin",
+   "sha256" : "\u02321\u059fZ",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

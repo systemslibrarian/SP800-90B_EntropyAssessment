@@ -1,0 +1,31 @@
+r8_300 indep_df [-151.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r3_300 indep_df [6.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r4_300 indep_df [12.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+bin_300 indep_df [6.0] m 3 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+binb_300 indep_df [2.0] m 2 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+two_300 indep_df [6.0] m 3 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+geo_300 indep_df [7.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+per_300 indep_df [0.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+drift_300 indep_df [-151.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Passed; IID permutation tests: Failed | 
+binper_300 indep_df [6.0] m 3 | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+r8_1001 indep_df [-155.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r3_1001 indep_df [6.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r4_1001 indep_df [65.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+bin_1001 indep_df [30.0] m 5 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+binb_1001 indep_df [2.0] m 2 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+two_1001 indep_df [30.0] m 5 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+geo_1001 indep_df [33.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+per_1001 indep_df [64.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+drift_1001 indep_df [-152.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+binper_1001 indep_df [30.0] m 5 | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+r8_4007 indep_df [143.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r3_4007 indep_df [6.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+r4_4007 indep_df [240.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+bin_4007 indep_df [62.0] m 6 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+binb_4007 indep_df [6.0] m 3 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+two_4007 indep_df [62.0] m 6 | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+geo_4007 indep_df [85.0]  None | Chi square tests: Passed; Length of longest repeated substring test: Passed; IID permutation tests: Passed | 
+per_4007 ABORT timeout: the monitored command dumped core
+drift_4007 indep_df [143.0]  None | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+binper_4007 indep_df [62.0] m 6 | Chi square tests: Failed; Length of longest repeated substring test: Failed; IID permutation tests: Failed | 
+TOTAL MISMATCHES 0

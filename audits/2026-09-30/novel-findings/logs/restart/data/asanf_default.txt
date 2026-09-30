@@ -1,0 +1,27 @@
+### asanf_default: /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/ea_restart_asanfast -n -v uni1.bin 1 1
+=================================================================
+==161404==ERROR: AddressSanitizer: alloc-dealloc-mismatch (operator new [] vs operator delete) on 0x7fb27ae94800
+    #0 0x7fb27e2990a8 in operator delete(void*) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:152
+    #1 0x597ea2c29e65 in simulateBound(double, int, double, unsigned long) /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/restart_main.cpp:160
+    #2 0x597ea2c32aa3 in main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/restart_main.cpp:445
+    #3 0x7fb27d0361c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #4 0x7fb27d03628a in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x597ea2bda604 in _start (/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/ea_restart_asanfast+0x133604) (BuildId: 7954b5597ef3fd1e81e2320304163fba083ab292)
+
+0x7fb27ae94800 is located 0 bytes inside of 400000-byte region [0x7fb27ae94800,0x7fb27aef6280)
+allocated by thread T0 here:
+    #0 0x7fb27e2986c8 in operator new[](unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:98
+    #1 0x597ea2c296b5 in simulateBound(double, int, double, unsigned long) /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/restart_main.cpp:123
+    #2 0x597ea2c32aa3 in main /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/restart_main.cpp:445
+    #3 0x7fb27d0361c9 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #4 0x7fb27d03628a in __libc_start_main_impl ../csu/libc-start.c:360
+    #5 0x597ea2bda604 in _start (/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/ea_restart_asanfast+0x133604) (BuildId: 7954b5597ef3fd1e81e2320304163fba083ab292)
+
+SUMMARY: AddressSanitizer: alloc-dealloc-mismatch ../../../../src/libsanitizer/asan/asan_new_delete.cpp:152 in operator delete(void*)
+==161404==HINT: if you don't care about these errors you may set ASAN_OPTIONS=alloc_dealloc_mismatch=0
+==161404==ABORTING
+
+real	0m15.410s
+user	0m7.145s
+sys	0m0.069s
+exit=1

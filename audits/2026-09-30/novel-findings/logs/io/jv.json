@@ -1,0 +1,11 @@
+{
+   "IID" : false,
+   "commandline" : "./r_non_iid -q -o jv.json nope.bin 8",
+   "dateTimeStamp" : "20260930152708",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: could not open '%s'\n",
+   "filename" : "nope.bin",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

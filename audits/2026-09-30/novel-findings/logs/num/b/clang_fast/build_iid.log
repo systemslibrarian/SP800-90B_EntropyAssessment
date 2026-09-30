@@ -1,0 +1,36 @@
+In file included from iid_main.cpp:4:
+./shared/utils.h:309:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  309 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:309:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:177:15: note: declared here
+  177 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:184:69: warning: expression result unused [-Wunused-value]
+  184 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:226:51: warning: expression result unused [-Wunused-value]
+  226 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:476:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  476 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:476:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:358:15: note: declared here
+  358 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:364:69: warning: expression result unused [-Wunused-value]
+  364 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:391:63: warning: expression result unused [-Wunused-value]
+  391 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from iid_main.cpp:5:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+7 warnings generated.

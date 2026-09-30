@@ -1,0 +1,203 @@
+diff --git a/cpp/Makefile b/cpp/Makefile
+index 16bf49a..425302c 100644
+--- a/cpp/Makefile
++++ b/cpp/Makefile
+@@ -2,7 +2,7 @@ ARCH ?= x86
+ 
+ CXX ?= $(CROSS_COMPILE)g++
+ 
+-CXXFLAGS = -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp
++CXXFLAGS = -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -Wall -Wextra -Werror
+ ifeq ($(ARCH),x86)
+ CXXFLAGS += -march=native
+ endif
+@@ -28,8 +28,8 @@ clean:
+ iid: iid_main.o
+ iid_main.o: iid_main.cpp
+ 	$(CXX) $(CXXFLAGS) $(INC) iid_main.cpp -o ea_iid $(LIB) $(SHARED_LIB)
+-	
+-non_iid: non_iid_main.o	
++
++non_iid: non_iid_main.o
+ non_iid_main.o: non_iid_main.cpp
+ 	$(CXX) $(CXXFLAGS) $(INC) non_iid_main.cpp -o ea_non_iid $(LIB) $(SHARED_LIB)
+ 
+diff --git a/cpp/conditioning_main.cpp b/cpp/conditioning_main.cpp
+index 9314bdc..734ffdb 100644
+--- a/cpp/conditioning_main.cpp
++++ b/cpp/conditioning_main.cpp
+@@ -464,7 +464,6 @@ int main(int argc, char* argv[]) {
+     string timestamp = getCurrentTimestamp();
+     string outputfilename;
+     string inputfilename;
+-    char *file_path;
+     string commandline = recreateCommandLine(argc, argv);
+     
+     for (int i = 0; i < argc; i++) {
+@@ -492,7 +491,6 @@ int main(int argc, char* argv[]) {
+                 break;
+             case 'i':
+                 inputfilename = optarg;
+-                file_path = optarg;
+                 break;
+             case 'c':
+                 iid = (strcmp(optarg, "iid") == 0);
+@@ -518,7 +516,7 @@ int main(int argc, char* argv[]) {
+         // Record hash of input file
+         char hash[2*SHA256_DIGEST_LENGTH+1];
+ 
+-        sha256_file(file_path, hash);
++        sha256_file(inputfilename.c_str(), hash);
+         testRunNonIid.sha256 = hash;
+     }
+     
+diff --git a/cpp/iid/permutation_tests.h b/cpp/iid/permutation_tests.h
+index 492ea59..f113d45 100644
+--- a/cpp/iid/permutation_tests.h
++++ b/cpp/iid/permutation_tests.h
+@@ -463,7 +463,7 @@ void run_tests(const data_t *dp, const uint8_t data[], const uint8_t rawdata[],
+  * ---------------------------------------------
+  */
+ 
+-void print_results(int C[][3], const int verbose){
++void print_results(int C[][3]){
+ 	cout << endl << endl;
+ 	cout << "                statistic  C[i][0]  C[i][1]  C[i][2]" << endl;
+ 	cout << "----------------------------------------------------" << endl;
+@@ -725,7 +725,7 @@ bool permutation_tests(const data_t *dp, const double rawmean, const double medi
+         	delete[](rawdata);
+ 	} //end parallel
+ 
+-	if(verbose > 1) print_results(C, verbose);
++	if(verbose > 1) print_results(C);
+         
+     populateTestCase(tc, C);
+ 	
+diff --git a/cpp/restart_main.cpp b/cpp/restart_main.cpp
+index d4af970..de63f66 100644
+--- a/cpp/restart_main.cpp
++++ b/cpp/restart_main.cpp
+@@ -107,7 +107,7 @@ uint16_t simulateCount(int k_effective, double p, uint64_t *xoshiro256starstarSt
+ int simulateBound(double alpha, int k, double H_I, unsigned long int simulation_rounds) {
+     uint64_t xoshiro256starstarMainSeed[4];
+     uint16_t *results;
+-    long int returnIndex;
++    unsigned long int returnIndex;
+     double p;
+     int k_effective;
+     int returnValue;
+@@ -153,11 +153,11 @@ int simulateBound(double alpha, int k, double H_I, unsigned long int simulation_
+     assert((results[simulation_rounds - 1] >= (1000 / k)) && (results[simulation_rounds - 1] <= 1000));
+ 
+     returnIndex = ((size_t) floor((1.0 - alpha) * ((double) simulation_rounds))) - 1;
+-    assert((returnIndex >= 0) && (returnIndex < simulation_rounds));
++    assert(returnIndex < simulation_rounds);
+ 
+     returnValue = (int)results[returnIndex];
+ 
+-    delete results;
++    delete[] results;
+ 
+     return returnValue;
+ }
+diff --git a/cpp/shared/utils.h b/cpp/shared/utils.h
+index 750396d..fed1371 100644
+--- a/cpp/shared/utils.h
++++ b/cpp/shared/utils.h
+@@ -22,6 +22,7 @@
+ #include <assert.h>
+ #include <cfloat>
+ #include <math.h>
++#include <sstream>
+ #include "test_run_base.h"
+ 
+ #define SWAP(x, y) do { int s = x; x = y; y = s; } while(0)
+@@ -180,8 +181,10 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
+ 
+ 	file = fopen(file_path, "rb");
+ 	if(!file){
+-                testRun->errorLevel = -1;
+-                testRun->errorMsg = "Error: could not open '%s'\n", file_path;
++		stringstream ss;
++		testRun->errorLevel = -1;
++		ss << "Error: could not open '" << file_path << "'";
++		testRun->errorMsg = ss.str();
+ 		printf("Error: could not open '%s'\n", file_path);
+ 		return false;
+ 	}
+@@ -222,9 +225,11 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
+ 	}
+ 
+ 	if(dp->len == 0){
+-    testRun->errorLevel = -1;
+-    testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+-    printf("Error: '%s' is empty\n", file_path);
++		stringstream ss;
++		testRun->errorLevel = -1;
++		ss << "Error: '" << file_path << "' is empty";
++		testRun->errorMsg = ss.str();
++		printf("Error: '%s' is empty\n", file_path);
+ 		fclose(file);
+ 		return false;
+ 	}
+@@ -360,8 +365,10 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
+ 
+ 	file = fopen(file_path, "rb");
+ 	if(!file){
+-                testRun->errorLevel = -1;
+-                testRun->errorMsg = "Error: could not open '%s'\n", file_path;
++		stringstream ss;
++		testRun->errorLevel = -1;
++		ss << "Error: could not open '" << file_path << "'";
++		testRun->errorMsg = ss.str();
+ 		printf("Error: could not open '%s'\n", file_path);
+ 		return false;
+ 	}
+@@ -387,8 +394,10 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
+ 	rewind(file);
+ 
+ 	if(dp->len == 0){
+-                testRun->errorLevel = -1;
+-                testRun->errorMsg = "Error: '%s' is empty\n", file_path;
++		stringstream ss;
++		testRun->errorLevel = -1;
++		ss << "Error: '" << file_path << "' is empty";
++		testRun->errorMsg = ss.str();
+ 		printf("Error: '%s' is empty\n", file_path);
+ 		fclose(file);
+ 		return false;
+@@ -749,14 +758,14 @@ void map_init(map<pair<uint8_t, uint8_t>, int> &m) {
+ 
+ // Calculates proportions of each value as an index
+ void calc_proportions(const uint8_t data[], vector<double> &p, const int sample_size) {
+-	unsigned int symbolNumber = p.size();
++	size_t symbolNumber = p.size();
+ 	
+ 	for (int i = 0; i < sample_size; i++) {
+ 		p[data[i]] ++;
+ 	}
+ 
+ 	//p now contains symbol counts. Normalize to the per-symbol probability
+-	for (int i = 0; i < symbolNumber; i++) {
++	for (size_t i = 0; i < symbolNumber; i++) {
+ 		p[i] /= (double)sample_size;
+ 	}
+ }
+@@ -999,7 +1008,7 @@ double predictionEstimate(long C, long N, long max_run_len, long k, const char *
+ //We then multiply this by 2 (as each pattern is associated with a length-2 array) by left shifting by 1.
+ #define BINARYDICTLOC(d, b) (binaryDict[(d)-1] + (((b) & ((1U << (d)) - 1))<<1))
+ 
+-static uint32_t compressedBitSymbols(const uint8_t *S, long length)
++uint32_t compressedBitSymbols(const uint8_t *S, long length)
+ {
+    uint32_t retPattern;
+    long j;
+@@ -1027,7 +1036,7 @@ static void printVersion(string name) {
+     cout << "\n\n";
+ }
+ 
+-static string recreateCommandLine(int argc, char* argv[]) {
++string recreateCommandLine(int argc, char* argv[]) {
+     string commandLine = "";
+     for(int i = 0; i < argc; ++i) {
+         commandLine.append(argv[i]);

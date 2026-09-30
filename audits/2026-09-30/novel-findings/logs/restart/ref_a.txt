@@ -1,0 +1,2 @@
+H_I=1.0  p=0.5  spec_U(alpha=5e-6,binomial)=570  P_binom(X>=570)=5.355e-06 P_binom(X>=571)=3.987e-06 | model c*=572 tails: P(max>571)=5.914e-06, P(max>572)=4.369e-06, P(max>573)=3.215e-06
+H_I=7.5  p=0.00552427  spec_U(alpha=5e-6,binomial)=19  P_binom(X>=19)=5.233e-06 P_binom(X>=20)=1.402e-06 | model c*=22 tails: P(max>21)=1.579e-05, P(max>22)=3.683e-06, P(max>23)=8.234e-07

@@ -1,0 +1,69 @@
+{
+   "IID" : false,
+   "commandline" : "./r_non_iid -q -o toctou.json toctou.bin 8",
+   "dateTimeStamp" : "20260930153828",
+   "errorLevel" : 0,
+   "filename" : "toctou.bin",
+   "sha256" : "c7e56911d2657fa9b6e86c03d4477474d6ec698691c5f32d3918ec513713e3c3",
+   "testCases" : [
+      {
+         "hBitstring" : 0.15182732507652344,
+         "hOriginal" : 0.31965065183818203,
+         "mcvEstimateMode" : 800234.0,
+         "mcvEstimatePHat" : 0.800234,
+         "mcvEstimatePU" : 0.80126387990272308,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.072705888458565959,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.091604387916422433,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.063135493215718444,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 0.032217608875810141,
+         "tTupleRes" : 0.29115980449860812,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 0.064801730063926102,
+         "lrsRes" : 0.51928137137655883,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 0.041925133646315872,
+         "hOriginal" : 0.31964625376592054,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.042001643639251546,
+         "hOriginal" : 0.4662582650278479,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.041925153682126653,
+         "hOriginal" : 0.32027687668519533,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.04192514875535195,
+         "hOriginal" : 0.32137218080982766,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : 0.25774087100648113,
+         "hBitstring" : 0.032217608875810141,
+         "hOriginal" : 0.29115980449860812,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

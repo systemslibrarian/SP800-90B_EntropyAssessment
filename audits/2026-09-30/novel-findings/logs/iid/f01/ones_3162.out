@@ -1,0 +1,63 @@
+Opening file: 'ones_3162.bin' (SHA-256 hash d39621c5bcb03de90aeaa088da2fb046ec47df792ce7168447e6801b699aed9c)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+Raw Mean = 0.0031619999999999999
+Median = 0.5
+Binary = true
+H_original = 0.0043597485654152356
+Assessed min entropy: 0.0043597485654152356
+Chi square independence: T = 0
+Chi square independence: df = 0
+Chi square independence: P-value = 1
+Chi square goodness of fit: T = 6.1979660902193991
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.71995315181628183
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.9936959964880000037001
+Literal Longest Repeated Substring results: W = 2872
+Literal Longest Repeated Substring results: Pr(X >= 1) = 1
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 37.12365799999990656488
+Permutation testing: Unpermuted result numDirectionalRuns = 6117
+Permutation testing: Unpermuted result lenDirectionalRuns = 313
+Permutation testing: Unpermuted result numIncreasesDecreases = 121941
+Permutation testing: Unpermuted result numRunsMedian = 6311
+Permutation testing: Unpermuted result lenRunsMedian = 2511
+Permutation testing: Unpermuted result avgCollision = 2.051114174132782075333
+Permutation testing: Unpermuted result maxCollision = 5
+Permutation testing: Unpermuted result periodicity(1) = 118883
+Permutation testing: Unpermuted result periodicity(2) = 118874
+Permutation testing: Unpermuted result periodicity(8) = 118856
+Permutation testing: Unpermuted result periodicity(16) = 118855
+Permutation testing: Unpermuted result periodicity(32) = 118846
+Permutation testing: Unpermuted result covariance(1) = 81
+Permutation testing: Unpermuted result covariance(2) = 77
+Permutation testing: Unpermuted result covariance(8) = 71
+Permutation testing: Unpermuted result covariance(16) = 74
+Permutation testing: Unpermuted result covariance(32) = 79
+Permutation testing: Unpermuted result compression = 6618
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       8       0       6
+       numDirectionalRuns       6       0      22
+       lenDirectionalRuns      14       1       5
+    numIncreasesDecreases      17       0       6
+            numRunsMedian       5       1      20
+            lenRunsMedian      14       0       6
+             avgCollision       6       0      28
+             maxCollision       0       6       0
+           periodicity(1)      17       0       6
+           periodicity(2)      61       0       6
+           periodicity(8)     130       1       5
+          periodicity(16)      94       1       5
+          periodicity(32)      65       1       5
+            covariance(1)       5       1       5
+            covariance(2)       6       1       5
+            covariance(8)      21       1       5
+           covariance(16)      24       0       6
+           covariance(32)      14       0       6
+              compression       8       0       6
+(* denotes failed test)
+
+IID permutation tests: Passed

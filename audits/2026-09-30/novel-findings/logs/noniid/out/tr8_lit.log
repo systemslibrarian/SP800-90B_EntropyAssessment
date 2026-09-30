@@ -1,0 +1,4 @@
+truerand_8bit.bin lit mcw  tool C=3779 r=3 N=999937 H=7.9885798193670183 | ref C=3779 r=3 N=999937 OK
+truerand_8bit.bin lit lag  tool C=3912 r=3 N=999999 H=7.939764556109469 | ref C=3912 r=3 N=999999 OK
+truerand_8bit.bin lit lz   tool C=3948 r=3 N=999983 H=7.9267871808058681 | ref C=3948 r=3 N=999983 OK
+    REFINFO lz dict_size=65536

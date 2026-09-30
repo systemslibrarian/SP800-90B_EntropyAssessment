@@ -1,0 +1,9 @@
+H_I: 1.000000
+
+real	3m28.199s
+user	3m55.526s
+sys	0m0.464s
+exit=0
+errorLevel 0
+{'h_c': 0.9961332374866155, 'h_i': 1.0, 'h_r': 0.9961332374866155, 'mean': 0.0, 'median': 0.0, 'passedChiSquareTests': True, 'passedIidPermutationTests': True, 'passedLongestRepeatedSubstringTest': True, 'testCaseDesc': 'Overall'} n_perm_entries 6
+true mean 0.500054

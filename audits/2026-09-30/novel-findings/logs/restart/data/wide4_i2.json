@@ -1,0 +1,11 @@
+{
+   "IID" : true,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -i -q -o wide4_i2.json wide4.bin 1 0.5",
+   "dateTimeStamp" : "20260930154626",
+   "errorLevel" : 0,
+   "filename" : "wide4.bin",
+   "sha256" : "7b1aa5d2ba6708180406899a025ad29c76d823f7bfeef3be060075726aa90a78",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

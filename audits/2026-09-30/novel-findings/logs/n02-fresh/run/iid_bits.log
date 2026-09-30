@@ -1,0 +1,70 @@
+Opening file: 'nibdup_bits.bin' (SHA-256 hash f90b9c48fd0fadae4143a892f75525b3764c86dab86356f8cc91fb8690a13299)
+Loaded 8000000 samples of 2 distinct 1-bit-wide symbols
+Number of Binary samples: 8000000
+Calculating baseline statistics...
+	Raw Mean: 0.500016
+	Median: 0.500000
+	Binary: true
+
+Bitstring MCV Estimate: mode = 4000130, p-hat = 0.50001625000000005, p_u = 0.5004715966201484
+h': 0.998640
+igamc: UNDERFLOW
+Chi square independence
+	score = 2613463.648964
+	degrees of freedom = 2046
+	p-value = 0.000000
+
+Chi square goodness of fit
+	score = 14.884770
+	degrees of freedom = 9
+	p-value = 0.094150
+
+** Failed chi square tests
+
+Literal Longest Repeated Substring results
+	P_col: 0.500000
+	Length of LRS: 75
+	Pr(X >= 1): 0.000000
+** Failed length of longest repeated substring test
+
+Beginning initial tests...
+
+Initial test results
+              excursion: 1561
+     numDirectionalRuns: 610618
+     lenDirectionalRuns: 17
+  numIncreasesDecreases: 636217
+          numRunsMedian: 3.99824e+06
+          lenRunsMedian: 41
+           avgCollision: 5.71268
+           maxCollision: 15
+         periodicity(1): 273007
+         periodicity(2): 274017
+         periodicity(8): 272949
+        periodicity(16): 273922
+        periodicity(32): 273171
+          covariance(1): 1.5997e+07
+          covariance(2): 1.60048e+07
+          covariance(8): 1.59997e+07
+         covariance(16): 1.59941e+07
+         covariance(32): 1.60021e+07
+            compression: 736460
+
+Beginning permutation tests... these may take some time
+  0.01% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.02% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.03% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.04% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.05% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.06% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.07% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.08% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.09% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.10% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.11% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.12% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.13% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.14% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.15% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)
+  0.16% of Permutation test rounds,   0.00% of Permutation tests (Core 0/1, passed_count 0)
+  0.17% of Permutation test rounds,   0.00% of Permutation tests (Core 1/1, passed_count 0)

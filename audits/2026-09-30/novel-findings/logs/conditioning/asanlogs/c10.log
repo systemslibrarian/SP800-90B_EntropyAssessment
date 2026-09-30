@@ -1,0 +1,2 @@
+ea_conditioning: conditioning_main.cpp:602: int main(int, char**): Assertion `mpfr_get_emax() > maxval' failed.
+timeout: the monitored command dumped core

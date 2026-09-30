@@ -1,0 +1,21 @@
+{
+   "IID" : false,
+   "commandline" : "./r_cond -n -q -i nope.bin -o c.json 512 256 256 400 0.9",
+   "dateTimeStamp" : "20260930155553",
+   "errorLevel" : 0,
+   "filename" : "nope.bin",
+   "sha256" : "\ufffd@\u06fd",
+   "testCases" : [
+      {
+         "h_in" : 400.0,
+         "h_out" : 230.39999999999997,
+         "h_p" : 0.89999999999999991,
+         "n_in" : 512.0,
+         "n_out" : 256.0,
+         "nw" : 256.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Conditioning"
+}

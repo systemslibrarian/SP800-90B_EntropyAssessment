@@ -1,0 +1,1 @@
+H_I (1.500000) must be at most 'bits_per_symbol' (1).

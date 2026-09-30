@@ -1,0 +1,40 @@
+Opening file: 'sticky8.bin' (SHA-256 hash 264a5bc0b097aeffefc8354976e8caaf73d4ca6c7bfecfa8cc59f141224f4370)
+Loaded 1000000 samples of 256 distinct 8-bit-wide symbols
+Number of Binary samples: 8000000
+Raw Mean = 127.517483
+Median = 128
+Binary = false
+H_bitstring = 0.99855054107343177
+H_bitstring Per Symbol = 7.9884043285874542
+H_original = 7.8896860148396195
+Assessed min entropy: 7.8896860148396195
+Chi square independence: T = 77895.75324868942
+Chi square independence: df = 65280
+Chi square independence: P-value = 1.4700431267768024e-237
+Chi square goodness of fit: T = 2347.7704897195199
+Chi square goodness of fit: df = 2295
+Chi square goodness of fit: P-value = 0.21686170577191693
+Chi square tests: Failed
+Literal Longest Repeated Substring results: P_col = 0.003907343160000000008605
+Literal Longest Repeated Substring results: W = 4
+Literal Longest Repeated Substring results: Pr(X >= 1) = 1
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 62315.35079400098038604
+Permutation testing: Unpermuted result numDirectionalRuns = 663611
+Permutation testing: Unpermuted result lenDirectionalRuns = 8
+Permutation testing: Unpermuted result numIncreasesDecreases = 506893
+Permutation testing: Unpermuted result numRunsMedian = 495108
+Permutation testing: Unpermuted result lenRunsMedian = 21
+Permutation testing: Unpermuted result avgCollision = 18.59760089269109073484
+Permutation testing: Unpermuted result maxCollision = 69
+Permutation testing: Unpermuted result periodicity(1) = 13773
+Permutation testing: Unpermuted result periodicity(2) = 3908
+Permutation testing: Unpermuted result periodicity(8) = 3940
+Permutation testing: Unpermuted result periodicity(16) = 3958
+Permutation testing: Unpermuted result periodicity(32) = 3870
+Permutation testing: Unpermuted result covariance(1) = 16315936097
+Permutation testing: Unpermuted result covariance(2) = 16268463091
+Permutation testing: Unpermuted result covariance(8) = 16266246574
+Permutation testing: Unpermuted result covariance(16) = 16257881169
+Permutation testing: Unpermuted result covariance(32) = 16261685166
+Permutation testing: Unpermuted result compression = 1067440
