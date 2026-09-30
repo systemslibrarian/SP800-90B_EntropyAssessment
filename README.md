@@ -1,5 +1,12 @@
 # EntropyAssessment
 
+> **Fork note (2026-09-30):** this fork builds and ships only `ea_non_iid`, with
+> Makefile changes limited to locating dependencies on macOS. See
+> [BUILDING.md](BUILDING.md) for the verified macOS build, the unverified
+> Windows route, and the pinned-output check, and [NOTICE](NOTICE) for the
+> licence and the full list of changes. Nothing that affects a reported
+> min-entropy figure has been changed.
+
 Cryptographic random bit generators (RBGs), also known as random number generators (RNGs), require a noise source that produces digital outputs with some level of unpredictability, expressed as min-entropy. [SP 800-90B](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90B.pdf) provides a standardized means of estimating the quality of a source of entropy.
 
 ## License
