@@ -1,0 +1,83 @@
+NOTICE
+======
+
+This is a modified copy of the NIST SP 800-90B Entropy Assessment software.
+
+Source:  National Institute of Standards and Technology (NIST),
+         https://github.com/usnistgov/SP800-90B_EntropyAssessment
+         Upstream baseline for this fork: commit
+         87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
+         ("Merge pull request #248 from joshuaehill/proportionRounding").
+
+The National Institute of Standards and Technology is hereby explicitly
+acknowledged as the source of this software.
+
+
+NIST licence (reproduced verbatim from the upstream README.md)
+----------------------------------------------------------------
+
+NIST-developed software is provided by NIST as a public service. You may use, copy, and distribute copies of the software in any medium, provided that you keep intact this entire notice. You may improve, modify, and create derivative works of the software or any portion of the software, and you may copy and distribute such modifications or works. Modified works should carry a notice stating that you changed the software and should note the date and nature of any such change. Please explicitly acknowledge the National Institute of Standards and Technology as the source of the software.
+
+NIST-developed software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT, OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE.
+
+You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property. The software developed by NIST employees is not subject to copyright protection within the United States.
+
+
+Statement of changes (required by the licence above)
+-----------------------------------------------------
+
+The software was changed by the maintainers of this fork. No change
+below touches estimator logic, cut-offs, rounding, output formatting,
+or the set of estimators that run. Nothing under cpp/shared/, cpp/iid/,
+cpp/non_iid/, the *_main.cpp programs, bin/, or cpp/selftest/refdata/
+has been modified from the upstream baseline.
+
+2026-09-30  cpp/Makefile: on macOS (uname -s = Darwin) add Homebrew's
+            include and library prefixes, and OpenSSL 3's keg-only
+            prefix, to the compile and link lines (INC, LDFLAGS).
+            Link rules now pass $(LDFLAGS); empty elsewhere.
+2026-09-30  cpp/Makefile: on macOS compile with Apple clang and enable
+            OpenMP via Homebrew's libomp (-Xpreprocessor -fopenmp,
+            -lomp) instead of a bare -fopenmp, which Apple clang rejects.
+            Non-Darwin command lines are unchanged.
+2026-09-30  cpp/Makefile: on Apple-silicon macOS default ARCH to arm64
+            so the x86-only -march=native flag is omitted, as upstream
+            already does for any non-x86 ARCH. ARCH can still be set.
+2026-09-30  cpp/selftest/pin-check.sh: new script that runs ea_non_iid
+            on the upstream sample bin/ringOsc-nist.bin and asserts the
+            reported min-entropy against upstream's own reference value.
+2026-09-30  NOTICE (this file) and BUILDING.md added; one pointer line
+            added to README.md. Build documentation only.
+
+Only ea_non_iid is built and distributed from this fork. ea_conditioning
+(the only program that links MPFR and GMP) is not built or shipped.
+
+
+Third-party components linked into ea_non_iid
+-----------------------------------------------
+
+Versions are those used for the verified macOS build on 2026-09-30.
+Licence identifiers are SPDX where one exists.
+
+| Component            | Version (macOS) | Licence                                   | Notes                                                        |
+|----------------------|-----------------|-------------------------------------------|--------------------------------------------------------------|
+| OpenSSL libcrypto    | 3.6.4           | Apache-2.0                                | Pinned to the 3.x series. Used only to SHA-256 the input file (cpp/shared/TestRunUtils.h). OpenSSL 1.1.x and earlier carried the dual OpenSSL/SSLeay licence, whose clauses 3 and 6 are advertising clauses; 1.1.x is also end-of-life. Do not build against it. |
+| jsoncpp              | 1.9.8           | Public Domain OR MIT (author's choice)    | JSON report output.                                          |
+| libdivsufsort (+64)  | 2.0.1           | MIT                                       | Suffix arrays for the t-tuple and LRS estimators.            |
+| bzip2 / libbz2       | 1.0.8 (system)  | bzip2-1.0.6 (BSD-style)                   | Named on the link line for every program; ea_non_iid references no symbol from it (only cpp/iid/permutation_tests.h does). |
+| OpenMP runtime       | libomp 23.1.2   | Apache-2.0 WITH LLVM-exception            | macOS build. On Linux and MinGW the runtime is GCC's libgomp (GPL-3.0-or-later WITH GCC-exception-3.1). ea_non_iid contains no OpenMP pragmas; the runtime is linked because shared/utils.h includes <omp.h>. |
+| pthreads             | libSystem       | Apple OS component                        | glibc (LGPL-2.1-or-later) on Linux; mingw-w64 winpthreads (MIT, with parts under ZPL-2.1; see its COPYING) on MSYS2. |
+| C++ standard library | libc++          | Apache-2.0 WITH LLVM-exception            | libstdc++ (GPL-3.0-or-later WITH GCC-exception-3.1) with GCC on Linux/MinGW. |
+
+Not linked into ea_non_iid (used only by ea_conditioning, via COND_LIB in cpp/Makefile):
+
+| Component | Licence                                            |
+|-----------|----------------------------------------------------|
+| GNU MPFR  | LGPL-3.0-or-later                                  |
+| GNU GMP   | LGPL-3.0-or-later OR GPL-2.0-or-later (dual)       |
+
+Evidence: cpp/Makefile defines COND_LIB = -lmpfr -lgmp and passes it only
+in the ea_conditioning rule; conditioning_main.cpp is the only source
+file that includes <mpfr.h>/<gmp.h>; `otool -L cpp/ea_non_iid` on the
+built binary lists no MPFR or GMP library and `nm -u` shows no mpfr/gmp
+symbols. See BUILDING.md for the exact commands.
