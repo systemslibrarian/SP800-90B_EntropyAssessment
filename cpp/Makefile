@@ -1,7 +1,16 @@
 # Host detection (used to locate Homebrew packages on macOS below).
 UNAME_S := $(shell uname -s 2>/dev/null)
+UNAME_M := $(shell uname -m 2>/dev/null)
 
+# -march=native is added only for ARCH=x86 (below). Upstream defaults ARCH
+# to x86; on an Apple-silicon Mac default it to the host instead so the
+# x86-only flag is not passed to an arm64 compile. Any ARCH given on the
+# command line or in the environment still wins.
+ifeq ($(UNAME_S)/$(UNAME_M),Darwin/arm64)
+ARCH ?= arm64
+else
 ARCH ?= x86
+endif
 
 CXX ?= $(CROSS_COMPILE)g++
 
