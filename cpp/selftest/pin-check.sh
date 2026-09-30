@@ -12,13 +12,15 @@
 #            which no CSPRNG stream exhibits.
 # Expected:  the value in upstream's own reference output,
 #            cpp/selftest/refdata/ringOsc-nist.res (Linux x86-64, GCC).
-# Tolerance: relative 1e-9. Justification: upstream's selftest accepts
-#            1e-10 per estimator; the largest cross-platform delta seen
-#            on any estimator is ~3.7e-10 (macOS arm64, this fork) and
-#            ~3.2e-10 (Windows 10, upstream issue #155). The overall
-#            figure on this sample differs by 4.4e-14 between platforms.
-#            A real change to the estimator or input moves the figure by
-#            >= 1e-5, four orders of magnitude above the tolerance.
+# Tolerance: relative 1e-9, valid for THIS sample (1-bit, 1e6 samples,
+#            collision estimate binding; measured cross-platform delta
+#            4.4e-14). Not a general figure: where a predictor is the
+#            minimum, 64-bit vs 80-bit long double platforms diverge by
+#            about 1.5e-15 x (bits assessed), i.e. ~1e-8 for 1e6 8-bit
+#            samples and ~1e-7 for 1e8 bits (BUILDING.md, "Precision
+#            audit"). When re-basing on a new capture, set RELTOL from
+#            the bits assessed. A real change to the estimator or input
+#            moves the figure by >= 1e-5, so the check stays non-vacuous.
 #            Exact per-platform values are recorded in BUILDING.md.
 set -u
 cd "$(dirname "$0")"

@@ -192,22 +192,35 @@ perturbed: expected FAIL observed (check is not vacuous)
   the other direction, so it was deliberately not added.
 - **`long double` width.** 80-bit x87 extended under GCC on x86-64
   (Linux, MinGW); 64-bit (same as `double`) on arm64 macOS and under
-  MSVC on every architecture. `ea_non_iid` uses `long double` in the
-  t-tuple/LRS `p_u` computations (`cpp/shared/lrs_test.h`). Measured
-  effect on the 11 upstream samples: t-tuple and LRS figures agree with
-  the x86 reference to ≤ 2e-16 relative, i.e. not visible at double
-  precision on these inputs. (The `LDBL_MIN` asserts in `len_LRS_test`
-  have a much narrower safe range on arm64, but that function is called
-  only by `ea_iid`, which this fork does not build.)
+  MSVC on every architecture. `ea_non_iid` uses `long double` in three
+  places: the t-tuple/LRS `p_u` chain (`cpp/shared/lrs_test.h`), the
+  compression estimate's G() series (`cpp/non_iid/compression_test.h`),
+  and the predictor p-value function `prediction_estimate_function`
+  (`cpp/shared/utils.h`) shared by Lag, MultiMCW, MultiMMC and LZ78Y.
+  Measured against a 113-bit `__float128` build of the same sources
+  (which reproduces the x86 reference to ≤ 6e-13), the 64-bit build
+  diverges by: predictors up to 1.5e-15 × (bits assessed) relative, so
+  ~1e-9 for 10^6 bits, ~1e-8 for 10^6 8-bit samples (the bitstring
+  predictors see 8×10^6 bits), ~1e-7 for 10^8 bits; compression ≤ 1e-11
+  and t-tuple/LRS ≤ 3e-11 at 10^6 samples, worst on near-constant data
+  where the estimate itself is near zero. The predictor divergence comes
+  from the fixed-point loop in `prediction_estimate_function` stopping at
+  `LDBL_EPSILON`, so its error is ~N × ε and the bisection in
+  `calc_p_local` inherits it. Direction is not systematic: the 64-bit
+  result was lower in about two thirds of cases, higher in the rest. See
+  "Precision audit" below for the full measurements.
 - **libm.** `log2`, `pow`, `exp`, `log1p` implementations differ between
   macOS libm, glibc, and mingw-w64/UCRT. This is the residual source of
   the 1e-10-scale predictor deltas above.
 
-The pinned-output tolerance of 1e-9 relative is set from these
-measurements: ten times upstream's per-value tolerance and about three
-times the largest cross-platform delta ever observed on any estimator,
-while a genuine change to the input or estimator moves the figure by
-≥ 1e-5 (see the perturbation above).
+The pinned-output tolerance of 1e-9 relative is valid for the pinned
+sample (1-bit, 10^6 samples, collision estimate binding: measured
+cross-platform delta 4.4e-14). It is **not** a general figure: for an
+input where a predictor is the minimum, the cross-platform divergence
+scales with the number of bits assessed (≈ 1.5e-15 × bits), so a
+re-based pin on a 10^7-sample 8-bit capture needs a tolerance nearer
+1e-7. A genuine change to the input or estimator moves the figure by
+≥ 1e-5, so even that tolerance is not vacuous.
 
 ---
 
@@ -336,15 +349,25 @@ so the Makefile takes its upstream (non-Darwin) path unchanged; GCC adds
 
 ### Windows caveats to check before trusting a figure
 
-- **`long` is 32-bit on Windows** (LLP64), 64-bit on Linux/macOS. The
-  code uses `long` for sample counts and the `-l` offsets (`data_t.len`,
-  `blen`, `n_choose_2`, `W`, `N` in `lrs_test.h`). Upstream's maintainer
-  flagged exactly this in issue #155 as the reason Windows is
-  unsupported. For inputs of a few million samples the counts fit, but
-  intermediate products like `n_choose_2(L)` are `long` and overflow
-  sooner on Windows. Compare every estimator against the Linux reference
-  on the Windows machine before relying on it, and prefer the Linux/macOS
-  figure where they disagree beyond 1e-9.
+- **`long` is 32-bit on Windows** (LLP64), 64-bit on Linux/macOS.
+  Audited by building the sources with every `long` forced to 32 bits
+  (scratch copy, not shipped) and comparing all 30 audit inputs: every
+  reported value was bit-identical to the 64-bit build. The only `long`
+  products on the ea_non_iid path are the bitstring length
+  `len × bits_per_symbol` and the `-l` offset `index × samples`. Measured
+  consequences: 8-bit inputs of 268,435,456 samples (256 MiB) or more are
+  refused at the bitstring allocation; at 536,870,912 samples (512 MiB)
+  the product wraps to 0 and the tool crashes (SIGBUS); 1-bit inputs have
+  no product and are limited only by the CRT's 32-bit `ftell`. One
+  wrong-rather-than-refuse case exists: an `-l index,samples` request
+  whose byte offset is ≥ 4 GiB wraps, reads the wrong block silently and
+  reports its figure, where the 64-bit build refuses ("file read
+  failure"); it needs a request beyond the end of any file Windows can
+  open, so it is an operator error, not a valid-input hazard. Whether
+  Windows `ftell` refuses or truncates for files ≥ 2 GiB is not stated in
+  Microsoft's documentation; do not feed a Windows build files that
+  large until tested (a truncating `ftell` on a ≥ 4 GiB file would assess
+  a silently shortened sample).
 - Expected deltas: issue #155's MinGW build agreed with the reference
   within 3.2e-10 on the predictors and better elsewhere.
 - Run under the MSYS2 shell so `/dev/zero` (used by `pin-check.sh`) and
@@ -360,6 +383,48 @@ no `<getopt.h>`, no `__int128` (`__SIZEOF_INT128__` guard leaves
 source change, which this fork forbids. If a native MSVC binary is ever
 required, clang-cl with the MinGW-style flags would be the next thing to
 try, but it is untested here.
+
+---
+
+## Precision audit (2026-09-30)
+
+Method: a scratch copy of the sources with `long double` replaced by
+`__float128` (113-bit, via Homebrew GCC + libquadmath), run beside the
+shipped macOS build on the 11 upstream samples, 19 synthetic classes
+(near-constant bits, biased bytes, periodic-with-noise, uniform, small n)
+and three 10^7-sample inputs. On the 11 upstream samples the 128-bit
+build reproduces the x86 (80-bit) reference to ≤ 6e-13 on predictors and
+exactly on compression, so it stands in for the x86 result.
+
+Worst 64-bit-vs-128-bit relative divergence per family, 10^6-sample
+inputs (bitstring runs on 8-bit data assess 8×10^6 bits):
+
+| Family                | Worst   | Input class                    | Lower / higher |
+|-----------------------|---------|--------------------------------|----------------|
+| MultiMMC predictor    | 8.7e-9  | biased bytes (bitstring)       | 6 / 2          |
+| LZ78Y predictor       | 7.9e-9  | 8-bit, p(0)=0.9999 (bitstring) | 3 / 3          |
+| MultiMCW predictor    | 6.5e-9  | 8-bit, p(0)=0.9999 (bitstring) | 10 / 4         |
+| Lag predictor         | 4.5e-9  | 8-bit, p(0)=0.99 (bitstring)   | 4 / 6          |
+| t-tuple               | 2.2e-11 | near-constant bits (H ≈ 1e-5)  | 13 / 12        |
+| compression           | 9.1e-12 | 8-bit, p(0)=0.9999 (bitstring) | 15 / 4         |
+| LRS                   | 1.3e-12 | near-constant bits             | 16 / 9         |
+| Assessed figure       | 8.2e-10 | uniform 8-bit (predictor min)  | 13 / 1         |
+
+Scaling with size (predictor p_local, from a grid of run length,
+sample count and p_global' restricted to states the tool's own guard
+can reach): max 1.7e-11 at N=10^4, 1.6e-9 at 10^6, 1.3e-7 at 10^8; on
+real 10^7-sample inputs MultiMCW reached 5.4e-9 and compression 3.7e-12.
+The guard decision (whether p_local is computed at all) never differed
+between precisions on 1,533 grid points. Outside the guard the two
+precisions take different bisection exit paths and differ by a factor
+of two, but those states are unreachable from data.
+
+Interpretation for the pricing use: on Apple silicon the figure can sit
+up to ~1e-8 relative from the x86 reference at 10^6 8-bit samples and
+~1e-7 at 10^8 bits, in either direction. That is far below any digit
+that changes a pad length, but it is above upstream's own 1e-10
+selftest threshold, and a pin tolerance must be chosen from the bits
+assessed, not from a fixed number.
 
 ---
 
