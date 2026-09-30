@@ -10,7 +10,7 @@ This directory preserves independent audit findings against **NIST's SP 800-90B 
 | Item | Value |
 |---|---|
 | Upstream baseline audited | `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289` (upstream `master` on 2026-09-30: tag v1.1.8 plus the later merges of PRs #237, #248 and #250) |
-| First-wave audit (F-series) | fork commit `f06166f`; every file on the `ea_non_iid` include path is byte-identical to `87c104d` (see [`AUDIT-2026-09-30.md`](../../AUDIT-2026-09-30.md)) |
+| First-wave audit (F-series) | fork commit `f06166f`; every file on the `ea_non_iid` include path is byte-identical to `87c104d` (see [`AUDIT.md`](AUDIT.md)) |
 | Standard | NIST SP 800-90B, *Recommendation for the Entropy Sources Used for Random Bit Generation*, January 2018, doi:[10.6028/NIST.SP.800-90B](https://doi.org/10.6028/NIST.SP.800-90B). The copy used during the audits (84 pages) is kept at [`reference/NIST.SP.800-90B.pdf`](reference/NIST.SP.800-90B.pdf), SHA-256 `9b0dd77131ade3617a91cd8457fa09e0dc354c273bb2220a6afeaca16e5defe7`. |
 | Build used | Linux x86_64, g++ 13.3.0, upstream Makefile (`-std=c++11 -fopenmp -O2 -ffloat-store -march=native`); sanitizer builds with `-fsanitize=address,undefined` |
 
@@ -18,12 +18,16 @@ This directory preserves independent audit findings against **NIST's SP 800-90B 
 
 | Path | Contents |
 |---|---|
+| [`AUDIT.md`](AUDIT.md) | First-wave adversarial audit of `ea_non_iid` (F01–F30) with round-2 verification status. Historical, unchanged; moved from the repository root. |
 | [`FINDINGS-TRACKER.md`](FINDINGS-TRACKER.md) | One table per series covering every finding (F01–F30, N-01–N-11, R-1–R-3, NOVEL-01–NOVEL-03), with upstream mapping and status |
 | [`novel-findings/`](novel-findings/) | Whole-codebase novel-findings audit (N/R series). `REPORT.md` is byte-identical to fork commit `0e685f6`. Also: the coordinator's verification outputs (`repro/verify/`), the seven per-area auditor reports (`agent-reports/`), generators, reference/oracle code, harness sources and logs. `MANIFEST.md` lists every file with its original path and SHA-256. |
 | [`phase2-focused/`](phase2-focused/) | Phase-2 focused audit (NOVEL series). `REPORT.md` is byte-identical to fork commit `3087ff4`. Also: the PDF-derived estimator oracles (`oracle/`), the exact #272 reproduction (`repro/issue272/`), dataset generators and evidence logs. `MANIFEST.md` lists every file. |
 | [`reference/`](reference/) | The reference material used during the audits, each byte-identical to the copy added in fork commit `8082231` (branch `audits/2026-09-30-novel-findings`), where it had been placed at the repository root. [`NIST.SP.800-90B.pdf`](reference/NIST.SP.800-90B.pdf) is the standard (SHA-256 above). [`full_source.txt`](reference/full_source.txt) is a concatenated listing of the 26 `cpp/` source files, each identical to upstream `87c104d` (SHA-256 `50f2c1412dd983ee6fc8ad1f0d0b8baa1cf3bd25aec35f882e3e9b1acfc5cefb`). |
 
-These files are unchanged historical records elsewhere in the fork: [`AUDIT-2026-09-30.md`](../../AUDIT-2026-09-30.md) (first-wave F-series) and [`../2026-09-30-phase2-focused-audit.md`](../2026-09-30-phase2-focused-audit.md) (the phase-2 report at its original path). The novel-findings report's original path, `audits/2026-09-30-novel-findings-audit.md`, exists on the fork branch `audits/2026-09-30-novel-findings`.
+Layout changes (2026-09-30 cleanup):
+- The first-wave report was moved from the repository root (`AUDIT-2026-09-30.md`) to [`AUDIT.md`](AUDIT.md), unchanged.
+- The phase-2 report's original path `audits/2026-09-30-phase2-focused-audit.md` (commit `3087ff4`) was consolidated into [`phase2-focused/REPORT.md`](phase2-focused/REPORT.md), which is byte-identical.
+- The novel-findings report's original path, `audits/2026-09-30-novel-findings-audit.md`, exists only on fork branch `audits/2026-09-30-novel-findings`.
 
 ## Filed upstream vs audit-only
 
