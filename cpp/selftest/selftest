@@ -1,8 +1,60 @@
 #!/bin/bash
+#
+# Compare this build's ea_non_iid output against the reference outputs in
+# refdata/ for every sample under bin/.
+#
+# Exit status: 0 only if every file matched. Previously the status of
+# compareresults.pl was discarded by the loop, so this script exited 0 even
+# when it had just printed "Significant difference" for one or more files,
+# and any harness or CI job checking $? saw a pass.
+#
+# All files are run before exiting, rather than stopping at the first
+# mismatch, so that one failure does not hide the state of the rest; the
+# summary below names every file that failed.
+
+fail_count=0
+run_count=0
+failed_files=""
+
+if [ ! -x ../ea_non_iid ]; then
+	echo "selftest: ../ea_non_iid is missing or not executable (run 'make non_iid' first)" >&2
+	exit 2
+fi
 
 for file in ../../bin/*; do
 	bfile=`basename $file`
+	resfile=${bfile/bin/res}
+
+	if [ ! -f "refdata/${resfile}" ]; then
+		echo "${bfile}: no reference output at refdata/${resfile}"
+		fail_count=$((fail_count + 1))
+		failed_files="${failed_files} ${bfile}"
+		continue
+	fi
+
+	run_count=$((run_count + 1))
 	echo -n "${bfile}: "
-	../ea_non_iid -vv ${file} > ${bfile/bin/res}
-	./compareresults.pl ${bfile/bin/res} refdata/${bfile/bin/res} 
+
+	if ! ../ea_non_iid -vv ${file} > ${resfile}; then
+		echo "FAILED (ea_non_iid exited $?)"
+		fail_count=$((fail_count + 1))
+		failed_files="${failed_files} ${bfile}"
+		continue
+	fi
+
+	if ./compareresults.pl ${resfile} refdata/${resfile}; then
+		:
+	else
+		fail_count=$((fail_count + 1))
+		failed_files="${failed_files} ${bfile}"
+	fi
 done
+
+echo
+if [ ${fail_count} -eq 0 ]; then
+	echo "selftest: PASS (${run_count} files)"
+	exit 0
+fi
+
+echo "selftest: FAIL (${fail_count} of ${run_count} files):${failed_files}"
+exit 1

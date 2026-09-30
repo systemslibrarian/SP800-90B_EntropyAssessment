@@ -61,9 +61,31 @@ sub resultsHash {
    my $fd = shift;
    my %input;
 
+   # Two kinds of line are collected:
+   #
+   #  1. per-estimator values, e.g.
+   #        Literal Collision Estimate: min entropy = 0.126...
+   #
+   #  2. the final combined figures produced by main() rather than by any
+   #     estimator:
+   #        H_bitstring = <v>
+   #        H_bitstring Per Symbol = <v>
+   #        H_original = <v>
+   #        Assessed min entropy: <v>
+   #
+   # Group 2 was previously not collected at all, so a fault confined to the
+   # final combination (for instance dropping the n x H_bitstring term, or
+   # failing to fold in H_original) left every collected value unchanged and
+   # the comparison passed. The final figure is the number an assessment is
+   # actually reported with, so it is the one that most needs checking.
    while( my $line = <$fd> ) {
-      if ( $line =~ /(Estimate:|Assessed)/i ) {
-         if($line =~ /^([^=]+) = ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$/ ) {
+      if ( $line =~ /(Estimate:|Assessed|^H_original|^H_bitstring)/i ) {
+         # "<label> = <value>" covers the estimators and H_original /
+         # H_bitstring; "<label>: <value>" covers "Assessed min entropy".
+         # The " = " form is tried first so that estimator lines, which
+         # contain both separators, keep the labels they have always had.
+         if(($line =~ /^([^=]+) = ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$/ ) ||
+            ($line =~ /^([^:=]+): ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$/ )) {
             my $label = $1;
             my $value = $2;
 
