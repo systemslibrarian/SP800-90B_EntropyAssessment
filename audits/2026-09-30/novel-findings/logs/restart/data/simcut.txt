@@ -1,0 +1,12 @@
+H_I=7.5 k=256 rounds=5000000 threads=1 X_cutoff=22
+H_I=7.5 k=256 rounds=5000000 threads=1 X_cutoff=22
+H_I=1 k=2 rounds=5000000 threads=1 X_cutoff=571
+H_I=1 k=2 rounds=5000000 threads=1 X_cutoff=572
+H_I=7.5 k=256 rounds=5000000 threads=2 X_cutoff=22
+H_I=7.5 k=256 rounds=5000000 threads=2 X_cutoff=22
+H_I=1 k=2 rounds=5000000 threads=2 X_cutoff=571
+H_I=1 k=2 rounds=5000000 threads=2 X_cutoff=572
+H_I=7.5 k=256 rounds=5000000 threads=4 X_cutoff=22
+H_I=7.5 k=256 rounds=5000000 threads=4 X_cutoff=22
+H_I=1 k=2 rounds=5000000 threads=4 X_cutoff=572
+H_I=1 k=2 rounds=5000000 threads=4 X_cutoff=572

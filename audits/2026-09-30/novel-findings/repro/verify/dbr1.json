@@ -1,0 +1,54 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -vv -o dbr1.json db256_3.bin 8 0.5",
+   "dateTimeStamp" : "20260930162017",
+   "errorLevel" : -1,
+   "errorMessage" : "min(H_r, H_c) < H_I/2, Validation Testing Failed.",
+   "filename" : "db256_3.bin",
+   "sha256" : "c5484038e515140d61342778212f0e44d8ecf3009ce66e02d81af0cfae1e50f2",
+   "testCases" : [
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 3.9176039347542009,
+         "h_r" : 3.9176039347542009,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 3.9176039347542004,
+         "h_r" : 3.9176039347542004,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 9.2286076798559069,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 1.7070755542172236,
+         "h_r" : 1.5805642090156899,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 1.5581719312789366,
+         "h_r" : 0.58520822194379885,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 4.5767623452176487,
+         "h_r" : 3.9232404698489476,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 4.5817364850974869,
+         "h_r" : 3.9232628098440401,
+         "testCaseDesc" : "LZ78Y Test"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

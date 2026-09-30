@@ -1,0 +1,4 @@
+truerand_1bit | non_iid: H_bitstring = 0.82967708323411438 | cond: h' = 0.8296770832341142654087
+biased-random-bits | non_iid: H_bitstring = 0.017766579116465193 | cond: h' = 0.01776657911646519275028
+truerand_4bit | non_iid: H_bitstring = 0.90062659214175955 | cond: h' = 0.9006265921417593300901
+normal | non_iid: H_bitstring = 0.51251197288879213 | cond: h' = 0.5125119728887920222959

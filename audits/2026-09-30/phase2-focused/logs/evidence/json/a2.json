@@ -1,0 +1,11 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/bae8c694-6a48-4fd3-83f6-685460129aee/scratchpad/asan/cpp/ea_restart -n -o a2.json nonexist.bin 8 4",
+   "dateTimeStamp" : "20260930173715",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: could not open '%s'\n",
+   "filename" : "nonexist.bin",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

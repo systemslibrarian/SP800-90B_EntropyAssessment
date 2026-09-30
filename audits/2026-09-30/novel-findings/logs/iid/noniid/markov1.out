@@ -1,0 +1,38 @@
+Opening file: 'markov1.bin' (SHA-256 hash 2fd5cf82b1beb429ecbf22c134d0362f0ddb539cd4c4a83fef9604488a011926)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+Raw Mean = 0.50043400000000005
+Median = 0.5
+Binary = true
+H_original = 0.99504013964738847
+Assessed min entropy: 0.99504013964738847
+igamc: UNDERFLOW
+Chi square independence: T = 45065.712977908544
+Chi square independence: df = 2046
+Chi square independence: P-value = 0
+Chi square goodness of fit: T = 20.827631692037581
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.013438142383134864
+Chi square tests: Failed
+Literal Longest Repeated Substring results: P_col = 0.5000003767120000555506
+Literal Longest Repeated Substring results: W = 39
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.597254888388597409408
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 665.8411160000313202545
+Permutation testing: Unpermuted result numDirectionalRuns = 79896
+Permutation testing: Unpermuted result lenDirectionalRuns = 10
+Permutation testing: Unpermuted result numIncreasesDecreases = 72865
+Permutation testing: Unpermuted result numRunsMedian = 400400
+Permutation testing: Unpermuted result lenRunsMedian = 25
+Permutation testing: Unpermuted result avgCollision = 18.27485380116959134966
+Permutation testing: Unpermuted result maxCollision = 59
+Permutation testing: Unpermuted result periodicity(1) = 20600
+Permutation testing: Unpermuted result periodicity(2) = 20440
+Permutation testing: Unpermuted result periodicity(8) = 20283
+Permutation testing: Unpermuted result periodicity(16) = 20439
+Permutation testing: Unpermuted result periodicity(32) = 20136
+Permutation testing: Unpermuted result covariance(1) = 2013757
+Permutation testing: Unpermuted result covariance(2) = 2002068
+Permutation testing: Unpermuted result covariance(8) = 2002442
+Permutation testing: Unpermuted result covariance(16) = 2001577
+Permutation testing: Unpermuted result covariance(32) = 2002237
+Permutation testing: Unpermuted result compression = 153154

@@ -1,0 +1,75 @@
+Opening file: 'nibdup.bin' (SHA-256 hash 4f043adf8eafe4ed8667b16e99c19dabdfe57c1a49cd46deca7d02ffb6e2fc25)
+Loaded 1000000 samples of 16 distinct 8-bit-wide symbols
+Number of Binary Symbols: 8000000
+
+Symbols have been translated.
+Bitstring Most Common Value Estimate: Mode count = 4000130
+Bitstring Most Common Value Estimate: p-hat = 0.50001625000000005
+Bitstring Most Common Value Estimate: p_u = 0.5004715966201484
+Bitstring Most Common Value Estimate: min entropy = 0.99863990110688217
+Bitstring Collision Estimate: v = 3274439
+Bitstring Collision Estimate: Sum t_i = 8000000
+Bitstring Collision Estimate: X-bar = 2.4431666004466721
+Bitstring Collision Estimate: sigma-hat = 0.49675953947332641
+Bitstring Collision Estimate: X-bar' = 2.4424594776423629
+Bitstring Collision Estimate: Found p.
+Bitstring Collision Estimate: p = 0.66961798601215183
+Bitstring Collision Estimate: min entropy = 0.57858981553248945
+Bitstring Markov Estimate: P_0 = 0.49998375
+Bitstring Markov Estimate: P_1 = 0.50001625000000005
+Bitstring Markov Estimate: P_{0,0} = 0.50020325660583964
+Bitstring Markov Estimate: P_{0,1} = 0.49979674339416036
+Bitstring Markov Estimate: P_{1,0} = 0.49976438259866118
+Bitstring Markov Estimate: P_{1,1} = 0.50023561740133882
+Bitstring Markov Estimate: p-hat_max = 3.1200366170387159e-39
+Bitstring Markov Estimate: min entropy = 0.99932525577982523
+Bitstring Compression Estimate: X-bar = 4.8181277898594415
+Bitstring Compression Estimate: sigma-hat = 1.1606267236202956
+Bitstring Compression Estimate: X-bar' = 4.8155377690514243
+Bitstring Compression Estimate: Found p.
+Bitstring Compression Estimate: p = 0.18672128139690111
+Bitstring Compression Estimate: min entropy = 0.40350695467166003
+Bitstring t-Tuple Estimate: t = 33
+Bitstring t-Tuple Estimate: p-hat_max = 0.694643876688324118907
+Bitstring t-Tuple Estimate: p_u = 0.6950633038347965854896
+Bitstring t-Tuple Estimate: min entropy = 0.52478371565627147
+Bitstring LRS Estimate: u = 34
+Bitstring LRS Estimate: v = 75
+Bitstring LRS Estimate: p-hat = 0.6768593637875076928553
+Bitstring LRS Estimate: p_u = 0.6772852730860375916047
+Bitstring LRS Estimate: min entropy = 0.56216446879872717
+Bitstring MultiMCW Prediction Estimate: C = 4106932
+Bitstring MultiMCW Prediction Estimate: r = 37
+Bitstring MultiMCW Prediction Estimate: N = 7999937
+Bitstring MultiMCW Prediction Estimate: P_global = 0.51337054279302452
+Bitstring MultiMCW Prediction Estimate: P_global' = 0.51382572837067586
+Bitstring MultiMCW Prediction Estimate: P_local = 0.58865647335523852
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.76450213955896484
+Bitstring Lag Prediction Estimate: C = 5998353
+Bitstring Lag Prediction Estimate: r = 45
+Bitstring Lag Prediction Estimate: N = 7999999
+Bitstring Lag Prediction Estimate: P_global = 0.74979421872427732
+Bitstring Lag Prediction Estimate: P_global' = 0.75018866862788602
+Bitstring Lag Prediction Estimate: P_local can't change the result.
+Bitstring Lag Prediction Estimate: min entropy = 0.41467462319405579
+Bitstring MultiMMC Prediction Estimate: C = 5998752
+Bitstring MultiMMC Prediction Estimate: r = 45
+Bitstring MultiMMC Prediction Estimate: N = 7999998
+Bitstring MultiMMC Prediction Estimate: P_global = 0.74984418746104686
+Bitstring MultiMMC Prediction Estimate: P_global' = 0.75023861114161849
+Bitstring MultiMMC Prediction Estimate: P_local can't change the result.
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.41457858146262438
+Bitstring LZ78Y Prediction Estimate: C = 4000400
+Bitstring LZ78Y Prediction Estimate: r = 41
+Bitstring LZ78Y Prediction Estimate: N = 7999983
+Bitstring LZ78Y Prediction Estimate: P_global = 0.50005106260850807
+Bitstring LZ78Y Prediction Estimate: P_global' = 0.50050640971032889
+Bitstring LZ78Y Prediction Estimate: P_local = 0.62113438271815324
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.68702266491622699
+H_bitstring = 0.40350695467166003
+H_bitstring Per Symbol = 3.2280556373732803
+Assessed min entropy: 3.2280556373732803
+
+real	0m38.434s
+user	0m4.897s
+sys	0m0.080s

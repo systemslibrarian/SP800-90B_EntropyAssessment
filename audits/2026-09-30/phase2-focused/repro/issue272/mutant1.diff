@@ -1,0 +1,11 @@
+--- up/cpp/non_iid_main.cpp	2026-05-26 14:57:01.000000000 +0000
++++ mut/cpp/non_iid_main.cpp	2026-09-30 17:20:39.412417118 +0000
+@@ -489,7 +489,7 @@
+     h_assessed = data.word_size;
+ 
+     if ((data.alph_size > 2) || !initial_entropy) {
+-        h_assessed = min(h_assessed, H_bitstring * data.word_size);
++        /* MUTANT: n x H_bitstring dropped */
+     }
+ 
+     if (initial_entropy) {

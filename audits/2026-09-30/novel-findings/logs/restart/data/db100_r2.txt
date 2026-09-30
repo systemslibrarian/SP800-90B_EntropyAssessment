@@ -1,0 +1,7 @@
+H_I: 5.500000
+LRS Estimate: v<u. Can't Run LRS Test.
+
+real	3m26.346s
+user	1m8.112s
+sys	0m0.375s
+exit=255

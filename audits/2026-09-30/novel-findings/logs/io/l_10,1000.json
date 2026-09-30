@@ -1,0 +1,59 @@
+{
+   "IID" : false,
+   "commandline" : "./r_non_iid -q -o l_10,1000.json -l 10,1000 /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_1bit.bin 1",
+   "dateTimeStamp" : "20260930154900",
+   "errorLevel" : 0,
+   "filename" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_1bit.bin",
+   "sha256" : "f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313",
+   "testCases" : [
+      {
+         "hOriginal" : 0.88430687880770231,
+         "mcvEstimateMode" : 501.0,
+         "mcvEstimatePHat" : 0.501,
+         "mcvEstimatePU" : 0.54174773482356975,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 0.50743623783244041,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.9885716512426761,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : 0.82005421175746973,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : 0.80390729383013027,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 0.93449474408395705,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 0.8682823031075324,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 0.91760021605063791,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : 0.50743623783244041,
+         "hOriginal" : 0.50743623783244041,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

@@ -1,0 +1,60 @@
+{
+   "IID" : false,
+   "commandline" : "./r_restart -o rcomma.json /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_4bit.bin 4 3,5",
+   "dateTimeStamp" : "20260930155832",
+   "errorLevel" : 0,
+   "filename" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/bin/truerand_4bit.bin",
+   "sha256" : "489bc841bb364ba86da70b1617138aef76b25dd9196ad669eef40c1441b6cb88",
+   "testCases" : [
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.9711943367296096,
+         "h_r" : 3.9711943367296096,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.8839292043340654,
+         "h_r" : 3.6877536942326419,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.9197664901877647,
+         "h_r" : 3.9349656657641394,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.9845779615915071,
+         "h_r" : 3.9922852807215925,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.9873774907789401,
+         "h_r" : 3.9762709694470533,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.9853544667013985,
+         "h_r" : 3.9852626440807923,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 4.0,
+         "h_c" : 3.9817560867416657,
+         "h_r" : 3.9842772267416611,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "h_c" : 3.8839292043340654,
+         "h_i" : 3.0,
+         "h_r" : 3.6877536942326419,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

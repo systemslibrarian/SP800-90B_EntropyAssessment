@@ -1,0 +1,10 @@
+n_in = 16
+n_out = 8
+nw = 8
+h_in = 8
+h' = 1
+Attempting to compute entropy with 106 bits of precision.
+Output_Entropy(*) = 7.002809533586824068847
+0.999 * n_out = 7.991999999999999999833
+h' * n_out = 8
+(Non-vetted) h_out = 7.002809533586824068847

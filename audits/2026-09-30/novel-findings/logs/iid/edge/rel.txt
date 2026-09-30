@@ -1,0 +1,255 @@
+bin_0.bin rc=255 |  |  |  | Error: 'bin_0.bin' is empty
+bin_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+bin_2.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+bin_3.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_4.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+bin_5.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_6.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_7.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_8.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_9.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_10.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_11.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_12.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_13.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_14.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_15.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_16.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_17.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_18.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_19.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_20.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_21.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_22.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_23.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_24.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_25.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_26.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_27.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_28.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_29.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_30.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_31.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_32.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_33.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_34.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_35.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_36.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_37.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_38.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_39.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_40.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_47.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_48.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_63.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_64.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_100.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+bin_255.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+bin_256.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+bin_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+bin_300.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+bin_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+const_0.bin rc=255 |  |  |  | Error: 'const_0.bin' is empty
+const_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_2.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_3.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_4.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_5.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_6.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_7.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_8.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_9.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_10.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_11.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_12.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_13.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_14.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_15.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_16.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_17.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_18.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_19.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_20.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_21.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_22.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_23.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_24.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_25.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_26.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_27.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_28.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_29.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_30.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_31.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_32.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_33.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_34.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_35.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_36.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_37.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_38.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_39.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_40.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_47.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_48.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_63.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_64.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_100.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_255.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_256.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_257.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_300.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+const_1000.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+distinct_0.bin rc=255 |  |  |  | Error: 'distinct_0.bin' is empty
+distinct_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+distinct_2.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_3.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_4.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_5.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_6.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_7.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_8.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_9.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_10.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_11.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_12.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_13.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_14.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_15.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_16.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_17.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_18.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_19.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_20.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_21.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_22.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_23.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_24.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_25.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_26.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_27.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_28.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_29.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_30.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_31.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_32.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_33.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_34.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_35.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_36.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_37.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_38.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_39.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_40.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_47.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_48.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_63.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_64.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_100.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_255.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+distinct_256.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+distinct_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Failed | 
+distinct_300.bin rc=0 | Chi square tests: Failed | Length of longest repeated substring test: Failed | IID permutation tests: Failed | 
+distinct_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Failed | IID permutation tests: Failed | 
+rand8_0.bin rc=255 |  |  |  | Error: 'rand8_0.bin' is empty
+rand8_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+rand8_2.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_3.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_4.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_5.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_6.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_7.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_8.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_9.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_10.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_11.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_12.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_13.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_14.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_15.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_16.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_17.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_18.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_19.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_20.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_21.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_22.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:658: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower <= 1.0L-LDBL_EPSILON' failed.
+rand8_23.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_24.bin rc=134 |  |  |  | ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+rand8_25.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_26.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_27.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_28.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_29.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_30.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_31.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+rand8_32.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_33.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_34.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_35.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_36.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_37.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_38.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_39.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_40.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_47.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_48.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_63.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_64.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_100.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_255.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_256.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_300.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+rand8_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+two_0.bin rc=255 |  |  |  | Error: 'two_0.bin' is empty
+two_1.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+two_2.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+two_3.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_4.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_5.bin rc=255 |  |  |  | Symbol alphabet consists of 1 symbol. No entropy awarded...
+two_6.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_7.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_8.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_9.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_10.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_11.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_12.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_13.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_14.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_15.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_16.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_17.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_18.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_19.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_20.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_21.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_22.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_23.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_24.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_25.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_26.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_27.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_28.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_29.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_30.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_31.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_32.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_33.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_34.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_35.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_36.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_37.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_38.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_39.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_40.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_47.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_48.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_63.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_64.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_100.bin rc=134 |  |  |  | ea_iid: iid/permutation_tests.h:256: unsigned int periodicity(const uint8_t*, unsigned int, unsigned int): Assertion `n>=p' failed.
+two_255.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+two_256.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+two_257.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 
+two_300.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Failed | 
+two_1000.bin rc=0 | Chi square tests: Passed | Length of longest repeated substring test: Passed | IID permutation tests: Passed | 

@@ -1,0 +1,48 @@
+== truerand_8bit
+REF mmc C=3948 r=3 N=999998
+REFINFO mmc scoreboard: 3948 2911 19 0 0 0 0 0 0 0 0 0 0 0 0 0 winner=1
+REFINFO mmc orphanSteps=0 orphanWinnerSteps=0 orphanWinnerCorrect=0
+REFINFO mmc winnerNull=255 winnerNullAfterCorrect=0 entries: 65536 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000
+Literal MultiMMC Prediction Estimate: C = 3948
+Literal MultiMMC Prediction Estimate: r = 3
+Literal MultiMMC Prediction Estimate: N = 999998
+== biased-random-bytes
+REF mmc C=799884 r=73 N=999998
+REFINFO mmc scoreboard: 799884 773585 726706 665209 598051 530651 465898 405235 350092 300632 256602 217752 183368 152681 125567 101660 winner=1
+REFINFO mmc orphanSteps=0 orphanWinnerSteps=0 orphanWinnerCorrect=0
+REFINFO mmc winnerNull=255 winnerNullAfterCorrect=0 entries: 30644 84874 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000
+Literal MultiMMC Prediction Estimate: C = 799884
+Literal MultiMMC Prediction Estimate: r = 73
+Literal MultiMMC Prediction Estimate: N = 999998
+== normal
+REF mmc C=19209 r=4 N=999998
+REFINFO mmc scoreboard: 19209 15849 2991 55 1 0 0 0 0 0 0 0 0 0 0 0 winner=1
+REFINFO mmc orphanSteps=0 orphanWinnerSteps=0 orphanWinnerCorrect=0
+REFINFO mmc winnerNull=178 winnerNullAfterCorrect=0 entries: 16430 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000
+Literal MultiMMC Prediction Estimate: C = 19209
+Literal MultiMMC Prediction Estimate: r = 4
+Literal MultiMMC Prediction Estimate: N = 999998
+== data.pi
+REF mmc C=662951 r=23 N=1165664
+REFINFO mmc scoreboard: 662963 662935 662906 662783 662723 662449 661875 661036 659351 657162 654508 650289 645003 635805 620882 581537 winner=1
+REFINFO mmc orphanSteps=0 orphanWinnerSteps=0 orphanWinnerCorrect=0
+REFINFO mmc winnerNull=1 winnerNullAfterCorrect=0 entries: 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768 65506 100000
+Literal MultiMMC Prediction Estimate: C = 662951
+Literal MultiMMC Prediction Estimate: r = 23
+Literal MultiMMC Prediction Estimate: N = 1165664
+== ringOsc-nist
+REF mmc C=839326 r=84 N=999998
+REFINFO mmc scoreboard: 839326 839322 839313 839303 839281 839232 839141 838962 838579 837841 836527 834304 830756 825459 817956 808093 winner=1
+REFINFO mmc orphanSteps=0 orphanWinnerSteps=0 orphanWinnerCorrect=0
+REFINFO mmc winnerNull=1 winnerNullAfterCorrect=0 entries: 4 8 16 32 64 128 256 512 1024 2033 3945 7255 12522 20181 30683 44389
+Literal MultiMMC Prediction Estimate: C = 839326
+Literal MultiMMC Prediction Estimate: r = 84
+Literal MultiMMC Prediction Estimate: N = 999998
+== truerand_4bit
+REF mmc C=62518 r=6 N=999998
+REFINFO mmc scoreboard: 62575 62092 62239 47604 5395 372 24 0 0 0 0 0 0 0 0 0 winner=1
+REFINFO mmc orphanSteps=0 orphanWinnerSteps=0 orphanWinnerCorrect=0
+REFINFO mmc winnerNull=15 winnerNullAfterCorrect=0 entries: 256 4096 65536 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000 100000
+Literal MultiMMC Prediction Estimate: C = 62518
+Literal MultiMMC Prediction Estimate: r = 6
+Literal MultiMMC Prediction Estimate: N = 999998

@@ -1,0 +1,54 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/ea_restart_asanfast -n -vv -o asanf_n_db100.json db100.bin 7 5.5",
+   "dateTimeStamp" : "20260930162642",
+   "errorLevel" : -1,
+   "errorMessage" : "min(H_r, H_c) < H_I/2, Validation Testing Failed.",
+   "filename" : "db100.bin",
+   "sha256" : "4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8",
+   "testCases" : [
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.607346961079835,
+         "h_r" : 6.607346961079835,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.3726857695387142,
+         "h_r" : 6.6073462488357819,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.4427235787946389,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.6075410056945971,
+         "h_r" : 6.5977436493431458,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.6037887168395288,
+         "h_r" : 6.5833315234342944,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.6113382006461698,
+         "h_r" : 6.6438561897747244,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 7.0,
+         "h_c" : 6.6225021027443223,
+         "h_r" : 6.6438561897747244,
+         "testCaseDesc" : "LZ78Y Test"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

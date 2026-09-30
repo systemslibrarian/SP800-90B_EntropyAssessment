@@ -1,0 +1,9 @@
+len=27569803776 bits, num_blocks=4594967296 (2^32+300000000)
+F14 Compression Estimate: X-bar = 2.0892427455796012
+F14 Compression Estimate: sigma-hat = 4.669551036728758
+F14 Compression Estimate: X-bar' = 2.0890653057789241
+F14 Compression Estimate: Found p.
+F14 Compression Estimate: p = 0.73792769362752775
+F14 Compression Estimate: min entropy = 0.073074772530174456
+RESULT compression min-entropy = 0.073074772530174456
+exit 0 elapsed 584s

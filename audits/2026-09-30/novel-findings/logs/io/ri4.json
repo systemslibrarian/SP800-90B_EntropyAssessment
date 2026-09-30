@@ -1,0 +1,11 @@
+{
+   "IID" : true,
+   "commandline" : "./r_restart -i -o ri4.json adir 8 1",
+   "dateTimeStamp" : "20260930153054",
+   "errorLevel" : 0,
+   "filename" : "adir",
+   "sha256" : "\u0202\fl\u03dc",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

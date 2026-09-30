@@ -1,0 +1,61 @@
+{
+   "IID" : false,
+   "commandline" : "../src/cpp/ea_non_iid -c -v -o noniid_c.json nibdup.bin 8",
+   "dateTimeStamp" : "20260930172022",
+   "errorLevel" : 0,
+   "filename" : "nibdup.bin",
+   "sha256" : "4f043adf8eafe4ed8667b16e99c19dabdfe57c1a49cd46deca7d02ffb6e2fc25",
+   "testCases" : [
+      {
+         "hBitstring" : 0.99863990110688217,
+         "mcvEstimateMode" : 4000130.0,
+         "mcvEstimatePHat" : 0.50001625000000005,
+         "mcvEstimatePU" : 0.5004715966201484,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.57858981553248945,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.99932525577982523,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.40350695467166003,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 0.52478371565627147,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 0.56216446879872717,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 0.76450213955896484,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.41467462319405579,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.41457858146262438,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.68702266491622699,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : 3.2280556373732803,
+         "hBitstring" : 0.40350695467166003,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

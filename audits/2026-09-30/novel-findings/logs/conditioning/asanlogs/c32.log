@@ -1,0 +1,30 @@
+/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/ea_conditioning: option requires an argument -- 'i'
+Usage is: ea_conditioning -v [-q] <n_in> <n_out> <nw> <h_in> [-o filename.json]
+	or 
+	ea_conditioning -n <n_in> <n_out> <nw> <h_in> [h' | -i filename] [-o filename.json]
+
+	 <n_in>: input number of bits to conditioning function.
+	 <n_out>: output number of bits from conditioning function.
+	 <nw>: narrowest internal width of conditioning function.
+	 <h_in>: input entropy to conditioning function.
+	 <-v|-n>: '-v' for vetted conditioning function, '-n' for non-vetted conditioning function. Vetted conditioning is the default.
+	 <h'>: entropy estimate per bit of conditioned sequential dataset (only for '-n' option).
+	 -q: Quiet mode, less output to screen.
+	 -i: Input file name, to run an entropy assessment on a non-vetted conditioned data file and use that value as h'.
+
+	 This program computes the entropy of the output of a conditioning function 'h_out' (Section 3.1.5).
+	 If the conditioning function is vetted, then
+
+		 h_out = Output_Entropy(n_in, n_out, nw, h_in)
+
+	 where 'Output_Entropy' is specified in Section 3.1.5.1.2. If the conditioning function is non-vetted then
+
+		 h_out = min(Output_Entropy(n_in, n_out, nw, h_in), 0.999*n_out, h'*n_out)
+
+	 as stated in Section 3.1.5.2.
+
+	 -o: Set Output Type to JSON
+
+		 Changes the output format to JSON and sets the file location for the output file.
+
+	 --version: Prints tool version information

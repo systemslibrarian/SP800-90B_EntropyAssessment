@@ -1,0 +1,145 @@
+### asanf_i_uni1: /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/work/restart/asanfast/ea_restart_asanfast -i -vv -o asanf_i_uni1.json uni1.bin 1 1
+Opening file: 'uni1.bin' (SHA-256 hash f21780ffbf55b67e55247c6a1bd4302abad375b0bd8a884aab6c767f010caf61)
+Loaded 1000000 samples made up of 2 distinct 1-bit-wide symbols.
+H_I: 1.000000
+ALPHA: 5.0251553006530614e-06, X_cutoff: 568
+X_max: 558
+
+Restart Sanity Check Passed...
+
+Running IID tests...
+
+Running Most Common Value Estimate...
+Literal Most Common Value Estimate: Mode count = 500054
+Literal Most Common Value Estimate: p-hat = 0.500054
+Literal Most Common Value Estimate: p_u = 0.50134191528822114
+Literal Most Common Value Estimate: min entropy = 0.99613323748661553
+	Most Common Value Estimate (Rows) = 0.996133 / 1 bit(s)
+Literal Most Common Value Estimate: Mode count = 500054
+Literal Most Common Value Estimate: p-hat = 0.500054
+Literal Most Common Value Estimate: p_u = 0.50134191528822114
+Literal Most Common Value Estimate: min entropy = 0.99613323748661553
+	Most Common Value Estimate (Cols) = 0.996133 / 1 bit(s)
+Chi square independence: T = 2012.789618688849
+Chi square independence: df = 2046
+Chi square independence: P-value = 0.69552243523556401
+Chi square goodness of fit: T = 22.638416264054491
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.0070615280455649026
+Chi square independence: T = 1953.4880817235398
+Chi square independence: df = 2046
+Chi square independence: P-value = 0.92759820235495405
+Chi square goodness of fit: T = 13.6954561597438
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.13357830882465538
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.5000000058320000000068
+Literal Longest Repeated Substring results: W = 39
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.5972442925080639332348
+Literal Longest Repeated Substring results: P_col = 0.5000000058320000000068
+Literal Longest Repeated Substring results: W = 38
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.8377884267427723345495
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 791.8474580000038258731
+Permutation testing: Unpermuted result numDirectionalRuns = 79535
+Permutation testing: Unpermuted result lenDirectionalRuns = 11
+Permutation testing: Unpermuted result numIncreasesDecreases = 74894
+Permutation testing: Unpermuted result numRunsMedian = 500022
+Permutation testing: Unpermuted result lenRunsMedian = 18
+Permutation testing: Unpermuted result avgCollision = 20.54841361170475266817
+Permutation testing: Unpermuted result maxCollision = 62
+Permutation testing: Unpermuted result periodicity(1) = 24601
+Permutation testing: Unpermuted result periodicity(2) = 24537
+Permutation testing: Unpermuted result periodicity(8) = 24585
+Permutation testing: Unpermuted result periodicity(16) = 24584
+Permutation testing: Unpermuted result periodicity(32) = 24766
+Permutation testing: Unpermuted result covariance(1) = 2000575
+Permutation testing: Unpermuted result covariance(2) = 1999713
+Permutation testing: Unpermuted result covariance(8) = 2000992
+Permutation testing: Unpermuted result covariance(16) = 2000596
+Permutation testing: Unpermuted result covariance(32) = 1999415
+Permutation testing: Unpermuted result compression = 155792
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       6       0     466
+       numDirectionalRuns      40       0       6
+       lenDirectionalRuns       4       3       3
+    numIncreasesDecreases       5       1      43
+            numRunsMedian       8       0       6
+            lenRunsMedian      80       5       1
+             avgCollision      37       0       6
+             maxCollision      19       2       4
+           periodicity(1)       6       0      13
+           periodicity(2)       6       0       6
+           periodicity(8)       6       0       8
+          periodicity(16)       6       0       9
+          periodicity(32)       6       0      98
+            covariance(1)       6       0      15
+            covariance(2)      62       0       6
+            covariance(8)       6       0      45
+           covariance(16)       6       0      22
+           covariance(32)      10       0       6
+              compression      79       1       5
+(* denotes failed test)
+
+Permutation testing: Unpermuted result excursion = 505.4170020000019576401
+Permutation testing: Unpermuted result numDirectionalRuns = 79439
+Permutation testing: Unpermuted result lenDirectionalRuns = 11
+Permutation testing: Unpermuted result numIncreasesDecreases = 74825
+Permutation testing: Unpermuted result numRunsMedian = 500150
+Permutation testing: Unpermuted result lenRunsMedian = 22
+Permutation testing: Unpermuted result avgCollision = 20.73229391275501853897
+Permutation testing: Unpermuted result maxCollision = 68
+Permutation testing: Unpermuted result periodicity(1) = 24583
+Permutation testing: Unpermuted result periodicity(2) = 24636
+Permutation testing: Unpermuted result periodicity(8) = 24357
+Permutation testing: Unpermuted result periodicity(16) = 24521
+Permutation testing: Unpermuted result periodicity(32) = 24483
+Permutation testing: Unpermuted result covariance(1) = 2000810
+Permutation testing: Unpermuted result covariance(2) = 1999584
+Permutation testing: Unpermuted result covariance(8) = 2001183
+Permutation testing: Unpermuted result covariance(16) = 2000263
+Permutation testing: Unpermuted result covariance(32) = 1999822
+Permutation testing: Unpermuted result compression = 155971
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       6       0      14
+       numDirectionalRuns      66       0       6
+       lenDirectionalRuns       0       6       4
+    numIncreasesDecreases       6       0      23
+            numRunsMedian       6       0      16
+            lenRunsMedian       2       4      17
+             avgCollision       6       0       7
+             maxCollision       4       2      18
+           periodicity(1)       6       0      13
+           periodicity(2)       6       0      16
+           periodicity(8)     108       1       5
+          periodicity(16)       6       0       9
+          periodicity(32)      20       0       6
+            covariance(1)       6       0       6
+            covariance(2)      43       0       6
+            covariance(8)       6       0      52
+           covariance(16)       6       0       6
+           covariance(32)       6       0       7
+              compression       6       0     617
+(* denotes failed test)
+
+IID permutation tests: Passed
+
+H_r: 0.996133
+H_c: 0.996133
+H_I: 1.000000
+
+Validation Test Passed...
+
+min(H_r, H_c, H_I): 0.996133
+
+
+real	17m59.695s
+user	8m40.603s
+sys	0m5.369s
+exit=0

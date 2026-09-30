@@ -1,0 +1,5 @@
+g++ -std=c++11 -fopenmp -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined,float-cast-overflow -I/usr/include/jsoncpp  iid_main.cpp -o ea_iid -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -ljsoncpp -lcrypto
+g++ -std=c++11 -fopenmp -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined,float-cast-overflow -I/usr/include/jsoncpp  non_iid_main.cpp -o ea_non_iid -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -ljsoncpp -lcrypto
+g++ -std=c++11 -fopenmp -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined,float-cast-overflow -I/usr/include/jsoncpp  restart_main.cpp -o ea_restart -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -ljsoncpp -lcrypto
+g++ -std=c++11 -fopenmp -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined,float-cast-overflow -I/usr/include/jsoncpp  conditioning_main.cpp -o ea_conditioning -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -lmpfr -lgmp -ljsoncpp -lcrypto
+g++ -std=c++11 -fopenmp -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined,float-cast-overflow -I/usr/include/jsoncpp  transpose_main.cpp -o ea_transpose -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -ljsoncpp -lcrypto

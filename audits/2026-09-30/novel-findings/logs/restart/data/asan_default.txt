@@ -1,0 +1,2 @@
+### asan_default: /tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/asan/cpp/ea_restart -n -v uni1.bin 1 1
+exit=KILLED-by-auditor (too slow under machine load; replaced by reduced-rounds ASan build)

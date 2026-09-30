@@ -1,0 +1,13 @@
+Loaded 1000000 samples of 2 distinct 8-bit-wide symbols
+  Most Common Value = 0.99590591981967258
+  Collision = 0.90752019739558776
+  Markov = 0.99787298954520753
+  Compression = 0.860078706179634
+  t-Tuple = 0.93978015269195192
+  LRS = 0.99227076797508273
+  MultiMCW Prediction = 0.99632162228197418
+  Lag Prediction = 0.99523424479785005
+  MultiMMC Prediction = 0.99589440652552874
+  LZ78Y Prediction = 0.99649440189826799
+H_original = 0.860078706179634
+Assessed min entropy: 0.860078706179634

@@ -1,0 +1,255 @@
+#1 I closed | py markov.py crash IndexError on packed-bit input (data expects 1 bit/byte, unpacked) | legacy python non_iid | usage/format; kerrymckay explains
+#2 I closed | py MultiMMC MemoryError | 32-bit python; resolved by 64-bit python | NON-DEFECT (env). Also restart -v flag position usage.
+#3 I closed | py LZ78Y TypeError dict>int on py3 | fixed in updated code 2016-07-11 (kerrymckay)
+#4 I closed | py chi_square_tests.py:147 T sum uses bins[q] not bins[i] | IID chi-square stat wrong | fixed PR #5
+#5 PR closed | fix #4
+#6 I closed | py permutation_tests.py conversion2 pads extra 8 zero bits when len%8==0 | IID perm tests | fixed PR #7
+#7 PR closed | fix #6
+#8 I closed | >8 bits/sample rejected (assert bits_per_symbol<=8) | MAINTAINER (kerrymckay): restriction intended by guidance; reduce per 6.4 before tool | by design
+#9 I closed | LRS estimate very low (2.43) on user data | kerrymckay: likely long repeated sequence in data; question | non-defect
+#10 I closed | terminology min-entropy docs | non-defect
+#11 I open | terminology entropy vs min-entropy | docs non-defect
+#12 I closed | py chi-square assert df>0 on 10k-byte dataset | celic: use 1M samples; PR #14 handles df==0
+#13 I closed | Markov p(max)=1e-206 "impossible" | MAINTAINER joshuaehill: by design, p is prob of 128-symbol string, H/128 | by design
+#14 PR closed | py handle df==0 gracefully, reorder tests, verbosity independence (for #12)
+#15 I closed | py runs-based-on-median tests used conversion II on binary; spec 5.1.5/5.1.6 says original data w/ median 0.5 | IID perm | fixed (python)
+#16 I closed | py altSequence2 discards last element (range(L-1)) | IID perm | fixed
+#17 I closed | binary-search closeness epsilon inconsistent (collision/compression/predictors) | resolved PR #25/#69 (#50)
+#18 I closed | collision F continued fraction iteration count | PR #26; final 90B k=2 F is polynomial 2z^3+2z^2+z
+#19 I closed | binary searches should be conservative/fail on non-convergence | resolved PR #25 / #69 (#50)
+#20 I closed | Markov alpha exponent should be k^2+k, 1/alpha_exp (py draft) | addressed in final 90B (markov has no epsilon)
+#21 I closed | Markov Hoeffding log base 2 vs ln | py draft; final 90B
+#22 I closed | z_alpha rounded to 2.576; use 2.5758293035489008 | joshuaehill: applies to C++; resolved PR #69 (full precision ZALPHA intended) => F07 is this; MAINTAINER POSITION: full-precision z is intended
+#23 I closed | Decimal in predictor code unnecessary | PR #25; NIST log approach better
+#24 I closed | verbose output inconsistent (py) | celic: moving to C++; closed
+#25 PR closed | binary search conservative, isclose, remove Decimal (py) resolves #17 #19 #23
+#26 PR closed | z_alpha full precision + collision F (py) resolves #18 #22
+#27 PR closed | umbrella of joshuaehill fixes (py)
+#28 I closed | binary chi-square independence 5.2.3 overlapping patterns, df 2^m-2 | addressed in final SP800-90B doc
+#29 I closed | binary GOF 5.2.4 omits 0s contribution | addressed in final SP800-90B doc
+#30 I closed | question re SP 800-90A/C | non-defect
+#31 I closed | py MultiMMC memory exhaustion 1M samples | joshuaehill: not a leak, spec 6.3.9 (draft) memory intensive; 32-bit python | NON-DEFECT env; also restart fails at H_I 7.89 passes at 7.85 (no resolution)
+#32 I closed | py LRS stuck for days on 2.5MB 8-bit | advice 64-bit python / trim to 1M | perf (LRS)
+#33 I closed | output number has no units | PR #35 | reporting feature
+#34 I closed | Markov (6-bit mapping in draft) lowers assessed entropy for 8-bit data | MAINTAINER joshuaehill: intended (draft 2016 mapped to 6 bits); don't scale; percentages misleading; map per 6.4; multi-byte must be mapped down; 1 bit per byte for bit sources | by design (python draft)
+#35 PR closed | display units (#33)
+#36 PR closed | README headers | docs
+#37 I closed | restart test fails on user RNG | usage (restart data format; H_I from 90B tool); joshuaehill: 2016-draft restart construction flawed; see #56 | non-defect/usage
+#38 I closed | py "Killed" on 167M samples | non-defect (resources)
+#39 I closed | py MemoryError on 167MB (permutation compression) | non-defect; dup #40
+#40 I closed | same | joshuaehill: trim to 1M; kerrymckay: MultiMMC limited in final doc (MAX_ENTRIES) ; joshuaehill: take low percentile of per-1M assessments
+#41 PR closed | py packed data, verbose, perm efficiency (zipnemud)
+#41 PR (cont) | early-exit perm tests (short circuit); packed data; start_position/read_amount | joshuaehill characterizes perm test failure rate ~1-2% on ideal data (19 tests x 1/1000); MAINTAINER: data must be passed one "natural sample" at a time; splitting/packing changes IID verdicts
+#42 I closed | run individual tests (py) | usage non-defect
+#43 I closed | update to final 90B | celic: C++ implementation in same repo | non-defect
+#44 I closed | LRS/t-tuple SA/LCP speedup | joshuaehill: current lrs_test.h uses SA/LCP, O(v*L) where v = longest repeat length; worst case all-1s input -> KNOWN quadratic on repetitive input (F17 root)
+#45 PR closed | C++ permtest srand per shuffle (seeded with time -> threads same sequence) & rand() not thread safe | celic agreed; superseded by xoshiro256** (see #48)
+#46 I closed | perm test per-test early stop | redundant w/ #41; closed
+#47 I closed | /dev/urandom data usage | MAINTAINER: tool for raw data prior to conditioning | non-defect
+#48 PR closed | Fisher-Yates biased (rand()%(i+1)) | replaced by xoshiro256** seeded /dev/urandom + Lemire bounded ints in shared/utils.h (joshuaehill PRs)
+#49 I closed | C++ compression estimate: alph_size used as 2^b and 2^b-1: com_exp uses alph_size*G(q) instead of (alph_size-1)*G(q); q=(1-p)/alph_size wrong | compression_test.h com_exp | entropy value wrong (vs UL tool) | fixed (PR #69 era)
+#50 I closed | binary search fragile/inaccurate/slow (C++) | fixed PR #69 (single robust decreasing-function search)
+#51 I closed | no debug output of spec variables | joshuaehill branch 2018UL (-vv/-vvv) | feature
+#52 I closed | LRS/t-tuple faster with SA/LCP (libdivsufsort) | fixed in joshuaehill 2018UL branch -> merged (PR #98/#112); KNOWN (brief) 
+#53 I closed | LRS/t-tuple memory 5.3GB on biased-random-bytes | fixed via SA/LCP (2018UL branch -> PR #98/#112)
+#54 I closed | C++ Fisher-Yates r=(rand()/RAND_MAX)*(i+1) can yield i+1 -> buffer overflow; nonuniform | IID shuffle | fixed PR #77 (xoshiro256**, Lemire)
+#55 I closed | perm tests should short-circuit | fixed 2018UL / PR #98
+#56 I closed | restart testing more failure-prone than desired (Jan 2018 spec) | tool should simulate cutoff | fixed 2018UL -> later PR #224 simulation (restart); MAINTAINER: spec-literal restart has elevated false-fail rate
+#57 I closed | collision F continued fraction unnecessary; k=2 polynomial 2z^3+2z^2+z | fixed PR #69
+#58 I closed | compression estimate FP error accumulation, use Kahan | fixed PR #69
+#59 I closed | calc_p_local x as long double | fixed PR #69
+#60 I closed | chi-square critical value table -> compute p-value | fixed PR #98
+#61 I closed | perm tests excursion 5.1.1 / covariance 5.1.10 / compression 5.1.11 not invariant under translation; should use original data | fixed PR #80 (dup #76)
+#62 I closed | non-binary chi-square independence expectation uses L/2 not floor(L/2) | calc_expectations | fixed PR #80
+#63 I closed | non-binary chi-square sort by expectation ill-defined; tie-break lexicographic | fixed (accepted PR, 2018UL)
+#64 I closed | Makefile references missing test files | build
+#65 I closed | conditioning Output_Entropy n should be min(n_out,nw,n_in) | ea_conditioning | fixed 2018UL branch
+#66 I closed | cmdline processing -> getopt | fixed later (PR #99 getopt)
+#67 I open | headers contain code (not idiomatic) | style
+#68 I closed | Makefile INC dirs system-specific | build
+#69 PR closed | compression alph_size fix (#49) + Kahan (#58) + binary search (#50) + z_alpha (#22) + F poly (#57) + p_local (#59); "corner cases flagged as failure (assigned full entropy as per standard)" 
+#70 I closed | 1-bit results: collision 0.32/compression 0.089 underestimates (old tool); t-tuple 0.0335 w/ -t on 00/01 bytes | fixed by joshuaehill PR (#69); MAINTAINER: -t/-a applies ONLY to H_bitstring data, not H_original; binary sources have no H_bitstring; old MultiMMC>1 neglected 1/k term. joshuaehill: collision/compression expected to underestimate (spec design)
+#71 I closed | bitstring built from translated data; should be raw | fixed PR #72; MAINTAINER: MSB-first bit order is a convention; 90B does not specify symbol->bitstring conversion (=> F21, F22 known)
+#72 PR closed | bitstring from non-translated data (#71)
+#73 I closed | Makefile lacks restart target | PR #75
+#74 I closed | restart_main uses SIZE not MIN_SIZE compile error | PR #75
+#75 PR closed | fixes #73 #74
+#76 I closed | dup #61
+#77 PR closed | xoshiro256** + Lemire; fixes #54
+#78 I closed | runs count off by one (counts transitions) | IID perm tests | fixed PR #80
+#79 I closed | compression permutation test compresses empty string (resize vs reserve) + BZ2 output buffer too small | IID perm compression | fixed PR #80
+#80 PR closed | closes #78 #79 #82 #61
+#81 I open | function naming confusing | style
+#82 I closed | median calc assumes even count; binary median should be 0.5 | IID perm | fixed PR #80
+#83 I closed | compile deps (bzip2), macOS OpenMP | build
+#84 I closed | usage name mismatch; "rightmost" should be "least significant" | docs
+#85 I closed | restart compile SIZE | dup #73/#74
+#86 I closed | OpenMP benefit small; parallelise perm tests | fixed later (joshuaehill commit, PR #98)
+#87 PR closed | README deps, Makefile targets, usage msgs; closes #64 #65 #68 #73 #74 #83 #84 #85
+#88 I closed | non-binary chi-square independence slow (2^16 scans) | fixed PR #98
+#89 I closed | divide(int,int) used with doubles (implicit truncation) | fixed PR #98
+#90 I closed | GOF chi-square memory leak (new w/o delete) | chi_square_tests.h | fixed PR #98
+#91 I closed | non-binary GOF expectations when L%10!=0 | MAINTAINER joshuaehill: correct expectation (c_i/L)*floor(L/10); spec calc doesn't make sense; tool deviates deliberately | fixed PR #98
+#92 I closed | LRS length wrong ("banana" -> 4 not 3) | old lrs code | replaced with SA/LCP PR #98
+#93 I closed | binary_chi_square_independence iterates tuples not blocks -> nonsense stat | fixed PR #98
+#94 I closed | need KAT/selftest | celic: bin/ files; joshuaehill: results differ across compilers; compare "suitably close" | led to selftest (later)
+#95 I closed | restart alpha=0.01/(r+c) wrong; spec alpha=0.000005 | ea_restart | fixed PR #98 (simulation-based cutoff); MAINTAINER: simulation replaces binomial assumption, "fixes a problem in the underlying SP"
+#96 I closed | ea_non_iid bad_alloc on 10M-byte data in LRS/t-tuple | joshuaehill: machine limit; fixed by SA/LCP (PR #98) | non-defect/perf
+#97 I closed | ea_iid segfault on 12.5M samples (large stack arrays w/ OpenMP in permutation_tests) | fixed PR #99 (dynamic alloc)
+#98 PR closed | OpenMP perm tests, divsufsort SA for t-tuple/LRS, chi-square fixes, restart cutoff via simulation, clang static analysis; closes #78 #79 #82 #61 #51 #86 #55 #88 #89 #90 #91 #93 #95 #56 #92 #52 #53
+#99 PR closed | perm testing dynamic alloc (large datasets), getopt cmdline; relEpsilonEqual delta overflow corner; closes #97 #66 #100 #101 #102
+#100 I closed | ea_iid verbose flag not optional (argc check) | fixed PR #99 (getopt; options must precede file on macOS)
+#101 I closed | ea_non_iid 1-bit data: H_original printed 1.000000 as no tests update it | fixed PR #99
+#102 I closed | ea_conditioning accepts non-integer n_in/n_out/nw | fixed PR #99
+#103 I closed | predictor speedup: P_local often not needed | PR #104
+#104 PR closed | speedups predictors/compression G; resolves #103 #105 #106 (typo at compression_test.h:79 found by zrlsid, fixed)
+#104 (cont) | LZ78Y binary accel: N off by 15 in bitstring (predictionEstimate call copied from MultiMMC) found by zrlsid, fixed before merge
+#105 I closed | compression G function early stop / fewer additions | PR #104
+#106 I closed | binary MultiMMC/LZ78Y fast path with 2^(A+2) tables | PR #104/#118 (this is the binaryMultiMMC code later subject of #257)
+#107 I closed | conversion2 applied before numRunsMedian/lenRunsMedian (5.1.5/5.1.6 say no conversion) | IID perm consecutive_runs_tests | fixed PR #111; joshuaehill also saw binary collision perm tests wrong
+#108 I closed | binary data len%8!=0 -> alt_sequence1/2 length sample_size/8 not +1 | IID perm | fixed PR #111
+#109 I closed | find_collisions simpler via lookup table | perf | PR #111
+#110 I closed | conversion2 bit shift wrong (<<(8-((i+1)%8))) values up to 382, low bit always 0 | IID perm | fixed PR #111
+#111 PR closed | binary permtest fixes; resolves #107-#110
+#112 PR closed | Kaufer t-tuple/LRS algorithm (faster, esp. degenerate data)
+#113 I closed | libdivsufsort install docs | build (wiki)
+#114 I closed | wide MultiMMC new postfixes count (retitled: not a bug, code does right thing) | NOT A BUG per joshuaehill
+#115 I closed | wide LZ78Y adds prefixes in increasing not decreasing order (6.3.10 step 3a) -> different dictionary, changes results | fixed PR #118
+#116 I closed | 1-bit data: H_original mislabelled as H_bitstring; H_bitstring never computed for 1-bit | fixed PR #118
+#117 I closed | LRS memset initializes sizeof bytes (32) not whole array -> possible heap overflow if v small | lrs_test.h | fixed PR #118
+#118 PR closed | verbosity for tests, selftest (perl), harmonize binary/non-binary MultiMMC & LZ78Y, file IO robust + symbol width generate/validate (inference), -l subset option, H_bitstring/H_original consistency, epsilon reduced, LRS memset; ea_iid processing made consistent w/ 90B; ea_transpose added; resolves #94 #114 #115 #116 #117 #119 #121 #122; UL tool diff < 2e-11
+#119 I closed | ea_iid doesn't compute H_bitstring | fixed PR #118
+#120 PR closed | stray stderr debug in binary_chi_square_independence; LRS "v<u" fprintf moved to verbose printf; MAINTAINER joshuaehill: v<u message "should really occur even when not in verbose mode. It's a condition that results in no information from the LRS test." (relates #255)
+#121 I closed | tools don't support IID claim: need column dataset testing | ea_transpose added PR #118 (later #222/#250 restart iid tests)
+#122 I closed | uninitialized max_key in max_map utils.h | removed PR #118
+#123 I closed | samples vs symbols confusion | MAINTAINER joshuaehill: 1 symbol per byte; PR #118 "defaults to the smallest bit width that can contain all provided samples" (width inference intended design -> #254)
+#124 I closed | print version number | celic will look; (later #236/#237)
+#124 (cont) | celic 2022-07-05: --version on all executables
+#125 I closed | t-tuple t=5878 on 83.9M-sample 1-bit file -> 0.0036 | joshuaehill: repeated substring of length 6373 really exists in user's converted file; user's converter (bin2nistoddball) buffer overrun; NIST tool correct | NOT A BUG. MAINTAINER: reversing bit order within symbol changes results (intra-symbol ordering); {0,1} vs {0,0x80} encoding shouldn't change non-iid results (may change perm tests)
+#126 PR closed | prettify perm test output (-> PR #135)
+#127 I closed | -t doesn't truncate non-binary H_original data | MAINTAINER joshuaehill: by design; -t only truncates translated bitstring for H_bitstring per 90B §3.1.3; no effect on binary data; recommend not using -t; use -l for subset | by design
+#128 I closed | ea_conditioning double/long double insufficient near full entropy (epsilon 2^-64) | PR #129/#136 MPFR
+#129 PR closed | MPFR conditioning + 2012 full-entropy verdict; restart README format (split into #136/#137)
+#130 I closed | restart input format question | joshuaehill: row-major (restart i, sample j), 1 symbol/byte; docs PR #137
+#131 I closed | IID compression perm test const char* -> char* cast to bzip (UB risk) | fixed PR #134
+#132 I closed | collision step 7 reduces to quadratic; X'bar<2 must be clamped to 2 | fixed PR #134 (UL comment 19)
+#133 I closed | predictors: x via 10 iterations of recurrence; iterate until stable | prediction_estimate_function | fixed PR #134 (UL comment 24b); MAINTAINER (joshuaehill, accepted by celic): "resolves a nominal scientific computing issue present within the original 90B specification" => F08 KNOWN/intended
+#134 PR closed | IID compression perm cast fix, P_local predictors (#133), collision closed form (#132), lag ring-buffer (#141), Markov refinement; resolves #131 #132 #133 #141; joshuaehill enumerates spec deviations to celic
+#135 PR closed | perm test progress output (replaces #126); resolves #142
+#136 PR closed | MPFR ea_conditioning; reports 2012-90B-draft / 2021-90C-draft full entropy; epsilon; resolves #128
+#137 PR closed | docs; restart format; -t description; resolves #130 #140
+#138 I closed | input file format question | MAINTAINER: 1 symbol per byte; testing conditioned data gives only upper bound | non-defect
+#139 PR closed | -t with -i doesn't truncate data.len (1-bit data) -> t-tuple differs | MAINTAINER joshuaehill: not a bug; -t only truncates bitstring for H_bitstring (§3.1.3 para 3); use -l 0,1000000; under -c (§3.1.5.2) ALL data treated as bitstring, only H_bitstring assessed; help text changed (#140) | declined
+#140 I closed | -t description misleading | docs fixed PR #137
+#141 I closed | Lag predictor ring buffer speedup | PR #134
+#142 I closed | perm test status unhelpful | PR #135
+#143 PR closed | Go port | celic: C++ only; declined
+#144 PR closed | JSON output (celic, ACVP-like API)
+#145 I open | Windows support | celic: not supported natively; Windows10 branch; Docker; ESV server uses Dockerfile | non-defect (build)
+#146 PR closed | JSON output discussion (-o flag)
+#147 I closed | "binary converted to 1s and 2s" | MAINTAINER: ea_non_iid translates k distinct symbols to [0,k-1]; estimators categorical or order-invariant -> no effect; text/newline bytes introduce spurious symbols (user error)
+#148 I closed | libdivsufsort on Windows | build
+#149 I closed | why constant 35 in t-tuple/LRS | spec constant | non-defect
+#150 I closed | why MultiMCW windows 63/255/1023/4095 | spec | non-defect
+#151 PR closed | ea_iid LRS test Pr(X>=1) computed as 0 due to double precision (1-p_col^W rounds to 1) | lrs_test.h (IID LRS test) | wrong IID verdict | superseded by PR #152 (log-domain, log1p, long double)
+#152 PR closed | comprehensive LRS test precision fix; resolves #153
+#153 I closed | IID LRS test precision: p_col^W < DBL_EPSILON / < DBL_MIN, (1-p)^N rounding -> wrong verdict | fixed PR #152
+#154 I closed | alph_size=4 for binary data | user error (ascii CRLF) | non-defect
+#155 I open | Windows10 selftest deltas ~1e-10 exceed threshold | MAINTAINER: 1e-10 threshold chosen empirically; on Windows long int is 32-bit -> overflow protections via long int unsafe; celic: Windows NOT supported | platform
+#156 PR closed | merge #152 into json-output
+#157 PR closed | merge #134 into json-output
+#158 I closed | macOS flags -fopenmp/-ffloat-store | MAINTAINER: -ffloat-store forces IEEE behaviour, results may differ without; OpenMP needed for speed | build
+#159 I open | conditioning h_p/h_in usage question | non-defect
+#160 I closed | health tests question | non-defect
+#161 I closed | ea_restart H_r 0.02 vs min of per-row ea_non_iid ~3.9 | MAINTAINER joshuaehill: not a bug; H_r is computed on the single 1M-sample row dataset (§3.1.4.1), NOT min over 1000 per-row assessments; 1000-sample tests not meaningful; low LRS/MultiMMC on rows = shared regularity between restarts, exactly what restart test should detect
+#162 PR open | bit-packed input (-p), refactor read_file/read_file_subset w/ goto error handling, deterministic seed option, transpose packed | joshuaehill review: endianness conventions must be explicit; bsymbols MSB->LSB is a free convention; restart format complexity; not merged
+#163 I closed | ea_non_iid stuck in LRS on 1-20MB data | MAINTAINER joshuaehill: tool works; LRS work scales with longest repeated substring length (v=656384 here); expected expensive computation on degenerate data => KNOWN (F17)
+#164 I closed | -msse2 on ARM (raspi) build error | build; also gcc 4.8 / OpenMP link (user)
+#165 I closed | jitterentropy data question | non-defect
+#166 PR closed | subset reporting in verbose output; BUG: ea_non_iid used Compression Estimator result even when it returned error (-1) -> overall assessment -1.0 ("does occur in nature") | non_iid_main.cpp | fixed: only use compression result if no error | (related F05/#255, F13)
+#167 I open | meaning of ea_iid output | celic: IID gives -log(p_max) (6.3.1); use ea_non_iid if not known IID; 90B sets no minimum entropy | non-defect
+#168 I open(listed open) | ea_conditioning -n 4096 64 64 64 1 -> h_out nan (p_low underflow) | conditioning_main.cpp | fixed by MPFR PR #136 (merged; joshuaehill asks to close 2022-02-01)
+#169 I closed | Windows10 branch Makefile uses clang++ w/ local paths | build
+#170 I closed | LRS estimate P_W denominator C(L-W+1,2) overflows 32-bit long int -> H_original inf, H_bitstring 0.13 (Windows/LLP64) | lrs_test.h | MAINTAINER joshuaehill: tool only works where long int >= 64 bits (several places assume this); fix = assert | fixed PR #175 (64-bit type + rollover asserts)
+#171 I closed | IID collision perm tests record j not j+1 (C=[2,3,1] vs spec [3,4,2]) | permutation_tests.h | MAINTAINER: no effect on perm test verdict (order-preserving shift) | fixed PR #173
+#172 PR closed | wiki link | docs
+#173 PR closed | collision perm test index fix (#171)
+#174 PR closed | merge master into json-output; joshuaehill inline review comments (v1.1.1 fixed some)
+#175 PR closed | 64-bit binomial coefficients + rollover asserts (#170)
+#176 I closed | user guide link | MAINTAINER: python tool/user guide obsolete (2016 draft), don't use python
+#177 I closed | JSON merge dropped compression validity check (ret>=0) in ea_non_iid | non_iid_main.cpp ~296 | -1 folded into min | fixed release v1.1.1 (celic)
+#178 I closed | check invalid (<0) results for all estimators: conditioning_main.cpp:384 bin_lrs_res and non_iid_main.cpp:341-350 LRS not guarded | -1 folded into min H | fixed (closed) (related F05/F13/#255)
+#179 I closed | JSON TestCase values incomplete/inconsistent; when estimator runs on literal and bitstring only literal saved in JSON | test_case / non_iid_main | reporting | PR #182 partial (both hBitstring/hOriginal) (related F23)
+#180 I closed | ARM support | celic: not actively supported; randomRange64 needs __uint128_t (no 32-bit ARM); MAINTAINER: tool runs on analysis host, not target
+#181 PR closed | Makefile cross compilation
+#182 PR closed | JSON include both hBitstring and hOriginal (#179)
+#183 I closed | ea_restart JSON mode may not flag failure; failure modes produce no JSON | restart_main.cpp | fixed PR #187
+#184 I closed | JSON patches change outputs at verbose levels | fixed PR #187
+#185 I closed | bool compared with -1 (tri-state) UB | fixed PR #187
+#186 I closed | conditioning_main.cpp optarg == "iid" pointer compare never true | fixed PR #187
+#187 PR closed | verbose levels 0(JSON)/1/2/3; quietMode; restart JSON error on failure; resolves #183 #184 #185 #186; CRLF->LF
+#188 PR closed | README libmpfr-dev | docs
+#189 I closed | ea_iid segfault: permutation_tests.h:297 compression msg buffer off-by-one (missing +1 for NUL) when k<=10 (binary) | IID compression perm test | heap overflow | fixed PR #190
+#190 PR closed | compression buffer overflow fix (#189) + ea_iid verbose consistency
+#191 I closed | ea_iid/ea_non_iid segfault when -l used (getopt string lost ':' after l in JSON merge commit 88107c8) | iid_main.cpp/non_iid_main.cpp | fixed PR #192
+#192 PR closed | getopt "l:" regression fix (#191)
+#193 I open | read packed bits input | MAINTAINER joshuaehill: 1-symbol-per-byte is explicit re bit ordering; packed input needs explicit ordering convention | feature (see #162)
+#194 PR closed | bugfix/duplicate output (andrewmccaffreynist) no body
+#195 I open | ea_restart core dump: assert k_max <= k' when data narrower than declared bits (4 declared, 3 actual); no JSON | restart_main.cpp | crash | MAINTAINER joshuaehill: expected to reduce claim; reduce H_submitter; (not fixed) (related #261 assert aborts, #254 width)
+#196 I open | how to build binary input file | MAINTAINER: 1 symbol/byte; ASCII '0'/'1' w/o newlines works due to translation; 64-bit samples must be mapped down (6.4); splitting 64-bit into 8 bytes -> "nonsense" | non-defect
+#197 I open | H_bitstring*n < H_original meaning | joshuaehill: binary-only estimators; dj-on-github: compression over-punishes positive serial correlation ("bug in the algorithm in the spec") | non-defect/spec
+#198 PR closed | bugfix/duplicate output (celic)
+#199 I closed | ea_iid JSON permutation counts differ from terminal (covariance*/compression wrong) | iid_main JSON | MAINTAINER joshuaehill: JSON IID output on ESV server broken; "could cause IID testing to incorrectly pass" | fixed PR #200
+#200 PR closed | fix duplicate / non-reported perm test results in JSON (#199)
+#201 PR closed | SHA256 avoid deprecated OpenSSL
+#202 PR closed | sha256_file FileLength/FileLen compile error | superseded by #204
+#203 I closed | selftest failing: double free (two fclose) in new sha256_file | TestRunUtils.h sha256_file | crash | fixed PR #204
+#204 PR closed | sha256_file bugs: fileLength/fileLen compile, const misuse, malloc leak, buffer size, errors returned as success, no read error checks, double fclose; also ea_conditioning #210 #211; resolves #203 #205 #206 #210 #211; (switched to streaming OpenSSL API; note: whole-file read -> #259 later)
+#205 I closed | compile error fileLen | dup #202; fixed PR #204; MAINTAINER joshuaehill: NIST suggests testing with tagged releases (v1.1.5)
+#206 I closed | TestRunUtils.h two bugs (fileLen, double fclose) | dup; PR #204
+#207 I closed | how to run ea_restart (format) | MAINTAINER: row dataset only, 1000 restarts x first 1000 samples, 1 symbol/byte; column dataset generated internally | non-defect
+#208 I closed | v1.5 master double free | use tagged release; PR #204 | dup #203
+#209 I closed | why X_cutoff in restart | MAINTAINER joshuaehill: cutoff computed by simulation because the stated spec (binomial) formula is incorrect (UL comment 3a); intentional deviation from §3.1.4.3
+#210 I closed | ea_conditioning non-vetted h' statistical test: always h'=1.0 for single-bit data; h' wrong in IID case | conditioning_main.cpp | wrong conditioned entropy (too high) | fixed PR #204
+#211 I closed | ea_conditioning mpfr leaks; computeEntropyOfConditionedData no free_data | fixed PR #204
+#212 I closed | ea_restart X_cutoff differs Windows (631) vs CentOS (608) | MAINTAINER: X_cutoff stochastic (simulation); Windows unsupported; LLP64 long=32-bit may give incorrect results
+#213 I closed | 8MB file assesses 0.156 whole vs ~7.35 per 1M segment (t-tuple t=1053, LRS v=1086) | MAINTAINER joshuaehill: tool correct; t-tuple 35-cutoff needs no scaling with L; large L behaves correctly; dataset had duplicates (confirmed by reporter). celic initially guessed test poorly designed for large L, then agreed code correct
+#214 I closed | ea_non_iid "hangs" in tuple estimates on 8MB file (LRS v=2,097,152) | lrs_test.h SAalgs O(n*v) | MAINTAINER celic: "not an issue with ea_non_iid but the low-entropy file"; joshuaehill: O(n v) ~ O(n^2) when v~n, upper bound argument; systemslibrarian 2026-09-30 comment: still quadratic at 87c104d, lrs_test.h:273 & :495 loop `for(t=L[i-1]; t>b; t--)`, 10^6 half-repeat input >20 CPU-min => KNOWN (F17)
+#215 I open | ASCII hex/binary input option | feature; joshuaehill: use Theseus converters
+#216 PR closed | typedef byte conflicts with std::byte -> uint8_t
+#217 PR closed | large files > 2G samples (divsufsort64) + ea_conditioning initialization fix (see #226)
+#218 PR closed | missing SHA256 in conditioning output (andrewmccaffreynist)
+#219 I open | Windows MinGW build: ea_iid LRS test Pr(X>=1) = -0.089 (negative) -> Failed on truerand_8bit; seed() replaced w/ RDRAND | lrs_test.h IID LRS (platform/libdivsufsort?) | wrong IID verdict on unsupported platform | skbhaskarla: Windows not officially supported; unresolved
+#220 I closed | ea_iid permutation tests unstable (pass/fail flips across runs) | MAINTAINER joshuaehill: non-deterministic by design; false-positive rate 1/1000 per test; run many datasets; KATs not applicable
+#221 PR closed | propagate cmdline/data-file read errors into JSON (andrewmccaffreynist)
+#222 PR closed | ea_restart: run IID tests on row and column data (celic) (see #250)
+#223 I open | how much data | MAINTAINER: L>=1e6 (§3.1.1); CI ~1/sqrt(L); black-box estimation impossible (PRNGs); H_submitter design-based | non-defect
+#224 PR closed | faster adjustable restart X_cutoff simulation; worst case "inverted near-uniform" distribution (Hagerty-Draper); stochastic cutoff
+#225 PR closed | ea_conditioning full-entropy report per IG D.K Resolution 19
+#226 PR closed | large files >2G samples (divsufsort64), 32-bit index opportunistic; ea_conditioning initialization fix (supersedes #217)
+#227 I closed | divsufsort64.h missing | build (BUILD_DIVSUFSORT64)
+#228 I closed | bad_alloc in tuple estimates on 2.4GB file | MAINTAINER: ~25x symbols memory, bitstring up to 8x; "don't do that" | resource
+#229 PR closed | Dockerfile
+#230 PR closed | JSON error message on unexpected data width (celic) (related #254/#255)
+#231 I open | selftest .res empty / no corresponding value | user build problem; joshuaehill: use v1.1.7 release | non-defect/unresolved
+#232 PR closed | better error messages (andrewmccaffreynist)
+#233 I closed | ea_restart "passed" with H_r 2.8 vs H_c 6.96 | MAINTAINER: criterion is min(H_r,H_c) < H_I/2 -> fail; no H_r vs H_c comparison (§3.1.4.3) | not a bug
+#234 I closed | json.h missing (libjsoncpp-dev) | build
+#235 PR closed | always run both chi-square independence and GOF (no short circuit) | ea_iid chi_square_tests
+#236 I open | --version reports 1.1.7 on v1.1.8 (VERSION macro utils.h manual) | reporting/provenance | PR #237
+#237 PR closed | VERSION 1.1.8 | celic: ESVTS docker containers rebuilt
+#238 I open | JSON lacks number of samples tested and distinct symbols / width | reporting (related #254 #255)
+#239 PR closed | perm test: run all 10000, dynamic pass criteria, p-values | MAINTAINER joshuaehill: early exit is intentional optimization (UL comment 21); fails always run all 10000 | declined
+#240 PR closed | ea_compression_only tool | declined/closed
+#241 PR open | Makefile phony targets / rebuild fix | build
+#242 PR open | fix -Wall/-Wextra warnings, -Werror (garlic-hub) | code quality
+#243 I open | raise min C++ standard (C++17/20); jsoncpp 1.9.7 needs C++17 | build
+#244 I closed | ea_restart IID permutation test on column data actually re-tests row data (restart_main.cpp:787-793 uses rdata not cdata); column rawsymbols never built | restart_main.cpp | column IID test never performed (IID claim wrongly supported) | MAINTAINER joshuaehill: bug; §3.1.2 bullet 3 requires Section 5 IID tests on row & column datasets | fixed PR #250
+#245 I closed | ringOsc-nist.bin H_original 0.126 "too small" | MAINTAINER joshuaehill: ring oscillators dominantly deterministic, low assessment warranted | not a bug
+#246 I closed | ea_iid assert p_col >= 1/k fails (lrs_test.h:626 len_LRS_test) on 1M-byte binary file: FP rounding in calc_proportions (sum of 1/n) | utils.h calc_proportions / lrs_test.h | crash (abort) | fixed PR #248 (integer counts then divide)
+#247 I closed | ea_iid fails some SHA256-counter / DRBG files; same file pass/fail varies | MAINTAINER joshuaehill: stochastic by design, per-test FP 1/1000, ~2% per round (19 tests), verified vs Theseus n=100,000; §5.1 says so; no max failure threshold; restart cutoff stochastic (-s rounds, default ~2e6); restart IID only row data (#244) | not a bug
+#248 PR closed | calc_proportions integer counts (#246)
+#249 PR open | cmake build (celic: ESVTS docker uses makefile) | build
+#250 PR closed | ea_restart Section 5 IID testing on column data (fixes #244), §3.1.2 bullet 3
+#251 PR open | ea_iid JSON hAssessed computed only inside verbose>2 block -> default JSON reports word_size (8.0) instead of 0.3197 for biased-random-bytes.bin | iid_main.cpp | JSON entropy TOO HIGH (reporting) | fix moves min() before verbosity branches (OPEN, unmerged)
+#252 PR open | ea_iid returns final min-entropy even when IID tests fail; set h_assessed=-1 in JSON | iid_main.cpp | reporting/integrity | OPEN

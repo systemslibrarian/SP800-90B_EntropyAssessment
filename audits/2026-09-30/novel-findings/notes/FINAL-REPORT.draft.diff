@@ -1,0 +1,20 @@
+--- SCRATCH/audit/FINAL-REPORT.md (draft)
++++ REPORT.md (committed, 0e685f6)
+@@ -2,7 +2,7 @@
+
+ Audited tree: `usnistgov/SP800-90B_EntropyAssessment` master **87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289**. That was upstream HEAD on the day of the audit, and its `cpp/` is identical to the fork except for the Makefile. The tree was extracted with `git archive` into a scratch directory, so the repository was never built in or modified. Nothing was posted to GitHub.
+
+-SCR below means `/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad`. Coordinator reproductions are in `SCR/audit/verify/` with a log in `LOG.md`. The per-area agent reports are in `SCR/audit/reports/`.
++The generated inputs, harnesses, per-area agent reports and the coordinator's verification log lived in a temporary session workspace and are **not** preserved in this repository. Each finding below carries its own self-contained reproduction commands (Python generators inline), to be run from a build of upstream `87c104d`. "Coordinator" means the owner's session, which re-ran every claim on a clean build; "agent" means evidence from one of the seven parallel auditors that the coordinator did not re-run.
+
+ ---
+
+@@ -321,7 +321,7 @@
+
+ | Row | Status now | Direction | Evidence |
+ |---|---|---|---|
+-| F09 (MultiMMC: a Null winner prediction does not reset the run) | **VERIFIED** (coordinator ×2 + literal §6.3.9 reference) | TOO LOW | f09b.bin (sha256 1e2ae594…c534, 114,146 samples): tool r = 6603, spec r = 24, and a "noreset-only" emulation gives 6603. MultiMMC 0.0021 vs 0.93; assessed figure unchanged (t-tuple binds). `multi_mmc_test.h:211-228`: `run_len = 0` only inside `if(found_x)`. No upstream item. |
++| F09 (MultiMMC: a Null winner prediction does not reset the run) | **VERIFIED** (coordinator ×2 + literal §6.3.9 reference) | TOO LOW | f09b.bin (sha256 1e2ae594…c534, 114,146 samples: 100,310 random bytes from {16..255}, a 36-byte all-distinct-bigram block Y over {1..8} placed so the order-2 dictionary fills inside it, 3,000 random bytes, then Y×300; the generator script was not preserved): tool r = 6603, spec r = 24, and a "noreset-only" emulation gives 6603. MultiMMC 0.0021 vs 0.93; assessed figure unchanged (t-tuple binds). `multi_mmc_test.h:211-228`: `run_len = 0` only inside `if(found_x)`. No upstream item. |
+ | F10 (MultiMMC chained lookup skips deeper orders) | mechanism verified (agent, instrumented) | either in a scaled model; none observed at 100,000 | Scoreboard deltas, but C and r unchanged at the shipped constants; in a scaled-down build 17/3000 cases up to +0.71 bit. Needs more work. |
+ | F14 (compression `unsigned int dict[]`) | mechanism verified (agent, unmodified function on 2^32+10^9 blocks) | TOO HIGH | 1.0 vs 0 (control). Needs > 25.77 Gbit and about 650 GB RAM end-to-end; latent in the size range #217/#226 enabled. Fix: `long dict[]`. |
+ | F13 (NaN folded by std::min) | no producer at ≥10^6 in any tool | — | numerics agent |

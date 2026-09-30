@@ -1,0 +1,20 @@
+{
+   "IID" : false,
+   "commandline" : "./r_cond -n -q -i nope.bin -o cv.json 512 256 256 400 0.9",
+   "dateTimeStamp" : "20260930155547",
+   "errorLevel" : 0,
+   "filename" : "nope.bin",
+   "testCases" : [
+      {
+         "h_in" : 400.0,
+         "h_out" : 230.4,
+         "h_p" : 0.90000000000000002,
+         "n_in" : 512.0,
+         "n_out" : 256.0,
+         "nw" : 256.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Conditioning"
+}

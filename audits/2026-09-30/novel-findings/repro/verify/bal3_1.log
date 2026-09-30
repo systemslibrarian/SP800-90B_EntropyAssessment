@@ -1,0 +1,7 @@
+ea_iid: shared/lrs_test.h:626: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+timeout: the monitored command dumped core
+/bin/bash: line 12: 152902 Aborted                 timeout 1200 $B/ea_iid -v -o bal3_$i.json bal3.bin 2
+
+real	0m0.324s
+user	0m0.057s
+sys	0m0.005s

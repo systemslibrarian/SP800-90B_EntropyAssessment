@@ -1,0 +1,80 @@
+igamc: UNDERFLOW
+Opening file: 'mix.bin' (SHA-256 hash b67264a5493563fc6a26d4940c3dda5deb0f59d4ba11ed8e956a77a7ddf9752f)
+Loaded 2000 samples of 242 distinct 8-bit-wide symbols
+Number of Binary samples: 16000
+
+*** Warning: data contains less than 1000000 samples ***
+
+
+Samples have been translated
+Raw Mean = 123.892
+Median = 119
+Binary = false
+Literal Most Common Value Estimate: Mode count = 18
+Literal Most Common Value Estimate: p-hat = 0.0089999999999999993
+Literal Most Common Value Estimate: p_u = 0.014440875201080335
+Literal Most Common Value Estimate: min entropy = 6.1136980091842883
+Bitstring Most Common Value Estimate: Mode count = 8103
+Bitstring Most Common Value Estimate: p-hat = 0.50643749999999998
+Bitstring Most Common Value Estimate: p_u = 0.51661883356430705
+Bitstring Most Common Value Estimate: min entropy = 0.95282785639746725
+H_bitstring = 0.95282785639746725
+H_bitstring Per Symbol = 7.622622851179738
+H_original = 6.1136980091842883
+Assessed min entropy: 6.1136980091842883
+Chi square independence: T = 227.06100553403132
+Chi square independence: df = -43
+Chi square independence: P-value = 1
+Chi square goodness of fit: T = 3029.2141653875274
+Chi square goodness of fit: df = 315
+Chi square goodness of fit: P-value = 0
+Chi square tests: Failed
+Literal Longest Repeated Substring results: P_col = 0.004989999999999999840262
+Literal Longest Repeated Substring results: W = 3
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.2195480692280319323043
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 49851.53999999999359716
+Permutation testing: Unpermuted result numDirectionalRuns = 1362
+Permutation testing: Unpermuted result lenDirectionalRuns = 5
+Permutation testing: Unpermuted result numIncreasesDecreases = 1023
+Permutation testing: Unpermuted result numRunsMedian = 162
+Permutation testing: Unpermuted result lenRunsMedian = 798
+Permutation testing: Unpermuted result avgCollision = 10.03517587939698429977
+Permutation testing: Unpermuted result maxCollision = 25
+Permutation testing: Unpermuted result periodicity(1) = 37
+Permutation testing: Unpermuted result periodicity(2) = 45
+Permutation testing: Unpermuted result periodicity(8) = 32
+Permutation testing: Unpermuted result periodicity(16) = 37
+Permutation testing: Unpermuted result periodicity(32) = 46
+Permutation testing: Unpermuted result covariance(1) = 37310771
+Permutation testing: Unpermuted result covariance(2) = 37322786
+Permutation testing: Unpermuted result covariance(8) = 37149644
+Permutation testing: Unpermuted result covariance(16) = 36954038
+Permutation testing: Unpermuted result covariance(32) = 36536273
+Permutation testing: Unpermuted result compression = 2100
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+               excursion*       0       0   10000
+       numDirectionalRuns       6       0      55
+       lenDirectionalRuns       3       4       2
+    numIncreasesDecreases       6       0      68
+           numRunsMedian*   10000       0       0
+           lenRunsMedian*       0       0   10000
+            avgCollision*   10000       0       0
+            maxCollision*   10000       0       0
+          periodicity(1)*       0       0   10000
+          periodicity(2)*       0       0   10000
+          periodicity(8)*       0       0   10000
+         periodicity(16)*       0       0   10000
+         periodicity(32)*       0       0   10000
+           covariance(1)*       0       0   10000
+           covariance(2)*       0       0   10000
+           covariance(8)*       0       0   10000
+          covariance(16)*       0       0   10000
+          covariance(32)*       0       0   10000
+             compression*   10000       0       0
+(* denotes failed test)
+
+IID permutation tests: Failed

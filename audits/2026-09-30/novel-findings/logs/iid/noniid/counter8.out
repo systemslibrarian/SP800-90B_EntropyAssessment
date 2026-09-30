@@ -1,0 +1,21 @@
+Opening file: 'counter8.bin' (SHA-256 hash 67870dfc9c64e7aa270a3f7e8051ae65d207f93fc3df04d7572e6365af69cd0d)
+Loaded 1000000 samples of 256 distinct 8-bit-wide symbols
+Number of Binary samples: 8000000
+Raw Mean = 127.49385599999999
+Median = 127
+Binary = false
+H_bitstring = 0.99866368333949429
+H_bitstring Per Symbol = 7.9893094667159543
+H_original = 7.9415745369915101
+Assessed min entropy: 7.9415745369915101
+igamc: UNDERFLOW
+Chi square independence: T = 255500000.00000539
+Chi square independence: df = 65280
+Chi square independence: P-value = 0
+igam: UNDERFLOW
+Chi square goodness of fit: T = 1.5237214546972926
+Chi square goodness of fit: df = 2295
+Chi square goodness of fit: P-value = 1
+Chi square tests: Failed
+ea_iid: shared/lrs_test.h:657: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower >= LDBL_MIN' failed.
+timeout: the monitored command dumped core

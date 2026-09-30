@@ -1,0 +1,31 @@
+== H_I='nan'
+timeout: the monitored command dumped core
+exit=139
+== H_I='-nan'
+	 'h_in' if conditioning is used (Section 3.1.5).
+
+	 --version: Prints tool version information
+exit=255
+== H_I='NaN'
+timeout: the monitored command dumped core
+exit=139
+== H_I='inf'
+H_I (inf) must be at most 'bits_per_symbol' (8).
+exit=255
+== H_I='1e-320'
+Terminated
+exit=124
+== H_I='abc'
+Terminated
+exit=124
+== H_I='0x1p2'
+Terminated
+exit=124
+== H_I='  7'
+Terminated
+exit=124
+== H_I='7abc'
+Terminated
+exit=124
+
+[exited with code 0]

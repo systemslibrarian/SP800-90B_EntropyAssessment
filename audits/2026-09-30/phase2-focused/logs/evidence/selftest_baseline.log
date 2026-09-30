@@ -1,0 +1,15 @@
+biased-random-bits.bin: Maximum delta: 4.18241830058008e-14
+biased-random-bytes.bin: Maximum delta: 4.24382751162966e-14
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+normal.bin: Maximum delta: 3.5527136788005e-15
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand8_short.bin: Maximum delta: 7.7715611723761e-16
+ringOsc-nist.bin: Maximum delta: 5.60662627435704e-15
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_8bit.bin: Maximum delta: 1.00808250635964e-13
+
+real	2m25.164s
+user	1m14.956s
+sys	0m1.465s

@@ -1,0 +1,37 @@
+Opening file: 'ones_3163.bin' (SHA-256 hash 48a1d75601bd7b116fef1605f1efac0db3f456cf4b9d4db2bcc9c95693ca232f)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+Raw Mean = 0.003163
+Median = 0.5
+Binary = true
+H_original = 0.0043611626444147499
+Assessed min entropy: 0.0043611626444147499
+Chi square independence: T = 0.16777801365130973
+Chi square independence: df = 2
+Chi square independence: P-value = 0.91953331235250002
+Chi square goodness of fit: T = 9.0837429443772635
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.42958019412481763
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.9936940091379999463283
+Literal Longest Repeated Substring results: W = 2939
+Literal Longest Repeated Substring results: Pr(X >= 1) = 1
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 32.87511800000000050659
+Permutation testing: Unpermuted result numDirectionalRuns = 6098
+Permutation testing: Unpermuted result lenDirectionalRuns = 282
+Permutation testing: Unpermuted result numIncreasesDecreases = 121950
+Permutation testing: Unpermuted result numRunsMedian = 6313
+Permutation testing: Unpermuted result lenRunsMedian = 2263
+Permutation testing: Unpermuted result avgCollision = 2.051130583177447341825
+Permutation testing: Unpermuted result maxCollision = 4
+Permutation testing: Unpermuted result periodicity(1) = 118897
+Permutation testing: Unpermuted result periodicity(2) = 118907
+Permutation testing: Unpermuted result periodicity(8) = 118889
+Permutation testing: Unpermuted result periodicity(16) = 118886
+Permutation testing: Unpermuted result periodicity(32) = 118852
+Permutation testing: Unpermuted result covariance(1) = 85
+Permutation testing: Unpermuted result covariance(2) = 86
+Permutation testing: Unpermuted result covariance(8) = 83
+Permutation testing: Unpermuted result covariance(16) = 81
+Permutation testing: Unpermuted result covariance(32) = 72
+Permutation testing: Unpermuted result compression = 6654

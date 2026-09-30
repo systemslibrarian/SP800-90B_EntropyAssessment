@@ -1,0 +1,9 @@
+n_in = 4194304
+n_out = 256
+nw = 256
+h_in = 300
+Attempting to compute entropy with 8388608 bits of precision.
+Output_Entropy(*) = 255.9999999999999179961
+(Vetted) h_out = 255.9999999999999179961
+epsilon = 2^(-51.47123362705514338852)
+rc=0

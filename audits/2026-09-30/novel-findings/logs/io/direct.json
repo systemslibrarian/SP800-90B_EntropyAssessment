@@ -1,0 +1,69 @@
+{
+   "IID" : false,
+   "commandline" : "./r_non_iid -q -o direct.json other.bin 8",
+   "dateTimeStamp" : "20260930153400",
+   "errorLevel" : 0,
+   "filename" : "other.bin",
+   "sha256" : "1960fc83dfe55d502c2c17295c2aacdb2cb91b4bf5df44a8a47eafda65c604b8",
+   "testCases" : [
+      {
+         "hBitstring" : 0.98649202011987835,
+         "hOriginal" : 7.4736959313225686,
+         "mcvEstimateMode" : 40.0,
+         "mcvEstimatePHat" : 0.0040000000000000001,
+         "mcvEstimatePU" : 0.0056259173307900709,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.8127816508556952,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.99949585865168156,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 1.0,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 0.00070128552416446081,
+         "tTupleRes" : 0.0037155845589927567,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 1.9092209764967633e-05,
+         "lrsRes" : -0.0,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 1.0,
+         "hOriginal" : 8.0,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.56821111899882848,
+         "hOriginal" : 8.0,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.0074673556209468922,
+         "hOriginal" : 0.00069021158420979733,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 1.0,
+         "hOriginal" : 0.00069130458784004477,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : -0.0,
+         "hBitstring" : 1.9092209764967633e-05,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

@@ -1,0 +1,78 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/claude-1000/-workspaces-SP800-90B-EntropyAssessment/cea834b3-fb2b-48af-9a72-01cd2c25f909/scratchpad/audit/rel/cpp/ea_restart -n -vv -o uni1_r.json uni1.bin 1 1",
+   "dateTimeStamp" : "20260930154453",
+   "errorLevel" : 0,
+   "filename" : "uni1.bin",
+   "sha256" : "f21780ffbf55b67e55247c6a1bd4302abad375b0bd8a884aab6c767f010caf61",
+   "testCases" : [
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99613323748661553,
+         "h_r" : 0.99613323748661553,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.90660593527538191,
+         "h_r" : 0.92334427889111925,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.9995720483818149,
+         "h_r" : 0.99990432193874335,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.84597504911067001,
+         "h_r" : 0.87902612531918101,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.92162256445118362,
+         "h_r" : 0.92162256445118362,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.9934475186504671,
+         "h_r" : 0.97733920090566495,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99626981517906155,
+         "h_r" : 0.99713927020891768,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99728908366377822,
+         "h_r" : 0.9952888873984338,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.9972905228028347,
+         "h_r" : 0.99441916232560867,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.9977124963264461,
+         "h_r" : 0.99721419123810451,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "h_c" : 0.84597504911067001,
+         "h_i" : 1.0,
+         "h_r" : 0.87902612531918101,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

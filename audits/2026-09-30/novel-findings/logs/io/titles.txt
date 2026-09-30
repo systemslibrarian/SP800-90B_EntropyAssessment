@@ -1,0 +1,271 @@
+3:######## #1 [ISSUE closed] markov test crashes.
+59:######## #2 [ISSUE closed] Crash with memory error in file SP90Bv2_predictors.py
+749:######## #3 [ISSUE closed] TypeError: unorderable types: dict() > int()
+836:######## #4 [ISSUE closed] Incorrect index when summing T values for Chi Square Test
+854:######## #5 [PR closed] Fixes indexing bug
+874:######## #6 [ISSUE closed] Incorrect padding in certain case of conversion2 in permutation tests
+899:######## #7 [PR closed] Fixes padding bug
+919:######## #8 [ISSUE closed] Using more than 8 bit per sample
+947:######## #9 [ISSUE closed] Query on LRS estimate results
+1000:######## #10 [ISSUE closed] min-entropy not defined or explained
+1032:######## #11 [ISSUE open] inconsistent use of terminology: entropy versus min-entropy
+1054:######## #12 [ISSUE closed] AssertionError ... assert df > 0
+1102:######## #13 [ISSUE closed] invalid p(max) value
+1127:######## #14 [PR closed] don't panic about small dataset;  print informative message instead
+1149:######## #15 [ISSUE closed] The "Runs Based on the Median" permutation tests should not use conversion II for binary inputs
+1162:######## #16 [ISSUE closed] The calculation of the sequence S' (done by altSequence2) discards the last data element
+1173:######## #17 [ISSUE closed] Test for "closeness" in binary searches isn't reasonable
+1194:######## #18 [ISSUE closed] Evaluation of the function "F" should terminate sooner.
+1280:######## #19 [ISSUE closed] Binary search code should be more conservative
+1382:######## #20 [ISSUE closed] Calculation of alpha in the Markov estimate
+1404:######## #21 [ISSUE closed] Wrong log base for Hoeffding's inequality in the Markov Estimate
+1412:######## #22 [ISSUE closed] z_alpha is aggressively rounded
+1423:######## #23 [ISSUE closed] Use of the fixed-precision Decimal package isn't necessary in the predictor code
+1452:######## #24 [ISSUE closed] Problems with verbose output
+1464:######## #25 [PR closed] Made all the binary search code more conservative; the code can now d…
+1469:######## #26 [PR closed] Computing refinements 18 22
+1474:######## #27 [PR closed] Address all the issues that I've recently reported via github
+1479:######## #28 [ISSUE closed] Binary independence iid test problems (5.2.3)
+1541:######## #29 [ISSUE closed] Binary goodness-of-fit test problems (5.2.4)
+1593:######## #30 [ISSUE closed] NIST SP 800-90
+1606:######## #31 [ISSUE closed] noniid_main.py Memory leak?
+2366:######## #32 [ISSUE closed] LRS estimate takes a lot of time?
+2424:######## #33 [ISSUE closed] Tool returns a number with no units
+2507:######## #34 [ISSUE closed] Markov Estimate Significantly lowers assessed entropy
+2576:######## #35 [PR closed] Displays Units
+2581:######## #36 [PR closed] Fix Readme markdown headers
+2586:######## #37 [ISSUE closed] RNG failing Restart Tests by NIST SP800-22
+2654:######## #38 [ISSUE closed] All call results by Killed
+2675:######## #39 [ISSUE closed] MemoryError with bin > 160Mo
+2705:######## #40 [ISSUE closed] Test result by MemoryError
+2762:######## #41 [PR closed] Modified to use packed data, enhance verbose output, increase efficie…
+2906:######## #42 [ISSUE closed] Is it possible to run tests individually?
+2919:######## #43 [ISSUE closed] Update for final version of SP 800-90B
+2951:######## #44 [ISSUE closed] Longest subsequences
+3014:######## #45 [PR closed] Seed the pseudo random number generator correctly.
+3039:######## #46 [ISSUE closed] Possible performance gain in permutation tests
+3057:######## #47 [ISSUE closed] User Guide
+3074:######## #48 [PR closed] Unbias the shuffle RNG
+3120:######## #49 [ISSUE closed] Compression estimator results mismatch
+3148:######## #50 [ISSUE closed] The binary search code is sometimes inaccurate, and always fragile and slow
+3160:######## #51 [ISSUE closed] (There is absolutely no) Debug output
+3168:######## #52 [ISSUE closed] LRS and t-tuple estimates can be dramatically faster using different algorithms
+3187:######## #53 [ISSUE closed] LRS memory use for byte strings can be huge
+3202:######## #54 [ISSUE closed] Use of rand within Fisher-Yates
+3232:######## #55 [ISSUE closed] Permutation tests should be short circuited for most (passing) data
+3243:######## #56 [ISSUE closed] The restart testing is more prone to failure than desired
+3257:######## #57 [ISSUE closed] The collision function F is unnecessarily complicated
+3265:######## #58 [ISSUE closed] Accumulation of floating point errors isn't controlled within the compression estimate
+3273:######## #59 [ISSUE closed] The calc_p_local function would benifit from calculating x as a long double
+3281:######## #60 [ISSUE closed] A table of chi square critical values isn't necessary
+3296:######## #61 [ISSUE closed] Some of the iid permutation tests are not invariant under translation
+3308:######## #62 [ISSUE closed] IID test independence test for non-binary data test sets expectation incorrectly
+3327:######## #63 [ISSUE closed] The sort used in the non-binary chi square tests do not make the test well defined
+3339:######## #64 [ISSUE closed] Makefile references files that don't exist
+3349:######## #65 [ISSUE closed] Output_Entropy calculation of 'n' is incorrect for narrow inputs
+3357:######## #66 [ISSUE closed] Command line processing seems a bit odd
+3365:######## #67 [ISSUE open] Source code arrangement isn't idiomatic 
+3376:######## #68 [ISSUE closed] Makefile seems very specific to the particular devolopment system used
+3387:######## #69 [PR closed] Compression estimate fix and a grab bag of scientific computing updates.
+3407:######## #70 [ISSUE closed] Incorrect results from 1 bit samples.
+3801:######## #71 [ISSUE closed] Created bitstring (bsymbols) is a bitwise representation of the translated data
+3817:######## #72 [PR closed] Make the bit string from the non-translated data
+3824:######## #73 [ISSUE closed] Makefile does not include a target to compile restart_main.cpp
+3831:######## #74 [ISSUE closed] restart_main.cpp uses SIZE instead of MIN_SIZE
+3857:######## #75 [PR closed] make restart_main.cpp compilable via Makefile target
+3864:######## #76 [ISSUE closed] Some permutation tests are not invariant under translation
+3874:######## #77 [PR closed] Fixes for random number generation and shuffling
+3883:######## #78 [ISSUE closed] Calculation of number of runs is off by 1
+3892:######## #79 [ISSUE closed] The compression permutation test returns nonsense
+3909:######## #80 [PR closed] First round of permutation test fixes
+3930:######## #81 [ISSUE open] Function naming is unnecessarily confusing
+3937:######## #82 [ISSUE closed] Median is calculated incorrectly
+3947:######## #83 [ISSUE closed] Dependencies for compilation
+3982:######## #84 [ISSUE closed] Usage print out
+3993:######## #85 [ISSUE closed] Compilation of restart_main
+4013:######## #86 [ISSUE closed] Multithreading isn't implemented in a way that produces significant benefit
+4032:######## #87 [PR closed] This is a set of very small changes, mostly non-controversial
+4043:######## #88 [ISSUE closed] Non-binary chi squared independence test is unnecessarily slow
+4054:######## #89 [ISSUE closed] double divide(const int, const int) function is used in inappropriate contexts
+4063:######## #90 [ISSUE closed] Goodness of fit chi squared test has a memory leak
+4072:######## #91 [ISSUE closed] Non-binary goodness-of-fit expectations are not necessarily based on the full dataset
+4086:######## #92 [ISSUE closed] LRS test calculates wrong LRS
+4102:######## #93 [ISSUE closed] binary_chi_square_independence isn't calculating the test statistic correctly
+4111:######## #94 [ISSUE closed] There should be some "known answer test" style functionality
+4128:######## #95 [ISSUE closed] Calculation of alpha in the restart test isn't correct, or as specified in 90B
+4148:######## #96 [ISSUE closed] Program crashes on large datasets; uninformative error
+4194:######## #97 [ISSUE closed] Segmentation fault when running iid path
+4336:######## #98 [PR closed] Changes to iid testing, major speed up of t-tuple and lrs tests, chi-square fixes, and restart testing fixes
+4350:######## #99 [PR closed] Allow permtesting large data sets, command line processing fixes.
+4379:######## #100 [ISSUE closed] Verbose flag in iid_main.cpp is not optional
+4408:######## #101 [ISSUE closed] ea_non_iid assessment of 1 bit data returns meaningless H_original result
+4413:######## #102 [ISSUE closed] conditioning_main.cpp allows for non-integer n_in, n_out, and nw values
+4418:######## #103 [ISSUE closed] There is a speedup possible for all predictors
+4423:######## #104 [PR closed] Speedups for several of the estimators
+4479:######## #105 [ISSUE closed] The compression estimate could be considerably faster
+4486:######## #106 [ISSUE closed] The MultiMMC and LZ78Y predictors could be much faster with binary data
+4493:######## #107 [ISSUE closed] why do the conversion2() before numRunsMedian test?
+4509:######## #108 [ISSUE closed] Binary data whose length is not divisible by 8 will lead to incorrect permtest results
+4516:######## #109 [ISSUE closed] find_collisions() could be made conceptually much simpler (and faster)
+4521:######## #110 [ISSUE closed] conversion2() does not function correctly
+4534:######## #111 [PR closed] Binary permtest fixes
+4544:######## #112 [PR closed] Changed the t-Tuple/LRS implementation to use Aaron Kaufer's improved algorithm
+4554:######## #113 [ISSUE closed] libdivsufsort
+4671:######## #114 [ISSUE closed] The wide MultiMMC predictor doesn't correctly account for new postfixes
+4679:######## #115 [ISSUE closed] The wide LZ78Y predictor implementation adds prefixes to the dictionary in the wrong order
+4684:######## #116 [ISSUE closed] For single bit data, non_iid_main erroneously labels the H_original as H_bitstring.
+4689:######## #117 [ISSUE closed] LRS test initializes the wrong amount of data
+4696:######## #118 [PR closed] A bunch of changes to fix the MultiMMC / LZ78Y predictors, and add self tests.
+4743:######## #119 [ISSUE closed] ea_iid doesn't calculate H_bitstring
+4748:######## #120 [PR closed] Uncommented stderr debugging stmt
+4782:######## #121 [ISSUE closed] The current tools do not support making an IID claim
+4795:######## #122 [ISSUE closed] Uninitialized comparison in max_map in shared/utils.h
+4803:######## #123 [ISSUE closed] Binary symbols as half of input binary bit stream length
+4857:######## #124 [ISSUE closed] Print version number in output
+4906:######## #125 [ISSUE closed] Silly results from Tuple Estimates
+5201:######## #126 [PR closed] Prettify the output for long-running permutation tests
+5214:######## #127 [ISSUE closed] Adjusting length of data in non-iid non-binary case
+5319:######## #128 [ISSUE closed] "double" and "long double" precision may not be sufficient within conditioning_main
+5337:######## #129 [PR closed] Make ea_conditioning use arbitrary precision arithmetic
+5370:######## #130 [ISSUE closed] Restart Test Input data format
+5413:######## #131 [ISSUE closed] Cast of const to non-const could yield undefined behavior (optimizer issue)
+5418:######## #132 [ISSUE closed] The collision test can be dramatically simplified
+5428:######## #133 [ISSUE closed] All predictors may calculate x using inadaquate precision
+5441:######## #134 [PR closed] Fixes for a few recently found scientific computing and language issues
+5493:######## #135 [PR closed] Prettify the output for long-running permutation tests (Edited version of PR #126)
+5520:######## #136 [PR closed] Make ea_conditioning use arbitrary precision arithmetic (and only that)
+5642:######## #137 [PR closed] Makes some documentation fixes. 
+5655:######## #138 [ISSUE closed] What content of the input file?
+5696:######## #139 [PR closed] Fix error causing t-tuple underestimation with -i, -t and len > 1E6 symbols
+5738:######## #140 [ISSUE closed] Description of `-t` option is misleading
+5747:######## #141 [ISSUE closed] Lag predictor estimator generally doesn't need to make 128 comparisons for each prediction
+5757:######## #142 [ISSUE closed] Permutation testing status isn't very helpful
+5762:######## #143 [PR closed] Adding initial support for Go version for the SP800-90B
+5773:######## #144 [PR closed] Output JSON Objects
+5785:######## #145 [ISSUE open] is it possible to run this code in windows?
+5965:######## #146 [PR closed] Json output
+5977:######## #147 [ISSUE closed] 1. Why binary data is converted into 1s and 2s in estimators section, where file is in text format? How wordsize bit conversion is done?
+6003:######## #148 [ISSUE closed] Is there any library that can be used in LSR and T-Tuple estimate that can be placed libdivsufsort While coding in windows platform?
+6018:######## #149 [ISSUE closed] what is the reason behind fixed values that are hard coded in  almost all estimators,like no of occurance is atleast 35 in t-tuple estimate as well as LSR estimate.
+6028:######## #150 [ISSUE closed] number of windows that are four and are defined as 63,255,1023,4095.what is the reason behind selecting these four windows in particular 
+6038:######## #151 [PR closed] Fix the calculation error in ea_iid.
+6106:######## #152 [PR closed] Attempt to comprehensively deal with the double precision issue in performing the lrs test.
+6125:######## #153 [ISSUE closed] The LRS test for IID data implementation has precision problems that lead to incorrect verdicts
+6138:######## #154 [ISSUE closed] i am giving binary data to non_iid estimators but it  shows  alph_size=4 for binary data(0,1)
+6151:######## #155 [ISSUE open] Significant differences in ea_non_iid selftest [Windows10]
+6185:######## #156 [PR closed] Merge #152 into json-output
+6190:######## #157 [PR closed] Merge #134 into json-output
+6195:######## #158 [ISSUE closed] Flags not supported on MacOS
+6226:######## #159 [ISSUE open] Entropy in Conditioning Components
+6239:######## #160 [ISSUE closed] if I am  evaluating  noise source, is it necessary to implement health test while evaluating noise source or we just have to make sure that submitter has implemented health test on noise source?
+6250:######## #161 [ISSUE closed] ea_restart generates a different result than ea_non_iid
+7327:######## #162 [PR open] Bit packing
+7363:######## #163 [ISSUE closed] Stuck in LRS Estimate
+7497:######## #164 [ISSUE closed] g++: error: unrecognized command line option ‘-msse2’
+7598:######## #165 [ISSUE closed] when i test cpu jitter, what data should i use
+7614:######## #166 [PR closed] Improved output and a small bug fix associated with the Compression Estimator
+7626:######## #167 [ISSUE open] The meaning of ea_iid output results
+7733:######## #168 [ISSUE open] The result of ea_conditioning  is nan
+7821:######## #169 [ISSUE closed] window10 branch: Makefile:38: recipe for target 'restart_main.o' failed
+7842:######## #170 [ISSUE closed] Calculation of P_W in LRS Estimate in certain environments
+7861:######## #171 [ISSUE closed] Find some results differ from standard samples
+7882:######## #172 [PR closed] Fix wiki link
+7887:######## #173 [PR closed] Corrected index recording error in collision permutation tests.
+7897:######## #174 [PR closed] Merge master into json-output
+7917:######## #175 [PR closed] Force a 64-bit type for computation of the binomial coefficients, and add asserts for detecting rollover
+7926:######## #176 [ISSUE closed] User's Guide missing
+7949:######## #177 [ISSUE closed] The test for a valid compression test is dropped
+7990:######## #178 [ISSUE closed] Check for invalid results for all tests that flag error
+8019:######## #179 [ISSUE closed] TestCase (et al) values are incomplete and the meaning of the saved values is inconsistent
+8038:######## #180 [ISSUE closed] Is ARM supported in this project?
+8122:######## #181 [PR closed] Makefile: add support to cross compilation
+8138:######## #182 [PR closed] Addresses comments on previous release to include both hBitstring and…
+8222:######## #183 [ISSUE closed] When in JSON mode, ea_restart testing may not flag failure
+8227:######## #184 [ISSUE closed] New JSON patches seems to change outputs at some verbose levels
+8232:######## #185 [ISSUE closed] Boolean values never equal -1
+8237:######## #186 [ISSUE closed] In C(++), string `char *` string values can't be compared using `==`
+8242:######## #187 [PR closed] A few changes to the merged JSON functionality.
+8263:######## #188 [PR closed] Update README.md
+8268:######## #189 [ISSUE closed] Array too small?
+8306:######## #190 [PR closed] Compression overflow
+8317:######## #191 [ISSUE closed] ea_iid, ea_non_iid crashing when -l used.
+8369:######## #192 [PR closed] Fix a regression in command line processing 
+8384:######## #193 [ISSUE open] Read bits instead of bytes
+8403:######## #194 [PR closed] Bugfix/duplicate output
+8408:######## #195 [ISSUE open] ea_restart core dumps on k_max <= k'
+8420:######## #196 [ISSUE open] How to generate binary type input file
+8549:######## #197 [ISSUE open] Meaning of H_bitstring and H_original 
+8566:######## #198 [PR closed] Bugfix/duplicate output
+8571:######## #199 [ISSUE closed] But: Json output differs from terminal output for ea_iid
+8654:######## #200 [PR closed] Resolves duplicate and non-reported permutation test results
+8661:######## #201 [PR closed] Avoid using deprecated OpenSSL methods for SHA256 hash generation
+8666:######## #202 [PR closed] Inconsistent variable with usage
+8691:######## #203 [ISSUE closed] Selftest failing
+8775:######## #204 [PR closed] Addressed some bugs introduced in the `sha256_file()` function
+8806:######## #205 [ISSUE closed] Compiling issue
+8873:######## #206 [ISSUE closed] Bugs in TestRunUtils.h
+8890:######## #207 [ISSUE closed] how to run ea_restart?
+8979:######## #208 [ISSUE closed] What are the main differences between versions 1.5 and 1.4
+8997:######## #209 [ISSUE closed] Why we need a cutoff value in restart-test
+9028:######## #210 [ISSUE closed] ea_conditioning does not work correctly for non-vetted conditioning functions
+9036:######## #211 [ISSUE closed] ea_conditioning has some memory leaks
+9044:######## #212 [ISSUE closed] Why does the restart_main have different results in different systems
+9058:######## #213 [ISSUE closed] poor entropy value for a large data file but good entropy value for each segment of the data file
+9396:######## #214 [ISSUE closed] ea_non_iid hangs on a big data file
+9457:######## #215 [ISSUE open] Input option for ascii (human readable) binary/hex data
+9467:######## #216 [PR closed] The type "byte" (unsigned char) used in this codebase conflicts with std::byte
+9473:######## #217 [PR closed] Support large files and fix an initialization problem
+9493:######## #218 [PR closed] Missing SHA256 hash in output for conditioning fixed and cleanup
+9498:######## #219 [ISSUE open] Compiling in Windows
+9609:######## #220 [ISSUE closed] ea_iid results are unstable
+9650:######## #221 [PR closed] Propagating command-line error messages on data file read errors into…
+9655:######## #222 [PR closed] Feature/restart full iid tests
+9660:######## #223 [ISSUE open] How much data should be fed into entropy assessment tools for an accurate min-entropy estimate?
+9680:######## #224 [PR closed] Faster (and adjustable) simulation code for restart testing.
+9697:######## #225 [PR closed] Make "Full Entropy" report consistent with IG D.K Resolution 19
+9704:######## #226 [PR closed] Add support for large files. (> 2GB)
+9725:######## #227 [ISSUE closed] divsufsort64.h: No such file or directory
+9847:######## #228 [ISSUE closed] Large dataset causing core dump error on Tuple Estimates
+9867:######## #229 [PR closed] added dockerfile
+9872:######## #230 [PR closed] FEATURE/Error report sample size
+9877:######## #231 [ISSUE open] The result is not available after selftest is run
+9900:######## #232 [PR closed] Feature better error messages
+9905:######## #233 [ISSUE closed] ea_restart: validity test failure?
+9941:######## #234 [ISSUE closed] json.h not found when building
+9992:######## #235 [PR closed] Consistently run both the chi-square independence and chi-square goodness-of-fit tests
+9999:######## #236 [ISSUE open] v1.1.8 not reporting correct version
+10030:######## #237 [PR closed] Update utils.h to fix version number to 1.1.8.
+10044:######## #238 [ISSUE open] Include in JSON outputs the number of samples tested, and the number of distinct symbols found
+10051:######## #239 [PR closed] PE-2407 Update the IID Permutation Test
+10158:######## #240 [PR closed] Add compression-only entropy assessment tool
+10166:######## #241 [PR open] Fix makefile - avoid unnecessary rebuilds and other confusion
+10175:######## #242 [PR open] Fix warnings and set them to be errors
+10188:######## #243 [ISSUE open] Update the minimum supported C++ standard
+10214:######## #244 [ISSUE closed] Possible bug in ea_restart test
+10249:######## #245 [ISSUE closed] the Entropy of ringOsc-nist.bin is too small
+10373:######## #246 [ISSUE closed] Assertion `p_col >= 1.0L / ((long double) k)' failed
+10431:######## #247 [ISSUE closed] ea_iid report failure, sometimes
+10955:######## #248 [PR closed] Reduce the impact of floating point rounding in the `calc_proportions()` function
+10966:######## #249 [PR open] Convert project build process to cmake
+11018:######## #250 [PR closed] Perform the SP 800-90B Section 5 testing on the restart column data.
+11027:######## #251 [PR open] Fix IID JSON hAssessed at default verbosity
+11052:######## #252 [PR open] IID test: do not return final min-entropy if any of the test suites fail the IID assumption
+11062:######## #253 [ISSUE open] Multi-bit datasets with exactly two observed values are assessed as binary; the n×H_bitstring term of §3.1.3 is never computed
+11102:######## #254 [ISSUE open] Default bits_per_symbol inference narrows the sample width from the data and changes n×H_bitstring by up to 2.4×; the inferred width is not recorded in the JSON
+11140:######## #255 [ISSUE open] Sub-minimum sample counts and skipped estimators are invisible in the JSON report (errorLevel stays 0)
+11181:######## #256 [PR open] non_iid: gate the bitstring estimators on the sample width, not the observed alphabet (§3.1.3)
+11215:######## #257 [ISSUE open] Heap buffer over-read in binaryMultiMMCPredictionEstimate for 4 <= L <= 16 (multi_mmc_test.h:38); reachable from a file, silent on a normal build
+11275:######## #258 [ISSUE open] Literal MultiMCW is skipped for 64 <= L <= 4095 though §6.3.7 defines it for L > 63; warning text is off by one
+11325:######## #259 [ISSUE open] sha256_file reads to EOF with no size/type check: ea_non_iid hangs forever on /dev/zero, /dev/urandom, or a FIFO
+11369:######## #260 [ISSUE open] -l subset path: offset multiplication overflows (silent wrong/whole-file read) and the recorded SHA-256 is of the whole file, not the subset
+11411:######## #261 [ISSUE open] assert() aborts on small/repeat-free inputs (asserts are live: no -DNDEBUG); related to the over-read in #257
+11449:######## #262 [ISSUE closed] Assertion aborts (no message, no JSON) on repeat-free or tiny inputs; LZ78Y/MultiMMC length checks and messages disagree
+11504:######## #263 [ISSUE open] Compression estimate admits exactly 1001 blocks (v = 1): sigma-hat divides by v-1 = 0 and reports 1.0 (NaN) or -0 (inf)
+11558:######## #264 [ISSUE open] Collision estimate with v <= 1 (2-5 binary samples): sigma-hat is NaN and the estimator prints min-entropy = 1 unmeasured
+11586:######## #265 [ISSUE closed] MultiMCW estimate is skipped for L < 4096 although SP 800-90B 6.3.7 defines it for L > 63; the skipped estimate can be the minimum
+11630:######## #266 [ISSUE closed] sha256_file reads to EOF before any size check: ea_non_iid hangs on /dev/zero and other non-regular files
+11652:######## #267 [ISSUE closed] -l index,samples: samples=0 ignores the index, index*samples wraps unchecked, the recorded SHA-256 is of the whole file, short final blocks are silent
+11690:######## #268 [PR open] non_iid: prevent heap over-read in binaryMultiMMCPredictionEstimate for 4 <= L <= 16 (#257)
+11727:######## #269 [PR closed] non_iid: bound the binary MultiMMC initialisation loop by the input length (fixes #257)
+11756:######## #270 [PR open] non_iid: compression estimate requires at least two test blocks (fixes #263)
+11779:######## PR REVIEW COMMENTS (inline)

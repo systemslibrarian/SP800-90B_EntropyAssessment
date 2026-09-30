@@ -1,0 +1,9 @@
+LRS Estimate: v<u. Can't Run LRS Test.
+
+real	0m42.334s
+user	0m14.256s
+sys	0m0.274s
+exit=0
+errorLevel 0 None
+{'binLrsRes': 0.9648029889991387, 'testCaseDesc': 'LRS Test'}
+{'dataWordSize': 7.0, 'hAssessed': 4.7760652119354905, 'hBitstring': 0.6822950302764986, 'hOriginal': 6.583331523434294, 'testCaseDesc': 'Overall'}

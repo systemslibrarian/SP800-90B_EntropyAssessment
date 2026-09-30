@@ -1,0 +1,41 @@
+Opening file: 'sortedblk8.bin' (SHA-256 hash 382e883434910f9411ff806dd5b3fd526b0fc79c6ca11bbaf3e95e0ca1ace339)
+Loaded 1000000 samples of 256 distinct 8-bit-wide symbols
+Number of Binary samples: 8000000
+Raw Mean = 127.372184
+Median = 127
+Binary = false
+H_bitstring = 0.99855990920408311
+H_bitstring Per Symbol = 7.9884792736326649
+H_original = 7.8816809927398026
+Assessed min entropy: 7.8816809927398026
+igamc: UNDERFLOW
+Chi square independence: T = 79199662.284293979
+Chi square independence: df = 65280
+Chi square independence: P-value = 0
+Chi square goodness of fit: T = 2259.3974356736007
+Chi square goodness of fit: df = 2295
+Chi square goodness of fit: P-value = 0.69790752553299373
+Chi square tests: Failed
+Literal Longest Repeated Substring results: P_col = 0.003907309714000000000591
+Literal Longest Repeated Substring results: W = 45
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0
+Length of longest repeated substring test: Failed
+Permutation testing: Unpermuted result excursion = 73037.00744800096435938
+Permutation testing: Unpermuted result numDirectionalRuns = 1999
+Permutation testing: Unpermuted result lenDirectionalRuns = 999
+Permutation testing: Unpermuted result numIncreasesDecreases = 999000
+Permutation testing: Unpermuted result numRunsMedian = 2000
+Permutation testing: Unpermuted result lenRunsMedian = 553
+Permutation testing: Unpermuted result avgCollision = 2.293149667148993042787
+Permutation testing: Unpermuted result maxCollision = 7
+Permutation testing: Unpermuted result periodicity(1) = 749148
+Permutation testing: Unpermuted result periodicity(2) = 518395
+Permutation testing: Unpermuted result periodicity(8) = 7459
+Permutation testing: Unpermuted result periodicity(16) = 0
+Permutation testing: Unpermuted result periodicity(32) = 0
+Permutation testing: Unpermuted result covariance(1) = 21645777380
+Permutation testing: Unpermuted result covariance(2) = 21613160820
+Permutation testing: Unpermuted result covariance(8) = 21418693233
+Permutation testing: Unpermuted result covariance(16) = 21163155183
+Permutation testing: Unpermuted result covariance(32) = 20664673078
+Permutation testing: Unpermuted result compression = 139035

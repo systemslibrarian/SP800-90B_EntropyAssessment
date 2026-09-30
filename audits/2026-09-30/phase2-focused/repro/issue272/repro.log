@@ -1,0 +1,94 @@
++ git clone -q https://github.com/usnistgov/SP800-90B_EntropyAssessment.git
++ cd SP800-90B_EntropyAssessment/cpp
++ git rev-parse HEAD
+87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
++ make non_iid
++ cd selftest
++ ./selftest
+biased-random-bits.bin: Maximum delta: 4.18241830058008e-14
+biased-random-bytes.bin: Maximum delta: 4.24382751162966e-14
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+normal.bin: Maximum delta: 3.5527136788005e-15
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand8_short.bin: Maximum delta: 7.7715611723761e-16
+ringOsc-nist.bin: Maximum delta: 5.60662627435704e-15
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_8bit.bin: Maximum delta: 1.00808250635964e-13
++ echo 'baseline exit=0'
+baseline exit=0
++ cd ..
++ sed -i 's/h_assessed = min(h_assessed, H_bitstring \* data.word_size);/\/\/ mutant 1/' non_iid_main.cpp
++ git diff --stat
+ cpp/non_iid_main.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
++ make non_iid
++ cd selftest
++ ./selftest
+biased-random-bits.bin: Maximum delta: 4.18241830058008e-14
+biased-random-bytes.bin: Maximum delta: 4.24382751162966e-14
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+normal.bin: Maximum delta: 3.5527136788005e-15
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand8_short.bin: Maximum delta: 7.7715611723761e-16
+ringOsc-nist.bin: Maximum delta: 5.60662627435704e-15
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_8bit.bin: Maximum delta: 1.00808250635964e-13
++ echo 'mutant1 exit=0'
+mutant1 exit=0
++ grep -h '^Assessed min entropy' refdata/normal.res normal.res refdata/truerand_8bit.res truerand_8bit.res
+Assessed min entropy: 4.1000957831103086
+Assessed min entropy: 5.529117785448844
+Assessed min entropy: 7.233861455178495
+Assessed min entropy: 7.8651180028995897
++ cd ..
++ git checkout -q non_iid_main.cpp
++ perl -0pi -e 's/    if \(initial_entropy\) \{\n        h_assessed = min\(h_assessed, H_original\);\n    \}\n/    \/\/ mutant 2\n/' non_iid_main.cpp
++ git diff --stat
+ cpp/non_iid_main.cpp | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
++ make non_iid
++ cd selftest
++ ./selftest
+biased-random-bits.bin: Maximum delta: 4.18241830058008e-14
+biased-random-bytes.bin: Maximum delta: 4.24382751162966e-14
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+normal.bin: Maximum delta: 3.5527136788005e-15
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand8_short.bin: Maximum delta: 7.7715611723761e-16
+ringOsc-nist.bin: Maximum delta: 5.60662627435704e-15
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_8bit.bin: Maximum delta: 1.00808250635964e-13
++ echo 'mutant2 exit=0'
+mutant2 exit=0
++ grep -h '^Assessed min entropy' refdata/ringOsc-nist.res ringOsc-nist.res refdata/biased-random-bits.res biased-random-bits.res
+Assessed min entropy: 0.12644573619605429
+Assessed min entropy: 1
+Assessed min entropy: 0.017766579116465196
+Assessed min entropy: 1
++ cd ..
++ git checkout -q non_iid_main.cpp
++ make non_iid
++ cd selftest
++ sed -i 's/^\(Literal Most Common Value Estimate: p_u = \).*/\10.9/' refdata/biased-random-bits.res
++ ./selftest
+biased-random-bits.bin: biased-random-bits.res: Significant difference for Literal Most Common Value Estimate: p_u (reference: 0.9 new: 0.98034872224294312 delta: 0.0803487222429431)
+Maximum delta: 0.0803487222429431
+biased-random-bytes.bin: Maximum delta: 4.24382751162966e-14
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+normal.bin: Maximum delta: 3.5527136788005e-15
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand8_short.bin: Maximum delta: 7.7715611723761e-16
+ringOsc-nist.bin: Maximum delta: 5.60662627435704e-15
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_8bit.bin: Maximum delta: 1.00808250635964e-13
++ echo 'refdata-edit exit=0'
+refdata-edit exit=0
++ git checkout -q refdata/

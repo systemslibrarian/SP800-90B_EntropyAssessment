@@ -1,0 +1,63 @@
+Opening file: 'bern002.bin' (SHA-256 hash df7cacae29c3b3352a38986f9bd9fe08c270cd4c0b3c64215e140973861696c3)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+Raw Mean = 0.0019880000000000002
+Median = 0.5
+Binary = true
+H_original = 0.0027050855620361102
+Assessed min entropy: 0.0027050855620361102
+Chi square independence: T = 0
+Chi square independence: df = 0
+Chi square independence: P-value = 1
+Chi square goodness of fit: T = 5.6732502524878612
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.7721227505025321
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.996031904288000020421
+Literal Longest Repeated Substring results: W = 4929
+Literal Longest Repeated Substring results: Pr(X >= 1) = 1
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 35.35033999999985354634
+Permutation testing: Unpermuted result numDirectionalRuns = 3887
+Permutation testing: Unpermuted result lenDirectionalRuns = 615
+Permutation testing: Unpermuted result numIncreasesDecreases = 123056
+Permutation testing: Unpermuted result numRunsMedian = 3971
+Permutation testing: Unpermuted result lenRunsMedian = 4930
+Permutation testing: Unpermuted result avgCollision = 2.032008453222791111159
+Permutation testing: Unpermuted result maxCollision = 5
+Permutation testing: Unpermuted result periodicity(1) = 121113
+Permutation testing: Unpermuted result periodicity(2) = 121104
+Permutation testing: Unpermuted result periodicity(8) = 121098
+Permutation testing: Unpermuted result periodicity(16) = 121087
+Permutation testing: Unpermuted result periodicity(32) = 121066
+Permutation testing: Unpermuted result covariance(1) = 35
+Permutation testing: Unpermuted result covariance(2) = 31
+Permutation testing: Unpermuted result covariance(8) = 31
+Permutation testing: Unpermuted result covariance(16) = 29
+Permutation testing: Unpermuted result covariance(32) = 26
+Permutation testing: Unpermuted result compression = 4463
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       6       0       6
+       numDirectionalRuns       4       2       8
+       lenDirectionalRuns       6       0      60
+    numIncreasesDecreases       7       2       4
+            numRunsMedian       4       2       4
+            lenRunsMedian       6       0      60
+             avgCollision       5       1      10
+             maxCollision       0       6       5
+           periodicity(1)       7       2       4
+           periodicity(2)       8       1       5
+           periodicity(8)      13       1       5
+          periodicity(16)      37       1       5
+          periodicity(32)      55       1       5
+            covariance(1)       4       2       8
+            covariance(2)       5       1       9
+            covariance(8)       4       2       4
+           covariance(16)      10       2       4
+           covariance(32)      46       2       4
+              compression     355       1       5
+(* denotes failed test)
+
+IID permutation tests: Passed

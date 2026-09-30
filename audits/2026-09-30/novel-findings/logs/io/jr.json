@@ -1,0 +1,11 @@
+{
+   "IID" : false,
+   "commandline" : "./a_restart -o jr.json nope.bin 8 4",
+   "dateTimeStamp" : "20260930152655",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: could not open '%s'\n",
+   "filename" : "nope.bin",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

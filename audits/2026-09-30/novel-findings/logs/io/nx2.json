@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "./r_non_iid -q -o nx2.json nope.bin 8",
+   "dateTimeStamp" : "20260930152632",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: could not open '%s'\n",
+   "filename" : "nope.bin",
+   "sha256" : "\ufffd\u0011",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

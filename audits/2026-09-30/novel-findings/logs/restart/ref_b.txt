@@ -1,0 +1,7 @@
+H_I=0.3  p=0.812252  spec_U(alpha=5e-6,binomial)=865  P_binom(X>=865)=5.513e-06 P_binom(X>=866)=3.658e-06 | model c*=865 tails: P(max>864)=5.513e-06, P(max>865)=3.658e-06, P(max>866)=2.407e-06
+H_I=2.0  p=0.25  spec_U(alpha=5e-6,binomial)=312  P_binom(X>=312)=5.711e-06 P_binom(X>=313)=4.136e-06 | model c*=316 tails: P(max>315)=6.12e-06, P(max>316)=4.354e-06, P(max>317)=3.084e-06
+H_I=4.0  p=0.0625  spec_U(alpha=5e-6,binomial)=99  P_binom(X>=99)=5.993e-06 P_binom(X>=100)=3.546e-06 | model c*=104 tails: P(max>103)=6.258e-06, P(max>104)=3.515e-06, P(max>105)=1.954e-06
+H_I=5.5  p=0.0220971  spec_U(alpha=5e-6,binomial)=45  P_binom(X>=45)=9.581e-06 P_binom(X>=46)=4.414e-06 | model c*=50 tails: P(max>49)=7.241e-06, P(max>50)=3.006e-06, P(max>51)=1.223e-06
+H_I=6.0  p=0.015625  spec_U(alpha=5e-6,binomial)=36  P_binom(X>=36)=5.798e-06 P_binom(X>=37)=2.356e-06 | model c*=40 tails: P(max>39)=8.639e-06, P(max>40)=3.167e-06, P(max>41)=1.133e-06
+H_I=7.0  p=0.0078125  spec_U(alpha=5e-6,binomial)=23  P_binom(X>=23)=7.035e-06 P_binom(X>=24)=2.215e-06 | model c*=27 tails: P(max>26)=6.986e-06, P(max>27)=1.887e-06, P(max>28)=4.923e-07
+H_I=8.0  p=0.00390625  spec_U(alpha=5e-6,binomial)=15  P_binom(X>=15)=1.437e-05 P_binom(X>=16)=3.407e-06 | model c*=19 tails: P(max>18)=8.241e-06, P(max>19)=1.568e-06, P(max>20)=2.84e-07
