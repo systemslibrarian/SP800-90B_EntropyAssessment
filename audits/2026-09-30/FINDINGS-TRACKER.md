@@ -260,6 +260,26 @@ A coding agent can take work from this queue by selecting findings whose **State
   ```
 - **Expected (correct) behaviour:** The estimate requires v ≥ 2 test blocks (§6.3.4 step 5 divides by v−1); with fewer, it is refused and reported as skipped
 - **Evidence / reproducer:** upstream #263 (reproduction); [`AUDIT.md`](AUDIT.md) row F11
+- **Observed output (second verification pass, fork `master` build, macOS arm64, Apple clang 21; the Reproduce block above quotes a Linux GCC run, which prints `-nan` where clang prints `nan`):**
+  ```
+  v1_nan.bin   Literal Compression Estimate: X-bar = 0
+               Literal Compression Estimate: sigma-hat = nan
+               Literal Compression Estimate: X-bar' = nan
+               Literal Compression Estimate: Could Not Find p. Proceeding with the lower bound for p.
+               Literal Compression Estimate: p = 0.015625
+               Literal Compression Estimate: min entropy = 1
+               Assessed min entropy: 0.80718158433086451     (other estimators bind, so the 1.0 does not reach the figure)
+
+  v1_inf.bin   Literal Compression Estimate: X-bar = 7.1799090900149345
+               Literal Compression Estimate: sigma-hat = inf
+               Literal Compression Estimate: X-bar' = -inf
+               Literal Compression Estimate: Found p.
+               Literal Compression Estimate: p = 1
+               Literal Compression Estimate: min entropy = -0
+               Assessed min entropy: -0                       (becomes the whole reported figure)
+  ```
+  For comparison: 1000 blocks are refused by the existing guard, and 1002 blocks give a finite sigma-hat = 1.8930014049997954.
+- **Correction history:** A first verification pass recorded this finding as "DID NOT REPRODUCE (dangerous direction)", on the grounds that the 0/0 NaN branch needs degenerate data and that it was not filed. A second verification pass superseded both points: the input above is 6006 **random** bits with only the final 6-bit block edited, which is not degenerate data, and both branches reproduce. It was filed upstream as #263 with fix PR #270. [`AUDIT.md`](AUDIT.md) row F11 carries the same correction.
 - **Regression test:** none yet — add: v1_nan.bin / v1_inf.bin report the compression estimate as not run
 - **Upstream NIST issue:** #263
 - **Upstream NIST PR:** PR #270
@@ -286,6 +306,7 @@ A coding agent can take work from this queue by selecting findings whose **State
   ```
 - **Expected (correct) behaviour:** Collision estimate refused (reported as not run) when v < 2
 - **Evidence / reproducer:** upstream #264 (reproduction); [`AUDIT.md`](AUDIT.md) row F12
+- **Correction history:** A first verification pass recorded this finding as "DID NOT REPRODUCE", on the grounds that no dangerous figure arises in any configuration, and did not file it. A second verification pass superseded that framing: the estimator does print `min entropy = 1` from an unmeasured NaN comparison (quoted in the Reproduce block above) before the run aborts at `lz78y_test.h:17`, so the value is produced and would enter the reported minimum if those aborts were ever turned into skips. It was filed upstream as #264 with exactly that caveat. [`AUDIT.md`](AUDIT.md) row F12 carries the same correction.
 - **Regression test:** none yet — add: b5.bin collision reported as not run
 - **Upstream NIST issue:** #264
 - **Upstream NIST PR:** —
