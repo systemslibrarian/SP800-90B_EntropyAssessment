@@ -1,3 +1,6 @@
+# Host detection (used to locate Homebrew packages on macOS below).
+UNAME_S := $(shell uname -s 2>/dev/null)
+
 ARCH ?= x86
 
 CXX ?= $(CROSS_COMPILE)g++
@@ -16,6 +19,16 @@ COND_LIB = -lmpfr -lgmp
 SHARED_LIB = -ljsoncpp -lcrypto
 INC =
 
+ifeq ($(UNAME_S),Darwin)
+# macOS: Homebrew installs headers and libraries outside the compiler's
+# default search path, and openssl@3 is keg-only, so point at them here.
+#   brew install libdivsufsort jsoncpp openssl@3
+BREW_PREFIX ?= $(shell brew --prefix 2>/dev/null || echo /opt/homebrew)
+OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+endif
+
 ######
 # Main operations
 ######
@@ -27,20 +40,20 @@ clean:
 
 iid: iid_main.o
 iid_main.o: iid_main.cpp
-	$(CXX) $(CXXFLAGS) $(INC) iid_main.cpp -o ea_iid $(LIB) $(SHARED_LIB)
+	$(CXX) $(CXXFLAGS) $(INC) iid_main.cpp -o ea_iid $(LDFLAGS) $(LIB) $(SHARED_LIB)
 	
 non_iid: non_iid_main.o	
 non_iid_main.o: non_iid_main.cpp
-	$(CXX) $(CXXFLAGS) $(INC) non_iid_main.cpp -o ea_non_iid $(LIB) $(SHARED_LIB)
+	$(CXX) $(CXXFLAGS) $(INC) non_iid_main.cpp -o ea_non_iid $(LDFLAGS) $(LIB) $(SHARED_LIB)
 
 restart: restart_main.o
 restart_main.o: restart_main.cpp
-	$(CXX) $(CXXFLAGS) $(INC) restart_main.cpp -o ea_restart $(LIB) $(SHARED_LIB)
+	$(CXX) $(CXXFLAGS) $(INC) restart_main.cpp -o ea_restart $(LDFLAGS) $(LIB) $(SHARED_LIB)
 
 conditioning: conditioning_main.o
 conditioning_main.o: conditioning_main.cpp
-	$(CXX) $(CXXFLAGS) $(INC) conditioning_main.cpp -o ea_conditioning $(LIB) $(COND_LIB) $(SHARED_LIB)
+	$(CXX) $(CXXFLAGS) $(INC) conditioning_main.cpp -o ea_conditioning $(LDFLAGS) $(LIB) $(COND_LIB) $(SHARED_LIB)
 
 transpose: transpose_main.o
 transpose_main.o: transpose_main.cpp
-	$(CXX) $(CXXFLAGS) $(INC) transpose_main.cpp -o ea_transpose $(LIB) $(SHARED_LIB)
+	$(CXX) $(CXXFLAGS) $(INC) transpose_main.cpp -o ea_transpose $(LDFLAGS) $(LIB) $(SHARED_LIB)
