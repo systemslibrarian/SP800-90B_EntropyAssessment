@@ -18,7 +18,26 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
    uint32_t curPattern=0;
    long dictElems[D_MMC] = {0};
 
-   assert(L>3);
+   // The initialisation loop below reads S[d] and S[d+1] for d up to
+   // D_MMC-1, so it needs at least D_MMC+1 samples. With fewer it read past
+   // the end of the buffer (upstream #257: a heap over-read for 4 <= L <= 16,
+   // which AddressSanitizer flags at the line marked below).
+   //
+   // Bounding the loop alone would leave the estimator running on a partially
+   // initialised model. @joshuaehill on PR #268: "It would be better to
+   // return a failure flag (or a result like -1.0) in the instance where
+   // L < D_MMC+1, as this is not a condition that could yield a reasonable
+   // test." So decline instead, the same way the non-binary path declines,
+   // and let the caller omit the estimate.
+   //
+   // SP 800-90B use requires at least 1000000 samples, which the tools now
+   // enforce at intake, so this is unreachable from a compliant run; it is
+   // here so that calling the estimator directly is safe.
+   if(L < D_MMC + 1) {
+      printf("\t*** Warning: not enough samples to run multiMMC test (need more than %d) ***\n", D_MMC);
+      return -1.0;
+   }
+
    assert(D_MMC < 31); //D+1 < 32 to make the bit shifts well defined
 
    //Initialize the predictors
@@ -35,6 +54,7 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
       curPattern = ((curPattern << 1) | (S[d]&1));
 
       //This is necessarily the first symbol of this length
+      //(the L >= D_MMC+1 check above is what keeps this S[d+1] in bounds)
       (BINARYDICTLOC(d+1, curPattern))[S[d+1]&1] = 1;
       dictElems[d] = 1;
    }
