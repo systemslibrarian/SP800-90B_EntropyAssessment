@@ -454,7 +454,10 @@ void goodness_of_fit_calc_observed(const uint8_t data[], const vector<struct tup
 * ---------------------------------------------
 */
 
-void binary_chi_square_independence(const uint8_t data[], double &score, int &df, const int sample_size){
+// Returns false when SP 800-90B 5.2.3's "If m is 1, the test fails" applies,
+// in which case score and df are not meaningful and the caller must fail the
+// chi-square battery. Returns true when the test was applied (m >= 2).
+bool binary_chi_square_independence(const uint8_t data[], double &score, int &df, const int sample_size){
 
 	// Compute proportion of 0s and 1s
 	double p0 = 0.0, p1 = 0.0;
@@ -483,9 +486,16 @@ void binary_chi_square_independence(const uint8_t data[], double &score, int &df
 	tuple_count = 1 << m;
 
 	if (m < 2){
+		// SP 800-90B 5.2.3: "m = 11. If m is 1, the test fails. ... The test
+		// is applied if m >= 2." Returning score 0 with df 0 gives a p-value
+		// of exactly 1, which the caller reads as a pass, so a dataset too
+		// biased to form 2-bit blocks with the required expected count was
+		// reported as having passed the independence test. Report the failure
+		// instead. Reachable with a compliant 1,000,000-sample dataset: 3162
+		// ones in 10^6 bits gives min_p^2 * (L/2) = 4.999 < 5, hence m = 1.
 		score = 0.0;
 		df = 0;
-		return;
+		return false;
 	}
 
 	// Test is only run if m >= 2
@@ -517,6 +527,8 @@ void binary_chi_square_independence(const uint8_t data[], double &score, int &df
 
 	score = T;
 	df = pow(2, m) - 2;
+
+	return true;
 }
 
 bool expectationOrder(const struct tupleTranslateEntry &a, const struct tupleTranslateEntry &b){
@@ -640,10 +652,27 @@ bool chi_square_tests(const uint8_t data[], const int sample_size, const int alp
 	bool result = true;
 
 	// Chi Square independence test
+	bool independence_applied = true;
+
 	if(alphabet_size == 2){
-		binary_chi_square_independence(data, score, df, sample_size);
+		independence_applied = binary_chi_square_independence(data, score, df, sample_size);
 	}else{
 		chi_square_independence(data, score, df, sample_size, alphabet_size);
+	}
+
+	if(!independence_applied){
+		// SP 800-90B 5.2.3: m = 1 means the test fails.
+		if(verbose == 2) {
+			printf("Chi square independence\n");
+			printf("\tm = 1; per SP 800-90B 5.2.3 the test fails\n\n");
+		} else if(verbose >= 3) {
+			printf("Chi square independence: m = 1, test fails per SP 800-90B 5.2.3\n");
+		}
+
+		score = 0.0;
+		df = 0;
+
+		return false;
 	}
 
 	pvalue = chi_square_pvalue(score, df);
