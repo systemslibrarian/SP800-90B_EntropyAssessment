@@ -59,30 +59,34 @@ Take findings whose **State** is:
    - **Upstream code is corrected:** build `upstream/master` and run the reproduction and regression check against it. If they pass, bring the upstream change into the fork (merge or cherry-pick) together with the regression test, and set the finding to `VERIFIED`.
    - **Upstream closed it without a fix, or has a fix only in an unmerged PR:** repair it in the fork. If upstream closed it, first set `FORK-FIX-REQUIRED`.
 4. **Fix** in the fork with the smallest correct change. If a fix branch already exists (see **Current fork status**), start from it and re-check it against current `master`.
-5. **Add a permanent regression test** under `cpp/regression/`, named after the finding (for example `cpp/regression/N-01.sh`, with small generated inputs rather than committed binaries where possible). A test must:
+5. **Add a permanent regression test** in `cpp/selftest/`, named `regression-<topic>.sh`, using small generated inputs rather than committed binaries where possible. A test must:
    - exit 0 when the behaviour is correct and non-zero when the defect is present;
    - be shown to fail on the unfixed code and pass on the fixed code (record both in the commit message);
-   - use the finding's expected values with a stated tolerance where a figure is compared (see `BUILDING.md`, "Precision audit").
+   - use the finding's expected values with a stated tolerance where a figure is compared (see `BUILDING.md`, "Precision audit");
+   - assert its own precondition where one exists, so that it cannot pass vacuously if the input stops exercising the defect.
 
-   If no `cpp/regression/run-all.sh` exists yet, the first fix adds it; it runs every `cpp/regression/*.sh` and fails if any fails.
-6. **Run the tests:**
-   - `cd cpp && make && ./regression/run-all.sh`
-   - `cd selftest && ./selftest`, plus a check that the "Assessed min entropy" lines are unchanged (until NOVEL-01 is fixed, `./selftest` alone cannot detect a change in the final figure)
-   - `./pin-check.sh`
-   - for memory or UB findings: an ASan/UBSan build, `make <tool> CXXFLAGS='-std=c++11 -fopenmp -O1 -g -fsanitize=address,undefined -I/usr/include/jsoncpp'`, run on the reproduction inputs
-7. **Commit** the fix and its regression test together in one commit:
+   One script may cover several findings that share a cause, as `regression-estimator-guards.sh` and `regression-restart.sh` do; name each finding in a section comment, and record the script against every finding it covers in this tracker. `cpp/selftest/run-all-checks.sh` **discovers** `regression-*.sh`, so a new script needs no registration anywhere. Earlier versions of this guide described a `cpp/regression/` directory with a hand-maintained `run-all.sh`; neither was ever created, and the discovery-based runner replaces the idea.
+6. **Run the tests:** `cd cpp && make non_iid iid restart && cd selftest && ./run-all-checks.sh`
+
+   That runs `pin-check.sh`, `selftest` and every regression script, and fails if any fails. Two things to know about its output:
+   - `selftest` exits non-zero on macOS arm64 for the pre-existing platform deltas in upstream #155. `./run-all-checks.sh --allow-known-platform-deltas` treats exactly those two files as a pass and nothing else. Do not widen that.
+   - For memory or UB findings also build with sanitizers, `make <tool> CXXFLAGS='-std=c++11 -fopenmp -O1 -g -fsanitize=address,undefined -I/usr/include/jsoncpp'`, and run the reproduction inputs. `regression-estimator-guards.sh` builds its own sanitizer binary and is the model for this.
+7. **Check the documentation claims:** `cd cpp/selftest && ./regression-docs.sh`
+
+   The prose has drifted out of true twice, both times still telling a reader the fork was unmodified after it had been modified. This script checks what can be checked mechanically: that commit SHAs resolve, referenced paths and links exist, the tracker's counts match its own sections, the pinned figure quoted in the documents matches both `pin-check.sh` and the current build, no built program links MPFR or GMP, and no previously-corrected claim has reappeared. If a repair changes what the documents assert, update them and re-run it.
+8. **Commit** the fix and its regression test together in one commit:
    - Message form: `fix(<ID>): <what was wrong>`.
    - In the body: the affected source, the reproduction before and after, and the regression-test path.
-8. **Update the tracker** in a separate commit, `audits: <ID> -> <STATE>`. Fill in:
+9. **Update the tracker** in a separate commit, `audits: <ID> -> <STATE>`. Fill in:
    - **State:** `FORK-FIXED`
    - **Current fork status**
-   - **Fork fix commit:** the SHA from step 7
+   - **Fork fix commit:** the SHA from step 8
    - **Regression test:** its path
    - **Verification:** the command and its result
    - **Last upstream-status check:** today's date
    - **Required next action**
    Then update the queue table and the summary counts at the top.
-9. **Verify independently.** In a fresh clone of fork `master`, do a clean build, run every regression test and the selftest, and re-run the finding's Reproduce block, which must no longer show the `BUG:` lines. Then set `VERIFIED` and record the date.
+10. **Verify independently.** In a fresh clone of fork `master`, do a clean build, run `cpp/selftest/run-all-checks.sh` and `cpp/selftest/regression-docs.sh`, and re-run the finding's Reproduce block, which must no longer show the `BUG:` lines. Then set `VERIFIED` and record the date.
 
 ## State transitions
 

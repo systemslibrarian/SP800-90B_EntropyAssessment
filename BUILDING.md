@@ -140,17 +140,30 @@ differ between runs of the same binary.
 ### Running the checks
 
 ```sh
-cd cpp/selftest
-./selftest                        # against NIST's reference outputs
-./pin-check.sh --prove-nonvacuous # this fork's pinned figure
-./regression-271.sh               # conditioned IID tests read the bitstring
-./regression-272.sh               # selftest compares the final figures
-./regression-minsize.sh           # the Section 3.1.1 intake check
-./regression-estimator-guards.sh  # estimator safety (builds its own ASan binary)
-./regression-subset.sh            # -l arithmetic and provenance
-./regression-width.sh             # effective symbol width in JSON
-./regression-nonregular.sh        # non-regular input files
+cd cpp && make non_iid iid restart
+cd selftest && ./run-all-checks.sh
 ```
+
+`run-all-checks.sh` runs `pin-check.sh`, `selftest`, and every
+`regression-*.sh` in that directory, and fails if any of them fails.
+
+It **discovers** the regression scripts rather than listing them. That is
+deliberate. An earlier version of this section listed them by hand and fell
+six scripts behind, so anyone following it ran half the suite believing they
+had run all of it. Adding a `regression-*.sh` file is now enough to get it
+run; there is no list to update.
+
+To check the documentation's own claims as well:
+
+```sh
+cd cpp/selftest && ./regression-docs.sh
+```
+
+That verifies what can be verified mechanically: commit SHAs resolve,
+referenced paths and links exist, the tracker's counts match its own
+sections, the pinned figure quoted in these documents matches both
+`pin-check.sh` and the current build, no built program links MPFR or GMP, and
+none of the claims that were previously corrected has reappeared.
 
 **`selftest` exits 1 on macOS arm64, and that is expected here.** Three
 predictor values on `biased-random-bytes.bin` and `ringOsc-nist.bin`
