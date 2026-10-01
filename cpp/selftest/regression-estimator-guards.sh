@@ -14,6 +14,8 @@
 #         4 <= L <= 16; it must decline instead. Checked under AddressSanitizer.
 #   #263  compression_test admitted exactly d+1 six-bit blocks, leaving one
 #         test block, and divided by v-1 = 0. It must require two.
+#   #264  collision_test divided by v-1 = 0 with a single collision and
+#         reported min entropy 1 from a NaN comparison. It must decline.
 #
 # Each input is run with EA_ALLOW_SHORT_DATASET=1 so that the intake check
 # does not mask the behaviour being tested.
@@ -115,6 +117,25 @@ if printf '%s' "${out}" | grep -qE 'Compression Estimate: sigma-hat = [0-9]'; th
 else
 	note "#263 compression still runs at v=2:" "did not run"
 	fails=$((fails + 1))
+fi
+
+# ---------------------------------------------------------------- #264
+# Five binary samples yield one collision: sigma-hat was NaN, and because NaN
+# compares false against both thresholds the estimator reported min entropy 1
+# without measuring anything.
+printf '\x00\x01\x01\x00\x01' > "${work}/b5.bin"
+out=$("${asan}" -vv "${work}/b5.bin" 1 2>&1)
+if printf '%s' "${out}" | grep -q 'not enough collisions to run collision test'; then
+	note "#264 collision declines at v=1:" "declined"
+else
+	note "#264 collision declines at v=1:" "ran anyway"
+	fails=$((fails + 1))
+fi
+if printf '%s' "${out}" | grep -qE 'Collision Estimate: (sigma-hat = -?nan|min entropy = 1$)'; then
+	note "#264 no unmeasured 1.0 from NaN:" "still produced"
+	fails=$((fails + 1))
+else
+	note "#264 no unmeasured 1.0 from NaN:" "none"
 fi
 
 # A compliant dataset must remain sanitizer-clean.

@@ -35,6 +35,20 @@ double collision_test(uint8_t* data, long len, const int verbose, const char *la
 		i += t_v;
 	}
 
+	// SP 800-90B 6.3.2 step 5 defines sigma-hat with a 1/(v-1) factor over the
+	// v collisions, so at least two collisions are needed. With v = 1 the
+	// division below is 0/0: sigma-hat was NaN, X-bar' was NaN, and NaN
+	// compares false against both the X < 2.0 and X < 2.5 thresholds, so the
+	// estimator fell through to "Could Not Find p" and reported min entropy 1
+	// without having measured anything. With v = 0, X itself is 0/0. Upstream
+	// #264; @joshuaehill: "This would be addressed by enforcing a 1000000
+	// sample minimum", which is enforced at intake, so this is here to keep
+	// the estimator safe when called directly.
+	if(v < 2){
+		printf("\t*** Warning: not enough collisions to run collision test (need at least 2, found %ld) ***\n", v);
+		return -1.0;
+	}
+
 	// X is mean of t_v's, s is sample stdev, where
 	// s^2 = (sum(t_v^2) - sum(t_v)^2/v) / (v-1)
 	X = i / (double)v;

@@ -298,16 +298,23 @@ int main(int argc, char* argv[]) {
 
     if (((data.alph_size > 2) || !initial_entropy)) {
         ret_min_entropy = collision_test(data.bsymbols, data.blen, verbose, "Bitstring");
-        if (verbose == 2) printf("\tCollision Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
-        tc632.h_bitstring = ret_min_entropy;
-        H_bitstring = min(ret_min_entropy, H_bitstring);
+        // collision_test can now decline (-1.0). Every other fallible
+        // estimator here is already guarded this way; without the guard a
+        // declined estimate would be folded in as -1 bits.
+        if (ret_min_entropy >= 0) {
+            if (verbose == 2) printf("\tCollision Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
+            tc632.h_bitstring = ret_min_entropy;
+            H_bitstring = min(ret_min_entropy, H_bitstring);
+        }
     }
 
     if (initial_entropy && (data.alph_size == 2)) {
         ret_min_entropy = collision_test(data.symbols, data.len, verbose, "Literal");
-        if (verbose == 2) printf("\tCollision Test Estimate = %f / 1 bit(s)\n", ret_min_entropy);
-        tc632.h_original = ret_min_entropy;
-        H_original = min(ret_min_entropy, H_original);
+        if (ret_min_entropy >= 0) {
+            if (verbose == 2) printf("\tCollision Test Estimate = %f / 1 bit(s)\n", ret_min_entropy);
+            tc632.h_original = ret_min_entropy;
+            H_original = min(ret_min_entropy, H_original);
+        }
     }
 
     tc632.testCaseNumber = "Collision Test (for bit strings only)";
