@@ -123,10 +123,7 @@ int main(int argc, char* argv[]) {
                     testRun.errorMsg = "Error on index/samples.";
 
                     if (jsonOutput) {
-                        ofstream output;
-                        output.open(outputfilename);
-                        output << testRun.GetAsJson();
-                        output.close();
+                        writeJsonReport(outputfilename, testRun.GetAsJson());
                     }
                     print_usage();
                 }
@@ -140,10 +137,7 @@ int main(int argc, char* argv[]) {
                     testRun.errorMsg = "Error on index/samples.";
 
                     if (jsonOutput) {
-                        ofstream output;
-                        output.open(outputfilename);
-                        output << testRun.GetAsJson();
-                        output.close();
+                        writeJsonReport(outputfilename, testRun.GetAsJson());
                     }
                     print_usage();
                 }
@@ -158,10 +152,7 @@ int main(int argc, char* argv[]) {
                     testRun.errorMsg = "Error: -l requires a sample count greater than zero.";
 
                     if (jsonOutput) {
-                        ofstream output;
-                        output.open(outputfilename);
-                        output << testRun.GetAsJson();
-                        output.close();
+                        writeJsonReport(outputfilename, testRun.GetAsJson());
                     }
 
                     printf("Error: -l requires a sample count greater than zero.\n");
@@ -208,10 +199,7 @@ int main(int argc, char* argv[]) {
         testRun.errorMsg = "Error: could not hash the input file.";
 
         if (jsonOutput) {
-            ofstream output;
-            output.open(outputfilename);
-            output << testRun.GetAsJson();
-            output.close();
+            writeJsonReport(outputfilename, testRun.GetAsJson());
         }
 
         printf("Error: could not hash the input file.\n");
@@ -230,10 +218,7 @@ int main(int argc, char* argv[]) {
             testRun.errorMsg = "Invalid bits per symbol.";
 
             if (jsonOutput) {
-                ofstream output;
-                output.open(outputfilename);
-                output << testRun.GetAsJson();
-                output.close();
+                writeJsonReport(outputfilename, testRun.GetAsJson());
             }
 
             printf("Invalid bits per symbol.\n");
@@ -254,10 +239,7 @@ int main(int argc, char* argv[]) {
 
     if (!read_file_subset(file_path, &data, subsetIndex, subsetSize, &testRun)) {
         if (jsonOutput) {
-            ofstream output;
-            output.open(outputfilename);
-            output << testRun.GetAsJson();
-            output.close();
+            writeJsonReport(outputfilename, testRun.GetAsJson());
         }
         printf("Error reading file.\n");
         print_usage();
@@ -281,10 +263,7 @@ int main(int argc, char* argv[]) {
     // subset request can make smaller than the file).
     if (!dataset_meets_minimum(&data, &testRun)) {
         if (jsonOutput) {
-            ofstream output;
-            output.open(outputfilename);
-            output << testRun.GetAsJson();
-            output.close();
+            writeJsonReport(outputfilename, testRun.GetAsJson());
         }
 
         free_data(&data);
@@ -299,10 +278,7 @@ int main(int argc, char* argv[]) {
         testRun.errorMsg = "Symbol alphabet consists of 1 symbol. No entropy awarded...";
 
         if (jsonOutput) {
-            ofstream output;
-            output.open(outputfilename);
-            output << testRun.GetAsJson();
-            output.close();
+            writeJsonReport(outputfilename, testRun.GetAsJson());
         }
 
         free_data(&data);
@@ -612,10 +588,13 @@ int main(int argc, char* argv[]) {
     testRun.errorLevel = 0;
 
     if (jsonOutput) {
-        ofstream output;
-        output.open(outputfilename);
-        output << testRun.GetAsJson();
-        output.close();
+        // This is the success path, so a report that cannot be written is the
+        // only failure of the run and must be its exit status. Exiting 0 here
+        // told a caller the report was on disk when nothing had been written.
+        if (!writeJsonReport(outputfilename, testRun.GetAsJson())) {
+            free_data(&data);
+            return -1;
+        }
     }
 
     free_data(&data);

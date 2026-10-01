@@ -3,6 +3,8 @@
 
 #include <cstdlib>
 #include <string.h>
+#include <string>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -17,6 +19,37 @@
 #include <openssl/sha.h>
 
 using namespace std;
+
+// Write a JSON report, reporting a failure instead of silently losing it.
+//
+// Every report write was an unchecked ofstream, so "-o /dev/full" or a path in
+// a directory that does not exist produced no file and exited 0. A caller that
+// reads the exit status and then opens the report would read a stale file, or
+// none, believing the run had succeeded.
+//
+// Returns true when the report was written. The caller decides the exit
+// status, because several of these writes happen on paths that are already
+// failing for some other reason and that reason should be the one reported.
+bool writeJsonReport(const string &path, const string &json) {
+    ofstream output;
+
+    output.open(path.c_str());
+    if (!output) {
+        fprintf(stderr, "Error: could not open the output file '%s'.\n", path.c_str());
+        return false;
+    }
+
+    output << json;
+    output.close();
+
+    // close() flushes, so a device-full or I/O error shows up here.
+    if (!output) {
+        fprintf(stderr, "Error: could not write the output file '%s'.\n", path.c_str());
+        return false;
+    }
+
+    return true;
+}
 
 string getCurrentTimestamp() {
 
