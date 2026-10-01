@@ -985,6 +985,32 @@ These are recorded so that nothing is lost. An `UNCONFIRMED` item enters the que
 | #56, #95, #209, PR #224 | restart cutoff by simulation instead of the literal binomial rule (intended deviation) | closed |
 | #236 / PR #237 | manually maintained VERSION macro (tag v1.1.8 prints 1.1.7) | #236 open |
 
+## Open questions put to NIST (2026-09-30, awaiting an answer)
+
+Posted by the fork owner on the upstream threads, not by the repair pass. Two
+of them gate work that is deliberately not done:
+
+| Thread | Question | What is blocked |
+|---|---|---|
+| PR [#256](https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/256) / [#253](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/253) | If `bits_per_symbol=8` is supplied explicitly for a two-symbol alphabet such as `{33, 211}`, is that dataset still binary for §3.1.3, so the `n x H_bitstring` term is correctly omitted? | F01. The fork follows upstream behaviour unchanged and PR #256 is not merged here until this is answered. |
+| PR [#268](https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268) / [#257](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/257) | Should the PR be revised to return failure locally as defence in depth, or superseded by the central 1,000,000-sample intake check? | Nothing in the fork: both are implemented here (`ed88de9`, `c2f1dcd`). Only the shape of the upstream PR is waiting. |
+
+Agreements confirmed on the same date, all already implemented here: remedy 1
+for [#271](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/271)
+(commit `134d377`), the selftest strengthening for
+[#272](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/272)
+(commit `da0265c`), the 1,000,000-sample minimum as the user-facing remedy for
+the short-input family (commit `c2f1dcd`), narrowing
+[#255](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/255) to
+sub-minimum input being an error rather than flagging legitimate no-result
+estimates, keeping the whole-file hash on
+[#260](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/260) and
+adding subset provenance instead, limiting
+[#254](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/254) to
+reporting the effective width in JSON, and treating
+[#259](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/259) as
+fork hardening rather than a standards defect.
+
 ## Sources
 
 - F-series: [`AUDIT.md`](AUDIT.md), the first-wave audit, with rows re-assessed in §4 of the novel-findings report.
