@@ -23,10 +23,28 @@ public:
 
     string testCaseNumber;
 
+    // Set when an estimator was applicable to this dataset but could not
+    // produce a value, as opposed to simply not applying to this branch. The
+    // JSON otherwise omits both cases identically, so a consumer could not
+    // tell that the reported minimum had been taken over fewer estimators
+    // than the standard lists, which can only make the figure higher.
+    //
+    // This is deliberately not an error. @joshuaehill on #255: "There are
+    // instances where binary estimators can't produce an estimate but where
+    // the result is not an error ... This is not an error, and should not be
+    // flagged as one." errorLevel is untouched; this is a statement of fact
+    // about the run.
+    bool literal_not_run = false;
+    bool bitstring_not_run = false;
+
 protected:
     Json::Value GetBaseJson() {
         Json::Value baseJson;
         baseJson["testCaseDesc"] = testCaseNumber;
+        if(literal_not_run)
+            baseJson["literalEstimateNotRun"] = true;
+        if(bitstring_not_run)
+            baseJson["bitstringEstimateNotRun"] = true;
         if(ret_min_entropy != -1)
             baseJson["retMinEntropy"] = ret_min_entropy;
         if(data_word_size != -1)

@@ -336,6 +336,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tCollision Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
             tc632.h_bitstring = ret_min_entropy;
             H_bitstring = min(ret_min_entropy, H_bitstring);
+        } else {
+            tc632.bitstring_not_run = true;
         }
     }
 
@@ -345,6 +347,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tCollision Test Estimate = %f / 1 bit(s)\n", ret_min_entropy);
             tc632.h_original = ret_min_entropy;
             H_original = min(ret_min_entropy, H_original);
+        } else {
+            tc632.literal_not_run = true;
         }
     }
 
@@ -380,6 +384,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tCompression Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
             tc634.h_bitstring = ret_min_entropy;
             H_bitstring = min(ret_min_entropy, H_bitstring);
+        } else {
+            tc634.bitstring_not_run = true;
         }
     }
 
@@ -389,6 +395,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tCompression Test Estimate = %f / 1 bit(s)\n", ret_min_entropy);
             tc634.h_original = ret_min_entropy;
             H_original = min(ret_min_entropy, H_original);
+        } else {
+            tc634.literal_not_run = true;
         }
     }
 
@@ -406,6 +414,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tT-Tuple Test Estimate (bit string) = %f / 1 bit(s)\n", bin_t_tuple_res);
             tc635.bin_t_tuple_res = bin_t_tuple_res;
             H_bitstring = min(bin_t_tuple_res, H_bitstring);
+        } else {
+            tc635.bitstring_not_run = true;
         }
     }
 
@@ -415,6 +425,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tT-Tuple Test Estimate = %f / %d bit(s)\n", t_tuple_res, data.word_size);
             tc635.t_tuple_res = t_tuple_res;
             H_original = min(t_tuple_res, H_original);
+        } else {
+            tc635.literal_not_run = true;
         }
     }
 
@@ -424,16 +436,24 @@ int main(int argc, char* argv[]) {
     // Section 6.3.6 - Estimate entropy with LRS Test
     NonIidTestCase tc636;
 
-    if ((((data.alph_size > 2) || !initial_entropy)) && (bin_lrs_res >= 0.0)) {
-        if (verbose == 2) printf("\tLRS Test Estimate (bit string) = %f / 1 bit(s)\n", bin_lrs_res);
-        tc636.bin_lrs_res = bin_lrs_res;
-        H_bitstring = min(bin_lrs_res, H_bitstring);
+    if (((data.alph_size > 2) || !initial_entropy)) {
+        if (bin_lrs_res >= 0.0) {
+            if (verbose == 2) printf("\tLRS Test Estimate (bit string) = %f / 1 bit(s)\n", bin_lrs_res);
+            tc636.bin_lrs_res = bin_lrs_res;
+            H_bitstring = min(bin_lrs_res, H_bitstring);
+        } else {
+            tc636.bitstring_not_run = true;
+        }
     }
 
-    if (initial_entropy && (lrs_res >= 0.0)) {
-        if (verbose == 2) printf("\tLRS Test Estimate = %f / %d bit(s)\n", lrs_res, data.word_size);
-        tc636.lrs_res = lrs_res;
-        H_original = min(lrs_res, H_original);
+    if (initial_entropy) {
+        if (lrs_res >= 0.0) {
+            if (verbose == 2) printf("\tLRS Test Estimate = %f / %d bit(s)\n", lrs_res, data.word_size);
+            tc636.lrs_res = lrs_res;
+            H_original = min(lrs_res, H_original);
+        } else {
+            tc636.literal_not_run = true;
+        }
     }
 
     tc636.testCaseNumber = "LRS Test";
@@ -450,6 +470,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tMulti Most Common in Window (MultiMCW) Prediction Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
             tc637.h_bitstring = ret_min_entropy;
             H_bitstring = min(ret_min_entropy, H_bitstring);
+        } else {
+            tc637.bitstring_not_run = true;
         }
     }
 
@@ -459,6 +481,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tMulti Most Common in Window (MultiMCW) Prediction Test Estimate = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc637.h_original = ret_min_entropy;
             H_original = min(ret_min_entropy, H_original);
+        } else {
+            tc637.literal_not_run = true;
         }
     }
 
@@ -474,6 +498,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tLag Prediction Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
             tc638.h_bitstring = ret_min_entropy;
             H_bitstring = min(ret_min_entropy, H_bitstring);
+        } else {
+            tc638.bitstring_not_run = true;
         }
     }
 
@@ -483,6 +509,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tLag Prediction Test Estimate = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc638.h_original = ret_min_entropy;
             H_original = min(ret_min_entropy, H_original);
+        } else {
+            tc638.literal_not_run = true;
         }
     }
 
@@ -498,6 +526,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tMulti Markov Model with Counting (MultiMMC) Prediction Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
             tc639.h_bitstring = ret_min_entropy;
             H_bitstring = min(ret_min_entropy, H_bitstring);
+        } else {
+            tc639.bitstring_not_run = true;
         }
     }
 
@@ -507,6 +537,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tMulti Markov Model with Counting (MultiMMC) Prediction Test Estimate = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc639.h_original = ret_min_entropy;
             H_original = min(ret_min_entropy, H_original);
+        } else {
+            tc639.literal_not_run = true;
         }
     }
 
@@ -522,6 +554,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tLZ78Y Prediction Test Estimate (bit string) = %f / 1 bit(s)\n", ret_min_entropy);
             tc6310.h_bitstring = ret_min_entropy;
             H_bitstring = min(ret_min_entropy, H_bitstring);
+        } else {
+            tc6310.bitstring_not_run = true;
         }
     }
 
@@ -531,6 +565,8 @@ int main(int argc, char* argv[]) {
             if (verbose == 2) printf("\tLZ78Y Prediction Test Estimate = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc6310.h_original = ret_min_entropy;
             H_original = min(ret_min_entropy, H_original);
+        } else {
+            tc6310.literal_not_run = true;
         }
     }
 
