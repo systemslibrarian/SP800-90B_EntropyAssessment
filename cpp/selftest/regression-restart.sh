@@ -8,6 +8,9 @@
 #         supplied; "nan" passed both range checks, because every comparison
 #         with NaN is false, and then reached (int)floor(u/p) with p = NaN,
 #         which is undefined behaviour indexing counts[] out of bounds.
+#   N-06  sha256_file()'s status was discarded and its buffer left
+#         uninitialised, so a failure put stack bytes into the report's
+#         "sha256" field and the run continued and exited 0.
 #   R-2   An estimate that could not be computed returns -1, and that sentinel
 #         was folded into H_r/H_c as if it were an entropy, failing an
 #         otherwise valid restart dataset.
@@ -104,6 +107,45 @@ if "${tool}" -n -o "${work}/ok.json" "${work}/r8.bin" 8 3.2 >/dev/null 2>&1 && \
 	note "R-3 successful run still errorLevel 0:" "yes"
 else
 	note "R-3 successful run still errorLevel 0:" "changed"
+	fails=$((fails + 1))
+fi
+
+# ---------------------------------------------------------------- N-06
+for mode in -i -n; do
+	rm -f "${work}/nf.json"
+	"${tool}" "${mode}" -o "${work}/nf.json" "${work}/absent.bin" 8 4 >/dev/null 2>&1
+	rc=$?
+	if [ "${rc}" -eq 0 ]; then
+		note "N-06 ${mode} unhashable input exits nonzero:" "exit 0"
+		fails=$((fails + 1))
+	elif python3 - "${work}/nf.json" <<'PY'
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+except Exception:
+    sys.exit(1)
+# errorLevel must be set, and no sha256 may be reported for a file that
+# could not be hashed.
+sys.exit(0 if d.get("errorLevel", 0) != 0 and not d.get("sha256") else 1)
+PY
+	then
+		note "N-06 ${mode} no hash invented on failure:" "errorLevel set, sha256 absent"
+	else
+		note "N-06 ${mode} no hash invented on failure:" "errorLevel 0 or a sha256 was reported"
+		fails=$((fails + 1))
+	fi
+done
+
+# A valid run must still record the real hash of the file.
+rm -f "${work}/okh.json"
+"${tool}" -n -o "${work}/okh.json" "${work}/r8.bin" 8 3.2 >/dev/null 2>&1
+want=$(shasum -a 256 "${work}/r8.bin" 2>/dev/null | cut -d' ' -f1)
+[ -n "${want}" ] || want=$(sha256sum "${work}/r8.bin" | cut -d' ' -f1)
+got=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('sha256',''))" "${work}/okh.json" 2>/dev/null)
+if [ "${got}" = "${want}" ]; then
+	note "N-06 valid run records the real hash:" "matches"
+else
+	note "N-06 valid run records the real hash:" "got '${got}'"
 	fails=$((fails + 1))
 fi
 

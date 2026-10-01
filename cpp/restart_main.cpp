@@ -244,22 +244,53 @@ int main(int argc, char* argv[]) {
 
     if (quietMode) verbose = 0;
 
-    char hash[2*SHA256_DIGEST_LENGTH+1];
-    sha256_file(file_path, hash);
-
     IidTestRun testRunIid;
     testRunIid.type = "Restart";
     testRunIid.timestamp = timestamp;
     testRunIid.filename = file_path;
     testRunIid.commandline = commandline;
-    testRunIid.sha256 = hash;
 
     NonIidTestRun testRunNonIid;
     testRunNonIid.type = "Restart";
     testRunNonIid.timestamp = timestamp;
-    testRunNonIid.sha256 = hash;
     testRunNonIid.filename = file_path;
     testRunNonIid.commandline = commandline;
+
+    // sha256_file()'s status was discarded and the buffer was left
+    // uninitialised, so a failure (a missing or unreadable file, or one that
+    // is not a regular file) put whatever happened to be on the stack into the
+    // report's "sha256" field, and the run continued and exited 0. The field
+    // was simply omitted whenever the first stack byte happened to be zero.
+    // Hashing is now done after both report objects exist, so a failure can be
+    // reported properly.
+    char hash[2*SHA256_DIGEST_LENGTH+1];
+
+    hash[0] = '\0';
+    if (sha256_file(file_path, hash) != 0) {
+        string msg = "Error: could not hash the input file.";
+
+        printf("%s\n", msg.c_str());
+
+        if (jsonOutput) {
+            ofstream output;
+            output.open(outputfilename);
+            if (iid) {
+                testRunIid.errorLevel = -1;
+                testRunIid.errorMsg = msg;
+                output << testRunIid.GetAsJson();
+            } else {
+                testRunNonIid.errorLevel = -1;
+                testRunNonIid.errorMsg = msg;
+                output << testRunNonIid.GetAsJson();
+            }
+            output.close();
+        }
+
+        exit(-1);
+    }
+
+    testRunIid.sha256 = hash;
+    testRunNonIid.sha256 = hash;
 
     if (argc == 2) {
         // get bits per word
