@@ -17,6 +17,7 @@
 #include "iid/permutation_tests.h"
 
 #include <cstdint>
+#include <cerrno>
 #include <getopt.h>
 #include <limits.h>
 #include <iostream>
@@ -289,8 +290,49 @@ int main(int argc, char* argv[]) {
         argc--;
     }
 
-    // get H_I	
-    H_I = atof(argv[0]);
+    // get H_I
+    //
+    // atof() cannot report a failure: it returns 0.0 for text it cannot parse,
+    // so "abc" was accepted as H_I = 0 and the run reported a verdict for an
+    // entropy the operator never supplied. Worse, it accepts "nan" and "inf".
+    // Every comparison with NaN is false, so a NaN H_I passes both the
+    // "H_I < 0" check here and the "H_I > word_size" check further down. It
+    // then reaches p = pow(2.0, -H_I), which is NaN, and the index expression
+    // (int)floor(randomUnit(...) / p) in simulateCount() and simulateBound()
+    // converts that NaN to int. That conversion is undefined behaviour and the
+    // result indexes counts[] out of bounds; the observed effect is a crash.
+    //
+    // Parse strictly: the whole argument must be consumed and the value must
+    // be finite.
+    {
+        char *H_I_end = NULL;
+
+        errno = 0;
+        H_I = strtod(argv[0], &H_I_end);
+
+        if ((H_I_end == argv[0]) || (*H_I_end != '\0') || !std::isfinite(H_I)) {
+            printf("H_I must be a finite decimal number: '%s'.\n", argv[0]);
+
+            if (jsonOutput) {
+                string msg = "H_I must be a finite decimal number: '" + string(argv[0]) + "'.";
+                ofstream output;
+                output.open(outputfilename);
+                if (iid) {
+                    testRunIid.errorLevel = -1;
+                    testRunIid.errorMsg = msg;
+                    output << testRunIid.GetAsJson();
+                } else {
+                    testRunNonIid.errorLevel = -1;
+                    testRunNonIid.errorMsg = msg;
+                    output << testRunNonIid.GetAsJson();
+                }
+                output.close();
+            }
+
+            print_usage();
+        }
+    }
+
     if (H_I < 0) {
         printf("H_I %f must be nonnegative.\n", H_I);
         if (jsonOutput) {
