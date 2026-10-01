@@ -64,6 +64,10 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
    //i is the index of the new symbol to be predicted
    for(i=2; i<L; i++) {
       bool found_x = false;
+      // See the generic path below: SP 800-90B 6.3.9 leaves correct[i-2] at 0
+      // for a Null prediction, so a Null from the winner ends the run. The
+      // run counter was only reset where the winner predicted and was wrong.
+      bool winner_correct = false;
 
       curWinner = winner;
       curPattern = 0;
@@ -111,13 +115,8 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
                //If the best predictor was previously d, increment the relevant counters
                if(d == curWinner){
                   correctCount++;
-                  curRunOfCorrects++;
-                  if(curRunOfCorrects > maxRunOfCorrects) maxRunOfCorrects = curRunOfCorrects;
+                  winner_correct = true;
                }
-            } else if(d == curWinner) {
-               //This prediction was wrong;
-               //If the best predictor was previously d, zero the run length counter
-               curRunOfCorrects = 0;
             }
 
             //Now check to see in (x,y) needs to be counted or (x,y) added to the dictionary
@@ -137,6 +136,16 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
             binaryDictEntry[S[i]&1]=1;
             dictElems[d]++;
          }
+      }
+
+      // Anything that is not a correct prediction by the winner ends the run:
+      // a wrong prediction, a Null because the winner's prefix has not been
+      // seen, or no prediction at all while i - 2 < curWinner.
+      if(winner_correct) {
+         curRunOfCorrects++;
+         if(curRunOfCorrects > maxRunOfCorrects) maxRunOfCorrects = curRunOfCorrects;
+      } else {
+         curRunOfCorrects = 0;
       }
    }
 
@@ -206,6 +215,14 @@ double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose,
 	//i is the index of the new symbol to be predicted
 	for (i = 2; i < len; i++){
 		bool found_x = false;
+		// Whether the winning subpredictor predicted S[i] correctly this
+		// round. SP 800-90B 6.3.9 step 1 initialises correct[] to 0 and step
+		// 4.d sets correct[i-2] = 1 only when the prediction equals s_i, so a
+		// Null prediction leaves it 0; the worked example in that section
+		// shows exactly that for its first two rounds. run_len was only ever
+		// reset where the winner predicted and was wrong, so a Null from the
+		// winner silently carried the run across.
+		bool winner_correct = false;
 		cur_winner = winner;
 		memset(x.data(), 0, D_MMC);
 
@@ -238,13 +255,8 @@ double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose,
 					if(++scoreboard[d] >= scoreboard[winner]) winner = d;
 					if(d == cur_winner){
 						C++;
-						if(++run_len > max_run_len) max_run_len = run_len;
+						winner_correct = true;
 					}
-				}
-				else if(d == cur_winner) {
-					//This prediction was wrong;
-					//If the best predictor was previously d, zero the run length counter
-					run_len = 0;
 				}
 
 				//Now check to see in (x,y) needs to be counted or (x,y) added to the dictionary
@@ -260,6 +272,17 @@ double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose,
 				(M[d][x]).incrementPostfix(data[i], true);
 				entries[d]++;
 			}
+		}
+
+		// The run of correct predictions ends on anything that is not a
+		// correct prediction by the winner: a wrong prediction, a Null
+		// because the winner's prefix has not been seen before, or no
+		// prediction at all because the loop above has not yet reached
+		// d = cur_winner while i - 2 < cur_winner.
+		if(winner_correct){
+			if(++run_len > max_run_len) max_run_len = run_len;
+		} else {
+			run_len = 0;
 		}
 	}
 
