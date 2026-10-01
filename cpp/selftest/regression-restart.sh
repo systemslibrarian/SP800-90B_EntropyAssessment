@@ -8,6 +8,9 @@
 #         supplied; "nan" passed both range checks, because every comparison
 #         with NaN is false, and then reached (int)floor(u/p) with p = NaN,
 #         which is undefined behaviour indexing counts[] out of bounds.
+#   R-3   An -i run that could not read its input wrote a JSON report saying
+#         errorLevel 0: the error level was set on the non-IID report object
+#         while the IID one was written.
 
 set -u
 
@@ -64,6 +67,42 @@ for good in 3.2 8 0; do
 		fails=$((fails + 1))
 	fi
 done
+
+# ---------------------------------------------------------------- R-3
+# r8.bin holds byte values, so declaring 4 bits per symbol makes read_file
+# fail. The report must say so, in both modes.
+for mode in -i -n; do
+	rm -f "${work}/err.json"
+	"${tool}" "${mode}" -o "${work}/err.json" "${work}/r8.bin" 4 3.2 >/dev/null 2>&1
+	rc=$?
+	if [ "${rc}" -eq 0 ]; then
+		note "R-3 ${mode} read failure exits nonzero:" "exit 0"
+		fails=$((fails + 1))
+	elif python3 - "${work}/err.json" <<'PY'
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+except Exception:
+    sys.exit(1)
+sys.exit(0 if d.get("errorLevel", 0) != 0 and d.get("errorMessage") else 1)
+PY
+	then
+		note "R-3 ${mode} read failure recorded in JSON:" "errorLevel set with a message"
+	else
+		note "R-3 ${mode} read failure recorded in JSON:" "errorLevel 0 or no message"
+		fails=$((fails + 1))
+	fi
+done
+
+# A run that succeeds must still report errorLevel 0.
+rm -f "${work}/ok.json"
+if "${tool}" -n -o "${work}/ok.json" "${work}/r8.bin" 8 3.2 >/dev/null 2>&1 && \
+   python3 -c "import json,sys; sys.exit(0 if json.load(open(sys.argv[1])).get('errorLevel')==0 else 1)" "${work}/ok.json"; then
+	note "R-3 successful run still errorLevel 0:" "yes"
+else
+	note "R-3 successful run still errorLevel 0:" "changed"
+	fails=$((fails + 1))
+fi
 
 echo
 if [ "${fails}" -eq 0 ]; then

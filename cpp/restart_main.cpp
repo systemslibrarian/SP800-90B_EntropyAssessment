@@ -362,19 +362,27 @@ int main(int argc, char* argv[]) {
         printf("Error reading file.\n");
 
         if (jsonOutput) {
+            ofstream output;
+            output.open(outputfilename);
+
             if (iid) {
-                testRunNonIid.errorLevel = -1;
-                ofstream output;
-                output.open(outputfilename);
+                // The error level used to be set on testRunNonIid while
+                // testRunIid was the object written, so an -i run that could
+                // not read its input produced a report saying errorLevel 0.
+                // read_file() also reports into testRunNonIid whatever the
+                // mode, so its message is carried across here rather than
+                // lost.
+                testRunIid.errorLevel = -1;
+                if (testRunIid.errorMsg.empty()) testRunIid.errorMsg = testRunNonIid.errorMsg;
+                if (testRunIid.errorMsg.empty()) testRunIid.errorMsg = "Error reading file.";
                 output << testRunIid.GetAsJson();
-                output.close();
             } else {
                 testRunNonIid.errorLevel = -1;
-                ofstream output;
-                output.open(outputfilename);
+                if (testRunNonIid.errorMsg.empty()) testRunNonIid.errorMsg = "Error reading file.";
                 output << testRunNonIid.GetAsJson();
-                output.close();
             }
+
+            output.close();
         }
 
         print_usage();
