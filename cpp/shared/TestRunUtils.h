@@ -3,6 +3,15 @@
 
 #include <cstdlib>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+// S_ISREG is POSIX and is present on Linux, macOS and mingw-w64, which is the
+// Windows toolchain this fork documents. Define it for a toolchain that has
+// only the _S_IFREG spelling.
+#ifndef S_ISREG
+#define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+#endif
 
 #include <openssl/evp.h>
 #include <openssl/sha.h>
@@ -67,6 +76,32 @@ int sha256_file(const char *path, char *outputBuffer) {
     const int bufSize = 32768;
     int res = 0;
     EVP_MD_CTX *mdctx = NULL;
+
+    // Fork hardening, not a defect NIST has accepted: the read loop below runs
+    // to EOF, so a character device never ends it and the tool hangs before
+    // any size check runs; a FIFO blocks even earlier, inside fopen, waiting
+    // for a writer. The file type is therefore established from the path,
+    // before the file is opened. Upstream #259 records the behaviour;
+    // @joshuaehill's view there is "I'm not sure this is a bug, it's more of
+    // an observation that when the user does wildly wrong things, marginally
+    // bad stuff might occur", so this is a local robustness choice rather
+    // than a standards fix. A dataset has to be a regular file to be seekable
+    // and sized, which read_file_subset already requires.
+    {
+        struct stat st;
+
+        if(stat(path, &st) != 0) {
+            perror("Can't stat the provided file name");
+            res=-1;
+            goto err;
+        }
+
+        if(!S_ISREG(st.st_mode)) {
+            fprintf(stderr, "Error: '%s' is not a regular file.\n", path);
+            res=-1;
+            goto err;
+        }
+    }
 
     // open the file
     if((file = fopen(path, "rb"))==NULL) {
