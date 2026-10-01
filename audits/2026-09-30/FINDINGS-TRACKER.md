@@ -4,6 +4,8 @@ This file is the authoritative work queue for every defect found in `usnistgov/S
 
 A confirmed finding stays in this queue until it is **technically resolved**. An upstream issue being closed, rejected or abandoned, or its discussion stopping, does not resolve it. Deduplicating copied source or evidence does not resolve it either. Findings are never deleted from this file.
 
+**Branch policy (recorded 2026-10-01).** The fork's earlier rule — master pinned to upstream behaviour, each fix on its own branch off upstream, none merged into master — was **superseded on 2026-09-30, deliberately**, when this tracker and [`../BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md) made fork-fix-with-regression-test (option B) a valid resolution and the repairs were committed **directly to master** (first estimator change `c2f1dcd`/`ed88de9`). **Master is now the patched build**, and TruePad ships it as a product dependency (see `../../NOTICE`, "Product-dependency status"). **Reconciliation gap:** not every reported fix is on master — the bitstring-gate (F01 / #253 / PR #256) is **still branch-only** (`fix/bitstring-gate-word-size`; master still reads `alph_size > 2`), so a two-valued multi-bit source ≥ 1,000,000 samples is still over-credited in the shipped build; whether #256 should land on master is an open item for the independent review. The pinned-output check (`cpp/selftest/pin-check.sh`) still holds the **upstream reference figure** for `ringOsc-nist.bin` and **passes on the patched build** (the repairs do not move that 1-bit collision-binding figure); it proves the unchanged paths, and the deliberate divergences are covered by `cpp/selftest/regression-*.sh`, not the pin.
+
 ## AI Repair Queue
 
 A coding agent can take work from this queue by selecting findings whose **State** is `NEEDS-FIX`, `FORK-FIX-REQUIRED` or `FIXED-UPSTREAM-VERIFY`. The full procedure is [`../BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md). For each selected finding the agent must:
@@ -1072,11 +1074,11 @@ re-audit's own write-up and evidence archive live outside the checkout.
 
 | ID | What was wrong | Class | Disposition | Fixed by |
 |---|---|---|---|---|
-| REV-001 | NOTICE still said estimator changes "changed only" to declining, which F09 and N-01 contradict. The same sentence had been corrected in BUILDING.md and missed here. | documentation | `VERIFIED` | `c11c9a8` |
+| REV-001 | NOTICE still said estimator changes "changed only" to declining, which F09 and N-01 contradict. The same sentence had been corrected in BUILDING.md and missed here. | documentation | `VERIFIED` | `5922ff8` |
 | REV-002 | `make non_iid` failed under GCC 13.3 on undeclared `ULONG_MAX`, introduced by the #260 subset overflow check. Apple clang builds it, so the macOS-only workflow did not catch it. | portability (build break) | `VERIFIED` | `b75e763` (a prior session) |
 | REV-003 | `regression-multimmc.sh` asserted only that the binary path produced *a* run length. A mutant with the binary reset removed reports r = 100275 against a correct 17 and passed. | test integrity (vacuous check) | `VERIFIED` | `8f0469c` |
 | REV-005 | `regression-estimator-guards.sh` compared the compression estimate against a literal that is this platform's value, so it raised a false alarm on Linux, where refdata records the other value. | test integrity (false failure) | `VERIFIED` | `8f0469c` |
-| REV-007 | BUILDING.md stated the permutation cost as "0.94 ms per thousand bits"; the measurements give 0.94 seconds, a factor of 1000. The derived run times were computed from the measured rate and were always correct. | documentation | `VERIFIED` | `c11c9a8` |
+| REV-007 | BUILDING.md stated the permutation cost as "0.94 ms per thousand bits"; the measurements give 0.94 seconds, a factor of 1000. The derived run times were computed from the measured rate and were always correct. | documentation | `VERIFIED` | `5922ff8` |
 
 REV-004 and REV-006 were raised and are **not** recorded as defects here.
 REV-004 observes that GNU `getopt` misroutes `-inf` and `-1` as options before
@@ -1096,6 +1098,61 @@ Three claims in the re-audit remain **BLOCKED** rather than confirmed or
 refuted, by its own account: F14's end-to-end evidence above 2^32 blocks, a
 `checkpoint-6` archive, and a `candidate-25.bin` fixture, none of which were
 located. They are not counted as findings in either direction.
+
+## Lesson: a regression is assumed vacuous until it has failed
+
+REV-003 and REV-005 are recorded above as fixed findings. They are also the
+reason for the rule below, and that is the more useful half.
+
+Both were regression tests. Both reported PASS. Neither was testing anything:
+
+- **REV-003** asserted that the MultiMMC binary path produced *a* run length,
+  not that it was correct. A mutant with the binary reset removed reports
+  r = 100275 against a correct 17 and the check passed it. It could not fail.
+- **REV-005** compared a compression figure against a literal that was this
+  platform's value. On Linux, the platform this project targets, the correct
+  figure is different and the check would have failed a correct build. It was
+  evidence about macOS and was read as evidence about the code.
+
+Both were written by the same process, in the same sitting, as the repairs they
+guard. That is the condition that produces them: a test written alongside the
+code it checks inherits the author's belief that the code is right, so it is
+written to agree rather than to discriminate, and agreement is indistinguishable
+from PASS.
+
+**The rule.**
+
+1. **A regression is assumed vacuous until it has been observed to fail against
+   a known-wrong build.** Not reasoned to fail: observed. Build the mutant, run
+   the check, read the failure, record the numbers in the commit. A check that
+   has only ever been seen passing is an untested assertion that it is possible
+   to fail at all.
+2. **A regression that has only been run on one platform is evidence about that
+   platform.** Say so when reporting it. Where a figure is compared, read the
+   expected value from a platform-independent source (`refdata/`) with a stated
+   tolerance, rather than pasting what this machine printed.
+
+**How often this has happened.** It is not a one-off; it is the failure mode.
+
+| Where | Vacuous (could not fail) | Platform-locked | Found by |
+|---|---|---|---|
+| This repo | 3 | 1 | 2 by the independent re-audit (REV-003, REV-005), 2 by me while writing them |
+| TruePad | 3 | — | the author, after every check in a new script passed on first run |
+| **Total** | **6** | **1** | **7 guards that read green and proved nothing** |
+
+The three in TruePad were a release-binary inspection whose every probe passed
+because `grep -q` on a large stream made "does it contain X" take the not-found
+branch unconditionally. The fix there generalises: **every probe now asserts it
+can fire before its silence is trusted** — the symbol probe proves it can see a
+symbol known to be present, the string probe proves it extracted thousands of
+strings. That is the same rule as 1 above, stated for a probe rather than a
+regression.
+
+Adjacent, and counted separately because the mechanism differs: TruePad also
+found three checks that were real but **unread** — an iOS Simulator build, a
+vector check red for 76+ commits, and an instrumentation suite red for 89. A
+check nobody runs and a check that cannot fail are different defects with the
+same symptom, which is a report that says everything is green.
 
 ## Open questions put to NIST (2026-09-30, awaiting an answer)
 

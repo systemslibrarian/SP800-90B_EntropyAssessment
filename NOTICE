@@ -34,6 +34,34 @@ reported figure held without qualification. On 2026-09-30, after NIST
 reviewed the defects this fork had reported upstream and agreed with
 several of them, repairs were made to the estimator sources as well.
 
+Branch policy, and when it changed (recorded 2026-10-01 from the history).
+Until 2026-09-30 this fork followed the rule: master stays pinned to
+upstream behaviour, each fix lives on its own branch off upstream, and no
+fix is merged into master (see the open PR branches fix/bitstring-gate-
+word-size #256 and fix/multimmc-binary-overread #268, and the audit commit
+cbffcbc which states "master's behaviour and pinned output are unchanged").
+That rule was SUPERSEDED on 2026-09-30, deliberately and not by drift: a
+separate session installed a canonical repair queue (audits/2026-09-30/
+FINDINGS-TRACKER.md) and audits/BUG-REPAIR-GUIDE.md, whose stated policy is
+that a defect is resolved only when upstream is corrected OR this fork
+contains the correction with a regression test (option B). Under that
+policy the repairs below were committed DIRECTLY to master (first estimator
+change c2f1dcd/ed88de9, 2026-09-30), not merged from the PR branches.
+MASTER IS NOW THE PATCHED BUILD. The supersession was a decision; see the
+"Product-dependency status" section below for why patched was chosen over
+unpatched.
+
+One inconsistency the history shows, recorded rather than smoothed over:
+not every reported fix is on master. The bitstring-gate fix (F01, upstream
+#253, PR #256 — gate the bitstring estimators on word_size, not the
+observed alphabet) is STILL BRANCH-ONLY: master still reads `alph_size > 2`
+(cpp/non_iid_main.cpp), so a two-valued multi-bit source at or above the
+1,000,000-sample minimum is still over-credited in the shipped master
+build. The sub-minimum intake refusal (c2f1dcd) does not cover it, because
+the hazard is a full-size capture. Whether #256 should land on master is an
+open item for the independent review; until it does, "master is the patched
+build" means the repairs listed below, not #256.
+
 What was observed across the changes below, stated as scope rather than
 as a guarantee, because the evidence is a finite set of datasets and
 not a proof about every qualifying input:
