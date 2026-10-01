@@ -148,6 +148,29 @@ int main(int argc, char* argv[]) {
                     print_usage();
                 }
                 subsetSize = inint;
+
+                // "-l index,0" asks for a subset of zero samples. subsetSize
+                // 0 is also the internal "no subset" sentinel, so such a
+                // request used to fall through to the whole-file path, ignore
+                // the index entirely, and assess the whole file. Upstream #260.
+                if (subsetSize == 0) {
+                    testRun.errorLevel = -1;
+                    testRun.errorMsg = "Error: -l requires a sample count greater than zero.";
+
+                    if (jsonOutput) {
+                        ofstream output;
+                        output.open(outputfilename);
+                        output << testRun.GetAsJson();
+                        output.close();
+                    }
+
+                    printf("Error: -l requires a sample count greater than zero.\n");
+                    print_usage();
+                }
+
+                testRun.subsetRequested = true;
+                testRun.subsetIndex = subsetIndex;
+                testRun.subsetRequestedSamples = subsetSize;
                 break;
             case 'o':
                 jsonOutput = true;
@@ -205,7 +228,7 @@ int main(int argc, char* argv[]) {
 
     if (verbose > 1) {
         if (subsetSize == 0) printf("Opening file: '%s' (SHA-256 hash %s)\n", file_path, hash);
-        else printf("Opening file: '%s' (SHA-256 hash %s), reading block %ld of size %ld\n", file_path, hash, subsetIndex, subsetSize);
+        else printf("Opening file: '%s' (SHA-256 hash %s), reading block %lu of size %lu\n", file_path, hash, subsetIndex, subsetSize);
     }
 
     if (!read_file_subset(file_path, &data, subsetIndex, subsetSize, &testRun)) {
@@ -218,6 +241,10 @@ int main(int argc, char* argv[]) {
         printf("Error reading file.\n");
         print_usage();
     }
+
+    // A request for the last block of a file usually yields fewer samples
+    // than were asked for; the report now says how many were obtained.
+    testRun.subsetActualSamples = data.len;
 
     if (verbose > 1) printf("Loaded %ld samples of %d distinct %d-bit-wide symbols\n", data.len, data.alph_size, data.word_size);
 

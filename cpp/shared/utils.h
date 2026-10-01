@@ -257,7 +257,35 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 	if(subsetSize == 0) {
 		dp->len = fileLen;
 	} else {
-		rc = (long)fseek(file, subsetIndex*subsetSize, SEEK_SET);
+		unsigned long subsetOffset;
+
+		// subsetIndex * subsetSize was computed unchecked. On a 64-bit build
+		// a request such as "-l 4,4611686018427387904" wraps to offset 0 and
+		// the whole file is assessed under the guise of block 4; on an LLP64
+		// build (Windows) unsigned long is 32-bit and the product wraps at
+		// 4 GiB. Either way the tool reported a figure for data other than
+		// the data requested. Upstream #260.
+		if(subsetIndex > (ULONG_MAX / subsetSize)) {
+			testRun->errorLevel = -1;
+			testRun->errorMsg = "Error: subset offset overflows: index " +
+				std::to_string(subsetIndex) + " x " + std::to_string(subsetSize) + " samples.";
+			printf("Error: subset offset overflows: index %lu x %lu samples.\n", subsetIndex, subsetSize);
+			fclose(file);
+			return false;
+		}
+
+		subsetOffset = subsetIndex * subsetSize;
+
+		if(subsetOffset >= (unsigned long)fileLen) {
+			testRun->errorLevel = -1;
+			testRun->errorMsg = "Error: subset offset " + std::to_string(subsetOffset) +
+				" is at or past the end of the " + std::to_string(fileLen) + "-byte file.";
+			printf("Error: subset offset %lu is at or past the end of the %ld-byte file.\n", subsetOffset, fileLen);
+			fclose(file);
+			return false;
+		}
+
+		rc = (long)fseek(file, subsetOffset, SEEK_SET);
 		if(rc < 0){
                         testRun->errorLevel = -1;
                         testRun->errorMsg = "Error: fseek failed";
@@ -266,7 +294,7 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 			return false;
 		}
 
-		dp->len = min(fileLen - subsetIndex*subsetSize, subsetSize);
+		dp->len = min(fileLen - subsetOffset, subsetSize);
 	}
 
 	if(dp->len == 0){

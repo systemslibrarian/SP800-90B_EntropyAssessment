@@ -20,6 +20,17 @@ public:
     // count was allowed to proceed by EA_ALLOW_SHORT_DATASET. Such a run is
     // not a compliant assessment, so any report it produces says so.
     bool nonCompliantShortDataset = false;
+    // Subset provenance, recorded only when -l was used. sha256 stays the hash
+    // of the WHOLE file: @joshuaehill on #260, "I think that the SHA sum acting
+    // on the file is the most reasonable behavior ... the file hash is more
+    // useful in this setting." These three fields are what make the assessed
+    // bytes identifiable alongside it, since the report otherwise did not say
+    // that only part of the file was read, nor how much of it was actually
+    // obtained when the last block was short.
+    bool subsetRequested = false;
+    unsigned long subsetIndex = 0;
+    unsigned long subsetRequestedSamples = 0;
+    long subsetActualSamples = 0;
 
 protected:
     Json::Value GetBaseJson() {
@@ -35,6 +46,11 @@ protected:
         }
         if (nonCompliantShortDataset) {
             baseJson["nonCompliantShortDataset"] = true;
+        }
+        if (subsetRequested) {
+            baseJson["subsetIndex"] = (Json::UInt64)subsetIndex;
+            baseJson["subsetRequestedSamples"] = (Json::UInt64)subsetRequestedSamples;
+            baseJson["subsetActualSamples"] = (Json::Int64)subsetActualSamples;
         }
         if(!filename.empty()) {
             baseJson["filename"] = filename;
