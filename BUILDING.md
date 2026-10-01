@@ -1,17 +1,26 @@
 # Building `ea_non_iid` from this fork
 
-This fork exists to produce a reliable `ea_non_iid` binary on macOS and
-Windows **without changing anything that can alter a reported min-entropy
-figure**. Estimator logic, cut-offs, rounding, output formatting, and the
-set of estimators that run are exactly upstream's. Every change is listed,
-with dates, in [NOTICE](NOTICE).
+This fork began as a reliable `ea_non_iid` build for macOS and Windows that
+changed nothing able to alter a reported min-entropy figure. **It is no
+longer only that.** After NIST reviewed the defects reported upstream from
+this fork's audit, the estimator sources were corrected here too, so they
+are no longer byte-identical to upstream. What that means in practice is in
+"Repairs made in this fork" below; every change is listed, with dates, in
+[NOTICE](NOTICE), and the per-finding status is in
+[audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md).
+
+No estimator formula, cut-off, rounding rule or confidence bound was
+altered. Two changes do alter results deliberately, F09 and N-01, and both
+are described below.
 
 Upstream baseline: `usnistgov/SP800-90B_EntropyAssessment` at
 `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289`.
 
-Only `ea_non_iid` is built and shipped. **Do not run plain `make`** (the
-`all` target) for a shippable build: it also builds `ea_conditioning`,
-the one program that links GNU MPFR and GMP (LGPL). See "LGPL isolation".
+`ea_non_iid`, `ea_iid` and `ea_restart` are built here; the repairs and the
+regression suite cover all three. **Do not run plain `make`** (the `all`
+target) for a shippable build: it also builds `ea_conditioning`, the one
+program that links GNU MPFR and GMP (LGPL). None of the three programs this
+fork builds links either; see "LGPL isolation".
 
 ---
 
@@ -159,19 +168,25 @@ expected to pass outright.
 
 Finding: MPFR and GMP are linked only into `ea_conditioning`.
 
-Evidence, all from the upstream baseline:
+Evidence. The first two points were established at the upstream baseline
+and re-checked after this fork's repairs; the third was re-run on
+2026-10-01 against all three programs the fork now builds.
 
 - `cpp/Makefile`: `COND_LIB = -lmpfr -lgmp` is passed only in the
   `conditioning` rule; `LIB` and `SHARED_LIB` (used by every program)
   name only bz2, pthread, divsufsort, divsufsort64, jsoncpp, crypto.
+  Unchanged by the repairs.
 - `grep -rln 'mpfr\|gmp' cpp/` → `cpp/Makefile`, `cpp/conditioning_main.cpp`
-  only. No header under `cpp/shared/` or `cpp/non_iid/` includes them.
-- Built binary: `otool -L cpp/ea_non_iid` lists libbz2, libSystem,
-  libdivsufsort, libdivsufsort64, libomp, libjsoncpp, libcrypto, libc++
-  and nothing else; `nm -u cpp/ea_non_iid | grep -c -E '_mpfr|gmp'` → 0.
+  only. No header under `cpp/shared/`, `cpp/non_iid/` or `cpp/iid/`
+  includes them, and none of the repairs added such an include.
+- Built binaries: for each of `ea_non_iid`, `ea_iid` and `ea_restart`,
+  `otool -L` lists no MPFR or GMP library and
+  `nm -u <binary> | grep -c -E '_mpfr|gmp'` → 0.
 
-`ea_non_iid` therefore carries no LGPL code. `make non_iid` never
-compiles `conditioning_main.cpp`; MPFR/GMP need not even be installed.
+None of the three programs this fork builds carries LGPL code.
+`make non_iid`, `make iid` and `make restart` never compile
+`conditioning_main.cpp`; MPFR and GMP need not be installed to build or
+run any of them.
 
 ---
 
@@ -585,7 +600,10 @@ recorded so nobody rediscovers them.
    reason two "reference" Linux builds can disagree at 1e-10.
 3. **README says selftest passes below 1.0E-6**; `compareresults.pl`
    actually uses 1.0E-10. The script is the stricter and is what
-   `selftest` runs.
+   `selftest` runs. Note that this fork *has* changed that script and
+   the harness around it (#272): what it collects and the exit status
+   it propagates. The 1.0E-10 epsilon itself is untouched, which is why
+   the observation still stands.
 4. **Makefile targets `*_main.o` never produce a `.o`**, so every
    `make non_iid` relinks. Harmless.
 5. **JSON report embeds the input file's SHA-256** (`sha256` field, from

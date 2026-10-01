@@ -203,8 +203,12 @@ rather than of the sample width, and the question of what an explicitly
 declared bits_per_symbol should mean for such a dataset is unresolved.
 The fork follows upstream's behaviour unchanged.
 
-Only ea_non_iid is built and distributed from this fork. ea_conditioning
-(the only program that links MPFR and GMP) is not built or shipped.
+ea_non_iid, ea_iid and ea_restart are built from this fork; the repairs
+listed above and the regression suite cover all three. ea_conditioning,
+the only program that links MPFR and GMP, is not built or shipped, and
+none of the three that are built links either: verified with otool -L
+and nm -u on each binary, and cpp/Makefile still passes COND_LIB only
+in the ea_conditioning rule.
 
 
 Third-party components linked into ea_non_iid

@@ -47,6 +47,12 @@ Layout changes (2026-09-30 cleanup):
 - **Residuals of closed upstream items, not reported upstream:** R-1 (#246), R-2 (#178), R-3 (#183).
 - **Audit-only:** N-01, N-03–N-11, NOVEL-02, NOVEL-03, and the unfiled F rows. The tracker has details.
 
+**This list says what was reported upstream, not what has been repaired.** The
+two are independent: several findings never filed upstream have since been
+fixed in this fork, and several that were filed are still open. The per-finding
+state, including the repair commit and regression test where one exists, is in
+[`FINDINGS-TRACKER.md`](FINDINGS-TRACKER.md), which is the canonical record.
+
 ## Reproducing
 
 1. **Build the baseline:**

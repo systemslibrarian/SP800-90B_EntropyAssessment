@@ -1,11 +1,24 @@
 # EntropyAssessment
 
-> **Fork note (2026-09-30):** this fork builds and ships only `ea_non_iid`, with
-> Makefile changes limited to locating dependencies on macOS. See
-> [BUILDING.md](BUILDING.md) for the verified macOS build, the unverified
-> Windows route, and the pinned-output check, and [NOTICE](NOTICE) for the
-> licence and the full list of changes. Nothing that affects a reported
-> min-entropy figure has been changed.
+> **Fork note (updated 2026-10-01):** this fork builds `ea_non_iid`, `ea_iid`
+> and `ea_restart`. It does not build `ea_conditioning`, the only program that
+> links GNU MPFR and GMP; none of the three it does build links either.
+>
+> It began as macOS and Windows build support with no change to estimator
+> behaviour. **That is no longer what it is.** After NIST reviewed defects
+> reported upstream from this fork's audit, the estimator sources were
+> corrected here as well, so they are no longer byte-identical to upstream
+> `87c104d`. Two of those corrections change results on purpose: F09 raises
+> the MultiMMC estimate where its defect bit, and N-01 makes an m = 1
+> chi-square test fail as SP 800-90B 5.2.3 requires. No unintended numerical
+> change was observed on the datasets tested, which is a statement about those
+> datasets and not a guarantee about every input.
+>
+> See [NOTICE](NOTICE) for the licence and the dated list of every change,
+> [BUILDING.md](BUILDING.md) for the build, the pinned-output check and the
+> regression suite, and
+> [audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md)
+> for the status of all 30 audit findings, including the nine still unresolved.
 
 Cryptographic random bit generators (RBGs), also known as random number generators (RNGs), require a noise source that produces digital outputs with some level of unpredictability, expressed as min-entropy. [SP 800-90B](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90B.pdf) provides a standardized means of estimating the quality of a source of entropy.
 
