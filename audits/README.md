@@ -2,7 +2,12 @@
 
 ## Purpose
 
-This directory preserves independent audit work against [`usnistgov/SP800-90B_EntropyAssessment`](https://github.com/usnistgov/SP800-90B_EntropyAssessment), NIST's SP 800-90B entropy assessment tool. All work here dates from **2026-09-30** and audits upstream `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289`. AI-assisted analysis was used; confirmed findings were reproduced on clean builds.
+This directory preserves independent audit work against [`usnistgov/SP800-90B_EntropyAssessment`](https://github.com/usnistgov/SP800-90B_EntropyAssessment), NIST's SP 800-90B entropy assessment tool. AI-assisted analysis was used; confirmed findings were reproduced on clean builds.
+
+Two rounds are preserved:
+
+- [`2026-09-30/`](2026-09-30/) — the original audits of upstream `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289`, and the canonical findings tracker.
+- [`2026-10-01-re-audit/`](2026-10-01-re-audit/) — an independent re-audit of those findings **and of the repairs made in response to them**, by a separate reviewer. Summary documents only; its 1.3 GB evidence archive is outside this repository and its claims are not verifiable from this checkout alone. See that directory's README.
 
 Nothing here is an official NIST conclusion. The reports are historical records: they must not be rewritten. New evidence or status belongs in new files, or in the tracker.
 
@@ -11,6 +16,7 @@ Nothing here is an official NIST conclusion. The reports are historical records:
 - [`2026-09-30/FINDINGS-TRACKER.md`](2026-09-30/FINDINGS-TRACKER.md) is the canonical defect work queue. It opens with an **AI Repair Queue**.
 - [`BUG-REPAIR-GUIDE.md`](BUG-REPAIR-GUIDE.md) is the permanent procedure for agents working that queue: states, reproduction, when to fix in the fork, and how to record a repair.
 - An upstream issue being closed does not mean the bug is resolved.
+- The re-audit found five defects, four of them in the repair work itself, including two in its regression tests. They are recorded in the tracker as the REV series, each with its fixing commit. A repair pass needs auditing like any other change.
 
 - Tracked files under `audits/`: **585**, including this README.
 - Tracked subdirectories: **118**.

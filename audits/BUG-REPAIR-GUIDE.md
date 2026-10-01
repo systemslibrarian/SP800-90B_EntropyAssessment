@@ -61,7 +61,8 @@ Take findings whose **State** is:
 4. **Fix** in the fork with the smallest correct change. If a fix branch already exists (see **Current fork status**), start from it and re-check it against current `master`.
 5. **Add a permanent regression test** in `cpp/selftest/`, named `regression-<topic>.sh`, using small generated inputs rather than committed binaries where possible. A test must:
    - exit 0 when the behaviour is correct and non-zero when the defect is present;
-   - be shown to fail on the unfixed code and pass on the fixed code (record both in the commit message);
+   - **be observed to fail against a known-wrong build, not reasoned to fail.** Build the mutant or check out the pre-fix commit, run the check, read the failure, and put the two numbers in the commit message. A check that has only ever been seen passing is an untested assertion that it can fail at all. Seven guards across this project and TruePad have read green while proving nothing; the tracker's "a regression is assumed vacuous until it has failed" section records them and why;
+   - **compare figures against a platform-independent source**, `cpp/selftest/refdata/` with a stated tolerance, never against a literal pasted from this machine. A check carrying one platform's value is evidence about that platform: REV-005 passed on macOS and would have failed a correct Linux build;
    - use the finding's expected values with a stated tolerance where a figure is compared (see `BUILDING.md`, "Precision audit");
    - assert its own precondition where one exists, so that it cannot pass vacuously if the input stops exercising the defect.
 

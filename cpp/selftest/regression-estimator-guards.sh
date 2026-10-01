@@ -214,6 +214,19 @@ fi
 # Linux/GCC, whose value is the one in refdata (0.15932269772157898). A
 # regression that fails on the platform the project targets is worse than no
 # regression: it reads as a defect that is not there.
+#
+# OBSERVED FAILING (2026-10-01), both directions. Against a build with G()
+# inflated by 1% -- mutation confirmed by source SHA-256 changing
+# bca454df0a2ab733 -> e4e97979c597f2d4 and by the binary differing from the
+# clean build -- the figure becomes 0.15635841219554089 and this check prints:
+#
+#     F14 compression estimate unchanged: got '0.15635841219554089', reference '0.15932269772157898'
+#     regression-estimator-guards: FAIL (1 checks)
+#
+# And in the direction the old check got wrong: a CORRECT Linux build produces
+# 0.15932269772157898, which the old literal rejected as a failure. The new
+# comparison accepts it at 7.8e-15 relative, well inside the 1e-9 tolerance,
+# while still rejecting the 1% mutant.
 want=$(sed -n 's/^Literal Compression Estimate: min entropy = //p' "${here}/refdata/ringOsc-nist.res" | head -1)
 got=$("${asan}" -vv "${cpp}/../bin/ringOsc-nist.bin" 2>/dev/null | sed -n 's/^Literal Compression Estimate: min entropy = //p' | head -1)
 if [ -z "${want}" ] || [ -z "${got}" ]; then

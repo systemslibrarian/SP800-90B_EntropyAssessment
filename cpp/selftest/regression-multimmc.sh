@@ -14,6 +14,21 @@
 # estimate smaller, so the defect was conservative. It is still a deviation
 # from the standard and it moved the estimate by a factor of 440 on the
 # dataset below.
+#
+# OBSERVED FAILING (2026-10-01). The binary-path check below replaced one that
+# asserted only that a run length existed, which nothing could fail. Against a
+# build with the binary reset removed -- mutation confirmed by source SHA-256
+# changing bbcd1d0d02e5bae0 -> d9f61b5c44fdc7e8, by the marker being present in
+# the compiled source, and by the binary differing from the clean build -- the
+# mutant reports r = 100275 where the clean build reports 17, and this script
+# then prints:
+#
+#     F09 binary path matches an independent reference: tool r = 100275, reference r = 17
+#     regression-multimmc: FAIL (1 checks)
+#
+# The old check passed that same build. Re-run that way before trusting any
+# change to this file: a check that has only been seen passing is an untested
+# assertion that it can fail.
 
 set -u
 

@@ -1080,13 +1080,53 @@ re-audit's own write-up and evidence archive live outside the checkout.
 | REV-005 | `regression-estimator-guards.sh` compared the compression estimate against a literal that is this platform's value, so it raised a false alarm on Linux, where refdata records the other value. | test integrity (false failure) | `VERIFIED` | `8f0469c` |
 | REV-007 | BUILDING.md stated the permutation cost as "0.94 ms per thousand bits"; the measurements give 0.94 seconds, a factor of 1000. The derived run times were computed from the measured rate and were always correct. | documentation | `VERIFIED` | `5922ff8` |
 
-REV-004 and REV-006 were raised and are **not** recorded as defects here.
-REV-004 observes that GNU `getopt` misroutes `-inf` and `-1` as options before
-the numeric checks see them; both configurations refuse the input either way,
-so the behaviour is correct and the note is about which code path refuses it.
-REV-006 could not reproduce the absent-file issue it was testing for, because
-the undefined hash bytes happened to be non-empty on that run; the N-06 repair
-and its regression stand.
+### REV-004 and REV-006 — DID NOT REPRODUCE
+
+Both were raised, both were re-tested here on 2026-10-01, and neither
+reproduced. They are recorded with what was observed rather than omitted: a
+declined finding is evidence that the question was asked, and the next reviewer
+should be able to see the measurement instead of repeating it.
+
+**REV-004 — `getopt` argument misrouting: DID NOT REPRODUCE.**
+The claim is that GNU `getopt` consumes `-inf` and `-1` as option clusters
+before the numeric validation sees them, and that `POSIXLY_CORRECT=1` is needed
+to reach the intended checks. Re-tested on `ea_restart` with a 1,000,000-sample
+input, four values, both configurations:
+
+| H_I | default | `POSIXLY_CORRECT=1` |
+|---|---|---|
+| `nan` | exit 255, "H_I must be a finite decimal number: 'nan'." | identical |
+| `-1` | exit 255, "H_I -1.000000 must be nonnegative." | identical |
+| `-inf` | exit 255, "H_I must be a finite decimal number: '-inf'." | identical |
+| `abc` | exit 255, "H_I must be a finite decimal number: 'abc'." | identical |
+
+Every value reaches the intended numeric check and produces that check's own
+message, in both configurations. `-1` reaches the nonnegative check rather than
+the parse check, which is correct: it parses as a finite number and is then
+rejected for being negative. No misrouting was observed on this platform, and
+the two configurations are indistinguishable. The re-audit's own verdict agrees
+on the outcome, that both configurations refuse the input; the disagreement is
+only about which path refuses it. Nothing to fix.
+
+**REV-006 — absent-file hash handling: DID NOT REPRODUCE, and the re-audit
+says so itself.**
+The claim under test was that `ea_restart` could report success for a file it
+could not hash. The re-audit records that it "did not reproduce here (undefined
+hash bytes happened to be nonempty)". Re-tested on the fixed build, six
+consecutive runs against a non-existent input:
+
+```
+run 1..6: exit=255  errorLevel=-1  sha256 absent
+```
+
+All six identical. That is the behaviour the N-06 repair (`fd83a43`) introduced
+and `regression-restart.sh` asserts, so the fix and its regression stand. Note
+what the re-audit's phrasing implies and this does not contradict: on the
+*unfixed* build the symptom depended on whatever bytes happened to be on the
+stack, which is why it presented intermittently. That is the nature of reading
+uninitialised memory, and it is the reason the repair zeroes the buffer and
+checks the return value rather than relying on the observed symptom.
+
 
 Two of the four defects introduced here were in regression tests, not in the
 tool: one that could not fail, and one that failed on the platform the project
