@@ -97,18 +97,61 @@ cd cpp
 - `-i` initial estimate, `-a` use all data. Both are the defaults; state
   them so the evidence is unambiguous. `-c` (conditioned data) and `-t`
   (truncate the bitstring to 1,000,000 bits) change the figure.
-- The tool requires at least 1,000,000 samples for a normal assessment
-  (it warns and continues below that).
+- The tool now **refuses** a dataset of fewer than 1,000,000 samples, which
+  is the minimum SP 800-90B Section 3.1.1 requires. It exits nonzero and,
+  with `-o`, writes a JSON report carrying `errorLevel` and `errorMessage`.
+  It used to warn on stdout and assess the data anyway with `errorLevel` 0.
+  The count checked is the number of samples actually loaded, so a `-l`
+  subset smaller than the minimum is refused too.
+- `EA_ALLOW_SHORT_DATASET=1` permits a short run for test purposes only. It
+  is not a documented command-line option and does not produce a compliant
+  assessment: the run says so on stdout and sets `nonCompliantShortDataset`
+  in the JSON. The three short samples under `bin/` need it, which is why
+  the selftest harness sets it.
 - `-v` shows the per-estimator figures; `-vv` prints them with 17
   significant digits (what selftest and pin-check parse).
 - **The JSON report and the `-vv` banner embed the SHA-256 of the input
   file** (`sha256_file` in `cpp/shared/TestRunUtils.h`, field `sha256`).
   This is upstream behaviour and is intentionally left in; the consuming
-  tool redacts it downstream.
+  tool redacts it downstream. It remains a hash of the **whole file** even
+  when `-l` selects a subset, which is what NIST asked for on upstream
+  #260; the subset itself is identified by the `subsetIndex`,
+  `subsetRequestedSamples` and `subsetActualSamples` fields beside it.
+- The JSON report also records `bitsPerSymbol`, the symbol width the
+  assessment used, and `bitsPerSymbolInferred`, which says whether that
+  width came from the command line or was inferred from the data.
 
 Run-to-run determinism: `ea_non_iid` contains no OpenMP pragmas (they
 are only in `ea_iid` and `ea_restart`), so it is single-threaded and
-gives bit-identical output on repeated runs on the same binary.
+gives bit-identical output on repeated runs on the same binary. `ea_iid`
+is not deterministic: its permutation tests seed themselves from
+`/dev/urandom`, and on a marginal dataset the pass/fail verdict can
+differ between runs of the same binary.
+
+### Running the checks
+
+```sh
+cd cpp/selftest
+./selftest                        # against NIST's reference outputs
+./pin-check.sh --prove-nonvacuous # this fork's pinned figure
+./regression-271.sh               # conditioned IID tests read the bitstring
+./regression-272.sh               # selftest compares the final figures
+./regression-minsize.sh           # the Section 3.1.1 intake check
+./regression-estimator-guards.sh  # estimator safety (builds its own ASan binary)
+./regression-subset.sh            # -l arithmetic and provenance
+./regression-width.sh             # effective symbol width in JSON
+./regression-nonregular.sh        # non-regular input files
+```
+
+**`selftest` exits 1 on macOS arm64, and that is expected here.** Three
+predictor values on `biased-random-bytes.bin` and `ringOsc-nist.bin`
+differ from NIST's Linux reference data by 1.3e-10 to 3.7e-10 against an
+epsilon of 1e-10. That is the platform difference recorded in upstream
+issue #155 and in the precision audit below; it is not introduced by any
+change here, and was previously invisible only because the harness
+discarded the comparison's exit status. Every other sample passes and
+all eight regression scripts pass. On a Linux x86-64 build, selftest is
+expected to pass outright.
 
 ---
 
@@ -425,6 +468,31 @@ up to ~1e-8 relative from the x86 reference at 10^6 8-bit samples and
 that changes a pad length, but it is above upstream's own 1e-10
 selftest threshold, and a pin tolerance must be chosen from the bits
 assessed, not from a fixed number.
+
+---
+
+## Repairs made in this fork (2026-09-30)
+
+After NIST reviewed the defects this fork reported upstream, ten repairs
+were made here. The estimator sources are therefore **no longer**
+byte-identical to upstream `87c104d`; the statement of changes in
+[NOTICE](NOTICE) lists each one with its upstream issue and commit, and
+[audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md)
+carries the per-finding status.
+
+What has not changed: no reported min-entropy figure moves for any
+dataset at or above the 1,000,000-sample minimum. The pinned check is
+unchanged at 0.12644573619604868, NIST's reference data under
+`cpp/selftest/refdata/` is untouched, and no estimator formula, cut-off,
+rounding or confidence bound was altered. Where an estimator changed, it
+changed only from producing an unmeasured number, reading out of bounds,
+or aborting the process, to declining to produce an estimate, which the
+combination logic already handled.
+
+One finding is deliberately **not** repaired: the treatment of a
+two-symbol alphabet as binary regardless of declared sample width
+(upstream #253 and PR #256). NIST disputes the premise, so the fork
+follows upstream behaviour unchanged pending their reading.
 
 ---
 
