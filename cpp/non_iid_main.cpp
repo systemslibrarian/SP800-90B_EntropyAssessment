@@ -221,6 +221,21 @@ int main(int argc, char* argv[]) {
 
     if (verbose > 1) printf("Loaded %ld samples of %d distinct %d-bit-wide symbols\n", data.len, data.alph_size, data.word_size);
 
+    // SP 800-90B Section 3.1.1 requires at least MIN_SIZE samples. Refuse
+    // before any estimator runs, on the count actually loaded (which a -l
+    // subset request can make smaller than the file).
+    if (!dataset_meets_minimum(&data, &testRun)) {
+        if (jsonOutput) {
+            ofstream output;
+            output.open(outputfilename);
+            output << testRun.GetAsJson();
+            output.close();
+        }
+
+        free_data(&data);
+        exit(-1);
+    }
+
     if (data.alph_size <= 1) {
 
         printf("Symbol alphabet consists of 1 symbol. No entropy awarded...\n");
@@ -242,7 +257,6 @@ int main(int argc, char* argv[]) {
     if (!all_bits && (data.blen > MIN_SIZE)) data.blen = MIN_SIZE;
 
     if ((verbose > 1) && ((data.alph_size > 2) || !initial_entropy)) printf("Number of Binary Symbols: %ld\n", data.blen);
-    if (data.len < MIN_SIZE) printf("\n*** Warning: data contains less than %d samples ***\n\n", MIN_SIZE);
     if (verbose > 1) {
         if (data.alph_size < (1 << data.word_size)) printf("\nSymbols have been translated.\n");
     }

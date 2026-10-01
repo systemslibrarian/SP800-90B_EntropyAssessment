@@ -220,6 +220,21 @@ int main(int argc, char* argv[]) {
 
     if (verbose > 1) printf("Loaded %ld samples of %d distinct %d-bit-wide symbols\n", data.len, data.alph_size, data.word_size);
 
+    // SP 800-90B Section 3.1.1 requires at least MIN_SIZE samples. Refuse
+    // before any estimator runs, on the count actually loaded (which a -l
+    // subset request can make smaller than the file).
+    if (!dataset_meets_minimum(&data, &testRun)) {
+        if (jsonOutput) {
+            ofstream output;
+            output.open(outputfilename);
+            output << testRun.GetAsJson();
+            output.close();
+        }
+
+        free_data(&data);
+        exit(-1);
+    }
+
     if (data.alph_size <= 1) {
 
         testRun.errorLevel = -1;

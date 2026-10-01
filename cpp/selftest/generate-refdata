@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Three of the samples under bin/ (rand1_short.bin, rand4_short.bin,
+# rand8_short.bin) hold 10,000 samples, far below the 1,000,000 that
+# SP 800-90B Section 3.1.1 requires and that the tools now enforce. They exist
+# to exercise estimator behaviour, not to produce compliant assessments, so
+# this harness sets the internal escape that permits short datasets. The
+# variable has no effect on the other eight samples, and a run that uses it
+# announces on stdout that its result is not a compliant assessment.
+export EA_ALLOW_SHORT_DATASET=1
+
+
 for file in ../../bin/*; do
 	bfile=`basename $file`
 	echo $file : $bfile

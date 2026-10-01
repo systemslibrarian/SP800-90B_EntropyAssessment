@@ -171,6 +171,54 @@ void free_data(data_t *dp){
 
 
 // Read in binary file to test
+// The single intake check for dataset size, shared by every tool that
+// assesses a dataset, so that the production rule is stated in one place.
+//
+// SP 800-90B Section 3.1.1 item 1: "A sequential dataset of at least 1 000 000
+// sample values ... shall be collected". An assessment made on fewer samples
+// is not a compliant assessment. Several estimators are also undefined or
+// degenerate well below that size: the compression estimate divides by v-1
+// with exactly 1001 six-bit blocks, the collision estimate divides by v-1 when
+// fewer than two collisions occur, MultiMCW is skipped entirely below 4096
+// samples, and several estimators abort on an assert rather than declining.
+//
+// The count checked is the number of samples actually loaded, which is what
+// the estimators receive. A "-l index,samples" request can load fewer samples
+// than the file holds, so checking the file size instead would let a short
+// subset through.
+//
+// EA_ALLOW_SHORT_DATASET exists so that this repository's own test material,
+// which deliberately includes short files, can still exercise estimator
+// behaviour. It is not a documented command-line option and it is not a way to
+// obtain a compliant assessment: a run that uses it says so on stdout and sets
+// nonCompliantShortDataset in any JSON report.
+//
+// Returns true if the assessment may proceed. On false the caller writes its
+// JSON report, if any, and exits nonzero without running any estimator.
+bool dataset_meets_minimum(const data_t *dp, TestRunBase *testRun) {
+	const char *allow;
+
+	if (dp->len >= MIN_SIZE) return true;
+
+	allow = getenv("EA_ALLOW_SHORT_DATASET");
+	if ((allow != NULL) && (strcmp(allow, "1") == 0)) {
+		testRun->nonCompliantShortDataset = true;
+		printf("\n*** Warning: dataset contains %ld samples; SP 800-90B Section 3.1.1 requires at least %d.\n", dp->len, MIN_SIZE);
+		printf("*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.\n");
+		printf("*** Its result is NOT a compliant SP 800-90B assessment. ***\n\n");
+		return true;
+	}
+
+	testRun->errorLevel = -1;
+	testRun->errorMsg = "Error: dataset contains " + std::to_string(dp->len) +
+		" samples; SP 800-90B Section 3.1.1 requires at least " + std::to_string(MIN_SIZE) + ".";
+
+	printf("\n*** Error: dataset contains %ld samples; SP 800-90B Section 3.1.1 requires at least %d ***\n", dp->len, MIN_SIZE);
+	printf("*** No assessment was performed. ***\n\n");
+
+	return false;
+}
+
 bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetIndex, unsigned long subsetSize, TestRunBase *testRun) {
 
 	FILE *file; 
