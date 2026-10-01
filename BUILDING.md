@@ -558,7 +558,10 @@ hardware or other data:
 | 400,000 | 374.9 s |
 
 That is linear: 2.06x and 1.95x the time for 2x the data. Extrapolating at
-0.94 ms per thousand bits:
+0.94 **seconds** per thousand bits (937 ms per thousand bits from the last
+row; this said "0.94 ms" until 2026-10-01, which is a factor of 1000 out.
+The extrapolated run times below were always computed from the measured
+rate, so they were and remain correct):
 
 | Run | Bits | Extrapolated |
 |---|---|---|

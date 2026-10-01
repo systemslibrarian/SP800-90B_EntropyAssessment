@@ -71,10 +71,12 @@ not a proof about every qualifying input:
     NIST's and is not regenerated here.
 
   * No estimator's formula, cut-off, rounding or confidence bound is
-    altered. Where an estimator changed, it changed only from producing
-    an unmeasured number, reading out of bounds, or aborting the
-    process, to declining to produce an estimate, which the combination
-    logic already handled.
+    altered. Most estimator changes only turn producing an unmeasured
+    number, reading out of bounds, or aborting the process into
+    declining to produce an estimate, which the combination logic
+    already handled. The two exceptions are F09 and N-01, described
+    above: they change results deliberately. This sentence said "only"
+    until 2026-10-01, which those two contradict.
 
 What is no longer true: cpp/shared/, cpp/non_iid/ and the *_main.cpp
 programs have been modified. Each change is listed below with the

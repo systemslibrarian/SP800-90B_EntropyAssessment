@@ -1055,6 +1055,48 @@ These are recorded so that nothing is lost. An `UNCONFIRMED` item enters the que
 | #56, #95, #209, PR #224 | restart cutoff by simulation instead of the literal binomial rule (intended deviation) | closed |
 | #236 / PR #237 | manually maintained VERSION macro (tag v1.1.8 prints 1.1.7) | #236 open |
 
+## Independent re-audit findings (REV series, 2026-10-01)
+
+An independent re-audit on 2026-10-01 re-tested the prior findings and the
+claimed repairs. It confirmed the repairs: fifteen findings verified as
+actual-parent / fixed / meaningful-mutant triples, the pinned figure computed
+on both the historical and current scripts, and the eleven-file reference
+corpus byte-identical between parent and fixed builds on both macOS and
+GCC/Linux. Its own scope statement is the right one: the evidence holds for
+the fixtures, platforms and mutations exercised, and is not a
+universal-compatibility or production-security certification.
+
+It also found five defects, four of them in work done by the repair passes.
+They are recorded here because this file is the canonical defect queue; the
+re-audit's own write-up and evidence archive live outside the checkout.
+
+| ID | What was wrong | Class | Disposition | Fixed by |
+|---|---|---|---|---|
+| REV-001 | NOTICE still said estimator changes "changed only" to declining, which F09 and N-01 contradict. The same sentence had been corrected in BUILDING.md and missed here. | documentation | `VERIFIED` | `c11c9a8` |
+| REV-002 | `make non_iid` failed under GCC 13.3 on undeclared `ULONG_MAX`, introduced by the #260 subset overflow check. Apple clang builds it, so the macOS-only workflow did not catch it. | portability (build break) | `VERIFIED` | `b75e763` (a prior session) |
+| REV-003 | `regression-multimmc.sh` asserted only that the binary path produced *a* run length. A mutant with the binary reset removed reports r = 100275 against a correct 17 and passed. | test integrity (vacuous check) | `VERIFIED` | `8f0469c` |
+| REV-005 | `regression-estimator-guards.sh` compared the compression estimate against a literal that is this platform's value, so it raised a false alarm on Linux, where refdata records the other value. | test integrity (false failure) | `VERIFIED` | `8f0469c` |
+| REV-007 | BUILDING.md stated the permutation cost as "0.94 ms per thousand bits"; the measurements give 0.94 seconds, a factor of 1000. The derived run times were computed from the measured rate and were always correct. | documentation | `VERIFIED` | `c11c9a8` |
+
+REV-004 and REV-006 were raised and are **not** recorded as defects here.
+REV-004 observes that GNU `getopt` misroutes `-inf` and `-1` as options before
+the numeric checks see them; both configurations refuse the input either way,
+so the behaviour is correct and the note is about which code path refuses it.
+REV-006 could not reproduce the absent-file issue it was testing for, because
+the undefined hash bytes happened to be non-empty on that run; the N-06 repair
+and its regression stand.
+
+Two of the four defects introduced here were in regression tests, not in the
+tool: one that could not fail, and one that failed on the platform the project
+targets. Both read as green. `cpp/selftest/regression-docs.sh` now also checks
+that the quoted permutation rate matches the measured table, and carries both
+corrected phrasings verbatim so they cannot reappear.
+
+Three claims in the re-audit remain **BLOCKED** rather than confirmed or
+refuted, by its own account: F14's end-to-end evidence above 2^32 blocks, a
+`checkpoint-6` archive, and a `candidate-25.bin` fixture, none of which were
+located. They are not counted as findings in either direction.
+
 ## Open questions put to NIST (2026-09-30, awaiting an answer)
 
 Posted by the fork owner on the upstream threads, not by the repair pass. Two

@@ -126,7 +126,23 @@ cond=$(grep -c 'COND_LIB' cpp/Makefile)
 if [ -z "${leak}" ] && [ "${cond}" -ge 1 ]; then note "no built program links MPFR or GMP:" "confirmed"
 else bad "MPFR/GMP linkage found in:" "${leak}"; fi
 
-# ------------------------- 8. claims that were false before must not reappear
+# --------------------------- 8. the quoted rate matches the measured table
+# The permutation-cost rate was stated in ms where the measurements give
+# seconds, a factor of 1000, while the run times derived from it were right.
+# Recompute from the table in BUILDING.md rather than trusting the sentence.
+rate_row=$(grep -oE '^\| 400,000 \| [0-9.]+ s \|' BUILDING.md | grep -oE '[0-9.]+ s' | grep -oE '[0-9.]+')
+if [ -n "${rate_row}" ]; then
+    want_s=$(python3 -c "print('%.2f' % (${rate_row} / 400000 * 1000))")
+    if grep -q "${want_s} \*\*seconds\*\* per thousand bits" BUILDING.md; then
+        note "quoted permutation rate matches the table:" "${want_s} s per thousand bits"
+    else
+        bad "quoted permutation rate does not match the table:" "table implies ${want_s} s per thousand bits"
+    fi
+else
+    note "permutation rate check:" "skipped (table row not found)"
+fi
+
+# ------------------------- 9. claims that were false before must not reappear
 # Each of these was in the documentation after the fork had been modified, and
 # each had to be corrected. They are listed verbatim so a reintroduction fails.
 STALE_CLAIMS=(
@@ -138,11 +154,19 @@ STALE_CLAIMS=(
  "Only \`ea_non_iid\` is built and shipped"
  "No reported min-entropy figure changes for any dataset"
  "No semantics-preserving optimisation was found"
+ "it changed only from producing"
+ "0.94 ms per thousand bits"
 )
 hit=""
 for c in "${STALE_CLAIMS[@]}"; do
     for d in ${DOCS}; do
-        grep -F -q "${c}" "${d}" 2>/dev/null && hit="${hit} ${d}:\"${c}\""
+        # A line that quotes the wrong wording while describing its correction
+        # is a record, not a reassertion. Such lines name the correction
+        # explicitly ("until 2026-10-01", "said", "which ... contradict"), so
+        # the claim only counts when it appears without that framing.
+        grep -F -- "${c}" "${d}" 2>/dev/null \
+            | grep -vqE 'until 2026-|said "|still said|had been corrected|which those two contradict|factor of 1000|a prior session' \
+            && hit="${hit} ${d}:\"${c}\""
     done
 done
 # "are identical to upstream" is only wrong unqualified; the negated and
