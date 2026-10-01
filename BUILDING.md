@@ -480,14 +480,29 @@ byte-identical to upstream `87c104d`; the statement of changes in
 [audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md)
 carries the per-finding status.
 
-What has not changed: no reported min-entropy figure moves for any
-dataset at or above the 1,000,000-sample minimum. The pinned check is
-unchanged at 0.12644573619604868, NIST's reference data under
-`cpp/selftest/refdata/` is untouched, and no estimator formula, cut-off,
-rounding or confidence bound was altered. Where an estimator changed, it
-changed only from producing an unmeasured number, reading out of bounds,
-or aborting the process, to declining to produce an estimate, which the
-combination logic already handled.
+What was checked, stated as scope rather than as a guarantee: no
+unintended numerical change was observed on the datasets tested. The
+pinned check is unchanged at 0.12644573619604868, NIST's reference data
+under `cpp/selftest/refdata/` is untouched and still reproduced exactly,
+and no estimator formula, cut-off, rounding or confidence bound was
+altered.
+
+Most of the estimator changes only turn producing an unmeasured number,
+reading out of bounds, or aborting the process into declining to produce
+an estimate, which the combination logic already handled. **Two change
+results on purpose:**
+
+- **F09** corrects the MultiMMC run of correct predictions. Where the
+  defect bit, the MultiMMC estimate rises. Because the reported figure
+  is a minimum over the estimators, an input on which MultiMMC was the
+  binding minimum will report a **higher** figure after this change. The
+  earlier value was too low, so the higher figure is the correct one,
+  but a before-and-after comparison must expect it. Not demonstrated on
+  a concrete input: on the audit's own dataset the overall figure is
+  unchanged because a different estimator binds.
+- **N-01** makes a binary chi-square independence test with m = 1 fail,
+  as SP 800-90B 5.2.3 requires, where it previously passed. That changes
+  an IID verdict, not a min-entropy figure.
 
 One finding is deliberately **not** repaired: the treatment of a
 two-symbol alphabet as binary regardless of declared sample width
@@ -503,7 +518,10 @@ output as a binary string, which is what SP 800-90B 3.1.1 item 2 and 3.1.5.2
 require. For multi-bit samples that is eight times as much data as the
 previous (incorrect) behaviour, and the permutation battery dominates.
 
-Measured on this machine, on conditioned data that **fails** the tests:
+Measured on this machine (Apple silicon, 10 cores), on conditioned data that
+**fails** the tests. These are measurements of one workload on one machine, and
+the rows below them are extrapolations from it, not predictions for other
+hardware or other data:
 
 | Bits tested | Wall clock |
 |---|---|
@@ -516,12 +534,17 @@ That is linear: 2.06x and 1.95x the time for 2x the data. Extrapolating at
 
 | Run | Bits | Extrapolated |
 |---|---|---|
-| `-c -t` | 1,000,000 | about 16 minutes |
-| `-c -a` on 10^6 8-bit samples | 8,000,000 | about 2 hours |
+| `-c -t` | 1,000,000 | about 16 minutes (extrapolated) |
+| `-c -a` on 10^6 8-bit samples | 8,000,000 | about 2 hours (extrapolated) |
 
-**No semantics-preserving optimisation was found, and the behaviour was not
-changed for speed.** The reason is worth stating, because it is not simply
-"more data":
+**No safe shortcut was identified within this pass, and the behaviour was not
+changed for speed.** That is not a claim that none exists: the measurements
+below establish the cost, not impossibility. Computing the statistics
+incrementally, or reducing per-permutation allocation, might preserve
+semantics, but each would need its own investigation and an equivalence
+argument before it could be trusted here.
+
+What was ruled out, and why it is not simply "more data":
 
 - The battery already short-circuits. `permutation_tests()` skips the
   remaining permutations once all 19 tests have passed decisively, and a

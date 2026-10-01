@@ -71,10 +71,20 @@ NIST's position and this fork's position are never conflated:
   `FORK-HARDENING` 1, `DEFERRED-NOT-BUILT` 3, `NOT-REPRODUCED-HERE` 1,
   `SPEC-INTERPRETATION-PENDING` 1, `NEEDS-FIX` 4.
 
-  The 21 `FORK-FIXED` are 11 from the 2026-09-30 repair pass and 10 from the
-  pass that followed NIST's review. Nothing is marked resolved merely because
-  the Section 3.1.1 intake check makes it unreachable: the two findings in that
-  position carry `RESOLVED-BY-GLOBAL-GUARD`, not `VERIFIED`.
+  `FORK-FIXED` is a state, not a quality claim, and the 21 are not all the
+  same kind of thing. Read them by fork disposition:
+
+  - **18 `VERIFIED`** — repaired here, each with a regression test that fails
+    against the pre-fix build.
+  - **2 `RESOLVED-BY-GLOBAL-GUARD`** (F03, F04) — *not* corrected. The
+    underlying behaviour is unchanged; the Section 3.1.1 intake check makes it
+    unreachable through ordinary use. If that check were ever relaxed, these
+    return.
+  - **1 `FORK-HARDENING`** (F18) — fixed here as robustness. NIST does not
+    regard it as a defect and it must not be cited as one.
+
+  They came from two passes on 2026-09-30: 11 from the first, 10 from the
+  second, after NIST's review.
 
   Of the 9 not fixed: 3 are in ea_conditioning, which this fork does not build;
   1 does not reproduce on this platform (R-1, a long double width question);
@@ -860,7 +870,7 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** #246 (closed)
 - **Upstream NIST PR:** PR #248 (merged; incomplete)
 - **Current upstream status:** #246 closed (completed) without covering this case; residual not reported
-- **Current fork status:** Investigated on 2026-09-30 and it does NOT reproduce on this platform. The assert compares a floating-point sum against an exact bound, and the margin depends on the width of long double: 64-bit on arm64 macOS, 80-bit under GCC on x86. Measured here for exactly balanced alphabets at L near 10^6: the margin p_col - 1/k is exactly 0 for k = 2, 3, 4, 7, 8, 9, 16 and +2.78e-17 for k = 5, 6, 12, so the assert holds for every k tried and ea_iid bal3.bin 2 completes with exit 0. A zero margin is itself the defect, since any change in rounding flips it, which is what the x86 abort shows. Not repaired here because a fix could not be regression-tested on this machine: the regression would pass before and after.
+- **Current fork status:** Investigated on 2026-09-30 and it does NOT reproduce on this platform. The assert compares a floating-point sum against an exact bound, and the margin depends on the width of long double: 64-bit on arm64 macOS, 80-bit under GCC on x86. Measured here for exactly balanced alphabets at L near 10^6: the margin p_col - 1/k is exactly 0 for k = 2, 3, 4, 7, 8, 9, 16 and +2.78e-17 for k = 5, 6, 12, so the assert holds for every k tried and ea_iid bal3.bin 2 completes with exit 0. A zero margin satisfies the assert, which tests `p_col >= 1/k` inclusively, so what was measured here is not itself a defect; it shows the predicate sits exactly on its bound and so is sensitive to rounding. The defect recorded against this finding is the abort observed on an x86-64 build with 80-bit long double, which was not reproduced here and is not re-asserted on this platform's evidence. Not repaired, because a fix could not be regression-tested on this machine: the regression would pass before and after.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written

@@ -34,15 +34,38 @@ reported figure held without qualification. On 2026-09-30, after NIST
 reviewed the defects this fork had reported upstream and agreed with
 several of them, repairs were made to the estimator sources as well.
 
-What is still true of every change below:
+What was observed across the changes below, stated as scope rather than
+as a guarantee, because the evidence is a finite set of datasets and
+not a proof about every qualifying input:
 
-  * No reported min-entropy figure changes for any dataset of 1,000,000
-    or more samples, which is the minimum SP 800-90B Section 3.1.1
-    requires for an assessment. The pinned-output check on
-    bin/ringOsc-nist.bin is unchanged at 0.12644573619604868, and the
-    reference comparison against cpp/selftest/refdata/ differs on
-    exactly the two files it differed on before, for the platform
+  * No unintended numerical change was observed on the datasets tested.
+    The pinned-output check on bin/ringOsc-nist.bin is unchanged at
+    0.12644573619604868, and the reference comparison against
+    cpp/selftest/refdata/ differs on exactly the two files it differed
+    on before, with the same eight predictor values, for the platform
     reason recorded in upstream issue #155.
+
+  * Two changes alter results deliberately, and are not covered by the
+    sentence above:
+
+      - F09 (commit 69b6094) corrects the MultiMMC run of correct
+        predictions. Where the defect bit, the MultiMMC estimate rises:
+        on the audit's dataset from 0.00211176482535928 to
+        0.93188950992564512. Because the reported figure is a minimum
+        over the estimators, an input on which MultiMMC was the binding
+        minimum will report a HIGHER figure after this change than
+        before. The earlier value was wrong, being too low, so the
+        higher figure is the correct one, but anyone comparing a report
+        made before this change with one made after must expect it. No
+        such input was demonstrated: on the audit's own dataset the
+        overall figure is unchanged at 0.0008876062538599284 because a
+        different estimator binds.
+
+      - N-01 (commit c8799f4) makes a binary chi-square independence
+        test with m = 1 fail, as SP 800-90B 5.2.3 requires, where it
+        previously passed. That changes an IID verdict rather than a
+        min-entropy figure, and it changes it on exactly the datasets
+        the standard says it should.
 
   * bin/ and cpp/selftest/refdata/ are untouched. The reference data is
     NIST's and is not regenerated here.
@@ -166,13 +189,12 @@ A second repair pass on the same date, working the remaining queue:
 2026-09-30  cpp/selftest/regression-*.sh: regression tests for each of
             the above. Test material only.
 
-The guarantee at the head of this section still holds for all of them:
-no reported min-entropy figure changes for any dataset of 1,000,000 or
-more samples. The MultiMMC correction is the one that changes a figure
-at all, and only for datasets built to trigger it; on every sample under
-bin/ the figures are unchanged, including the Literal MultiMMC figure in
-cpp/selftest/refdata/truerand_8bit.res, which the build still reproduces
-exactly.
+The scope statement at the head of this section covers these too: no
+unintended numerical change was observed on the datasets tested, with
+F09 and N-01 the two deliberate exceptions described there. On every
+sample under bin/ the figures are unchanged, including the Literal
+MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which the
+build still reproduces exactly.
 
 Deliberately not changed, pending NIST: the treatment of a two-symbol
 alphabet as binary regardless of the declared sample width (upstream
