@@ -239,3 +239,48 @@ in the ea_conditioning rule; conditioning_main.cpp is the only source
 file that includes <mpfr.h>/<gmp.h>; `otool -L cpp/ea_non_iid` on the
 built binary lists no MPFR or GMP library and `nm -u` shows no mpfr/gmp
 symbols. See BUILDING.md for the exact commands.
+
+
+Product-dependency status (recorded 2026-10-01)
+-----------------------------------------------
+
+This patched build is no longer only an upstream proposal: TruePad SHIPS it as
+the entropy-assessment engine of its hardware-RNG path. That changes four things,
+recorded here because this file is now part of the evidence chain, not a licence
+formality.
+
+1. THE EVIDENCE SENTENCE CHANGES. "Assessed with NIST's reference
+   implementation" is no longer accurate for a shipped patched build. The honest
+   form names the patched build, its commit, and that each change is documented
+   above and was offered upstream with its issue number. Every surface that
+   states the unpatched form must be updated to the patched form, and the dated
+   change list above is the artefact that backs it: it is read as evidence, not
+   skimmed as a formality.
+
+2. THE BAR RISES. A fix that upstream declines costs nothing as a PR; shipped, a
+   wrong fix silently changes the number pads are priced against. TruePad's
+   independent review therefore now covers a PRODUCT DEPENDENCY, and any fix the
+   review cannot independently support DOES NOT SHIP, whatever its claimed
+   upstream status (accepted, "a real bug", or still open). Upstream acceptance
+   is necessary context, not sufficient warrant.
+
+3. THE PINNED-OUTPUT TEST'S JOB CHANGES. On an unpatched build the single pin
+   (cpp/selftest/pin-check.sh on bin/ringOsc-nist.bin) proves equivalence to the
+   reference. On a patched build that pin proves only that the UNCHANGED paths
+   still match the reference; it cannot speak to the deliberate divergences. The
+   requirement for a patched build is PER-CHANGE EXPECTED VALUES: each deliberate
+   divergence (e.g. F09's MultiMMC rise) must have a recorded expected figure and
+   be shown to produce exactly that, AND nothing else may have moved. The
+   cpp/selftest/regression-*.sh scripts are that mechanism; the global pin is
+   necessary but no longer sufficient.
+
+4. THE ALTERNATIVE GIVEN UP. Shipping UNPATCHED keeps the evidence at its
+   strongest — "assessed with NIST's own reference implementation, unmodified" —
+   at the cost of carrying the known defects (the heap over-read, the
+   divide-by-zero estimates, the sub-minimum-sample acceptance, and the rest
+   listed above). Shipping PATCHED was chosen instead: the defects are real and
+   several change the number in the dangerous direction, so carrying them into a
+   product that prices pads on that number was judged worse than taking on the
+   evidence burden of a documented, upstream-offered, independently-reviewed fork.
+   This was a decision, not a default; a later reader should see both sides were
+   weighed.

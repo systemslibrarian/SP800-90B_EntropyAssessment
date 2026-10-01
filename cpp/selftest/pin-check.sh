@@ -33,6 +33,12 @@ SAMPLE_SHA256=7d37dc3795e9b2927beb779008d7f4b4630dd7f2c058a2b14cee9d41a658dd68
 EXPECTED=0.12644573619605429
 RELTOL=1e-9
 
+# PATCHED-BUILD NOTE (product-dependency status, NOTICE 2026-10-01): on this
+# patched fork the single pin below proves only that the UNCHANGED estimator
+# paths still match the reference. It cannot speak to the deliberate divergences
+# (e.g. F09). Those need PER-CHANGE expected values, which live in the
+# cpp/selftest/regression-*.sh scripts. This pin is necessary but not sufficient.
+
 if [ ! -x "$BIN" ]; then echo "pin-check: no executable at $BIN" >&2; exit 2; fi
 if [ ! -f "$SAMPLE" ]; then echo "pin-check: sample $SAMPLE missing" >&2; exit 2; fi
 
