@@ -240,7 +240,6 @@ int main(int argc, char* argv[]) {
     if (!all_bits && (data.blen > MIN_SIZE)) data.blen = MIN_SIZE;
 
     if ((verbose > 1) && ((data.alph_size > 2) || !initial_entropy)) printf("Number of Binary samples: %ld\n", data.blen);
-    if (data.len < MIN_SIZE) printf("\n*** Warning: data contains less than %d samples ***\n\n", MIN_SIZE);
     if (verbose > 1) {
         if (data.alph_size < (1 << data.word_size)) printf("\nSamples have been translated\n");
     }
@@ -249,25 +248,90 @@ int main(int argc, char* argv[]) {
     int alphabet_size = data.alph_size;
     int sample_size = data.len;
 
+    // The Section 5 IID tests must run on the dataset that is actually being
+    // assessed. Under -c that dataset is the conditioned output treated as a
+    // binary string:
+    //
+    //   SP 800-90B 3.1.1 item 2: "The output of the conditioning component
+    //   shall be concatenated in the order in which it was generated and
+    //   treated as a binary string for testing purposes."
+    //
+    //   SP 800-90B 3.1.5.2: "The output of the conditioning component (n_out)
+    //   shall be treated as a binary string, for purposes of the entropy
+    //   estimation."
+    //
+    // h' is already computed from data.bsymbols, but the chi-square, LRS and
+    // permutation batteries were run on the packed multi-bit symbols, so any
+    // dependence between the bits within a symbol was invisible to them: a
+    // dataset whose every byte duplicates its low nibble into its high nibble
+    // passes all three as 8-bit symbols and fails two of them as a bitstring.
+    //
+    // testdata is a view onto the bitstring. It aliases data's buffers and is
+    // therefore never freed. For a 1-bit input bsymbols aliases symbols and
+    // blen equals len, so the view is identical to data and -c on binary input
+    // is unaffected. Bits need no symbol translation, so rawsymbols and
+    // symbols are the same array; both bit values are necessarily present
+    // whenever the symbol alphabet has two or more members, so maxsymbol is 1.
+    data_t testdata = data;
+    if (!initial_entropy) {
+        testdata.symbols = data.bsymbols;
+        testdata.rawsymbols = data.bsymbols;
+        testdata.len = data.blen;
+        testdata.alph_size = 2;
+        testdata.word_size = 1;
+        testdata.maxsymbol = 1;
+    }
+
+    // chi_square_tests() and len_LRS_test() take the sample count as int, and
+    // permutation_tests() indexes dp->len with an int. Under -i that count is
+    // data.len; under -c it is data.blen, up to eight times larger. Refuse
+    // rather than wrap silently and return an IID verdict computed from
+    // overflowed indices.
+    if (testdata.len > INT_MAX) {
+        testRun.errorLevel = -1;
+        testRun.errorMsg = "Error: conditioned dataset is too large to test: " +
+            std::to_string(testdata.len) + " bits exceeds the " +
+            std::to_string(INT_MAX) + "-bit limit of the Section 5 test code.";
+
+        printf("\n*** Error: conditioned dataset is too large to test: %ld bits exceeds the %d-bit limit of the Section 5 test code ***\n\n",
+               testdata.len, INT_MAX);
+
+        if (jsonOutput) {
+            ofstream output;
+            output.open(outputfilename);
+            output << testRun.GetAsJson();
+            output.close();
+        }
+
+        free_data(&data);
+        exit(-1);
+    }
+
+    // What the Section 5 tests see, which differs from the entropy-estimation
+    // inputs above only under -c with multi-bit symbols.
+    int test_alphabet_size = testdata.alph_size;
+    int test_sample_size = (int)testdata.len;
+    const char *test_label = initial_entropy ? "Literal" : "Bitstring";
+
     if ((verbose == 1) || (verbose == 2))
         printf("Calculating baseline statistics...\n");
 
-    calc_stats(&data, rawmean, median);
+    calc_stats(&testdata, rawmean, median);
 
     if (verbose == 2) {
         printf("\tRaw Mean: %f\n", rawmean);
         printf("\tMedian: %f\n", median);
-        printf("\tBinary: %s\n\n", (alphabet_size == 2 ? "true" : "false"));
+        printf("\tBinary: %s\n\n", (test_alphabet_size == 2 ? "true" : "false"));
     } else if (verbose > 2) {
         printf("Raw Mean = %.17g\n", rawmean);
         printf("Median = %.17g\n", median);
-        printf("Binary = %s\n", (alphabet_size == 2 ? "true" : "false"));
+        printf("Binary = %s\n", (test_alphabet_size == 2 ? "true" : "false"));
     }
 
     IidTestCase tc;
     tc.mean = rawmean;
     tc.median = median;
-    tc.binary = (alphabet_size == 2);
+    tc.binary = (test_alphabet_size == 2);
 
     double H_original = data.word_size;
     double H_bitstring = 1.0;
@@ -313,7 +377,7 @@ int main(int argc, char* argv[]) {
     tc.h_assessed = h_assessed;
 
     // Compute chi square stats
-    bool chi_square_test_pass = chi_square_tests(data.symbols, sample_size, alphabet_size, verbose);
+    bool chi_square_test_pass = chi_square_tests(testdata.symbols, test_sample_size, test_alphabet_size, verbose);
     tc.passed_chi_square_tests = chi_square_test_pass;
 
     if ((verbose == 1) || (verbose == 2)) {
@@ -331,7 +395,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Compute length of the longest repeated substring stats
-    bool len_LRS_test_pass = len_LRS_test(data.symbols, sample_size, alphabet_size, verbose, "Literal");
+    bool len_LRS_test_pass = len_LRS_test(testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
     tc.passed_longest_repeated_substring_test = len_LRS_test_pass;
 
     if ((verbose == 1) || (verbose == 2)) {
@@ -349,7 +413,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Compute permutation stats
-    bool perm_test_pass = permutation_tests(&data, rawmean, median, verbose, tc);
+    bool perm_test_pass = permutation_tests(&testdata, rawmean, median, verbose, tc);
     tc.passed_iid_permutation_tests = perm_test_pass;
 
     if ((verbose == 1) || (verbose == 2)) {
