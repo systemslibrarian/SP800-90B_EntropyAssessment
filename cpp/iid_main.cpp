@@ -383,14 +383,28 @@ int main(int argc, char* argv[]) {
     if (initial_entropy) {
         H_original = most_common(data.symbols, sample_size, alphabet_size, verbose, "Literal");
     }
-    tc.h_original = H_original;
 
     if (((data.alph_size > 2) || !initial_entropy)) {
         H_bitstring = most_common(data.bsymbols, data.blen, 2, verbose, "Bitstring");
     }
-    tc.h_bitstring = H_bitstring;
 
+    // Compute the assessed figure, then print it. These were tangled: the
+    // whole computation lived inside the "verbose > 2" branch, so at any lower
+    // verbosity h_assessed kept its initial value of data.word_size and that
+    // was what reached the JSON report. For binary input under -i the report
+    // said 1.0 where the correct figure is H_original, so the reported figure
+    // came out too high. (Upstream PR #251 addresses the same verbosity
+    // coupling; it is open and untouched.)
     double h_assessed = data.word_size;
+
+    if ((data.alph_size > 2) || !initial_entropy) {
+        h_assessed = min(h_assessed, H_bitstring * data.word_size);
+    }
+
+    if (initial_entropy) {
+        h_assessed = min(h_assessed, H_original);
+    }
+
     if ((verbose == 1) || (verbose == 2)) {
         if (initial_entropy) {
             printf("H_original: %f\n", H_original);
@@ -402,21 +416,32 @@ int main(int argc, char* argv[]) {
             printf("h': %f\n", H_bitstring);
         }
     } else if (verbose > 2) {
-        h_assessed = data.word_size;
-
         if ((data.alph_size > 2) || !initial_entropy) {
-            h_assessed = min(h_assessed, H_bitstring * data.word_size);
             printf("H_bitstring = %.17g\n", H_bitstring);
             printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
         }
 
         if (initial_entropy) {
-            h_assessed = min(h_assessed, H_original);
             printf("H_original = %.17g\n", H_original);
         }
 
         printf("Assessed min entropy: %.17g\n", h_assessed);
     }
+
+    // Record only the values that were computed. H_original and H_bitstring
+    // are initialised to data.word_size and 1.0 so that the min() above is
+    // well defined whichever branch runs; reporting those initialisers as if
+    // they were estimates put "hBitstring": 1.0 into a binary -i report and
+    // "hOriginal": <word size> into a -c report, neither of which any
+    // estimator produced. ea_non_iid already records only what it computed.
+    if (initial_entropy) {
+        tc.h_original = H_original;
+    }
+
+    if ((data.alph_size > 2) || !initial_entropy) {
+        tc.h_bitstring = H_bitstring;
+    }
+
     tc.h_assessed = h_assessed;
 
     // Compute chi square stats
