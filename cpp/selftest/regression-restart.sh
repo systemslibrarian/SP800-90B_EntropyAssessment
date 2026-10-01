@@ -8,6 +8,9 @@
 #         supplied; "nan" passed both range checks, because every comparison
 #         with NaN is false, and then reached (int)floor(u/p) with p = NaN,
 #         which is undefined behaviour indexing counts[] out of bounds.
+#   R-2   An estimate that could not be computed returns -1, and that sentinel
+#         was folded into H_r/H_c as if it were an entropy, failing an
+#         otherwise valid restart dataset.
 #   R-3   An -i run that could not read its input wrote a JSON report saying
 #         errorLevel 0: the error level was set on the non-IID report object
 #         while the IID one was written.
@@ -101,6 +104,47 @@ if "${tool}" -n -o "${work}/ok.json" "${work}/r8.bin" 8 3.2 >/dev/null 2>&1 && \
 	note "R-3 successful run still errorLevel 0:" "yes"
 else
 	note "R-3 successful run still errorLevel 0:" "changed"
+	fails=$((fails + 1))
+fi
+
+# ---------------------------------------------------------------- R-2
+# A de Bruijn B(100,3) sequence is exactly 1,000,000 samples in which every
+# 3-tuple occurs once and every 2-tuple about 100 times, so the LRS estimate
+# hits "v < u, cannot be computed" (SP 800-90B 6.3.6 step 2) and returns -1.
+gen="${repo}/audits/2026-09-30/novel-findings/generators/restart/gen_debruijn.py"
+if [ -f "${gen}" ] && python3 "${gen}" 100 11 "${work}/db100.bin" >/dev/null 2>&1; then
+	out=$("${tool}" -vv "${work}/db100.bin" 8 0.5 2>&1)
+
+	if printf '%s' "${out}" | grep -q "v<u. Can't Run LRS Test"; then
+		note "R-2 the LRS estimate really does decline:" "yes (precondition holds)"
+	else
+		note "R-2 the LRS estimate really does decline:" "no; this input no longer exercises R-2"
+		fails=$((fails + 1))
+	fi
+
+	if printf '%s' "${out}" | grep -qE '^H_r: -1'; then
+		note "R-2 the -1 sentinel is not folded in:" "H_r is -1 (still folded)"
+		fails=$((fails + 1))
+	else
+		note "R-2 the -1 sentinel is not folded in:" "H_r $(printf '%s' "${out}" | sed -n 's/^H_r: //p' | head -1)"
+	fi
+
+	if printf '%s' "${out}" | grep -q 'Validation Test Passed'; then
+		note "R-2 no false validation failure:" "passed"
+	else
+		note "R-2 no false validation failure:" "still fails validation"
+		fails=$((fails + 1))
+	fi
+else
+	note "R-2:" "skipped (generator unavailable)"
+fi
+
+# An ordinary restart dataset must be unaffected.
+out=$("${tool}" -vv "${work}/r8.bin" 8 3.2 2>&1)
+if printf '%s' "${out}" | grep -q 'Validation Test Passed'; then
+	note "R-2 ordinary dataset unaffected:" "passed"
+else
+	note "R-2 ordinary dataset unaffected:" "verdict changed"
 	fails=$((fails + 1))
 fi
 

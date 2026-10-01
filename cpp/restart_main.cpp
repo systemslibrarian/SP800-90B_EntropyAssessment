@@ -610,15 +610,23 @@ int main(int argc, char* argv[]) {
             NonIidTestCase tc632;
             tc632.testCaseNumber = "Collision Test (for bit strings only)";
             tc632.data_word_size = 1;
+            // collision_test() became fallible when it was given the v >= 2
+            // guard SP 800-90B 6.3.2 step 5 requires. It cannot decline on a
+            // restart dataset, which is always 1,000,000 samples, but the
+            // guard is here so the two programs treat it alike.
             ret_min_entropy = collision_test(rdata, data.len, verbose, "Literal");
-            if (verbose > 1) printf("\tCollision Test Estimate (Rows) = %f / 1 bit(s)\n", ret_min_entropy);
-            tc632.h_r = ret_min_entropy;
-            H_r = min(ret_min_entropy, H_r);
+            if (ret_min_entropy >= 0) {
+                if (verbose > 1) printf("\tCollision Test Estimate (Rows) = %f / 1 bit(s)\n", ret_min_entropy);
+                tc632.h_r = ret_min_entropy;
+                H_r = min(ret_min_entropy, H_r);
+            }
 
             ret_min_entropy = collision_test(cdata, data.len, verbose, "Literal");
-            if (verbose > 1) printf("\tCollision Test Estimate (Cols) = %f / 1 bit(s)\n", ret_min_entropy);
-            tc632.h_c = ret_min_entropy;
-            H_c = min(ret_min_entropy, H_c);
+            if (ret_min_entropy >= 0) {
+                if (verbose > 1) printf("\tCollision Test Estimate (Cols) = %f / 1 bit(s)\n", ret_min_entropy);
+                tc632.h_c = ret_min_entropy;
+                H_c = min(ret_min_entropy, H_c);
+            }
 
             testRunNonIid.testCases.push_back(tc632);
 
@@ -677,13 +685,22 @@ int main(int argc, char* argv[]) {
         SAalgs(rdata, data.len, data.alph_size, row_t_tuple_res, row_lrs_res, verbose, "Literal");
         SAalgs(cdata, data.len, data.alph_size, col_t_tuple_res, col_lrs_res, verbose, "Literal");
 
-        if (verbose > 1) printf("\tT-Tuple Test Estimate (Rows) = %f / %d bit(s)\n", row_t_tuple_res, data.word_size);
-        tc635.h_r = row_t_tuple_res;
-        H_r = min(row_t_tuple_res, H_r);
+        // SAalgs() returns -1 for an estimate that could not be computed
+        // (SP 800-90B 6.3.6 step 2: "If v < u, this estimate cannot be
+        // computed"). Folding that sentinel in as an entropy drove H_r to -1
+        // and failed an otherwise valid restart dataset. Every other fallible
+        // estimator here is already guarded this way.
+        if (row_t_tuple_res >= 0) {
+            if (verbose > 1) printf("\tT-Tuple Test Estimate (Rows) = %f / %d bit(s)\n", row_t_tuple_res, data.word_size);
+            tc635.h_r = row_t_tuple_res;
+            H_r = min(row_t_tuple_res, H_r);
+        }
 
-        if (verbose > 1) printf("\tT-Tuple Test Estimate (Cols) = %f / %d bit(s)\n", col_t_tuple_res, data.word_size);
-        tc635.h_c = col_t_tuple_res;
-        H_c = min(col_t_tuple_res, H_c);
+        if (col_t_tuple_res >= 0) {
+            if (verbose > 1) printf("\tT-Tuple Test Estimate (Cols) = %f / %d bit(s)\n", col_t_tuple_res, data.word_size);
+            tc635.h_c = col_t_tuple_res;
+            H_c = min(col_t_tuple_res, H_c);
+        }
 
         testRunNonIid.testCases.push_back(tc635);
         // Section 6.3.6 - Estimate entropy with LRS Test
@@ -692,13 +709,17 @@ int main(int argc, char* argv[]) {
         tc636.testCaseNumber = "LRS Test";
         tc636.data_word_size = data.word_size;
 
-        if (verbose > 1) printf("\tLRS Test Estimate (Rows) = %f / %d bit(s)\n", row_lrs_res, data.word_size);
-        tc636.h_r = row_lrs_res;
-        H_r = min(row_lrs_res, H_r);
+        if (row_lrs_res >= 0) {
+            if (verbose > 1) printf("\tLRS Test Estimate (Rows) = %f / %d bit(s)\n", row_lrs_res, data.word_size);
+            tc636.h_r = row_lrs_res;
+            H_r = min(row_lrs_res, H_r);
+        }
 
-        if (verbose > 1) printf("\tLRS Test Estimate (Cols) = %f / %d bit(s)\n", col_lrs_res, data.word_size);
-        tc636.h_c = col_lrs_res;
-        H_c = min(col_lrs_res, H_c);
+        if (col_lrs_res >= 0) {
+            if (verbose > 1) printf("\tLRS Test Estimate (Cols) = %f / %d bit(s)\n", col_lrs_res, data.word_size);
+            tc636.h_c = col_lrs_res;
+            H_c = min(col_lrs_res, H_c);
+        }
 
         testRunNonIid.testCases.push_back(tc636);
 
