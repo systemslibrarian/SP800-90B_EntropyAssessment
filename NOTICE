@@ -26,11 +26,36 @@ You are solely responsible for determining the appropriateness of using and dist
 Statement of changes (required by the licence above)
 -----------------------------------------------------
 
-The software was changed by the maintainers of this fork. No change
-below touches estimator logic, cut-offs, rounding, output formatting,
-or the set of estimators that run. Nothing under cpp/shared/, cpp/iid/,
-cpp/non_iid/, the *_main.cpp programs, bin/, or cpp/selftest/refdata/
-has been modified from the upstream baseline.
+The software was changed by the maintainers of this fork.
+
+Changes fall into two periods. Until 2026-09-30 nothing outside the
+build files was touched, and the statement that no change affected a
+reported figure held without qualification. On 2026-09-30, after NIST
+reviewed the defects this fork had reported upstream and agreed with
+several of them, repairs were made to the estimator sources as well.
+
+What is still true of every change below:
+
+  * No reported min-entropy figure changes for any dataset of 1,000,000
+    or more samples, which is the minimum SP 800-90B Section 3.1.1
+    requires for an assessment. The pinned-output check on
+    bin/ringOsc-nist.bin is unchanged at 0.12644573619604868, and the
+    reference comparison against cpp/selftest/refdata/ differs on
+    exactly the two files it differed on before, for the platform
+    reason recorded in upstream issue #155.
+
+  * bin/ and cpp/selftest/refdata/ are untouched. The reference data is
+    NIST's and is not regenerated here.
+
+  * No estimator's formula, cut-off, rounding or confidence bound is
+    altered. Where an estimator changed, it changed only from producing
+    an unmeasured number, reading out of bounds, or aborting the
+    process, to declining to produce an estimate, which the combination
+    logic already handled.
+
+What is no longer true: cpp/shared/, cpp/non_iid/ and the *_main.cpp
+programs have been modified. Each change is listed below with the
+upstream issue it answers and the commit that made it.
 
 2026-09-30  cpp/Makefile: on macOS (uname -s = Darwin) add Homebrew's
             include and library prefixes, and OpenSSL 3's keg-only
@@ -48,6 +73,69 @@ has been modified from the upstream baseline.
             reported min-entropy against upstream's own reference value.
 2026-09-30  NOTICE (this file) and BUILDING.md added; one pointer line
             added to README.md. Build documentation only.
+
+The following were made on 2026-09-30 after NIST's review of the
+defects reported upstream from this fork's audit. Each names the
+upstream issue and this fork's commit.
+
+2026-09-30  cpp/selftest/compareresults.pl, cpp/selftest/selftest: the
+            comparison now also covers H_original, H_bitstring and the
+            Assessed min entropy, and the harness propagates a
+            mismatch as a nonzero exit status. Upstream #272, accepted.
+            Commit da0265c.
+2026-09-30  cpp/iid_main.cpp: under -c the Section 5 IID tests run on
+            the conditioned output as a binary string, per SP 800-90B
+            3.1.1 item 2 and 3.1.5.2, instead of on the packed
+            multi-bit symbols. Upstream #271, accepted; remedy 1 of the
+            two offered. Commit 134d377.
+2026-09-30  cpp/shared/utils.h, cpp/shared/test_run_base.h,
+            cpp/non_iid_main.cpp, cpp/iid_main.cpp: datasets of fewer
+            than 1,000,000 samples are refused before any estimator
+            runs, with a nonzero exit and a JSON error. Answers the
+            remedy NIST gave for #257, #258, #261, #263, #264 and the
+            sub-minimum half of #255. Commit c2f1dcd.
+2026-09-30  cpp/non_iid/multi_mmc_test.h: the binary MultiMMC estimator
+            declines below D_MMC+1 samples instead of reading past the
+            end of the sample buffer. Upstream #257, which NIST called
+            "a real bug". Commit ed88de9.
+2026-09-30  cpp/non_iid/compression_test.h: the compression estimate
+            requires at least two test blocks, instead of dividing by
+            v-1 = 0. Upstream #263. Commit c0ee84a.
+2026-09-30  cpp/non_iid/collision_test.h, cpp/non_iid_main.cpp: the
+            collision estimate requires at least two collisions instead
+            of dividing by v-1 = 0, and its result is guarded in the
+            combination logic the way every other fallible estimator
+            already was. Upstream #264. Commit c217f20.
+2026-09-30  cpp/shared/lrs_test.h, cpp/non_iid/lag_test.h,
+            cpp/non_iid/lz78y_test.h: estimators decline rather than
+            aborting the process on short or repeat-free input.
+            Upstream #261. Commit 21b0a31.
+2026-09-30  cpp/shared/utils.h, cpp/shared/test_run_base.h,
+            cpp/non_iid_main.cpp, cpp/iid_main.cpp: the -l subset offset
+            is checked for overflow and against the file length, a
+            zero-sample subset is refused, and the report records which
+            block was requested and how many samples were obtained. The
+            sha256 field still hashes the whole file, which is what
+            NIST asked for. Upstream #260. Commit 0e1ffcd.
+2026-09-30  cpp/shared/test_run_base.h, cpp/non_iid_main.cpp,
+            cpp/iid_main.cpp: the JSON report records the symbol width
+            the assessment used and whether it was inferred. Upstream
+            #254, the half NIST called useful; the inference itself is
+            unchanged. Commit 97571de.
+2026-09-30  cpp/shared/TestRunUtils.h, cpp/non_iid_main.cpp,
+            cpp/iid_main.cpp: non-regular input files are refused
+            instead of hanging, and the hash function's status is
+            checked. Fork hardening; NIST does not regard upstream #259
+            as a defect. Commit cdb5cd6.
+2026-09-30  cpp/selftest/regression-*.sh: new regression tests for each
+            of the above. Test material only.
+
+Deliberately not changed, pending NIST: the treatment of a two-symbol
+alphabet as binary regardless of the declared sample width (upstream
+#253 and PR #256). NIST reads "binary" as a property of the alphabet
+rather than of the sample width, and the question of what an explicitly
+declared bits_per_symbol should mean for such a dataset is unresolved.
+The fork follows upstream's behaviour unchanged.
 
 Only ea_non_iid is built and distributed from this fork. ea_conditioning
 (the only program that links MPFR and GMP) is not built or shipped.
