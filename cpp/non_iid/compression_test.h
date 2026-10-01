@@ -94,7 +94,18 @@ double compression_test(uint8_t* data, long len, const int verbose, const char *
 	int j, d, b = 6;
 	long i, num_blocks, v;
 	unsigned int block, alph_size = 1 << b; 
-	unsigned int dict[alph_size];
+	// dict[] holds a 1-based block index, which is a long. Storing it in an
+	// unsigned int truncated it above 2^32 blocks (inputs beyond about 25.8
+	// Gbit): every later distance i+1-dict[block] was then inflated by a
+	// multiple of 2^32, X-bar rose above the uniform expectation, and the
+	// estimate silently became 1.0, the maximum. int64_t rather than long
+	// because long is 32-bit on LLP64 targets such as Windows, where the
+	// truncation would start far sooner.
+	int64_t dict[alph_size];
+
+	// If this ever fails, the dictionary can no longer hold the block index
+	// and the estimate can be inflated for large inputs without any error.
+	static_assert(sizeof(dict[0]) >= 8, "compression dictionary must hold 64-bit block indices");
 	double X=0.0, X_comp=0.0;
 	double sigma=0.0, sigma_comp=0.0;
 	double p, entEst;

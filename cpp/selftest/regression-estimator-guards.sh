@@ -18,6 +18,9 @@
 #         reported min entropy 1 from a NaN comparison. It must decline.
 #   #261  assert() aborted the process (SIGABRT, no report) on ordinary short
 #         or repeat-free inputs. Every estimator must decline instead.
+#   F14   compression_test's dictionary stored a long block index in an
+#         unsigned int, truncating above 2^32 blocks and silently inflating
+#         the estimate to 1.0. The element type must stay 64-bit.
 #
 # Each input is run with EA_ALLOW_SHORT_DATASET=1 so that the intake check
 # does not mask the behaviour being tested.
@@ -179,6 +182,35 @@ if printf '%s' "${out}" | grep -q 'no repeated substrings' && \
 	note "#261 repeat-free data declines and reports:" "both present"
 else
 	note "#261 repeat-free data declines and reports:" "missing decline or figure"
+	fails=$((fails + 1))
+fi
+
+# ---------------------------------------------------------------- F14
+# The end-to-end case needs more than 25.8 Gbit of input and hundreds of GB of
+# memory, so it cannot be run here. What is tested instead is that the
+# compile-time guard protecting the element type is real: narrowing the type
+# back must fail the build.
+narrow="${work}/narrow"
+cp -R "${cpp}" "${narrow}" && rm -f "${narrow}/ea_non_iid"
+perl -pi -e 's/^\tint64_t dict\[alph_size\];$/\tunsigned int dict[alph_size];/' "${narrow}/non_iid/compression_test.h"
+if grep -q 'unsigned int dict\[alph_size\];' "${narrow}/non_iid/compression_test.h"; then
+	if ( cd "${narrow}" && make non_iid >/dev/null 2>&1 ); then
+		note "F14 narrowing the dictionary fails the build:" "it BUILT — the guard is not protecting"
+		fails=$((fails + 1))
+	else
+		note "F14 narrowing the dictionary fails the build:" "build refused, as intended"
+	fi
+else
+	note "F14 guard check:" "SOURCE PATTERN NOT FOUND — update this script"
+	fails=$((fails + 1))
+fi
+
+# And the estimate on real data must be unchanged by the widening.
+got=$("${asan}" -vv "${cpp}/../bin/ringOsc-nist.bin" 2>/dev/null | sed -n 's/^Literal Compression Estimate: min entropy = //p' | head -1)
+if [ "${got}" = "0.15932269772157773" ]; then
+	note "F14 compression estimate unchanged:" "${got}"
+else
+	note "F14 compression estimate unchanged:" "got '${got}'"
 	fails=$((fails + 1))
 fi
 
