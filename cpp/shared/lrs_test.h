@@ -146,7 +146,20 @@ void SAalgs32(const uint8_t text[], long int n, int k, double &t_tuple_res, doub
 		if(L[i]>v) v = L[i];
 	}
 
-	assert((v>0) && (v < n));
+	// v == 0 means no substring repeats anywhere in the dataset, so neither
+	// the t-tuple nor the LRS estimate is defined. This was an assert, so an
+	// ordinary input with no repeat (two distinct bytes, or all 256 byte
+	// values once each) aborted the process with SIGABRT and produced no
+	// report at all. Decline both estimates instead; main() already omits a
+	// negative result from the minimum. Upstream #261.
+	if(v == 0) {
+		printf("t-Tuple and LRS Estimates: no repeated substrings. Can't run either test.\n");
+		t_tuple_res = -1.0;
+		lrs_res = -1.0;
+		return;
+	}
+
+	assert(v < n);
 	//v is now set correctly
 
 	vector <saidx_t> Q(v+1, 1); //Contains an accumulation of positive counts 1 <= Q[i] <= n
@@ -368,7 +381,20 @@ void SAalgs64(const uint8_t text[], long int n, int k, double &t_tuple_res, doub
 		if(L[i]>v) v = L[i];
 	}
 
-	assert((v>0) && (v < n));
+	// v == 0 means no substring repeats anywhere in the dataset, so neither
+	// the t-tuple nor the LRS estimate is defined. This was an assert, so an
+	// ordinary input with no repeat (two distinct bytes, or all 256 byte
+	// values once each) aborted the process with SIGABRT and produced no
+	// report at all. Decline both estimates instead; main() already omits a
+	// negative result from the minimum. Upstream #261.
+	if(v == 0) {
+		printf("t-Tuple and LRS Estimates: no repeated substrings. Can't run either test.\n");
+		t_tuple_res = -1.0;
+		lrs_res = -1.0;
+		return;
+	}
+
+	assert(v < n);
 	//v is now set correctly
 
 	vector <saidx64_t> Q(v+1, 1); //Contains an accumulation of positive counts 1 <= Q[i] <= n

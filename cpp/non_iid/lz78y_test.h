@@ -14,9 +14,21 @@ static double binaryLZ78YPredictionEstimate(const uint8_t *S, long L, const int 
    uint32_t curPattern=0;
    long dictElems=0;
 
-   assert(L>B_len);
-   assert(L-B_len > 2);
    assert(B_len < 32); //B < 32 to make the bit shifts well defined
+
+   // The predictor needs B_len context samples plus more than two predictions,
+   // so L must exceed B_len+2. These were asserts, so binary inputs of 17 or 18
+   // samples aborted the process with SIGABRT and no report, and inputs of 4 to
+   // 16 aborted here after MultiMMC had already run. Decline instead, as the
+   // non-binary path does. Upstream #261.
+   //
+   // Note the two paths differ by one sample: the non-binary path accepts
+   // len == B_len+2 while this one needs one more to make a prediction. Both
+   // are far below the SP 800-90B minimum enforced at intake.
+   if(L < B_len + 3) {
+      printf("\t*** Warning: not enough samples to run LZ78Y test (need at least %d) ***\n", B_len + 3);
+      return -1.0;
+   }
 
    //Initialize the data structure tables
    for(j=0; j< B_len; j++) {
@@ -123,7 +135,7 @@ double LZ78Y_test(uint8_t *data, long len, int alph_size, const int verbose, con
 	array<map<array<uint8_t, B_len>, PostfixDictionary>, B_len> D;
 
 	if(len < B_len+2){	
-		printf("\t*** Warning: not enough samples to run LZ78Y test (need more than %d) ***\n", B_len+2);
+		printf("\t*** Warning: not enough samples to run LZ78Y test (need at least %d) ***\n", B_len+2);
 		return -1.0;
 	}
 

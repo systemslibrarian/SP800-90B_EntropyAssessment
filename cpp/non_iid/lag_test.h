@@ -38,8 +38,15 @@ double lag_test(uint8_t *S, long L, int k, const int verbose, const char *label)
 	long highScore = 0;
 
 	assert(S != NULL);
-	assert(L > 2);
 	assert(k >= 2);
+
+	// Fewer than three samples cannot produce a lag prediction. This was an
+	// assert, so an ordinary (if useless) input file aborted the process with
+	// SIGABRT and no report rather than being declined. Upstream #261.
+	if(L < 3) {
+		printf("\t*** Warning: not enough samples to run lag test (need at least %d) ***\n", 3);
+		return -1.0;
+	}
 
 	ringBuffers = new lagBuf[k];
 

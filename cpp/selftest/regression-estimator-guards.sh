@@ -16,6 +16,8 @@
 #         test block, and divided by v-1 = 0. It must require two.
 #   #264  collision_test divided by v-1 = 0 with a single collision and
 #         reported min entropy 1 from a NaN comparison. It must decline.
+#   #261  assert() aborted the process (SIGABRT, no report) on ordinary short
+#         or repeat-free inputs. Every estimator must decline instead.
 #
 # Each input is run with EA_ALLOW_SHORT_DATASET=1 so that the intake check
 # does not mask the behaviour being tested.
@@ -136,6 +138,48 @@ if printf '%s' "${out}" | grep -qE 'Collision Estimate: (sigma-hat = -?nan|min e
 	fails=$((fails + 1))
 else
 	note "#264 no unmeasured 1.0 from NaN:" "none"
+fi
+
+# ---------------------------------------------------------------- #261
+# These inputs all aborted on an assert before the fix: no message from the
+# tool, no JSON, exit 134. They must now be declined with a reason, and the
+# run must still produce a report.
+printf '\x00\x01' > "${work}/two.bin"                       # no repeated substring
+python3 -c "open('${work}/d256.bin','wb').write(bytes(range(256)))"   # every byte once
+python3 -c "open('${work}/b3.bin','wb').write(bytes([0,1,0]))"        # binary, L=3
+for L in 17 18 19; do
+	python3 -c "
+import random, sys
+r = random.Random(int(sys.argv[2]))
+open(sys.argv[1],'wb').write(bytes(r.randrange(2) for _ in range(int(sys.argv[2]))))
+" "${work}/b${L}.bin" "${L}"
+done
+
+check_no_abort() { # check_no_abort <file> <bits> <label>
+	local out rc
+	out=$("${asan}" -q "${work}/$1" "$2" 2>&1); rc=$?
+	if [ "${rc}" -eq 134 ] || printf '%s' "${out}" | grep -q 'Assertion failed'; then
+		note "#261 $3:" "ABORTED (exit ${rc})"
+		fails=$((fails + 1))
+	else
+		note "#261 $3:" "no abort (exit ${rc})"
+	fi
+}
+check_no_abort two.bin  1 "two distinct bytes, nothing repeats"
+check_no_abort d256.bin 8 "256 distinct bytes, nothing repeats"
+check_no_abort b3.bin   1 "binary L=3 (MultiMMC)"
+check_no_abort b17.bin  1 "binary L=17 (LZ78Y)"
+check_no_abort b18.bin  1 "binary L=18 (LZ78Y)"
+check_no_abort b19.bin  1 "binary L=19 (LZ78Y)"
+
+# A repeat-free dataset must say so and still report.
+out=$("${asan}" -vv "${work}/d256.bin" 8 2>&1)
+if printf '%s' "${out}" | grep -q 'no repeated substrings' && \
+   printf '%s' "${out}" | grep -q '^Assessed min entropy:'; then
+	note "#261 repeat-free data declines and reports:" "both present"
+else
+	note "#261 repeat-free data declines and reports:" "missing decline or figure"
+	fails=$((fails + 1))
 fi
 
 # A compliant dataset must remain sanitizer-clean.
