@@ -229,6 +229,10 @@ int main(int argc, char* argv[]) {
             printf("Opening file: '%s' (SHA-256 hash %s), reading block %lu of size %lu\n", file_path, hash, subsetIndex, subsetSize);
         }
     }
+    // Remember whether the width came from the command line, before
+    // read_file_subset fills in an inferred one.
+    int bitsPerSymbolGiven = data.word_size;
+
     if (!read_file_subset(file_path, &data, subsetIndex, subsetSize, &testRun)) {
         if (jsonOutput) {
             ofstream output;
@@ -244,6 +248,13 @@ int main(int argc, char* argv[]) {
     // A request for the last block of a file usually yields fewer samples
     // than were asked for; the report now says how many were obtained.
     testRun.subsetActualSamples = data.len;
+
+    // data.word_size was zero here unless a width was given on the command
+    // line, in which case read_file_subset left it alone; otherwise it now
+    // holds the width inferred from the data. Either way it is the width the
+    // assessment used.
+    testRun.bitsPerSymbolInferred = (bitsPerSymbolGiven == 0);
+    testRun.bitsPerSymbol = data.word_size;
 
     if (verbose > 1) printf("Loaded %ld samples of %d distinct %d-bit-wide symbols\n", data.len, data.alph_size, data.word_size);
 

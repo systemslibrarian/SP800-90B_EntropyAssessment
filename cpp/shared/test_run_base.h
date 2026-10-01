@@ -27,6 +27,14 @@ public:
     // bytes identifiable alongside it, since the report otherwise did not say
     // that only part of the file was read, nor how much of it was actually
     // obtained when the last block was short.
+    // The symbol width the assessment actually used, and whether it was taken
+    // from the command line or inferred from the data. @joshuaehill on #254:
+    // "Certainly reporting the evident symbol width in JSON would be useful."
+    // The inference itself is deliberately unchanged, and the warning that the
+    // same issue proposed is deliberately not added: "Reporting this 'not a
+    // mapping' as a warning isn't useful."
+    int bitsPerSymbol = 0;
+    bool bitsPerSymbolInferred = false;
     bool subsetRequested = false;
     unsigned long subsetIndex = 0;
     unsigned long subsetRequestedSamples = 0;
@@ -46,6 +54,10 @@ protected:
         }
         if (nonCompliantShortDataset) {
             baseJson["nonCompliantShortDataset"] = true;
+        }
+        if (bitsPerSymbol > 0) {
+            baseJson["bitsPerSymbol"] = bitsPerSymbol;
+            baseJson["bitsPerSymbolInferred"] = bitsPerSymbolInferred;
         }
         if (subsetRequested) {
             baseJson["subsetIndex"] = (Json::UInt64)subsetIndex;
