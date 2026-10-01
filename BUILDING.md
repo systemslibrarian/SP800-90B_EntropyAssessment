@@ -496,6 +496,54 @@ follows upstream behaviour unchanged pending their reading.
 
 ---
 
+## Cost of conditioned IID testing (`ea_iid -c`)
+
+Since the #271 repair, `-c` runs the Section 5 batteries on the conditioned
+output as a binary string, which is what SP 800-90B 3.1.1 item 2 and 3.1.5.2
+require. For multi-bit samples that is eight times as much data as the
+previous (incorrect) behaviour, and the permutation battery dominates.
+
+Measured on this machine, on conditioned data that **fails** the tests:
+
+| Bits tested | Wall clock |
+|---|---|
+| 100,000 | 93.3 s |
+| 200,000 | 191.8 s |
+| 400,000 | 374.9 s |
+
+That is linear: 2.06x and 1.95x the time for 2x the data. Extrapolating at
+0.94 ms per thousand bits:
+
+| Run | Bits | Extrapolated |
+|---|---|---|
+| `-c -t` | 1,000,000 | about 16 minutes |
+| `-c -a` on 10^6 8-bit samples | 8,000,000 | about 2 hours |
+
+**No semantics-preserving optimisation was found, and the behaviour was not
+changed for speed.** The reason is worth stating, because it is not simply
+"more data":
+
+- The battery already short-circuits. `permutation_tests()` skips the
+  remaining permutations once all 19 tests have passed decisively, and a
+  passing test can never un-pass because its counters only rise. Data that
+  passes is therefore already fast.
+- The slow case is data that **fails**. A failure is only known after all
+  10,000 permutations, so none can be skipped. Short-circuiting a failure
+  early would mean deciding it before the evidence is in.
+- It is already parallel: `#pragma omp parallel for` over the permutations,
+  across all 10 cores here.
+- Anything further would mean computing the 19 statistics incrementally
+  rather than over the whole array per permutation, which is a rewrite of the
+  statistical code rather than an optimisation of it.
+
+So the cost is inherent to testing the right data, and it falls on exactly the
+datasets an operator most wants an answer about. `-t` bounds the work to
+1,000,000 bits, but that is an operator decision with its own consequence,
+namely that the verdict then covers only the first 1,000,000 bits of the
+conditioned output. It is not applied by default and should not be.
+
+---
+
 ## Upstream observations (not patched here)
 
 None of these affect a reported figure on a valid input. They are
