@@ -12,6 +12,8 @@
 # Covered:
 #   #257  binaryMultiMMCPredictionEstimate read S[d+1] past the buffer for
 #         4 <= L <= 16; it must decline instead. Checked under AddressSanitizer.
+#   #263  compression_test admitted exactly d+1 six-bit blocks, leaving one
+#         test block, and divided by v-1 = 0. It must require two.
 #
 # Each input is run with EA_ALLOW_SHORT_DATASET=1 so that the intake check
 # does not mask the behaviour being tested.
@@ -71,6 +73,47 @@ if printf '%s' "${out}" | grep -q 'not enough samples to run multiMMC'; then
 	note "#257 binary MultiMMC declines below D_MMC+1:" "declined"
 else
 	note "#257 binary MultiMMC declines below D_MMC+1:" "no decline reported"
+	fails=$((fails + 1))
+fi
+
+# ---------------------------------------------------------------- #263
+# 1001 six-bit blocks leaves v = 1 and divided by v-1 = 0: NaN when the last
+# block repeats the one before it (the estimator then reported 1.0), +inf
+# otherwise (the estimate became -0 and that became the whole figure).
+python3 - "${work}" <<'PY'
+import random, sys
+w = sys.argv[1]
+r = random.Random(11)
+bits = [r.randrange(2) for _ in range(6006)]           # 1001 blocks of 6 bits
+a = bits[:]; a[6000:6006] = a[5994:6000]               # last block repeats -> 0/0
+b = bits[:]; b[6000:6006] = [1 - x for x in b[5994:6000]]  # differs          -> x/0
+open(w + "/v1_nan.bin", "wb").write(bytes(a))
+open(w + "/v1_inf.bin", "wb").write(bytes(b))
+open(w + "/v2.bin", "wb").write(bytes(a + a[:6]))      # 1002 blocks, v = 2
+PY
+
+for f in v1_nan v1_inf; do
+	out=$("${asan}" -vv "${work}/${f}.bin" 1 2>&1)
+	if printf '%s' "${out}" | grep -q 'not enough samples to run compression'; then
+		note "#263 compression declines at v=1 (${f}):" "declined"
+	else
+		note "#263 compression declines at v=1 (${f}):" "ran anyway"
+		fails=$((fails + 1))
+	fi
+	if printf '%s' "${out}" | grep -qE 'Compression Estimate: sigma-hat = (-?nan|-?inf)'; then
+		note "#263 no NaN/inf sigma-hat (${f}):" "NaN or inf still produced"
+		fails=$((fails + 1))
+	else
+		note "#263 no NaN/inf sigma-hat (${f}):" "none"
+	fi
+done
+
+# Two test blocks is the smallest usable case and must still run.
+out=$("${asan}" -vv "${work}/v2.bin" 1 2>&1)
+if printf '%s' "${out}" | grep -qE 'Compression Estimate: sigma-hat = [0-9]'; then
+	note "#263 compression still runs at v=2:" "ran with a finite sigma-hat"
+else
+	note "#263 compression still runs at v=2:" "did not run"
 	fails=$((fails + 1))
 fi
 

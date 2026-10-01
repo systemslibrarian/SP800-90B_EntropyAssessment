@@ -103,8 +103,19 @@ double compression_test(uint8_t* data, long len, const int verbose, const char *
 	d = 1000;
 	num_blocks = len/b;
 
-	if(num_blocks <= d){
-		printf("\t*** Warning: not enough samples to run compression test (need more than %d) ***\n", d);
+	// SP 800-90B 6.3.4 step 5 defines sigma-hat with a 1/(v-1) factor over the
+	// v = num_blocks - d test blocks, so at least two test blocks are needed.
+	// The old bound admitted exactly d+1 blocks, leaving v = 1, and the
+	// division below produced NaN (0/0, when the single test block repeats the
+	// one before it) or +inf. NaN then fell through the X'<2.0 and X'<2.5
+	// comparisons and the estimator reported 1.0 without a search; inf drove
+	// X' to -inf, p to 1 and the estimate to -0, which became the whole
+	// reported figure. Upstream #263; @joshuaehill on PR #270: "This fix seems
+	// fine, but this would be addressed by enforcing a 1000000 sample minimum."
+	// That minimum is enforced at intake; this keeps the estimator itself safe
+	// when called directly.
+	if(num_blocks < d + 2){
+		printf("\t*** Warning: not enough samples to run compression test (need at least %d blocks of %d bits) ***\n", d + 2, b);
 		return -1.0;
 	}
 
