@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <cfloat>
 #include <math.h>
+#include <climits>		// ULONG_MAX, used by the -l subset overflow check below
 #include "test_run_base.h"
 
 #define SWAP(x, y) do { int s = x; x = y; y = s; } while(0)
