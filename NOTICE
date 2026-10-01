@@ -130,6 +130,50 @@ upstream issue and this fork's commit.
 2026-09-30  cpp/selftest/regression-*.sh: new regression tests for each
             of the above. Test material only.
 
+A second repair pass on the same date, working the remaining queue:
+
+2026-09-30  cpp/iid/chi_square_tests.h: a binary chi-square independence
+            test with m = 1 now fails the battery, as SP 800-90B 5.2.3
+            requires, instead of returning a statistic of 0 on 0 degrees
+            of freedom and being read as a pass. Reachable with a
+            compliant dataset. Commit c8799f4.
+2026-09-30  cpp/restart_main.cpp: H_I is parsed with strtod and must be
+            finite, instead of atof, which accepted "abc" as 0 and let
+            "nan" through to an out-of-bounds index. Commit db7a2ba.
+2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
+            report that is actually written. Commit 23dca69.
+2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed
+            is no longer folded into H_r or H_c as if it were an
+            entropy. Commit d892b90.
+2026-09-30  cpp/restart_main.cpp: sha256_file()'s status is checked
+            rather than discarded with an uninitialised buffer.
+            Commit fd83a43.
+2026-09-30  cpp/shared/TestRunUtils.h and the three programs this fork
+            builds: report writes go through a checked helper, and a
+            report that cannot be written fails the run. Commit 47d6624.
+2026-09-30  cpp/iid_main.cpp: only the figures that were computed are
+            reported, and the assessed figure no longer depends on the
+            verbosity. Commit 9f64f62.
+2026-09-30  cpp/non_iid/compression_test.h: block indices are held in a
+            64-bit type, with a compile-time guard. Commit 6b60f9d.
+2026-09-30  cpp/non_iid/multi_mmc_test.h: a Null prediction from the
+            winning subpredictor ends the run of correct predictions, in
+            both the binary and the generic implementation, per
+            SP 800-90B 6.3.9. Commit 69b6094.
+2026-09-30  cpp/shared/test_case_base.h, cpp/non_iid_main.cpp: the report
+            records which estimators applied but could not produce a
+            value, without treating that as an error. Commit dfe325a.
+2026-09-30  cpp/selftest/regression-*.sh: regression tests for each of
+            the above. Test material only.
+
+The guarantee at the head of this section still holds for all of them:
+no reported min-entropy figure changes for any dataset of 1,000,000 or
+more samples. The MultiMMC correction is the one that changes a figure
+at all, and only for datasets built to trigger it; on every sample under
+bin/ the figures are unchanged, including the Literal MultiMMC figure in
+cpp/selftest/refdata/truerand_8bit.res, which the build still reproduces
+exactly.
+
 Deliberately not changed, pending NIST: the treatment of a two-symbol
 alphabet as binary regardless of the declared sample width (upstream
 #253 and PR #256). NIST reads "binary" as a property of the alphabet

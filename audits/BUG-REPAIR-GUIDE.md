@@ -34,7 +34,7 @@ cd selftest && ./selftest      # baseline; compare the "Assessed min entropy" li
 ./pin-check.sh                 # pinned figure on real noise (bin/ringOsc-nist.bin)
 ```
 
-The fork's C++ sources are identical to upstream `87c104d`; the fork adds only build/doc files (macOS Makefile support, `cpp/selftest/pin-check.sh`, `BUILDING.md`, `NOTICE`, a README pointer). All tracker commands run from `cpp/`. The generators they call live under `audits/2026-09-30/`.
+The fork's C++ sources were identical to upstream `87c104d` when this guide was written. They no longer are: two repair passes on 2026-09-30 corrected defects in `cpp/shared/`, `cpp/non_iid/`, `cpp/iid/` and the `*_main.cpp` programs. Each change is listed in [`../NOTICE`](../NOTICE) with its upstream issue and commit, and every repaired finding below records its commit. Line references in older findings may therefore be a few lines out; the surrounding code is still recognisable. No reported figure changes for a dataset at or above the 1,000,000-sample minimum, and `cpp/selftest/refdata/` is untouched. All tracker commands run from `cpp/`. The generators they call live under `audits/2026-09-30/`.
 
 ## Selecting work
 

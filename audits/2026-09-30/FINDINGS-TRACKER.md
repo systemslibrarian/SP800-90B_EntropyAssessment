@@ -42,6 +42,7 @@ NIST's position and this fork's position are never conflated:
 | `HARDENING-NOT-BUG` | NIST regards it as abnormal input rather than a defect. |
 | `LOW-PRIORITY` | NIST has no objection to a fix but does not consider it important. |
 | `PENDING` | Filed, no substantive NIST response yet. |
+| `NOT-FILED` | A confirmed defect that has not been reported upstream. The fork may still repair it; doing so is not a statement about NIST's view. |
 
 | Fork disposition | Meaning |
 |---|---|
@@ -51,59 +52,72 @@ NIST's position and this fork's position are never conflated:
 | `RESOLVED-BY-GLOBAL-GUARD` | Unreachable through ordinary use because of the Section 3.1.1 intake check; any estimator-level guard is recorded separately. |
 | `SPEC-INTERPRETATION-PENDING` | Held: the behaviour turns on a reading of the standard that NIST has not settled. The fork follows upstream unchanged. |
 | `FORK-HARDENING` | Repaired here as robustness, not as a standards defect. |
+| `DEFERRED-NOT-BUILT` | In a program this fork does not build (ea_conditioning), so a repair could not be reproduced or regression-tested here. |
+| `NOT-REPRODUCED-HERE` | Confirmed elsewhere but does not reproduce on this platform; a repair cannot be regression-tested here. |
 
 **Resolution rule.** A confirmed bug is resolved only when (A) the relevant upstream code is actually corrected and the regression test passes, or (B) this fork contains the correction and a regression test proving it. If upstream closes, rejects or abandons a confirmed bug without fixing it, its state becomes `FORK-FIX-REQUIRED`.
 
 ## Queue summary (upstream status last checked 2026-09-30)
 
 - Confirmed defects: **30**.
-  - `NEEDS-FIX`: 15
+  - `NEEDS-FIX`: 7
   - `UPSTREAM-FIX-PENDING`: 1
   - `FIXED-UPSTREAM-VERIFY`: 0
-  - `FORK-FIX-REQUIRED`: 3
-  - `FORK-FIXED`: 11
+  - `FORK-FIX-REQUIRED`: 1
+  - `FORK-FIXED`: 21
   - `VERIFIED`: 0
 
-  Fork disposition of the 11 repaired on 2026-09-30: `VERIFIED` 8,
-  `RESOLVED-BY-GLOBAL-GUARD` 2, `FORK-HARDENING` 1. One further finding, F01,
-  is `SPEC-INTERPRETATION-PENDING` because NIST disputes the premise.
-  No upstream issue or pull request was modified while making these repairs.
+  Fork disposition across all 30: `VERIFIED` 18, `RESOLVED-BY-GLOBAL-GUARD` 2,
+  `FORK-HARDENING` 1, `DEFERRED-NOT-BUILT` 3, `NOT-REPRODUCED-HERE` 1,
+  `SPEC-INTERPRETATION-PENDING` 1, `NEEDS-FIX` 4.
+
+  The 21 `FORK-FIXED` are 11 from the 2026-09-30 repair pass and 10 from the
+  pass that followed NIST's review. Nothing is marked resolved merely because
+  the Section 3.1.1 intake check makes it unreachable: the two findings in that
+  position carry `RESOLVED-BY-GLOBAL-GUARD`, not `VERIFIED`.
+
+  Of the 9 not fixed: 3 are in ea_conditioning, which this fork does not build;
+  1 does not reproduce on this platform (R-1, a long double width question);
+  1 is held pending NIST's reading (F01); and 4 remain open work (N-07, N-08,
+  N-10, NOVEL-03), each with its next step recorded.
+
+  No upstream issue or pull request was modified in either pass.
 - Unconfirmed or not-a-bug items (not in the queue): **17**; see the end of this file.
 - All commands below run from `cpp/` of this fork after `make`. The fork's C++ sources (`cpp/*.cpp`, `cpp/iid/`, `cpp/non_iid/`, `cpp/shared/`) are identical to upstream `87c104d`, so every line reference holds for both. The fork adds only build/doc files: macOS Makefile support, `cpp/selftest/pin-check.sh`, `BUILDING.md`, `NOTICE` and a README pointer. `../audits/2026-09-30/` holds the generators and evidence. Evidence paths are relative to this file.
 - Reproduction audit (2026-09-30): every Reproduce block below was re-run, unmodified, on a clean build of fork `master` `237d85c`; 29 of 30 show the stated `BUG:` output. The exception is **F14**. Its harness (`novel-findings/repro/num/f14/`) demonstrates the mechanism on the unmodified function, but an end-to-end run needs more than 25.8 Gbit of input and about 650 GB RAM.
 
 | ID | State | Dangerous direction? | Upstream issue / PR | Next action |
 |---|---|---|---|---|
-| [F01](#f01) | `UPSTREAM-FIX-PENDING` | yes (too HIGH: 0.9216 vs 0.1796) | #253 / PR #256 | Hold. Get the explicit-width clarification on #253 first; do not merge PR #256 here. |
+| [F01](#f01) | `UPSTREAM-FIX-PENDING` | yes (too HIGH: 0.9216 vs 0.1796) | #253 / PR #256 | Obtain one clarification before doing anything: when bits_per_symbol is declared explicitly as 8 for a two-value alphabet such as {33, 211}, is the dataset still binary for the purposes of §3.1.3, so that the n x H_bitstring term is correctly omitted? If yes, record that reading and close #253 and PR #256. If no, the gate needs to distinguish declared width from observed alphabet. Do not merge PR #256 into the fork until this is answered. |
 | [F02](#f02) | `FORK-FIXED` | yes (too HIGH vs the declared-width computation) | #254 / — | None in this fork. The default-width question stays with NIST on #254. |
 | [F03](#f03) | `FORK-FIXED` | yes (a figure is emitted for non-conforming data) | #255 (related #238) / — | None for the sub-minimum half. How a legitimate no-estimate result should appear is tracked separately as F05. |
 | [F04](#f04) | `FORK-FIXED` | yes (a missing estimator can only raise the minimum) | #258 (dup #265) / — | None unless NIST decides §6.3.7 should run for L > 63, which would be a behaviour change this fork should not make first. |
-| [F05](#f05) | `NEEDS-FIX` | yes (unbounded in principle) | #255 / — | Fork fix: record skipped estimators in the JSON test cases and set a warning. |
-| [F09](#f09) | `NEEDS-FIX` | no (TOO LOW: MultiMMC 0.0021 vs 0.93; assessed figure unchanged) | — / — | Decide whether to file upstream; fork fix: reset `run_len` when the winner has no prediction. |
+| [F05](#f05) | `FORK-FIXED` | yes (unbounded in principle) | #255 / — | None. |
+| [F09](#f09) | `FORK-FIXED` | no (TOO LOW: MultiMMC 0.0021 vs 0.93; assessed figure unchanged) | — / — | None. |
 | [F11](#f11) | `FORK-FIXED` | tiny inputs only (NaN case reports 1.0) | #263 / PR #270 | Watch PR #270. If NIST prefers to rely only on the intake minimum, the local guard can stay as defence in depth. |
 | [F12](#f12) | `FORK-FIXED` | estimator-level only (tiny inputs; later estimators abort) | #264 / — | None. |
-| [F14](#f14) | `NEEDS-FIX` | yes (only above 25.8 Gbit of input) | — / — | Low priority. Fork fix: change the element type to a 64-bit integer; no practical end-to-end test. |
+| [F14](#f14) | `FORK-FIXED` | yes (only above 25.8 Gbit of input) | — / — | An end-to-end confirmation would need a machine with the memory for it. |
 | [F15](#f15) | `FORK-FIXED` | no | #261 (dup #262) / — | None. |
 | [F16](#f16) | `FORK-FIXED` | no (memory safety) | #257 / PR #268 (dup PR #269 closed) | PR #268 still carries the one-line bound. Decide with NIST whether to update it to the failure return or close it in favour of the intake minimum. Nothing was changed upstream from this fork. |
 | [F18](#f18) | `FORK-FIXED` | no (availability) | #259 (dup #266) / — | None. Do not present this as a NIST-accepted defect. |
 | [F19](#f19) | `FORK-FIXED` | no (hostile/mistaken command line; report integrity) | #260 (dup #267) / — | None. |
-| [N-01](#n-01) | `NEEDS-FIX` | yes (IID wrongly accepted: 1.42× in the novel audit, +38 % in phase 2) | — / — | Recommended to file upstream (report draft A). Fork fix: treat m < 2 as a failure in chi_square_tests. |
+| [N-01](#n-01) | `FORK-FIXED` | yes (IID wrongly accepted: 1.42× in the novel audit, +38 % in phase 2) | — / — | None in the fork. Consider reporting upstream. |
 | [N-02](#n-02) | `FORK-FIXED` | yes (IID wrongly accepted; h′ 2.47× in repro) | #271 / — | None. Note the cost: under -c -a with multi-bit symbols the permutation battery now runs on eight times as much data and did not finish in 40 minutes on a 1,000,000-sample 8-bit file; -t bounds it. |
-| [N-03](#n-03) | `NEEDS-FIX` | no (correct h′ = 0) | — / — | Fork fix: guard blen < 2 / single-valued bitstring in computeEntropyOfConditionedData. |
-| [N-04](#n-04) | `NEEDS-FIX` | no | — (#195 is a different path) / — | Fork fix: parse H_I with strtod + end-pointer + std::isfinite. |
-| [N-05](#n-05) | `NEEDS-FIX` | no (report integrity) | — / — | Fork fix: reject contradictory arguments. |
-| [N-06](#n-06) | `NEEDS-FIX` | no (report integrity / UB) | — / — | Fork fix: check sha256_file() and initialise the buffer. |
-| [N-07](#n-07) | `NEEDS-FIX` | no (hardening) | — / — | Fork fix: hash the loaded buffer (shares the fix with F19). |
-| [N-08](#n-08) | `NEEDS-FIX` | no (none or lower) | — (#260 is -l arithmetic) / — | Fork fix: a shared strict integer parser. |
-| [N-09](#n-09) | `NEEDS-FIX` | no | — / — | Fork fix: check stream state after close and the fclose return. |
-| [N-10](#n-10) | `NEEDS-FIX` | no | — / — | Fork fix: label/compute the fields correctly. |
-| [N-11](#n-11) | `NEEDS-FIX` | no (low relevance) | — / — | Fork fix: validate n_in/n_out/nw against the supported exponent range. |
-| [R-1](#r-1) | `FORK-FIX-REQUIRED` | no (abort, no JSON) | #246 (closed) / PR #248 (merged; incomplete) | Fork fix (upstream closed without fixing this path); optionally comment on #246. |
-| [R-2](#r-2) | `FORK-FIX-REQUIRED` | no (TOO LOW: false failure) | #178 (closed) / — | Fork fix: add the >= 0 guards to the four folds. |
-| [R-3](#r-3) | `FORK-FIX-REQUIRED` | no (report integrity) | #183 (closed) / — | Fork fix: set testRunIid.errorLevel and pass the IID run to read_file. |
+| [N-03](#n-03) | `NEEDS-FIX` | no (correct h′ = 0) | — / — | Decide whether to build ea_conditioning locally for test purposes. Building it for testing does not change what the fork ships, but it is the owner's call. |
+| [N-04](#n-04) | `FORK-FIXED` | no | — (#195 is a different path) / — | None. |
+| [N-05](#n-05) | `NEEDS-FIX` | no (report integrity) | — / — | Same decision as N-03. |
+| [N-06](#n-06) | `FORK-FIXED` | no (report integrity / UB) | — / — | Decide whether to build ea_conditioning for test purposes; until then its instance stands. |
+| [N-07](#n-07) | `NEEDS-FIX` | no (hardening) | — / — | Decide the shape first: keep sha256 as the whole-file hash and add a second, separately named digest of the assessed buffer, or re-read and compare. Do not silently redefine sha256. |
+| [N-08](#n-08) | `NEEDS-FIX` | no (none or lower) | — (#260 is -l arithmetic) / — | Parse every numeric argument decimal-only with an end-pointer and errno check, rejecting signs where a count is expected. Mechanical but it touches five files. |
+| [N-09](#n-09) | `FORK-FIXED` | no | — / — | The two programs this fork does not build still carry the defect. |
+| [N-10](#n-10) | `NEEDS-FIX` | no | — / — | Decide per item whether the value or its label should change; the conditioning half waits on the N-03 decision. |
+| [N-11](#n-11) | `NEEDS-FIX` | no (low relevance) | — / — | Same decision as N-03. |
+| [R-1](#r-1) | `FORK-FIX-REQUIRED` | no (abort, no JSON) | #246 (closed) / PR #248 (merged; incomplete) | Reproduce on an x86-64 build with 80-bit long double, then fix (clamp p_col to 1/k within rounding, or compute the collision proportion as an exact integer ratio) with a regression that fails there. |
+| [R-2](#r-2) | `FORK-FIXED` | no (TOO LOW: false failure) | #178 (closed) / — | None. |
+| [R-3](#r-3) | `FORK-FIXED` | no (report integrity) | #183 (closed) / — | None. |
 | [NOVEL-01](#novel-01) | `FORK-FIXED` | no by itself (it masks TOO-HIGH regressions) | #272 / — | None. Note that selftest now exits 1 on macOS arm64 because of the pre-existing platform deltas in upstream #155. |
-| [NOVEL-02](#novel-02) | `NEEDS-FIX` | no | — (distinct from PR #251) / — | Fork fix: assign only inside the computing branches. |
-| [NOVEL-03](#novel-03) | `NEEDS-FIX` | no | — (introduced with PR #250) / — | Fork fix: separate test cases for rows and columns. |
+| [NOVEL-02](#novel-02) | `FORK-FIXED` | no | — (distinct from PR #251) / — | Watch PR #251 for the upstream shape of the hAssessed half. |
+| [NOVEL-03](#novel-03) | `NEEDS-FIX` | no | — (introduced with PR #250) / — | Give populateTestCase() a row/column tag, or use two test cases. Reporting-only; no figure changes. |
 
 ## Confirmed findings
 
@@ -225,7 +239,9 @@ NIST's position and this fork's position are never conflated:
 
 **Estimators that cannot run (−1) are silently dropped from the minimum and from the JSON; reachable at 10^6 (de Bruijn LRS v < u)**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `ACCEPTED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** yes (unbounded in principle)
 - **Affected source:** `cpp/non_iid_main.cpp`: the `if (ret_min_entropy >= 0)` / `bin_lrs_res >= 0.0` guards (lines 327-340, 353-385, 397-483); `cpp/shared/test_case_base.h` TestCaseBase::GetBaseJson() (the −1 sentinel omits the key) (upstream `87c104d`)
 - **Reproduce:**
@@ -237,22 +253,25 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** The report lists every estimator that could not run and flags it (warning or errorLevel)
 - **Evidence / reproducer:** [`AUDIT.md`](AUDIT.md) row F05; [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §4 (F05 at 10^6); upstream #255
-- **Regression test:** none yet — add: JSON lists skipped estimators for p2000.bin and db100.bin
+- **Regression test:** cpp/selftest/regression-notrun.sh
 - **Upstream NIST issue:** #255
 - **Upstream NIST PR:** —
-- **Current upstream status:** issue open
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** #255 open. @joshuaehill drew the distinction this implements: “There are instances where binary estimators can’t produce an estimate but where the result is not an error ... This is not an error, and should not be flagged as one.”
+- **Current fork status:** Each test case carries literalEstimateNotRun or bitstringEstimateNotRun when the estimator applied but declined, omitted otherwise. errorLevel is untouched, so a skip is recorded as a fact rather than flagged as an error.
+- **Fork fix commit:** `dfe325a`
+- **Verification:** A de Bruijn B(100,3) sequence, a compliant 1,000,000-sample dataset whose LRS estimate genuinely cannot be computed, now names that skip with errorLevel still 0. truerand_8bit, truerand_1bit, ringOsc-nist and normal carry no flags. A short dataset names both estimators it cannot run.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: record skipped estimators in the JSON test cases and set a warning.
+- **Required next action:** None.
+- **Classification:** JSON and reporting, covering a too-high direction
 
 ### F09
 
 **Generic MultiMMC: a Null prediction from the winning sub-predictor does not reset the run of correct predictions (r over-counted)**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no (TOO LOW: MultiMMC 0.0021 vs 0.93; assessed figure unchanged)
 - **Affected source:** `cpp/non_iid/multi_mmc_test.h` multi_mmc_test() generic path: `run_len = 0` only inside `if(found_x)` (lines 211-228) (upstream `87c104d`)
 - **Reproduce:**
@@ -262,16 +281,17 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** §6.3.9: a Null prediction is incorrect, so r = 24 (literal reference: `novel-findings/oracle/noniid/ref90b.py`, `novel-findings/repro/noniid/h/`)
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §4; `novel-findings/logs/noniid/out/f09b_run1.txt`; `novel-findings/agent-reports/noniid-estimators.md` §3a
-- **Regression test:** none yet — add: f09b.bin must give MultiMMC r = 24
+- **Regression test:** cpp/selftest/regression-multimmc.sh
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed upstream.
+- **Current fork status:** Both MultiMMC implementations now end the run of correct predictions on anything that is not a correct prediction by the winner: wrong, Null, or no prediction at all. SP 800-90B 6.3.9 step 1 initialises correct[] to 0 and step 4.d sets it to 1 only on a match, and the worked example in that section shows Null giving 0.
+- **Fork fix commit:** `69b6094`
+- **Verification:** On the audit's dataset r falls from 6603 to 24, the value the audit's literal implementation produces, and the estimate rises from 0.00211176482535928 to 0.93188950992564512. No figure on NIST's reference data moved: the pinned figure is unchanged, selftest differs on the same two files and the same eight predictor values as before, and the Literal MultiMMC figure on truerand_8bit.bin still matches refdata exactly.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Decide whether to file upstream; fork fix: reset `run_len` when the winner has no prediction.
+- **Required next action:** None.
+- **Classification:** correctness, direction too low
 
 ### F11
 
@@ -360,7 +380,9 @@ NIST's position and this fork's position are never conflated:
 
 **Compression dict[] stores block indices in unsigned int: above 2^32 blocks D_i inflates and the estimate becomes 1.0**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** yes (only above 25.8 Gbit of input)
 - **Affected source:** `cpp/non_iid/compression_test.h`:97 `unsigned int dict[]` (upstream `87c104d`)
 - **Reproduce:**
@@ -371,17 +393,18 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** Block indices stored in a 64-bit type (`long dict[]`); the estimate is unchanged by input size
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §4; `novel-findings/logs/noniid/out/f14_big.log`, `f14_mid.log`
-- **Regression test:** none yet — add: static check or harness run confirming 64-bit indices
+- **Regression test:** cpp/selftest/regression-estimator-guards.sh (F14 section)
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed upstream.
+- **Current fork status:** dict[] holds int64_t rather than unsigned int, with a static_assert keeping the element type at least 64-bit. int64_t rather than long because long is 32-bit on LLP64 targets, where the truncation would start at 4 Gbit rather than 25.8 Gbit.
+- **Fork fix commit:** `6b60f9d`
+- **Verification:** The end-to-end case cannot be run here (more than 25.8 Gbit of input and hundreds of GB of RAM). Verified instead that figures on real data are unchanged (ringOsc-nist.bin still 0.15932269772157773, pin-check unchanged) and that the compile-time guard is real: the regression narrows the type back in a scratch copy and the build refuses.
 - **Reproduction last re-run:** 2026-09-30: not run end to end (needs > 25.8 Gbit of input and ~650 GB RAM); mechanism shown by the harness in the original audit
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Low priority. Fork fix: change the element type to a 64-bit integer; no practical end-to-end test.
+- **Required next action:** An end-to-end confirmation would need a machine with the memory for it.
 - **Notes:** Latent in the size range #217/#226 enabled
+- **Classification:** arithmetic safety, direction too high
 
 ### F15
 
@@ -499,7 +522,9 @@ NIST's position and this fork's position are never conflated:
 
 **Binary chi-square independence reports Passed when m = 1; SP 800-90B §5.2.3 says "If m is 1, the test fails"**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** yes (IID wrongly accepted: 1.42× in the novel audit, +38 % in phase 2)
 - **Affected source:** `cpp/iid/chi_square_tests.h` binary_chi_square_independence(): `if (m < 2) { score = 0.0; df = 0; return; }` (lines 485-489); chi_square_tests() :649 p-value of (0,0) = 1, :664 fails only if p < 0.001 (upstream `87c104d`)
 - **Reproduce:**
@@ -516,17 +541,18 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** m = 1 makes the chi-square battery fail, so the data is not IID (non-IID track: ea_non_iid gives 0.003068 for ones_3162.bin)
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-01; `novel-findings/repro/verify/ones3162_iid.json`, `ones3162_iid.log`, `ones3162_non.log`; `phase2-focused/logs/evidence/json/iid_p002.1.json`
-- **Regression test:** none yet — add (from report): ones_3162.bin must fail the chi-square tests; ones_3163.bin computes df = 2
+- **Regression test:** cpp/selftest/regression-chisquare.sh
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed upstream. This pass does not touch upstream; the finding is a candidate to report once the owner decides.
+- **Current fork status:** binary_chi_square_independence() now returns whether the test was applied, and chi_square_tests() fails the battery when m = 1, as SP 800-90B 5.2.3 requires. Reachable with a compliant dataset: fewer than about 3163 ones in 10^6 bits gives m = 1.
+- **Fork fix commit:** `c8799f4`
+- **Verification:** 999 ones in 100,000 bits (m = 1) now fails and names the rule; 1200 ones (m >= 2) still passes with a real statistic; truerand_1bit and truerand_8bit unaffected. The regression fails against the pre-fix build.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Recommended to file upstream (report draft A). Fork fix: treat m < 2 as a failure in chi_square_tests.
+- **Required next action:** None in the fork. Consider reporting upstream.
 - **Notes:** Also reachable via ea_restart -i
+- **Classification:** correctness (IID wrongly accepted)
 
 ### N-02
 
@@ -561,6 +587,8 @@ NIST's position and this fork's position are never conflated:
 **ea_conditioning -n -i on an all-zero conditioned dataset: assert abort, no JSON; with -DNDEBUG a heap over-read and a wild write**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `DEFERRED-NOT-BUILT`
 - **Dangerous direction:** no (correct h′ = 0)
 - **Affected source:** `cpp/conditioning_main.cpp` computeEntropyOfConditionedData() (lines 364-384, no single-symbol/length guard); `cpp/shared/utils.h` read_file_subset() infers word_size 0 → blen 0; `cpp/shared/most_common.h`:14 (upstream `87c104d`)
 - **Reproduce:**
@@ -574,18 +602,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** In ea_conditioning, which this fork deliberately does not build: that is the only program linking MPFR and GMP, and keeping them out of what the fork ships is a standing decision. A repair could not be reproduced or regression-tested in this pass.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: guard blen < 2 / single-valued bitstring in computeEntropyOfConditionedData.
+- **Required next action:** Decide whether to build ea_conditioning locally for test purposes. Building it for testing does not change what the fork ships, but it is the owner's call.
 
 ### N-04
 
 **ea_restart accepts H_I = nan (passes both range checks) → float→int UB and out-of-bounds stack write → SIGSEGV; non-numeric H_I becomes 0**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no
 - **Affected source:** `cpp/restart_main.cpp` main(): `H_I = atof(argv[0])` (:293), checks at :294 and :343 are false for NaN; simulateBound():127, simulateCount():92 `counts[(int)floor(u/p)]++` (upstream `87c104d`)
 - **Reproduce:**
@@ -596,22 +626,25 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** Non-finite or non-numeric H_I refused (strtod with end check, isfinite)
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-04; `phase2-focused/logs/evidence/restart_HI_fuzz.log`; `novel-findings/logs/restart/data/nan_nan.txt`
-- **Regression test:** none yet — add: nan/abc refused with a message
+- **Regression test:** cpp/selftest/regression-restart.sh
 - **Upstream NIST issue:** — (#195 is a different path)
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed upstream.
+- **Current fork status:** H_I is parsed with strtod, requiring the whole argument to be consumed and the value to be finite. atof() returned 0.0 for unparseable text and accepted nan/inf, and a NaN H_I passed both range checks before reaching (int)floor(u/p), which is undefined behaviour indexing counts[] out of bounds.
+- **Fork fix commit:** `db7a2ba`
+- **Verification:** nan, NAN, inf, -inf, abc, 1.5x, 3.2e and an empty argument are refused with no signal, where the pre-fix build aborts with SIGABRT on nan. Negative H_I keeps its own message; 0, 3.2 and 8 still run.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: parse H_I with strtod + end-pointer + std::isfinite.
+- **Required next action:** None.
+- **Classification:** arithmetic safety leading to memory unsafety
 
 ### N-05
 
 **ea_conditioning JSON binds the -i file's name and SHA-256 to an h′ that did not come from it (CLI h′ given too, or vetted mode)**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `DEFERRED-NOT-BUILT`
 - **Dangerous direction:** no (report integrity)
 - **Affected source:** `cpp/conditioning_main.cpp` main(): hashes and records `-i` whenever given (:515-523); uses the CLI h′ when argc == 5 (:558-576); vetted mode never reads the file (upstream `87c104d`)
 - **Reproduce:**
@@ -626,18 +659,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** In ea_conditioning; see N-03. Not reproduced or repaired in this pass.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: reject contradictory arguments.
+- **Required next action:** Same decision as N-03.
 
 ### N-06
 
 **sha256_file() failure ignored by every main: uninitialised stack bytes land in the JSON "sha256"**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no (report integrity / UB)
 - **Affected source:** `cpp/shared/TestRunUtils.h` sha256_file() returns −1 (:62); ignored at `cpp/non_iid_main.cpp`:179, `cpp/iid_main.cpp`:199, `cpp/restart_main.cpp`:247, `cpp/conditioning_main.cpp`:521; `char hash[65]` uninitialised (upstream `87c104d`)
 - **Reproduce:**
@@ -649,22 +684,25 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** Return value checked; errorLevel/message set; hash zero-initialised
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-06; `novel-findings/repro/verify/nf1.json`, `nf2.json`; `phase2-focused/logs/evidence/json/ne.json`
-- **Regression test:** none yet — add: missing file gives errorLevel −1 and no sha256 field
+- **Regression test:** cpp/selftest/regression-nonregular.sh and regression-restart.sh (N-06 section)
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed upstream.
+- **Current fork status:** Three of the four programs now check sha256_file()'s status and zero the buffer, so a failure is a clean refusal rather than stack bytes in the report. The fourth instance, conditioning_main.cpp:521, is NOT fixed: this fork does not build ea_conditioning, so a change there could not be reproduced or regression-tested.
+- **Fork fix commit:** `cdb5cd6 (ea_non_iid, ea_iid) and fd83a43 (ea_restart)`
+- **Verification:** A missing input in ea_restart -i and -n exits 255 with errorLevel -1, a message and no sha256 field; a valid run records the file's true hash. ea_non_iid and ea_iid were verified in the previous pass.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: check sha256_file() and initialise the buffer.
+- **Required next action:** Decide whether to build ea_conditioning for test purposes; until then its instance stands.
+- **Classification:** report integrity and undefined behaviour
 
 ### N-07
 
 **TOCTOU: the hash pass and the data pass open the file separately, so a concurrent rewrite binds one file's hash to another file's figure**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `NEEDS-FIX`
 - **Dangerous direction:** no (hardening)
 - **Affected source:** `cpp/shared/TestRunUtils.h`:72 (hash fopen) vs `cpp/shared/utils.h`:181 (data fopen); same pattern in all four mains (upstream `87c104d`)
 - **Reproduce:**
@@ -680,18 +718,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** Not repaired. The obvious remedy, hashing the buffer that was assessed, would change what the sha256 field means, and NIST asked for the opposite on #260: @joshuaehill, “I think that the SHA sum acting on the file is the most reasonable behavior ... the file hash is more useful in this setting.” A repair therefore has to keep the whole-file hash and add a separate integrity check, which is a design decision rather than a mechanical fix.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: hash the loaded buffer (shares the fix with F19).
+- **Required next action:** Decide the shape first: keep sha256 as the whole-file hash and add a second, separately named digest of the assessed buffer, or re-read and compare. Do not silently redefine sha256.
 
 ### N-08
 
 **Numeric CLI arguments parsed permissively (strtoull/strtoul base 0, atoi, no end check): -l 010 = block 8, bits "8x" = 8, n_out 0256 = 174**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `NEEDS-FIX`
 - **Dangerous direction:** no (none or lower)
 - **Affected source:** `cpp/non_iid_main.cpp`:120, :137, :186; `cpp/iid_main.cpp`:179; `cpp/restart_main.cpp`:265; `cpp/conditioning_main.cpp`:104; `cpp/transpose_main.cpp` -l parse (upstream `87c104d`)
 - **Reproduce:**
@@ -706,18 +746,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** — (#260 is -l arithmetic)
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** Not repaired in this pass. The H_I instance, which was the one that crashed, is fixed under N-04; the remaining permissive parses (strtoull/strtoul base 0 for -l, atoi for bits_per_symbol, the conditioning arguments) are unchanged. They mis-read rather than crash: -l 010 means block 8, and a trailing character is ignored so “8x” is accepted as 8.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: a shared strict integer parser.
+- **Required next action:** Parse every numeric argument decimal-only with an end-pointer and errno check, rejecting signs where a count is expected. Mechanical but it touches five files.
 
 ### N-09
 
 **Output-file write failures never checked: -o /dev/full or a missing directory exits 0; ea_transpose can leave a truncated column file with exit 0**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no
 - **Affected source:** every main: `ofstream` JSON writes never checked; `cpp/transpose_main.cpp`:112 `fclose` unchecked (upstream `87c104d`)
 - **Reproduce:**
@@ -727,22 +769,25 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** Non-zero exit and a message when the report cannot be written
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-09; `novel-findings/logs/io/`
-- **Regression test:** none yet — add: both commands exit non-zero
+- **Regression test:** cpp/selftest/regression-output.sh
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed upstream.
+- **Current fork status:** The 39 report writes across the three programs this fork builds are now one checked helper, writeJsonReport() in shared/TestRunUtils.h, which checks both the open and the close. The three success paths exit nonzero when the report cannot be written. conditioning_main.cpp and transpose_main.cpp still have unchecked writes and are not built here.
+- **Fork fix commit:** `47d6624`
+- **Verification:** All three tools refuse with a nonzero exit naming the output file and no signal; writable paths still produce non-empty reports. A double free introduced in the restart cleanup during this change was caught by testing and corrected; an AddressSanitizer build of that path is clean.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: check stream state after close and the fclose return.
+- **Required next action:** The two programs this fork does not build still carry the defect.
+- **Classification:** CLI and error handling
 
 ### N-10
 
 **Reporting-only: ea_iid "Median" is of translated indices; conditioning JSON hard-codes "IID": false and omits vetted/track; restart -i JSON mean/median always 0.0**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `NEEDS-FIX`
 - **Dangerous direction:** no
 - **Affected source:** `cpp/shared/utils.h` calc_stats() (median from `dp->symbols`); `cpp/non_iid/non_iid_test_run.h`:30 (IID const false, reused by conditioning_main.cpp:509); `cpp/restart_main.cpp` tcOverallIid mean/median never assigned (upstream `87c104d`)
 - **Reproduce:**
@@ -761,18 +806,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** Not repaired. Partly in ea_conditioning (see N-03) and partly a question of what the reported value should mean rather than a defect with one correct answer: ea_iid's “Median” is the median of translated symbol indices, which is what SP 800-90B 5.1.5/5.1.6 need for the tests but is not the median of the sample values a reader would expect.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: label/compute the fields correctly.
+- **Required next action:** Decide per item whether the value or its label should change; the conditioning half waits on the N-03 decision.
 
 ### N-11
 
 **ea_conditioning aborts (assert) for accepted n_in/n_out ≥ 1,073,741,823 (MPFR emax)**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `DEFERRED-NOT-BUILT`
 - **Dangerous direction:** no (low relevance)
 - **Affected source:** `cpp/conditioning_main.cpp`:602 `assert(mpfr_get_emax() > maxval)`; inputs accepted up to UINT_MAX (upstream `87c104d`)
 - **Reproduce:**
@@ -786,18 +833,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** In ea_conditioning; see N-03. Not reproduced or repaired in this pass.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: validate n_in/n_out/nw against the supported exponent range.
+- **Required next action:** Same decision as N-03.
 
 ### R-1
 
 **Residual of #246: len_LRS_test asserts p_col ≥ 1/k and aborts when every symbol count is exactly equal and 1/k rounds down (k = 3, 6, 7, 9, 12, …)**
 
 - **State:** `FORK-FIX-REQUIRED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `NOT-REPRODUCED-HERE`
 - **Dangerous direction:** no (abort, no JSON)
 - **Affected source:** `cpp/shared/lrs_test.h`:626 len_LRS_test() `assert(p_col >= 1.0L / ((long double) k))`; `cpp/shared/utils.h` calc_proportions() (PR #248 fixed accumulation only) (upstream `87c104d`)
 - **Reproduce:**
@@ -811,18 +860,20 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** #246 (closed)
 - **Upstream NIST PR:** PR #248 (merged; incomplete)
 - **Current upstream status:** #246 closed (completed) without covering this case; residual not reported
-- **Current fork status:** no fix in the fork
+- **Current fork status:** Investigated on 2026-09-30 and it does NOT reproduce on this platform. The assert compares a floating-point sum against an exact bound, and the margin depends on the width of long double: 64-bit on arm64 macOS, 80-bit under GCC on x86. Measured here for exactly balanced alphabets at L near 10^6: the margin p_col - 1/k is exactly 0 for k = 2, 3, 4, 7, 8, 9, 16 and +2.78e-17 for k = 5, 6, 12, so the assert holds for every k tried and ea_iid bal3.bin 2 completes with exit 0. A zero margin is itself the defect, since any change in rounding flips it, which is what the x86 abort shows. Not repaired here because a fix could not be regression-tested on this machine: the regression would pass before and after.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix (upstream closed without fixing this path); optionally comment on #246.
+- **Required next action:** Reproduce on an x86-64 build with 80-bit long double, then fix (clamp p_col to 1/k within rounding, or compute the collision proportion as an exact integer ratio) with a regression that fails there.
 
 ### R-2
 
 **Residual of #178: ea_restart folds a t-tuple/LRS −1 ("cannot run") into H_r/H_c, giving a false restart failure**
 
-- **State:** `FORK-FIX-REQUIRED`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no (TOO LOW: false failure)
 - **Affected source:** `cpp/restart_main.cpp` main(): `H_r = min(row_lrs_res, H_r)` etc. without the `>= 0` guard (:632, :636, :647, :651) (upstream `87c104d`)
 - **Reproduce:**
@@ -833,22 +884,25 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** Estimates that could not run (−1) are excluded from H_r/H_c: db100.bin with H_I = 0.5 must not fail on H_r = −1; the coordinator's db256_3.bin passes with H_r = 0.585208
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §3 R-2; `novel-findings/repro/verify/dbr1.log`, `dbr2.log`; `novel-findings/agent-reports/numerics-asserts.md` (NUM-03)
-- **Regression test:** none yet — add (from report): db100.bin and db256_3.bin with H_I = 0.5 pass validation (db256_3: H_r = 0.585208)
+- **Regression test:** cpp/selftest/regression-restart.sh (R-2 section)
 - **Upstream NIST issue:** #178 (closed)
 - **Upstream NIST PR:** —
-- **Current upstream status:** #178 closed (completed); restart path never patched; residual not reported
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Residual of upstream #178, which is closed. Not re-filed.
+- **Current fork status:** The t-tuple and LRS folds into H_r/H_c are guarded with >= 0, as ten of the twenty folds in the file already were. The two collision folds are guarded as well, since collision_test became fallible in c217f20.
+- **Fork fix commit:** `d892b90`
+- **Verification:** On a de Bruijn B(100,3) sequence of exactly 1,000,000 samples, where the LRS estimate genuinely declines, H_r is now 6.583332 instead of -1 and the run passes validation. An ordinary restart dataset is unchanged. The regression also asserts the precondition so it cannot pass vacuously.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: add the >= 0 guards to the four folds.
+- **Required next action:** None.
+- **Classification:** correctness, direction too low (false validation failure)
 
 ### R-3
 
 **Regression of #183: ea_restart -i writes JSON errorLevel 0 on an input read failure (sets testRunNonIid, writes testRunIid; merge 4d68e47)**
 
-- **State:** `FORK-FIX-REQUIRED`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no (report integrity)
 - **Affected source:** `cpp/restart_main.cpp` main(): read_file failure branch (:319-339), line 324 `testRunNonIid.errorLevel = -1` under `if (iid)` (upstream `87c104d`)
 - **Reproduce:**
@@ -858,16 +912,17 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** errorLevel −1 with the read error message in the IID JSON
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §3 R-3; `novel-findings/repro/verify/r_iid.json`, `r_non.json`; `phase2-focused/logs/evidence/json/w4i.json`
-- **Regression test:** none yet — add: r.json errorLevel −1
+- **Regression test:** cpp/selftest/regression-restart.sh (R-3 section)
 - **Upstream NIST issue:** #183 (closed)
 - **Upstream NIST PR:** —
-- **Current upstream status:** #183 closed (completed); regressed later by merge 4d68e47; not reported
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Regression of upstream #183, which is closed. Not re-filed.
+- **Current fork status:** The read-failure branch sets the error on the report object it actually writes, and carries read_file()'s message across in IID mode.
+- **Fork fix commit:** `23dca69`
+- **Verification:** Declaring 4 bits per symbol for byte-valued data now yields errorLevel -1 and the real message in both -i and -n, where -i previously reported errorLevel 0; a successful run still reports 0.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: set testRunIid.errorLevel and pass the IID run to read_file.
+- **Required next action:** None.
+- **Classification:** report integrity
 
 ### NOVEL-01
 
@@ -901,7 +956,9 @@ NIST's position and this fork's position are never conflated:
 
 **ea_iid JSON emits never-computed placeholders: hBitstring 1.0 for binary input, hOriginal = word size under -c**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
+- **Upstream disposition:** `PENDING`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no
 - **Affected source:** `cpp/iid_main.cpp` main(): `H_original = data.word_size`, `H_bitstring = 1.0` assigned to tc unconditionally (lines 272-284) (upstream `87c104d`)
 - **Reproduce:**
@@ -912,22 +969,25 @@ NIST's position and this fork's position are never conflated:
   ```
 - **Expected (correct) behaviour:** Fields omitted when not computed (as ea_non_iid does)
 - **Evidence / reproducer:** [`phase2-focused/REPORT.md`](phase2-focused/REPORT.md) NOVEL-02; `phase2-focused/logs/evidence/json/iid_p002.1.json`, `iid_c_r8.json`
-- **Regression test:** none yet — add: a.json has no hBitstring; b.json has no hOriginal
+- **Regression test:** cpp/selftest/regression-iid-json.sh
 - **Upstream NIST issue:** — (distinct from PR #251)
 - **Upstream NIST PR:** —
-- **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current upstream status:** Not filed as NOVEL-02. Upstream PR #251, by another contributor, addresses the same verbosity coupling for hAssessed and is open and untouched.
+- **Current fork status:** ea_iid records only the figures it computed, and the assessed figure is computed separately from printing it. Previously a binary -i report carried hBitstring 1.0 and a -c report carried hOriginal = word size, and hAssessed was the word size at any verbosity below -vvv: 1.0 against a correct 0.9950430151312257.
+- **Fork fix commit:** `9f64f62`
+- **Verification:** binary -i omits hBitstring and reports hAssessed 0.9950430151312257, matching the -vvv text; -c omits hOriginal and still reports hBitstring; -vvv text output unchanged.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: assign only inside the computing branches.
+- **Required next action:** Watch PR #251 for the upstream shape of the hAssessed half.
+- **Classification:** JSON and reporting, with a too-high reported figure
 
 ### NOVEL-03
 
 **ea_restart -i JSON appends row and column permutation results under identical iteration labels (no row/column tag)**
 
 - **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED`
+- **Fork disposition:** `NEEDS-FIX`
 - **Dangerous direction:** no
 - **Affected source:** `cpp/restart_main.cpp`:791, :800 both call permutation_tests(..., tcOverallIid); `cpp/iid/permutation_tests.h`:730 populateTestCase() (upstream `87c104d`)
 - **Reproduce:**
@@ -941,12 +1001,12 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** — (introduced with PR #250)
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** no fix in the fork
+- **Current fork status:** Not repaired in this pass. ea_restart -i runs the permutation battery twice, over rows and then over columns, and both populate the same test case, so the JSON carries six results under iteration labels 0,1,2,0,1,2 with nothing saying which pass each came from.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Fork fix: separate test cases for rows and columns.
+- **Required next action:** Give populateTestCase() a row/column tag, or use two test cases. Reporting-only; no figure changes.
 
 ## Unconfirmed and not-a-bug items (not in the repair queue)
 
