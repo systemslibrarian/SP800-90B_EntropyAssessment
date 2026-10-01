@@ -63,23 +63,85 @@ for pair in "C:7089" "N:114144"; do
 	fi
 done
 
-# The binary path carries the same logic and must agree with the generic path
-# on the same bits. Feeding the generic path one bit per byte must give the
-# same run length as the binary path sees on a 1-bit file.
+# The binary path carries the same logic and needs its own expected value.
+#
+# This check used to assert only that the binary path produced *a* run length,
+# which nothing could fail: a mutant with the binary reset removed reports
+# r = 100275 against a correct 17 and still passed. An expected value is now
+# asserted, derived independently below rather than copied from the tool.
 python3 - "${work}" <<'PY'
 import random, sys
 w = sys.argv[1]
 r = random.Random(99)
-bits = bytes(r.randrange(2) for _ in range(200000))
-open(w + "/bits.bin", "wb").write(bits)
-# The same bits as 2-bit symbols keeps the values in {0,1} so the alphabet
-# stays binary and the binary path is used; a 1-bit declaration does the same.
+open(w + "/bits.bin", "wb").write(bytes(r.randrange(2) for _ in range(200000)))
 PY
-a=$("${tool}" -vv "${work}/bits.bin" 1 2>/dev/null | sed -n 's/^Literal MultiMMC Prediction Estimate: r = //p' | head -1)
-if [ -n "${a}" ]; then
-	note "F09 binary path still produces a run length:" "r = ${a}"
+
+# Independent reference for the binary path, implementing SP 800-90B 6.3.9
+# directly: D = 16 subpredictors over a binary alphabet, prediction from the
+# most frequent successor of the length-(d+1) prefix, the run of correct
+# predictions ending on anything that is not a correct prediction by the
+# winner (wrong, Null, or no prediction while i-2 < winner). r is one greater
+# than the longest run, per step 6.
+want=$(python3 - "${work}/bits.bin" <<'PY'
+import sys
+S = open(sys.argv[1], 'rb').read()
+L = len(S)
+D = 16
+MAX_ENTRIES = 100000
+d_dict = [dict() for _ in range(D)]
+entries = [0] * D
+scoreboard = [0] * D
+winner = 0
+run = 0
+maxrun = 0
+for d in range(D):
+    if d < L - 2:
+        d_dict[d][S[:d+1]] = {S[d+1]: 1}
+        entries[d] = 1
+for i in range(2, L):
+    cur_winner = winner
+    winner_correct = False
+    found = False
+    for d in range(D):
+        if d > i - 2:
+            break
+        key = S[i-d-1:i]
+        if d == 0 or found:
+            post = d_dict[d].get(key)
+            found = post is not None
+        if found:
+            post = d_dict[d][key]
+            best = max(post, key=lambda y: (post[y], y))
+            if best == S[i]:
+                scoreboard[d] += 1
+                if scoreboard[d] >= scoreboard[winner]:
+                    winner = d
+                if d == cur_winner:
+                    winner_correct = True
+            if S[i] in post:
+                post[S[i]] += 1
+            elif entries[d] < MAX_ENTRIES:
+                post[S[i]] = 1
+                entries[d] += 1
+        elif entries[d] < MAX_ENTRIES:
+            d_dict[d][key] = {S[i]: 1}
+            entries[d] += 1
+    if winner_correct:
+        run += 1
+        maxrun = max(maxrun, run)
+    else:
+        run = 0
+print(maxrun + 1)
+PY
+)
+got=$("${tool}" -vv "${work}/bits.bin" 1 2>/dev/null | sed -n 's/^Literal MultiMMC Prediction Estimate: r = //p' | head -1)
+if [ -z "${want}" ] || [ -z "${got}" ]; then
+	note "F09 binary path run length:" "could not compute want='${want}' got='${got}'"
+	fails=$((fails + 1))
+elif [ "${got}" = "${want}" ]; then
+	note "F09 binary path matches an independent reference:" "r = ${got}"
 else
-	note "F09 binary path still produces a run length:" "no value"
+	note "F09 binary path matches an independent reference:" "tool r = ${got}, reference r = ${want}"
 	fails=$((fails + 1))
 fi
 

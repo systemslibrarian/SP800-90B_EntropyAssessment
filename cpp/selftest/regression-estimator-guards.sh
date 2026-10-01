@@ -206,11 +206,27 @@ else
 fi
 
 # And the estimate on real data must be unchanged by the widening.
+#
+# Compared against NIST's own reference output with the tolerance the project
+# uses elsewhere (1e-9 relative; see pin-check.sh for the justification), not
+# against a literal. A literal here was this platform's value, so the check
+# passed on macOS/clang (0.15932269772157773) and raised a false alarm on
+# Linux/GCC, whose value is the one in refdata (0.15932269772157898). A
+# regression that fails on the platform the project targets is worse than no
+# regression: it reads as a defect that is not there.
+want=$(sed -n 's/^Literal Compression Estimate: min entropy = //p' "${here}/refdata/ringOsc-nist.res" | head -1)
 got=$("${asan}" -vv "${cpp}/../bin/ringOsc-nist.bin" 2>/dev/null | sed -n 's/^Literal Compression Estimate: min entropy = //p' | head -1)
-if [ "${got}" = "0.15932269772157773" ]; then
-	note "F14 compression estimate unchanged:" "${got}"
+if [ -z "${want}" ] || [ -z "${got}" ]; then
+	note "F14 compression estimate unchanged:" "could not read want='${want}' got='${got}'"
+	fails=$((fails + 1))
+elif python3 -c "
+import sys
+w, g = float(sys.argv[1]), float(sys.argv[2])
+m = max(abs(w), abs(g), 1e-300)
+sys.exit(0 if abs(w - g) / m < 1e-9 else 1)" "${want}" "${got}"; then
+	note "F14 compression estimate unchanged:" "${got} (reference ${want})"
 else
-	note "F14 compression estimate unchanged:" "got '${got}'"
+	note "F14 compression estimate unchanged:" "got '${got}', reference '${want}'"
 	fails=$((fails + 1))
 fi
 
