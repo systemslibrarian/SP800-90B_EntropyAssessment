@@ -537,15 +537,17 @@ results on purpose:**
   as SP 800-90B 5.2.3 requires, where it previously passed. That changes
   an IID verdict, not a min-entropy figure.
 
-One finding is deliberately **not** repaired: the treatment of a
-two-symbol alphabet as binary regardless of declared sample width
-(upstream #253 and PR #256). @joshuaehill disputes the premise and, asked
-on 2026-09-30 whether an explicitly declared width changes it, answered on
-2026-10-01 that the current behaviour is correct (PR #256). The fork
-follows upstream behaviour unchanged. Whether to withdraw the branch patch
-or adopt it on master as a deliberate divergence is an owner decision,
-recorded in NOTICE and in the tracker's F01 row and not taken as of
-2026-10-02. Until 2026-10-02 this paragraph said "NIST disputes the premise, so the fork follows upstream behaviour unchanged pending their reading."
+One finding was raised and then **withdrawn**: the treatment of a two-symbol
+alphabet as binary regardless of declared sample width (upstream #253 and
+PR #256). The upstream respondent held the current behaviour correct, answered
+the fork's clarifying question on 2026-10-01, and is right on the standard's
+text: §4.4.2 and §5 define "binary" by the alphabet, not the sample width, and
+§6.2's binary-only estimators already run on the translated two-symbol data.
+PR #256 was closed on 2026-10-02. The patch was never on master, so no figure
+this build reports changed in either direction. Until 2026-10-02 this paragraph
+said the finding was "deliberately not repaired ... pending their reading". The
+full record is in [NOTICE](NOTICE) and in the tracker under "Withdrawn
+findings".
 
 ---
 

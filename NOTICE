@@ -54,21 +54,21 @@ MASTER IS NOW THE PATCHED BUILD. The supersession was a decision; see the
 "Product-dependency status" section below for why patched was chosen over
 unpatched.
 
-One inconsistency the history shows, recorded rather than smoothed over:
-not every reported fix is on master. The bitstring-gate fix (F01, upstream
-#253, PR #256 — gate the bitstring estimators on word_size, not the
-observed alphabet) is STILL BRANCH-ONLY: master still reads `alph_size > 2`
-(cpp/non_iid_main.cpp), so a two-valued multi-bit source at or above the
-1,000,000-sample minimum is still assessed as binary in the shipped master
-build: over-credited on the fork's reading in #253, correct on the upstream
-respondent's. The sub-minimum intake refusal (c2f1dcd) does not cover it,
-because the hazard is a full-size capture. Until 2026-10-02 this paragraph said that
-whether #256 should land on master was "an open item for the independent
-review", pending an upstream answer. The answer arrived on 2026-10-01 (see
-"Deliberately not changed" below): the upstream respondent holds the
-current behaviour correct. What remains is an owner decision, recorded
-there and not yet taken. Until it is, "master is the patched build" means
-the repairs listed below, not #256.
+One inconsistency the history showed, and how it was closed. Until 2026-10-02
+not every reported fix was on master: the bitstring-gate change (F01, upstream
+#253, PR #256 - gate the bitstring estimators on word_size rather than the
+observed alphabet) was branch-only, and this file recorded that as an open item
+for the independent review. It is now closed by WITHDRAWAL. The upstream
+respondent answered the open question on 2026-10-01, holding the current
+behaviour correct; the standard defines "binary" by the alphabet in §4.4.2 and
+§5 rather than by the sample width, and §6.2's binary-only Collision, Markov
+and Compression estimates already run on the translated two-symbol data, which
+the patch would have withheld. PR #256 was closed on 2026-10-02 and the change
+withdrawn. Master gates on `alph_size > 2`, identical to upstream, as it always
+did: no shipped behaviour changed on withdrawal, because none had changed on
+raising. The branch fix/bitstring-gate-word-size is retained unmerged as the
+evidence behind the analysis. Raising the question was not the error; the
+"over-credited" label was, and it is corrected in the findings tracker.
 
 What was observed across the changes below, stated as scope rather than
 as a guarantee, because the evidence is a finite set of datasets and
@@ -234,6 +234,11 @@ A second repair pass on the same date, working the remaining queue:
 2026-09-30  cpp/selftest/regression-*.sh: regression tests for each of
             the above. Test material only.
 
+2026-10-02  No source change. PR #256 closed upstream and the F01 bitstring-
+            gate change withdrawn; it was never on master, so nothing in the
+            shipped build changed. The pinned figure and the full check suite
+            were re-run after the withdrawal and are unchanged. Recorded above
+            under "Withdrawn, not merely unchanged".
 2026-10-02  cpp/selftest/regression-docs.sh: the stale-claim check now
             normalises whitespace before matching, because it had been
             matching line by line against text wrapped at 72 columns and
@@ -263,39 +268,45 @@ sample under bin/ the figures are unchanged, including the Literal
 MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which the
 build still reproduces exactly.
 
-Deliberately not changed: the treatment of a two-symbol alphabet as
-binary regardless of the declared sample width (upstream #253 and
-PR #256). Until 2026-10-02 this paragraph said "pending NIST" and that NIST reads "binary" as a property of the alphabet; the reading is @joshuaehill's, and NIST has not spoken.
-His position (PR #256, 2026-09-30): {0,1} and {33,211} are both
-two-symbol alphabets, so the "if the sequential dataset is not binary"
-condition of §3.1.3 is not met and no n x H_bitstring term is due. The
-fork owner asked the same day whether an explicitly declared
-bits_per_symbol of 8 changes that. He answered on 2026-10-01 at 21:38
-UTC, after walking through read_file_subset(): the alph_size > 2 gate
-tests the translated alphabet, which he holds correct; a declared width
-only fixes the encoding of data.bsymbols, which the bitstring
-assessment uses when -c forces it; without -c a two-symbol dataset is
-already binary and no separate H_bitstring is produced or, under
-§3.1.3, wanted. "In summary, I think that this aspect of the current
-behavior is correct."
+Withdrawn, not merely unchanged (recorded 2026-10-02): the treatment of a
+two-symbol alphabet as binary regardless of the declared sample width
+(upstream #253 and PR #256). This paragraph previously said "Deliberately not
+changed" and described the question as unresolved. It is resolved, against the
+fork's reading.
 
-So the question is answered, not open. master follows upstream here:
-the gate is unchanged, the patch exists only on branch
-fix/bitstring-gate-word-size and in PR #256, and the shipped build
-therefore agrees with his reading and reports 0.9216 rather than 0.1796
-on the audit's two-valued 2-bit input. What remains is a DECISION for
-the owner and the independent review, recorded 2026-10-02 and
-deliberately not taken here: either (a) withdraw the branch patch and
-PR #256 and record his reading as the fork's, or (b) adopt the patch on
-master as a deliberate, documented divergence from upstream, with the
-counter-argument stated. The counter-argument, as filed in #253: §3.1.3
-makes the bitstring assessment depend on the sample width n, §3.2.2
-requires the submitter to document that width, and a comparator or
-threshold source captured into bytes (0x00/0xFF) is an n-bit source
-that happens to emit two values, so relabelling it to {0,1} drops the
-n x H_bitstring term and over-credits it by up to 5.1x on the
-reproduction, unbounded in principle. Until the decision is taken the
-fork follows upstream's behaviour unchanged.
+The upstream respondent's position (PR #256, 2026-09-30 and 2026-10-01): {0,1}
+and {33,211} are both two-symbol alphabets, the `alph_size > 2` gate tests the
+translated data, which is the data actually assessed, and a declared width only
+fixes the encoding of the bitstring the assessment uses when -c forces it.
+Asked on 2026-09-30 whether an explicitly declared bits_per_symbol of 8 changes
+that, he answered on 2026-10-01: it does not. "In summary, I think that this
+aspect of the current behavior is correct."
+
+That is right, and the fork's premise was wrong. §4.4.2 defines a binary noise
+source as one that "produces only two distinct values", and §5 as "binary, i.e.,
+k = 2"; neither defines it by the sample width, and nothing in the standard
+does. §6.2 then restricts the Collision, Markov and Compression estimates to
+binary inputs, and master runs exactly those three on the translated two-symbol
+data; the patch would have rewritten their gates to the sample width and
+withheld three required estimates from a genuine binary input. Because the
+bitstring is a deterministic symbol-wise expansion, it can also carry no
+structure the symbol-level battery has not already seen. The respondent reached
+the same conclusion independently on 2026-10-02.
+
+PR #256 was therefore closed on 2026-10-02 and the change withdrawn. The fork
+follows upstream, which it always did on this point: the patch was never on
+master. The figure the fork had called over-credited, 0.92162256445118362 on a
+fair coin recorded two bits wide, is the accurate one; the 0.17960299911578648
+the patch would have produced is depressed by the constant padding bit. The
+"dangerous direction" label is corrected in the tracker.
+
+What survives, and is not a defect of that kind: declaring bits_per_symbol for
+a two-valued file has no effect on the initial estimate and the tool never says
+so. And one observation for the standard's authors rather than the tool: the
+assessment is discontinuous at the alphabet boundary, so a single rare third
+value switches the bitstring term on and drops the reported figure several-fold
+on barely different data.
+
 
 Correction of upstream attributions (recorded 2026-10-02)
 ---------------------------------------------------------

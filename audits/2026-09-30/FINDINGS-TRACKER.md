@@ -4,7 +4,15 @@ This file is the authoritative work queue for every defect found in `usnistgov/S
 
 A confirmed finding stays in this queue until it is **technically resolved**. An upstream issue being closed, rejected or abandoned, or its discussion stopping, does not resolve it. Deduplicating copied source or evidence does not resolve it either. Findings are never deleted from this file.
 
-**Branch policy (recorded 2026-10-01).** The fork's earlier rule — master pinned to upstream behaviour, each fix on its own branch off upstream, none merged into master — was **superseded on 2026-09-30, deliberately**, when this tracker and [`../BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md) made fork-fix-with-regression-test (option B) a valid resolution and the repairs were committed **directly to master** (first estimator change `c2f1dcd`/`ed88de9`). **Master is now the patched build**, and TruePad ships it as a product dependency (see `../../NOTICE`, "Product-dependency status"). **Reconciliation gap:** not every reported fix is on master — the bitstring-gate (F01 / #253 / PR #256) is **still branch-only** (`fix/bitstring-gate-word-size`; master still reads `alph_size > 2`), so a two-valued multi-bit source ≥ 1,000,000 samples is still assessed as binary in the shipped build (0.9216 rather than 0.1796 on the audit's input), which the fork's #253 calls over-crediting and the upstream respondent calls correct. **Correction (2026-10-02):** until 2026-10-02 this sentence said "whether #256 should land on master is an open item for the independent review". The question put on PR #256 was answered on 2026-10-01 by @joshuaehill (not a NIST account), who holds the current behaviour correct; what remains is an owner decision — withdraw the patch, or adopt it as a deliberate divergence — recorded in the F01 row and in the questions section at the end of this file, and not yet taken. The pinned-output check (`cpp/selftest/pin-check.sh`) still holds the **upstream reference figure** for `ringOsc-nist.bin` and **passes on the patched build** (the repairs do not move that 1-bit collision-binding figure); it proves the unchanged paths, and the deliberate divergences are covered by `cpp/selftest/regression-*.sh`, not the pin.
+**Branch policy (recorded 2026-10-01).** The fork's earlier rule — master pinned to upstream behaviour, each fix on its own branch off upstream, none merged into master — was **superseded on 2026-09-30, deliberately**, when this tracker and [`../BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md) made fork-fix-with-regression-test (option B) a valid resolution and the repairs were committed **directly to master** (first estimator change `c2f1dcd`/`ed88de9`). **Master is now the patched build**, and TruePad ships it as a product dependency (see `../../NOTICE`, "Product-dependency status"). **Reconciliation closed 2026-10-02.** Until 2026-10-02 this paragraph recorded a gap: the
+bitstring-gate change (F01 / #253 / PR #256) was branch-only, master read `alph_size > 2`, and
+whether the patch should land was an open question. It is closed by withdrawal, not by
+merging. The upstream respondent answered on 2026-10-01 that the current behaviour is correct,
+the standard's own definitions of "binary" support him, and PR #256 was closed on 2026-10-02.
+Master is therefore identical to upstream on this point, as it always was: **no shipped
+behaviour changed on withdrawal, because none had changed on raising.** The branch
+`fix/bitstring-gate-word-size` is kept unmerged as evidence. The full record is under
+"Withdrawn findings" at the end of this file. The pinned-output check (`cpp/selftest/pin-check.sh`) still holds the **upstream reference figure** for `ringOsc-nist.bin` and **passes on the patched build** (the repairs do not move that 1-bit collision-binding figure); it proves the unchanged paths, and the deliberate divergences are covered by `cpp/selftest/regression-*.sh`, not the pin.
 
 ## AI Repair Queue
 
@@ -64,8 +72,8 @@ the upstream position and this fork's position are never conflated.
 ## Queue summary (upstream status last checked 2026-09-30)
 
 - Confirmed defects: **30**.
-  - `NEEDS-FIX`: 7
-  - `UPSTREAM-FIX-PENDING`: 1
+  - `NEEDS-FIX`: 8
+  - `UPSTREAM-FIX-PENDING`: 0
   - `FIXED-UPSTREAM-VERIFY`: 0
   - `FORK-FIX-REQUIRED`: 1
   - `FORK-FIXED`: 21
@@ -73,7 +81,11 @@ the upstream position and this fork's position are never conflated.
 
   Fork disposition across all 30: `VERIFIED` 18, `RESOLVED-BY-GLOBAL-GUARD` 2,
   `FORK-HARDENING` 1, `DEFERRED-NOT-BUILT` 3, `NOT-REPRODUCED-HERE` 1,
-  `SPEC-INTERPRETATION-PENDING` 1, `NEEDS-FIX` 4.
+  `NEEDS-FIX` 5.
+
+  The membership changed on 2026-10-02 and the total did not: F01 was withdrawn
+  (see "Withdrawn findings") and C-01, the carried `ea_restart` allocation
+  mismatch, entered the queue so that it is watched rather than only recorded.
 
   `FORK-FIXED` is a state, not a quality claim, and the 21 are not all the
   same kind of thing. Read them by fork disposition:
@@ -92,18 +104,16 @@ the upstream position and this fork's position are never conflated.
 
   Of the 9 not fixed: 3 are in ea_conditioning, which this fork does not build;
   1 does not reproduce on this platform (R-1, a long double width question);
-  1 (F01) awaits an owner decision now that the upstream respondent has
-  answered (2026-10-01); and 4 remain open work (N-07, N-08,
-  N-10, NOVEL-03), each with its next step recorded.
+  and 5 remain open work (N-07, N-08, N-10, NOVEL-03 and C-01), each with its
+  next step recorded.
 
   No upstream issue or pull request was modified in either pass.
-- Unconfirmed or not-a-bug items (not in the queue): **17**; see the end of this file.
+- Unconfirmed or not-a-bug items (not in the queue): **18**, one of them withdrawn after being raised (F01); see the end of this file.
 - All commands below run from `cpp/` of this fork after `make`. **The fork's C++ sources are no longer identical to upstream `87c104d`.** They were when this file was written; two repair passes on 2026-09-30 then corrected defects in `cpp/shared/`, `cpp/non_iid/`, `cpp/iid/` and the `*_main.cpp` programs, each listed in [`../../NOTICE`](../../NOTICE) with its commit and recorded against its finding below. Line references in findings that predate those passes may therefore be a few lines out, and a reproduction may now show the repaired behaviour rather than the `BUG:` line: check the finding's own state before concluding anything from a reproduction that no longer fails. `../audits/2026-09-30/` holds the generators and evidence. Evidence paths are relative to this file.
 - Reproduction audit (2026-09-30): every Reproduce block below was re-run, unmodified, on a clean build of fork `master` `237d85c`; 29 of 30 show the stated `BUG:` output. The exception is **F14**. Its harness (`novel-findings/repro/num/f14/`) demonstrates the mechanism on the unmodified function, but an end-to-end run needs more than 25.8 Gbit of input and about 650 GB RAM.
 
 | ID | State | Dangerous direction? | Upstream issue / PR | Next action |
 |---|---|---|---|---|
-| [F01](#f01) | `UPSTREAM-FIX-PENDING` | yes on the fork's reading (too HIGH: 0.9216 vs 0.1796); disputed upstream | #253 / PR #256 | Answered 2026-10-01 on PR #256 by @joshuaehill (not a NIST account): yes, still binary; current behaviour correct. DECISION PENDING (owner and independent review; not taken 2026-10-02): (a) withdraw the branch patch and PR #256 and record his reading as the fork's, or (b) adopt the patch on master as a deliberate, documented divergence with the #253 counter-argument stated. master is unchanged either way until decided. |
 | [F02](#f02) | `FORK-FIXED` | yes (too HIGH vs the declared-width computation) | #254 / — | None in this fork. The default-width question stays upstream on #254. |
 | [F03](#f03) | `FORK-FIXED` | yes (a figure is emitted for non-conforming data) | #255 (related #238) / — | None for the sub-minimum half. How a legitimate no-estimate result should appear is tracked separately as F05. |
 | [F04](#f04) | `FORK-FIXED` | yes (a missing estimator can only raise the minimum) | #258 (dup #265) / — | None unless upstream decides §6.3.7 should run for L > 63, which would be a behaviour change this fork should not make first. |
@@ -132,37 +142,10 @@ the upstream position and this fork's position are never conflated.
 | [R-3](#r-3) | `FORK-FIXED` | no (report integrity) | #183 (closed) / — | None. |
 | [NOVEL-01](#novel-01) | `FORK-FIXED` | no by itself (it masks TOO-HIGH regressions) | #272 / — | None. Note that selftest now exits 1 on macOS arm64 because of the pre-existing platform deltas in upstream #155. |
 | [NOVEL-02](#novel-02) | `FORK-FIXED` | no | — (distinct from PR #251) / — | Watch PR #251 for the upstream shape of the hAssessed half. |
+| [C-01](#c-01) | `NEEDS-FIX` | no (memory safety) | — / PR #242 (third party) | Decide whether to repair the scalar `delete` of an array in ea_restart here or wait on PR #242; add the ASan regression either way. |
 | [NOVEL-03](#novel-03) | `NEEDS-FIX` | no | — (introduced with PR #250) / — | Give populateTestCase() a row/column tag, or use two test cases. Reporting-only; no figure changes. |
 
 ## Confirmed findings
-
-### F01
-
-**Multi-bit data with exactly two observed values is assessed as binary; the n×H_bitstring term (§3.1.3) is never computed**
-
-- **State:** `UPSTREAM-FIX-PENDING`
-- **Upstream disposition:** `DISPUTED`
-- **Fork disposition:** `SPEC-INTERPRETATION-PENDING`
-- **Dangerous direction:** yes (too HIGH: 0.9216 vs 0.1796)
-- **Affected source:** `cpp/non_iid_main.cpp` main(): every bitstring branch is gated on `data.alph_size > 2` (lines 263, 285, 305, 325, 351, 375, 395, 419, 443, 467, 491); the same gate is in `cpp/iid_main.cpp`:280-299 (upstream `87c104d`)
-- **Reproduce:**
-  ```sh
-  python3 -c "import random;r=random.Random(12345);b=[r.randrange(2) for _ in range(10**6)];open('t.bin','wb').write(bytes(2*x for x in b))"
-  ./ea_non_iid -vv t.bin      # BUG: no 'Bitstring' lines; Assessed min entropy: 0.92162256445118362
-  ./ea_non_iid -vv t.bin 8    # BUG: Assessed 0.92162256445118362
-  ```
-- **Expected (correct) behaviour:** Bitstring estimators run whenever the sample width n > 1: `t.bin` inferred 2-bit → Assessed 0.17960299911578648; declared 8 → 0.31779050350127225 (values measured on the PR #256 branch)
-- **Evidence / reproducer:** [`AUDIT.md`](AUDIT.md) row F01 and its verification record; upstream #253
-- **Regression test:** none yet — add: `t.bin` must report 0.17960299911578648 (inferred) and 0.31779050350127225 (declared 8)
-- **Upstream NIST issue:** #253
-- **Upstream NIST PR:** PR #256
-- **Current upstream status:** #253 open, PR #256 open (re-checked 2026-10-02). @joshuaehill (Joshua E. Hill, KeyPair Consulting; not a NIST account) disputes the premise: "I'm not sure this actually is a problem as the whole issue seems to turn on the phrase 'If the sequential dataset is not binary' ... both are binary (that is there are two symbols in both alphabets). I think the current behavior is correct." **Answered 2026-10-01 (PR #256, 21:38 UTC):** asked on 2026-09-30 whether an explicitly declared bits_per_symbol of 8 for a two-value alphabet such as {33, 211} leaves the dataset binary for §3.1.3, he answered yes, with this reasoning: read_file_subset() translates the observed alphabet to {0..k-1}, so the alph_size > 2 gate tests whether the translated data is binary, which he holds correct; a declared width only fixes the encoding of data.bsymbols, which the bitstring assessment uses when -c forces it; without -c a two-symbol dataset "is already regarded as being binary ... and no separate H_bitstring output (or desired, as per SP 800-90B Section 3.1.3)". "In summary, I think that this aspect of the current behavior is correct." No NIST account has commented on #253 or PR #256.
-- **Current fork status:** HELD, and the question is now answered rather than open. The fork follows upstream behaviour unchanged (master still gates on alph_size > 2; the patch exists only on fix/bitstring-gate-word-size and PR #256), so the shipped build agrees with the upstream respondent's reading and reports 0.9216 on the audit input. Until 2026-10-02 this field said that changing it "would encode our reading of 'binary' over NIST's while the question is open"; the reading is @joshuaehill's, not NIST's.
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
-- **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
-- **Last upstream-status check:** 2026-10-02
-- **Required next action:** **Decision to be made (recorded 2026-10-02, deliberately not taken in this pass).** The clarification asked for on 2026-09-30 was answered on 2026-10-01: yes, still binary; current behaviour correct. The instruction this field carried until 2026-10-02 was "If yes, record that reading and close #253 and PR #256"; the reading is recorded above, and closing is an upstream action that needs the owner's explicit approval (BUG-REPAIR-GUIDE rule 6). The remaining decision has two options and no default: (a) withdraw the branch patch and PR #256 and record his reading as the fork's; or (b) adopt the patch on master as a deliberate, documented divergence from upstream, with the counter-argument stated. The counter-argument as filed in #253: §3.1.3 makes the bitstring assessment depend on the sample width n, §3.2.2 requires the submitter to document that width, and a comparator or threshold source captured into bytes (0x00/0xFF) is an n-bit source that happens to emit two values, so relabelling it to {0,1} drops the n × H_bitstring term and over-credits it by up to 5.1× on the reproduction, unbounded in principle. For the review: the respondent is not a NIST account and deferred to "the NIST folks" on PR #268; no NIST account has spoken on #253. Until the decision is taken, master stays as it is and nothing is changed upstream.
 
 ### F02
 
@@ -1023,12 +1006,44 @@ the upstream position and this fork's position are never conflated.
 - **Last upstream-status check:** 2026-09-30
 - **Required next action:** Give populateTestCase() a row/column tag, or use two test cases. Reporting-only; no figure changes.
 
+### C-01
+
+**`ea_restart` frees an array with scalar `delete`: undefined behaviour in a shipped program (carried upstream defect)**
+
+- **State:** `NEEDS-FIX`
+- **Upstream disposition:** `NOT-FILED` (by this fork; a third-party PR that would fix it is open, see below)
+- **Fork disposition:** `NEEDS-FIX`
+- **Dangerous direction:** no (memory safety; no effect on any reported figure)
+- **Affected source:** `cpp/restart_main.cpp` simulateBound(): line 124 allocates `results = new uint16_t[simulation_rounds];`, line 161 frees it with `delete results;`. Upstream's code, unchanged in this fork and unchanged upstream since 2023 (`3aef5d1`). Reached from `main()` by ordinary valid input.
+- **Reproduce:**
+  ```sh
+  # the mismatch is not diagnosed by default; the check must be asked for
+  make restart CXXFLAGS='-std=c++11 -O1 -g -fsanitize=address,undefined -I/usr/include/jsoncpp'
+  ASAN_OPTIONS=alloc_dealloc_mismatch=1 ./ea_restart -n ../bin/truerand_8bit.bin 8 3.2
+  # BUG: SIGABRT, "alloc-dealloc-mismatch (operator new [] vs operator delete)",
+  #      allocation at restart_main.cpp:124, deallocation at restart_main.cpp:161
+  ```
+- **Expected (correct) behaviour:** `delete[] results;`
+- **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) line 315 and [`novel-findings/agent-reports/restart.md`](novel-findings/agent-reports/restart.md) line 162 recorded it on 2026-09-30 as a rediscovery; [`../2026-10-01-re-audit/KNOWN-242.md`](../2026-10-01-re-audit/KNOWN-242.md) records four sanitizer probes, including the full command line at the default 5,000,000 rounds
+- **Regression test:** none yet. A check belongs in `cpp/selftest/`, building `ea_restart` with ASan and `alloc_dealloc_mismatch=1` and asserting a clean exit, with the probe proving it can fire before its silence is trusted.
+- **Upstream issue:** none describing this defect
+- **Upstream PR:** PR #242 (garlic-hub, "Fix warnings and set them to be errors") carries `delete[]` in its diff and would fix it. It is a PR, not an issue about this defect, which `KNOWN-242.md`'s filename calls it. Open and unmerged, re-checked 2026-10-02.
+- **Current upstream status:** PR #242 open since 2025-06-19; @celic commented 2026-05-26, the author replied 2026-05-28; no movement since.
+- **Current fork status:** **Not repaired, and deliberately carried.** Entered this queue on 2026-10-02 so that it is watched rather than merely recorded. It had been excluded on 2026-09-30 as already known upstream, which was sound while master was pinned to upstream behaviour; that rule lapsed the same day master became the patched build, and nothing recorded the lapse.
+- **What a fix would take:** one character, `delete results;` → `delete results[];` — strictly, `delete[] results;` — plus a regression as described above, plus a decision about whether to carry a one-character divergence from upstream in a program whose figures nothing is priced against. The honest reason to hesitate is not the change; it is that every divergence adds to the evidence burden the "Product-dependency status" section of `../../NOTICE` describes.
+- **What leaving it costs:** undefined behaviour on every `ea_restart` run, which today is benign on the allocators in use for a trivially destructible type, and is not detected by a default sanitizer build. It is a real defect that a reviewer of this dependency will find, and the cost of leaving it is mostly to the evidence chain rather than to the figures: a shipped program with known undefined behaviour and no tracker row reads as an archive that lost track of it.
+- **Verification:** the Reproduce block must stop aborting, and the ASan probe must be shown able to fire before a clean run is trusted
+- **Reproduction last re-run:** 2026-10-02 (source read at `9802717`; sanitizer runs as recorded in `KNOWN-242.md` on 2026-10-01)
+- **Last upstream-status check:** 2026-10-02
+- **Required next action:** Decide whether to repair it here or wait on PR #242, and either way add the ASan regression so the state is checkable. Re-query PR #242 at each periodic upstream check.
+
 ## Unconfirmed and not-a-bug items (not in the repair queue)
 
 These are recorded so that nothing is lost. An `UNCONFIRMED` item enters the queue as `NEEDS-FIX` once verified; a `NOT-A-BUG` item re-enters only if its reason stops holding.
 
 | ID | Title | Label | Reason (from the source report) | Evidence | Next action |
 |---|---|---|---|---|---|
+| F01 | Multi-bit data with exactly two observed values is assessed as binary; the n×H_bitstring term is never computed | `NOT-A-BUG` | Withdrawn 2026-10-02: "binary" is defined by the alphabet in §4.4.2 and §5, not by the sample width, and §6.2's binary-only estimators already run on the translated data. The full entry is kept under "Withdrawn findings". | Withdrawn findings, F01; #253; PR #256 (closed) | None |
 | F06 | Compression step 8 returns 1.0 when X̄′ exceeds the uniform expectation | `NOT-A-BUG` | Spec-literal behaviour (§6.3.4 step 8); weakness of the standard, not a code divergence. UNVERIFIED attacker claim. | AUDIT.md F06 | None (spec comment, not a code fix) |
 | F07 | Z = 2.5758293 instead of the printed 2.576 | `NOT-A-BUG` | Deliberate full precision, closed upstream #22; ≤ 5e-6 bit/bit. | AUDIT.md F07; #22 | None |
 | F08 | P_local recurrence iterated to convergence instead of x = x₁₀ | `NOT-A-BUG` | Deliberate upstream change (#133, PR #134 merged); effect < 1e-10. UNVERIFIED. | AUDIT.md F08 | None |
@@ -1046,6 +1061,41 @@ These are recorded so that nothing is lost. An `UNCONFIRMED` item enters the que
 | F28 | Deterministic sources with long memory score near full entropy | `NOT-A-BUG` | Spec limitation of the estimator battery, not code. | AUDIT.md F28 | None |
 | F29 | Single-estimator blind spots | `NOT-A-BUG` | Spec limitation; the battery minimum covers them. | AUDIT.md F29 | None |
 | F30 | LRS estimates collision entropy (can exceed min-entropy) | `NOT-A-BUG` | Spec says so explicitly; other estimators bound the figure. | AUDIT.md F30 | None |
+
+## Withdrawn findings (raised, then accepted as not defects; kept in full)
+
+A finding here was reported in good faith, argued upstream, and withdrawn when the
+argument was answered. The entry is kept whole, not summarised, because the analysis is
+the evidence for the withdrawal. Never delete one.
+
+### F01
+
+**Multi-bit data with exactly two observed values is assessed as binary; the n×H_bitstring term (§3.1.3) is never computed**
+
+- **Disposition:** `NOT-A-BUG` — withdrawn 2026-10-02, upstream's reading accepted. Kept in full because the analysis is the evidence for the withdrawal, and because raising it was not the error.
+- **Upstream disposition:** `DISPUTED`, and the dispute is accepted as correct
+- **Fork disposition:** `WITHDRAWN` — PR #256 closed 2026-10-02, the branch retained as evidence
+- **Dangerous direction:** none. **The original label was backwards.** It read "yes (too HIGH: 0.9216 vs 0.1796)". The test file is a fair coin recorded two bits wide, whose true min-entropy is about one bit per sample: 0.92162256445118362 is close to the truth and 0.17960299911578648 is depressed by the constant padding bit. The figure the fork called over-credited is the accurate one.
+- **Affected source:** `cpp/non_iid_main.cpp` main(): every bitstring branch is gated on `data.alph_size > 2` (lines 263, 285, 305, 325, 351, 375, 395, 419, 443, 467, 491); the same gate is in `cpp/iid_main.cpp`:280-299 (upstream `87c104d`)
+- **Reproduce:**
+  ```sh
+  python3 -c "import random;r=random.Random(12345);b=[r.randrange(2) for _ in range(10**6)];open('t.bin','wb').write(bytes(2*x for x in b))"
+  ./ea_non_iid -vv t.bin      # BUG: no 'Bitstring' lines; Assessed min entropy: 0.92162256445118362
+  ./ea_non_iid -vv t.bin 8    # BUG: Assessed 0.92162256445118362
+  ```
+- **Expected behaviour as originally claimed (now withdrawn):** Bitstring estimators run whenever the sample width n > 1: `t.bin` inferred 2-bit → Assessed 0.17960299911578648; declared 8 → 0.31779050350127225 (values measured on the PR #256 branch)
+- **Evidence / reproducer:** [`AUDIT.md`](AUDIT.md) row F01 and its verification record; upstream #253
+- **Regression test:** none, and none is wanted. The behaviour the fork would have asserted is not the behaviour the standard requires.
+- **Upstream issue:** #253 (open; should be read as resolved on the respondent's interpretation, not as an open defect)
+- **Upstream PR:** PR #256 — **CLOSED by the fork owner 2026-10-02**, withdrawing the change
+- **Current upstream status:** #253 open, PR #256 open (re-checked 2026-10-02). @joshuaehill (Joshua E. Hill, KeyPair Consulting; not a NIST account) disputes the premise: "I'm not sure this actually is a problem as the whole issue seems to turn on the phrase 'If the sequential dataset is not binary' ... both are binary (that is there are two symbols in both alphabets). I think the current behavior is correct." **Answered 2026-10-01 (PR #256, 21:38 UTC):** asked on 2026-09-30 whether an explicitly declared bits_per_symbol of 8 for a two-value alphabet such as {33, 211} leaves the dataset binary for §3.1.3, he answered yes, with this reasoning: read_file_subset() translates the observed alphabet to {0..k-1}, so the alph_size > 2 gate tests whether the translated data is binary, which he holds correct; a declared width only fixes the encoding of data.bsymbols, which the bitstring assessment uses when -c forces it; without -c a two-symbol dataset "is already regarded as being binary ... and no separate H_bitstring output (or desired, as per SP 800-90B Section 3.1.3)". "In summary, I think that this aspect of the current behavior is correct." No NIST account has commented on #253 or PR #256.
+- **Current fork status:** **WITHDRAWN 2026-10-02.** The fork follows upstream, as it always did: master gates on `alph_size > 2` and never carried the patch, which exists only on branch `fix/bitstring-gate-word-size`. No shipped behaviour changed on withdrawal, because none had changed on raising. The branch is kept, unmerged, as the evidence behind the analysis; PR #256 is closed.
+- **Fork fix commit:** — (not yet fixed on fork `master`)
+- **Verification:** none applicable. The `BUG:` lines in the Reproduce block describe correct behaviour and must continue to appear.
+- **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
+- **Last upstream-status check:** 2026-10-02
+- **Required next action:** None in this fork. **Why it was withdrawn, recorded 2026-10-02:** the standard defines "binary" twice and both times by the alphabet, not the sample width — §4.4.2, "the noise source produces only two distinct values", and §5, "when the input is binary, i.e., k = 2". §6.2 then says the Collision, Markov and Compression estimates are only applied to binary inputs, and master runs exactly those three on the translated two-symbol data; the patch would have rewritten their gates to the sample width and withheld three estimates the standard requires from a genuine binary input. And because the bitstring is a deterministic symbol-wise expansion, it can carry no structure the symbol-level battery has not already seen. The upstream respondent reached the same conclusion independently on 2026-10-02: "There is no advantage in conducting the bitstring assessment in the instance where there are exactly two symbols in the alphabet, as the full set of estimators (including the binary-only estimators) are already run on the (translated) data set." **Raising it was not the error**; the §3.1.3 sentence is genuinely ambiguous read alone, the measurement was real, and the answer came from asking. The error was the "over-credited" and "dangerous direction" labels, which this row now corrects. One residual survives and is not a defect of this kind: declaring `bits_per_symbol` for a two-valued file has no effect on the initial estimate and the tool never says so. One spec observation also survives, for the standard's authors rather than the tool: the assessment is discontinuous at the alphabet boundary, so a single rare third value switches the bitstring term on and drops the figure several-fold on barely different data.
+
 
 ## Other upstream items referenced by the audits (known; not audit findings)
 
