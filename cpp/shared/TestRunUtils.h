@@ -110,7 +110,8 @@ int sha256_file(const char *path, char *outputBuffer) {
     int res = 0;
     EVP_MD_CTX *mdctx = NULL;
 
-    // Fork hardening, not a defect NIST has accepted: the read loop below runs
+    // Fork hardening, and not a defect anyone upstream has accepted: the
+    // read loop below runs
     // to EOF, so a character device never ends it and the tool hangs before
     // any size check runs; a FIFO blocks even earlier, inside fopen, waiting
     // for a writer. The file type is therefore established from the path,

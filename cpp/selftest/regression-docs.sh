@@ -145,6 +145,16 @@ fi
 # ------------------------- 9. claims that were false before must not reappear
 # Each of these was in the documentation after the fork had been modified, and
 # each had to be corrected. They are listed verbatim so a reintroduction fails.
+#
+# Matching normalises whitespace first. The previous version of this check
+# matched line by line, and these documents are wrapped at about 72 columns, so
+# the most load-bearing phrasings ("after NIST's review", "agreed with several
+# of them") were split across two lines and could not be found: the guard read
+# green against the exact sentences it had been added to block. That is the
+# vacuous guard FINDINGS-TRACKER.md forbids ("a regression is assumed vacuous
+# until it has failed"), so each phrase is now searched with \s+ between its
+# words, which spans the wrap. Observed to fail against the wrapped sentence
+# before this was committed.
 STALE_CLAIMS=(
  "Nothing that affects a reported min-entropy figure has been changed"
  "builds and ships only"
@@ -156,27 +166,114 @@ STALE_CLAIMS=(
  "No semantics-preserving optimisation was found"
  "it changed only from producing"
  "0.94 ms per thousand bits"
+ "After NIST reviewed"
+ "after NIST's review"
+ "accepted by NIST"
+ "NIST called"
+ "pending NIST"
+ "NIST-accepted"
+ "put to NIST"
+ "awaiting an answer"
+ "agreed with several of them"
 )
-hit=""
-for c in "${STALE_CLAIMS[@]}"; do
-    for d in ${DOCS}; do
-        # A line that quotes the wrong wording while describing its correction
-        # is a record, not a reassertion. Such lines name the correction
-        # explicitly ("until 2026-10-01", "said", "which ... contradict"), so
-        # the claim only counts when it appears without that framing.
-        grep -F -- "${c}" "${d}" 2>/dev/null \
-            | grep -vqE 'until 2026-|said "|still said|had been corrected|which those two contradict|factor of 1000|a prior session' \
-            && hit="${hit} ${d}:\"${c}\""
-    done
-done
-# "are identical to upstream" is only wrong unqualified; the negated and
-# commit-scoped forms are correct and must not trip this.
-for d in ${DOCS}; do
-    grep -nE "(sources|files)[^.]{0,40}are identical to upstream" "${d}" 2>/dev/null \
-        | grep -viE "no longer|were identical" | grep -q . && hit="${hit} ${d}:unqualified-identical-claim"
-done
+# A block that quotes the wrong wording while describing its correction is a
+# record, not a reassertion. Exemption is judged over the whole paragraph the
+# phrase sits in, not its line, for the same wrapping reason.
+hit=$(python3 - "${DOCS}" "${STALE_CLAIMS[@]}" <<'PY'
+import re, sys
+
+docs   = sys.argv[1].split()
+claims = sys.argv[2:]
+# A correction note is recognised by explicit correction framing, not by a bare
+# date. "until 2026-" alone was too loose: NOTICE's statement-of-changes
+# paragraph opens "Until 2026-09-30 nothing outside the build files was
+# touched", which would have exempted the very sentence this check exists to
+# catch. The markers below all require a saying-verb or the word Correction.
+EXEMPT = re.compile(r'Correction \(2026-|said "|still said|had been corrected'
+                    r'|was headed|headed "|which those two contradict'
+                    r'|factor of 1000|a prior session'
+                    r'|until 2026-\d\d-\d\d[^.]{0,80}?(said|stated|read|headed|asserted|claimed)',
+                    re.I)
+hits = []
+
+def paragraph(raw, a, b):
+    s = raw.rfind('\n\n', 0, a); s = 0 if s < 0 else s + 2
+    e = raw.find('\n\n', b);     e = len(raw) if e < 0 else e
+    return raw[s:e]
+
+for d in docs:
+    try:
+        raw = open(d, encoding='utf-8').read()
+    except OSError:
+        continue
+    for c in claims:
+        words = c.split()
+        if not words:
+            continue
+        pat = re.compile(r'\s+'.join(map(re.escape, words)))
+        for m in pat.finditer(raw):
+            if EXEMPT.search(paragraph(raw, m.start(), m.end())):
+                continue
+            hits.append('%s:%d:"%s"' % (d, raw.count('\n', 0, m.start()) + 1, c))
+    # "are identical to upstream" is only wrong unqualified; the negated and
+    # commit-scoped forms are correct and must not trip this.
+    for m in re.finditer(r'(sources|files)[^.]{0,40}are\s+identical\s+to\s+upstream', raw):
+        if re.search(r'no longer|were identical', paragraph(raw, m.start(), m.end()), re.I):
+            continue
+        hits.append('%s:%d:unqualified-identical-claim' % (d, raw.count('\n', 0, m.start()) + 1))
+
+print(' '.join(hits))
+PY
+)
 if [ -z "${hit}" ]; then note "no previously-corrected claim has reappeared:" "none"
 else bad "stale claims present again:" "${hit}"; fi
+
+# ------------------------------- 10. NIST attributions in cpp/ comments
+# Every reply on this fork's upstream issues and pull requests came from
+# @joshuaehill, who is not a NIST account and who deferred to "the NIST folks"
+# on PR #268. The 2026-10-02 sweep corrected the documents; three comments
+# under cpp/ were missed, and this script did not look there, so README.md
+# could claim the sweep was complete while it was not. Source comments are read
+# as evidence too, so they are held to the same rule. A block that says "not a
+# NIST account" is recording the distinction, not asserting a NIST position.
+nistsrc=$(python3 - <<'PY'
+import glob, os, re
+
+files = sorted(set(
+    glob.glob('cpp/*.cpp') + glob.glob('cpp/*.h') + glob.glob('cpp/*/*.h')
+    + glob.glob('cpp/selftest/*.sh')
+    + ['cpp/Makefile', 'cpp/selftest/selftest', 'cpp/selftest/compareresults.pl',
+       'cpp/selftest/generate-refdata']))
+
+# This script is the one file that must contain the forbidden phrasings: they
+# are its data. It is therefore the single exclusion, and a NIST attribution
+# written into this file would not be caught here.
+files = [f for f in files if os.path.basename(f) != 'regression-docs.sh']
+
+VERB = re.compile(r"NIST(?:'s)?\s+(?:has\s+|have\s+|does\s+not\s+|did\s+not\s+|never\s+)?"
+                  r"(accept\w*|agree\w*|ask\w*|call\w*|regard\w*|disput\w*|prefer\w*"
+                  r"|decid\w*|review\w*|reads?\b|position\b|view\b)", re.I)
+ALT  = re.compile(r"(accepted|agreed|reviewed|confirmed|endorsed)\s+by\s+NIST", re.I)
+OK   = re.compile(r"not a NIST account|No NIST account|anyone upstream", re.I)
+hits = []
+
+for f in files:
+    if not os.path.isfile(f):
+        continue
+    raw = open(f, encoding='utf-8', errors='replace').read()
+    for pat in (VERB, ALT):
+        for m in pat.finditer(raw):
+            s = raw.rfind('\n\n', 0, m.start()); s = 0 if s < 0 else s + 2
+            e = raw.find('\n\n', m.end());      e = len(raw) if e < 0 else e
+            if OK.search(raw[s:e]):
+                continue
+            hits.append('%s:%d' % (f, raw.count('\n', 0, m.start()) + 1))
+
+print(' '.join(sorted(set(hits))))
+PY
+)
+if [ -z "${nistsrc}" ]; then note "no NIST attribution in cpp/ comments:" "none"
+else bad "NIST attributions in cpp/ (the sweep is incomplete):" "${nistsrc}"; fi
 
 echo
 if [ "${fails}" -eq 0 ]; then echo "regression-docs: PASS"; exit 0; fi

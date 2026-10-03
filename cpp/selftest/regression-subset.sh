@@ -14,8 +14,10 @@
 #   5. the report says which block was asked for, how many samples were asked
 #      for, and how many were actually obtained, so a short final block is
 #      visible
-#   6. sha256 still identifies the WHOLE file, which is what NIST asked for
-#      on #260; the provenance in 5 is what identifies the assessed part
+#   6. sha256 still identifies the WHOLE file, which is what the upstream
+#      respondent preferred on #260 (@joshuaehill, not a NIST account: "I think
+#      that the SHA sum acting on the file is the most reasonable behavior");
+#      the provenance in 5 is what identifies the assessed part
 
 set -u
 

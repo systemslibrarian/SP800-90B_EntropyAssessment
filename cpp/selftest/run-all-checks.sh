@@ -53,11 +53,27 @@ if [ "${rc}" -eq 0 ]; then
     printf '  %-34s PASS\n' "selftest"; pass=$((pass + 1))
 else
     line=$(printf '%s' "${out}" | grep -E '^selftest: FAIL')
+    files=$(printf '%s' "${line}" | sed 's/^.*files)://')
     only_known=1
-    for f in $(printf '%s' "${line}" | sed 's/^.*files)://'); do
+    nfiles=0
+    for f in ${files}; do
+        nfiles=$((nfiles + 1))
         case " ${KNOWN_PLATFORM_FILES} " in *" ${f} "*) ;; *) only_known=0 ;; esac
     done
-    if [ "${only_known}" -eq 1 ] && [ "${allow_platform}" -eq 1 ]; then
+    # selftest exited non-zero. If it printed no "selftest: FAIL" summary line,
+    # or that line names no file, there is nothing to classify and the run must
+    # NOT be excused. This used to fail open: an empty classification left
+    # only_known=1, so with --allow-known-platform-deltas the harness printed
+    # "PASS (only the known upstream #155 platform files)" and exited 0 when no
+    # file had been compared at all -- a green that named the two excused files
+    # while selftest had died before reaching them. The flag is the documented
+    # macOS invocation, so that was the path normally run. Observed to fail
+    # against a selftest stub that exits non-zero printing no summary line.
+    if [ -z "${line}" ] || [ "${nfiles}" -eq 0 ]; then
+        printf '  %-34s FAIL (exit %s, no "selftest: FAIL" summary line to classify)\n' "selftest" "${rc}"
+        printf '%s\n' "${out}" | tail -4 | sed 's/^/        /'
+        fail=$((fail + 1)); failed="${failed} selftest"
+    elif [ "${only_known}" -eq 1 ] && [ "${allow_platform}" -eq 1 ]; then
         printf '  %-34s PASS (only the known upstream #155 platform files)\n' "selftest"
         pass=$((pass + 1))
     else
