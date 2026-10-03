@@ -16,7 +16,7 @@ Nothing here is an official NIST conclusion. The reports are historical records:
 - [`2026-09-30/FINDINGS-TRACKER.md`](2026-09-30/FINDINGS-TRACKER.md) is the canonical defect work queue. It opens with an **AI Repair Queue**.
 - [`BUG-REPAIR-GUIDE.md`](BUG-REPAIR-GUIDE.md) is the permanent procedure for agents working that queue: states, reproduction, when to fix in the fork, and how to record a repair.
 - An upstream issue being closed does not mean the bug is resolved.
-- The re-audit found five defects, four of them in the repair work itself, including two in its regression tests. They are recorded in the tracker as the REV series, each with its fixing commit. A repair pass needs auditing like any other change.
+- The re-audit found six defects, five of them in the repair work itself, including three in its regression tests. They are recorded in the tracker as the REV series. A repair pass needs auditing like any other change — and so does the pass that audits it: the sixth was found on 2026-10-02 by re-reading the re-audit against the tracker, where a PARTIALLY SUPPORTED verdict had been recorded as "did not reproduce".
 
 - Tracked files under `audits/`: **585**, including this README.
 - Tracked subdirectories: **118**.

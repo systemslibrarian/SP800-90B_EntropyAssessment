@@ -23,6 +23,29 @@ A closed, rejected, abandoned or stale upstream issue is **not** a resolution. I
 6. **Do not act upstream without the owner's explicit approval.** That means no pushing to `usnistgov`, and no opening, closing or commenting on upstream issues or PRs. Push only to this fork, never with `--force`.
 7. **Keep the numbers honest.** Record measured outputs, not expected ones. If a reproduction does not show the stated failure, do not "fix" it: record that in the tracker and stop.
 
+## Two standing facts about this queue (recorded 2026-10-02)
+
+**"Already known upstream" is no longer a reason to leave a defect out.** The
+2026-09-30 audits excluded defects that upstream already knew about, recording
+them as rediscoveries rather than queueing them. That was sound while master
+was pinned to upstream behaviour: an upstream defect was not this fork's to
+answer. It stopped being sound on 2026-09-30, when master became the patched
+build and that build became a product dependency, and nothing recorded the
+change until now. If you find a defect in this fork's shipped programs,
+upstream knowing about it is a fact to record, not grounds for omitting it.
+One such defect is carried today: the scalar `delete` of an array at
+`cpp/restart_main.cpp` lines 124 and 161, in `ea_restart`, which this fork
+builds and ships. It has no tracker row of its own, no repair and no
+regression; `../NOTICE` describes it under "Known upstream defects carried into
+the shipped build".
+
+**There is no CI. Every check in step 6 and step 7 is manual.** No workflow,
+no pipeline, no commit hook exists in this repository. A green suite means
+someone ran it once, on one machine, at a moment you cannot recover from the
+history. Nothing runs it for you, nothing records which commits it was run
+against, and nothing will tell you if a later commit breaks it. Run it
+yourself, and say in the commit message what you ran and on what.
+
 ## Setup
 
 ```sh

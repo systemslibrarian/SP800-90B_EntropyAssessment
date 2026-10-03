@@ -4,7 +4,7 @@ This file is the authoritative work queue for every defect found in `usnistgov/S
 
 A confirmed finding stays in this queue until it is **technically resolved**. An upstream issue being closed, rejected or abandoned, or its discussion stopping, does not resolve it. Deduplicating copied source or evidence does not resolve it either. Findings are never deleted from this file.
 
-**Branch policy (recorded 2026-10-01).** The fork's earlier rule — master pinned to upstream behaviour, each fix on its own branch off upstream, none merged into master — was **superseded on 2026-09-30, deliberately**, when this tracker and [`../BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md) made fork-fix-with-regression-test (option B) a valid resolution and the repairs were committed **directly to master** (first estimator change `c2f1dcd`/`ed88de9`). **Master is now the patched build**, and TruePad ships it as a product dependency (see `../../NOTICE`, "Product-dependency status"). **Reconciliation gap:** not every reported fix is on master — the bitstring-gate (F01 / #253 / PR #256) is **still branch-only** (`fix/bitstring-gate-word-size`; master still reads `alph_size > 2`), so a two-valued multi-bit source ≥ 1,000,000 samples is still over-credited in the shipped build; whether #256 should land on master is an open item for the independent review. The pinned-output check (`cpp/selftest/pin-check.sh`) still holds the **upstream reference figure** for `ringOsc-nist.bin` and **passes on the patched build** (the repairs do not move that 1-bit collision-binding figure); it proves the unchanged paths, and the deliberate divergences are covered by `cpp/selftest/regression-*.sh`, not the pin.
+**Branch policy (recorded 2026-10-01).** The fork's earlier rule — master pinned to upstream behaviour, each fix on its own branch off upstream, none merged into master — was **superseded on 2026-09-30, deliberately**, when this tracker and [`../BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md) made fork-fix-with-regression-test (option B) a valid resolution and the repairs were committed **directly to master** (first estimator change `c2f1dcd`/`ed88de9`). **Master is now the patched build**, and TruePad ships it as a product dependency (see `../../NOTICE`, "Product-dependency status"). **Reconciliation gap:** not every reported fix is on master — the bitstring-gate (F01 / #253 / PR #256) is **still branch-only** (`fix/bitstring-gate-word-size`; master still reads `alph_size > 2`), so a two-valued multi-bit source ≥ 1,000,000 samples is still assessed as binary in the shipped build (0.9216 rather than 0.1796 on the audit's input), which the fork's #253 calls over-crediting and the upstream respondent calls correct. **Correction (2026-10-02):** until 2026-10-02 this sentence said "whether #256 should land on master is an open item for the independent review". The question put on PR #256 was answered on 2026-10-01 by @joshuaehill (not a NIST account), who holds the current behaviour correct; what remains is an owner decision — withdraw the patch, or adopt it as a deliberate divergence — recorded in the F01 row and in the questions section at the end of this file, and not yet taken. The pinned-output check (`cpp/selftest/pin-check.sh`) still holds the **upstream reference figure** for `ringOsc-nist.bin` and **passes on the patched build** (the repairs do not move that 1-bit collision-binding figure); it proves the unchanged paths, and the deliberate divergences are covered by `cpp/selftest/regression-*.sh`, not the pin.
 
 ## AI Repair Queue
 
@@ -34,17 +34,19 @@ A coding agent can take work from this queue by selecting findings whose **State
 | `UNCONFIRMED` | Reported but not yet confirmed. Needs verification before it can enter the queue; not in the queue until then. |
 
 Since 2026-09-30 each repaired finding also carries two further fields, so that
-NIST's position and this fork's position are never conflated:
+the upstream position and this fork's position are never conflated.
+
+**Correction (2026-10-02).** Until 2026-10-02 the table below said "NIST agreed", "NIST does not agree", "NIST regards" and so on, and the sentence above said "NIST's position". Every reply on the fork's upstream issues and pull requests has come from @joshuaehill (Joshua E. Hill, KeyPair Consulting), who is not a NIST account and who wrote on PR #268 (2026-10-01) that "The NIST folks may have more relevant feedback on the issue." No NIST account has replied. "The upstream respondent" below means him, and none of these dispositions is an official NIST position:
 
 | Upstream disposition | Meaning |
 |---|---|
-| `ACCEPTED` | NIST agreed it is a defect and agreed with the remedy. |
-| `ACCEPTED-DIFFERENT-FIX` | NIST agreed something is wrong but prefers a different remedy, usually enforcing the 1,000,000-sample minimum. |
-| `DISPUTED` | NIST does not agree it is a defect. Fork behaviour is not changed to match our reading while this stands. |
-| `HARDENING-NOT-BUG` | NIST regards it as abnormal input rather than a defect. |
-| `LOW-PRIORITY` | NIST has no objection to a fix but does not consider it important. |
-| `PENDING` | Filed, no substantive NIST response yet. |
-| `NOT-FILED` | A confirmed defect that has not been reported upstream. The fork may still repair it; doing so is not a statement about NIST's view. |
+| `ACCEPTED` | The upstream respondent agreed it is a defect and agreed with the remedy. |
+| `ACCEPTED-DIFFERENT-FIX` | The upstream respondent agreed something is wrong but prefers a different remedy, usually enforcing the 1,000,000-sample minimum. |
+| `DISPUTED` | The upstream respondent does not agree it is a defect. Fork behaviour is not changed to match our reading while this stands. |
+| `HARDENING-NOT-BUG` | The upstream respondent regards it as abnormal input rather than a defect. |
+| `LOW-PRIORITY` | The upstream respondent has no objection to a fix but does not consider it important. |
+| `PENDING` | Filed, no substantive upstream response yet. |
+| `NOT-FILED` | A confirmed defect that has not been reported upstream. The fork may still repair it; doing so is not a statement about the upstream view. |
 
 | Fork disposition | Meaning |
 |---|---|
@@ -52,7 +54,7 @@ NIST's position and this fork's position are never conflated:
 | `FIX-IN-PROGRESS` | Being repaired now. |
 | `VERIFIED` | Repaired here, with a regression test that fails against the pre-fix build. |
 | `RESOLVED-BY-GLOBAL-GUARD` | Unreachable through ordinary use because of the Section 3.1.1 intake check; any estimator-level guard is recorded separately. |
-| `SPEC-INTERPRETATION-PENDING` | Held: the behaviour turns on a reading of the standard that NIST has not settled. The fork follows upstream unchanged. |
+| `SPEC-INTERPRETATION-PENDING` | Held: the behaviour turns on a reading of the standard that NIST has not settled; the upstream respondent gave his reading on 2026-10-01. The fork follows upstream unchanged. |
 | `FORK-HARDENING` | Repaired here as robustness, not as a standards defect. |
 | `DEFERRED-NOT-BUILT` | In a program this fork does not build (ea_conditioning), so a repair could not be reproduced or regression-tested here. |
 | `NOT-REPRODUCED-HERE` | Confirmed elsewhere but does not reproduce on this platform; a repair cannot be regression-tested here. |
@@ -82,15 +84,16 @@ NIST's position and this fork's position are never conflated:
     underlying behaviour is unchanged; the Section 3.1.1 intake check makes it
     unreachable through ordinary use. If that check were ever relaxed, these
     return.
-  - **1 `FORK-HARDENING`** (F18) — fixed here as robustness. NIST does not
-    regard it as a defect and it must not be cited as one.
+  - **1 `FORK-HARDENING`** (F18) — fixed here as robustness. The upstream
+    respondent does not regard it as a defect and it must not be cited as one.
 
   They came from two passes on 2026-09-30: 11 from the first, 10 from the
-  second, after NIST's review.
+  second, after the upstream respondent's review.
 
   Of the 9 not fixed: 3 are in ea_conditioning, which this fork does not build;
   1 does not reproduce on this platform (R-1, a long double width question);
-  1 is held pending NIST's reading (F01); and 4 remain open work (N-07, N-08,
+  1 (F01) awaits an owner decision now that the upstream respondent has
+  answered (2026-10-01); and 4 remain open work (N-07, N-08,
   N-10, NOVEL-03), each with its next step recorded.
 
   No upstream issue or pull request was modified in either pass.
@@ -100,18 +103,18 @@ NIST's position and this fork's position are never conflated:
 
 | ID | State | Dangerous direction? | Upstream issue / PR | Next action |
 |---|---|---|---|---|
-| [F01](#f01) | `UPSTREAM-FIX-PENDING` | yes (too HIGH: 0.9216 vs 0.1796) | #253 / PR #256 | Obtain one clarification before doing anything: when bits_per_symbol is declared explicitly as 8 for a two-value alphabet such as {33, 211}, is the dataset still binary for the purposes of §3.1.3, so that the n x H_bitstring term is correctly omitted? If yes, record that reading and close #253 and PR #256. If no, the gate needs to distinguish declared width from observed alphabet. Do not merge PR #256 into the fork until this is answered. |
-| [F02](#f02) | `FORK-FIXED` | yes (too HIGH vs the declared-width computation) | #254 / — | None in this fork. The default-width question stays with NIST on #254. |
+| [F01](#f01) | `UPSTREAM-FIX-PENDING` | yes on the fork's reading (too HIGH: 0.9216 vs 0.1796); disputed upstream | #253 / PR #256 | Answered 2026-10-01 on PR #256 by @joshuaehill (not a NIST account): yes, still binary; current behaviour correct. DECISION PENDING (owner and independent review; not taken 2026-10-02): (a) withdraw the branch patch and PR #256 and record his reading as the fork's, or (b) adopt the patch on master as a deliberate, documented divergence with the #253 counter-argument stated. master is unchanged either way until decided. |
+| [F02](#f02) | `FORK-FIXED` | yes (too HIGH vs the declared-width computation) | #254 / — | None in this fork. The default-width question stays upstream on #254. |
 | [F03](#f03) | `FORK-FIXED` | yes (a figure is emitted for non-conforming data) | #255 (related #238) / — | None for the sub-minimum half. How a legitimate no-estimate result should appear is tracked separately as F05. |
-| [F04](#f04) | `FORK-FIXED` | yes (a missing estimator can only raise the minimum) | #258 (dup #265) / — | None unless NIST decides §6.3.7 should run for L > 63, which would be a behaviour change this fork should not make first. |
+| [F04](#f04) | `FORK-FIXED` | yes (a missing estimator can only raise the minimum) | #258 (dup #265) / — | None unless upstream decides §6.3.7 should run for L > 63, which would be a behaviour change this fork should not make first. |
 | [F05](#f05) | `FORK-FIXED` | yes (unbounded in principle) | #255 / — | None. |
 | [F09](#f09) | `FORK-FIXED` | no (TOO LOW: MultiMMC 0.0021 vs 0.93; assessed figure unchanged) | — / — | None. |
-| [F11](#f11) | `FORK-FIXED` | tiny inputs only (NaN case reports 1.0) | #263 / PR #270 | Watch PR #270. If NIST prefers to rely only on the intake minimum, the local guard can stay as defence in depth. |
+| [F11](#f11) | `FORK-FIXED` | tiny inputs only (NaN case reports 1.0) | #263 / PR #270 | Watch PR #270. If upstream prefers to rely only on the intake minimum, the local guard can stay as defence in depth. |
 | [F12](#f12) | `FORK-FIXED` | estimator-level only (tiny inputs; later estimators abort) | #264 / — | None. |
 | [F14](#f14) | `FORK-FIXED` | yes (only above 25.8 Gbit of input) | — / — | An end-to-end confirmation would need a machine with the memory for it. |
 | [F15](#f15) | `FORK-FIXED` | no | #261 (dup #262) / — | None. |
-| [F16](#f16) | `FORK-FIXED` | no (memory safety) | #257 / PR #268 (dup PR #269 closed) | PR #268 still carries the one-line bound. Decide with NIST whether to update it to the failure return or close it in favour of the intake minimum. Nothing was changed upstream from this fork. |
-| [F18](#f18) | `FORK-FIXED` | no (availability) | #259 (dup #266) / — | None. Do not present this as a NIST-accepted defect. |
+| [F16](#f16) | `FORK-FIXED` | no (memory safety) | #257 / PR #268 (dup PR #269 closed) | PR #268 still carries the one-line bound. Asked which shape he preferred, @joshuaehill answered on 2026-10-01: in-estimator sanity checks as asserts kept in production builds, plus the central 1,000,000-sample minimum, adding "The NIST folks may have more relevant feedback on the issue." No NIST account has replied. Decide the PR's shape; nothing in the fork is blocked (ed88de9 and c2f1dcd are both in). Nothing was changed upstream from this fork. |
+| [F18](#f18) | `FORK-FIXED` | no (availability) | #259 (dup #266) / — | None. Do not present this as a defect accepted upstream, still less as a NIST position. |
 | [F19](#f19) | `FORK-FIXED` | no (hostile/mistaken command line; report integrity) | #260 (dup #267) / — | None. |
 | [N-01](#n-01) | `FORK-FIXED` | yes (IID wrongly accepted: 1.42× in the novel audit, +38 % in phase 2) | — / — | None in the fork. Consider reporting upstream. |
 | [N-02](#n-02) | `FORK-FIXED` | yes (IID wrongly accepted; h′ 2.47× in repro) | #271 / — | None. Note the cost: under -c -a with multi-bit symbols the permutation battery now runs on eight times as much data and did not finish in 40 minutes on a 1,000,000-sample 8-bit file; -t bounds it. |
@@ -153,13 +156,13 @@ NIST's position and this fork's position are never conflated:
 - **Regression test:** none yet — add: `t.bin` must report 0.17960299911578648 (inferred) and 0.31779050350127225 (declared 8)
 - **Upstream NIST issue:** #253
 - **Upstream NIST PR:** PR #256
-- **Current upstream status:** #253 open, PR #256 open, both untouched. @joshuaehill disputes the premise: "I'm not sure this actually is a problem as the whole issue seems to turn on the phrase 'If the sequential dataset is not binary' ... both are binary (that is there are two symbols in both alphabets). I think the current behavior is correct."
-- **Current fork status:** HELD. The fork follows upstream behaviour unchanged and PR #256 is NOT merged here. Changing it would encode our reading of "binary" over NIST's while the question is open.
+- **Current upstream status:** #253 open, PR #256 open (re-checked 2026-10-02). @joshuaehill (Joshua E. Hill, KeyPair Consulting; not a NIST account) disputes the premise: "I'm not sure this actually is a problem as the whole issue seems to turn on the phrase 'If the sequential dataset is not binary' ... both are binary (that is there are two symbols in both alphabets). I think the current behavior is correct." **Answered 2026-10-01 (PR #256, 21:38 UTC):** asked on 2026-09-30 whether an explicitly declared bits_per_symbol of 8 for a two-value alphabet such as {33, 211} leaves the dataset binary for §3.1.3, he answered yes, with this reasoning: read_file_subset() translates the observed alphabet to {0..k-1}, so the alph_size > 2 gate tests whether the translated data is binary, which he holds correct; a declared width only fixes the encoding of data.bsymbols, which the bitstring assessment uses when -c forces it; without -c a two-symbol dataset "is already regarded as being binary ... and no separate H_bitstring output (or desired, as per SP 800-90B Section 3.1.3)". "In summary, I think that this aspect of the current behavior is correct." No NIST account has commented on #253 or PR #256.
+- **Current fork status:** HELD, and the question is now answered rather than open. The fork follows upstream behaviour unchanged (master still gates on alph_size > 2; the patch exists only on fix/bitstring-gate-word-size and PR #256), so the shipped build agrees with the upstream respondent's reading and reports 0.9216 on the audit input. Until 2026-10-02 this field said that changing it "would encode our reading of 'binary' over NIST's while the question is open"; the reading is @joshuaehill's, not NIST's.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
-- **Last upstream-status check:** 2026-09-30
-- **Required next action:** Obtain one clarification before doing anything: when bits_per_symbol is declared explicitly as 8 for a two-value alphabet such as {33, 211}, is the dataset still binary for the purposes of §3.1.3, so that the n x H_bitstring term is correctly omitted? If yes, record that reading and close #253 and PR #256. If no, the gate needs to distinguish declared width from observed alphabet. Do not merge PR #256 into the fork until this is answered.
+- **Last upstream-status check:** 2026-10-02
+- **Required next action:** **Decision to be made (recorded 2026-10-02, deliberately not taken in this pass).** The clarification asked for on 2026-09-30 was answered on 2026-10-01: yes, still binary; current behaviour correct. The instruction this field carried until 2026-10-02 was "If yes, record that reading and close #253 and PR #256"; the reading is recorded above, and closing is an upstream action that needs the owner's explicit approval (BUG-REPAIR-GUIDE rule 6). The remaining decision has two options and no default: (a) withdraw the branch patch and PR #256 and record his reading as the fork's; or (b) adopt the patch on master as a deliberate, documented divergence from upstream, with the counter-argument stated. The counter-argument as filed in #253: §3.1.3 makes the bitstring assessment depend on the sample width n, §3.2.2 requires the submitter to document that width, and a comparator or threshold source captured into bytes (0x00/0xFF) is an n-bit source that happens to emit two values, so relabelling it to {0,1} drops the n × H_bitstring term and over-credits it by up to 5.1× on the reproduction, unbounded in principle. For the review: the respondent is not a NIST account and deferred to "the NIST folks" on PR #268; no NIST account has spoken on #253. Until the decision is taken, master stays as it is and nothing is changed upstream.
 
 ### F02
 
@@ -182,12 +185,12 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** #254
 - **Upstream NIST PR:** —
 - **Current upstream status:** #254 open. @joshuaehill: “Certainly reporting the evident symbol width in JSON would be useful. Reporting this ‘not a mapping’ as a warning isn’t useful.”
-- **Current fork status:** JSON now carries bitsPerSymbol and bitsPerSymbolInferred. The inference algorithm and the existing stdout warning are unchanged, and no new warning was added. Whether the inferred width is the right default remains open with NIST and is not decided here.
+- **Current fork status:** JSON now carries bitsPerSymbol and bitsPerSymbolInferred. The inference algorithm and the existing stdout warning are unchanged, and no new warning was added. Whether the inferred width is the right default remains open upstream and is not decided here.
 - **Fork fix commit:** `97571de`
 - **Verification:** regression-width.sh passes: both tools report width 4 inferred on truerand_4bit.bin and width 8 when 8 is declared; the inference still yields 4.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** None in this fork. The default-width question stays with NIST on #254.
+- **Required next action:** None in this fork. The default-width question stays upstream on #254.
 
 ### F03
 
@@ -245,7 +248,7 @@ NIST's position and this fork's position are never conflated:
 - **Verification:** regression-minsize.sh passes. The 4096 threshold in multi_mcw_test.h is unchanged and still applies if the estimator is called directly.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** None unless NIST decides §6.3.7 should run for L > 63, which would be a behaviour change this fork should not make first.
+- **Required next action:** None unless upstream decides §6.3.7 should run for L > 63, which would be a behaviour change this fork should not make first.
 
 ### F05
 
@@ -357,7 +360,7 @@ NIST's position and this fork's position are never conflated:
 - **Verification:** regression-estimator-guards.sh passes: both 1001-block inputs decline, no NaN or inf sigma-hat is produced, and a 1002-block input still runs with sigma-hat 1.8930014049997954.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Watch PR #270. If NIST prefers to rely only on the intake minimum, the local guard can stay as defence in depth.
+- **Required next action:** Watch PR #270. If upstream prefers to rely only on the intake minimum, the local guard can stay as defence in depth.
 
 ### F12
 
@@ -469,12 +472,12 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** #257
 - **Upstream NIST PR:** PR #268 (dup PR #269 closed)
 - **Current upstream status:** #257 open; PR #268 open and untouched. @joshuaehill: “This is a real bug”, and he asked for a failure return rather than the bound PR #268 proposes: “It would be better to return a failure flag (or a result like -1.0) in the instance where L < D_MMC+1.”
-- **Current fork status:** Implemented as NIST asked: the estimator returns -1.0 below D_MMC+1 rather than bounding the loop and continuing on a partial model.
+- **Current fork status:** Implemented as the upstream respondent asked: the estimator returns -1.0 below D_MMC+1 rather than bounding the loop and continuing on a partial model.
 - **Fork fix commit:** `ed88de9`
 - **Verification:** AddressSanitizer: L = 4, 5, 8, 12, 16 produce no sanitizer error where each previously reported heap-buffer-overflow at multi_mmc_test.h; a compliant dataset stays sanitizer-clean.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
-- **Last upstream-status check:** 2026-09-30
-- **Required next action:** PR #268 still carries the one-line bound. Decide with NIST whether to update it to the failure return or close it in favour of the intake minimum. Nothing was changed upstream from this fork.
+- **Last upstream-status check:** 2026-10-02
+- **Required next action:** PR #268 still carries the one-line bound. Asked which shape he preferred, @joshuaehill answered on 2026-10-01: in-estimator sanity checks as asserts kept in production builds, plus the central 1,000,000-sample minimum, adding "The NIST folks may have more relevant feedback on the issue." No NIST account has replied. Decide the PR's shape; nothing in the fork is blocked (ed88de9 and c2f1dcd are both in). Nothing was changed upstream from this fork.
 
 ### F18
 
@@ -500,7 +503,7 @@ NIST's position and this fork's position are never conflated:
 - **Verification:** regression-nonregular.sh passes: /dev/zero, /dev/urandom, a FIFO and a directory are refused within 10 seconds; a regular file hashes unchanged.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** None. Do not present this as a NIST-accepted defect.
+- **Required next action:** None. Do not present this as a defect accepted upstream, still less as a NIST position.
 
 ### F19
 
@@ -522,7 +525,7 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** #260 (dup #267)
 - **Upstream NIST PR:** —
 - **Current upstream status:** #260 open. @joshuaehill: “There’s no harm in checking for an overflow, but I don’t view this change as being high priority”, and “I think that the SHA sum acting on the file is the most reasonable behavior ... the file hash is more useful in this setting.”
-- **Current fork status:** Overflow and out-of-range offsets are refused, and -l index,0 is refused. The sha256 field still hashes the whole file, as NIST preferred; subsetIndex, subsetRequestedSamples and subsetActualSamples identify the assessed part alongside it. No second hash was added.
+- **Current fork status:** Overflow and out-of-range offsets are refused, and -l index,0 is refused. The sha256 field still hashes the whole file, as the upstream respondent preferred; subsetIndex, subsetRequestedSamples and subsetActualSamples identify the assessed part alongside it. No second hash was added.
 - **Fork fix commit:** `0e1ffcd`
 - **Verification:** regression-subset.sh passes all seven checks, including that a short final block is recorded as requested 700000 / actual 300000 and that sha256 still matches the whole file.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
@@ -702,7 +705,7 @@ NIST's position and this fork's position are never conflated:
 - **Current upstream status:** Not filed upstream.
 - **Current fork status:** Three of the four programs now check sha256_file()'s status and zero the buffer, so a failure is a clean refusal rather than stack bytes in the report. The fourth instance, conditioning_main.cpp:521, is NOT fixed: this fork does not build ea_conditioning, so a change there could not be reproduced or regression-tested.
 - **Fork fix commit:** `cdb5cd6 (ea_non_iid, ea_iid) and fd83a43 (ea_restart)`
-- **Verification:** A missing input in ea_restart -i and -n exits 255 with errorLevel -1, a message and no sha256 field; a valid run records the file's true hash. ea_non_iid and ea_iid were verified in the previous pass.
+- **Verification:** A missing input in ea_restart -i and -n exits 255 with errorLevel -1, a message and no sha256 field; a valid run records the file's true hash (regression-restart.sh, N-06 block). ea_non_iid and ea_iid: regression-nonregular.sh runs both against a character device, a FIFO, a directory and an absent file, and asserts errorLevel set with no sha256 invented. Corrected 2026-10-02: until then this field said ea_non_iid and ea_iid "were verified in the previous pass", but the script executed only ea_non_iid, so the ea_iid half of cdb5cd6 had no regression at all (the re-audit's REV-006, confirmed half). Both tools are now exercised, observed to fail against an ea_iid mutant with the status check removed.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
 - **Required next action:** Decide whether to build ea_conditioning for test purposes; until then its instance stands.
@@ -730,7 +733,7 @@ NIST's position and this fork's position are never conflated:
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** Not repaired. The obvious remedy, hashing the buffer that was assessed, would change what the sha256 field means, and NIST asked for the opposite on #260: @joshuaehill, “I think that the SHA sum acting on the file is the most reasonable behavior ... the file hash is more useful in this setting.” A repair therefore has to keep the whole-file hash and add a separate integrity check, which is a design decision rather than a mechanical fix.
+- **Current fork status:** Not repaired. The obvious remedy, hashing the buffer that was assessed, would change what the sha256 field means, and the upstream respondent asked for the opposite on #260: @joshuaehill, “I think that the SHA sum acting on the file is the most reasonable behavior ... the file hash is more useful in this setting.” A repair therefore has to keep the whole-file hash and add a separate integrity check, which is a design decision rather than a mechanical fix.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
@@ -1056,6 +1059,7 @@ These are recorded so that nothing is lost. An `UNCONFIRMED` item enters the que
 | #269 (PR) | duplicate of PR #268 | closed |
 | #56, #95, #209, PR #224 | restart cutoff by simulation instead of the literal binomial rule (intended deviation) | closed |
 | #236 / PR #237 | manually maintained VERSION macro (tag v1.1.8 prints 1.1.7) | #236 open |
+| PR #242 | **A defect in a program this fork ships, carried deliberately and recorded 2026-10-02.** `cpp/restart_main.cpp` simulateBound(): line 124 allocates `new uint16_t[simulation_rounds]`, line 161 frees it with scalar `delete results` — undefined behaviour, upstream's code, reached by ordinary valid input. Excluded from this queue on 2026-09-30 as already known upstream (`novel-findings/REPORT.md` §3, `novel-findings/agent-reports/restart.md`), under the then-current rule that master carried upstream behaviour on purpose. That rule was superseded the same day; the exclusion was not revisited. PR #242 (garlic-hub, "Fix warnings and set them to be errors") carries `delete[]` in its diff and would fix it. It is a PR, not an issue describing the defect, which `../2026-10-01-re-audit/KNOWN-242.md` calls it. No repair and no regression here. | open (re-checked 2026-10-02); not merged |
 
 ## Independent re-audit findings (REV series, 2026-10-01)
 
@@ -1068,9 +1072,12 @@ GCC/Linux. Its own scope statement is the right one: the evidence holds for
 the fixtures, platforms and mutations exercised, and is not a
 universal-compatibility or production-security certification.
 
-It also found five defects, four of them in work done by the repair passes.
+It also found six defects, five of them in work done by the repair passes.
 They are recorded here because this file is the canonical defect queue; the
 re-audit's own write-up and evidence archive live outside the checkout.
+Corrected 2026-10-02: this said five and four until then, counting REV-006 as
+declined. Its confirmed half is a sixth defect, and the third of the six to be
+in a regression test rather than in the tool.
 
 | ID | What was wrong | Class | Disposition | Fixed by |
 |---|---|---|---|---|
@@ -1079,8 +1086,9 @@ re-audit's own write-up and evidence archive live outside the checkout.
 | REV-003 | `regression-multimmc.sh` asserted only that the binary path produced *a* run length. A mutant with the binary reset removed reports r = 100275 against a correct 17 and passed. | test integrity (vacuous check) | `VERIFIED` | `8f0469c` |
 | REV-005 | `regression-estimator-guards.sh` compared the compression estimate against a literal that is this platform's value, so it raised a false alarm on Linux, where refdata records the other value. | test integrity (false failure) | `VERIFIED` | `8f0469c` |
 | REV-007 | BUILDING.md stated the permutation cost as "0.94 ms per thousand bits"; the measurements give 0.94 seconds, a factor of 1000. The derived run times were computed from the measured rate and were always correct. | documentation | `VERIFIED` | `5922ff8` |
+| REV-006 (confirmed half) | `regression-nonregular.sh` asserted that `ea_iid` existed and then exercised only `ea_non_iid`, so the `ea_iid` half of the #259/N-06 repair had no regression: a build ignoring `sha256_file`'s status passed the whole script. Recorded as DID NOT REPRODUCE until 2026-10-02; see the REV-006 entry below. | test integrity (uncovered program) | `VERIFIED` | working tree 2026-10-02, not yet committed |
 
-### REV-004 and REV-006 — DID NOT REPRODUCE
+### REV-004 — DID NOT REPRODUCE; REV-006 — PARTIALLY SUPPORTED
 
 Both were raised, both were re-tested here on 2026-10-01, and neither
 reproduced. They are recorded with what was observed rather than omitted: a
@@ -1108,24 +1116,48 @@ the two configurations are indistinguishable. The re-audit's own verdict agrees
 on the outcome, that both configurations refuse the input; the disagreement is
 only about which path refuses it. Nothing to fix.
 
-**REV-006 — absent-file hash handling: DID NOT REPRODUCE, and the re-audit
-says so itself.**
-The claim under test was that `ea_restart` could report success for a file it
-could not hash. The re-audit records that it "did not reproduce here (undefined
-hash bytes happened to be nonempty)". Re-tested on the fixed build, six
-consecutive runs against a non-existent input:
+**REV-006 — absent-file hash handling: PARTIALLY SUPPORTED. One subclaim did
+not reproduce; the central criticism was CONFIRMED and was open until
+2026-10-02.**
+
+**Corrected 2026-10-02.** Until 2026-10-02 this entry was headed "DID NOT
+REPRODUCE, and the re-audit says so itself" and concluded "so the fix and its
+regression stand". Both were wrong, and in the direction that retires an
+adverse verdict. The re-audit's verdict is PARTIALLY SUPPORTED
+(`../2026-10-01-re-audit/REV-006.md`), and the quotation this entry carried --
+"did not reproduce here (undefined hash bytes happened to be nonempty)" --
+dropped its subject. What did not reproduce was the narrow subclaim that the
+*pre-fix parent* PASSED the original absent-file check, which is a statement
+about an intermittent symptom of reading uninitialised memory, not about the
+defect and not about REV-006 as a whole.
+
+What was CONFIRMED, and what this entry previously concealed: the repair's
+regression did not cover `ea_iid` at all. `regression-nonregular.sh` asserted
+that `ea_iid` merely EXISTED and then exercised only `ea_non_iid`, so an
+`ea_iid` built with `sha256_file`'s status ignored passed the entire script.
+The `ea_restart` half (`fd83a43`) was and remains covered by
+`regression-restart.sh`'s N-06 block; the `ea_iid` half of `cdb5cd6` was not
+covered by anything.
+
+**Closed 2026-10-02.** `cpp/selftest/regression-nonregular.sh` now runs every
+case against both `ea_non_iid` and `ea_iid`, and adds the absent-file case with
+the same JSON assertions `regression-restart.sh` uses: nonzero exit,
+`errorLevel` set, no `sha256` invented. Observed against an `ea_iid` rebuilt
+with the status check removed and the buffer left uninitialised, which is
+upstream's code:
 
 ```
-run 1..6: exit=255  errorLevel=-1  sha256 absent
+old script, mutant build:  PASS (5 checks, ea_iid never executed)
+new script, mutant build:  FAIL (2 checks)
+    ea_iid FIFO:                             TIMED OUT - still hangs
+    ea_iid absent file no hash invented:     report is wrong or absent
+new script, fixed build:   PASS (11 checks, both tools)
 ```
 
-All six identical. That is the behaviour the N-06 repair (`fd83a43`) introduced
-and `regression-restart.sh` asserts, so the fix and its regression stand. Note
-what the re-audit's phrasing implies and this does not contradict: on the
-*unfixed* build the symptom depended on whatever bytes happened to be on the
-stack, which is why it presented intermittently. That is the nature of reading
-uninitialised memory, and it is the reason the repair zeroes the buffer and
-checks the return value rather than relying on the observed symptom.
+The mutant hangs on the FIFO because, with the status unchecked, the run
+continues past the failed hash into `read_file_subset`, which blocks in
+`fopen`. That is the #259 symptom reappearing through the `ea_iid` path, and
+nothing in the suite could see it before.
 
 
 Two of the four defects introduced here were in regression tests, not in the
@@ -1138,6 +1170,15 @@ Three claims in the re-audit remain **BLOCKED** rather than confirmed or
 refuted, by its own account: F14's end-to-end evidence above 2^32 blocks, a
 `checkpoint-6` archive, and a `candidate-25.bin` fixture, none of which were
 located. They are not counted as findings in either direction.
+
+## No continuous integration (recorded 2026-10-02)
+
+Every check this file cites as verification is manual. There is no workflow, no
+pipeline and no commit hook anywhere in the repository, so no commit has been
+gated by the suite, and the history does not record which commits it was run
+against. A `VERIFIED` disposition below means a person ran the named script and
+read the result, once, on one machine. That is weaker than it looks, and it is
+the reason the rule in the next section matters as much as it does.
 
 ## Lesson: a regression is assumed vacuous until it has failed
 
@@ -1194,35 +1235,43 @@ vector check red for 76+ commits, and an instrumentation suite red for 89. A
 check nobody runs and a check that cannot fail are different defects with the
 same symptom, which is a report that says everything is green.
 
-## Open questions put to NIST (2026-09-30, awaiting an answer)
+## Questions put upstream (2026-09-30) and their answers (2026-10-01)
 
-Posted by the fork owner on the upstream threads, not by the repair pass. Two
-of them gate work that is deliberately not done:
+This section was headed "Open questions put to NIST (2026-09-30, awaiting an answer)" until 2026-10-02.
+**Correction (2026-10-02):** the questions were posted by the fork owner (not by
+the repair pass) on the upstream threads, where the only respondent is
+@joshuaehill (Joshua E. Hill, KeyPair Consulting), who is not a NIST account.
+Both were answered by him on 2026-10-01. No NIST account has replied to any of
+the fork's threads.
 
-| Thread | Question | What is blocked |
-|---|---|---|
-| PR [#256](https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/256) / [#253](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/253) | If `bits_per_symbol=8` is supplied explicitly for a two-symbol alphabet such as `{33, 211}`, is that dataset still binary for §3.1.3, so the `n x H_bitstring` term is correctly omitted? | F01. The fork follows upstream behaviour unchanged and PR #256 is not merged here until this is answered. |
-| PR [#268](https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268) / [#257](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/257) | Should the PR be revised to return failure locally as defence in depth, or superseded by the central 1,000,000-sample intake check? | Nothing in the fork: both are implemented here (`ed88de9`, `c2f1dcd`). Only the shape of the upstream PR is waiting. |
+| Thread | Question | Answer (2026-10-01, @joshuaehill) | What it leaves |
+|---|---|---|---|
+| PR [#256](https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/256) / [#253](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/253) | If `bits_per_symbol=8` is supplied explicitly for a two-symbol alphabet such as `{33, 211}`, is that dataset still binary for §3.1.3, so the `n x H_bitstring` term is correctly omitted? | Yes (21:38 UTC). Reasoning given: `read_file_subset()` translates the observed alphabet to {0..k-1}, so the `alph_size > 2` gate tests whether the translated data is binary, which he holds correct; a declared width only fixes the encoding of `data.bsymbols`, used when `-c` forces the bitstring assessment; without `-c` a two-symbol dataset is already binary and no separate H_bitstring is produced or, under §3.1.3, wanted. "In summary, I think that this aspect of the current behavior is correct." | F01: a DECISION for the owner and the independent review, recorded in the F01 row and not taken as of 2026-10-02 — withdraw the branch patch and PR #256, or adopt the patch on master as a deliberate divergence with the #253 counter-argument stated. master is unchanged until then. |
+| PR [#268](https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268) / [#257](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/257) | Should the PR be revised to return failure locally as defence in depth, or superseded by the central 1,000,000-sample intake check? | Both, as his preference (04:33 UTC): in-estimator sanity checks as asserts kept in production binaries, plus the central restriction enforced programmatically, "but I'm of the 'fail quickly and noisily' religion. The NIST folks may have more relevant feedback on the issue." | Nothing in the fork: both are implemented here (`ed88de9`, `c2f1dcd`). The shape of the upstream PR is the owner's call. |
 
-Agreements confirmed on the same date, all already implemented here: remedy 1
+Agreements recorded on 2026-09-30, all already implemented here, each from
+@joshuaehill and none from a NIST account (until 2026-10-02 this paragraph was
+headed "Agreements confirmed" and attributed them to NIST): remedy 1
 for [#271](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/271)
 (commit `134d377`), the selftest strengthening for
 [#272](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/272)
-(commit `da0265c`), the 1,000,000-sample minimum as the user-facing remedy for
-the short-input family (commit `c2f1dcd`), narrowing
+(commit `da0265c`; his words, "it surely wouldn't hurt to check"), the
+1,000,000-sample minimum as the user-facing remedy for the short-input family
+(commit `c2f1dcd`), narrowing
 [#255](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/255) to
-sub-minimum input being an error rather than flagging legitimate no-result
-estimates, keeping the whole-file hash on
+sub-minimum input being an error ("should probably be treated as an error")
+rather than flagging legitimate no-result estimates, keeping the whole-file
+hash on
 [#260](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/260) and
 adding subset provenance instead, limiting
 [#254](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/254) to
 reporting the effective width in JSON, and treating
 [#259](https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/259) as
-fork hardening rather than a standards defect.
+fork hardening rather than a standards defect ("I'm not sure this is a bug").
 
 ## Sources
 
 - F-series: [`AUDIT.md`](AUDIT.md), the first-wave audit, with rows re-assessed in §4 of the novel-findings report.
 - N/R-series: [`novel-findings/REPORT.md`](novel-findings/REPORT.md).
 - NOVEL-series: [`phase2-focused/REPORT.md`](phase2-focused/REPORT.md).
-- Upstream states: read from GitHub on 2026-09-30.
+- Upstream states: read from GitHub on 2026-09-30; every thread re-read on 2026-10-02 (all states unchanged; the two 2026-10-01 answers recorded above).

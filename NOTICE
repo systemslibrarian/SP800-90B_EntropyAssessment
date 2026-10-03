@@ -30,9 +30,12 @@ The software was changed by the maintainers of this fork.
 
 Changes fall into two periods. Until 2026-09-30 nothing outside the
 build files was touched, and the statement that no change affected a
-reported figure held without qualification. On 2026-09-30, after NIST
-reviewed the defects this fork had reported upstream and agreed with
-several of them, repairs were made to the estimator sources as well.
+reported figure held without qualification. On 2026-09-30, after the
+defects this fork had reported upstream had been reviewed on the upstream
+threads, repairs were made to the estimator sources as well. Correction
+(2026-10-02): until 2026-10-02 this sentence said "after NIST reviewed the defects this fork had reported upstream and agreed with several of them".
+The reviewer was @joshuaehill (Joshua E. Hill, KeyPair Consulting), not a
+NIST account; see "Correction of upstream attributions" below.
 
 Branch policy, and when it changed (recorded 2026-10-01 from the history).
 Until 2026-09-30 this fork followed the rule: master stays pinned to
@@ -56,11 +59,16 @@ not every reported fix is on master. The bitstring-gate fix (F01, upstream
 #253, PR #256 — gate the bitstring estimators on word_size, not the
 observed alphabet) is STILL BRANCH-ONLY: master still reads `alph_size > 2`
 (cpp/non_iid_main.cpp), so a two-valued multi-bit source at or above the
-1,000,000-sample minimum is still over-credited in the shipped master
-build. The sub-minimum intake refusal (c2f1dcd) does not cover it, because
-the hazard is a full-size capture. Whether #256 should land on master is an
-open item for the independent review; until it does, "master is the patched
-build" means the repairs listed below, not #256.
+1,000,000-sample minimum is still assessed as binary in the shipped master
+build: over-credited on the fork's reading in #253, correct on the upstream
+respondent's. The sub-minimum intake refusal (c2f1dcd) does not cover it,
+because the hazard is a full-size capture. Until 2026-10-02 this paragraph said that
+whether #256 should land on master was "an open item for the independent
+review", pending an upstream answer. The answer arrived on 2026-10-01 (see
+"Deliberately not changed" below): the upstream respondent holds the
+current behaviour correct. What remains is an owner decision, recorded
+there and not yet taken. Until it is, "master is the patched build" means
+the repairs listed below, not #256.
 
 What was observed across the changes below, stated as scope rather than
 as a guarantee, because the evidence is a finite set of datasets and
@@ -127,9 +135,16 @@ upstream issue it answers and the commit that made it.
 2026-09-30  NOTICE (this file) and BUILDING.md added; one pointer line
             added to README.md. Build documentation only.
 
-The following were made on 2026-09-30 after NIST's review of the
-defects reported upstream from this fork's audit. Each names the
-upstream issue and this fork's commit.
+The following were made on 2026-09-30 after the defects reported
+upstream from this fork's audit had been reviewed on the upstream
+threads. Correction (2026-10-02): until 2026-10-02 this sentence said "after NIST's review of the defects".
+The review was by @joshuaehill (Joshua E. Hill, KeyPair Consulting),
+the tool's principal contributor outside NIST; no NIST account has
+replied to any of the fork's issues or pull requests, and on PR #268
+(2026-10-01) he wrote "The NIST folks may have more relevant feedback
+on the issue." Where an entry below says the upstream respondent asked,
+called or regards, it means him. Each entry names the upstream issue
+and this fork's commit.
 
 2026-09-30  cpp/selftest/compareresults.pl, cpp/selftest/selftest: the
             comparison now also covers H_original, H_bitstring and the
@@ -145,12 +160,12 @@ upstream issue and this fork's commit.
             cpp/non_iid_main.cpp, cpp/iid_main.cpp: datasets of fewer
             than 1,000,000 samples are refused before any estimator
             runs, with a nonzero exit and a JSON error. Answers the
-            remedy NIST gave for #257, #258, #261, #263, #264 and the
-            sub-minimum half of #255. Commit c2f1dcd.
+            remedy the upstream respondent gave for #257, #258, #261,
+            #263, #264 and the sub-minimum half of #255. Commit c2f1dcd.
 2026-09-30  cpp/non_iid/multi_mmc_test.h: the binary MultiMMC estimator
             declines below D_MMC+1 samples instead of reading past the
-            end of the sample buffer. Upstream #257, which NIST called
-            "a real bug". Commit ed88de9.
+            end of the sample buffer. Upstream #257, which the upstream
+            respondent called "a real bug" (on PR #268). Commit ed88de9.
 2026-09-30  cpp/non_iid/compression_test.h: the compression estimate
             requires at least two test blocks, instead of dividing by
             v-1 = 0. Upstream #263. Commit c0ee84a.
@@ -168,18 +183,18 @@ upstream issue and this fork's commit.
             is checked for overflow and against the file length, a
             zero-sample subset is refused, and the report records which
             block was requested and how many samples were obtained. The
-            sha256 field still hashes the whole file, which is what
-            NIST asked for. Upstream #260. Commit 0e1ffcd.
+            sha256 field still hashes the whole file, which is what the
+            upstream respondent asked for. Upstream #260. Commit 0e1ffcd.
 2026-09-30  cpp/shared/test_run_base.h, cpp/non_iid_main.cpp,
             cpp/iid_main.cpp: the JSON report records the symbol width
             the assessment used and whether it was inferred. Upstream
-            #254, the half NIST called useful; the inference itself is
-            unchanged. Commit 97571de.
+            #254, the half the upstream respondent called useful; the
+            inference itself is unchanged. Commit 97571de.
 2026-09-30  cpp/shared/TestRunUtils.h, cpp/non_iid_main.cpp,
             cpp/iid_main.cpp: non-regular input files are refused
             instead of hanging, and the hash function's status is
-            checked. Fork hardening; NIST does not regard upstream #259
-            as a defect. Commit cdb5cd6.
+            checked. Fork hardening; the upstream respondent does not
+            regard upstream #259 as a defect. Commit cdb5cd6.
 2026-09-30  cpp/selftest/regression-*.sh: new regression tests for each
             of the above. Test material only.
 
@@ -219,6 +234,28 @@ A second repair pass on the same date, working the remaining queue:
 2026-09-30  cpp/selftest/regression-*.sh: regression tests for each of
             the above. Test material only.
 
+2026-10-02  cpp/selftest/regression-docs.sh: the stale-claim check now
+            normalises whitespace before matching, because it had been
+            matching line by line against text wrapped at 72 columns and
+            could not see the sentences it was added to block; and it now
+            also scans cpp/ for the same attributions. cpp/selftest/
+            run-all-checks.sh: a selftest that exits non-zero without its
+            summary line is now a failure, where it had been reported as a
+            pass. cpp/selftest/regression-nonregular.sh: every case now runs
+            against ea_iid as well as ea_non_iid, with the absent-file hash
+            path asserted, closing the gap the re-audit confirmed as REV-006.
+            cpp/shared/TestRunUtils.h, cpp/selftest/regression-nonregular.sh,
+            cpp/selftest/regression-subset.sh: three comments re-attributed
+            away from NIST. Test material and comments only; no estimator
+            behaviour changes.
+2026-10-02  README.md, NOTICE, BUILDING.md, audits/2026-09-30/
+            FINDINGS-TRACKER.md, cpp/selftest/regression-docs.sh:
+            replies on the upstream threads re-attributed from "NIST" to
+            their author, @joshuaehill (not a NIST account); the F01 /
+            PR #256 question recorded as answered on 2026-10-01 with the
+            decision it leaves open; regression-docs.sh carries the
+            corrected phrasings. Documentation only; no source change.
+
 The scope statement at the head of this section covers these too: no
 unintended numerical change was observed on the datasets tested, with
 F09 and N-01 the two deliberate exceptions described there. On every
@@ -226,12 +263,107 @@ sample under bin/ the figures are unchanged, including the Literal
 MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which the
 build still reproduces exactly.
 
-Deliberately not changed, pending NIST: the treatment of a two-symbol
-alphabet as binary regardless of the declared sample width (upstream
-#253 and PR #256). NIST reads "binary" as a property of the alphabet
-rather than of the sample width, and the question of what an explicitly
-declared bits_per_symbol should mean for such a dataset is unresolved.
-The fork follows upstream's behaviour unchanged.
+Deliberately not changed: the treatment of a two-symbol alphabet as
+binary regardless of the declared sample width (upstream #253 and
+PR #256). Until 2026-10-02 this paragraph said "pending NIST" and that NIST reads "binary" as a property of the alphabet; the reading is @joshuaehill's, and NIST has not spoken.
+His position (PR #256, 2026-09-30): {0,1} and {33,211} are both
+two-symbol alphabets, so the "if the sequential dataset is not binary"
+condition of §3.1.3 is not met and no n x H_bitstring term is due. The
+fork owner asked the same day whether an explicitly declared
+bits_per_symbol of 8 changes that. He answered on 2026-10-01 at 21:38
+UTC, after walking through read_file_subset(): the alph_size > 2 gate
+tests the translated alphabet, which he holds correct; a declared width
+only fixes the encoding of data.bsymbols, which the bitstring
+assessment uses when -c forces it; without -c a two-symbol dataset is
+already binary and no separate H_bitstring is produced or, under
+§3.1.3, wanted. "In summary, I think that this aspect of the current
+behavior is correct."
+
+So the question is answered, not open. master follows upstream here:
+the gate is unchanged, the patch exists only on branch
+fix/bitstring-gate-word-size and in PR #256, and the shipped build
+therefore agrees with his reading and reports 0.9216 rather than 0.1796
+on the audit's two-valued 2-bit input. What remains is a DECISION for
+the owner and the independent review, recorded 2026-10-02 and
+deliberately not taken here: either (a) withdraw the branch patch and
+PR #256 and record his reading as the fork's, or (b) adopt the patch on
+master as a deliberate, documented divergence from upstream, with the
+counter-argument stated. The counter-argument, as filed in #253: §3.1.3
+makes the bitstring assessment depend on the sample width n, §3.2.2
+requires the submitter to document that width, and a comparator or
+threshold source captured into bytes (0x00/0xFF) is an n-bit source
+that happens to emit two values, so relabelling it to {0,1} drops the
+n x H_bitstring term and over-credits it by up to 5.1x on the
+reproduction, unbounded in principle. Until the decision is taken the
+fork follows upstream's behaviour unchanged.
+
+Correction of upstream attributions (recorded 2026-10-02)
+---------------------------------------------------------
+
+Until 2026-10-02 this file, README.md, BUILDING.md and the findings
+tracker credited "NIST" with the replies received on the fork's
+upstream issues and pull requests (#253-#255, #257-#261, #263, #264,
+#271, #272, PRs #256, #268, #270): they said NIST reviewed, agreed,
+accepted, asked, regards, disputes. Checked against GitHub on
+2026-10-02, every one of those replies was written by @joshuaehill
+(Joshua E. Hill, KeyPair Consulting), the tool's principal contributor
+outside NIST. He is not a NIST account, and on PR #268 (2026-10-01) he
+deferred explicitly: "The NIST folks may have more relevant feedback on
+the issue." No NIST account has replied to any of the fork's threads.
+The attributions were corrected in all four documents on 2026-10-02 to
+name him; the tracker's "Upstream disposition" vocabulary now means his
+replies. Nothing he wrote is an official NIST position, and the
+evidence sentence in "Product-dependency status" below must not say
+otherwise: each change was documented and offered upstream with its
+issue number, and the upstream responses came from him. That is all
+that can be claimed.
+
+Known upstream defects carried into the shipped build, and the exclusion
+rule that stopped applying (recorded 2026-10-02)
+-----------------------------------------------------------------------
+
+The 2026-09-30 audits deliberately did not queue defects that were already
+known upstream: they are listed as rediscoveries, "not counted", in
+audits/2026-09-30/novel-findings/REPORT.md section 3 and in that directory's
+agent-reports/restart.md. That was sound while the rule above held, because
+master then carried upstream's behaviour on purpose and an upstream defect was
+not this fork's to answer. THAT RATIONALE LAPSED on 2026-09-30, when master
+became the patched build and this build became a product dependency. Nothing
+recorded the lapse until now, so defects excluded under the old rule were left
+out of the queue under the new one.
+
+At least one of them is a memory-safety defect in a program this fork builds
+and ships:
+
+  * cpp/restart_main.cpp, simulateBound(): line 124 allocates with
+    `new uint16_t[simulation_rounds]` and line 161 frees it with a scalar
+    `delete results`. Freeing an array with scalar delete is undefined
+    behaviour. The code is upstream's, unchanged here and unchanged since
+    2023, and ordinary valid input reaches it. A default sanitizer build does
+    not diagnose it; ASAN_OPTIONS=alloc_dealloc_mismatch=1 aborts at line 161
+    on the full command line (audits/2026-10-01-re-audit/KNOWN-242.md records
+    those runs). Upstream PR #242 by garlic-hub, "Fix warnings and set them to
+    be errors", carries `delete[]` in its diff and is open; it is not an issue
+    describing this defect, and the re-audit's file name calls it one. Nothing
+    in this fork repairs it, and no regression covers it.
+
+It is recorded here rather than silently repaired because changing it is a
+decision about diverging further from upstream on a program whose figures no
+product prices anything against, and because the honest statement of what
+ships must name it. The findings tracker now carries it in the "Other upstream
+items" table with the same note.
+
+No continuous integration (recorded 2026-10-02)
+-----------------------------------------------
+
+There is no CI anywhere in this repository: no workflow, no pipeline
+configuration, no commit hook. Every check named above and in BUILDING.md runs
+only when a person runs it, on the machine they run it on. A reader who sees a
+regression suite, a pinned-output check and a documentation check will
+reasonably assume something enforces them on each commit, and nothing does.
+The per-change expected values of the "Product-dependency status" section below
+are therefore a manual procedure, not an automated gate, and no record exists
+of which commits the suite was run against.
 
 ea_non_iid, ea_iid and ea_restart are built from this fork; the repairs
 listed above and the regression suite cover all three. ea_conditioning,

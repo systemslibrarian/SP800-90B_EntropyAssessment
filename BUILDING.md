@@ -2,12 +2,16 @@
 
 This fork began as a reliable `ea_non_iid` build for macOS and Windows that
 changed nothing able to alter a reported min-entropy figure. **It is no
-longer only that.** After NIST reviewed the defects reported upstream from
-this fork's audit, the estimator sources were corrected here too, so they
-are no longer byte-identical to upstream. What that means in practice is in
+longer only that.** After the defects reported upstream from this fork's
+audit were reviewed on the upstream threads by @joshuaehill (not a NIST
+account; see NOTICE, "Correction of upstream attributions"), the estimator
+sources were corrected here too, so they are no longer byte-identical to
+upstream. What that means in practice is in
 "Repairs made in this fork" below; every change is listed, with dates, in
 [NOTICE](NOTICE), and the per-finding status is in
 [audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md).
+
+**Correction (2026-10-02).** Until 2026-10-02 this introduction and "Repairs made in this fork" said "After NIST reviewed the defects". The replies were @joshuaehill's; no NIST account has replied. NOTICE records the correction.
 
 No estimator formula, cut-off, rounding rule or confidence bound was
 altered. Two changes do alter results deliberately, F09 and N-01, and both
@@ -123,8 +127,9 @@ cd cpp
   file** (`sha256_file` in `cpp/shared/TestRunUtils.h`, field `sha256`).
   This is upstream behaviour and is intentionally left in; the consuming
   tool redacts it downstream. It remains a hash of the **whole file** even
-  when `-l` selects a subset, which is what NIST asked for on upstream
-  #260; the subset itself is identified by the `subsetIndex`,
+  when `-l` selects a subset, which is what the upstream respondent
+  (@joshuaehill) asked for on upstream #260; the subset itself is
+  identified by the `subsetIndex`,
   `subsetRequestedSamples` and `subsetActualSamples` fields beside it.
 - The JSON report also records `bitsPerSymbol`, the symbol width the
   assessment used, and `bitsPerSymbolInferred`, which says whether that
@@ -501,8 +506,8 @@ assessed, not from a fixed number.
 
 ## Repairs made in this fork (2026-09-30)
 
-After NIST reviewed the defects this fork reported upstream, ten repairs
-were made here. The estimator sources are therefore **no longer**
+After the defects this fork reported upstream had been reviewed there by
+@joshuaehill (not a NIST account), ten repairs were made here. The estimator sources are therefore **no longer**
 byte-identical to upstream `87c104d`; the statement of changes in
 [NOTICE](NOTICE) lists each one with its upstream issue and commit, and
 [audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md)
@@ -534,8 +539,13 @@ results on purpose:**
 
 One finding is deliberately **not** repaired: the treatment of a
 two-symbol alphabet as binary regardless of declared sample width
-(upstream #253 and PR #256). NIST disputes the premise, so the fork
-follows upstream behaviour unchanged pending their reading.
+(upstream #253 and PR #256). @joshuaehill disputes the premise and, asked
+on 2026-09-30 whether an explicitly declared width changes it, answered on
+2026-10-01 that the current behaviour is correct (PR #256). The fork
+follows upstream behaviour unchanged. Whether to withdraw the branch patch
+or adopt it on master as a deliberate divergence is an owner decision,
+recorded in NOTICE and in the tracker's F01 row and not taken as of
+2026-10-02. Until 2026-10-02 this paragraph said "NIST disputes the premise, so the fork follows upstream behaviour unchanged pending their reading."
 
 ---
 

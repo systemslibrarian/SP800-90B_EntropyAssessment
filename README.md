@@ -5,14 +5,18 @@
 > links GNU MPFR and GMP; none of the three it does build links either.
 >
 > It began as macOS and Windows build support with no change to estimator
-> behaviour. **That is no longer what it is.** After NIST reviewed defects
-> reported upstream from this fork's audit, the estimator sources were
+> behaviour. **That is no longer what it is.** After the defects reported
+> upstream from this fork's audit were reviewed on the upstream threads by
+> @joshuaehill (Joshua E. Hill, KeyPair Consulting; a long-standing
+> contributor to the tool, not a NIST account), the estimator sources were
 > corrected here as well, so they are no longer byte-identical to upstream
 > `87c104d`. Two of those corrections change results on purpose: F09 raises
 > the MultiMMC estimate where its defect bit, and N-01 makes an m = 1
 > chi-square test fail as SP 800-90B 5.2.3 requires. No unintended numerical
 > change was observed on the datasets tested, which is a statement about those
 > datasets and not a guarantee about every input.
+>
+> **Correction (2026-10-02).** Until 2026-10-02 this note said "After NIST reviewed defects"; NOTICE, BUILDING.md and the findings tracker made the same attribution. Every reply on the fork's upstream issues and pull requests has come from @joshuaehill, who is not a NIST account and who wrote on PR #268 (2026-10-01) that "The NIST folks may have more relevant feedback on the issue." No NIST account has replied to any of them. Every such attribution was corrected on 2026-10-02: the four documents first, then three comments under `cpp/` that the first pass missed. `cpp/selftest/regression-docs.sh` now scans both the documents and `cpp/`, with whitespace normalised so a wrapped sentence cannot slip past, and fails if any of this wording reappears. The record is in NOTICE under "Correction of upstream attributions".
 >
 > See [NOTICE](NOTICE) for the licence and the dated list of every change,
 > [BUILDING.md](BUILDING.md) for the build, the pinned-output check and the
