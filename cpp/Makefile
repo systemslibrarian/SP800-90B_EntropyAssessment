@@ -59,7 +59,7 @@ endif
 all:    iid non_iid restart conditioning transpose
 
 clean:
-	rm -f ea_iid ea_non_iid ea_restart ea_conditioning ea_transpose selftest/*.res
+	rm -f ea_iid ea_non_iid ea_restart ea_conditioning ea_transpose ea_non_iid_identity_test selftest/*.res
 
 iid: iid_main.o
 iid_main.o: iid_main.cpp
@@ -68,6 +68,11 @@ iid_main.o: iid_main.cpp
 non_iid: non_iid_main.o	
 non_iid_main.o: non_iid_main.cpp
 	$(CXX) $(CXXFLAGS) $(INC) non_iid_main.cpp -o ea_non_iid $(LDFLAGS) $(LIB) $(SHARED_LIB)
+
+# N-07 regression-only build. The synchronization hook is compiled out of all
+# supported production targets.
+non_iid_identity_test:
+	$(CXX) $(CXXFLAGS) -DEA_TEST_INPUT_IDENTITY_HOOK $(INC) non_iid_main.cpp -o ea_non_iid_identity_test $(LDFLAGS) $(LIB) $(SHARED_LIB)
 
 restart: restart_main.o
 restart_main.o: restart_main.cpp

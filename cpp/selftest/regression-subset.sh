@@ -14,10 +14,8 @@
 #   5. the report says which block was asked for, how many samples were asked
 #      for, and how many were actually obtained, so a short final block is
 #      visible
-#   6. sha256 still identifies the WHOLE file, which is what the upstream
-#      respondent preferred on #260 (@joshuaehill, not a NIST account: "I think
-#      that the SHA sum acting on the file is the most reasonable behavior");
-#      the provenance in 5 is what identifies the assessed part
+#   6. sha256 identifies the exact bytes consumed by the estimator, closing
+#      N-07; subset provenance identifies where those bytes came from
 
 set -u
 
@@ -85,14 +83,29 @@ else
 	fails=$((fails + 1))
 fi
 
-# sha256 must remain the whole-file hash.
+# sha256 must identify the exact assessed subset. For block zero this happens
+# to equal the file hash, but the scope and count make that meaning explicit.
 whole=$(shasum -a 256 "${sample}" 2>/dev/null | cut -d' ' -f1)
 [ -n "${whole}" ] || whole=$(sha256sum "${sample}" | cut -d' ' -f1)
 got=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('sha256',''))" "${work}/ok.json")
-if [ "${got}" = "${whole}" ]; then
-	note "sha256 still identifies the whole file:" "yes"
+scope=$(python3 -c "import json,sys;d=json.load(open(sys.argv[1]));print(d.get('sha256Scope',''),d.get('assessedSampleCount',''))" "${work}/ok.json")
+if [ "${got}" = "${whole}" ] && [ "${scope}" = "assessed-sample-bytes 1000000" ]; then
+	note "sha256 identifies assessed block zero:" "yes"
 else
-	note "sha256 still identifies the whole file:" "changed (${got})"
+	note "sha256 identifies assessed block zero:" "wrong (${got}; ${scope})"
+	fails=$((fails + 1))
+fi
+
+# The short block's digest must be the trailing 300,000 assessed bytes, not
+# the whole-file digest from a separate pathname read.
+tail -c 300000 "${sample}" >"${work}/tail.bin"
+tail_hash=$(shasum -a 256 "${work}/tail.bin" 2>/dev/null | cut -d' ' -f1)
+[ -n "${tail_hash}" ] || tail_hash=$(sha256sum "${work}/tail.bin" | cut -d' ' -f1)
+short_hash=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('sha256',''))" "${work}/short.json")
+if [ "${short_hash}" = "${tail_hash}" ]; then
+	note "short-block hash binds consumed bytes:" "yes"
+else
+	note "short-block hash binds consumed bytes:" "got '${short_hash}'"
 	fails=$((fails + 1))
 fi
 

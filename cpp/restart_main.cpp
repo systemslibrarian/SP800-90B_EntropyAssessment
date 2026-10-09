@@ -22,7 +22,6 @@
 #include <limits.h>
 #include <iostream>
 #include <fstream>
-#include <openssl/sha.h>
 
 //Each test has a targeted chance of roughly 0.000005, and we need to witness at least 5 failures, so this should be no less than 1000000
 #define DEFAULT_SIMULATION_ROUNDS 5000000UL
@@ -259,39 +258,6 @@ int main(int argc, char* argv[]) {
     testRunNonIid.filename = file_path;
     testRunNonIid.commandline = commandline;
 
-    // sha256_file()'s status was discarded and the buffer was left
-    // uninitialised, so a failure (a missing or unreadable file, or one that
-    // is not a regular file) put whatever happened to be on the stack into the
-    // report's "sha256" field, and the run continued and exited 0. The field
-    // was simply omitted whenever the first stack byte happened to be zero.
-    // Hashing is now done after both report objects exist, so a failure can be
-    // reported properly.
-    char hash[2*SHA256_DIGEST_LENGTH+1];
-
-    hash[0] = '\0';
-    if (sha256_file(file_path, hash) != 0) {
-        string msg = "Error: could not hash the input file.";
-
-        printf("%s\n", msg.c_str());
-
-        if (jsonOutput) {
-            if (iid) {
-                testRunIid.errorLevel = -1;
-                testRunIid.errorMsg = msg;
-                writeJsonReport(outputfilename, testRunIid.GetAsJson());
-            } else {
-                testRunNonIid.errorLevel = -1;
-                testRunNonIid.errorMsg = msg;
-                writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
-            }
-        }
-
-        exit(-1);
-    }
-
-    testRunIid.sha256 = hash;
-    testRunNonIid.sha256 = hash;
-
     if (argc == 2) {
         // get bits per word
         data.word_size = atoi(argv[0]);
@@ -372,8 +338,7 @@ int main(int argc, char* argv[]) {
         print_usage();
     }
 
-    if (verbose > 1) printf("Opening file: '%s' (SHA-256 hash %s)\n", file_path, hash);
-
+    int bitsPerSymbolGiven = data.word_size;
     if (!read_file(file_path, &data, &testRunNonIid)) {
         printf("Error reading file.\n");
 
@@ -398,6 +363,14 @@ int main(int argc, char* argv[]) {
 
         print_usage();
     }
+
+    testRunIid.sha256 = testRunNonIid.sha256;
+    testRunIid.assessedSampleCount = testRunNonIid.assessedSampleCount;
+    testRunIid.bitsPerSymbol = data.word_size;
+    testRunIid.bitsPerSymbolInferred = (bitsPerSymbolGiven == 0);
+    testRunNonIid.bitsPerSymbol = data.word_size;
+    testRunNonIid.bitsPerSymbolInferred = (bitsPerSymbolGiven == 0);
+    if (verbose > 1) printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes)\n", file_path, testRunNonIid.sha256.c_str());
 
     if (verbose > 1) printf("Loaded %ld samples made up of %d distinct %d-bit-wide symbols.\n", data.len, data.alph_size, data.word_size);
 

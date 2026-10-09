@@ -23,6 +23,13 @@
 #include <cfloat>
 #include <math.h>
 #include <climits>		// ULONG_MAX, used by the -l subset overflow check below
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <openssl/evp.h>
+#include <openssl/sha.h>
+#ifdef EA_TEST_INPUT_IDENTITY_HOOK
+#include <signal.h>
+#endif
 #include "test_run_base.h"
 
 #define SWAP(x, y) do { int s = x; x = y; y = s; } while(0)
@@ -170,6 +177,64 @@ void free_data(data_t *dp){
 	if((dp->word_size > 1) && (dp->bsymbols != NULL)) free(dp->bsymbols);
 } 
 
+// N-07: bind the report digest to the exact sample bytes already loaded into
+// memory and subsequently consumed by the estimators. Hashing the pathname in
+// a separate pass allowed replacement or mutation between that pass and the
+// assessment read. For a -l run this deliberately identifies the assessed
+// subset, not unconsumed bytes elsewhere in the source file.
+bool record_assessed_data_identity(const uint8_t *bytes, size_t length, TestRunBase *testRun) {
+	unsigned char digest[EVP_MAX_MD_SIZE];
+	unsigned int digestLength = 0;
+	char encoded[SHA256_DIGEST_LENGTH * 2 + 1];
+
+	if(EVP_Digest(bytes, length, digest, &digestLength, EVP_sha256(), NULL) != 1 ||
+	   digestLength != SHA256_DIGEST_LENGTH) {
+		testRun->errorLevel = -1;
+		testRun->errorMsg = "Error: could not hash the loaded assessment bytes.";
+		return false;
+	}
+	for(unsigned int i = 0; i < digestLength; i++) {
+		snprintf(encoded + (i * 2), 3, "%02x", digest[i]);
+	}
+	encoded[SHA256_DIGEST_LENGTH * 2] = '\0';
+	testRun->sha256 = encoded;
+	testRun->assessedSampleCount = (long)length;
+
+#ifdef EA_TEST_INPUT_IDENTITY_HOOK
+	// Test-only synchronization point. The regression build stops after the
+	// immutable in-memory snapshot and digest exist, allowing the pathname to
+	// be replaced before estimators consume the snapshot. This code is absent
+	// from every production build.
+	const char *marker = getenv("EA_TEST_INPUT_IDENTITY_MARKER");
+	if(marker != NULL && marker[0] != '\0') {
+		FILE *markerFile = fopen(marker, "wb");
+		if(markerFile != NULL) {
+			fputs("loaded\n", markerFile);
+			fclose(markerFile);
+			raise(SIGSTOP);
+		}
+	}
+#endif
+
+	return true;
+}
+
+bool input_path_is_regular(const char *file_path, TestRunBase *testRun) {
+	struct stat st;
+	if(stat(file_path, &st) != 0) {
+		testRun->errorLevel = -1;
+		testRun->errorMsg = "Error: could not stat the input file.";
+		return false;
+	}
+	if(!S_ISREG(st.st_mode)) {
+		testRun->errorLevel = -1;
+		testRun->errorMsg = "Error: input is not a regular file.";
+		fprintf(stderr, "Error: '%s' is not a regular file.\n", file_path);
+		return false;
+	}
+	return true;
+}
+
 
 // Read in binary file to test
 // The single intake check for dataset size, shared by every tool that
@@ -226,6 +291,8 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 	int mask, j, max_symbols;
 	long rc, i;
 	long fileLen;
+
+	if(!input_path_is_regular(file_path, testRun)) return false;
 
 	file = fopen(file_path, "rb");
 	if(!file){
@@ -337,6 +404,13 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 		return false;
 	}
 	fclose(file);
+	if(!record_assessed_data_identity(dp->symbols, (size_t)dp->len, testRun)) {
+		free(dp->symbols);
+		dp->symbols = NULL;
+		free(dp->rawsymbols);
+		dp->rawsymbols = NULL;
+		return false;
+	}
 
 	//Do we need to establish the word size?
 	if(dp->word_size == 0) {
@@ -435,6 +509,8 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
 	int mask, j, max_symbols;
 	long rc, i;
 
+	if(!input_path_is_regular(file_path, testRun)) return false;
+
 	file = fopen(file_path, "rb");
 	if(!file){
                 testRun->errorLevel = -1;
@@ -502,6 +578,13 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
 		return false;
 	}
 	fclose(file);
+	if(!record_assessed_data_identity(dp->symbols, (size_t)dp->len, testRun)) {
+		free(dp->symbols);
+		dp->symbols = NULL;
+		free(dp->rawsymbols);
+		dp->rawsymbols = NULL;
+		return false;
+	}
 
 	//Do we need to establish the word size?
 	if(dp->word_size == 0) {

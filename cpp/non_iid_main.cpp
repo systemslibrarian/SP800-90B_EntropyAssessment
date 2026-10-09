@@ -17,7 +17,6 @@
 #include <limits.h>
 #include <iostream>
 #include <fstream>
-#include <openssl/sha.h>
 
 [[ noreturn ]] void print_usage() {
     printf("Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]\n\n");
@@ -189,24 +188,6 @@ int main(int argc, char* argv[]) {
     // get filename
     file_path = argv[0];
 
-    char hash[2*SHA256_DIGEST_LENGTH+1];
-
-    // sha256_file's status was discarded, so a failure left hash
-    // uninitialised and it was printed and recorded anyway.
-    hash[0] = '\0';
-    if (sha256_file(file_path, hash) != 0) {
-        testRun.errorLevel = -1;
-        testRun.errorMsg = "Error: could not hash the input file.";
-
-        if (jsonOutput) {
-            writeJsonReport(outputfilename, testRun.GetAsJson());
-        }
-
-        printf("Error: could not hash the input file.\n");
-        exit(-1);
-    }
-
-    testRun.sha256 = hash;
     testRun.filename = file_path;
 
     if (argc == 2) {
@@ -228,11 +209,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (verbose > 1) {
-        if (subsetSize == 0) printf("Opening file: '%s' (SHA-256 hash %s)\n", file_path, hash);
-        else printf("Opening file: '%s' (SHA-256 hash %s), reading block %lu of size %lu\n", file_path, hash, subsetIndex, subsetSize);
-    }
-
     // Remember whether the width came from the command line, before
     // read_file_subset fills in an inferred one.
     int bitsPerSymbolGiven = data.word_size;
@@ -243,6 +219,11 @@ int main(int argc, char* argv[]) {
         }
         printf("Error reading file.\n");
         print_usage();
+    }
+
+    if (verbose > 1) {
+        if (subsetSize == 0) printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes)\n", file_path, testRun.sha256.c_str());
+        else printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes), block %lu of size %lu\n", file_path, testRun.sha256.c_str(), subsetIndex, subsetSize);
     }
 
     // A request for the last block of a file usually yields fewer samples
