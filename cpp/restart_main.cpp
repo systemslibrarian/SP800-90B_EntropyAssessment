@@ -158,7 +158,10 @@ int simulateBound(double alpha, int k, double H_I, unsigned long int simulation_
 
     returnValue = (int)results[returnIndex];
 
-    delete results;
+    // C-01: results is allocated with new[] above and must be released with
+    // the matching array form.  Scalar delete is undefined behaviour and was
+    // sanitizer-reproducible on a standards-sized 1000 x 1000 restart input.
+    delete[] results;
 
     return returnValue;
 }
