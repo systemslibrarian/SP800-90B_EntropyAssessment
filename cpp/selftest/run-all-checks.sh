@@ -2,10 +2,10 @@
 #
 # Run every check in this directory and report one summary.
 #
-# The scripts are DISCOVERED, not listed. That is deliberate: a
-# hand-maintained list in a document drifted out of date twice, and anyone
-# following it ran half the suite believing they had run all of it. Adding a
-# regression-*.sh file here is enough to get it run.
+# regression-script-inventory.txt is the authoritative, version-controlled
+# inventory.  Discovery is checked against that inventory before any test is
+# run: adding, deleting, or renaming a script without deliberately updating the
+# inventory is an incomplete suite and fails closed.
 #
 # Exit status is 0 only if every check passed. selftest is expected to exit 1
 # on macOS arm64 for the pre-existing platform deltas in upstream #155; pass
@@ -21,6 +21,54 @@ allow_platform=0
 [ "${1:-}" = "--allow-known-platform-deltas" ] && allow_platform=1
 
 KNOWN_PLATFORM_FILES="biased-random-bytes.bin ringOsc-nist.bin"
+REGRESSION_INVENTORY="regression-script-inventory.txt"
+EXPECTED_REGRESSION_SCRIPTS=17
+EXPECTED_TOTAL_CHECKS=19
+
+inventory_error() {
+    echo "run-all-checks: regression inventory error: $*" >&2
+    exit 2
+}
+
+[ -f "${REGRESSION_INVENTORY}" ] || inventory_error "${REGRESSION_INVENTORY} is missing"
+
+inventory_names=""
+inventory_count=0
+while IFS= read -r name || [ -n "${name}" ]; do
+    case "${name}" in
+        regression-[A-Za-z0-9]*.sh) ;;
+        *) inventory_error "malformed entry ${name:-<empty>}" ;;
+    esac
+    case " ${inventory_names} " in
+        *" ${name} "*) inventory_error "duplicate entry ${name}" ;;
+    esac
+    [ -f "./${name}" ] || inventory_error "required script ${name} is missing"
+    [ -x "./${name}" ] || inventory_error "required script ${name} is not executable"
+    inventory_names="${inventory_names} ${name}"
+    inventory_count=$((inventory_count + 1))
+done < "${REGRESSION_INVENTORY}"
+
+[ "${inventory_count}" -eq "${EXPECTED_REGRESSION_SCRIPTS}" ] ||
+    inventory_error "expected ${EXPECTED_REGRESSION_SCRIPTS} entries, found ${inventory_count}"
+
+discovered_names=""
+discovered_count=0
+for script in ./regression-*.sh; do
+    [ -e "${script}" ] || continue
+    name=$(basename "${script}")
+    case " ${inventory_names} " in
+        *" ${name} "*) ;;
+        *) inventory_error "unexpected script ${name}" ;;
+    esac
+    case " ${discovered_names} " in
+        *" ${name} "*) inventory_error "duplicate discovered script ${name}" ;;
+    esac
+    discovered_names="${discovered_names} ${name}"
+    discovered_count=$((discovered_count + 1))
+done
+
+[ "${discovered_count}" -eq "${inventory_count}" ] ||
+    inventory_error "expected ${inventory_count} scripts, discovered ${discovered_count}"
 
 pass=0; fail=0; failed=""
 run() { # run <label> <command...>
@@ -85,14 +133,24 @@ else
 fi
 
 echo
-echo "regression scripts (discovered)"
+echo "regression scripts (authoritative inventory verified)"
 found=0
-for s in ./regression-*.sh; do
-    [ -e "${s}" ] || continue
+while IFS= read -r name || [ -n "${name}" ]; do
+    s="./${name}"
     found=$((found + 1))
     run "$(basename "${s}" .sh)" "${s}"
-done
-[ "${found}" -eq 0 ] && { echo "  none found — that is itself wrong" >&2; fail=$((fail + 1)); }
+done < "${REGRESSION_INVENTORY}"
+
+if [ "${found}" -ne "${EXPECTED_REGRESSION_SCRIPTS}" ]; then
+    echo "run-all-checks: executed ${found} regression scripts; expected ${EXPECTED_REGRESSION_SCRIPTS}" >&2
+    fail=$((fail + 1)); failed="${failed} regression-inventory"
+fi
+
+total=$((pass + fail))
+if [ "${total}" -ne "${EXPECTED_TOTAL_CHECKS}" ]; then
+    echo "run-all-checks: executed ${total} total checks; expected ${EXPECTED_TOTAL_CHECKS}" >&2
+    fail=$((fail + 1)); failed="${failed} total-check-count"
+fi
 
 echo
 echo "run-all-checks: ${pass} passed, ${fail} failed (${found} regression scripts discovered)"
