@@ -790,17 +790,12 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        bool len_LRS_test_pass = false;
-        if (chi_square_test_pass) {
-            tcOverallIid.ran_longest_repeated_substring_test = true;
-            bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
-            bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
-            len_LRS_test_pass = len_LRS_test_pass_row && len_LRS_test_pass_col;
-            tcOverallIid.passed_longest_repeated_substring_test = len_LRS_test_pass;
-            if (verbose > 0) printf("** %s length of longest repeated substring tests\n\n", len_LRS_test_pass ? "Passed" : "Failed");
-        } else if (verbose > 0) {
-            printf("** Skipped length of longest repeated substring tests after required chi-square failure\n\n");
-        }
+        tcOverallIid.ran_longest_repeated_substring_test = true;
+        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
+        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
+        bool len_LRS_test_pass = len_LRS_test_pass_row && len_LRS_test_pass_col;
+        tcOverallIid.passed_longest_repeated_substring_test = len_LRS_test_pass;
+        if (verbose > 0) printf("** %s length of longest repeated substring tests\n\n", len_LRS_test_pass ? "Passed" : "Failed");
 
         bool perm_test_pass = false;
         if (chi_square_test_pass && len_LRS_test_pass) {

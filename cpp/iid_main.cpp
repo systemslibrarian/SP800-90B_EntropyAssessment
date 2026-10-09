@@ -419,23 +419,20 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Once a required suite fails, the IID claim is decided. Do not spend
-    // unbounded time on later stochastic tests and do not mislabel skipped
-    // suites as having run. This makes the valid period-two #153 control
-    // terminate after its exact log-domain LRS failure.
-    bool len_LRS_test_pass = false;
-    if (chi_square_test_pass) {
-        tc.ran_longest_repeated_substring_test = true;
-        len_LRS_test_pass = len_LRS_test(testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
-        tc.passed_longest_repeated_substring_test = len_LRS_test_pass;
+    // The deterministic chi-square and LRS suites both provide required IID
+    // evidence and exercise different representations in conditioned mode.
+    // Run both even if the first already rejected the claim (#271). The
+    // expensive stochastic permutation battery may be skipped after either
+    // deterministic rejection because the aggregate verdict is then final.
+    tc.ran_longest_repeated_substring_test = true;
+    bool len_LRS_test_pass = len_LRS_test(
+        testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
+    tc.passed_longest_repeated_substring_test = len_LRS_test_pass;
 
-        if ((verbose == 1) || (verbose == 2)) {
-            printf("** %s length of longest repeated substring test\n\n", len_LRS_test_pass ? "Passed" : "Failed");
-        } else if (verbose > 2) {
-            printf("Length of longest repeated substring test: %s\n", len_LRS_test_pass ? "Passed" : "Failed");
-        }
-    } else if (verbose > 0) {
-        printf("** Skipped length of longest repeated substring test after required chi-square failure\n\n");
+    if ((verbose == 1) || (verbose == 2)) {
+        printf("** %s length of longest repeated substring test\n\n", len_LRS_test_pass ? "Passed" : "Failed");
+    } else if (verbose > 2) {
+        printf("Length of longest repeated substring test: %s\n", len_LRS_test_pass ? "Passed" : "Failed");
     }
 
     bool perm_test_pass = false;
