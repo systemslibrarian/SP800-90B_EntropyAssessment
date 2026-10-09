@@ -25,14 +25,21 @@ export EA_ALLOW_SHORT_DATASET=1
 fail_count=0
 run_count=0
 failed_files=""
+here=$(cd "$(dirname "$0")" && pwd)
+cd "$here" || exit 2
+
+if ! ./verify-fixture-inventory.sh fixture-manifest.txt ../../bin refdata; then
+	echo "selftest: FAIL (fixture inventory incomplete or untrusted)"
+	exit 1
+fi
 
 if [ ! -x ../ea_non_iid ]; then
 	echo "selftest: ../ea_non_iid is missing or not executable (run 'make non_iid' first)" >&2
 	exit 2
 fi
 
-for file in ../../bin/*; do
-	bfile=`basename $file`
+for bfile in $(awk '$1 == "input" { print $2 }' fixture-manifest.txt); do
+	file="../../bin/${bfile}"
 	resfile=${bfile/bin/res}
 
 	if [ ! -f "refdata/${resfile}" ]; then
@@ -45,14 +52,16 @@ for file in ../../bin/*; do
 	run_count=$((run_count + 1))
 	echo -n "${bfile}: "
 
-	if ! ../ea_non_iid -vv ${file} > ${resfile}; then
-		echo "FAILED (ea_non_iid exited $?)"
+	../ea_non_iid -vv "${file}" > "${resfile}"
+	rc=$?
+	if [ "$rc" -ne 0 ]; then
+		echo "FAILED (ea_non_iid exited ${rc})"
 		fail_count=$((fail_count + 1))
 		failed_files="${failed_files} ${bfile}"
 		continue
 	fi
 
-	if ./compareresults.pl ${resfile} refdata/${resfile}; then
+	if ./compareresults.pl "${resfile}" "refdata/${resfile}"; then
 		:
 	else
 		fail_count=$((fail_count + 1))

@@ -177,7 +177,7 @@ epsilon of 1e-10. That is the platform difference recorded in upstream
 issue #155 and in the precision audit below; it is not introduced by any
 change here, and was previously invisible only because the harness
 discarded the comparison's exit status. Every other sample passes and
-all eight regression scripts pass. On a Linux x86-64 build, selftest is
+every discovered regression script passes. On a Linux x86-64 build, selftest is
 expected to pass outright.
 
 ---
