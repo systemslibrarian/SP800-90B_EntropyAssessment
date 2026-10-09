@@ -182,6 +182,7 @@ int main(int argc, char* argv[]) {
     unsigned long int inul;
     data_t data;
     int opt;
+    bool iid_test_suite_pass = true;
 
     iid = false;
     data.word_size = 0;
@@ -769,6 +770,7 @@ int main(int argc, char* argv[]) {
         bool chi_square_test_pass_col = chi_square_tests(cdata, sample_size, alphabet_size, verbose);
         bool chi_square_test_pass = chi_square_test_pass_row && chi_square_test_pass_col;
 
+        tcOverallIid.ran_chi_square_tests = true;
         tcOverallIid.passed_chi_square_tests = chi_square_test_pass;
 
         if ((verbose == 1) || (verbose == 2)) {
@@ -788,64 +790,61 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        // Compute length of the longest repeated substring stats
-        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Literal");
-        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Literal");
-        bool len_LRS_test_pass = len_LRS_test_pass_row && len_LRS_test_pass_col;
-
-        tcOverallIid.passed_longest_repeated_substring_test = len_LRS_test_pass;
-
-        if ((verbose == 1) || (verbose == 2)) {
-            if (len_LRS_test_pass) {
-                printf("** Passed length of longest repeated substring test\n\n");
-            }
-            else {
-                printf("** Failed length of longest repeated substring test\n\n");
-            }
-        }
-        else if (verbose > 2) {
-            if (len_LRS_test_pass) {
-                printf("Length of longest repeated substring test: Passed\n");
-            }
-            else {
-                printf("Length of longest repeated substring test: Failed\n");
-            }
+        bool len_LRS_test_pass = false;
+        if (chi_square_test_pass) {
+            tcOverallIid.ran_longest_repeated_substring_test = true;
+            bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
+            bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
+            len_LRS_test_pass = len_LRS_test_pass_row && len_LRS_test_pass_col;
+            tcOverallIid.passed_longest_repeated_substring_test = len_LRS_test_pass;
+            if (verbose > 0) printf("** %s length of longest repeated substring tests\n\n", len_LRS_test_pass ? "Passed" : "Failed");
+        } else if (verbose > 0) {
+            printf("** Skipped length of longest repeated substring tests after required chi-square failure\n\n");
         }
 
-        // Compute permutation stats
-        bool perm_test_pass_row = permutation_tests(&data, rawmean, median, verbose, tcOverallIid);
+        bool perm_test_pass = false;
+        if (chi_square_test_pass && len_LRS_test_pass) {
+            tcOverallIid.ran_iid_permutation_tests = true;
+            bool perm_test_pass_row = permutation_tests(&data, rawmean, median, verbose, tcOverallIid);
 
-        data_t data_col;
-        // He rest of the data_col entries are invariant under permutation, so we just copy them.
-        memcpy(&data_col, &data, sizeof(data));
-        // Both the translated and raw data are used, and are not invariant under permutation
-        data_col.symbols = cdata;
-        data_col.rawsymbols = crawdata;
-
-        bool perm_test_pass_col = permutation_tests(&data_col, rawmean, median, verbose, tcOverallIid);
-
-        bool perm_test_pass = perm_test_pass_row && perm_test_pass_col;
-
-        tcOverallIid.passed_iid_permutation_tests = perm_test_pass;
-
-        if ((verbose == 1) || (verbose == 2)) {
-            if (perm_test_pass) {
-                printf("** Passed IID permutation tests\n\n");
-            }
-            else {
-                printf("** Failed IID permutation tests\n\n");
-            }
-        }
-        else if (verbose > 2) {
-            if (perm_test_pass) {
-                printf("IID permutation tests: Passed\n");
-            }
-            else {
-                printf("IID permutation tests: Failed\n");
-            }
+            data_t data_col;
+            // The rest of data_col is invariant under permutation.
+            memcpy(&data_col, &data, sizeof(data));
+            data_col.symbols = cdata;
+            data_col.rawsymbols = crawdata;
+            bool perm_test_pass_col = permutation_tests(&data_col, rawmean, median, verbose, tcOverallIid);
+            perm_test_pass = perm_test_pass_row && perm_test_pass_col;
+            tcOverallIid.passed_iid_permutation_tests = perm_test_pass;
+            if (verbose > 0) printf("** %s IID permutation tests\n\n", perm_test_pass ? "Passed" : "Failed");
+        } else if (verbose > 0) {
+            printf("** Skipped IID permutation tests after an earlier required IID test failure\n\n");
         }
 
+        iid_test_suite_pass = chi_square_test_pass && len_LRS_test_pass && perm_test_pass;
+        testRunIid.assessmentComplete = true;
+        testRunIid.iidClaimAccepted = iid_test_suite_pass;
 
+
+    }
+
+    if (iid && !iid_test_suite_pass) {
+        tcOverallIid.h_r = -1.0;
+        tcOverallIid.h_c = -1.0;
+        tcOverallIid.h_i = -1.0;
+        testRunIid.testCases.push_back(tcOverallIid);
+        testRunIid.errorLevel = 2;
+        testRunIid.errorMsg = "IID restart test suite failed; no IID restart entropy estimate was awarded.";
+        if (verbose > 0) printf("IID restart test suite failed: no IID restart entropy estimate was awarded.\n");
+        if (jsonOutput && !writeJsonReport(outputfilename, testRunIid.GetAsJson())) {
+            free(cdata);
+            free(crawdata);
+            free_data(&data);
+            return -1;
+        }
+        free(cdata);
+        free(crawdata);
+        free_data(&data);
+        return 1;
     }
 
     if (verbose > 0) {

@@ -386,29 +386,6 @@ int main(int argc, char* argv[]) {
         h_assessed = min(h_assessed, H_original);
     }
 
-    if ((verbose == 1) || (verbose == 2)) {
-        if (initial_entropy) {
-            printf("H_original: %f\n", H_original);
-            if (data.alph_size > 2) {
-                printf("H_bitstring: %f\n", H_bitstring);
-                printf("min(H_original, %d X H_bitstring): %f\n", data.word_size, min(H_original, data.word_size * H_bitstring));
-            }
-        } else {
-            printf("h': %f\n", H_bitstring);
-        }
-    } else if (verbose > 2) {
-        if ((data.alph_size > 2) || !initial_entropy) {
-            printf("H_bitstring = %.17g\n", H_bitstring);
-            printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
-        }
-
-        if (initial_entropy) {
-            printf("H_original = %.17g\n", H_original);
-        }
-
-        printf("Assessed min entropy: %.17g\n", h_assessed);
-    }
-
     // Record only the values that were computed. H_original and H_bitstring
     // are initialised to data.word_size and 1.0 so that the min() above is
     // well defined whichever branch runs; reporting those initialisers as if
@@ -423,10 +400,9 @@ int main(int argc, char* argv[]) {
         tc.h_bitstring = H_bitstring;
     }
 
-    tc.h_assessed = h_assessed;
-
     // Compute chi square stats
     bool chi_square_test_pass = chi_square_tests(testdata.symbols, test_sample_size, test_alphabet_size, verbose);
+    tc.ran_chi_square_tests = true;
     tc.passed_chi_square_tests = chi_square_test_pass;
 
     if ((verbose == 1) || (verbose == 2)) {
@@ -443,42 +419,81 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Compute length of the longest repeated substring stats
-    bool len_LRS_test_pass = len_LRS_test(testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
-    tc.passed_longest_repeated_substring_test = len_LRS_test_pass;
+    // Once a required suite fails, the IID claim is decided. Do not spend
+    // unbounded time on later stochastic tests and do not mislabel skipped
+    // suites as having run. This makes the valid period-two #153 control
+    // terminate after its exact log-domain LRS failure.
+    bool len_LRS_test_pass = false;
+    if (chi_square_test_pass) {
+        tc.ran_longest_repeated_substring_test = true;
+        len_LRS_test_pass = len_LRS_test(testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
+        tc.passed_longest_repeated_substring_test = len_LRS_test_pass;
 
-    if ((verbose == 1) || (verbose == 2)) {
-        if (len_LRS_test_pass) {
-            printf("** Passed length of longest repeated substring test\n\n");
-        } else {
-            printf("** Failed length of longest repeated substring test\n\n");
+        if ((verbose == 1) || (verbose == 2)) {
+            printf("** %s length of longest repeated substring test\n\n", len_LRS_test_pass ? "Passed" : "Failed");
+        } else if (verbose > 2) {
+            printf("Length of longest repeated substring test: %s\n", len_LRS_test_pass ? "Passed" : "Failed");
         }
-    } else if (verbose > 2) {
-        if (len_LRS_test_pass) {
-            printf("Length of longest repeated substring test: Passed\n");
-        } else {
-            printf("Length of longest repeated substring test: Failed\n");
-        }
+    } else if (verbose > 0) {
+        printf("** Skipped length of longest repeated substring test after required chi-square failure\n\n");
     }
 
-    // Compute permutation stats
-    bool perm_test_pass = permutation_tests(&testdata, rawmean, median, verbose, tc);
-    tc.passed_iid_permutation_tests = perm_test_pass;
+    bool perm_test_pass = false;
+    if (chi_square_test_pass && len_LRS_test_pass) {
+        tc.ran_iid_permutation_tests = true;
+        perm_test_pass = permutation_tests(&testdata, rawmean, median, verbose, tc);
+        tc.passed_iid_permutation_tests = perm_test_pass;
 
-    if ((verbose == 1) || (verbose == 2)) {
-        if (perm_test_pass) {
-            printf("** Passed IID permutation tests\n\n");
-        } else {
-            printf("** Failed IID permutation tests\n\n");
+        if ((verbose == 1) || (verbose == 2)) {
+            printf("** %s IID permutation tests\n\n", perm_test_pass ? "Passed" : "Failed");
+        } else if (verbose > 2) {
+            printf("IID permutation tests: %s\n", perm_test_pass ? "Passed" : "Failed");
         }
-    } else if (verbose > 2) {
-        if (perm_test_pass) {
-            printf("IID permutation tests: Passed\n");
-        } else {
-            printf("IID permutation tests: Failed\n");
-        }
+    } else if (verbose > 0) {
+        printf("** Skipped IID permutation tests after an earlier required IID test failure\n\n");
     }
 
+    const bool iid_test_suite_pass =
+        chi_square_test_pass && len_LRS_test_pass && perm_test_pass;
+    testRun.assessmentComplete = true;
+    testRun.iidClaimAccepted = iid_test_suite_pass;
+
+    if (!iid_test_suite_pass) {
+        testRun.errorLevel = 2;
+        testRun.errorMsg = "IID test suite failed; no IID min-entropy estimate was awarded.";
+        testRun.testCases.push_back(tc);
+        if (verbose > 0) printf("IID test suite failed: no IID min-entropy estimate was awarded.\n");
+        if (jsonOutput && !writeJsonReport(outputfilename, testRun.GetAsJson())) {
+            free_data(&data);
+            return -1;
+        }
+        free_data(&data);
+        return 1;
+    }
+
+    // Only a complete passing IID battery may expose the final IID entropy
+    // figure. The component MCV values remain available as diagnostic evidence
+    // on a failed run, but hAssessed is deliberately absent.
+    if ((verbose == 1) || (verbose == 2)) {
+        if (initial_entropy) {
+            printf("H_original: %f\n", H_original);
+            if (data.alph_size > 2) {
+                printf("H_bitstring: %f\n", H_bitstring);
+                printf("min(H_original, %d X H_bitstring): %f\n", data.word_size, min(H_original, data.word_size * H_bitstring));
+            }
+        } else {
+            printf("h': %f\n", H_bitstring);
+        }
+    } else if (verbose > 2) {
+        if ((data.alph_size > 2) || !initial_entropy) {
+            printf("H_bitstring = %.17g\n", H_bitstring);
+            printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
+        }
+        if (initial_entropy) printf("H_original = %.17g\n", H_original);
+        printf("Assessed min entropy: %.17g\n", h_assessed);
+    }
+
+    tc.h_assessed = h_assessed;
     testRun.testCases.push_back(tc);
     testRun.errorLevel = 0;
 

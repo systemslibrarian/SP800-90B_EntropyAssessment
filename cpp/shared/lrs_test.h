@@ -673,26 +673,10 @@ bool len_LRS_test(const uint8_t data[], const int L, const int k, const int verb
 		W = len_LRS64(data, L);
 	}
 
-	// p_col^W is the probability of collision of a W-length string under an IID assumption;
-	// this may be quite close to 0.
-	// We know that p_col >= 2^-8, but if W is sufficiently large, then the result will be smaller than LDBL_MIN 
-	// (2^-16382 on modern Intel platforms); if this happens then we can't represent p_col^W directly as a long double.
-	// There isn't anything we can do about this error condition without moving to an arbitrary precision calculation, so
-	// for now, we'll just detect this condition and abort the calculation.
-	long double p_colPower = powl(p_col, (long double)W);
-	assert(p_colPower >= LDBL_MIN);
-	assert(p_colPower <= 1.0L-LDBL_EPSILON);
-
-	// There is some delicacy in calculating Pr(X>=1) as some of the intermediary values may be quite close to 0 or 1.
-	// We first want to calculate the probability of not having a collision of length W for a single pair of independent 
-	// W-length strings.  This quantity is (1-p_col^W).
-	// We know that p_col >= 2^-8, but if W is sufficiently large, then the result will be smaller than 
-	// LDBL_EPSILON (2^-63 on modern Intel platforms); if this happens then we can't represent (1-p_col^W) directly as a long double.
-	// We instead calculate the log of the probability of not having a collision of length W for a single pair of independent W-length strings.
-	// Recall that log1p(x) = log(1+x); this form is useful when |x| is small. We are particularly concerned with the case where p_col^W is a small 
-	// positive value, which would make log1p(-p_col^W) a negative value quite close to 0.
-	long double logProbNoColsPerPair = log1pl(-p_colPower);
-	assert(logProbNoColsPerPair < 0.0L);
+	// #153: never form p_col^W directly. On a standards-sized input with a
+	// long repeat it can be far below LDBL_MIN even though the pass/fail result
+	// remains exactly decidable. Work in the log domain instead.
+	const long double logCollisionPower = ((long double)W) * logl(p_col);
 
 	//(L - W + 1) is the number of overlapping contiguous substrings of length W in a string of length L.
 	// The number of pairs of such overlapping substrings is N = (L - W + 1) choose 2.
@@ -722,11 +706,23 @@ bool len_LRS_test(const uint8_t data[], const int L, const int k, const int verb
 		// Note, this N is O(L^2), so use of this value as an exponent tends to cause underflows here;
 		// in this case, this probability isn't accurately representable using the precision that we have to work with, but it is expected to
 		// round reasonably.
-		long double probNoCols = expl(((long double)N)*logProbNoColsPerPair);
-		if(verbose > 2) {
-			printf("%s Longest Repeated Substring results: Pr(X >= 1) = %.22Lg\n",  label, 1.0L - probNoCols);
+		long double probabilityAtLeastOne;
+		if(logCollisionPower >= logl(LDBL_MIN)) {
+			const long double collisionPower = expl(logCollisionPower);
+			const long double logProbNoCols = ((long double)N) * log1pl(-collisionPower);
+			probabilityAtLeastOne = -expm1l(logProbNoCols);
 		} else {
-			printf("\tPr(X >= 1): %Lf\n", 1.0L - probNoCols);
+			// In this range p_col^W itself is unrepresentable. The Poisson
+			// first-order form remains representable whenever the final
+			// probability does; otherwise the printable probability is zero.
+			const long double logExpected = logl((long double)N) + logCollisionPower;
+			probabilityAtLeastOne = logExpected >= logl(LDBL_MIN)
+				? -expm1l(-expl(logExpected)) : 0.0L;
+		}
+		if(verbose > 2) {
+			printf("%s Longest Repeated Substring results: Pr(X >= 1) = %.22Lg\n", label, probabilityAtLeastOne);
+		} else {
+			printf("\tPr(X >= 1): %Lf\n", probabilityAtLeastOne);
 		}
 	}
 
@@ -737,6 +733,10 @@ bool len_LRS_test(const uint8_t data[], const int L, const int k, const int verb
 	// iff 1 - (1-p_col^W)^N >= 1/1000
 	// iff 0.999 >= (1-p_col^W)^N
 	// iff log(0.999) >= N*log(1-p_col^W)
-	// iff log(0.999) >= N*log1p(-p_col^W)
-	return logl(0.999L) >= ((long double)N)* logProbNoColsPerPair;
+	// Solve the threshold for p_col^W and compare its logarithm. expm1l
+	// retains the tiny difference from one when N is large:
+	// p_col^W >= 1 - exp(log(0.999)/N).
+	const long double logDecisionThreshold =
+		logl(-expm1l(logl(0.999L) / ((long double)N)));
+	return logCollisionPower >= logDecisionThreshold;
 }

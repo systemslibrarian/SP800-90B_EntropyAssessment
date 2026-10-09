@@ -87,6 +87,12 @@ You may specify either `-i` or `-c`, and either `-a` or `-t`. These correspond t
 * `-v`: Optional verbosity flag for more output. Can be used multiple times.
 * bits_per_symbol are the number of bits per symbol. Each symbol is expected to fit within a single byte.
 
+The IID entropy estimate is awarded only when every required IID test suite
+passes. A failed suite returns a nonzero status; JSON then records
+`"IID": false` and omits the final `hAssessed` value. Component calculations
+may remain in the report as diagnostic evidence, but they are not an accepted
+IID entropy assessment.
+
 To run the non-IID tests, use the Makefile to compile:
 
     make non_iid
@@ -110,6 +116,9 @@ The file should be in the "row dataset" format described in SP800-90B Section 3.
 * `-v`: Optional verbosity flag for more output. Can be used multiple times.
 * bits_per_symbol are the number of bits per symbol. Each symbol is expected to fit within a single byte.
 * `H_I` is the assessed entropy.
+
+In IID restart mode, failure of any required row or column IID suite likewise
+returns nonzero and no final restart entropy is awarded.
 
 To calculate the entropy reduction due to conditioning, use the Makefile to compile:
     

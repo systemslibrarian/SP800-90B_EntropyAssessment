@@ -19,6 +19,9 @@ public:
     bool passed_chi_square_tests = false;
     bool passed_longest_repeated_substring_test = false;
     bool passed_iid_permutation_tests = false;
+    bool ran_chi_square_tests = false;
+    bool ran_longest_repeated_substring_test = false;
+    bool ran_iid_permutation_tests = false;
 
     double h_r = -1.0;
     double h_c = -1.0;
@@ -38,6 +41,9 @@ public:
         json["passedChiSquareTests"] = passed_chi_square_tests;
         json["passedLongestRepeatedSubstringTest"] = passed_longest_repeated_substring_test;
         json["passedIidPermutationTests"] = passed_iid_permutation_tests;
+        json["ranChiSquareTests"] = ran_chi_square_tests;
+        json["ranLongestRepeatedSubstringTest"] = ran_longest_repeated_substring_test;
+        json["ranIidPermutationTests"] = ran_iid_permutation_tests;
 
         if (h_r != -1)
             json["h_r"] = h_r;
