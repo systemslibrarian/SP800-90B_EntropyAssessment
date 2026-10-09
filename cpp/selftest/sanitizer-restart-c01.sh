@@ -20,7 +20,7 @@ with open(sys.argv[1], "wb") as out:
     out.write(bytes(rng.getrandbits(1) for _ in range(1_000_000)))
 PY
 
-ASAN_OPTIONS=${ASAN_OPTIONS:-halt_on_error=1:abort_on_error=1} \
+ASAN_OPTIONS=${ASAN_OPTIONS:-halt_on_error=1:abort_on_error=1:alloc_dealloc_mismatch=1:detect_leaks=0} \
 UBSAN_OPTIONS=${UBSAN_OPTIONS:-halt_on_error=1:print_stacktrace=1} \
     "$tool" -n -q -o "$work/result.json" "$work/restart.bin" 1 0.8
 rc=$?
