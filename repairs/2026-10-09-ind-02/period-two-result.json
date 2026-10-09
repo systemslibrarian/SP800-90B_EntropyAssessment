@@ -1,0 +1,33 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 1000000,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "cpp/ea_iid -i -q -o /private/tmp/ind-remediation-period-two.json /private/tmp/audit-2026-10-09/p2.bin 1",
+   "dateTimeStamp" : "20261009193007",
+   "errorLevel" : 2,
+   "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",
+   "filename" : "/private/tmp/audit-2026-10-09/p2.bin",
+   "sha256" : "2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "binary" : true,
+         "hOriginal" : 0.99628863984762794,
+         "mean" : 0.5,
+         "median" : 0.5,
+         "passedChiSquareTests" : false,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : false,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "testCaseDesc" : ""
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}
