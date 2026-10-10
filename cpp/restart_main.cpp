@@ -219,7 +219,10 @@ int main(int argc, char* argv[]) {
                 outputfilename = optarg;
                 break;
             case 's':
-                inul = strtoul(optarg, NULL, 10);
+                if (!parse_unsigned_decimal(optarg, inul)) {
+                    printf("Simulation count must be an unsigned decimal integer.\n");
+                    print_usage();
+                }
 		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
                     print_usage();
                 } else {
@@ -261,23 +264,23 @@ int main(int argc, char* argv[]) {
 
     if (argc == 2) {
         // get bits per word
-        data.word_size = atoi(argv[0]);
-        if (data.word_size < 1 || data.word_size > 8) {
-            printf("Invalid bits per symbol.\n");
+        if (!parse_unsigned_decimal(argv[0], inul) || inul < 1 || inul > 8) {
+            printf("Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.\n");
             if (jsonOutput) {
                 if (iid) {
                     testRunIid.errorLevel = -1;
-                    testRunIid.errorMsg = "Invalid bits per symbol.";
+                    testRunIid.errorMsg = "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.";
                     writeJsonReport(outputfilename, testRunIid.GetAsJson());
                 } else {
                     testRunNonIid.errorLevel = -1;
-                    testRunNonIid.errorMsg = "Invalid bits per symbol.";
+                    testRunNonIid.errorMsg = "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.";
                     writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
                 }
             }
 
             print_usage();
         }
+        data.word_size = (int)inul;
         argv++;
         argc--;
     }

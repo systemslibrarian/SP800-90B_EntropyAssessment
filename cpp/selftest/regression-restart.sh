@@ -17,6 +17,7 @@
 #   R-3   An -i run that could not read its input wrote a JSON report saying
 #         errorLevel 0: the error level was set on the non-IID report object
 #         while the IID one was written.
+#   N-08  Integer options must be unsigned decimal strings consumed in full.
 
 set -u
 
@@ -36,6 +37,29 @@ import random, sys
 r = random.Random(8)
 open(sys.argv[1], 'wb').write(bytes(r.randrange(256) for _ in range(1000000)))
 " "${work}/r8.bin"
+
+# ---------------------------------------------------------------- N-08
+# Use an absent input so a permissive pre-fix parse is distinguishable from a
+# parser refusal without running the restart simulation.
+for bad in 8x +8 0x8; do
+	out=$("${tool}" -n "${work}/absent.bin" "${bad}" 1 2>&1); rc=$?
+	if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'unsigned decimal'; then
+		note "N-08 restart refuses width ${bad}:" "refused"
+	else
+		note "N-08 restart refuses width ${bad}:" "exit ${rc}, parser accepted it"
+		fails=$((fails + 1))
+	fi
+done
+
+for bad in 5000000x +5000000 0x5000000; do
+	out=$("${tool}" -n -s "${bad}" "${work}/absent.bin" 8 1 2>&1); rc=$?
+	if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'unsigned decimal'; then
+		note "N-08 restart refuses -s ${bad}:" "refused"
+	else
+		note "N-08 restart refuses -s ${bad}:" "exit ${rc}, parser accepted it"
+		fails=$((fails + 1))
+	fi
+done
 
 # ---------------------------------------------------------------- N-04
 # Each of these must be refused, with a nonzero exit and no crash.

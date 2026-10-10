@@ -70,8 +70,8 @@ int main(int argc, char* argv[]) {
     double t_tuple_res = -1.0, lrs_res = -1.0;
     unsigned long subsetIndex = ULONG_MAX;
     unsigned long subsetSize = 0;
-    unsigned long long inint;
-    char *nextOption;
+    unsigned long inint;
+    const char *nextOption;
 
     bool jsonOutput = false;
     string timestamp = getCurrentTimestamp();
@@ -116,10 +116,11 @@ int main(int argc, char* argv[]) {
                 quietMode = true;
                 break;
             case 'l':
-                inint = strtoull(optarg, &nextOption, 0);
-                if ((inint > ULONG_MAX) || (errno == EINVAL) || (nextOption == NULL) || (*nextOption != ',')) {
+                if (!parse_unsigned_decimal(optarg, inint, &nextOption) || (nextOption == NULL) || (*nextOption != ',')) {
                     testRun.errorLevel = -1;
-                    testRun.errorMsg = "Error on index/samples.";
+                    testRun.errorMsg = "Error: -l requires unsigned decimal <index>,<samples>.";
+
+                    printf("Error: -l requires unsigned decimal <index>,<samples>.\n");
 
                     if (jsonOutput) {
                         writeJsonReport(outputfilename, testRun.GetAsJson());
@@ -130,10 +131,11 @@ int main(int argc, char* argv[]) {
 
                 nextOption++;
 
-                inint = strtoull(nextOption, NULL, 0);
-                if ((inint > ULONG_MAX) || (errno == EINVAL)) {
+                if (!parse_unsigned_decimal(nextOption, inint)) {
                     testRun.errorLevel = -1;
-                    testRun.errorMsg = "Error on index/samples.";
+                    testRun.errorMsg = "Error: -l requires unsigned decimal <index>,<samples>.";
+
+                    printf("Error: -l requires unsigned decimal <index>,<samples>.\n");
 
                     if (jsonOutput) {
                         writeJsonReport(outputfilename, testRun.GetAsJson());
@@ -192,17 +194,16 @@ int main(int argc, char* argv[]) {
 
     if (argc == 2) {
         // get bits per word
-        inint = atoi(argv[1]);
-        if (inint < 1 || inint > 8) {
+        if (!parse_unsigned_decimal(argv[1], inint) || inint < 1 || inint > 8) {
 
             testRun.errorLevel = -1;
-            testRun.errorMsg = "Invalid bits per symbol.";
+            testRun.errorMsg = "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.";
 
             if (jsonOutput) {
                 writeJsonReport(outputfilename, testRun.GetAsJson());
             }
 
-            printf("Invalid bits per symbol.\n");
+            printf("Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.\n");
             print_usage();
         } else {
             data.word_size = inint;

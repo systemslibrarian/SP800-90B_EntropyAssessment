@@ -23,6 +23,7 @@
 #include <cfloat>
 #include <math.h>
 #include <climits>		// ULONG_MAX, used by the -l subset overflow check below
+#include <cerrno>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <openssl/evp.h>
@@ -38,6 +39,30 @@
 
 #define MIN_SIZE 1000000
 #define PERMS 10000
+
+// Parse a non-empty unsigned decimal integer without accepting whitespace,
+// signs, C-style octal/hexadecimal prefixes, overflow, or unconsumed suffixes.
+// The end-pointer overload is for compound arguments such as -l index,count.
+// strtoul alone is deliberately not exposed at CLI call sites: its default
+// grammar accepts leading whitespace and signs, and base 0 changes the meaning
+// of a leading zero.
+inline bool parse_unsigned_decimal(const char *input, unsigned long &value, const char **end) {
+	if ((input == NULL) || (input[0] < '0') || (input[0] > '9')) return false;
+
+	errno = 0;
+	char *parsedEnd = NULL;
+	unsigned long parsed = strtoul(input, &parsedEnd, 10);
+	if ((errno == ERANGE) || (parsedEnd == input)) return false;
+
+	value = parsed;
+	if (end != NULL) *end = parsedEnd;
+	return true;
+}
+
+inline bool parse_unsigned_decimal(const char *input, unsigned long &value) {
+	const char *end = NULL;
+	return parse_unsigned_decimal(input, value, &end) && (end != NULL) && (*end == '\0');
+}
 
 //This is the smallest practical value (one can't do better with the double type)
 #define RELEPSILON DBL_EPSILON

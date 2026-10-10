@@ -10,6 +10,8 @@
 #
 # NIST's sample truerand_4bit.bin holds 4-bit values in bytes, so it exercises
 # both paths: inferred as 4-bit by default, assessed as 8-bit when declared.
+# N-08 also requires the optional width to be an unsigned decimal argument
+# consumed in full; atoi("8x") and atoi("+8") previously accepted both as 8.
 
 set -u
 
@@ -49,6 +51,18 @@ for tool in ea_non_iid ea_iid; do
 	[ -x "${here}/../${tool}" ] || { echo "regression-width: ${tool} missing" >&2; exit 2; }
 	check "${tool}" "inferred width" 4 true
 	check "${tool}" "declared width" 8 false 8
+done
+
+for tool in ea_non_iid ea_iid; do
+	for bad in 8x +8 0x8; do
+		out=$("${here}/../${tool}" -q "${work}/absent.bin" "${bad}" 2>&1); rc=$?
+		if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'unsigned decimal'; then
+			note "N-08 ${tool} refuses width ${bad}:" "refused"
+		else
+			note "N-08 ${tool} refuses width ${bad}:" "exit ${rc}, parser accepted it"
+			fails=$((fails + 1))
+		fi
+	done
 done
 
 # The inference itself must not have changed: 4-bit data still infers 4.

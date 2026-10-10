@@ -16,12 +16,15 @@
 #      visible
 #   6. sha256 identifies the exact bytes consumed by the estimator, closing
 #      N-07; subset provenance identifies where those bytes came from
+#   7. N-08: subset numbers are unsigned decimal, consume the whole field,
+#      and do not accept C-style octal, a leading sign, or trailing text
 
 set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "${here}/../.." && pwd)
 tool="${here}/../ea_non_iid"
+iid_tool="${here}/../ea_iid"
 sample="${repo}/bin/truerand_1bit.bin"      # 1,000,000 samples
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-regsub.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT
@@ -29,6 +32,7 @@ trap 'rm -rf "${work}"' EXIT
 fails=0
 note() { printf '%-44s %s\n' "$1" "$2"; }
 [ -x "${tool}" ] || { echo "regression-subset: ${tool} missing (run 'make non_iid')" >&2; exit 2; }
+[ -x "${iid_tool}" ] || { echo "regression-subset: ${iid_tool} missing (run 'make iid')" >&2; exit 2; }
 
 refused() { # refused <label> <expected text> <args...>
 	local label=$1 want=$2; shift 2
@@ -45,6 +49,32 @@ refused() { # refused <label> <expected text> <args...>
 refused "offset multiplication overflow" "offset overflows"        -l 4,4611686018427387904
 refused "offset past end of file"        "past the end"            -l 5,1000000
 refused "zero-sample subset request"     "greater than zero"       -l 3,0
+
+# N-08 used strtoull(..., base 0), accepted a leading plus sign, and did not
+# check that the second field ended at the end of the argument.  A ten-byte
+# file makes the octal/decimal distinction without running any estimator:
+# block 8 exists, while decimal block 10 starts exactly at EOF.
+python3 -c "open('$work/ten.bin','wb').write(bytes(range(10)))"
+for candidate in "${tool}" "${iid_tool}"; do
+	name=$(basename "${candidate}")
+	out=$("${candidate}" -q -l 010,1 "${work}/ten.bin" 2>&1); rc=$?
+	if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'at or past the end'; then
+		note "N-08 ${name} treats 010 as decimal 10:" "yes"
+	else
+		note "N-08 ${name} treats 010 as decimal 10:" "no (exit ${rc})"
+		fails=$((fails + 1))
+	fi
+
+	for bad in '+0,1' '0,+1' '0,1x' '0,0x1'; do
+		out=$("${candidate}" -q -l "${bad}" "${work}/absent.bin" 2>&1); rc=$?
+		if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'unsigned decimal'; then
+			note "N-08 ${name} refuses -l ${bad}:" "refused"
+		else
+			note "N-08 ${name} refuses -l ${bad}:" "exit ${rc}, parser accepted it"
+			fails=$((fails + 1))
+		fi
+	done
+done
 
 # An ordinary subset must still work and carry its provenance.
 if "${tool}" -q -o "${work}/ok.json" -l 0,1000000 "${sample}" >/dev/null 2>&1; then
