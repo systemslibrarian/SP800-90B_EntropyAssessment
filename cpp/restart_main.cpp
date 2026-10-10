@@ -177,7 +177,7 @@ int main(int argc, char* argv[]) {
     int i, j;
     int X_i, X_r, X_c, X_max;
     double H_I, H_r, H_c, alpha, ret_min_entropy;
-	double rawmean, median;
+	double rawmean, translated_symbol_median;
     uint8_t *rdata, *cdata, *crawdata;
     unsigned long int inul;
     data_t data;
@@ -514,7 +514,7 @@ int main(int argc, char* argv[]) {
     if ((verbose == 1) || (verbose == 2))
         printf("Calculating baseline statistics...\n");
 
-    calc_stats(&data, rawmean, median);
+    calc_stats(&data, rawmean, translated_symbol_median);
 
     // The maximum min-entropy is -log2(1/2^word_size) = word_size
     H_c = data.word_size;
@@ -555,6 +555,8 @@ int main(int argc, char* argv[]) {
     tcOverallIid.h_c = H_c;
     tcOverallIid.h_i = H_I;
     tcOverallIid.testCaseNumber = "Overall";
+    tcOverallIid.raw_mean = rawmean;
+    tcOverallIid.translated_symbol_median = translated_symbol_median;
 
 
     if (!iid) {
@@ -803,14 +805,14 @@ int main(int argc, char* argv[]) {
         bool perm_test_pass = false;
         if (chi_square_test_pass && len_LRS_test_pass) {
             tcOverallIid.ran_iid_permutation_tests = true;
-            bool perm_test_pass_row = permutation_tests(&data, rawmean, median, verbose, tcOverallIid);
+            bool perm_test_pass_row = permutation_tests(&data, rawmean, translated_symbol_median, verbose, tcOverallIid);
 
             data_t data_col;
             // The rest of data_col is invariant under permutation.
             memcpy(&data_col, &data, sizeof(data));
             data_col.symbols = cdata;
             data_col.rawsymbols = crawdata;
-            bool perm_test_pass_col = permutation_tests(&data_col, rawmean, median, verbose, tcOverallIid);
+            bool perm_test_pass_col = permutation_tests(&data_col, rawmean, translated_symbol_median, verbose, tcOverallIid);
             perm_test_pass = perm_test_pass_row && perm_test_pass_col;
             tcOverallIid.passed_iid_permutation_tests = perm_test_pass;
             if (verbose > 0) printf("** %s IID permutation tests\n\n", perm_test_pass ? "Passed" : "Failed");

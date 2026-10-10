@@ -12,8 +12,8 @@ using namespace std;
 
 class IidTestCase : public TestCaseBase {
 public:
-    double mean = 0.0;
-    double median = 0.0;
+    double raw_mean = -1.0;
+    double translated_symbol_median = -1.0;
     bool binary = false;
 
     bool passed_chi_square_tests = false;
@@ -31,10 +31,10 @@ public:
 
     Json::Value GetAsJson() {
         Json::Value json = TestCaseBase::GetBaseJson();
-        if (mean != -1)
-            json["mean"] = mean;
-        if (median != -1)
-            json["median"] = median;
+        if (raw_mean != -1)
+            json["rawMean"] = raw_mean;
+        if (translated_symbol_median != -1)
+            json["translatedSymbolMedian"] = translated_symbol_median;
         if (binary)
             json["binary"] = binary;
 

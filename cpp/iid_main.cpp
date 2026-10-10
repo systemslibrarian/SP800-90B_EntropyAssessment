@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 
     bool initial_entropy, all_bits;
     int verbose = 1; //verbose 0 is for JSON output, 1 is the normal mode, 2 is the NIST tool verbose mode, and 3 is for extra verbose output
-    double rawmean, median;
+    double rawmean, translated_symbol_median;
     char* file_path;
     data_t data;
     int opt;
@@ -342,21 +342,21 @@ int main(int argc, char* argv[]) {
     if ((verbose == 1) || (verbose == 2))
         printf("Calculating baseline statistics...\n");
 
-    calc_stats(&testdata, rawmean, median);
+    calc_stats(&testdata, rawmean, translated_symbol_median);
 
     if (verbose == 2) {
         printf("\tRaw Mean: %f\n", rawmean);
-        printf("\tMedian: %f\n", median);
+        printf("\tTranslated Symbol Index Median: %f\n", translated_symbol_median);
         printf("\tBinary: %s\n\n", (test_alphabet_size == 2 ? "true" : "false"));
     } else if (verbose > 2) {
         printf("Raw Mean = %.17g\n", rawmean);
-        printf("Median = %.17g\n", median);
+        printf("Translated Symbol Index Median = %.17g\n", translated_symbol_median);
         printf("Binary = %s\n", (test_alphabet_size == 2 ? "true" : "false"));
     }
 
     IidTestCase tc;
-    tc.mean = rawmean;
-    tc.median = median;
+    tc.raw_mean = rawmean;
+    tc.translated_symbol_median = translated_symbol_median;
     tc.binary = (test_alphabet_size == 2);
 
     double H_original = data.word_size;
@@ -440,7 +440,7 @@ int main(int argc, char* argv[]) {
     bool perm_test_pass = false;
     if (chi_square_test_pass && len_LRS_test_pass) {
         tc.ran_iid_permutation_tests = true;
-        perm_test_pass = permutation_tests(&testdata, rawmean, median, verbose, tc);
+        perm_test_pass = permutation_tests(&testdata, rawmean, translated_symbol_median, verbose, tc);
         tc.passed_iid_permutation_tests = perm_test_pass;
 
         if ((verbose == 1) || (verbose == 2)) {

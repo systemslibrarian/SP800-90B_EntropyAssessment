@@ -882,8 +882,10 @@ T sum(const vector<T> &v) {
 }
 
 // Calculate baseline statistics
-// Finds mean, median, and whether or not the data is binary
-void calc_stats(const data_t *dp, double &rawmean, double &median) {
+// Finds the raw-symbol mean and the median of the translated symbol indices.
+// Section 5.1.5 and 5.1.6 require the latter, which is not generally the
+// median of the original byte values when read_file() remaps a sparse alphabet.
+void calc_stats(const data_t *dp, double &rawmean, double &translatedSymbolMedian) {
 
 	// Calculate mean
 	rawmean = sum(dp->rawsymbols, dp->len) / (double)dp->len;
@@ -896,14 +898,14 @@ void calc_stats(const data_t *dp, double &rawmean, double &median) {
 	if(dp->alph_size == 2) {
 		//This isn't necessarily true, but we are supposed to set it this way.
 		//See 5.1.5, 5.1.6.
-		median = 0.5;
+		translatedSymbolMedian = 0.5;
 	} else {
 		if((dp->len & 1) == 1) {
 			//the length is odd
-			median = v[half];
+			translatedSymbolMedian = v[half];
 		} else {
 			//the length is even
-			median = (v[half] + v[half - 1]) / 2.0;
+			translatedSymbolMedian = (v[half] + v[half - 1]) / 2.0;
 		}
 	}
 }

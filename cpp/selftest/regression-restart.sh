@@ -18,6 +18,8 @@
 #         errorLevel 0: the error level was set on the non-IID report object
 #         while the IID one was written.
 #   N-08  Integer options must be unsigned decimal strings consumed in full.
+#   N-10  IID restart JSON must carry the actual baseline statistics under
+#         names that identify the raw-value and translated-index domains.
 
 set -u
 
@@ -60,6 +62,30 @@ for bad in 5000000x +5000000 0x5000000; do
 		fails=$((fails + 1))
 	fi
 done
+
+# ---------------------------------------------------------------- N-10
+# H_I=0 makes the restart sanity bound permissive, while this deterministic
+# period-two matrix fails an IID test before the expensive permutation stage.
+# It is nevertheless a standards-sized 1000 x 1000 restart capture, so the
+# report path is exercised with the required sample count and dimensions.
+python3 -c "open('$work/alternating.bin','wb').write(bytes((i & 1) for i in range(1000000)))"
+"${tool}" -i -q -o "${work}/alternating.json" "${work}/alternating.bin" 1 0 >/dev/null 2>&1
+rc=$?
+if [ "${rc}" -ne 0 ] && python3 - "${work}/alternating.json" <<'PY'
+import json, math, sys
+d = json.load(open(sys.argv[1]))
+tc = d.get("testCases", [{}])[0]
+ok = (math.isclose(tc.get("rawMean", -1), 0.5)
+      and math.isclose(tc.get("translatedSymbolMedian", -1), 0.5)
+      and "mean" not in tc and "median" not in tc)
+sys.exit(0 if ok else 1)
+PY
+then
+	note "N-10 restart reports actual named statistics:" "rawMean 0.5, translatedSymbolMedian 0.5"
+else
+	note "N-10 restart reports actual named statistics:" "missing, zero, or ambiguously named"
+	fails=$((fails + 1))
+fi
 
 # ---------------------------------------------------------------- N-04
 # Each of these must be refused, with a nonzero exit and no crash.
