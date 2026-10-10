@@ -59,7 +59,7 @@ endif
 all:    iid non_iid restart conditioning transpose
 
 clean:
-	rm -f ea_iid ea_non_iid ea_restart ea_conditioning ea_transpose ea_non_iid_identity_test selftest/*.res
+	rm -f ea_iid ea_non_iid ea_restart ea_conditioning ea_transpose ea_non_iid_identity_test selftest/restart-report-label-test selftest/*.res
 
 iid: iid_main.o
 iid_main.o: iid_main.cpp
@@ -77,6 +77,11 @@ non_iid_identity_test:
 restart: restart_main.o
 restart_main.o: restart_main.cpp
 	$(CXX) $(CXXFLAGS) $(INC) restart_main.cpp -o ea_restart $(LDFLAGS) $(LIB) $(SHARED_LIB)
+
+# NOVEL-03 regression-only unit: exercise report population without running
+# the 10,000-round row and column permutation batteries.
+selftest/restart-report-label-test: selftest/restart-report-label-test.cpp
+	$(CXX) $(CXXFLAGS) $(INC) selftest/restart-report-label-test.cpp -o $@ $(LDFLAGS) $(LIB) $(SHARED_LIB)
 
 conditioning: conditioning_main.o
 conditioning_main.o: conditioning_main.cpp

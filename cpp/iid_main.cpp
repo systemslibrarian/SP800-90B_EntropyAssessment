@@ -440,7 +440,7 @@ int main(int argc, char* argv[]) {
     bool perm_test_pass = false;
     if (chi_square_test_pass && len_LRS_test_pass) {
         tc.ran_iid_permutation_tests = true;
-        perm_test_pass = permutation_tests(&testdata, rawmean, translated_symbol_median, verbose, tc);
+        perm_test_pass = permutation_tests(&testdata, rawmean, translated_symbol_median, verbose, tc, "input");
         tc.passed_iid_permutation_tests = perm_test_pass;
 
         if ((verbose == 1) || (verbose == 2)) {

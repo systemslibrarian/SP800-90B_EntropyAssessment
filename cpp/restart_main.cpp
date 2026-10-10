@@ -805,14 +805,14 @@ int main(int argc, char* argv[]) {
         bool perm_test_pass = false;
         if (chi_square_test_pass && len_LRS_test_pass) {
             tcOverallIid.ran_iid_permutation_tests = true;
-            bool perm_test_pass_row = permutation_tests(&data, rawmean, translated_symbol_median, verbose, tcOverallIid);
+            bool perm_test_pass_row = permutation_tests(&data, rawmean, translated_symbol_median, verbose, tcOverallIid, "rows");
 
             data_t data_col;
             // The rest of data_col is invariant under permutation.
             memcpy(&data_col, &data, sizeof(data));
             data_col.symbols = cdata;
             data_col.rawsymbols = crawdata;
-            bool perm_test_pass_col = permutation_tests(&data_col, rawmean, translated_symbol_median, verbose, tcOverallIid);
+            bool perm_test_pass_col = permutation_tests(&data_col, rawmean, translated_symbol_median, verbose, tcOverallIid, "columns");
             perm_test_pass = perm_test_pass_row && perm_test_pass_col;
             tcOverallIid.passed_iid_permutation_tests = perm_test_pass;
             if (verbose > 0) printf("** %s IID permutation tests\n\n", perm_test_pass ? "Passed" : "Failed");

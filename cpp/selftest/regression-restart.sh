@@ -20,6 +20,8 @@
 #   N-08  Integer options must be unsigned decimal strings consumed in full.
 #   N-10  IID restart JSON must carry the actual baseline statistics under
 #         names that identify the raw-value and translated-index domains.
+#   NOVEL-03 Restart row and column permutation result groups must carry
+#         distinct layout labels rather than repeating bare iterations 0-2.
 
 set -u
 
@@ -32,6 +34,24 @@ trap 'rm -rf "${work}"' EXIT
 fails=0
 note() { printf '%-50s %s\n' "$1" "$2"; }
 [ -x "${tool}" ] || { echo "regression-restart: ${tool} missing (run 'make restart')" >&2; exit 2; }
+
+# ---------------------------------------------------------- NOVEL-03
+# This exercises the exact JSON population helper with synthetic counters. It
+# avoids a vacuous source grep and avoids the cost and randomness of two full
+# permutation batteries over a million samples.
+label_test="${here}/restart-report-label-test"
+build_out=$(make -s -C "${here}/.." selftest/restart-report-label-test 2>&1); build_rc=$?
+if [ "${build_rc}" -ne 0 ]; then
+	note "NOVEL-03 row/column label test builds:" "failed (exit ${build_rc})"
+	printf '%s\n' "${build_out}" | tail -4 | sed 's/^/    /'
+	fails=$((fails + 1))
+elif out=$("${label_test}" 2>&1); then
+	note "NOVEL-03 permutation groups are labelled:" "rows 0-2, columns 0-2"
+else
+	note "NOVEL-03 permutation groups are labelled:" "failed"
+	printf '%s\n' "${out}" | tail -4 | sed 's/^/    /'
+	fails=$((fails + 1))
+fi
 
 # ea_restart requires exactly 1,000,000 samples (a 1000 x 1000 restart matrix).
 python3 -c "
