@@ -1,0 +1,9 @@
+2db32d764b6727cf716ef66912b08cb885d66acf20ffbe061675e57c3ec88ae3  repairs/2026-10-09-followup/REPORT.md
+ca6c4b4d29658f21bfec179c68ac289ea474989f6748e2189fe257c709591423  repairs/2026-10-09-followup/PR-BODY.md
+3010324e136922bce7e2ddc7b76ed5a488383736487d99f9da4a357f060742e8  repairs/2026-10-09-followup/UPSTREAM-CANDIDATES.md
+0eec0ccd777b7ecad2de00fc3ffcdcc4b6c89413cb128171025bf077a0f13c14  repairs/2026-10-09-followup/logs/c01-sanitizer.log
+8675c77f96578864d03a7dda3ed58e46b27ff9dec1503fe981c69166018bad63  repairs/2026-10-09-followup/logs/clean-build.log
+ba501f25409163ca57bc0e6ef536ffef7d0cff35936ab5cf6e0acddaf6249f66  repairs/2026-10-09-followup/logs/run-all-platform.log
+64984d508563d51ba23ddb0a6ad08b9993b9355c6fa46166a3c13223341ecbfc  repairs/2026-10-09-followup/logs/run-all-strict.log
+703463657139659730f5c6635a6c10b2a97702354ea39143da354f21ab003493  repairs/2026-10-09-followup/rerun.sh
+87c6e003a46e7a2416554649822116ed4870d242f2b91f9c25abd0229ec70c89  repairs/2026-10-09-followup/results.json

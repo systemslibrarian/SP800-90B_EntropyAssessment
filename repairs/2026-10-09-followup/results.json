@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-09",
+  "branch": "repair/2026-10-09-verified-defects",
+  "codeRevision": "876ba05da68f741df33d32ade7fb52611d4852e5",
+  "upstreamRevision": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+  "platform": {
+    "kernel": "Darwin 25.6.0",
+    "architecture": "arm64",
+    "cpu": "Apple M5",
+    "compiler": "Apple clang 21.0.0"
+  },
+  "repairs": {
+    "N-08": {
+      "commit": "031d7eefe6801c8370c9882cb81348d7cf1df388",
+      "scope": "supported direct CLI paths plus ea_transpose",
+      "status": "repaired; independent verification pending"
+    },
+    "N-10": {
+      "commit": "094189cdc6dd2b2d975abcbe00d7018628c50bee",
+      "scope": "supported IID and restart reports",
+      "status": "repaired in supported scope; conditioning instance excluded"
+    },
+    "NOVEL-03": {
+      "commit": "25fbb54b69a81d96801c63d0acf8bb1282281e58",
+      "status": "repaired; independent verification pending"
+    },
+    "conditioningScope": {
+      "commit": "876ba05da68f741df33d32ade7fb52611d4852e5",
+      "excludedFindings": ["N-03", "N-05", "N-11"],
+      "status": "excluded and guarded, not repaired"
+    },
+    "R-1": {
+      "status": "blocked-hardware",
+      "requiredPlatform": "x86-64 with 80-bit long double",
+      "attempted": false
+    }
+  },
+  "verification": {
+    "cleanBuildExit": 0,
+    "strictSuite": {"passed": 18, "failed": 1, "exit": 1},
+    "strictExpectedPlatformFiles": [
+      "biased-random-bytes.bin",
+      "ringOsc-nist.bin"
+    ],
+    "platformSuite": {"passed": 19, "failed": 0, "exit": 0},
+    "regressionScriptsExecuted": 17,
+    "c01AsanUbsanExit": 0
+  },
+  "upstreamActionsCreated": 0,
+  "independentVerificationComplete": false
+}

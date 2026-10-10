@@ -78,7 +78,7 @@ else bad "regressions named but absent:" "${missing}"; fi
 
 # --------------------------------- 5. tracker counts match the tracker itself
 mismatch=""
-for st in NEEDS-FIX UPSTREAM-FIX-PENDING FIXED-UPSTREAM-VERIFY FORK-FIX-REQUIRED FORK-FIXED VERIFIED; do
+for st in NEEDS-FIX UPSTREAM-FIX-PENDING FIXED-UPSTREAM-VERIFY FORK-FIX-REQUIRED FORK-FIXED SUPPORTED-SCOPE-FIXED EXCLUDED-UNSUPPORTED BLOCKED-HARDWARE VERIFIED; do
     claimed=$(grep -oE "^  - \`${st}\`: [0-9]+" "${TRACKER}" | grep -oE '[0-9]+$' | head -1)
     [ -z "${claimed}" ] && continue
     actual=$(grep -cE "^- \*\*State:\*\* \`${st}\`" "${TRACKER}")

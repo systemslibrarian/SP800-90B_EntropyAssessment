@@ -37,6 +37,9 @@ A coding agent can take work from this queue by selecting findings whose **State
 | `FIXED-UPSTREAM-VERIFY` | Upstream merged a fix or closed the issue as fixed; the code and regression test still need verifying here. |
 | `FORK-FIX-REQUIRED` | Upstream closed, rejected or abandoned the item (or closed a related item) without fixing this defect; the fork must fix it. |
 | `FORK-FIXED` | This fork contains the correction and a regression test proving it. |
+| `SUPPORTED-SCOPE-FIXED` | Every instance in the supported build is corrected and regression-tested; an instance remains only in an explicitly excluded executable, and a build-plan guard fails if that executable enters supported scope. |
+| `EXCLUDED-UNSUPPORTED` | The defect remains in an executable deliberately excluded from the supported aggregate build. It is not fixed and becomes active work before that scope can expand. |
+| `BLOCKED-HARDWARE` | A confirmed platform-specific defect cannot be reproduced or a repair verified on the available architecture. It is retained as blocked evidence, not open repair work on this host. |
 | `VERIFIED` | Resolution confirmed: upstream or fork code corrected and the regression test passes. |
 | `NOT-A-BUG` | Spec-consistent, spec limitation/erratum, deliberate upstream design, or no observable effect. Kept for the record; not in the queue. |
 | `UNCONFIRMED` | Reported but not yet confirmed. Needs verification before it can enter the queue; not in the queue until then. |
@@ -66,22 +69,27 @@ the upstream position and this fork's position are never conflated.
 | `FORK-HARDENING` | Repaired here as robustness, not as a standards defect. |
 | `DEFERRED-NOT-BUILT` | In a program this fork does not build (ea_conditioning), so a repair could not be reproduced or regression-tested here. |
 | `NOT-REPRODUCED-HERE` | Confirmed elsewhere but does not reproduce on this platform; a repair cannot be regression-tested here. |
+| `VERIFIED-SUPPORTED-SCOPE` | Repaired and regression-tested in all supported executables; any remaining instance is confined to an executable protected by the supported-build exclusion guard. |
+| `BLOCKED-HARDWARE` | Not attempted because the failure and any meaningful regression require unavailable hardware floating-point semantics. |
 
 **Resolution rule.** A confirmed bug is resolved only when (A) the relevant upstream code is actually corrected and the regression test passes, or (B) this fork contains the correction and a regression test proving it. If upstream closes, rejects or abandons a confirmed bug without fixing it, its state becomes `FORK-FIX-REQUIRED`.
 
 ## Queue summary (upstream status last checked 2026-09-30)
 
 - Confirmed defects: **30**.
-  - `NEEDS-FIX`: 8
+  - `NEEDS-FIX`: 0
   - `UPSTREAM-FIX-PENDING`: 0
   - `FIXED-UPSTREAM-VERIFY`: 0
-  - `FORK-FIX-REQUIRED`: 1
-  - `FORK-FIXED`: 21
+  - `FORK-FIX-REQUIRED`: 0
+  - `FORK-FIXED`: 24
+  - `SUPPORTED-SCOPE-FIXED`: 2
+  - `EXCLUDED-UNSUPPORTED`: 3
+  - `BLOCKED-HARDWARE`: 1
   - `VERIFIED`: 0
 
-  Fork disposition across all 30: `VERIFIED` 18, `RESOLVED-BY-GLOBAL-GUARD` 2,
-  `FORK-HARDENING` 1, `DEFERRED-NOT-BUILT` 3, `NOT-REPRODUCED-HERE` 1,
-  `NEEDS-FIX` 5.
+  Fork disposition across all 30: `VERIFIED` 21, `RESOLVED-BY-GLOBAL-GUARD` 2,
+  `FORK-HARDENING` 1, `DEFERRED-NOT-BUILT` 3,
+  `VERIFIED-SUPPORTED-SCOPE` 2, `BLOCKED-HARDWARE` 1.
 
   The membership changed on 2026-10-02 and the total did not: F01 was withdrawn
   (see "Withdrawn findings") and C-01, the carried `ea_restart` allocation
@@ -102,10 +110,14 @@ the upstream position and this fork's position are never conflated.
   They came from two passes on 2026-09-30: 11 from the first, 10 from the
   second, after the upstream respondent's review.
 
-  Of the 9 not fixed: 3 are in ea_conditioning, which this fork does not build;
-  1 does not reproduce on this platform (R-1, a long double width question);
-  and 5 remain open work (N-07, N-08, N-10, NOVEL-03 and C-01), each with its
-  next step recorded.
+  Current product scope has no unassigned `NEEDS-FIX` item. That is not the
+  same as universal resolution: N-03, N-05 and N-11 remain unfixed in
+  `ea_conditioning`; the conditioning instances of N-08 and N-10 also remain.
+  Commit `876ba05` excludes that executable from `make all`, and
+  `regression-docs.sh` fails if it enters the supported build. R-1 remains
+  blocked until an x86-64 host with 80-bit `long double` can reproduce and
+  verify a repair. Independent verification of the repair branch is still
+  required before production approval.
 
   No upstream issue or pull request was modified in either pass.
 - Unconfirmed or not-a-bug items (not in the queue): **18**, one of them withdrawn after being raised (F01); see the end of this file.
@@ -128,22 +140,22 @@ the upstream position and this fork's position are never conflated.
 | [F19](#f19) | `FORK-FIXED` | no (hostile/mistaken command line; report integrity) | #260 (dup #267) / — | None. |
 | [N-01](#n-01) | `FORK-FIXED` | yes (IID wrongly accepted: 1.42× in the novel audit, +38 % in phase 2) | — / — | None in the fork. Consider reporting upstream. |
 | [N-02](#n-02) | `FORK-FIXED` | yes (IID wrongly accepted; h′ 2.47× in repro) | #271 / — | None. Note the cost: under -c -a with multi-bit symbols the permutation battery now runs on eight times as much data and did not finish in 40 minutes on a 1,000,000-sample 8-bit file; -t bounds it. |
-| [N-03](#n-03) | `NEEDS-FIX` | no (correct h′ = 0) | — / — | Decide whether to build ea_conditioning locally for test purposes. Building it for testing does not change what the fork ships, but it is the owner's call. |
+| [N-03](#n-03) | `EXCLUDED-UNSUPPORTED` | no (correct h′ = 0) | — / — | Repair and regression-test before any supported build may include ea_conditioning. |
 | [N-04](#n-04) | `FORK-FIXED` | no | — (#195 is a different path) / — | None. |
-| [N-05](#n-05) | `NEEDS-FIX` | no (report integrity) | — / — | Same decision as N-03. |
+| [N-05](#n-05) | `EXCLUDED-UNSUPPORTED` | no (report integrity) | — / — | Repair and regression-test before any supported build may include ea_conditioning. |
 | [N-06](#n-06) | `FORK-FIXED` | no (report integrity / UB) | — / — | Decide whether to build ea_conditioning for test purposes; until then its instance stands. |
-| [N-07](#n-07) | `NEEDS-FIX` | no (hardening) | — / — | Decide the shape first: keep sha256 as the whole-file hash and add a second, separately named digest of the assessed buffer, or re-read and compare. Do not silently redefine sha256. |
-| [N-08](#n-08) | `NEEDS-FIX` | no (none or lower) | — (#260 is -l arithmetic) / — | Parse every numeric argument decimal-only with an end-pointer and errno check, rejecting signs where a count is expected. Mechanical but it touches five files. |
+| [N-07](#n-07) | `FORK-FIXED` | no (hardening) | — / — | Independent verification of `c01fb43` remains. |
+| [N-08](#n-08) | `SUPPORTED-SCOPE-FIXED` | no (none or lower) | — (#260 is -l arithmetic) / — | Supported CLIs and transpose are fixed; the conditioning instance stays excluded by `876ba05`. |
 | [N-09](#n-09) | `FORK-FIXED` | no | — / — | The two programs this fork does not build still carry the defect. |
-| [N-10](#n-10) | `NEEDS-FIX` | no | — / — | Decide per item whether the value or its label should change; the conditioning half waits on the N-03 decision. |
-| [N-11](#n-11) | `NEEDS-FIX` | no (low relevance) | — / — | Same decision as N-03. |
-| [R-1](#r-1) | `FORK-FIX-REQUIRED` | no (abort, no JSON) | #246 (closed) / PR #248 (merged; incomplete) | Reproduce on an x86-64 build with 80-bit long double, then fix (clamp p_col to 1/k within rounding, or compute the collision proportion as an exact integer ratio) with a regression that fails there. |
+| [N-10](#n-10) | `SUPPORTED-SCOPE-FIXED` | no | — / — | IID/restart semantics are fixed; the conditioning half stays excluded by `876ba05`. |
+| [N-11](#n-11) | `EXCLUDED-UNSUPPORTED` | no (low relevance) | — / — | Repair and regression-test before any supported build may include ea_conditioning. |
+| [R-1](#r-1) | `BLOCKED-HARDWARE` | no (abort, no JSON) | #246 (closed) / PR #248 (merged; incomplete) | Requires x86-64 with 80-bit long double; do not attempt or claim a repair from Apple silicon. |
 | [R-2](#r-2) | `FORK-FIXED` | no (TOO LOW: false failure) | #178 (closed) / — | None. |
 | [R-3](#r-3) | `FORK-FIXED` | no (report integrity) | #183 (closed) / — | None. |
 | [NOVEL-01](#novel-01) | `FORK-FIXED` | no by itself (it masks TOO-HIGH regressions) | #272 / — | None. Note that selftest now exits 1 on macOS arm64 because of the pre-existing platform deltas in upstream #155. |
 | [NOVEL-02](#novel-02) | `FORK-FIXED` | no | — (distinct from PR #251) / — | Watch PR #251 for the upstream shape of the hAssessed half. |
-| [C-01](#c-01) | `NEEDS-FIX` | no (memory safety) | — / PR #242 (third party) | Decide whether to repair the scalar `delete` of an array in ea_restart here or wait on PR #242; add the ASan regression either way. |
-| [NOVEL-03](#novel-03) | `NEEDS-FIX` | no | — (introduced with PR #250) / — | Give populateTestCase() a row/column tag, or use two test cases. Reporting-only; no figure changes. |
+| [C-01](#c-01) | `FORK-FIXED` | no (memory safety) | — / PR #242 (third party) | Independent verification of `6f84ad7`/`b3db7ab` remains. |
+| [NOVEL-03](#novel-03) | `FORK-FIXED` | no | — (introduced with PR #250) / — | Independent verification of `25fbb54` remains. |
 
 ## Confirmed findings
 
@@ -584,7 +596,7 @@ the upstream position and this fork's position are never conflated.
 
 **ea_conditioning -n -i on an all-zero conditioned dataset: assert abort, no JSON; with -DNDEBUG a heap over-read and a wild write**
 
-- **State:** `NEEDS-FIX`
+- **State:** `EXCLUDED-UNSUPPORTED`
 - **Upstream disposition:** `NOT-FILED`
 - **Fork disposition:** `DEFERRED-NOT-BUILT`
 - **Dangerous direction:** no (correct h′ = 0)
@@ -605,7 +617,7 @@ the upstream position and this fork's position are never conflated.
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Decide whether to build ea_conditioning locally for test purposes. Building it for testing does not change what the fork ships, but it is the owner's call.
+- **Required next action:** Repair and regression-test this finding before any supported build may include `ea_conditioning`. Commit `876ba05` and `cpp/selftest/regression-docs.sh` currently enforce that exclusion.
 
 ### N-04
 
@@ -640,7 +652,7 @@ the upstream position and this fork's position are never conflated.
 
 **ea_conditioning JSON binds the -i file's name and SHA-256 to an h′ that did not come from it (CLI h′ given too, or vetted mode)**
 
-- **State:** `NEEDS-FIX`
+- **State:** `EXCLUDED-UNSUPPORTED`
 - **Upstream disposition:** `NOT-FILED`
 - **Fork disposition:** `DEFERRED-NOT-BUILT`
 - **Dangerous direction:** no (report integrity)
@@ -662,7 +674,7 @@ the upstream position and this fork's position are never conflated.
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Same decision as N-03.
+- **Required next action:** Same enforced exclusion and pre-expansion repair requirement as N-03.
 
 ### N-06
 
@@ -698,9 +710,9 @@ the upstream position and this fork's position are never conflated.
 
 **TOCTOU: the hash pass and the data pass open the file separately, so a concurrent rewrite binds one file's hash to another file's figure**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `NEEDS-FIX`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no (hardening)
 - **Affected source:** `cpp/shared/TestRunUtils.h`:72 (hash fopen) vs `cpp/shared/utils.h`:181 (data fopen); same pattern in all four mains (upstream `87c104d`)
 - **Reproduce:**
@@ -712,24 +724,24 @@ the upstream position and this fork's position are never conflated.
   ```
 - **Expected (correct) behaviour:** The hash is computed over the buffer that is assessed
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-07; `novel-findings/repro/verify/toctou_shim.c`, `t1.json`, `t2.json`, `ctl.json`
-- **Regression test:** none yet — add: shim run produces a hash matching the assessed bytes
+- **Regression test:** `cpp/selftest/regression-input-identity.sh`
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** Not repaired. The obvious remedy, hashing the buffer that was assessed, would change what the sha256 field means, and the upstream respondent asked for the opposite on #260: @joshuaehill, “I think that the SHA sum acting on the file is the most reasonable behavior ... the file hash is more useful in this setting.” A repair therefore has to keep the whole-file hash and add a separate integrity check, which is a design decision rather than a mechanical fix.
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current fork status:** The supported tools now hash the exact loaded sample buffer and bind the report to those consumed bytes. Subset provenance separately records its source range. This deliberately gives `sha256` assessed-byte semantics rather than claiming a pathname read is an immutable file identity.
+- **Fork fix commit:** `c01fb43`
+- **Verification:** `regression-input-identity.sh` deterministically replaces the pathname after the estimator read and confirms the report hash still matches the consumed snapshot; the subset regression confirms the exact assessed slice hash.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Decide the shape first: keep sha256 as the whole-file hash and add a second, separately named digest of the assessed buffer, or re-read and compare. Do not silently redefine sha256.
+- **Required next action:** Independent review of the changed digest contract and TruePad binding remains required.
 
 ### N-08
 
 **Numeric CLI arguments parsed permissively (strtoull/strtoul base 0, atoi, no end check): -l 010 = block 8, bits "8x" = 8, n_out 0256 = 174**
 
-- **State:** `NEEDS-FIX`
+- **State:** `SUPPORTED-SCOPE-FIXED`
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `NEEDS-FIX`
+- **Fork disposition:** `VERIFIED-SUPPORTED-SCOPE`
 - **Dangerous direction:** no (none or lower)
 - **Affected source:** `cpp/non_iid_main.cpp`:120, :137, :186; `cpp/iid_main.cpp`:179; `cpp/restart_main.cpp`:265; `cpp/conditioning_main.cpp`:104; `cpp/transpose_main.cpp` -l parse (upstream `87c104d`)
 - **Reproduce:**
@@ -740,16 +752,16 @@ the upstream position and this fork's position are never conflated.
   ```
 - **Expected (correct) behaviour:** Decimal-only parsing with end-pointer and errno checks; signs rejected
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-08; `novel-findings/logs/io/l_8,1000.json`, `l_010,1000.json`, `l_10,1000.json`
-- **Regression test:** none yet — add: each command refused
+- **Regression test:** `cpp/selftest/regression-subset.sh`, `regression-width.sh`, `regression-restart.sh`
 - **Upstream NIST issue:** — (#260 is -l arithmetic)
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** Not repaired in this pass. The H_I instance, which was the one that crashed, is fixed under N-04; the remaining permissive parses (strtoull/strtoul base 0 for -l, atoi for bits_per_symbol, the conditioning arguments) are unchanged. They mis-read rather than crash: -l 010 means block 8, and a trailing character is ignored so “8x” is accepted as 8.
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current fork status:** `ea_non_iid`, `ea_iid`, `ea_restart`, and the development-only transpose utility use one unsigned decimal parser with overflow, sign, suffix, and full-consumption checks. Leading zeroes retain decimal meaning. The `ea_conditioning` instance was not changed because that program is outside the supported build; `876ba05` makes that exclusion fail closed.
+- **Fork fix commit:** `031d7ee` (supported tools and transpose); exclusion guard `876ba05`
+- **Verification:** Before the fix, the three affected regression scripts failed 10, 6, and 6 checks. They now pass; `-l 010,1` resolves to decimal block 10, and signed, hexadecimal, or suffixed count/width arguments are refused.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Parse every numeric argument decimal-only with an end-pointer and errno check, rejecting signs where a count is expected. Mechanical but it touches five files.
+- **Required next action:** Repair and test the conditioning instance before expanding supported scope to `ea_conditioning`.
 
 ### N-09
 
@@ -783,9 +795,9 @@ the upstream position and this fork's position are never conflated.
 
 **Reporting-only: ea_iid "Median" is of translated indices; conditioning JSON hard-codes "IID": false and omits vetted/track; restart -i JSON mean/median always 0.0**
 
-- **State:** `NEEDS-FIX`
+- **State:** `SUPPORTED-SCOPE-FIXED`
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `NEEDS-FIX`
+- **Fork disposition:** `VERIFIED-SUPPORTED-SCOPE`
 - **Dangerous direction:** no
 - **Affected source:** `cpp/shared/utils.h` calc_stats() (median from `dp->symbols`); `cpp/non_iid/non_iid_test_run.h`:30 (IID const false, reused by conditioning_main.cpp:509); `cpp/restart_main.cpp` tcOverallIid mean/median never assigned (upstream `87c104d`)
 - **Reproduce:**
@@ -800,22 +812,22 @@ the upstream position and this fork's position are never conflated.
   ```
 - **Expected (correct) behaviour:** Values reported with their true meaning; conditioning JSON records the track
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) §2 N-10; `phase2-focused/logs/evidence/json/rst_i.json`
-- **Regression test:** none yet — add: JSON fields as expected
+- **Regression test:** `cpp/selftest/regression-iid-json.sh`, `regression-restart.sh`
 - **Upstream NIST issue:** —
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** Not repaired. Partly in ea_conditioning (see N-03) and partly a question of what the reported value should mean rather than a defect with one correct answer: ea_iid's “Median” is the median of translated symbol indices, which is what SP 800-90B 5.1.5/5.1.6 need for the tests but is not the median of the sample values a reader would expect.
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current fork status:** Supported IID JSON now reports `rawMean` and `translatedSymbolMedian`; stdout uses the same explicit distinction. Restart IID assigns the actual baseline values instead of emitting default zeroes. The `ea_conditioning` track-reporting instance remains unchanged and outside supported scope under `876ba05`.
+- **Fork fix commit:** `094189c` (IID/restart); exclusion guard `876ba05`
+- **Verification:** Before the fix, `regression-iid-json.sh` failed two N-10 checks and `regression-restart.sh` failed one. Both now pass, including an exact 1,000,000-sample sparse-alphabet control with raw mean 127.5 and translated-index median 0.5.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Decide per item whether the value or its label should change; the conditioning half waits on the N-03 decision.
+- **Required next action:** Repair and test conditioning track reporting before expanding supported scope to `ea_conditioning`.
 
 ### N-11
 
 **ea_conditioning aborts (assert) for accepted n_in/n_out ≥ 1,073,741,823 (MPFR emax)**
 
-- **State:** `NEEDS-FIX`
+- **State:** `EXCLUDED-UNSUPPORTED`
 - **Upstream disposition:** `NOT-FILED`
 - **Fork disposition:** `DEFERRED-NOT-BUILT`
 - **Dangerous direction:** no (low relevance)
@@ -836,15 +848,15 @@ the upstream position and this fork's position are never conflated.
 - **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Same decision as N-03.
+- **Required next action:** Same enforced exclusion and pre-expansion repair requirement as N-03.
 
 ### R-1
 
 **Residual of #246: len_LRS_test asserts p_col ≥ 1/k and aborts when every symbol count is exactly equal and 1/k rounds down (k = 3, 6, 7, 9, 12, …)**
 
-- **State:** `FORK-FIX-REQUIRED`
+- **State:** `BLOCKED-HARDWARE`
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `NOT-REPRODUCED-HERE`
+- **Fork disposition:** `BLOCKED-HARDWARE`
 - **Dangerous direction:** no (abort, no JSON)
 - **Affected source:** `cpp/shared/lrs_test.h`:626 len_LRS_test() `assert(p_col >= 1.0L / ((long double) k))`; `cpp/shared/utils.h` calc_proportions() (PR #248 fixed accumulation only) (upstream `87c104d`)
 - **Reproduce:**
@@ -858,12 +870,12 @@ the upstream position and this fork's position are never conflated.
 - **Upstream NIST issue:** #246 (closed)
 - **Upstream NIST PR:** PR #248 (merged; incomplete)
 - **Current upstream status:** #246 closed (completed) without covering this case; residual not reported
-- **Current fork status:** Investigated on 2026-09-30 and it does NOT reproduce on this platform. The assert compares a floating-point sum against an exact bound, and the margin depends on the width of long double: 64-bit on arm64 macOS, 80-bit under GCC on x86. Measured here for exactly balanced alphabets at L near 10^6: the margin p_col - 1/k is exactly 0 for k = 2, 3, 4, 7, 8, 9, 16 and +2.78e-17 for k = 5, 6, 12, so the assert holds for every k tried and ea_iid bal3.bin 2 completes with exit 0. A zero margin satisfies the assert, which tests `p_col >= 1/k` inclusively, so what was measured here is not itself a defect; it shows the predicate sits exactly on its bound and so is sensitive to rounding. The defect recorded against this finding is the abort observed on an x86-64 build with 80-bit long double, which was not reproduced here and is not re-asserted on this platform's evidence. Not repaired, because a fix could not be regression-tested on this machine: the regression would pass before and after.
+- **Current fork status:** **Blocked on unavailable hardware, not open repair work on this host.** The Apple-silicon ABI uses 64-bit `long double`; the reported failure depends on x86-64's 80-bit extended format. The assert compares a floating-point sum against an exact bound, and the measured margin here is zero or positive for every tested alphabet, so the pre-fix regression would already pass. No code change was attempted because this machine cannot distinguish a valid repair from a no-op or regression.
 - **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Verification:** blocked until an x86-64 environment with 80-bit `long double` reproduces the abort, then runs a negative control and the repaired build.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Reproduce on an x86-64 build with 80-bit long double, then fix (clamp p_col to 1/k within rounding, or compute the collision proportion as an exact integer ratio) with a regression that fails there.
+- **Required next action:** On suitable x86-64 hardware only, reproduce first and then evaluate an exact-ratio or bounded-rounding repair. Do not claim a fix from Apple silicon.
 
 ### R-2
 
@@ -983,9 +995,9 @@ the upstream position and this fork's position are never conflated.
 
 **ea_restart -i JSON appends row and column permutation results under identical iteration labels (no row/column tag)**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `NEEDS-FIX`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no
 - **Affected source:** `cpp/restart_main.cpp`:791, :800 both call permutation_tests(..., tcOverallIid); `cpp/iid/permutation_tests.h`:730 populateTestCase() (upstream `87c104d`)
 - **Reproduce:**
@@ -995,24 +1007,24 @@ the upstream position and this fork's position are never conflated.
   ```
 - **Expected (correct) behaviour:** Separate, labelled row and column results
 - **Evidence / reproducer:** [`phase2-focused/REPORT.md`](phase2-focused/REPORT.md) NOVEL-03; `phase2-focused/logs/evidence/json/rst_i.json`
-- **Regression test:** none yet — add: r.json has labelled row/column blocks
+- **Regression test:** `cpp/selftest/regression-restart.sh` via `restart-report-label-test.cpp`
 - **Upstream NIST issue:** — (introduced with PR #250)
 - **Upstream NIST PR:** —
 - **Current upstream status:** not filed
-- **Current fork status:** Not repaired in this pass. ea_restart -i runs the permutation battery twice, over rows and then over columns, and both populate the same test case, so the JSON carries six results under iteration labels 0,1,2,0,1,2 with nothing saying which pass each came from.
-- **Fork fix commit:** — (not yet fixed on fork `master`)
-- **Verification:** re-run the Reproduce commands; the `BUG:` lines must instead show the expected behaviour, and the regression test must pass
+- **Current fork status:** Every permutation result now carries `dataLayout`. Standalone IID uses `input`; restart uses `rows` for iterations 0–2 and `columns` for iterations 0–2.
+- **Fork fix commit:** `25fbb54`
+- **Verification:** The regression-only JSON population unit failed before the source change because the label-bearing API did not exist; it now confirms the six exact labels without a stochastic 20,000-round run. The complete restart regression passes.
 - **Reproduction last re-run:** 2026-09-30, clean build of fork `master` `237d85c` (Linux x86-64, GCC 13, -O2): reproduces as written
 - **Last upstream-status check:** 2026-09-30
-- **Required next action:** Give populateTestCase() a row/column tag, or use two test cases. Reporting-only; no figure changes.
+- **Required next action:** Independent verification remains; no estimator figure changed.
 
 ### C-01
 
 **`ea_restart` frees an array with scalar `delete`: undefined behaviour in a shipped program (carried upstream defect)**
 
-- **State:** `NEEDS-FIX`
+- **State:** `FORK-FIXED`
 - **Upstream disposition:** `NOT-FILED` (by this fork; a third-party PR that would fix it is open, see below)
-- **Fork disposition:** `NEEDS-FIX`
+- **Fork disposition:** `VERIFIED`
 - **Dangerous direction:** no (memory safety; no effect on any reported figure)
 - **Affected source:** `cpp/restart_main.cpp` simulateBound(): line 124 allocates `results = new uint16_t[simulation_rounds];`, line 161 frees it with `delete results;`. Upstream's code, unchanged in this fork and unchanged upstream since 2023 (`3aef5d1`). Reached from `main()` by ordinary valid input.
 - **Reproduce:**
@@ -1025,17 +1037,18 @@ the upstream position and this fork's position are never conflated.
   ```
 - **Expected (correct) behaviour:** `delete[] results;`
 - **Evidence / reproducer:** [`novel-findings/REPORT.md`](novel-findings/REPORT.md) line 315 and [`novel-findings/agent-reports/restart.md`](novel-findings/agent-reports/restart.md) line 162 recorded it on 2026-09-30 as a rediscovery; [`../2026-10-01-re-audit/KNOWN-242.md`](../2026-10-01-re-audit/KNOWN-242.md) records four sanitizer probes, including the full command line at the default 5,000,000 rounds
-- **Regression test:** none yet. A check belongs in `cpp/selftest/`, building `ea_restart` with ASan and `alloc_dealloc_mismatch=1` and asserting a clean exit, with the probe proving it can fire before its silence is trusted.
+- **Regression test:** `cpp/selftest/sanitizer-restart-c01.sh`
 - **Upstream issue:** none describing this defect
 - **Upstream PR:** PR #242 (garlic-hub, "Fix warnings and set them to be errors") carries `delete[]` in its diff and would fix it. It is a PR, not an issue about this defect, which `KNOWN-242.md`'s filename calls it. Open and unmerged, re-checked 2026-10-02.
 - **Current upstream status:** PR #242 open since 2025-06-19; @celic commented 2026-05-26, the author replied 2026-05-28; no movement since.
-- **Current fork status:** **Not repaired, and deliberately carried.** Entered this queue on 2026-10-02 so that it is watched rather than merely recorded. It had been excluded on 2026-09-30 as already known upstream, which was sound while master was pinned to upstream behaviour; that rule lapsed the same day master became the patched build, and nothing recorded the lapse.
+- **Current fork status:** The array is released with `delete[]`. The sanitizer regression runs an exact 1000×1000 valid restart input with `alloc_dealloc_mismatch=1`; a separate detector probe establishes that the configured sanitizer would diagnose the vulnerable form.
 - **What a fix would take:** one character, `delete results;` → `delete results[];` — strictly, `delete[] results;` — plus a regression as described above, plus a decision about whether to carry a one-character divergence from upstream in a program whose figures nothing is priced against. The honest reason to hesitate is not the change; it is that every divergence adds to the evidence burden the "Product-dependency status" section of `../../NOTICE` describes.
 - **What leaving it costs:** undefined behaviour on every `ea_restart` run, which today is benign on the allocators in use for a trivially destructible type, and is not detected by a default sanitizer build. It is a real defect that a reviewer of this dependency will find, and the cost of leaving it is mostly to the evidence chain rather than to the figures: a shipped program with known undefined behaviour and no tracker row reads as an archive that lost track of it.
-- **Verification:** the Reproduce block must stop aborting, and the ASan probe must be shown able to fire before a clean run is trusted
+- **Fork fix commit:** `6f84ad7`; sanitizer-control follow-up `b3db7ab`
+- **Verification:** Fixed exact-dimension run passes ASan/UBSan; vulnerable-parent and detector-positive controls abort with the expected allocation/deallocation mismatch.
 - **Reproduction last re-run:** 2026-10-02 (source read at `9802717`; sanitizer runs as recorded in `KNOWN-242.md` on 2026-10-01)
 - **Last upstream-status check:** 2026-10-02
-- **Required next action:** Decide whether to repair it here or wait on PR #242, and either way add the ASan regression so the state is checkable. Re-query PR #242 at each periodic upstream check.
+- **Required next action:** Independent verification remains. Re-query upstream PR #242 before preparing any upstream submission.
 
 ## Unconfirmed and not-a-bug items (not in the repair queue)
 
@@ -1101,15 +1114,15 @@ the evidence for the withdrawal. Never delete one.
 
 | Upstream item | What the audits recorded | Status (2026-09-30) |
 |---|---|---|
-| #153 | IID LRS test aborts at `assert(p_colPower >= LDBL_MIN)` on one duplicated ≥ 2,049-byte region; detection by design | closed |
+| #153 | IID LRS test aborts when direct `p_col^W` underflows on a standards-valid input. Fork `a3dde6f` evaluates the comparison in the log domain with an independent boundary oracle and width 1–8 regression coverage. | closed upstream; fork repair independently unverified |
 | #195 | ea_restart `k_effective` assertion | open |
 | #251 (PR) | ea_iid JSON `hAssessed` computed only at `-vvv` | open |
-| #252 (PR) | ea_iid / restart `-i` report a figure when IID tests fail; `"IID": true` constant | open |
+| #252 (PR) | ea_iid / restart `-i` reported a figure when required IID tests failed. Fork `007d0e7` gates the aggregate verdict and final entropy on every required test and adds period-two negative controls. | open upstream; fork repair independently unverified |
 | #262, #265, #266, #267 | duplicates of #261, #258, #259, #260 | closed (not planned) |
 | #269 (PR) | duplicate of PR #268 | closed |
 | #56, #95, #209, PR #224 | restart cutoff by simulation instead of the literal binomial rule (intended deviation) | closed |
 | #236 / PR #237 | manually maintained VERSION macro (tag v1.1.8 prints 1.1.7) | #236 open |
-| PR #242 | **A defect in a program this fork ships, carried deliberately and recorded 2026-10-02.** `cpp/restart_main.cpp` simulateBound(): line 124 allocates `new uint16_t[simulation_rounds]`, line 161 frees it with scalar `delete results` — undefined behaviour, upstream's code, reached by ordinary valid input. Excluded from this queue on 2026-09-30 as already known upstream (`novel-findings/REPORT.md` §3, `novel-findings/agent-reports/restart.md`), under the then-current rule that master carried upstream behaviour on purpose. That rule was superseded the same day; the exclusion was not revisited. PR #242 (garlic-hub, "Fix warnings and set them to be errors") carries `delete[]` in its diff and would fix it. It is a PR, not an issue describing the defect, which `../2026-10-01-re-audit/KNOWN-242.md` calls it. No repair and no regression here. | open (re-checked 2026-10-02); not merged |
+| PR #242 | `cpp/restart_main.cpp` allocated `new uint16_t[]` and used scalar `delete`. Fork `6f84ad7` corrects it and `b3db7ab` supplies vulnerable-parent, detector-positive, and fixed ASan/UBSan controls. PR #242 carries the same one-character source correction inside a broader warning cleanup. | open (last checked 2026-10-02); fork repair independently unverified |
 
 ## Independent re-audit findings (REV series, 2026-10-01)
 

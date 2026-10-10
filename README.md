@@ -1,6 +1,6 @@
 # EntropyAssessment
 
-> **Fork note (updated 2026-10-01):** this fork builds `ea_non_iid`, `ea_iid`
+> **Fork note (updated 2026-10-09):** this fork builds `ea_non_iid`, `ea_iid`
 > and `ea_restart`. The default `make` target is restricted to exactly those
 > three and is guarded by `cpp/selftest/regression-docs.sh`. It does not build
 > `ea_conditioning`, the only program that links GNU MPFR and GMP; none of the
@@ -24,7 +24,9 @@
 > [BUILDING.md](BUILDING.md) for the build, the pinned-output check and the
 > regression suite, and
 > [audits/2026-09-30/FINDINGS-TRACKER.md](audits/2026-09-30/FINDINGS-TRACKER.md)
-> for the status of all 30 audit findings, including the nine still unresolved.
+> for the status of all 30 audit findings, including the deliberately excluded
+> conditioning cases, the hardware-blocked R-1 case, and repairs still awaiting
+> independent verification.
 
 Cryptographic random bit generators (RBGs), also known as random number generators (RNGs), require a noise source that produces digital outputs with some level of unpredictability, expressed as min-entropy. [SP 800-90B](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90B.pdf) provides a standardized means of estimating the quality of a source of entropy.
 

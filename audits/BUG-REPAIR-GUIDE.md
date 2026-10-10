@@ -52,7 +52,7 @@ yourself, and say in the commit message what you ran and on what.
 git clone https://github.com/systemslibrarian/SP800-90B_EntropyAssessment.git && cd SP800-90B_EntropyAssessment
 git remote add upstream https://github.com/usnistgov/SP800-90B_EntropyAssessment.git
 git fetch upstream
-cd cpp && make                 # dependencies: see BUILDING.md (jsoncpp, libdivsufsort, openssl, mpfr, gmp, bz2, OpenMP)
+cd cpp && make                 # supported targets only; see BUILDING.md (no MPFR/GMP required)
 cd selftest && ./selftest      # baseline; compare the "Assessed min entropy" lines too (NOVEL-01)
 ./pin-check.sh                 # pinned figure on real noise (bin/ringOsc-nist.bin)
 ```
@@ -68,6 +68,11 @@ Take findings whose **State** is:
 - `NEEDS-FIX`: everything else confirmed. Prefer rows marked "yes" in **Dangerous direction?** (the figure can come out too high or IID can be wrongly accepted), then memory safety, then report integrity, then cosmetics.
 
 `UPSTREAM-FIX-PENDING` rows are not in the queue; only their status is checked (see below). `NOT-A-BUG` and `UNCONFIRMED` rows are not in the queue. An `UNCONFIRMED` item enters the queue as `NEEDS-FIX` once someone reproduces it and fills in all the fields.
+
+`EXCLUDED-UNSUPPORTED` and `SUPPORTED-SCOPE-FIXED` rows do not authorize work
+on the excluded executable. They become active before supported scope expands.
+`BLOCKED-HARDWARE` is not actionable until the required architecture is
+available; do not write an untestable numerical repair on a different ABI.
 
 ## Procedure for one finding
 
@@ -89,7 +94,7 @@ Take findings whose **State** is:
    - use the finding's expected values with a stated tolerance where a figure is compared (see `BUILDING.md`, "Precision audit");
    - assert its own precondition where one exists, so that it cannot pass vacuously if the input stops exercising the defect.
 
-   One script may cover several findings that share a cause, as `regression-estimator-guards.sh` and `regression-restart.sh` do; name each finding in a section comment, and record the script against every finding it covers in this tracker. `cpp/selftest/run-all-checks.sh` **discovers** `regression-*.sh`, so a new script needs no registration anywhere. Earlier versions of this guide described a `cpp/regression/` directory with a hand-maintained `run-all.sh`; neither was ever created, and the discovery-based runner replaces the idea.
+   One script may cover several findings that share a cause, as `regression-estimator-guards.sh` and `regression-restart.sh` do; name each finding in a section comment, and record the script against every finding it covers in this tracker. `cpp/selftest/run-all-checks.sh` checks discovery against the authoritative `regression-script-inventory.txt`; adding, deleting, or renaming a script requires updating that inventory and the expected counts deliberately. Earlier versions of this guide described a `cpp/regression/` directory with a hand-maintained `run-all.sh`; it was never created.
 6. **Run the tests:** `cd cpp && make non_iid iid restart && cd selftest && ./run-all-checks.sh`
 
    That runs `pin-check.sh`, `selftest` and every regression script, and fails if any fails. Two things to know about its output:
@@ -124,6 +129,9 @@ Take findings whose **State** is:
 | `FIXED-UPSTREAM-VERIFY` | upstream code corrected, regression test passes against it, change brought into the fork | `VERIFIED` |
 | `NEEDS-FIX` / `FORK-FIX-REQUIRED` | fork fix and regression test committed | `FORK-FIXED` |
 | `FORK-FIXED` | independent clean-clone verification passes | `VERIFIED` |
+| `NEEDS-FIX` in an excluded executable | supported-build exclusion and drift guard committed | `EXCLUDED-UNSUPPORTED` (not fixed; reactivate before scope expansion) |
+| supported instances fixed, excluded instance remains | fix regressions plus supported-build exclusion guard pass | `SUPPORTED-SCOPE-FIXED` |
+| platform-specific failure cannot reproduce on the available ABI | evidence identifies the required ABI and a repair cannot be distinguished from a no-op | `BLOCKED-HARDWARE` |
 | any confirmed state | the finding turns out to be spec-consistent, with the reason and evidence recorded | `NOT-A-BUG` (move the row; never delete it) |
 
 ## Periodic upstream-status check
