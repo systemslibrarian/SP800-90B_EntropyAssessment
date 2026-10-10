@@ -56,7 +56,13 @@ endif
 # Main operations
 ######
 
-all:    iid non_iid restart conditioning transpose
+# The supported fork build is deliberately limited to the three assessed and
+# regression-tested executables. conditioning and transpose remain explicit
+# development targets, but must never enter this aggregate without also
+# changing the documented support boundary and its failing regression guard.
+SUPPORTED_TARGETS := iid non_iid restart
+
+all: $(SUPPORTED_TARGETS)
 
 clean:
 	rm -f ea_iid ea_non_iid ea_restart ea_conditioning ea_transpose ea_non_iid_identity_test selftest/restart-report-label-test selftest/*.res

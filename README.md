@@ -1,8 +1,10 @@
 # EntropyAssessment
 
 > **Fork note (updated 2026-10-01):** this fork builds `ea_non_iid`, `ea_iid`
-> and `ea_restart`. It does not build `ea_conditioning`, the only program that
-> links GNU MPFR and GMP; none of the three it does build links either.
+> and `ea_restart`. The default `make` target is restricted to exactly those
+> three and is guarded by `cpp/selftest/regression-docs.sh`. It does not build
+> `ea_conditioning`, the only program that links GNU MPFR and GMP; none of the
+> three supported executables links either.
 >
 > It began as macOS and Windows build support with no change to estimator
 > behaviour. **That is no longer what it is.** After the defects reported
@@ -42,9 +44,13 @@ Issues on this repository are strictly for problems or questions concerning the 
 
 This code package requires a C++11 compiler. The code uses OpenMP directives, so compiler support for OpenMP is expected. GCC is preferred (and the only platform tested). There is one method that involves a GCC built-in function (`chi_square_tests.h -> binary_goodness_of_fit() -> __builtin_popcount()`). To run this you will need some compiler that supplies this GCC built-in function (GCC and clang both do so).
 
-The resulting binary is linked with bzlib, divsufsort, jsoncpp, GMP MP and GNU MPFR, so these libraries (and their associated include files) must be installed and accessible to the compiler.
+The supported executables link with bzlib, divsufsort, jsoncpp and OpenSSL.
+`ea_conditioning`, an unsupported opt-in development target, additionally
+requires GMP and GNU MPFR.
 
-On Ubuntu they can be installed with `apt-get install libbz2-dev libdivsufsort-dev libjsoncpp-dev libssl-dev libmpfr-dev`.
+On Ubuntu the supported dependencies can be installed with `apt-get install
+libbz2-dev libdivsufsort-dev libjsoncpp-dev libssl-dev`. MPFR and GMP are not
+required for the supported build.
 
 See [the wiki](https://github.com/usnistgov/SP800-90B_EntropyAssessment/wiki/Installing-Packages) for some distribution-specific instructions on installing the mentioned packages.
 
@@ -57,9 +63,12 @@ See [the wiki](https://github.com/usnistgov/SP800-90B_EntropyAssessment/wiki/Ins
 
 The project is divided into two sections, IID tests and non-IID tests. They are intended to be separate. One provides an assurance that a dataset is IID [(independent and identically distributed)](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) and the other provides an estimate for min-entropy for any data provided. Please note that most commonly used entropy sources are not IID; see IG7.18 for the additional justification necessary to support any IID claim.
 
-One can make all the binaries using:
+Build all supported executables using:
 
 	make
+
+This builds exactly `ea_non_iid`, `ea_iid`, and `ea_restart`. The regression
+suite fails if an unsupported executable is added to that aggregate target.
 
 After compiling, one can test that your compilation behaves as expected by using the self-test functionality:
 	
@@ -120,9 +129,15 @@ The file should be in the "row dataset" format described in SP800-90B Section 3.
 In IID restart mode, failure of any required row or column IID suite likewise
 returns nonzero and no final restart entropy is awarded.
 
-To calculate the entropy reduction due to conditioning, use the Makefile to compile:
+The upstream conditioning utility remains available only as an explicit,
+unsupported development target:
     
     make conditioning
+
+It is deliberately excluded from `make all`, from this fork's supported build,
+and from TruePad. Its known N-03, N-05, and N-11 defects have not been repaired
+or regression-tested here, so output from `ea_conditioning` must not be used to
+extend this fork's support or approval claims.
 
 Running this is similar.
 

@@ -260,6 +260,12 @@ A second repair pass on the same date, working the remaining queue:
             PR #256 question recorded as answered on 2026-10-01 with the
             decision it leaves open; regression-docs.sh carries the
             corrected phrasings. Documentation only; no source change.
+2026-10-09  cpp/Makefile: restrict the default all target to ea_non_iid,
+            ea_iid and ea_restart. ea_conditioning and ea_transpose remain
+            explicit unsupported development targets. cpp/selftest/
+            regression-docs.sh checks make's expanded build plan and fails
+            if that supported boundary drifts. README.md and BUILDING.md make
+            the exclusion and the carried conditioning defects explicit.
 
 The scope statement at the head of this section covers these too: no
 unintended numerical change was observed on the datasets tested, with
