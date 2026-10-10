@@ -1,0 +1,63 @@
+{
+   "IID" : false,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_non_iid -i -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/near-constant.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/near-constant-1bit.bin 1",
+   "dateTimeStamp" : "20261009023421",
+   "errorLevel" : 0,
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/near-constant-1bit.bin",
+   "sha256" : "2515fe0c5dd2fb7298a382e0c08369831fa8e28fa909400aaa29188444c038ed",
+   "testCases" : [
+      {
+         "hOriginal" : -0.0,
+         "mcvEstimateMode" : 999999.0,
+         "mcvEstimatePHat" : 0.99999899999999997,
+         "mcvEstimatePU" : 1.0,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 1.4426971936722022e-06,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : -0.0,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : -0.0,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : -0.0,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

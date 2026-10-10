@@ -1,0 +1,11 @@
+^D[?25l
+ RUN  v5.0.3 /Users/gmcas/repos/TruePad
+
+
+ Test Files  10 passed (10)
+      Tests  71 passed (71)
+   Start at  02:50:48
+   Duration  6.09s (tests 96%, transform 3%, import 1%)
+
+[?25h
+AUDIT_EXIT_STATUS=0

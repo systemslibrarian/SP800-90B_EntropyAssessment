@@ -1,0 +1,102 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/163",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/163/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/163/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/163/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/163",
+  "id": 897460155,
+  "node_id": "MDU6SXNzdWU4OTc0NjAxNTU=",
+  "number": 163,
+  "title": "Stuck in LRS Estimate",
+  "user": {
+    "login": "telmonteiro",
+    "id": 79711994,
+    "node_id": "MDQ6VXNlcjc5NzExOTk0",
+    "avatar_url": "https://avatars.githubusercontent.com/u/79711994?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/telmonteiro",
+    "html_url": "https://github.com/telmonteiro",
+    "followers_url": "https://api.github.com/users/telmonteiro/followers",
+    "following_url": "https://api.github.com/users/telmonteiro/following{/other_user}",
+    "gists_url": "https://api.github.com/users/telmonteiro/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/telmonteiro/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/telmonteiro/subscriptions",
+    "organizations_url": "https://api.github.com/users/telmonteiro/orgs",
+    "repos_url": "https://api.github.com/users/telmonteiro/repos",
+    "events_url": "https://api.github.com/users/telmonteiro/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/telmonteiro/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "closed",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 4,
+  "created_at": "2021-05-20T21:03:59Z",
+  "updated_at": "2021-07-07T15:59:24Z",
+  "closed_at": "2021-07-07T15:59:24Z",
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "Hi! I'm trying to test a 20 million byte-sized sample, but it gets stuck right after the t-tuple estimate. I tried reducing the sample size to 10 million, 5 million even to 1 million bytes, but it would always get stuck for hours/days. \r\nThough it works with 500 thousand bytes, I intended to get an estimate for the full 20MB.\r\n\r\nHere's the output using one verbose and two verboses for the 10 million bytes sample (the output is similar to the other sizes I mentioned):\r\n\r\n./ea_non_iid -i -a -v -l 0,10000000 ../bin/RawRandom_5.dat 8\r\nOpening file: '../bin/RawRandom_5.dat'\r\nLoaded 10000000 samples of 256 distinct 8-bit-wide symbols\r\nNumber of Binary Symbols: 80000000\r\n\r\nRunning non-IID tests...\r\n\r\nRunning Most Common Value Estimate...\r\nBitstring MCV Estimate: mode = 40001947, p-hat = 0.50002433749999997, p_u = 0.50016833073625866\r\n        Most Common Value Estimate (bit string) = 0.999514 / 1 bit(s)\r\nLiteral MCV Estimate: mode = 111928, p-hat = 0.011192799999999999, p_u = 0.011278492395416184\r\n        Most Common Value Estimate = 6.470282 / 8 bit(s)\r\n\r\nRunning Entropic Statistic Estimates (bit strings only)...\r\nBitstring Collision Estimate: X-bar = 2.4956254804858933, sigma-hat = 0.49998087101133543, p = 0.54796866074796802\r\n        Collision Test Estimate (bit string) = 0.867835 / 1 bit(s)\r\nBitstring Markov Estimate: P_0 = 0.49997566249999997, P_1 = 0.50002433749999997, P_0,0 = 0.50412775102147478, P_0,1 = 0.49587224897852522, P_1,0 = 0.49582399076724942, P_1,1 = 0.50417600923275052, p_max = 8.4513781664308203e-39\r\n        Markov Test Estimate (bit string) = 0.988094 / 1 bit(s)\r\nBitstring Compression Estimate: X-bar = 5.1327901495360555, sigma-hat = 1.0945666045533693, p = 0.077420044709657132\r\n        Compression Test Estimate (bit string) = 0.615192 / 1 bit(s)\r\n\r\nRunning Tuple Estimates...\r\nBitstring t-Tuple Estimate: t = 614, p-hat_max = 0.97693703399913179, p_u = 0.97698026178134945\r\n\r\nand for two verboses:\r\n\r\n./ea_non_iid -i -a -v -v -l 0,10000000 ../bin/RawRandom_5.dat 8\r\nOpening file: '../bin/RawRandom_5.dat'\r\nLoaded 10000000 samples of 256 distinct 8-bit-wide symbols\r\nNumber of Binary Symbols: 80000000\r\nBitstring Most Common Value Estimate: Mode count = 40001947\r\nBitstring Most Common Value Estimate: p-hat = 0.50002433749999997\r\nBitstring Most Common Value Estimate: p_u = 0.50016833073625866\r\nBitstring Most Common Value Estimate: min entropy = 0.99951438190300679\r\nLiteral Most Common Value Estimate: Mode count = 111928\r\nLiteral Most Common Value Estimate: p-hat = 0.011192799999999999\r\nLiteral Most Common Value Estimate: p_u = 0.011278492395416184\r\nLiteral Most Common Value Estimate: min entropy = 6.4702819552843014\r\nBitstring Collision Estimate: v = 32056092\r\nBitstring Collision Estimate: Sum t_i = 80000000\r\nBitstring Collision Estimate: X-bar = 2.4956254804858933\r\nBitstring Collision Estimate: sigma-hat = 0.49998087101133543\r\nBitstring Collision Estimate: X-bar' = 2.4953980151720927\r\nBitstring Collision Estimate: Found p.\r\nBitstring Collision Estimate: p = 0.54796866074796802\r\nBitstring Collision Estimate: min entropy = 0.86783470950515607\r\nBitstring Markov Estimate: P_0 = 0.49997566249999997\r\nBitstring Markov Estimate: P_1 = 0.50002433749999997\r\nBitstring Markov Estimate: P_{0,0} = 0.50412775102147478\r\nBitstring Markov Estimate: P_{0,1} = 0.49587224897852522\r\nBitstring Markov Estimate: P_{1,0} = 0.49582399076724942\r\nBitstring Markov Estimate: P_{1,1} = 0.50417600923275052\r\nBitstring Markov Estimate: p-hat_max = 8.4513781664308203e-39\r\nBitstring Markov Estimate: min entropy = 0.9880938209352732\r\nBitstring Compression Estimate: X-bar = 5.1327901495360555\r\nBitstring Compression Estimate: sigma-hat = 1.0945666045533693\r\nBitstring Compression Estimate: X-bar' = 5.1320179914976336\r\nBitstring Compression Estimate: Found p.\r\nBitstring Compression Estimate: p = 0.077420044709657132\r\nBitstring Compression Estimate: min entropy = 0.61519150816594603\r\nBitstring t-Tuple Estimate: t = 614\r\nBitstring t-Tuple Estimate: p-hat_max = 0.97693703399913179\r\nBitstring t-Tuple Estimate: p_u = 0.97698026178134945\r\nBitstring t-Tuple Estimate: min entropy = 0.033598679590137848\r\n\r\nI'm using 64-bit python version. Any help would be highly appreciated.",
+  "closed_by": {
+    "login": "celic",
+    "id": 2558865,
+    "node_id": "MDQ6VXNlcjI1NTg4NjU=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2558865?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/celic",
+    "html_url": "https://github.com/celic",
+    "followers_url": "https://api.github.com/users/celic/followers",
+    "following_url": "https://api.github.com/users/celic/following{/other_user}",
+    "gists_url": "https://api.github.com/users/celic/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/celic/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/celic/subscriptions",
+    "organizations_url": "https://api.github.com/users/celic/orgs",
+    "repos_url": "https://api.github.com/users/celic/repos",
+    "events_url": "https://api.github.com/users/celic/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/celic/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/163/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/163/timeline",
+  "performed_via_github_app": null,
+  "state_reason": "completed",
+  "pinned_comment": null
+}

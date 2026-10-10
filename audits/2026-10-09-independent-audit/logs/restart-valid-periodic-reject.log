@@ -1,0 +1,9 @@
+^DH_I: 1.000000
+{
+  "errorLevel": -1,
+  "errorMessage": "Restart Sanity Check Failed.",
+  "IID": false,
+  "testCases": null
+}
+
+AUDIT_EXIT_STATUS=255

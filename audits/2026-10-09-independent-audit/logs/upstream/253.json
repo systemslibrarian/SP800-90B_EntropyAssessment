@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/253",
+  "id": 5646823447,
+  "node_id": "I_kwDOAdd9c88AAAABUJOwFw",
+  "number": 253,
+  "title": "Multi-bit datasets with exactly two observed values are assessed as binary; the n×H_bitstring term of §3.1.3 is never computed",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2026-09-30T12:59:16Z",
+  "updated_at": "2026-09-30T19:07:49Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\nIn `-i` (initial entropy) mode, every bitstring branch in `cpp/non_iid_main.cpp` is gated on `data.alph_size > 2` — the number of **distinct observed** symbol values (`cpp/shared/utils.h`, the `symbol_map_down_table` pass) — and the binary \"Literal\" Collision/Markov/Compression branches on `data.alph_size == 2`. SP 800-90B §3.1.3 makes the bitstring assessment depend on the **sample width** n: \"If the sequential dataset is not binary … L samples (each having n bits) is considered as a bitstring of size nL … H_I = min(H_original, n × H_bitstring, H_submitter)\".\n\nSo an n-bit dataset (n = 2..8, declared or inferred) in which exactly two values occur is relabelled to {0,1} (`utils.h`, \"map down symbols\") and assessed as a 1-bit source: the ten estimators run on the relabelled symbols, no bitstring is formed, and the n × H_bitstring term is dropped. Declaring the width explicitly does not change this. A comparator/threshold source captured into bytes (0x00/0xFF, 0x55/0xAA) is exactly this case.\n\n## Reproduction\n\nBuilt at `87c104d` (macOS, Apple clang + libomp; `selftest` agrees with `refdata` to 3.7e-10).\n\n```\npython3 -c \"import random;r=random.Random(12345);b=[r.randrange(2) for _ in range(1000000)];open('twoval.bin','wb').write(bytes(2*x for x in b))\"\n./ea_non_iid -vv twoval.bin\n#   Loaded 1000000 samples of 2 distinct 2-bit-wide symbols\n#   H_original = 0.92162256445118362          (no Bitstring lines at all)\n#   Assessed min entropy: 0.92162256445118362\n./ea_non_iid -vv twoval.bin 8\n#   Loaded 1000000 samples of 2 distinct 8-bit-wide symbols\n#   Assessed min entropy: 0.92162256445118362  (declared width ignored)\n./ea_non_iid -vv -c twoval.bin\n#   H_bitstring = 0.089801499557893238\n#   H_bitstring Per Symbol = 0.17960299911578648\n```\n\nExpected per §3.1.3 at width 2: H_I = min(0.9216, 2 × 0.0898) = **0.1796**. Actual: **0.9216** (5.1× higher). With the width declared as 8, the same battery on the 8L-bit string gives H_bitstring per symbol 0.3178, so H_I should be 0.3178; actual 0.9216. The same binary takes the bitstring path for the identical file in `-c` mode (gate `!initial_entropy`), which is how the missing term was measured.\n\n## Direction\n\nReported figure too high whenever a multi-bit source happens to emit only two values; unbounded in principle (e.g. {0x00, 0xFF} at width 8).\n\n## Suggested fix\n\nGate on `data.word_size > 1` / `data.word_size == 1` instead of `data.alph_size > 2` / `== 2`. Width-1 datasets and datasets with more than two values are unaffected (the two conditions coincide there); `selftest` refdata is unchanged by the change. Pull request to follow.\n\nFound while auditing this tool for a downstream use that prices output length on the reported min-entropy figure.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

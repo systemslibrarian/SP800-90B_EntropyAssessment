@@ -1,0 +1,12 @@
+^D{
+  "errorLevel": 0,
+  "IID": true,
+  "case": {
+    "hAssessed": 0.99389902627828497,
+    "passedChiSquareTests": true,
+    "passedLongestRepeatedSubstringTest": true,
+    "passedIidPermutationTests": true
+  }
+}
+
+AUDIT_EXIT_STATUS=0

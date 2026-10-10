@@ -1,0 +1,22 @@
+pinned figure and reference comparison
+  pin-check                          PASS
+  selftest                           PASS (only the known upstream #155 platform files)
+
+regression scripts (discovered)
+  regression-271                     PASS
+  regression-272                     PASS
+  regression-chisquare               PASS
+  regression-docs                    PASS
+  regression-estimator-guards        PASS
+  regression-iid-json                PASS
+  regression-minsize                 PASS
+  regression-multimmc                PASS
+  regression-nonregular              PASS
+  regression-notrun                  PASS
+  regression-output                  PASS
+  regression-restart                 PASS
+  regression-subset                  PASS
+  regression-width                   PASS
+
+run-all-checks: 16 passed, 0 failed (14 regression scripts discovered)
+AUDIT_EXIT_STATUS=0

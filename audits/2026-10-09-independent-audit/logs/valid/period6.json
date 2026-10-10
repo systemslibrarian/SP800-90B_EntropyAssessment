@@ -1,0 +1,63 @@
+{
+   "IID" : false,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_non_iid -i -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/period6.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/period6-1bit.bin 1",
+   "dateTimeStamp" : "20261009023422",
+   "errorLevel" : 0,
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/period6-1bit.bin",
+   "sha256" : "bb9f2af262388161391e57c53e3c94e386847af3559f2ff8025b7c04a13c8163",
+   "testCases" : [
+      {
+         "hOriginal" : 0.99628576187360496,
+         "mcvEstimateMode" : 500001.0,
+         "mcvEstimatePHat" : 0.50000100000000003,
+         "mcvEstimatePU" : 0.50128891529572972,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 1.0,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.58820496991253524,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : -0.0,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : -0.0,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hOriginal" : 1.0,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 2.6692295007473114e-07,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 2.6692321708037965e-07,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 0.58234435610892532,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : -0.0,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

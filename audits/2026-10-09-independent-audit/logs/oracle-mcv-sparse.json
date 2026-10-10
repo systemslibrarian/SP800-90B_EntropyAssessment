@@ -1,0 +1,14 @@
+{
+  "file": "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-sparse-8bit.bin",
+  "sha256": "6f3fe369c5bd5b0ca56db4e4a1ac8a71783bab06e9838ad3d941b3442cc239f2",
+  "samples": 1000000,
+  "bitsPerSample": 8,
+  "alphabetSize": 3,
+  "maximumCount": 335864,
+  "pHat": 0.335864,
+  "pUpperPrinted2576": 0.3370806238192007,
+  "minEntropyPrinted2576": 1.568834394659168,
+  "pUpperFullQuantile": 0.33708054320065706,
+  "minEntropyFullQuantile": 1.5688347397041773,
+  "fullMinusPrintedEntropy": 3.450450092312707e-07
+}

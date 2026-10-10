@@ -1,0 +1,14 @@
+{
+   "IID" : false,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_non_iid -i -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/constant.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/constant-1bit.bin 1",
+   "dateTimeStamp" : "20261009023421",
+   "errorLevel" : -1,
+   "errorMessage" : "Symbol alphabet consists of 1 symbol. No entropy awarded...",
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/constant-1bit.bin",
+   "sha256" : "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

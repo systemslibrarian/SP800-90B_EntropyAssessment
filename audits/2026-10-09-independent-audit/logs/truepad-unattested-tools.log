@@ -1,0 +1,24 @@
+^D{
+  "exitStatus": 0,
+  "signal": null,
+  "stdout": "{\"qualification\":\"/tmp/sp80090b-audit-20261009.5WcSLl/truepad-spoof-2/qualification/qualification.json\",\"status\":\"assessment-tools-passed-independent-physical-review-pending\"}\n",
+  "stderr": "truepad2: reuse-safe pad handling with authenticated envelopes (Store Format v2; docs/FORMAT-V2.md is the\nbinding spec). Forgery of a record is bounded per FORMAT-V2.md §5, conditional on ceremony-grade source\nmaterial and the §10 durability scope. This is pad handling, not a messaging system, and not a\nrecommendation to use one-time pads for real traffic.\nSP 800-90B tool runs completed and evidence was saved under /tmp/sp80090b-audit-20261009.5WcSLl/truepad-spoof-2/qualification. Independent physical review remains pending. No hardware entropy or exact-uniformity claim was validated.\n",
+  "gitTrackedStatus": "",
+  "assessmentSha256": "2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3",
+  "restartSha256": "46b7a4fc500549915a2b991f47409f947d3929a9d8dbc4d2b82872447ba7224f",
+  "fakeNonIidSha256": "32945cf9f24872c15dc33281c44997dacca06feac024d0d658e85b3c5b519b8b",
+  "fakeRestartSha256": "32945cf9f24872c15dc33281c44997dacca06feac024d0d658e85b3c5b519b8b",
+  "qualification": {
+    "status": "assessment-tools-passed-independent-physical-review-pending",
+    "assessedMinEntropyPerSample": 1,
+    "selectedMinEntropyPerSample": 1,
+    "toolCommit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+    "selftestRecord": {
+      "path": "/tmp/sp80090b-audit-20261009.5WcSLl/truepad-spoof-2/selftest.txt",
+      "sha256": "bad0d0a3543a69d9b362b47a2ebefa64b12b647f19c1cd2c15e200db3aae955d",
+      "operatorReviewRequired": true
+    }
+  }
+}
+
+AUDIT_EXIT_STATUS=0

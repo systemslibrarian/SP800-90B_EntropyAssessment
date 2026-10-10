@@ -1,0 +1,49 @@
+[
+  {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/comments/5917873394",
+    "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/253#issuecomment-5917873394",
+    "issue_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/253",
+    "id": 5917873394,
+    "node_id": "IC_kwDOAdd9c88AAAABYLuU8g",
+    "user": {
+      "login": "joshuaehill",
+      "id": 990213,
+      "node_id": "MDQ6VXNlcjk5MDIxMw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/joshuaehill",
+      "html_url": "https://github.com/joshuaehill",
+      "followers_url": "https://api.github.com/users/joshuaehill/followers",
+      "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+      "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+      "repos_url": "https://api.github.com/users/joshuaehill/repos",
+      "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-09-30T19:07:49Z",
+    "updated_at": "2026-09-30T19:07:49Z",
+    "body": "As per my comment in the relevant PR #256 I don't think this change is useful.",
+    "author_association": "CONTRIBUTOR",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/comments/5917873394/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null
+  }
+]

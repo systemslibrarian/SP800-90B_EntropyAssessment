@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/264",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/264/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/264/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/264/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/264",
+  "id": 5647267172,
+  "node_id": "I_kwDOAdd9c88AAAABUJp1ZA",
+  "number": 264,
+  "title": "Collision estimate with v <= 1 (2-5 binary samples): sigma-hat is NaN and the estimator prints min-entropy = 1 unmeasured",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2026-09-30T13:31:18Z",
+  "updated_at": "2026-09-30T23:20:46Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\n`collision_test` (`cpp/non_iid/collision_test.h`) has no minimum on the number of collisions v. For binary inputs of 2–5 samples v ≤ 1, the sample standard deviation `sqrt((s - i*X)/(v-1))` at line 40 is 0/0 = NaN, X̄' becomes NaN, both `X < 2.0` and `X < 2.5` are false on NaN, and the estimator prints **min-entropy = 1** (\"Could Not Find p. Proceeding with the lower bound for p.\") without having measured anything.\n\nVerified at `87c104d`:\n\n```\npython3 -c \"open('b5.bin','wb').write(bytes([0,1,1,0,1]))\"\n./ea_non_iid -vv b5.bin 1\n#   Literal Collision Estimate: v = 1\n#   Literal Collision Estimate: X-bar = 3\n#   Literal Collision Estimate: sigma-hat = nan\n#   Literal Collision Estimate: X-bar' = nan\n#   Literal Collision Estimate: p = 0.5\n#   Literal Collision Estimate: min entropy = 1\n#   Assertion failed: (L>B_len), function binaryLZ78YPredictionEstimate, file lz78y_test.h, line 17.\n```\n\nToday the 1.0 never reaches an assessed figure because every such input later aborts in an assert (see the tiny-input issue filed alongside this one). If those aborts are turned into skips, this unmeasured 1.0 would become part of the reported minimum. The non-binary path cannot reach it (the bitstring of any ≥ 2-sample multi-bit input has ≥ 16 bits, v ≥ 5).\n\n## Expected\n\n§6.3.2 step 5 defines σ̂ with a 1/(v−1) factor, so v ≥ 2 is required; the estimator should return −1 (skip) or refuse when v < 2, and NaN should never be compared against the 2.0 / 2.5 thresholds. Direction: too HIGH for the estimator's own value; no effect on any figure the tool currently emits.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/264/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/264/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

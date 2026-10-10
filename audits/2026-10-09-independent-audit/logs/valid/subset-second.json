@@ -1,0 +1,66 @@
+{
+   "IID" : false,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_non_iid -i -q -l 1,1000000 -o audits/2026-10-09-independent-audit/logs/valid/subset-second.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/subset-source-1bit.bin 1",
+   "dateTimeStamp" : "20261009023530",
+   "errorLevel" : 0,
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/subset-source-1bit.bin",
+   "sha256" : "24dca96b6163b695686a4756b6c62501268b8110107da29910d45c1fbd2d6303",
+   "subsetActualSamples" : 1000000,
+   "subsetIndex" : 1,
+   "subsetRequestedSamples" : 1000000,
+   "testCases" : [
+      {
+         "hOriginal" : 0.99514653637640615,
+         "mcvEstimateMode" : 500397.0,
+         "mcvEstimatePHat" : 0.50039699999999998,
+         "mcvEstimatePU" : 0.50168491488975808,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 0.91162948082135986,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.99896733199639576,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.82943710623935463,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : 0.94333360905039731,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : 0.96644522788978593,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hOriginal" : 0.99631586584509668,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 0.99669592976743837,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 0.99715516977341323,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 0.99580949682094788,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : 0.82943710623935463,
+         "hOriginal" : 0.82943710623935463,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

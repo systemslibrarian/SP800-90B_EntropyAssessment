@@ -1,0 +1,102 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/22",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/22/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/22/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/22/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/22",
+  "id": 190239275,
+  "node_id": "MDU6SXNzdWUxOTAyMzkyNzU=",
+  "number": 22,
+  "title": "z_alpha is aggressively rounded",
+  "user": {
+    "login": "joshuaehill",
+    "id": 990213,
+    "node_id": "MDQ6VXNlcjk5MDIxMw==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/joshuaehill",
+    "html_url": "https://github.com/joshuaehill",
+    "followers_url": "https://api.github.com/users/joshuaehill/followers",
+    "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+    "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+    "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+    "repos_url": "https://api.github.com/users/joshuaehill/repos",
+    "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "closed",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2016-11-18T05:29:18Z",
+  "updated_at": "2019-01-31T21:55:23Z",
+  "closed_at": "2019-01-31T21:55:23Z",
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "Various instances of Z_alpha are used throughout the codebase (in maurer.py, mostCommonValue.py, noniid_collision.py, SP90Bv2_predictors.py), and in each case this value is approximated as 2.576. Baring some specific reason to round, it seems reasonable to use this value in as precise a way as double-based arithmetic allows, which would be 2.5758293035489008.",
+  "closed_by": {
+    "login": "celic",
+    "id": 2558865,
+    "node_id": "MDQ6VXNlcjI1NTg4NjU=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2558865?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/celic",
+    "html_url": "https://github.com/celic",
+    "followers_url": "https://api.github.com/users/celic/followers",
+    "following_url": "https://api.github.com/users/celic/following{/other_user}",
+    "gists_url": "https://api.github.com/users/celic/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/celic/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/celic/subscriptions",
+    "organizations_url": "https://api.github.com/users/celic/orgs",
+    "repos_url": "https://api.github.com/users/celic/repos",
+    "events_url": "https://api.github.com/users/celic/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/celic/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/22/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/22/timeline",
+  "performed_via_github_app": null,
+  "state_reason": "completed",
+  "pinned_comment": null
+}

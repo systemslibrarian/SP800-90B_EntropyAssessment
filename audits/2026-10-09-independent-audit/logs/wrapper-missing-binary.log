@@ -1,0 +1,3 @@
+run-all-checks: ea_restart is missing; run 'make non_iid iid restart' first
+
+AUDIT_EXIT_STATUS=2

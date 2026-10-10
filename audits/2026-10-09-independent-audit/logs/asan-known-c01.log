@@ -1,0 +1,20 @@
+^DH_I: 1.000000
+=================================================================
+[1m[31m==67411==ERROR: AddressSanitizer: alloc-dealloc-mismatch (operator new [] vs operator delete) on 0x00010ca1c800
+[1m[0m    #0 0x000105c64558 in _ZdlPv+0x74 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x50558)
+    #1 0x00010488dab0 in simulateBound(double, int, double, unsigned long) restart_main.cpp:161
+    #2 0x00010488eff0 in main restart_main.cpp:479
+    #3 0x000186b304e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+[1m[32m0x00010ca1c800 is located 0 bytes inside of 10000000-byte region [0x00010ca1c800,0x00010d3a5e80)
+[1m[0m[1m[35mallocated by thread T0 here:[1m[0m
+    #0 0x000105c64268 in _Znam+0x74 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x50268)
+    #1 0x00010488d7ec in simulateBound(double, int, double, unsigned long) restart_main.cpp:124
+    #2 0x00010488eff0 in main restart_main.cpp:479
+    #3 0x000186b304e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: AddressSanitizer: alloc-dealloc-mismatch restart_main.cpp:161 in simulateBound(double, int, double, unsigned long)
+==67411==HINT: if you don't care about these errors you may set ASAN_OPTIONS=alloc_dealloc_mismatch=0
+==67411==ABORTING
+
+AUDIT_EXIT_STATUS=6

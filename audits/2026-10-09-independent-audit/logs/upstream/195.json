@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/195",
+  "id": 1348284824,
+  "node_id": "I_kwDOAdd9c85QXTGY",
+  "number": 195,
+  "title": "ea_restart core dumps on k_max <= k'",
+  "user": {
+    "login": "mmccarl",
+    "id": 61979072,
+    "node_id": "MDQ6VXNlcjYxOTc5MDcy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/61979072?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/mmccarl",
+    "html_url": "https://github.com/mmccarl",
+    "followers_url": "https://api.github.com/users/mmccarl/followers",
+    "following_url": "https://api.github.com/users/mmccarl/following{/other_user}",
+    "gists_url": "https://api.github.com/users/mmccarl/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/mmccarl/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/mmccarl/subscriptions",
+    "organizations_url": "https://api.github.com/users/mmccarl/orgs",
+    "repos_url": "https://api.github.com/users/mmccarl/repos",
+    "events_url": "https://api.github.com/users/mmccarl/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/mmccarl/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2022-08-23T17:21:00Z",
+  "updated_at": "2022-08-23T17:41:09Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "i specified bitspersample = 4, alphabetsize = 16 and hminestimate = 3.2, but input file has only 3 bits per sample (with the 5 high order bits all zeros).  When ea_restart was run, it said that the symbols appear to be narrower than described then it aborted with a core dump because Assertion 'k_max <= k' failed.  No json output is produced in this scenario.\r\n\r\nthe program should at least produced a json output containing an error message.",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

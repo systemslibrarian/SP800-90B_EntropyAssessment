@@ -1,0 +1,21 @@
+^DCOMMAND width2: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width2.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-2bit.bin 2
+STATUS width2 0
+{"dataWordSize":2.0,"hAssessed":1.7746986435684364,"hBitstring":0.8873493217842182,"hOriginal":1.9048345618002862,"testCaseDesc":"Overall"}
+COMMAND width3: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width3.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-3bit.bin 3
+STATUS width3 0
+{"dataWordSize":3.0,"hAssessed":2.6769916865331616,"hBitstring":0.8923305621777206,"hOriginal":2.8208833291571827,"testCaseDesc":"Overall"}
+COMMAND width4: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width4.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-4bit.bin 4
+STATUS width4 0
+{"dataWordSize":4.0,"hAssessed":3.611520397580104,"hBitstring":0.902880099395026,"hOriginal":3.863764456839539,"testCaseDesc":"Overall"}
+COMMAND width5: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width5.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-5bit.bin 5
+STATUS width5 0
+{"dataWordSize":5.0,"hAssessed":4.36314416446082,"hBitstring":0.872628832892164,"hOriginal":4.698165232420376,"testCaseDesc":"Overall"}
+COMMAND width6: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width6.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-6bit.bin 6
+STATUS width6 0
+{"dataWordSize":6.0,"hAssessed":5.541324584260068,"hBitstring":0.923554097376678,"hOriginal":5.8071739614533335,"testCaseDesc":"Overall"}
+COMMAND width7: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width7.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-7bit.bin 7
+STATUS width7 0
+{"dataWordSize":7.0,"hAssessed":6.243702284161174,"hBitstring":0.8919574691658819,"hOriginal":6.6383827321596725,"testCaseDesc":"Overall"}
+COMMAND width8: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width8.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-8bit.bin 8
+STATUS width8 0
+{"dataWordSize":8.0,"hAssessed":7.411307998619576,"hBitstring":0.926413499827447,"hOriginal":7.880987019644007,"testCaseDesc":"Overall"}

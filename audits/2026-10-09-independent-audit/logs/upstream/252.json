@@ -1,0 +1,78 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/252",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/252/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/252/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/252/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/252",
+  "id": 5477791942,
+  "node_id": "PR_kwDOAdd9c88AAAABDzjtAQ",
+  "number": 252,
+  "title": "IID test: do not return final min-entropy if any of the test suites fail the IID assumption",
+  "user": {
+    "login": "locksmithone",
+    "id": 930858,
+    "node_id": "MDQ6VXNlcjkzMDg1OA==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/930858?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/locksmithone",
+    "html_url": "https://github.com/locksmithone",
+    "followers_url": "https://api.github.com/users/locksmithone/followers",
+    "following_url": "https://api.github.com/users/locksmithone/following{/other_user}",
+    "gists_url": "https://api.github.com/users/locksmithone/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/locksmithone/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/locksmithone/subscriptions",
+    "organizations_url": "https://api.github.com/users/locksmithone/orgs",
+    "repos_url": "https://api.github.com/users/locksmithone/repos",
+    "events_url": "https://api.github.com/users/locksmithone/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/locksmithone/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2026-09-16T17:28:14Z",
+  "updated_at": "2026-09-16T17:28:14Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "draft": false,
+  "pull_request": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/pulls/252",
+    "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/252",
+    "diff_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/252.diff",
+    "patch_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/252.patch",
+    "merged_at": null
+  },
+  "body": "In the current code, testing with ea_iid will always return a min-entropy value at the end, regardless of whether the data passes the IID assumption, or not. Even though seeing the value may be beneficial, it is also misleading, since this min-entropy value is now meaningless from the point of view of an ESV and SP800-90B, as a non-passing IID result forbids the assessment to be submitted through the IID path.\r\n\r\nThis request modifies the code so that the final min-entropy value will not be returned if any of the test suites fail to demonstrate that the data passes the IID assumption.\r\n\r\n- The text output will indicate that the IID test suite failed;\r\n- and h_assessed will be set to -1.0 in the JSON output file.",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/252/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/252/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null
+}

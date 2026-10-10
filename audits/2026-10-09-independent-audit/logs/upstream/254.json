@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/254",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/254/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/254/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/254/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/254",
+  "id": 5646823659,
+  "node_id": "I_kwDOAdd9c88AAAABUJOw6w",
+  "number": 254,
+  "title": "Default bits_per_symbol inference narrows the sample width from the data and changes n×H_bitstring by up to 2.4×; the inferred width is not recorded in the JSON",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2026-09-30T12:59:17Z",
+  "updated_at": "2026-09-30T23:20:34Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\nWhen `bits_per_symbol` is omitted (the documented default), `read_file_subset` (`cpp/shared/utils.h`, \"Do we need to establish the word size?\") sets `word_size` to the position of the highest bit set in the OR of all bytes. Constant-zero high bits are therefore dropped from the bitstring, and both the bitstring and the `n` in `n × H_bitstring` (§3.1.3) change. This is an undocumented symbol-space reduction: §3.2.2 requirement 6 has the submitter document the fixed symbol size, and §6.4 permits reducing n-bit samples to m bits only via a submitter-supplied bit ranking.\n\n## Reproduction\n\nBuilt at `87c104d` (macOS, Apple clang + libomp; `selftest` agrees with `refdata` to 3.7e-10).\n\n```\npython3 -c \"import random;r=random.Random(2);open('w4.bin','wb').write(bytes(r.randrange(16) for _ in range(1000000)))\"\n./ea_non_iid -vv w4.bin\n#   Loaded 1000000 samples of 16 distinct 4-bit-wide symbols\n#   H_bitstring Per Symbol = 3.7390649510685936   H_original = 3.7798741076670073\n#   Assessed min entropy: 3.7390649510685936\n./ea_non_iid -vv w4.bin 8\n#   Warning: Symbols appear to be narrower than described.\n#   H_bitstring Per Symbol = 1.5385994915639978   H_original = 3.7798741076670073\n#   Assessed min entropy: 1.5385994915639978\npython3 -c \"d=bytearray(open('w4.bin','rb').read());d[-1]|=0x80;open('w4b.bin','wb').write(d)\"\n./ea_non_iid -vv w4b.bin\n#   Loaded 1000000 samples of 17 distinct 8-bit-wide symbols\n#   Assessed min entropy: 1.5386114654846945   (one sample changed the width, and the figure, by 2.4x)\n```\n\nH_original is invariant (the translation is order-preserving); the n × H_bitstring term is computed on a different bitstring with a different n. The inferred-width figure is 2.4× the declared-width figure here, and a single sample with a high bit set flips it discontinuously. `bin/truerand_4bit.bin` takes the same path.\n\nThe \"Symbols appear to be narrower than described\" warning is printed to stdout; `errorLevel` stays 0 and the message does not reach the JSON report, so a consumer of `-o` output cannot tell which width was used.\n\n## Request\n\nEither require `bits_per_symbol` (or a `--infer-width` opt-in), or record the inferred width and the \"narrower than described\" condition in the JSON report with a non-zero `errorLevel`/warning field. Which width is normative is a spec-reading question; the point of this issue is that the tool currently decides it silently.\n\nFound while auditing this tool for a downstream use that prices output length on the reported min-entropy figure.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/254/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/254/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

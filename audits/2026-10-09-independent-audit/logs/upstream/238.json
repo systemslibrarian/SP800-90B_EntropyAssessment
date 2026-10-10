@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/238",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/238/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/238/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/238/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/238",
+  "id": 2845836355,
+  "node_id": "I_kwDOAdd9c86poARD",
+  "number": 238,
+  "title": "Include in JSON outputs the number of samples tested, and the number of distinct symbols found",
+  "user": {
+    "login": "locksmithone",
+    "id": 930858,
+    "node_id": "MDQ6VXNlcjkzMDg1OA==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/930858?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/locksmithone",
+    "html_url": "https://github.com/locksmithone",
+    "followers_url": "https://api.github.com/users/locksmithone/followers",
+    "following_url": "https://api.github.com/users/locksmithone/following{/other_user}",
+    "gists_url": "https://api.github.com/users/locksmithone/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/locksmithone/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/locksmithone/subscriptions",
+    "organizations_url": "https://api.github.com/users/locksmithone/orgs",
+    "repos_url": "https://api.github.com/users/locksmithone/repos",
+    "events_url": "https://api.github.com/users/locksmithone/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/locksmithone/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2025-02-11T16:10:56Z",
+  "updated_at": "2025-02-11T16:10:56Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "In the console text output when running the 90B tool, the tool reports, right at the beginning, something like \"Loaded 1000000 samples of 2 distinct 1-bit-wide symbols.\" This information is however not present in the JSON output, and it is frequently relevant information.\n\nMay I suggest including the \"loaded # samples\" and the symbol length in the JSON file as reported in the console text output.",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/238/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/238/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

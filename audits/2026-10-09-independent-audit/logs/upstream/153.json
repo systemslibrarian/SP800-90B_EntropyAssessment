@@ -1,0 +1,102 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/153",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/153/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/153/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/153/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/153",
+  "id": 674533649,
+  "node_id": "MDU6SXNzdWU2NzQ1MzM2NDk=",
+  "number": 153,
+  "title": "The LRS test for IID data implementation has precision problems that lead to incorrect verdicts",
+  "user": {
+    "login": "joshuaehill",
+    "id": 990213,
+    "node_id": "MDQ6VXNlcjk5MDIxMw==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/joshuaehill",
+    "html_url": "https://github.com/joshuaehill",
+    "followers_url": "https://api.github.com/users/joshuaehill/followers",
+    "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+    "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+    "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+    "repos_url": "https://api.github.com/users/joshuaehill/repos",
+    "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "closed",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2020-08-06T18:58:09Z",
+  "updated_at": "2020-08-13T16:43:40Z",
+  "closed_at": "2020-08-13T16:43:40Z",
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "This issue was first reported in PR #151 \r\n\r\nThere are a few issues that need to be resolved:\r\n\r\n1. p_col^W could be smaller that DBL_EPSILON (or LDBL_EPSILON if we switch to long doubles), which would incorrectly make the calculation 1-p_col^W return exactly equal to 1 due to loss of precision in the underlying floating point representation. This is the specific issue identified in PR #151, and it leads to the issue reported within that pull request.\r\n2. p_col^W could be smaller than DBL_MIN (or LDBL_MIN if we switch to long doubles), which leads to the same issue above, but is nominally distinct. This issue is harder to resolve this issue without moving to arbitrary precision math, but it can be detected.\r\n3. (1 - p_col^W)^N could have rounding issues. In this case, the rounding resolves into a sensible answer, but it's something to note.\r\n\r\nThese can all be mostly addressed by doing calculations using long doubles and doing the important calculations after first taking the log (using a suitable variant of log, like log1p).",
+  "closed_by": {
+    "login": "celic",
+    "id": 2558865,
+    "node_id": "MDQ6VXNlcjI1NTg4NjU=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2558865?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/celic",
+    "html_url": "https://github.com/celic",
+    "followers_url": "https://api.github.com/users/celic/followers",
+    "following_url": "https://api.github.com/users/celic/following{/other_user}",
+    "gists_url": "https://api.github.com/users/celic/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/celic/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/celic/subscriptions",
+    "organizations_url": "https://api.github.com/users/celic/orgs",
+    "repos_url": "https://api.github.com/users/celic/repos",
+    "events_url": "https://api.github.com/users/celic/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/celic/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/153/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/153/timeline",
+  "performed_via_github_app": null,
+  "state_reason": "completed",
+  "pinned_comment": null
+}

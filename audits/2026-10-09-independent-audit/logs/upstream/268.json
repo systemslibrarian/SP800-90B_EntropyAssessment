@@ -1,0 +1,78 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/268",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/268/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/268/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/268/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268",
+  "id": 5647276844,
+  "node_id": "PR_kwDOAdd9c88AAAABF511EA",
+  "number": 268,
+  "title": "non_iid: prevent heap over-read in binaryMultiMMCPredictionEstimate for 4 <= L <= 16 (#257)",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2026-09-30T13:32:04Z",
+  "updated_at": "2026-10-01T04:33:36Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "draft": false,
+  "pull_request": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/pulls/268",
+    "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268",
+    "diff_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268.diff",
+    "patch_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/pull/268.patch",
+    "merged_at": null
+  },
+  "body": "Fixes #257.\r\n\r\n## What\r\n\r\nGuard the init loop in `binaryMultiMMCPredictionEstimate` (`cpp/non_iid/multi_mmc_test.h`) with `d+1 < L`, so `S[d+1]` is never read past the sample buffer.\r\n\r\n```diff\r\n   // initialize MMC counts\r\n-  for(d=0; d<D_MMC; d++) {\r\n+  for(d=0; (d<D_MMC) && (d+1 < L); d++) {\r\n      curPattern = ((curPattern << 1) | (S[d]&1));\r\n      (BINARYDICTLOC(d+1, curPattern))[S[d+1]&1] = 1;\r\n      dictElems[d] = 1;\r\n   }\r\n```\r\n\r\n## Why\r\n\r\n`D_MMC == 16`, and the loop reads `S[d+1]` for `d` up to `D_MMC-1 = 15`, i.e. `S[16]`, guarded only by `assert(L>3)`. For any `4 <= L <= 16` this reads one byte past the end of the buffer allocated in `read_file_subset`. It is reachable from an untrusted file with the default command line. On a normal assert-enabled build, the over-read is silent inside MultiMMC, but execution later aborts in `binaryLZ78YPredictionEstimate`, so no overall assessment is emitted. AddressSanitizer exposes the underlying heap-buffer-overflow directly at `multi_mmc_test.h:38`. See #257 for the full reproduction.\r\n\r\nThe generic (non-binary) `multiMMCPredictionEstimate` already guards the identical loop with `if(d < N)` (`N = len-2`); this brings the binary path in line.\r\n\r\n## What does not change\r\n\r\nFor `L > 16` the guard `d+1 < L` is always true, so no in-bounds run changes:\r\n\r\n- AddressSanitizer clean on `L` in `{4,5,8,12,16}` (was: heap-buffer-overflow on each).\r\n- `cpp/selftest/selftest` vs `refdata`: max delta `3.7e-10`, none above `1e-9` (unchanged platform deltas).\r\n- Identical `Assessed min entropy` to the unpatched binary on `bin/truerand_8bit.bin` (`7.2338614551796505`).\r\n\r\nBuilt and tested at the current `master` baseline on macOS (Apple clang + libomp).\r\n\r\n🤖 Generated with [[Claude Code](https://claude.com/claude-code)](https://claude.com/claude-code)",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/268/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/268/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null
+}

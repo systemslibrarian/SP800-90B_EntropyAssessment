@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/260",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/260/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/260/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/260/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/260",
+  "id": 5647226742,
+  "node_id": "I_kwDOAdd9c88AAAABUJnXdg",
+  "number": 260,
+  "title": "-l subset path: offset multiplication overflows (silent wrong/whole-file read) and the recorded SHA-256 is of the whole file, not the subset",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2026-09-30T13:28:13Z",
+  "updated_at": "2026-09-30T23:20:36Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\nTwo issues on the `-l <index>,<samples>` subset path, distinct from the already-fixed segfault in #191:\n\n1. **Offset multiplication overflow.** `read_file_subset` computes the byte offset as `subsetIndex*subsetSize` in `unsigned long` (`cpp/shared/utils.h:207-222`, and the same expression in `non_iid_main.cpp`). Chosen so the product reaches 2^64, it wraps to a small value and the tool silently reads from the wrong offset (offset 0 = the whole file) instead of refusing.\n2. **Recorded SHA-256 is of the whole file, not the subset.** `sha256_file` hashes the entire file (`non_iid_main.cpp:180`) regardless of `-l`, so the JSON report of a subset run records a hash that does not identify the data actually assessed.\n\n## Reproduction\n\nBuilt at `87c104d`, on `bin/truerand_1bit.bin` (1,000,000 bytes, whole-file SHA-256 `f9ea8832...`).\n\n```\n# (1) overflow: index=2, size=2^63 -> 2*2^63 = 2^64 wraps to 0\n./ea_non_iid -vv -l 2,9223372036854775808 bin/truerand_1bit.bin 1\n#   Opening file: '...' , reading block 2 of size -9223372036854775808\n#   Loaded 1000000 samples ...        <-- the WHOLE file, not block 2\n\n# (2) whole-file hash under -l\n./ea_non_iid -q -o sub.json -l 4,1000 bin/truerand_1bit.bin 1\n#   sub.json \"sha256\": f9ea8832...            (whole file)\n#   actual bytes[4000:5000] sha256: d4075730...  (differs)\n```\n\nThe reported block size also prints as negative (`-9223372036854775808`): `subsetSize` is `unsigned long` but printed with `%ld`.\n\n## Impact\n\nReachable only with a hostile or mistaken command line (the file alone cannot trigger it). No crash, but a subset run can silently assess different data than requested, and its JSON report's hash does not identify the assessed subset. #191 fixed a `-l` segfault; these are separate: the current code does not crash, it silently reads the wrong range.\n\n## Suggested fix (not submitted as code)\n\nDetect the multiplication overflow (or compute the offset with a widening/checked type) and refuse; either hash only the assessed subset or state in the report that the hash is of the whole file.\n\nFound during an integer-overflow / input-handling audit.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/260/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/260/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

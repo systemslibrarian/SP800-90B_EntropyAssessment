@@ -1,0 +1,14 @@
+{
+  "file": "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/constant-1bit.bin",
+  "sha256": "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025",
+  "samples": 1000000,
+  "bitsPerSample": 1,
+  "alphabetSize": 1,
+  "maximumCount": 1000000,
+  "pHat": 1.0,
+  "pUpperPrinted2576": 1.0,
+  "minEntropyPrinted2576": -0.0,
+  "pUpperFullQuantile": 1.0,
+  "minEntropyFullQuantile": -0.0,
+  "fullMinusPrintedEntropy": 0.0
+}

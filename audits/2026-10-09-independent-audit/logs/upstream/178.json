@@ -1,0 +1,102 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/178",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/178/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/178/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/178/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/178",
+  "id": 1119061273,
+  "node_id": "I_kwDOAdd9c85Cs4UZ",
+  "number": 178,
+  "title": "Check for invalid results for all tests that flag error",
+  "user": {
+    "login": "joshuaehill",
+    "id": 990213,
+    "node_id": "MDQ6VXNlcjk5MDIxMw==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/joshuaehill",
+    "html_url": "https://github.com/joshuaehill",
+    "followers_url": "https://api.github.com/users/joshuaehill/followers",
+    "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+    "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+    "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+    "repos_url": "https://api.github.com/users/joshuaehill/repos",
+    "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "closed",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 0,
+  "created_at": "2022-01-31T07:21:44Z",
+  "updated_at": "2022-02-16T18:40:22Z",
+  "closed_at": "2022-02-16T18:40:22Z",
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "Some (though not all) of the estimators can return values less than 0 to indicate an error. This indicates that the estimator was unable to run, and such results should be ignored.\r\n\r\nThe line https://github.com/usnistgov/SP800-90B_EntropyAssessment/blob/71160ce65aa356a21634f5540fd6e5eb77b232e5/cpp/conditioning_main.cpp#L384\r\n\r\nShould instead be \r\n```\r\nif(bin_lrs_res >= 0.0) h_bitstring = min(bin_lrs_res, h_bitstring);\r\n```\r\nSimilarly the lines in https://github.com/usnistgov/SP800-90B_EntropyAssessment/blob/71160ce65aa356a21634f5540fd6e5eb77b232e5/cpp/non_iid_main.cpp#L341-L350\r\n\r\nshould instead be\r\n```\r\n    // Section 6.3.6 - Estimate entropy with LRS Test\r\n    if ((((data.alph_size > 2) || !initial_entropy)) && (bin_lrs_res >= 0.0)) {\r\n        if (verbose == 1) printf(\"\\tLRS Test Estimate (bit string) = %f / 1 bit(s)\\n\", bin_lrs_res);\r\n        H_bitstring = min(bin_lrs_res, H_bitstring);\r\n    }\r\n\r\n    if (initial_entropy && (lrs_res >= 0.0)) {\r\n        if (verbose == 1) printf(\"\\tLRS Test Estimate = %f / %d bit(s)\\n\", lrs_res, data.word_size);\r\n        H_original = min(lrs_res, H_original);\r\n    }\r\n```\r\n\r\n",
+  "closed_by": {
+    "login": "celic",
+    "id": 2558865,
+    "node_id": "MDQ6VXNlcjI1NTg4NjU=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2558865?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/celic",
+    "html_url": "https://github.com/celic",
+    "followers_url": "https://api.github.com/users/celic/followers",
+    "following_url": "https://api.github.com/users/celic/following{/other_user}",
+    "gists_url": "https://api.github.com/users/celic/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/celic/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/celic/subscriptions",
+    "organizations_url": "https://api.github.com/users/celic/orgs",
+    "repos_url": "https://api.github.com/users/celic/repos",
+    "events_url": "https://api.github.com/users/celic/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/celic/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/178/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/178/timeline",
+  "performed_via_github_app": null,
+  "state_reason": "completed",
+  "pinned_comment": null
+}

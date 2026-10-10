@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/258",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/258/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/258/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/258/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/258",
+  "id": 5647226083,
+  "node_id": "I_kwDOAdd9c88AAAABUJnU4w",
+  "number": 258,
+  "title": "Literal MultiMCW is skipped for 64 <= L <= 4095 though §6.3.7 defines it for L > 63; warning text is off by one",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2026-09-30T13:28:10Z",
+  "updated_at": "2026-09-30T23:20:42Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\nThe literal MultiMCW estimator is skipped for every input of `64 <= L <= 4095` samples, although SP 800-90B §6.3.7 defines it for `L > 63` (the smallest of its four windows is 63). When it is skipped the reported entropy is the minimum over fewer estimators, so it can only be `>=` the compliant figure. The warning text is also off by one.\n\n## Location\n\n`cpp/non_iid/multi_mcw_test.h:9,16-19`:\n\n```c\nint W[NUM_WINS] = {63, 255, 1023, 4095};      // NUM_WINS == 4\n...\nif(len < W[NUM_WINS-1]+1){                     // len < 4096\n    printf(\"\\t*** Warning: not enough samples to run multiMCW test (need more than %d) ***\\n\", W[NUM_WINS-1]+1);  // prints 4096\n    return -1.0;                               // dropped from the minimum by the `if (ret >= 0)` guard in non_iid_main.cpp\n}\n```\n\n## Reproduction\n\nBuilt at `87c104d`.\n\n```\npython3 -c \"import random;r=random.Random(9);open('m4095.bin','wb').write(bytes(r.randrange(256) for _ in range(4095)))\"\npython3 -c \"import random;r=random.Random(9);open('m4096.bin','wb').write(bytes(r.randrange(256) for _ in range(4096)))\"\n./ea_non_iid -vv m4095.bin 8    # Literal MultiMCW ABSENT; prints \"*** Warning: not enough samples to run multiMCW test (need more than 4096) ***\"\n./ea_non_iid -vv m4096.bin 8    # \"Literal MultiMCW Prediction Estimate: ... min entropy = 7.0007111463554326\"\n```\n\nAt `L = 4095` the literal MultiMCW does not run; at `L = 4096` it does.\n\n## Two problems\n\n1. **Coverage.** §6.3.7 defines MultiMCW for `L > 63`; windows larger than the data can sit out (step 3a.ii, `frequent_j = Null`). The guard `len < 4096` excludes the entire range `64..4095`, so for those inputs the reported minimum omits an estimator that the standard includes. The reported figure can only be higher than the compliant one.\n2. **Off-by-one message.** The check is `len < 4096`, so `len == 4096` is accepted, yet the message says \"need more than 4096\". It should read \"need at least 4096\" (or \"more than 4095\").\n\nI confirmed the skip boundary and the message text; I did not reconstruct a specific input where the omitted estimator is the binding minimum (a drifting-MCV construction), so the magnitude of the resulting over-report is not quantified here.\n\n## Suggested fix (not submitted as code)\n\nLet MultiMCW run whenever `len > W[0]` (63), with each window `W[k] >= len` sitting out per step 3a.ii, and correct the warning text.\n\nFound during an audit of this tool for a downstream use that prices output length on the reported min-entropy.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/258/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/258/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

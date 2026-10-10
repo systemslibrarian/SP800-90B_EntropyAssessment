@@ -1,0 +1,14 @@
+{
+  "file": "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/biased-p01-1bit.bin",
+  "sha256": "6fe1f1409451a0bb4d3f86b680db8ab1fde4499b3aebff35e9fdc3eaf04d9f7a",
+  "samples": 1000000,
+  "bitsPerSample": 1,
+  "alphabetSize": 2,
+  "maximumCount": 990110,
+  "pHat": 0.99011,
+  "pUpperPrinted2576": 0.9903649094553624,
+  "minEntropyPrinted2576": 0.013967896905853407,
+  "pUpperFullQuantile": 0.990364892564004,
+  "minEntropyFullQuantile": 0.013967921512015244,
+  "fullMinusPrintedEntropy": 2.4606161837248397e-08
+}

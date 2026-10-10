@@ -1,0 +1,7 @@
+^DCOMMAND ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/ndebug-ea_non_iid.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-1bit.bin 1
+STATUS ea_non_iid 0
+COMMAND ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/ndebug-ea_iid.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-1bit.bin 1
+STATUS ea_iid 0
+COMMAND ea_restart -n -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/ndebug-restart.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-1bit.bin 1 .8
+H_I: 0.800000
+STATUS ea_restart 0

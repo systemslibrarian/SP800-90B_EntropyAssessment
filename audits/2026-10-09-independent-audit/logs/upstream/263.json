@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/263",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/263/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/263/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/263/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/263",
+  "id": 5647266998,
+  "node_id": "I_kwDOAdd9c88AAAABUJp0tg",
+  "number": 263,
+  "title": "Compression estimate admits exactly 1001 blocks (v = 1): sigma-hat divides by v-1 = 0 and reports 1.0 (NaN) or -0 (inf)",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 1,
+  "created_at": "2026-09-30T13:31:18Z",
+  "updated_at": "2026-09-30T19:34:24Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\n`compression_test` (`cpp/non_iid/compression_test.h`) refuses inputs with `num_blocks <= d` (d = 1000) but admits exactly `d + 1 = 1001` blocks. Then `v = num_blocks - d = 1` and the sample standard deviation at line 131,\n\n```c\nsigma = 0.5907 * sqrt(sigma/(v-1.0) - X*X);\n```\n\ndivides by zero. Depending on the single test block the result is NaN (0/0) or +inf (x/0), and the estimator then reports either **1.0** (full entropy, from \"Could Not Find p\" on a NaN comparison) or **−0** (from X̄' = −inf driving p to 1). The warning text (\"need more than 1000\") describes the intended threshold, not the coded one.\n\nVerified at `87c104d`.\n\n## Reproduction\n\n1001 six-bit blocks = 6006–6011 one-bit samples (also reachable with 2-bit samples at L = 3003–3005, 3-bit at L = 2002–2003, 6-bit at L = 1001).\n\n```\npython3 - <<'PY'\nimport random\nr=random.Random(11); bits=[r.randrange(2) for _ in range(6006)]\nA=bits[:]; A[6000:6006]=A[5994:6000]            # block 1001 == block 1000 -> D = 1 -> log2(1) = 0 -> 0/0\nB=bits[:]; B[6000:6006]=[1-x for x in B[5994:6000]]  # block 1001 != block 1000 -> x/0\nopen('v1_nan.bin','wb').write(bytes(A)); open('v1_inf.bin','wb').write(bytes(B))\nPY\n./ea_non_iid -vv v1_nan.bin 1\n#   Literal Compression Estimate: X-bar = 0\n#   Literal Compression Estimate: sigma-hat = nan\n#   Literal Compression Estimate: X-bar' = nan\n#   Literal Compression Estimate: Could Not Find p. Proceeding with the lower bound for p.\n#   Literal Compression Estimate: p = 0.015625\n#   Literal Compression Estimate: min entropy = 1\n#   Assessed min entropy: 0.80718158433086451        (other estimators bind)\n./ea_non_iid -vv v1_inf.bin 1\n#   Literal Compression Estimate: X-bar = 7.1799090900149345\n#   Literal Compression Estimate: sigma-hat = inf\n#   Literal Compression Estimate: X-bar' = -inf\n#   Literal Compression Estimate: Found p.\n#   Literal Compression Estimate: p = 1\n#   Literal Compression Estimate: min entropy = -0\n#   Assessed min entropy: -0                          (whole figure)\n```\n\nWith 1000 blocks (6000 samples) the existing guard refuses cleanly; with 1002 blocks σ̂ is finite.\n\n## Expected\n\nSP 800-90B §6.3.4 step 5 defines σ̂ with a `1/(v−1)` factor over the v test blocks, so v ≥ 2 is required; the guard should refuse `num_blocks < d + 2` (v < 2) exactly as it already refuses smaller inputs, and the message should state the threshold it enforces. Direction of the current error: the estimator's own value is unmeasured (1.0 in the NaN case; −0, which becomes the overall figure, in the inf case). These inputs are below the §3.1.1 minimum, so the practical effect is confined to short test files.\n\nA one-line fix is in the linked pull request; it changes nothing for inputs with ≥ 1002 blocks (verified byte-identical `-vv` output on all 11 samples under `bin/`).\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/263/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/263/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

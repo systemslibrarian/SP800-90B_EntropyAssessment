@@ -1,0 +1,35 @@
+[
+  {
+    "name": "libomp",
+    "installed": [
+      "23.1.2"
+    ],
+    "license": "MIT",
+    "homepage": "https://openmp.llvm.org/"
+  },
+  {
+    "name": "jsoncpp",
+    "installed": [
+      "1.9.8"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/open-source-parsers/jsoncpp"
+  },
+  {
+    "name": "libdivsufsort",
+    "installed": [
+      "2.0.1"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/y-256/libdivsufsort"
+  },
+  {
+    "name": "openssl@3",
+    "installed": [
+      "3.6.3",
+      "3.6.4"
+    ],
+    "license": "Apache-2.0",
+    "homepage": "https://openssl-library.org"
+  }
+]

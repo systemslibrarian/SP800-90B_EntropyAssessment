@@ -1,0 +1,16 @@
+^D{
+  "errorLevel": 0,
+  "filename": "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/subset-source-1bit.bin",
+  "sha256": "24dca96b6163b695686a4756b6c62501268b8110107da29910d45c1fbd2d6303",
+  "subsetIndex": 1,
+  "subsetRequestedSamples": 1000000,
+  "subsetActualSamples": 1000000,
+  "overall": {
+    "dataWordSize": 1.0,
+    "hAssessed": 0.82943710623935463,
+    "hOriginal": 0.82943710623935463,
+    "testCaseDesc": "Overall"
+  }
+}
+
+AUDIT_EXIT_STATUS=0

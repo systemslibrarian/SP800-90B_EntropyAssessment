@@ -1,0 +1,102 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/214",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/214/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/214/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/214/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/214",
+  "id": 1607530138,
+  "node_id": "I_kwDOAdd9c85f0Paa",
+  "number": 214,
+  "title": "ea_non_iid hangs on a big data file",
+  "user": {
+    "login": "yiatsec",
+    "id": 98990784,
+    "node_id": "U_kgDOBeZ6wA",
+    "avatar_url": "https://avatars.githubusercontent.com/u/98990784?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/yiatsec",
+    "html_url": "https://github.com/yiatsec",
+    "followers_url": "https://api.github.com/users/yiatsec/followers",
+    "following_url": "https://api.github.com/users/yiatsec/following{/other_user}",
+    "gists_url": "https://api.github.com/users/yiatsec/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/yiatsec/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/yiatsec/subscriptions",
+    "organizations_url": "https://api.github.com/users/yiatsec/orgs",
+    "repos_url": "https://api.github.com/users/yiatsec/repos",
+    "events_url": "https://api.github.com/users/yiatsec/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/yiatsec/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "closed",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 12,
+  "created_at": "2023-03-02T21:29:03Z",
+  "updated_at": "2026-09-30T20:10:48Z",
+  "closed_at": "2023-03-07T20:11:00Z",
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "ea_non_iid hangs on the Tuple Estimates when processing the following\r\n8MB file.\r\n\r\nA10.bin (8MB) is uploaded to the ESV demo server (/esvp/v1/entropyAssessments/1393/dataFiles/3290)\r\n\r\nThe following command hangs:\r\n  ea_non_iid -i -a -v A10.bin 8\r\n\r\nThe following command passes:\r\n  ea_non_iid -i -a -v -l 0,1000000 A10.bin 8\r\n\r\nThe following command hangs:\r\n  ea_non_iid -i -a -v -l 2,1000000 A10.bin 8",
+  "closed_by": {
+    "login": "celic",
+    "id": 2558865,
+    "node_id": "MDQ6VXNlcjI1NTg4NjU=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2558865?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/celic",
+    "html_url": "https://github.com/celic",
+    "followers_url": "https://api.github.com/users/celic/followers",
+    "following_url": "https://api.github.com/users/celic/following{/other_user}",
+    "gists_url": "https://api.github.com/users/celic/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/celic/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/celic/subscriptions",
+    "organizations_url": "https://api.github.com/users/celic/orgs",
+    "repos_url": "https://api.github.com/users/celic/repos",
+    "events_url": "https://api.github.com/users/celic/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/celic/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/214/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/214/timeline",
+  "performed_via_github_app": null,
+  "state_reason": "completed",
+  "pinned_comment": null
+}

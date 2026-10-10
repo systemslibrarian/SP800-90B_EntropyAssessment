@@ -1,0 +1,33 @@
+Final report-integrity verification
+===================================
+
+Final fetch and checkout identity:
+HEAD=106d31c4b010d9cd4ae94c0db14d9dcf11aeb353
+origin/master=106d31c4b010d9cd4ae94c0db14d9dcf11aeb353
+upstream/master=87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
+merge-base=87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
+divergence=0 upstream-only, 55 fork-only
+branch=master
+tracked production-source changes=0
+
+Adjacent TruePad checkout:
+HEAD=186a3376deca2e1608dbd1c8114c84113b048091
+branch=master
+tracked changes=0
+pre-existing untracked review documents=5
+
+Artifact checks before sealing:
+JSON files parsed=94
+invalid JSON files=0
+rerun.sh bash syntax=pass
+reproducer Node syntax=pass
+generator/oracle Python syntax=pass
+required executable bits=present
+missing referenced log files=0
+deliverable whitespace-error files=0
+canonical prior-finding IDs=55
+prior-finding IDs missing from exclusion map=0
+
+The final MANIFEST.sha256 was generated after this file and all other audit
+artifacts were finalized. Its independent `shasum -a 256 -c` result is part of
+the sealing command output; no artifact was edited after that successful check.

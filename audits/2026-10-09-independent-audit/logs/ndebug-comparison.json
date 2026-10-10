@@ -1,0 +1,31 @@
+{
+  "build": {
+    "flags": "-O2 -DNDEBUG -ffloat-store (Apple clang ignored -ffloat-store)",
+    "exitStatus": 0
+  },
+  "validControls": {
+    "nonIid": {
+      "releaseHAssessed": 0.8389091522985468,
+      "ndebugHAssessed": 0.8389091522985468,
+      "equal": true
+    },
+    "iid": {
+      "releaseHAssessed": 0.993899026278285,
+      "ndebugHAssessed": 0.993899026278285,
+      "releaseAllRequiredTestsPassed": true,
+      "ndebugAllRequiredTestsPassed": true,
+      "note": "Individual permutation counters differ because each IID run is randomly permuted."
+    },
+    "restart": {
+      "release": {"h_r": 0.8389091522985468, "h_c": 0.8295285293705509, "h_i": 0.8},
+      "ndebug": {"h_r": 0.8389091522985468, "h_c": 0.8295285293705509, "h_i": 0.8},
+      "equal": true
+    }
+  },
+  "shortInputExitStatus": {
+    "ea_non_iid": 255,
+    "ea_iid": 255,
+    "ea_restart": 255
+  },
+  "unexpectedShortInputStatuses": 0
+}

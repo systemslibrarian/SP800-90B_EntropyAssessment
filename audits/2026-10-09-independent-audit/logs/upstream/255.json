@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/255",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/255/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/255/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/255/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/255",
+  "id": 5646823848,
+  "node_id": "I_kwDOAdd9c88AAAABUJOxqA",
+  "number": 255,
+  "title": "Sub-minimum sample counts and skipped estimators are invisible in the JSON report (errorLevel stays 0)",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2026-09-30T12:59:18Z",
+  "updated_at": "2026-09-30T23:20:32Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\nTwo related gaps in the JSON report make a degraded run indistinguishable from a compliant one:\n\n1. **Sub-minimum sample counts.** §3.1.1 requires at least 1,000,000 samples. `non_iid_main.cpp` prints `*** Warning: data contains less than 1000000 samples ***` to stdout and continues; `errorLevel` is set to 0 and `test_run_base.h` emits `errorMessage` only when `errorLevel != 0`, so the JSON of a 2,000-sample run has `\"errorLevel\": 0` and no message.\n2. **Skipped estimators.** Any estimator that returns −1 (\"could not run\": compression with ≤ 1000 blocks, MultiMCW below 4096 samples, t-tuple with no 35-fold repeat, LRS with v < u, …) is dropped from the minimum by the `if (ret >= 0)` guards; its JSON test case is emitted as `{\"testCaseDesc\": …}` with no value, `errorLevel` stays 0, and the reported minimum is over fewer estimators than §6.2 requires (\"the minimum of all the estimates\").\n\n## Reproduction\n\nBuilt at `87c104d` (macOS, Apple clang + libomp; `selftest` agrees with `refdata` to 3.7e-10).\n\n```\npython3 -c \"import random;r=random.Random(777);P=3000;p=[r.randrange(2) for _ in range(P)];open('p2000.bin','wb').write(bytes(p[i%P] for i in range(2000)))\"\n./ea_non_iid -q -o o.json p2000.bin\n#   stdout: *** Warning: data contains less than 1000000 samples ***\n#           *** Warning: not enough samples to run compression test (need more than 1000) ***\n#           *** Warning: not enough samples to run multiMCW test (need more than 4096) ***\n#   o.json: \"errorLevel\": 0, no \"errorMessage\";\n#           \"Compression Test (for bit strings only)\" and \"Multi Most Common in Window Test\" test cases carry no value\n./ea_non_iid -vv p2000.bin\n#   Assessed min entropy: 0.61486314415516563\n```\n\nThe same period-3000 source at 1,000,000 samples:\n\n```\n./ea_non_iid -vv p1e6.bin        # Assessed min entropy: 1.2912892207571696e-06\n```\n\nSo a 2,000-sample run of a source whose compliant assessment is ~1e-6 reports 0.61 bit/sample, with the same exit status and the same JSON shape as a compliant run. Nothing in the JSON says the sample count was below the minimum or that two estimators did not contribute to the minimum.\n\n## Request\n\nSet a machine-readable warning/`errorLevel` in the JSON when (a) the sample count is below the §3.1.1 minimum and (b) any estimator returned −1 and was excluded from the minimum — or refuse outright in case (a). Related, not duplicate: #238 asks for the sample count and symbol count in the JSON, which would help a consumer detect (a) but not (b).\n\nFound while auditing this tool for a downstream use that prices output length on the reported min-entropy figure.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/255/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/255/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

@@ -1,0 +1,4 @@
+^Digamc: UNDERFLOW
+Assertion failed: (p_colPower >= LDBL_MIN), function len_LRS_test, file lrs_test.h, line 683.
+
+AUDIT_EXIT_STATUS=6

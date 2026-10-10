@@ -1,0 +1,63 @@
+{
+   "IID" : false,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_non_iid -i -q -o audits/2026-10-09-independent-audit/logs/valid/repeated-block.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/repeated-block-1bit.bin 1",
+   "dateTimeStamp" : "20261009025232",
+   "errorLevel" : 0,
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/repeated-block-1bit.bin",
+   "sha256" : "896704565680d6f9ea4ac12bec55d1807d2bfa581531839e93e1e9d70ae2da3b",
+   "testCases" : [
+      {
+         "hOriginal" : 0.97602710350220123,
+         "mcvEstimateMode" : 507090.0,
+         "mcvEstimatePHat" : 0.50709000000000004,
+         "mcvEstimatePU" : 0.50837778580711313,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 1.0,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.96802812999569821,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 1.0,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : 2.3610625136719373e-06,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : 1.5940282592698827e-06,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hOriginal" : 0.97743543481419648,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 0.94398935764528058,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 0.037669738902099625,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 0.96438089536062621,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : 1.5940282592698827e-06,
+         "hOriginal" : 1.5940282592698827e-06,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/155",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/155/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/155/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/155/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/155",
+  "id": 677710846,
+  "node_id": "MDU6SXNzdWU2Nzc3MTA4NDY=",
+  "number": 155,
+  "title": "Significant differences in ea_non_iid selftest [Windows10]",
+  "user": {
+    "login": "skbhaskarla",
+    "id": 2388275,
+    "node_id": "MDQ6VXNlcjIzODgyNzU=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2388275?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/skbhaskarla",
+    "html_url": "https://github.com/skbhaskarla",
+    "followers_url": "https://api.github.com/users/skbhaskarla/followers",
+    "following_url": "https://api.github.com/users/skbhaskarla/following{/other_user}",
+    "gists_url": "https://api.github.com/users/skbhaskarla/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/skbhaskarla/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/skbhaskarla/subscriptions",
+    "organizations_url": "https://api.github.com/users/skbhaskarla/orgs",
+    "repos_url": "https://api.github.com/users/skbhaskarla/repos",
+    "events_url": "https://api.github.com/users/skbhaskarla/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/skbhaskarla/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2020-08-12T13:50:58Z",
+  "updated_at": "2020-08-12T16:04:27Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "COLLABORATOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "FYI: I ran all the ea_non_iid output files through the compare perl script and wanted to let you know I noticed \"Significant difference\" for two files:\r\n\r\n```\r\n1. perl compareresults.pl result\\biased-random-bytes.res refdata\\biased-random-bytes.res\r\nresult\\biased-random-bytes.res: Significant difference for Literal Lag Prediction Estimate: min entropy (reference: 0.46625826502784795 new: 0.4662582648795216 delta: 1.48326351201433e-10)\r\nresult\\biased-random-bytes.res: Significant difference for Bitstring MultiMCW Prediction Estimate: P_local (reference: 0.9713579012997926 new: 0.97135790142486211 delta: 1.25069510303888e-10)\r\nresult\\biased-random-bytes.res: Significant difference for Bitstring MultiMMC Prediction Estimate: P_local (reference: 0.9713578878098017 new: 0.97135788791663613 delta: 1.06834430191327e-10)\r\nresult\\biased-random-bytes.res: Significant difference for Bitstring MultiMMC Prediction Estimate: min entropy (reference: 0.041925153682126653 new: 0.041925153523452385 delta: 1.58674268169179e-10)\r\nresult\\biased-random-bytes.res: Significant difference for Bitstring MultiMCW Prediction Estimate: min entropy (reference: 0.041925133646315872 new: 0.04192513346055822 delta: 1.85757652315655e-10)\r\nresult\\biased-random-bytes.res: Significant difference for Bitstring Lag Prediction Estimate: min entropy (reference: 0.042001643639251546 new: 0.042001643777700305 delta: 1.38448759401388e-10)\r\nresult\\biased-random-bytes.res: Significant difference for Bitstring LZ78Y Prediction Estimate: min entropy (reference: 0.04192514875535195 new: 0.041925148882084547 delta: 1.26732596639201e-10)\r\nMaximum delta: 1.85757652315655e-10\r\n\r\n2. perl compareresults.pl result\\ringOsc-nist.res refdata\\ringOsc-nist.res\r\nresult\\ringOsc-nist.res: Significant difference for Literal MultiMCW Prediction Estimate: min entropy (reference: 0.29051922736594488 new: 0.29051922704532573 delta: 3.20619142346601e-10)\r\nresult\\ringOsc-nist.res: Significant difference for Literal MultiMCW Prediction Estimate: P_local (reference: 0.81760774776600598 new: 0.81760774794770807 delta: 1.8170209781232e-10)\r\nMaximum delta: 3.20619142346601e-10\r\n```",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/155/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/155/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

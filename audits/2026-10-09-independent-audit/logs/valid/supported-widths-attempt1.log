@@ -1,0 +1,2 @@
+^DCOMMAND width2: ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/width2.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-2bit.bin 2
+zsh:1: read-only variable: status

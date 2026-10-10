@@ -1,0 +1,12 @@
+{
+   "IID" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_restart -n -q -o audits/2026-10-09-independent-audit/logs/valid/restart-periodic.json /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/period6-1bit.bin 1 1",
+   "dateTimeStamp" : "20261009024721",
+   "errorLevel" : -1,
+   "errorMessage" : "Restart Sanity Check Failed.",
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/period6-1bit.bin",
+   "sha256" : "bb9f2af262388161391e57c53e3c94e386847af3559f2ff8025b7c04a13c8163",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

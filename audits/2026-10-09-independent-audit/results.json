@@ -1,0 +1,123 @@
+{
+  "format": "sp800-90b-independent-audit",
+  "version": 1,
+  "auditDate": "2026-10-09",
+  "timezone": "America/New_York",
+  "baseline": {
+    "forkCommit": "106d31c4b010d9cd4ae94c0db14d9dcf11aeb353",
+    "originCommit": "106d31c4b010d9cd4ae94c0db14d9dcf11aeb353",
+    "upstreamCommit": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+    "mergeBase": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+    "forkCommitsAhead": 55,
+    "upstreamCommitsAhead": 0,
+    "truePadCommit": "186a3376deca2e1608dbd1c8114c84113b048091",
+    "platform": "macOS 26.6.2 arm64 Apple M5",
+    "compiler": "Apple clang 21.0.0"
+  },
+  "standards": {
+    "publication": "NIST SP 800-90B, January 2018",
+    "publicationSha256": "9b0dd77131ade3617a91cd8457fa09e0dc354c273bb2220a6afeaca16e5defe7",
+    "potentialErrataLastUpdated": "2025-05-29",
+    "potentialErrataSha256": "af99ae20161aeed6e8eab88badf650e08c9f5ac455b71cf1095c289c104a5128",
+    "potentialErrataNormative": false
+  },
+  "newFindings": [
+    {
+      "id": "TP-AUD-01",
+      "severity": "high",
+      "component": "TruePad qualification",
+      "title": "Assessment executables and selftest verdict are not attested",
+      "supportedInput": true,
+      "truePadImpact": "A deterministic period-two source was accepted at one bit per sample using substituted ignored executables.",
+      "reproducer": "reproducers/truepad-unattested-tools.mjs",
+      "evidence": [
+        "logs/truepad-unattested-tools.log",
+        "logs/truepad-spoof-real-tool-control.log"
+      ]
+    },
+    {
+      "id": "TP-AUD-02",
+      "severity": "medium",
+      "component": "TruePad tool lock",
+      "title": "Implemented pin selects upstream instead of declared patched fork",
+      "supportedInput": true,
+      "truePadImpact": "All 55 fork commits, including claimed product-dependent repairs, are bypassed.",
+      "evidence": ["REPORT.md", "BASELINE.md"]
+    },
+    {
+      "id": "HARNESS-AUD-01",
+      "severity": "low",
+      "component": "cpp/selftest/selftest",
+      "title": "Missing fixture/reference pair is silently accepted",
+      "supportedInput": null,
+      "truePadImpact": "Current TruePad setup parser mitigates the exact-count case, but the repository strict suite can be falsely green.",
+      "evidence": ["logs/selftest-missing-fixture.log"]
+    }
+  ],
+  "newEstimatorCorrectnessFindings": [],
+  "suite": {
+    "releaseBuildExit": 0,
+    "strictExit": 1,
+    "strictPassed": 15,
+    "strictFailed": 1,
+    "regressionScriptsDiscovered": 14,
+    "knownPlatformFiles": ["biased-random-bytes.bin", "ringOsc-nist.bin"],
+    "allowKnownPlatformDeltasExit": 0,
+    "truePadTargetedTestFiles": 10,
+    "truePadTargetedTests": 71,
+    "truePadTargetedFailures": 0
+  },
+  "existingBlockers": [
+    {"id": "C-01", "status": "reproduced", "scope": "valid restart input under ASan"},
+    {"id": "N-07", "status": "present-by-inspection", "scope": "hash/data TOCTOU including TruePad path"},
+    {"id": "N-08", "status": "present-by-inspection", "scope": "standalone numeric CLI"},
+    {"id": "N-10", "status": "present-by-inspection", "scope": "report integrity"},
+    {"id": "NOVEL-03", "status": "present-by-inspection", "scope": "IID restart labels"},
+    {"id": "R-1", "status": "unverified-current-platform", "scope": "x86 80-bit long double"},
+    {"id": "upstream-153", "status": "reproduced-release-ndebug-incomplete", "scope": "valid 1M alternating IID input"},
+    {"id": "upstream-252", "status": "existing-evidence", "scope": "IID aggregate verdict/reporting"}
+  ],
+  "validInputEvidence": {
+    "generatorSeed": "0x90b20261009",
+    "manifest": "logs/fixture-manifest.json",
+    "sampleCountPerOrdinaryFixture": 1000000,
+    "restartRows": 1000,
+    "restartSamplesPerRow": 1000,
+    "widthsExercised": [1, 2, 3, 4, 5, 6, 7, 8],
+    "mcvOracleExactFullQuantileMatch": true,
+    "nonIidOpenMp1Vs8Identical": true,
+    "ndebugBuildExit": 0,
+    "ndebugValidFinalValuesMatched": true,
+    "ndebugShortInputExitStatuses": [255, 255, 255],
+    "restartIidValidControl": {
+      "allRequiredTestsPassed": true,
+      "hRow": 0.993899026278285,
+      "hColumn": 0.993899026278285,
+      "hInput": 0.8
+    }
+  },
+  "blockedOrUntested": [
+    "Current Linux/x86-64 and Windows builds/sanitizers",
+    "macOS leak detection",
+    "Current ThreadSanitizer execution",
+    "Full IID drift completion",
+    "Completion of the assertion-disabled alternating IID edge case",
+    "F14 end-to-end greater-than-2^32-block case",
+    "Unbuilt ea_conditioning findings N-03, N-05, N-11",
+    "True physical-source, restart, operating-range, and health-test evidence",
+    "Independent extractor seed authority and physical independence"
+  ],
+  "auditHarnessValidation": {
+    "rerunScriptSyntax": "passed",
+    "duplicateEndToEndRun": "interrupted after ten minutes in conditioned IID regression",
+    "inferenceFromInterruptedRun": false,
+    "temporaryCleanupVerified": true
+  },
+  "readiness": {
+    "truePadReady": false,
+    "reason": "Tool attestation can be bypassed, the implemented source pin contradicts the reviewed fork contract, and existing valid-input/runtime blockers remain.",
+    "nistApprovalClaimed": false,
+    "entropyGuaranteed": false,
+    "oneTimePadSecurityClaimed": false
+  }
+}

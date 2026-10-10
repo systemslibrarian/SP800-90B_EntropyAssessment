@@ -1,0 +1,13 @@
+^DH_I: 0.800000
+{
+  "errorLevel": 0,
+  "IID": false,
+  "overall": {
+    "h_c": 0.82952852937055088,
+    "h_i": 0.80000000000000004,
+    "h_r": 0.83890915229854679,
+    "testCaseDesc": "Overall"
+  }
+}
+
+AUDIT_EXIT_STATUS=0

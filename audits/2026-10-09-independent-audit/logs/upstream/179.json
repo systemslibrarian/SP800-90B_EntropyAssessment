@@ -1,0 +1,102 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/179",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/179/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/179/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/179/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/179",
+  "id": 1119128363,
+  "node_id": "I_kwDOAdd9c85CtIsr",
+  "number": 179,
+  "title": "TestCase (et al) values are incomplete and the meaning of the saved values is inconsistent",
+  "user": {
+    "login": "joshuaehill",
+    "id": 990213,
+    "node_id": "MDQ6VXNlcjk5MDIxMw==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/joshuaehill",
+    "html_url": "https://github.com/joshuaehill",
+    "followers_url": "https://api.github.com/users/joshuaehill/followers",
+    "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+    "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+    "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+    "repos_url": "https://api.github.com/users/joshuaehill/repos",
+    "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "closed",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 2,
+  "created_at": "2022-01-31T08:38:19Z",
+  "updated_at": "2022-02-21T21:52:18Z",
+  "closed_at": "2022-02-21T21:52:18Z",
+  "assignee": null,
+  "author_association": "CONTRIBUTOR",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "It seems like there should be more coverage and consistency in the data being fed into NonIidTestCase classes.\r\n\r\nThere are instances where apparently irrelevant variable values (sometimes for variables that have not yet been calculated) are set (e.g., `lrs_res` is set across most of the tests, but it only is relevant to one of the test cases).\r\n\r\nSome values that are useful for results summary are not saved (e.g., `ret_min_entropy` is saved, but the meaning of that value depends on the tests that were run (e.g., literal or bitstring versions of these tests?) In cases where both are run, only the last one run is saved in this structure. Likely both of these values should be consistently saved.\r\n\r\nIt isn't really clear why the non-final versions of `H_bitstring` and `H_original` are consistently saved, when the current test may or may not ultimately influence those values.\r\n\r\n",
+  "closed_by": {
+    "login": "joshuaehill",
+    "id": 990213,
+    "node_id": "MDQ6VXNlcjk5MDIxMw==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/joshuaehill",
+    "html_url": "https://github.com/joshuaehill",
+    "followers_url": "https://api.github.com/users/joshuaehill/followers",
+    "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+    "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+    "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+    "repos_url": "https://api.github.com/users/joshuaehill/repos",
+    "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/179/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/179/timeline",
+  "performed_via_github_app": null,
+  "state_reason": "completed",
+  "pinned_comment": null
+}

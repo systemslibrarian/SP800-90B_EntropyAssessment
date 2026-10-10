@@ -1,0 +1,223 @@
+^Dclang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include non_iid_main.cpp -o ea_non_iid -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from non_iid_main.cpp:3:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from non_iid_main.cpp:4:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from non_iid_main.cpp:7:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from non_iid_main.cpp:12:
+./non_iid/multi_mcw_test.h:13:26: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:26: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                      ^
+./non_iid/multi_mcw_test.h:13:58: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:58: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:47: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                      ^
+In file included from non_iid_main.cpp:13:
+./non_iid/compression_test.h:104:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  104 |         int64_t dict[alph_size];
+      |                      ^~~~~~~~~
+./non_iid/compression_test.h:104:15: note: read of non-const variable 'alph_size' is not allowed in a constant expression
+./non_iid/compression_test.h:96:22: note: declared here
+   96 |         unsigned int block, alph_size = 1 << b; 
+      |                             ^
+13 warnings generated.
+clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include iid_main.cpp -o ea_iid -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from iid_main.cpp:4:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from iid_main.cpp:5:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from iid_main.cpp:8:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from iid_main.cpp:9:
+./iid/permutation_tests.h:303:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  303 |                 res = sprintf(curmsg, "%u ", data[i]);
+      |                       ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+9 warnings generated.
+clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include restart_main.cpp -o ea_restart -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from restart_main.cpp:3:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from restart_main.cpp:4:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from restart_main.cpp:8:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from restart_main.cpp:13:
+./non_iid/multi_mcw_test.h:13:26: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:26: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                      ^
+./non_iid/multi_mcw_test.h:13:58: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:58: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:47: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                      ^
+In file included from restart_main.cpp:14:
+./non_iid/compression_test.h:104:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  104 |         int64_t dict[alph_size];
+      |                      ^~~~~~~~~
+./non_iid/compression_test.h:104:15: note: read of non-const variable 'alph_size' is not allowed in a constant expression
+./non_iid/compression_test.h:96:22: note: declared here
+   96 |         unsigned int block, alph_size = 1 << b; 
+      |                             ^
+In file included from restart_main.cpp:17:
+./iid/permutation_tests.h:303:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  303 |                 res = sprintf(curmsg, "%u ", data[i]);
+      |                       ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+14 warnings generated.
+AUDIT_EXIT_STATUS=0

@@ -1,0 +1,49 @@
+[
+  {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/comments/1224437942",
+    "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/195#issuecomment-1224437942",
+    "issue_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/195",
+    "id": 1224437942,
+    "node_id": "IC_kwDOAdd9c85I-3C2",
+    "user": {
+      "login": "joshuaehill",
+      "id": 990213,
+      "node_id": "MDQ6VXNlcjk5MDIxMw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/990213?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/joshuaehill",
+      "html_url": "https://github.com/joshuaehill",
+      "followers_url": "https://api.github.com/users/joshuaehill/followers",
+      "following_url": "https://api.github.com/users/joshuaehill/following{/other_user}",
+      "gists_url": "https://api.github.com/users/joshuaehill/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/joshuaehill/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/joshuaehill/subscriptions",
+      "organizations_url": "https://api.github.com/users/joshuaehill/orgs",
+      "repos_url": "https://api.github.com/users/joshuaehill/repos",
+      "events_url": "https://api.github.com/users/joshuaehill/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/joshuaehill/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2022-08-23T17:41:09Z",
+    "updated_at": "2022-08-23T17:41:09Z",
+    "body": "Your estimate suggests that the sample used to produce $H_\\text{original}$ actually had 4 bits per sample. You then have a fairly large restart sample where this is not so, so this is an instance where the restart testing is expected to reduce your entropy claim.\r\n\r\nIn practice, the restart testing is going to reduce the estimate to less than 3 bits: both $H_{c}$ and $H_{r}$ are going to be less than 3. As such, you could reduce your estimate to 3 and the result will be the same (or better) as if that assert was removed. From a 90B perspective, this would be done by reducing your $H_{\\text{submitter}}$ value.",
+    "author_association": "CONTRIBUTOR",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/comments/1224437942/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null
+  }
+]

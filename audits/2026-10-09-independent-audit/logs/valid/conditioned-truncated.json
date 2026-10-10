@@ -1,0 +1,63 @@
+{
+   "IID" : false,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/tmp/sp80090b-audit-20261009.5WcSLl/source/cpp/ea_non_iid -i -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/audits/2026-10-09-independent-audit/logs/valid/conditioned-truncated.json -c -t /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-8bit.bin 8",
+   "dateTimeStamp" : "20261009023448",
+   "errorLevel" : 0,
+   "filename" : "/tmp/sp80090b-audit-20261009.5WcSLl/fixtures/uniform-8bit.bin",
+   "sha256" : "1f33abbba94e7a885576f583557a8579fa28aba92cf4071bae1452e5b5d895a0",
+   "testCases" : [
+      {
+         "hBitstring" : 0.99185762864258087,
+         "mcvEstimateMode" : 501542.0,
+         "mcvEstimatePHat" : 0.50154200000000004,
+         "mcvEstimatePU" : 0.50282990917100046,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.92939950583274311,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.99698876630125366,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.85758328465549472,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 0.93143295059475639,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 0.9961370842138062,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 0.99660947349027684,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.99854818621851171,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.99409153557123098,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.99251040787352729,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : 6.8606662772439577,
+         "hBitstring" : 0.85758328465549472,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

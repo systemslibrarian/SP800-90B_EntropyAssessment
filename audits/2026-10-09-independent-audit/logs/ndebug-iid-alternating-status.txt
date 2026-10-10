@@ -1,0 +1,13 @@
+check: assertion-disabled ea_iid on standards-sized alternating data
+source SHA: 106d31c4b010d9cd4ae94c0db14d9dcf11aeb353
+build: -O2 -DNDEBUG
+input: /tmp/sp80090b-audit-20261009.5WcSLl/fixtures/alternating-1bit.bin
+input representation: 1,000,000 one-byte samples, explicit width 1
+command: ./ea_iid -q -o AUDIT/logs/valid/ndebug-iid-alternating.json INPUT 1
+observed stderr: igamc: UNDERFLOW
+elapsed at interrupt: 10 minutes 8 seconds
+interrupt exit status: 130
+JSON output: absent
+disposition: bounded incomplete run; no acceptance or entropy result inferred
+classification: current evidence for the existing upstream #153/#252 IID family, not a new finding
+cleanup: disposable ndebug-edge worktree removed successfully

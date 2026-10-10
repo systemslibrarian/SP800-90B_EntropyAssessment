@@ -1,0 +1,10 @@
+^DCONTROL_11
+fixture01.bin: fixture02.bin: fixture03.bin: fixture04.bin: fixture05.bin: fixture06.bin: fixture07.bin: fixture08.bin: fixture09.bin: fixture10.bin: fixture11.bin: 
+selftest: PASS (11 files)
+CONTROL_STATUS=0
+MUTATION_10
+fixture01.bin: fixture02.bin: fixture03.bin: fixture04.bin: fixture05.bin: fixture06.bin: fixture07.bin: fixture08.bin: fixture09.bin: fixture10.bin: 
+selftest: PASS (10 files)
+MUTATION_STATUS=0
+
+AUDIT_WRAPPER_EXIT_STATUS=0

@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/236",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/236/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/236/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/236/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/236",
+  "id": 2411860715,
+  "node_id": "I_kwDOAdd9c86PwhLr",
+  "number": 236,
+  "title": "v1.1.8 not reporting correct version",
+  "user": {
+    "login": "mmccarl",
+    "id": 61979072,
+    "node_id": "MDQ6VXNlcjYxOTc5MDcy",
+    "avatar_url": "https://avatars.githubusercontent.com/u/61979072?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/mmccarl",
+    "html_url": "https://github.com/mmccarl",
+    "followers_url": "https://api.github.com/users/mmccarl/followers",
+    "following_url": "https://api.github.com/users/mmccarl/following{/other_user}",
+    "gists_url": "https://api.github.com/users/mmccarl/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/mmccarl/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/mmccarl/subscriptions",
+    "organizations_url": "https://api.github.com/users/mmccarl/orgs",
+    "repos_url": "https://api.github.com/users/mmccarl/repos",
+    "events_url": "https://api.github.com/users/mmccarl/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/mmccarl/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2024-07-16T19:05:06Z",
+  "updated_at": "2024-10-11T15:04:55Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "running ea_non_iid --version still reports v1.1.7 instead of v1.1.8",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/236/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/236/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

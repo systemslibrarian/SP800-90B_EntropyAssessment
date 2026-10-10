@@ -1,0 +1,82 @@
+{
+  "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/257",
+  "repository_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment",
+  "labels_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/257/labels{/name}",
+  "comments_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/257/comments",
+  "events_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/257/events",
+  "html_url": "https://github.com/usnistgov/SP800-90B_EntropyAssessment/issues/257",
+  "id": 5647070569,
+  "node_id": "I_kwDOAdd9c88AAAABUJd1aQ",
+  "number": 257,
+  "title": "Heap buffer over-read in binaryMultiMMCPredictionEstimate for 4 <= L <= 16 (multi_mmc_test.h:38); reachable from a file, silent on a normal build",
+  "user": {
+    "login": "systemslibrarian",
+    "id": 5807986,
+    "node_id": "MDQ6VXNlcjU4MDc5ODY=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5807986?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/systemslibrarian",
+    "html_url": "https://github.com/systemslibrarian",
+    "followers_url": "https://api.github.com/users/systemslibrarian/followers",
+    "following_url": "https://api.github.com/users/systemslibrarian/following{/other_user}",
+    "gists_url": "https://api.github.com/users/systemslibrarian/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/systemslibrarian/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/systemslibrarian/subscriptions",
+    "organizations_url": "https://api.github.com/users/systemslibrarian/orgs",
+    "repos_url": "https://api.github.com/users/systemslibrarian/repos",
+    "events_url": "https://api.github.com/users/systemslibrarian/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/systemslibrarian/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false
+  },
+  "labels": [
+
+  ],
+  "state": "open",
+  "locked": false,
+  "assignees": [
+
+  ],
+  "milestone": null,
+  "comments": 3,
+  "created_at": "2026-09-30T13:16:56Z",
+  "updated_at": "2026-09-30T19:25:36Z",
+  "closed_at": null,
+  "assignee": null,
+  "author_association": "NONE",
+  "issue_field_values": [
+
+  ],
+  "type": null,
+  "active_lock_reason": null,
+  "sub_issues_summary": {
+    "total": 0,
+    "completed": 0,
+    "percent_completed": 0
+  },
+  "issue_dependencies_summary": {
+    "blocked_by": 0,
+    "total_blocked_by": 0,
+    "blocking": 0,
+    "total_blocking": 0
+  },
+  "body": "## Summary\n\n`binaryMultiMMCPredictionEstimate` (`cpp/non_iid/multi_mmc_test.h:33-40`) reads one byte past the end of the sample buffer for any input of **4 ≤ L ≤ 16 bits**. It is reachable from a file alone with the default command line, and on a normal (non-sanitizer) build it does **not** crash: the out-of-bounds byte is read from adjacent heap, folded into the MultiMMC prediction, and the tool prints an assessment and exits 0. AddressSanitizer flags it as a heap-buffer-overflow.\n\n## Location\n\n```c\n// multi_mmc_test.h, binaryMultiMMCPredictionEstimate\nassert(L>3);                                   // line 21: passes for L>=4\n...\nfor(d=0; d<D_MMC; d++) {                        // D_MMC == 16 for the binary path\n   curPattern = ((curPattern << 1) | (S[d]&1));\n   (BINARYDICTLOC(d+1, curPattern))[S[d+1]&1] = 1;   // line 38: reads S[d+1], d up to 15 -> S[16]\n   dictElems[d] = 1;\n}\n```\n\nThe init loop reads `S[d+1]` for `d` up to `D_MMC-1 = 15`, i.e. up to `S[16]`, with only `assert(L>3)` guarding entry. For `4 <= L <= 16` the index `d+1` runs past the buffer. (The generic/non-binary `multiMMCPredictionEstimate` guards the identical loop with `if(d < N)`, `N = L-2`, and is not affected; the binary path has no such guard.)\n\n## Reproduction\n\nBuilt at `87c104d` with AddressSanitizer (`-fsanitize=address,undefined -O1`, Apple clang; asserts left enabled, as in the shipped Makefile — no `-DNDEBUG`):\n\n```\nprintf '\\x00\\x01\\x00\\x01\\x00\\x01\\x00\\x01' > f8.bin   # L = 8\n./ea_non_iid f8.bin\n```\n\nASan:\n```\nERROR: AddressSanitizer: heap-buffer-overflow ... READ of size 1\n    #0 binaryMultiMMCPredictionEstimate(...) multi_mmc_test.h:38\n    #1 multi_mmc_test(...) multi_mmc_test.h:154\n    #2 main non_iid_main.cpp:453\n0x... is located 0 bytes after 8-byte region\nallocated by ... read_file_subset(...) utils.h:232\n```\n\nEvery `L` in `{4,5,8,12,16}` reproduces; `L=3` aborts earlier on `assert(L>3)`, and `L>=17` is in bounds. On a stock build (no ASan) the same input prints a full assessment and exits 0 — the over-read is silent and its byte affects the reported figure.\n\n## Impact\n\nReachable from an untrusted sample file with the default invocation (no `-l`, no special width). Out-of-bounds read of one byte that is incorporated into the estimate. Not a crash on a normal build, so it passes unnoticed; a hardened build (`_FORTIFY_SOURCE`, ASan, or a guard page) turns it into an abort.\n\n## Suggested fix (not submitted as code here)\n\nGuard the binary init loop the same way the generic path is guarded, e.g. iterate `for(d=0; d<D_MMC && d+1<L; d++)` (equivalently `d < N` with `N = L-2`), so `S[d+1]` is never read past the buffer.\n\nFound during a memory-safety audit; reporting the memory-unsafe read on its own.\n",
+  "closed_by": null,
+  "reactions": {
+    "url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/257/reactions",
+    "total_count": 0,
+    "+1": 0,
+    "-1": 0,
+    "laugh": 0,
+    "hooray": 0,
+    "confused": 0,
+    "heart": 0,
+    "rocket": 0,
+    "eyes": 0
+  },
+  "timeline_url": "https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/issues/257/timeline",
+  "performed_via_github_app": null,
+  "state_reason": null,
+  "pinned_comment": null
+}

@@ -1,0 +1,24 @@
+^DANALYZE non_iid_main.cpp
+STATUS non_iid_main.cpp 0
+ANALYZE iid_main.cpp
+In file included from iid_main.cpp:10:
+./iid/chi_square_tests.h:672:3: warning: Value stored to 'score' is never read [deadcode.DeadStores]
+  672 |                 score = 0.0;
+      |                 ^       ~~~
+./iid/chi_square_tests.h:673:3: warning: Value stored to 'df' is never read [deadcode.DeadStores]
+  673 |                 df = 0;
+      |                 ^    ~
+2 warnings generated.
+STATUS iid_main.cpp 0
+ANALYZE restart_main.cpp
+In file included from restart_main.cpp:16:
+./iid/chi_square_tests.h:672:3: warning: Value stored to 'score' is never read [deadcode.DeadStores]
+  672 |                 score = 0.0;
+      |                 ^       ~~~
+./iid/chi_square_tests.h:673:3: warning: Value stored to 'df' is never read [deadcode.DeadStores]
+  673 |                 df = 0;
+      |                 ^    ~
+2 warnings generated.
+STATUS restart_main.cpp 0
+
+AUDIT_WRAPPER_EXIT_STATUS=0
