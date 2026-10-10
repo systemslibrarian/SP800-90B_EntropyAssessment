@@ -46,6 +46,22 @@
     "regressionScriptsExecuted": 17,
     "c01AsanUbsanExit": 0
   },
+  "evidenceCorrections": {
+    "A-1": {
+      "date": "2026-10-10",
+      "status": "resolved",
+      "reviewedHead": "baa51b352928db83f0620c2559cb1641914127e0",
+      "parentSource": "031d7eefe6801c8370c9882cb81348d7cf1df388",
+      "transportedTestCommit": "094189cdc6dd2b2d975abcbe00d7018628c50bee",
+      "transportedTestBlob": "ddbfb3acd6c3196c20cfbae5c25507a072437c98",
+      "parentExit": 1,
+      "parentFailingChecks": 3,
+      "fixedIidJsonExit": 0,
+      "fixedRestartExit": 0,
+      "originalTwoCheckRevision": null,
+      "originalTwoCheckDisposition": "uncommitted intermediate test state; no immutable SHA or preserved log"
+    }
+  },
   "upstreamActionsCreated": 0,
   "independentVerificationComplete": false
 }

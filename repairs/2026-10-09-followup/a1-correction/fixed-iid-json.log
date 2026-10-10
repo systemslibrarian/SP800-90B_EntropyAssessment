@@ -1,0 +1,19 @@
+A-1 fixed-head IID JSON regression
+date_local=2026-10-10T05:26:54-0400
+source_sha=baa51b352928db83f0620c2559cb1641914127e0
+test_blob=ddbfb3acd6c3196c20cfbae5c25507a072437c98
+command=cpp/selftest/regression-iid-json.sh
+--- complete stdout/stderr ---
+binary -i omits hBitstring:                            absent
+N-10 JSON uses explicit statistic names:               rawMean and translatedSymbolMedian
+-c omits hOriginal:                                    absent
+hAssessed at -q matches the -vvv figure:               0.9950430151312257
+N-10 stdout labels the translated median:              explicit
+N-10 sparse-alphabet domains are distinguishable:      raw 127.5, translated 0.5
+hAssessed is not the word-size placeholder:            ok
+bin.json still reports hOriginal:                      0.9950430151312257
+cond.json still reports hBitstring:                    0.9986867452731383
+
+regression-iid-json: PASS
+--- end stdout/stderr ---
+exit_status=0

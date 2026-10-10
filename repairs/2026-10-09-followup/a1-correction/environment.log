@@ -1,0 +1,26 @@
+A-1 reproduction environment
+date_local=2026-10-10T05:25:58-0400
+timezone=America/New_York
+uname:
+Darwin MacBook-Air.local 25.6.0 Darwin Kernel Version 25.6.0: Fri Jul 31 19:16:20 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T8142 arm64
+sw_vers:
+ProductName:		macOS
+ProductVersion:		26.6.2
+BuildVersion:		25G83
+cpu:
+Apple M5
+clang++:
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+bash:
+GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+git:
+git version 2.54.0 (Apple Git-157)
+jsoncpp=1.9.8
+openssl=3.6.4
+libdivsufsort 2.0.1
+libomp 23.1.2
+branch_head=baa51b352928db83f0620c2559cb1641914127e0
+pr_head_remote=baa51b352928db83f0620c2559cb1641914127e0

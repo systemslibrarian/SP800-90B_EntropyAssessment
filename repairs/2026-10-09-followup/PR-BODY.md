@@ -29,6 +29,19 @@ under `repairs/2026-10-09-followup/`. General upstream candidates and the
 smallest defensible submissions are in `UPSTREAM-CANDIDATES.md`; no upstream
 issue, comment, or pull request was created or modified.
 
+### A-1 evidence correction — 2026-10-10
+
+The hostile review found that the committed N-10 IID regression, transported
+onto parent `031d7ee`, fails three checks rather than the two stated in the
+original repair report. This branch now preserves the original statement as
+superseded and records the reproducible result: ambiguous JSON names,
+ambiguous stdout median semantics, and the sparse-alphabet domain control all
+fail on the parent (`FAIL (3 checks)`, exit 1). No committed revision of the
+intermediate two-control test exists. On reviewed production head `baa51b3`,
+the IID JSON and restart regressions both pass; the sparse control reports raw
+mean 127.5 and translated median 0.5. Complete correction evidence is under
+`repairs/2026-10-09-followup/a1-correction/`.
+
 ## Independent-audit boundary
 
 This branch includes the independent audit's findings and their remediation,

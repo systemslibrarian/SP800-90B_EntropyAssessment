@@ -42,13 +42,47 @@ not a claim that `ea_conditioning` was repaired.
 
 ### N-10 — ambiguous report statistics
 
-The regression assertions were added before the source change. The exact
-failures were:
+#### Correction dated 2026-10-10 — A-1
+
+The original 2026-10-09 evidence stated that the pre-fix IID JSON regression
+failed two checks. That count is superseded. The independent hostile review
+transported the regression committed by `094189c` onto its parent `031d7ee`
+and observed three failures. The correction run reproduced that result with:
+
+- source `031d7eefe6801c8370c9882cb81348d7cf1df388`;
+- test commit `094189cdc6dd2b2d975abcbe00d7018628c50bee`;
+- test blob `ddbfb3acd6c3196c20cfbae5c25507a072437c98`;
+- test-file SHA-256
+  `db1fd5caf8ee438e1afededd64ad84e9950aeb19c77c85e1df8b543326d83b06`;
+- exit status 1 and `regression-iid-json: FAIL (3 checks)`.
+
+The complete output is [the corrected parent reproduction](a1-correction/parent-regression.log),
+with the [build](a1-correction/parent-build.log),
+[environment](a1-correction/environment.log), and
+[revision investigation](a1-correction/revision-investigation.log) recorded
+separately. Git history contains only the pre-N-10 blob `456d9768...` and the
+final three-control blob `ddbfb3ac...`; no committed or unreachable revision
+contains a two-control N-10 test. The earlier two-check observation therefore
+came from an uncommitted intermediate working-tree revision before the
+sparse-alphabet positive control was added. That intermediate has no immutable
+SHA or preserved log and must not be represented as the committed test.
+
+The original claim is retained here verbatim as superseded evidence rather
+than silently rewritten:
 
 ```text
 N-10 JSON uses explicit statistic names: ambiguous or missing fields
 N-10 stdout labels the translated median: still says only Median
 regression-iid-json: FAIL (2 checks)
+```
+
+The reproducible result from the committed regression is:
+
+```text
+N-10 JSON uses explicit statistic names: ambiguous or missing fields
+N-10 stdout labels the translated median: still says only Median
+N-10 sparse-alphabet domains are distinguishable: labels or values wrong
+regression-iid-json: FAIL (3 checks)
 N-10 restart reports actual named statistics: missing, zero, or ambiguously named
 regression-restart: FAIL (1 checks)
 ```
@@ -61,7 +95,11 @@ raw mean is 127.5 and whose translated-symbol median is 0.5, so equality or a
 mere field rename cannot satisfy it.
 
 Post-fix: `regression-iid-json.sh` and `regression-restart.sh` pass. The
-conditioning-report instance remains deliberately excluded and unfixed.
+2026-10-10 correction reran both against reviewed production head `baa51b3`;
+the IID log records `raw 127.5, translated 0.5` and both exit statuses are 0.
+See [fixed IID JSON](a1-correction/fixed-iid-json.log) and
+[fixed restart](a1-correction/fixed-restart.log). The conditioning-report
+instance remains deliberately excluded and unfixed.
 
 ### NOVEL-03 — ambiguous IID restart row/column labels
 
