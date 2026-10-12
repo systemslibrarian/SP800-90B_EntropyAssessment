@@ -9,7 +9,7 @@ remains `false`.
 
 ---
 
-## 1. Batch 1 of verification: 14 of 15 lenses returned
+## 1. Batch 1 of verification: COMPLETE, 15 of 15 lenses
 
 Phase 2 verifies clustered candidates with up to three adversarial lenses each
 (refute by spec and source, independent reproduction, impact and prior art).
@@ -20,20 +20,37 @@ Batch 1 covered the five highest-consequence clusters.
 | `C01-multimmc-chained` | stands-with-corrections | yes | High | **Lenses disagree on severity; unsettled** |
 | `C02-c-mode-hassessed` | stands-with-corrections | yes | High | **Not reopened** — prior F23 decision stands, see `DISPOSITIONS.md` |
 | `C03-iid-verdict-not-in-status` | stands-with-corrections | yes | **Critical** | `ea_iid` half closed by the repair branch; `ea_restart -i` analogue **OPEN** |
-| `C04-chisq-negative-df` | partially-refuted | **OUTSTANDING** | *(pending)* | Downgraded to Low; its proposed repair was harmful |
+| `C04-chisq-negative-df` | partially-refuted | yes | Low | **Low — all three lenses concur**; its proposed repair was harmful |
 | `C05-restart-k-effective` | stands-with-corrections | yes | Medium | Upstream #195 open since 2022-08-23 |
 
-**The one outstanding lens is `C04`'s reproduction.** Workflow run
-`wf_ec9e4efc-9a3`; results are one `{"type":"result",…}` line per agent in
+**Batch 1 is closed.** Run `wf_ec9e4efc-9a3` completed with 15 of 15 agents
+and no errors. Results are one `{"type":"result",…}` line per agent in
 `~/.claude/projects/-Users-gmcas-repos-SP800-90B-EntropyAssessment/a3b01f18-b6b3-44a0-8c60-e2c7009fbc54/subagents/workflows/wf_ec9e4efc-9a3/journal.jsonl`.
-Read that file before assuming anything about what returned.
+Read that file rather than trusting any summary, including this one.
 
-`C04` cannot change the merge decision either way: it is a master-side
-spec-consistency reporting item, now Low, and the refutation lens established
-at high confidence that §5.2.1 says "do not apply the test" rather than "the
-test fails", so the computed verdict already matches the requirement.
+`C04` resolved **Low**, and the three lenses agree on it. The reproduction lens
+matched every figure digit for digit on master, repair and upstream — `skew8b.bin`
+(k=75) `T = 4.4523609313899577`, `df = -58`, `P-value = 1`, `Passed`,
+`hAssessed 0.00010084084053479317`; `imbal-k3-1M.bin` `df = -1`;
+`imbal-k4-1M.bin` `df = 0` — and confirmed the mechanism at
+`chi_square_tests.h:569` (`size_t − int`, narrowed to `int`) feeding
+`cephes_igamc`, which returns `1.0` for a non-positive argument. It diverged
+from the finder only on severity, scope and **evidence provenance**: the
+sanitizer evidence cited did not come from this audit's sanitizer build.
+The impact lens reached Low independently: §5.2.1 step 2 says "If the value of
+degrees of freedom is less than one, do not apply the test", a test that is not
+applied cannot reject and `p = 1` cannot reject either, so the aggregate verdict
+is **identical to a spec-correct implementation's** on every `df < 1` input.
+No false IID acceptance, no overestimate attributable to the fork or upstream,
+and no memory-unsafety (`size_t − int` is well defined). Misreport only.
 
-**Batches 2 and 3 have not run.** Script `verify3.js`, args
+This changes nothing about the merge: `C04` is a master-side reporting item at
+Low, and the rebase rests on Claim 1.
+
+**Batches 2 and 3 have not run**, and they are the bulk of the remaining
+verification: 18 of the 23 clusters are still unverified, including
+`C07-lrs-underflow-abort` (five independent finders) and
+`C08-harness-cannot-fail` (fourteen). Script `verify3.js`, args
 `{batch, items:[{key, lenses}]}`; cluster definitions in
 `<shared-scratchpad>/wf/clusters.json`. Batch 2 is 9 clusters / 16 agents,
 batch 3 is 9 clusters / 9 agents.
@@ -42,7 +59,10 @@ batch 3 is 9 clusters / 9 agents.
 
 ## 2. The repair-branch rebase is held — and what it rests on
 
-**Not started.** Held at the owner's instruction pending `C04`.
+**Not started.** Held at the owner's explicit instruction to pause and stop.
+`C04` is no longer a blocker — batch 1 closed after that instruction was given,
+and the pause was not conditional on it. Do not start the rebase without fresh
+instruction.
 
 When it runs: rebase `repair/2026-10-09-verified-defects` (`2d4b135`, 17
 commits) onto `master` for linear history with no merge commit, then delete the
