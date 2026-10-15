@@ -50,8 +50,33 @@ foreach my $refKey (keys %$refResults) {
    }
 }
 
+# Keys left in %$newResults are those the output produced and the reference does
+# not contain: every key the reference did have was deleted above as it was
+# compared. Such a key has been compared against NOTHING.
+#
+# This used to print and return success. The loop above iterates the REFERENCE
+# key set, so the comparison was total in one direction only: a key missing from
+# the output failed ("No corresponding value"), while a key missing from the
+# REFERENCE was announced on stdout and ignored. A comparison that must be total
+# has to assert the two key sets are EQUAL, not iterate one of them.
+#
+# That asymmetry was not hypothetical. This script was extended to collect the
+# final combined figures -- see resultsHash below, which names "dropping the
+# n x H_bitstring term" as the fault that extension exists to catch -- but the
+# reference files were never regenerated, so "H_bitstring Per Symbol" is emitted
+# on 6 of the 11 selftest files, appears in 0 of the references, and was
+# therefore checked on none of them. The one collected key with no reference was
+# the exact term the extension was written for.
+#
+# An extra key is now a FAILURE. Enabling this makes the shipped references fail
+# on those 6 files, which is the correct report: the comparison has been
+# incomplete since the collection was added and nothing said so. Do not silence
+# this to keep the suite green -- see audits/2026-10-11-independent-audit
+# (OC-20, OC-21) for why the references must not simply be regenerated from the
+# current tools.
 foreach my $newKey (keys %$newResults) {
-   print "$ARGV[0]: Found extra data item: $newKey -> $newResults->{$newKey}\n";
+   print "$ARGV[0]: No reference value for $newKey (output has it, reference does not): $newResults->{$newKey}\n";
+   $retstatus = 1;
 }
 
 print "Maximum delta: $maxdelta\n";

@@ -106,5 +106,16 @@ Literal LZ78Y Prediction Estimate: P_global' = 0.063184862350762594
 Literal LZ78Y Prediction Estimate: P_local can't change the result.
 Literal LZ78Y Prediction Estimate: min entropy = 3.9842772267416611
 H_bitstring = 0.90062659214175955
+# The next line was DERIVED, not captured from a run -- see
+# audits/2026-10-11-independent-audit ORCHESTRATOR-CHECKS.md OC-21.
+# non_iid_main.cpp:600 emits it as H_bitstring * data.word_size, so the
+# expected value is computed from the H_bitstring value and the 4-bit-wide
+# symbol width recorded ABOVE IN THIS FILE. Both predate the current tools
+# (this file was last written by upstream, not by this fork), so the
+# expectation is pinned independently of the build it checks. It was NOT
+# regenerated from the current binaries: those carry known permissive
+# defects, and a reference produced by its subject cannot detect its
+# subject changing.
+H_bitstring Per Symbol = 3.6025063685670382
 H_original: 3.6877536942326419
 Assessed min entropy: 3.6025063685670382

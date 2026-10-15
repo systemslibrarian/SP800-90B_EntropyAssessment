@@ -1982,3 +1982,167 @@ reference data is not a change to make unprompted.
 (the deltas are the documented ones and predate my work), but "pre-existing and
 known" rested on a filename match I had myself shown to be unbounded, and
 interrogating it surfaced a real third defect that the label would have buried.
+
+---
+
+## OC-21 — the key-set asymmetry fixed, and the missing reference DERIVED rather than regenerated
+
+State read: `master @ 67177d2` (== `origin/master`). Binaries built from that
+tree with `cpp/Makefile`'s own flags, `NDEBUG` absent. selftest invoked as
+`./selftest` (no flags); `compareresults.pl` compared directly for the
+controlled cases.
+
+`OC-20` found two separable defects. **Only one has a safe repair, and they are
+fixed by different means.**
+
+### Defect 1 — the comparison was total in one direction only. FIXED.
+
+`compareresults.pl` iterated the **reference** key set, so a key the output
+produced and no reference contained was printed and ignored. Now an extra key
+sets `$retstatus = 1`:
+
+```perl
+foreach my $newKey (keys %$newResults) {
+   print "$ARGV[0]: No reference value for $newKey (output has it, reference does not): ...";
+   $retstatus = 1;
+}
+```
+
+**Shown failing both ways**, on four controlled file pairs (the old script kept
+beside the new one):
+
+| case | before | after |
+|---|---|---|
+| identical key sets, equal values | exit 0 | **exit 0** (no false positive) |
+| **extra key in output** | **exit 0 — the defect** | **exit 1** |
+| missing key in output | exit 1 | **exit 1** (unchanged) |
+| both at once | exit 1 | **exit 1** |
+
+Messages distinguish the two directions: *"No reference value for X (output has
+it, reference does not)"* versus the pre-existing *"No corresponding value for
+X"*.
+
+### What that made fail, recorded before it was resolved
+
+Enforcement on, references **not yet** touched — the loud failure, exactly as
+predicted:
+
+```
+biased-random-bytes  exit=1  No reference value for H_bitstring Per Symbol
+normal               exit=1  No reference value for H_bitstring Per Symbol
+rand4_short          exit=1  No reference value for H_bitstring Per Symbol
+rand8_short          exit=1  No reference value for H_bitstring Per Symbol
+truerand_4bit        exit=1  No reference value for H_bitstring Per Symbol
+truerand_8bit        exit=1  No reference value for H_bitstring Per Symbol
+  -> 6 of 6 failed on the unreferenced key
+```
+
+**That is the correct report.** The comparison had been incomplete on those six
+files since the collection was added and nothing said so. It was not suppressed.
+
+### Defect 2 — the missing reference. DERIVED, not regenerated.
+
+**Regenerating the eleven references from the current tools was rejected.** These
+tools carry nine confirmed permissive defects; references regenerated from them
+would record what this build produces rather than what is correct, and selftest
+would then verify the tools against themselves. **A reference derived from its
+subject cannot detect its subject changing.**
+
+**First: is the identity by construction, or did it hold on the one file I
+checked?** Settled from source, not from the coincidence — **two call sites, both
+unconditional products:**
+
+```c
+non_iid_main.cpp:600   printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
+iid_main.cpp:421       printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
+```
+
+**By construction.** And the emission guard is
+`if ((data.alph_size > 2) || !initial_entropy)`, which is why exactly the six
+multi-bit files are affected and the five 1-bit files emit neither `H_bitstring`
+nor this key — so their references correctly lack it and the enforcement does not
+fire on them.
+
+**Both inputs already exist in the references and neither came from the current
+build:**
+
+- `H_bitstring = <v>` — already a reference line, already compared.
+- `n` — recorded in each reference's own header: *"Loaded 1000000 samples of 256
+  distinct **8-bit-wide** symbols"*.
+
+And `git log -- cpp/selftest/refdata/` shows these files were last written by
+**upstream** commits (`6950b6d`, `951f854`, `7f51b1c`), not by this fork. So the
+expectation is pinned independently of the build it checks, which is what RULE 12
+requires.
+
+**Derived values, all six, computed from reference data only:**
+
+| file | n | reference `H_bitstring` | derived `n × H_bitstring` | vs this build's output |
+|---|---:|---|---|---|
+| biased-random-bytes | 8 | 0.032217608875810141 | **0.25774087100648113** | identical |
+| normal | 8 | 0.51251197288878858 | **4.1000957831103086** | δ 6.93e-15 |
+| rand4_short | 4 | 0.80387206696918412 | **3.2154882678767365** | identical |
+| rand8_short | 8 | 0.73261171806065617 | **5.8608937444852494** | identical |
+| truerand_4bit | 4 | 0.90062659214175955 | **3.6025063685670382** | identical |
+| truerand_8bit | 8 | 0.90423268189731187 | **7.233861455178495** | δ 1.6e-13 |
+
+**A correction to my own first check.** I initially compared derived against
+emitted as **exact strings** and called `normal` and `truerand_8bit`
+mismatches. That is not the tool's criterion: `compareresults.pl` compares
+numerically with `epsilon = 1e-10` on `min(absolute, relative)` delta. Under the
+actual criterion **all six pass**, worst delta **1.6e-13**, a **626× margin**.
+The two non-identical cases arise because those references' `H_bitstring`
+already differs from this build's by a sub-epsilon amount (3.6e-15 and 1.4e-13)
+that the comparison tolerates by design; multiplying by n = 8 scales it by 8 and
+it stays four orders under epsilon. Four of the six are **bit-identical**,
+because n ∈ {4, 8} are powers of two, so the product only changes the binary
+exponent and cannot round.
+
+**Marked as derived, in the reference files themselves**, so a later reader is
+not misled into thinking these were captured:
+
+```
+# The next line was DERIVED, not captured from a run -- see
+# ... OC-21.  non_iid_main.cpp:600 emits it as H_bitstring * data.word_size, so
+# the expected value is computed from the H_bitstring value and the 8-bit-wide
+# symbol width recorded ABOVE IN THIS FILE. Both predate the current tools ...
+# It was NOT regenerated from the current binaries: those carry known permissive
+# defects, and a reference produced by its subject cannot detect its subject
+# changing.
+H_bitstring Per Symbol = 0.25774087100648113
+```
+
+Verified that the comment lines are **not** parsed as keys: replicating
+`resultsHash`'s filter and both value regexes collects 103 keys from
+`biased-random-bytes.res`, **none** from a comment line, and
+`H_bitstring Per Symbol` **is** among them.
+
+**The other ten keys were not touched.** Only the one key with a safe,
+independently-derivable expectation was filled in.
+
+### Result
+
+`./selftest` at this tree:
+
+```
+selftest: FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin
+```
+
+- **Unreferenced keys: 0.** The previously-unchecked `n × H_bitstring` term is
+  now compared on all six files and passes.
+- **No new failures.** The only reported differences are the **7** and **1**
+  documented upstream #155 predictor deltas (`OC-20` possibility 2), unchanged.
+
+**The guard needs no separate regression: selftest is the guard.** An output key
+without a reference now fails it directly, and `OC-20`'s defect could not recur
+silently.
+
+### Still open, deliberately
+
+The other ten keys' references remain upstream-captured and are **not** verified
+against an independent derivation — they cannot be, since nothing derives a
+predictor estimate from other reference data. That is the honest residual: this
+fixes the *key-set completeness* defect and the *one* value that arithmetic could
+pin. **It does not make the reference corpus trustworthy**, and the corpus still
+must not be regenerated from these tools while they carry known permissive
+defects.

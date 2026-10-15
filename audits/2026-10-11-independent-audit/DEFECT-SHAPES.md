@@ -107,6 +107,13 @@ but the eleven references were never regenerated — so `H_bitstring Per Symbol`
 present in 0 references, and compared on **none**. The one key with no reference
 is the term the fix was written for.
 
+**Fixed 2026-10-15 (`OC-21`)**, and the two halves needed different repairs: the
+asymmetry was fixed in code (an extra key now fails, shown failing both ways),
+while the missing value was **derived** from data already in the references
+(`n × H_bitstring`, with both `n` and `H_bitstring` present in reference files
+last written by upstream) rather than regenerated from the current tools —
+because a reference produced by its subject cannot detect its subject changing.
+
 **The general form, now stated for both directions:** a comparison driven by one
 side's key set cannot see what is missing from that side. Iterating the reference
 misses additions; iterating the new output would miss deletions. **A comparison
