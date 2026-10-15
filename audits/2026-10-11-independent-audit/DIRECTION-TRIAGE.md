@@ -108,7 +108,7 @@ these are the changes.
 
 ## Revised register — permissive or unknown, still unverified
 
-1. **`C09`** — PERMISSIVE. `ea_conditioning -i` accepts a 125,000-byte file with `errorLevel 0`. Next.
+1. ~~**`C09`**~~ — **VERIFIED 2026-10-15** (`OC-9`), all four members. Permissive half confirmed: a **100-byte** file yields `h' = 0.6375933997245808448894` and `h_out = 163.22` with `errorLevel 0` and no marker, while `ea_non_iid` exits 255 on the same data. Also found: under `-DNDEBUG` — which no Makefile target sets but downstream packaging commonly adds — the shipped assert is replaced by a **heap-buffer-overflow READ** at `markov_test.h:48`, and `-c iid` exits **0** reporting `h' = -0`. Off the Chor–Goldreich path (raw per-source min-entropy is what the goal needs), so it threatens the figure only if a conditioner enters the chain.
 2. **`C22`** remainder — PERMISSIVE. `P_local` quantisation and `P_global'` at `N == 1`.
 3. **`C16`** — UNKNOWN, mixed. `H_I` via `strtod` sets the restart threshold `H_I/2`; a mis-parsed lower `H_I` is permissive, and `OC-7` now shows the restart sanity check is the wrong place to be adding slack.
 4. **`C21`** — UNKNOWN, mixed. Out-of-bounds reads in `periodicity()`/`covariance()`, which are permutation statistics.

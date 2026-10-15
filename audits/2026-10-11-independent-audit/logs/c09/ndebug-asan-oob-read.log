@@ -1,0 +1,50 @@
+=================================================================
+==87853==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x60200000352f at pc 0x0001048ebff0 bp 0x00016b53d190 sp 0x00016b53d188
+READ of size 1 at 0x60200000352f thread T0
+    #0 0x0001048ebfec in markov_test(unsigned char*, long, int, char const*) markov_test.h:48
+    #1 0x000104907de8 in computeEntropyOfConditionedData(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, bool, TestRunBase*) conditioning_main.cpp:392
+    #2 0x000104907de8 in main conditioning_main.cpp:561
+    #3 0x000186b304e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+0x60200000352f is located 1 bytes before 1-byte region [0x602000003530,0x602000003531)
+allocated by thread T0 here:
+    #0 0x000105cc9274 in malloc+0x78 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x41274)
+    #1 0x0001048c5264 in read_file_subset(char const*, data_t*, unsigned long, unsigned long, TestRunBase*) utils.h:406
+    #2 0x000104907c30 in computeEntropyOfConditionedData(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, bool, TestRunBase*) conditioning_main.cpp:367
+    #3 0x000104907c30 in main conditioning_main.cpp:561
+    #4 0x000186b304e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow markov_test.h:48 in markov_test(unsigned char*, long, int, char const*)
+Shadow bytes around the buggy address:
+  0x602000003280: fa fa 00 02 fa fa 00 02 fa fa 00 02 fa fa 00 02
+  0x602000003300: fa fa 00 04 fa fa 00 04 fa fa 00 04 fa fa 00 04
+  0x602000003380: fa fa 04 fa fa fa 00 01 fa fa 04 fa fa fa fd fd
+  0x602000003400: fa fa 00 01 fa fa 00 03 fa fa 07 fa fa fa 07 fa
+  0x602000003480: fa fa 00 03 fa fa fd fa fa fa 05 fa fa fa 05 fa
+=>0x602000003500: fa fa 01 fa fa[fa]01 fa fa fa fa fa fa fa fa fa
+  0x602000003580: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x602000003600: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x602000003680: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x602000003700: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x602000003780: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==87853==ABORTING
+	*** Warning: not enough collisions to run collision test (need at least 2, found 0) ***

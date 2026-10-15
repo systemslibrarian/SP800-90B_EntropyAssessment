@@ -924,3 +924,103 @@ substring test" is a credible, actionable-looking verdict about the hardware.
 already does elsewhere (the `-1` sentinel and the `nonCompliant*` flags are
 precedents). Added to the merge record's blocking list alongside the Claim 2
 and Claim 3 guard rewrites.
+
+---
+
+## OC-9 — C09: `ea_conditioning` enforces none of the intake discipline the other three tools do
+
+**Verdict: all four members confirmed by execution. Direction: mixed, and the
+permissive half is the fork's own compliance rule being absent from one tool.**
+
+### Permissive half — sub-minimum data assessed with no marker
+
+The fork added the §3.1.1 1,000,000-sample rule (F03/F04) and enforces it in
+`ea_non_iid`, `ea_iid` and `ea_restart`. `ea_conditioning` does not have it.
+
+```
+ea_conditioning -n -i short125k.bin -o o.json 512 256 256 300    (125,000 bytes)
+  rc=0   h' = 0.8330616146316409675876   (Non-vetted) h_out = 213.2637733457000877024
+  JSON: errorLevel 0,  nonCompliantShortDataset ABSENT,  bitsPerSymbol ABSENT
+
+ea_conditioning -n -i short100.bin  -o o.json 512 256 256 300    (100 bytes)
+  rc=0   h' = 0.6375933997245808448894   (Non-vetted) h_out = 163.2239103294926962917
+  JSON: errorLevel 0,  nonCompliantShortDataset ABSENT,  bitsPerSymbol ABSENT
+
+ea_non_iid -q short125k.bin 8                                    (the same file)
+  rc=255   "*** Error: dataset contains 125000 samples;
+            SP 800-90B Section 3.1.1 requires at least 1000000 ***"
+```
+
+A **100-byte** file produces a complete `h'` and `h_out` with `errorLevel 0` and
+no non-compliance marker of any kind. The fork's `EA_ALLOW_SHORT_DATASET`
+escape sets `nonCompliantShortDataset` in the JSON precisely so that a consumer
+can tell a non-compliant assessment apart; here there is nothing to tell it
+with, because the rule was never applied and so the escape was never needed.
+
+### Crash half — degenerate input, and what the assert is hiding
+
+All-zero 1,000-byte input, shipped configuration (no `NDEBUG`):
+
+```
+master       rc=134   "Assertion failed: (len > 1), function most_common,
+                       file most_common.h, line 14."   no JSON
+master-asan  rc=134   same assert
+```
+
+Fail-closed and harmless in a shipped build. But the assert is masking a real
+memory error. Built with **`-DNDEBUG`** plus ASan/UBSan — a configuration no
+`cpp/Makefile` target produces, but one that **downstream packaging commonly
+adds**:
+
+```
+ERROR: AddressSanitizer: heap-buffer-overflow
+READ of size 1 at 0x60200000352f thread T0
+    #0 markov_test(unsigned char*, long, int, char const*)  markov_test.h:48
+    #1 computeEntropyOfConditionedData(...)                 conditioning_main.cpp:392
+0x60200000352f is located 1 bytes BEFORE 1-byte region [0x602000003530,0x602000003531)
+allocated by thread T0 here:
+    #1 read_file_subset(char const*, data_t*, unsigned long, unsigned long, TestRunBase*)  utils.h:406
+```
+
+The mechanism is `OC-1`'s width inference taken to its degenerate limit:
+all-zero input makes the inferred `word_size` **0**, so `blen = len * word_size`
+is 0 and `bsymbols` is a zero-length allocation; `markov_test` then reads before
+it. `conditioning_main.cpp:364` hard-codes `data.word_size = 0` to request
+inference, and nothing rejects an inference of 0.
+
+And the IID variant does not even abort:
+
+```
+ea_conditioning -n -c iid -i allzero1000.bin 512 256 256 300    (NDEBUG build)
+  rc=0   h' = -0   (Non-vetted) h_out = -0
+```
+
+**Exit 0 on all-zero input, reporting negative-zero entropy.** A consumer
+checking the exit status sees success.
+
+### Direction
+
+- **PERMISSIVE**: sub-minimum data assessed with `errorLevel 0` and no marker;
+  and `-c iid` exiting 0 with `h' = -0` on degenerate input.
+- **CONSERVATIVE** in the shipped configuration: the non-IID path aborts.
+- **MEMORY-UNSAFE** under `-DNDEBUG`: an out-of-bounds read reaching a figure.
+
+The cluster was filed Medium with mixed directions, which is why direction
+triage put it third on the register. The permissive element is the sharper one:
+the fork's compliance rule is enforced in three tools and absent from the
+fourth, with no flag to say so.
+
+### Relevance to the goal — off the critical path, and why it still matters
+
+Chor–Goldreich two-source extraction needs **raw per-source min-entropy**, not
+conditioned output, so `ea_conditioning` sits off the path to the 0.5 bit/bit
+figure. `C09` therefore does not threaten that number *unless a conditioning
+component enters the chain*, at which point `OC-1`'s width-inference
+overestimate (`h_out` 7.1552 against a 7-bit ceiling) and this cluster's missing
+intake rule compound: a short, degenerate conditioned dataset would be assessed
+without complaint and scaled by an inferred width.
+
+**Correct and verified**: all four members, by execution, on both the shipped
+and the `NDEBUG` configuration. **Not verified**: whether any upstream issue
+covers the missing intake rule, and the behaviour of the remaining
+`ea_conditioning` items in `C21`.
