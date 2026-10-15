@@ -488,9 +488,9 @@ repair branch rather than treated as closed.
 
 ## OC-6 — C03's `ea_restart -i` half: the same mechanism, same shape, still open
 
-**Verdict: the C03 mechanism does apply to the `-i` path. Source-confirmed;
-the compliant execution was still running when this was written and is marked
-below.** It **misreports** — it does not abort.
+**Verdict: the C03 mechanism does apply to the `-i` path. Source-confirmed and
+now VERIFIED by compliant 1,000,000-sample execution.** It **misreports** — it
+does not abort.
 
 ### The mechanism, at source
 
@@ -556,36 +556,61 @@ repeat — weak serial correlation — which is what the pending run uses
 `0x90B2026C03`, no implanted repeat, not exactly balanced, with `H_I = 0.1` so
 that `min(H_r,H_c) ≥ H_I/2` and validation passes on its own terms).
 
-### Status of this check
+### Status of this check — now VERIFIED by compliant execution
 
-- **Correct**: the mechanism is established from the source with no ambiguity —
-  three booleans computed and never read, then an unconditional `errorLevel = 0`
-  and `return 0`.
-- **Verified**: not yet, for the compliant 1,000,000-sample case, and the
-  reason is runtime rather than evidence. The first attempt
-  (`mk55-1bit.bin`, `timeout 900`, `OMP_NUM_THREADS=2`) **timed out at
-  `rc=124`** — but not before establishing that the dataset reaches exactly the
-  state the demonstration needs:
+The re-launched run completed in 19 min 28 s (22:51:07 → 23:10:35,
+`OMP_NUM_THREADS=4`). `mk55-1bit.bin`: 1,000,000 samples, 1-bit, p(stay)=0.55,
+seed `0x90B2026C03`, no implanted repeat, not exactly balanced, no
+`EA_ALLOW_SHORT_DATASET`, plain CLI, `H_I = 0.1`:
 
-  ```
-  ** Failed chi square tests
-  ** Passed length of longest repeated substring test
-  rc=124   json=no
-  ```
+```
+H_I: 0.100000
+** Failed chi square tests
+** Passed length of longest repeated substring test
+** Failed IID permutation tests
+H_r: 0.994896
+H_c: 0.994896
+H_I: 0.100000
+Validation Test Passed...
+min(H_r, H_c, H_I): 0.100000
+ea_restart rc=0
+```
 
-  So chi-square **fails** (one of the three Section 5 tests is negative) and the
-  LRS test **passes** (site B of `OC-5` is not masking this case, which was the
-  construction goal). It timed out inside the permutation battery, which
-  `ea_restart -i` runs **twice** — once on rows, once on columns — at 10,000
-  permutations each over 1,000,000 samples. The unconditional `errorLevel = 0`
-  sits after that battery, so the decisive line was never reached.
+JSON: `errorLevel: 0`, `IID: true`, `errorMessage: None`, and the Overall test
+case:
 
-  Re-launched with `timeout 7200` and `OMP_NUM_THREADS=4`. The short-matrix
-  shortcut is unavailable: `ea_restart` mandates exactly 1,000,000 samples and
-  `EA_ALLOW_SHORT_DATASET` does not bypass that check, as the refusal quoted
-  above shows. There is no flag to reduce the permutation round count (`-s`
-  controls the §3.1.4.3 simulation rounds, not the battery).
-- The `"IID": true` constant is verified by execution, on an error path.
+```json
+{"h_r": 0.9948963727812402, "h_c": 0.9948963727812402, "h_i": 0.1,
+ "passedChiSquareTests": false,
+ "passedIidPermutationTests": false,
+ "passedLongestRepeatedSubstringTest": true}
+```
+
+**Two of the three Section 5 IID tests failed, and the tool exits 0 with
+`errorLevel 0`, `"IID": true`, no error message, and published `h_r`/`h_c`
+figures.** The per-test booleans sit in the same JSON object as the figures they
+should have invalidated. Nothing reads them, exactly as the source said.
+
+This is the restart analogue of the `ea_iid` half, demonstrated on compliant
+input. **Misreport, not an abort** — the figures are published, which is the
+permissive case. Under §3.1.2 a source whose Section 5 tests fail is not IID
+and the non-IID track is the mandated one, so awarding an *IID restart*
+estimate here is a figure the standard does not sanction.
+
+One honest qualification about magnitude. I set `H_I = 0.1` so that
+`min(H_r,H_c) ≥ H_I/2` and validation would pass on its own terms, which also
+caps the final `min(H_r, H_c, H_I)` at **0.1** — so the headline number in this
+particular run is dominated by the submitter's own `H_I` claim rather than by
+the defect. The awarded restart figures are `h_r = h_c = 0.9948963727812402`. A
+submitter claiming a higher `H_I` would see the defect in the headline figure
+directly. What is demonstrated here without qualification is that **the IID
+verdict is computed, recorded, and then discarded** — not the size of any
+particular resulting number.
+
+**Correct and verified**: the mechanism, the unconditional `errorLevel = 0` and
+`return 0`, the published figures alongside two false `passed*` booleans, on
+1,000,000 compliant samples. Also verified earlier: `"IID": true` on a
+10,000-sample *refusal* path where no IID test ran at all.
 
 ### Correction, made while writing this entry
 

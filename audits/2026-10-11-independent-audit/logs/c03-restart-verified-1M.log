@@ -1,0 +1,16 @@
+start 22:51:07
+ea_restart rc=0 end 23:10:35
+H_I: 0.100000
+** Failed chi square tests
+** Passed length of longest repeated substring test
+** Failed IID permutation tests
+H_r: 0.994896
+H_c: 0.994896
+H_I: 0.100000
+Validation Test Passed...
+min(H_r, H_c, H_I): 0.100000
+--- JSON ---
+errorLevel: 0 | IID: True | errorMessage: None
+  {'h_c': 0.9948963727812402, 'h_i': 0.1, 'h_r': 0.9948963727812402, 'passedChiSquareTests': False, 'passedIidPermutationTests': False, 'passedLongestRepeatedSubstringTest': True}
+
+[exited with code 0]
