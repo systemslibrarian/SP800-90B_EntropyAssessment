@@ -1,0 +1,11 @@
+mk55-1bit.bin    ones= 499516  sha256=3270cb404ac005d07aa93e7a…
+mk60-1bit.bin    ones= 499821  sha256=9a004ae20f40894256639bef…
+mk70-1bit.bin    ones= 501026  sha256=ae69a8de5c4141f58e2da41c…
+
+######## mk55-1bit, H_I=0.1 ########
+   ** Failed chi square tests
+   ** Passed length of longest repeated substring test
+   rc=124  json=no
+######## mk60-1bit, H_I=0.1 ########
+
+[killed]

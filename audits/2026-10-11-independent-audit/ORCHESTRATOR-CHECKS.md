@@ -561,10 +561,30 @@ that `min(H_r,H_c) ≥ H_I/2` and validation passes on its own terms).
 - **Correct**: the mechanism is established from the source with no ambiguity —
   three booleans computed and never read, then an unconditional `errorLevel = 0`
   and `return 0`.
-- **Verified**: not yet, for the compliant 1,000,000-sample case. `ea_restart -i`
-  runs the permutation battery twice (rows and columns) over 1M samples and the
-  run had not completed. The short-matrix shortcut is unavailable because the
-  tool mandates exactly 1,000,000 samples.
+- **Verified**: not yet, for the compliant 1,000,000-sample case, and the
+  reason is runtime rather than evidence. The first attempt
+  (`mk55-1bit.bin`, `timeout 900`, `OMP_NUM_THREADS=2`) **timed out at
+  `rc=124`** — but not before establishing that the dataset reaches exactly the
+  state the demonstration needs:
+
+  ```
+  ** Failed chi square tests
+  ** Passed length of longest repeated substring test
+  rc=124   json=no
+  ```
+
+  So chi-square **fails** (one of the three Section 5 tests is negative) and the
+  LRS test **passes** (site B of `OC-5` is not masking this case, which was the
+  construction goal). It timed out inside the permutation battery, which
+  `ea_restart -i` runs **twice** — once on rows, once on columns — at 10,000
+  permutations each over 1,000,000 samples. The unconditional `errorLevel = 0`
+  sits after that battery, so the decisive line was never reached.
+
+  Re-launched with `timeout 7200` and `OMP_NUM_THREADS=4`. The short-matrix
+  shortcut is unavailable: `ea_restart` mandates exactly 1,000,000 samples and
+  `EA_ALLOW_SHORT_DATASET` does not bypass that check, as the refusal quoted
+  above shows. There is no flag to reduce the permutation round count (`-s`
+  controls the §3.1.4.3 simulation rounds, not the battery).
 - The `"IID": true` constant is verified by execution, on an error path.
 
 ### Correction, made while writing this entry
