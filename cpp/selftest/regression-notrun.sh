@@ -24,6 +24,11 @@ work=$(mktemp -d "${TMPDIR:-/tmp}/ea-regnr5.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT
 
 fails=0
+# A case that could not run is not a pass. It is counted separately from a
+# failure because the cause is environmental rather than a regression, and the
+# two call for different action, but both must reach the exit status: a suite
+# that reports success for a guard that never executed is not a guard.
+cannot_run=0
 note() { printf '%-54s %s\n' "$1" "$2"; }
 [ -x "${tool}" ] || { echo "regression-notrun: ${tool} missing (run 'make non_iid')" >&2; exit 2; }
 
@@ -56,7 +61,8 @@ if [ -f "${gen}" ] && python3 "${gen}" 100 11 "${work}/db100.bin" >/dev/null 2>&
 		fails=$((fails + 1))
 	fi
 else
-	note "de Bruijn case:" "skipped (generator unavailable)"
+	note "de Bruijn case:" "COULD NOT RUN (no generator at ${gen})"
+	cannot_run=$((cannot_run + 1))
 fi
 
 # Ordinary NIST samples must carry no flags at all: a false positive here
@@ -88,6 +94,10 @@ else
 fi
 
 echo
+if [ "${cannot_run}" -ne 0 ]; then
+	echo "regression-notrun: COULD NOT RUN (${cannot_run} case(s) had no input; ${fails} of the cases that ran failed)"
+	exit 2
+fi
 if [ "${fails}" -eq 0 ]; then
 	echo "regression-notrun: PASS"
 	exit 0

@@ -23,6 +23,12 @@ allow_platform=0
 KNOWN_PLATFORM_FILES="biased-random-bytes.bin ringOsc-nist.bin"
 
 pass=0; fail=0; failed=""
+# Exit 2 from a regression means it could not run — a prerequisite was absent —
+# as distinct from exit 1, a regression it detected. Both count against this
+# script's exit status, because a check that did not execute supports no claim,
+# but they are reported apart so the operator knows whether to fix the
+# environment or the code.
+cannot=0; couldnot=""
 run() { # run <label> <command...>
     local label=$1; shift
     local out rc
@@ -30,6 +36,12 @@ run() { # run <label> <command...>
     if [ "${rc}" -eq 0 ]; then
         printf '  %-34s PASS\n' "${label}"
         pass=$((pass + 1))
+        return
+    fi
+    if [ "${rc}" -eq 2 ]; then
+        printf '  %-34s COULD NOT RUN (exit 2)\n' "${label}"
+        printf '%s\n' "${out}" | tail -4 | sed 's/^/        /'
+        cannot=$((cannot + 1)); couldnot="${couldnot} ${label}"
         return
     fi
     printf '  %-34s FAIL (exit %s)\n' "${label}" "${rc}"
@@ -95,7 +107,14 @@ done
 [ "${found}" -eq 0 ] && { echo "  none found — that is itself wrong" >&2; fail=$((fail + 1)); }
 
 echo
-echo "run-all-checks: ${pass} passed, ${fail} failed (${found} regression scripts discovered)"
-[ "${fail}" -eq 0 ] && exit 0
-echo "failed:${failed}"
+# The summary line stays byte-identical when nothing was skipped: the repair
+# branch's harness-inventory-mutation-test.sh matches it exactly.
+if [ "${cannot}" -eq 0 ]; then
+    echo "run-all-checks: ${pass} passed, ${fail} failed (${found} regression scripts discovered)"
+else
+    echo "run-all-checks: ${pass} passed, ${fail} failed, ${cannot} could not run (${found} regression scripts discovered)"
+    echo "could-not-run:${couldnot}"
+fi
+[ "${fail}" -eq 0 ] && [ "${cannot}" -eq 0 ] && exit 0
+[ "${fail}" -eq 0 ] || echo "failed:${failed}"
 exit 1

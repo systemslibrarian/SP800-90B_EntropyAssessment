@@ -27,6 +27,28 @@ fails=0
 note() { printf '  %-52s %s\n' "$1" "$2"; }
 bad()  { note "$1" "$2"; fails=$((fails + 1)); }
 
+# An extraction that matches nothing produces an empty accumulator, and an empty
+# accumulator reads exactly like "nothing was wrong". Every extraction below
+# therefore declares the minimum number of items it must find. A count under the
+# floor means the pattern has stopped matching these documents, so the check
+# verifies nothing -- reported as a failure, not as a pass.
+#
+# A floor rather than an exact count, deliberately: these documents grow, and a
+# hand-maintained exact total is the very defect audits/README.md demonstrates
+# (it claims 585 tracked files against an actual 739).
+# verify-fixture-inventory.sh can assert an exact 11/11 because its corpus is
+# frozen by design; documentation references are not. Each floor sits well under
+# the count observed at f069898, which is recorded beside it.
+nwords() { echo "$#"; }
+floor() { # floor <label> <observed> <minimum>
+    if [ "$2" -lt "$3" ]; then
+        bad "${1}:" "extracted only $2 item(s), floor is $3 - the pattern no longer matches, so this check verifies nothing"
+        return 1
+    fi
+    note "${1}:" "$2 item(s) extracted (floor $3)"
+    return 0
+}
+
 # ---------------------------------------------------------------- 1. SHAs
 missing=""
 # Taken from the fields that actually assert a commit. Scanning for bare hex
@@ -36,6 +58,7 @@ shas=$( { grep -ohE 'Commit [0-9a-f]{7,40}\.' NOTICE | sed 's/^Commit //; s/\.$/
           grep -ohE '^- \*\*Fork fix commit:\*\* `[0-9a-f]{7,40}`' "${TRACKER}" | grep -ohE '[0-9a-f]{7,40}'
           grep -ohE '`87c104d[0-9a-f]*`' NOTICE "${TRACKER}" | tr -d '`'
         } | sort -u )
+floor "commit SHA extraction from NOTICE and the tracker" "$(nwords ${shas})" 10   # 23 at f069898
 for h in ${shas}; do
     git cat-file -e "${h}^{commit}" 2>/dev/null || missing="${missing} ${h}"
 done
@@ -44,7 +67,9 @@ else bad "commit SHAs that do not resolve:" "${missing}"; fi
 
 # -------------------------------------------------------- 2. referenced paths
 missing=""
-for f in $(grep -ohE '`[A-Za-z0-9_][A-Za-z0-9_./-]*/[A-Za-z0-9_./-]+\.(sh|py|cpp|h|md|pl|txt|pdf)`' ${DOCS} | tr -d '`' | sort -u); do
+refpaths=$(grep -ohE '`[A-Za-z0-9_][A-Za-z0-9_./-]*/[A-Za-z0-9_./-]+\.(sh|py|cpp|h|md|pl|txt|pdf)`' ${DOCS} | tr -d '`' | sort -u)
+floor "repo-path extraction from the docs" "$(nwords ${refpaths})" 20   # 64 at f069898
+for f in ${refpaths}; do
     [ -e "${f}" ] && continue
     find . -path ./.git -prune -o -path "*/${f}" -print 2>/dev/null | grep -q . && continue
     # A path the documentation explicitly describes as a former or original
@@ -60,7 +85,9 @@ else bad "referenced paths that do not exist:" "${missing}"; fi
 
 # ------------------------------------------------- 3. markdown link targets
 missing=""
-for l in $(grep -ohE '\]\([A-Za-z0-9_][A-Za-z0-9_./-]*\.(md|sh|pdf|txt)\)' ${DOCS} | sed 's/^](//; s/)$//' | sort -u); do
+mdlinks=$(grep -ohE '\]\([A-Za-z0-9_][A-Za-z0-9_./-]*\.(md|sh|pdf|txt)\)' ${DOCS} | sed 's/^](//; s/)$//' | sort -u)
+floor "markdown link extraction from the docs" "$(nwords ${mdlinks})" 5   # 11 at f069898
+for l in ${mdlinks}; do
     found=0
     for d in . audits audits/2026-09-30; do [ -e "${d}/${l}" ] && found=1; done
     [ "${found}" -eq 0 ] && missing="${missing} ${l}"
@@ -70,7 +97,9 @@ else bad "markdown links that do not resolve:" "${missing}"; fi
 
 # -------------------------------------------- 4. regressions the tracker names
 missing=""
-for f in $(grep -oE 'cpp/selftest/regression-[a-z0-9-]+\.sh' "${TRACKER}" | sort -u); do
+trackernamed=$(grep -oE 'cpp/selftest/regression-[a-z0-9-]+\.sh' "${TRACKER}" | sort -u)
+floor "regression-script names extracted from the tracker" "$(nwords ${trackernamed})" 8   # 14 at f069898
+for f in ${trackernamed}; do
     [ -f "${f}" ] || missing="${missing} ${f}"
 done
 if [ -z "${missing}" ]; then note "every regression the tracker names exists:" "yes"
@@ -102,6 +131,11 @@ else
     [ -x cpp/ea_non_iid ] && observed=$(cpp/ea_non_iid -vv bin/ringOsc-nist.bin 2>/dev/null \
         | sed -n 's/^Assessed min entropy: //p' | head -1)
     wrong=""
+    # Total across all the documents, not per document: most of them legitimately
+    # quote no pinned figure, but if NONE of them does any more then the pattern
+    # has stopped matching and the comparison below is vacuous.
+    allpinned=$(grep -ohE '0\.12644573619[0-9]+' ${DOCS} | sort -u)
+    floor "pinned-figure extraction across the docs" "$(nwords ${allpinned})" 1   # 2 at f069898
     for d in ${DOCS}; do
         for v in $(grep -ohE '0\.12644573619[0-9]+' "${d}" | sort -u); do
             [ "${v}" = "${pinned}" ] && continue

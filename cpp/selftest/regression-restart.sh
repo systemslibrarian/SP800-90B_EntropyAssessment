@@ -27,6 +27,10 @@ work=$(mktemp -d "${TMPDIR:-/tmp}/ea-regrst.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT
 
 fails=0
+# A case that could not run is not a pass. Counted apart from a failure because
+# the cause is environmental, not a regression, but it still reaches the exit
+# status: a guard that never executed supports no claim.
+cannot_run=0
 note() { printf '%-50s %s\n' "$1" "$2"; }
 [ -x "${tool}" ] || { echo "regression-restart: ${tool} missing (run 'make restart')" >&2; exit 2; }
 
@@ -178,7 +182,8 @@ if [ -f "${gen}" ] && python3 "${gen}" 100 11 "${work}/db100.bin" >/dev/null 2>&
 		fails=$((fails + 1))
 	fi
 else
-	note "R-2:" "skipped (generator unavailable)"
+	note "R-2:" "COULD NOT RUN (no generator at ${gen})"
+	cannot_run=$((cannot_run + 1))
 fi
 
 # An ordinary restart dataset must be unaffected.
@@ -191,6 +196,10 @@ else
 fi
 
 echo
+if [ "${cannot_run}" -ne 0 ]; then
+	echo "regression-restart: COULD NOT RUN (${cannot_run} case(s) had no input; ${fails} of the cases that ran failed)"
+	exit 2
+fi
 if [ "${fails}" -eq 0 ]; then
 	echo "regression-restart: PASS"
 	exit 0
