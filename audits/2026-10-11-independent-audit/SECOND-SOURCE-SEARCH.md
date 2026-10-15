@@ -453,3 +453,163 @@ thing that closes the gap named above.
 Physical items remain **NOT RUN**. The 0.696 figure is one unit's measurement,
 and per `XR-04` it is uninterpretable until the assessing binary's build
 provenance is established — which applies with equal force to a second unit.
+
+---
+
+# Part 4 — batch correlation, and a correction to Part 3 (2026-10-15)
+
+Availability, verified: **Crowd Supply, $39 + $8 US shipping, "Orders placed now
+ship Jan 29, 2027", pre-order.** Manufactured by **leetronics UG** (Wiesbaden);
+"Sold and shipped by Crowd Supply", i.e. Crowd Supply is a *distributor* for the
+same manufacturer as `leetronics.de`. Ordering the second unit now means both
+arrive together, so **Tier 2 costs no schedule**.
+
+## First, a correction to Part 3's residual risk
+
+Part 3 said that if a shared design flaw put both units at 0.4 rather than
+0.696, "you'd never know from the output." **That was too strong, and the
+correction sharpens what the real risk is.**
+
+SP 800-90B min-entropy estimation is **empirical, not model-based**: the ten
+estimators compute statistics of the sample stream itself. They do not consult
+`DESIGN_K` or any device model. So a fault that genuinely *reduces* the stream's
+entropy — a resistor out of tolerance lowering the gain `K`, hence lowering
+log2(K) per bit — would show up as a **lower measured figure**. That failure is
+detectable, and it is detectable on a single unit.
+
+(The *driver's* health check is the model-based one — a predictor against
+`DESIGN_K`, `libinfnoise.c:44`. That is a different mechanism from the
+assessment and would mis-report if `K` drifted. But it is not what the Tier 2
+figure rests on.)
+
+**So the undetectable risk is narrower and more specific than Part 3 stated:**
+it is **shared source structure lying in the SP 800-90B estimator battery's
+blind spot.** The battery covers a particular family of dependencies — i.i.d.
+deviation, Markov, compressibility, predictability. A structure outside that
+family (a periodic modulation from a switching supply, a long-range correlation)
+reads high on all ten estimators. If both units share that structure, both read
+high and both are wrong — and **the blind spot is a property of the estimator,
+not of the unit, so no amount of measuring either unit reveals it.**
+
+That is the risk CG cannot absorb, and it is what design or batch commonality
+can deliver.
+
+## Batch correlation is not design correlation
+
+They differ in origin, permanence, examinability and mitigation, and collapsing
+them loses all four distinctions.
+
+| | **Design correlation** | **Batch correlation** |
+|---|---|---|
+| Origin | the schematic, topology, component choices | a production run: resistor lot out of tolerance, mis-set gain trim, a comparator reel |
+| Present in | **every unit ever made** | only units from that run |
+| Permanence | **permanent** | contingent |
+| Examinable by | **reading the schematic and BOM** — open hardware, so this is possible today, before purchase | **only by comparing units from different runs** |
+| Mitigated by | a different *design* — i.e. mechanism diversity, which is what criterion 2 was protecting | units from different *batches* |
+| Status for this plan | **dominant, and accepted as the named gap** | second-order, and addressable later |
+
+The practical asymmetry: design correlation can be *investigated now* — the
+Infinite Noise is open hardware, so the schematic and BOM are readable, and a
+careful look at the gain-setting resistor pair and the comparator stage is
+available for free before anything is bought. Batch correlation cannot be
+investigated at all without two units from two runs.
+
+## Can the measurement distinguish them? No — and here is what follows
+
+If both units read 0.70 and the truth is 0.55, **nothing in either figure says
+whether the cause is the design or the batch.** Both hypotheses predict the same
+observation. One pair of units cannot separate them.
+
+But the two figures are not therefore uninformative:
+
+- **If the two units' measured figures differ materially**, that is direct
+  evidence of unit-to-unit variation — which bounds how tight the component
+  tolerances actually are, and therefore how plausible a batch-wide
+  out-of-tolerance fault is.
+- **If they agree closely**, that is weak evidence that unit variation is small.
+  It is **not** evidence that the design is sound, because a design-caused
+  structure would make them agree closely *and* both be wrong.
+
+So close agreement is the ambiguous outcome and disagreement is the informative
+one — which is the opposite of the intuition that matching figures are
+reassuring.
+
+### Measurement requirement: record separately, never average
+
+**Both units' figures must be recorded and compared individually, before any
+combination.** Averaging is wrong for two independent reasons:
+
+1. **It destroys the differential signal** — the one piece of batch evidence a
+   single pair can give.
+2. **More fundamentally, CG requires *each* source to exceed the threshold, not
+   their mean.** If unit A reads 0.72 and unit B reads 0.58, the average 0.65
+   looks comfortable while unit B sits 0.08 above the 0.5 floor. The governing
+   quantity is the **minimum of the two**, so an average actively conceals the
+   binding constraint.
+
+"Two units measured as one pair" is a measurement that cannot be taken apart
+afterwards, and the quantity CG needs is not recoverable from it.
+
+## Is cross-batch sourcing worth doing? Re-derived — no, and for a reason beyond schedule
+
+The proposal suspects design correlation dominates and batch diversity is not
+worth a schedule risk. **That conclusion holds, and the strongest argument for
+it is not the schedule.**
+
+**1. The intended diversity probably would not materialise.** Crowd Supply is a
+*distributor for leetronics UG*, the same manufacturer as `leetronics.de`.
+Buying one from each gives two units from one manufacturer, and the ship windows
+coincide (`leetronics` 3-4 months ≈ Jan–Feb 2027; Crowd Supply Jan 29 2027), so
+both are plausibly fulfilled from **the same production run**. Paying extra
+shipping and accepting a vaguer second date for *possibly zero* batch diversity
+is a bad trade on its own terms, independent of schedule. **Batch diversity is
+not obtained by buying from two distributors of one manufacturer** — it would
+require confirming distinct production runs, which neither storefront exposes.
+
+**2. Batch diversity says nothing about the dominant risk.** Even if genuinely
+different batches were obtained, they share the design. The permanent,
+examinable-from-source, mechanism-level risk is untouched.
+
+**3. Desynchronised arrival delays the claim.** Both units arriving together
+means one calibration session in January. Split arrival means the second figure
+lands months later and the Tier 2 claim waits on it.
+
+**4. There is a cheaper way to get the batch evidence, later and for free.**
+Once the first two units are calibrated and their individual figures recorded, a
+**third unit bought from a later production run** gives a genuine cross-batch
+comparison against two already-characterised units — stronger evidence than a
+two-unit cross-batch pair would have given, at no schedule cost now, and only if
+the first comparison suggests it is worth having. Defer it.
+
+**Recommendation: buy the second unit from Crowd Supply now, same batch, both
+arriving 2027-01-29.** Accept batch correlation as a *contingent* risk recorded
+separately from the design gap, obtain the differential evidence by measuring the
+two units separately, and hold the third-unit option in reserve.
+
+## Added to the January calibration list
+
+Before any combination, extraction, or Tier 2 claim:
+
+1. **Record each unit's serial number and any batch or date markings** on the
+   PCB and packaging, photographed. If no markings exist, record that — absence
+   of batch identification is itself a limit on what can be reconstructed later.
+2. **Capture and assess each unit entirely separately**, raw (`--raw`), with no
+   shared whitening, no `/dev/random`, no shared Keccak instance.
+3. **Record each unit's min-entropy figure individually**, with the full
+   per-estimator breakdown, not just the minimum. Never average the two.
+4. **Compare the two figures explicitly** and record the difference. A material
+   difference is evidence about unit variation; close agreement is the ambiguous
+   outcome, not the reassuring one.
+5. **Record the binding constraint as the minimum of the two**, since that is
+   what CG requires.
+6. **Run the cross-correlation test between the two raw streams** (Part 3,
+   requirement 2) — built and shown failing on deliberately coupled input first.
+7. **Record the build provenance of the assessing binary** for every figure, per
+   `XR-04`. A figure without it is uninterpretable, and that applies to both
+   units equally.
+8. **Read the schematic and BOM for the gain-setting resistor pair and the
+   comparator stage** before January. This is the only investigation available
+   into the *dominant* risk, it is free, and it does not need hardware.
+
+Physical items remain **NOT RUN**. No figure here is measured; the 0.696 remains
+one unit's prior measurement and uninterpretable pending build provenance.
