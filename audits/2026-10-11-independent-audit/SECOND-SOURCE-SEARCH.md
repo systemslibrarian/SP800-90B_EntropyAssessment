@@ -607,12 +607,40 @@ Before any combination, extraction, or Tier 2 claim:
 7. **Record the build provenance of the assessing binary** for every figure, per
    `XR-04`. A figure without it is uninterpretable, and that applies to both
    units equally.
-8. **Read the schematic and BOM for the gain-setting resistor pair and the
-   comparator stage** before January. This is the only investigation available
-   into the *dominant* risk, it is free, and it does not need hardware.
+8. ~~**Read the schematic and BOM for the gain-setting resistor pair and the
+   comparator stage** before January.~~ **DONE 2026-10-15 — see Part 5.** It
+   cost nothing and needed no hardware, as predicted. Outcome: K = 1.82
+   confirmed on both channels; **tolerances absent from the BOM**, so the
+   unit-to-unit yardstick is a derived band (±0.013 bit at 1 %, ±0.065 bit at
+   5 %) rather than a known one; and it found a mechanism the brief did not
+   anticipate — **`VREF` is a VCC33/2 divider shared by *both* comparators with a
+   3 kHz corner, on a rail the FT240X's own I/O shares.** Items 9-11 follow from
+   that.
+9. **Run the host-supply experiment** specified in **Part 6**: three conditions
+   (laptop on battery / same laptop on mains / powered hub), both units captured
+   simultaneously, 5 × 1,000,000 samples per unit per condition. **The decision
+   rule is pre-registered in Part 6 and is not to be revised after seeing the
+   data** — 3 × the pooled within-condition SD *and* an absolute floor of
+   0.013 bit, the latter because below the component-tolerance band a difference
+   is uninterpretable however significant it looks.
+10. **Record each unit's figures per condition, never averaged across units**,
+    and record the inter-unit peak coherence per condition — that second
+    statistic is the sharper test, because independence is what CG needs and
+    coupling is what breaks it.
+11. **Build the outside-the-battery checks** — long-lag autocorrelation to ~10⁵
+    lags and a power spectrum of the raw stream. **Part 5 established that the
+    estimator battery's frequency floor is 73.3 Hz** (MultiMCW's 4095-sample
+    window at ~0.3 Mbit/s), so **mains at 50 Hz (6000 samples) and 60 Hz (5000
+    samples) sits in the blind spot while the rectified second harmonic does
+    not.** Per **Part 7** this is a *software* item, needs no purchase and no
+    schedule, is available now, and is plausibly the **highest-value item on the
+    whole Tier 2 list** — ahead of the second unit it would be assessing, because
+    no purchase can close an estimator blind spot.
 
 Physical items remain **NOT RUN**. No figure here is measured; the 0.696 remains
 one unit's prior measurement and uninterpretable pending build provenance.
+Item 8 is the only item on this list that is now DONE, and it is a paper
+finding: it changes what to measure, and measures nothing.
 
 ---
 
@@ -741,16 +769,62 @@ in the output. That one is comfortably inside the estimator battery's reach
 
 **What the battery probes**, computed at the Infinite Noise's ~0.3 Mbit/s:
 
-| estimator | lag reach | = time | frequency floor |
-|---|---:|---:|---:|
-| Markov §6.3.3 (first order) | 1 | 0.003 ms | 300 kHz |
-| MultiMMC §6.3.9 (depth) | 16 | 0.053 ms | 18.8 kHz |
-| LZ78Y §6.3.10 (prefix) | 16 | 0.053 ms | 18.8 kHz |
-| Lag predictor §6.3.8 | 128 | 0.427 ms | 2.34 kHz |
-| **MultiMCW §6.3.7 (longest window)** | **4095** | **13.65 ms** | **73.3 Hz** |
+| estimator | lag reach | = time | frequency floor | source |
+|---|---:|---:|---:|---|
+| Markov §6.3.3 (first order) | 1 | 0.003 ms | 300 kHz | `markov_test.h:18-23` |
+| MultiMMC §6.3.9 (depth) | 16 | 0.053 ms | 18.8 kHz | `multi_mmc_test.h:4` `D_MMC 16` |
+| LZ78Y §6.3.10 (prefix) | 16 | 0.053 ms | 18.8 kHz | `lz78y_test.h:4` `B_len 16` |
+| Lag predictor §6.3.8 | 128 | 0.427 ms | 2.34 kHz | `lag_test.h:4` `D_LAG 128U` |
+| **MultiMCW §6.3.7 (longest window)** | **4095** | **13.65 ms** | **73.3 Hz** | `multi_mcw_test.h:9` `W[] = {63,255,1023,4095}` |
 
-t-tuple/LRS reach is data-dependent; compression (bzip2) catches general
-redundancy but is not a sensitive detector of weak periodicity.
+**These five are read from this repository's source, not inferred** — the
+load-bearing claim of Parts 5-7 is that 4095 is the largest window anywhere in
+the battery, so it was checked rather than recalled. Two notes from doing so:
+
+- **Markov's reach really is lag 1.** It accumulates only `C_00` and `C_10` over
+  `data[i]` → `data[i+1]` (`markov_test.h:18-23`), so it is a first-order chain
+  and **cannot represent a lag-2 dependency at all.** The `128.0` in that file is
+  not a lag: `H_min = 128.0` is a sentinel for a running minimum and
+  `H_min/128.0` (`:105`) normalises the most-likely-128-sequence probability back
+  to per-bit. The estimator spans 128 samples but models only adjacent pairs.
+- **MultiMCW's smallest window is 63**, so the four windows are 63/255/1023/4095
+  and there is no coverage between 4095 and the data length.
+
+### The obvious objection, answered: don't t-tuple and LRS reach further?
+
+**Yes, and it does not rescue the battery.** `t_tuple_test` and `len_LRS_test`
+have **no fixed window** — LRS finds the longest repeated substring in the whole
+input, which on 1,000,000 samples can be far longer than 4095. So the claim
+"nothing in the battery looks past 4095" would be false as stated, and the
+reason it does not matter is a difference in *kind*, not in reach:
+
+| estimator family | what it detects | reach |
+|---|---|---|
+| MultiMCW / Lag / MultiMMC / LZ78Y | **predictability** — a model that forecasts the next symbol | bounded: 4095 max |
+| t-tuple / LRS §6.3.5-6.3.6 | **exact repetition** — the same substring occurring twice | unbounded |
+| compression §6.3.4 | general redundancy, via bzip2 | unbounded, insensitive |
+
+A 50/60 Hz modulation of a shared comparator threshold does **not** produce
+exact repeated substrings. It produces a slowly oscillating *bias* — P(1) drifts
+a fraction of a percent above and below 0.5 with a 5000-6000 sample period —
+while the sample-to-sample values stay random. There is no repeated substring to
+find, because no substring repeats; only its *distribution* shifts. So:
+
+- **LRS and t-tuple are blind to it** because it is not repetition.
+- **The predictors could model it** — a bias oscillation is predictable
+  structure — **but only within their window**, and the window stops at 4095
+  while the period is 5000-6000.
+- **Compression would need the bias excursion to be large** before bzip2's
+  estimate moves measurably; it is the least sensitive member of the battery.
+
+That is the precise shape of the gap: **the estimator with the right *kind* of
+sensitivity has the wrong reach, and the estimators with unbounded reach have
+the wrong kind of sensitivity.** Neither half is individually wrong, and nothing
+in the standard composes them. This is `SHAPE-07` in `DEFECT-SHAPES.md`.
+
+A long-lag autocorrelation closes it directly, because autocorrelation measures
+exactly the quantity that is varying — the mean — at exactly the lags nothing
+else examines.
 
 **No time constant in the design exceeds that reach.** VREF's 50 µs is ~15
 samples; C8/C9 at 220pF are sub-sample; C6 and C2 filter only high frequencies.

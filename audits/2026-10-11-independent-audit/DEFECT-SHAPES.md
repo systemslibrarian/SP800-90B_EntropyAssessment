@@ -171,3 +171,59 @@ sentinel and the `nonCompliant*` fields are the existing precedents.
 **Instances:** `C07` site B under `NDEBUG`; the repair branch's handling of the
 same site; `C21`'s `-1` sentinels folded into `h'` giving `h_out = -256` is the
 same shape with the sentinel leaking into a figure instead of a verdict.
+
+---
+
+## SHAPE-07 — a bounded-reach instrument reporting an unbounded verdict
+
+The SP 800-90B estimator battery has a **finite lag reach**. The longest
+explicit window in the whole battery is MultiMCW's **4095 samples** (§6.3.7);
+Markov reaches lag 1, MultiMMC and LZ78Y reach depth 16, the Lag predictor
+reaches 128. At the Infinite Noise's ~0.3 Mbit/s that longest window is
+13.65 ms, a **frequency floor of 73.3 Hz** (`SECOND-SOURCE-SEARCH.md` Part 5,
+Question 4).
+
+The output is `min-entropy = H` bit/bit, with **no stated reach**. Nothing in
+the JSON, the console output, or the standard's reporting requirements says
+*"periodicity slower than 73.3 Hz was not examined."* So a source with a clean
+figure and a 60 Hz mains component in it produces the same output as a source
+with neither — and the mains fundamental (5000-6000 samples) is beyond 4095
+while its own rectified second harmonic (2500-3000 samples) is inside. **The
+battery can see the harmonic of a defect it cannot see.**
+
+**The general form:** an instrument whose coverage is bounded along some
+dimension — lag, frequency, alphabet size, time, input length — emits a verdict
+phrased as a property of the thing measured rather than of the measurement. The
+bound is real, documented in the algorithm, and absent from the result. Readers
+then treat silence about the unexamined region as evidence about it.
+
+**Why it is distinct from `SHAPE-06`:** `SHAPE-06` is a limit *reached and
+mislabelled* — the arithmetic underflows and the tool says "test failed."
+`SHAPE-07` is a limit *never reached and never mentioned* — nothing goes wrong,
+no code path is exercised, and the figure is correct about everything it looked
+at. `SHAPE-06` produces a wrong answer; `SHAPE-07` produces a right answer to a
+narrower question than the reader thinks was asked. That makes it harder to
+find, because there is no failure to notice.
+
+**Where to look for it:** any aggregate presented without its support. Every
+estimator with a fixed window, depth, or `D`/`k` cap; every "passed" that is
+really "passed within the examined range"; `ea_restart`'s 1000×1000 matrix,
+which examines exactly the restart structure it samples and nothing about
+longer-period drift; and — the reason this matters past this repo — **any
+consumer that stores a min-entropy figure as a scalar property of a source.**
+A downstream system cannot recover a bound the upstream figure never carried.
+
+**The fix shape:** emit the reach alongside the verdict. A field recording the
+longest lag actually examined turns an unbounded claim into a bounded one and
+costs nothing, since the battery already knows its own windows — the same
+principle as *a test that asserts about a quantity must emit that quantity*,
+applied to the test's domain instead of its subject. Where the standard's output
+cannot be changed, the gap must be closed **outside** the battery: a long-lag
+autocorrelation, a spectrum, or an estimator family the standard does not
+include. No additional *source* closes it, because the bound belongs to the
+instrument and a second source is measured with the same instrument
+(`SECOND-SOURCE-SEARCH.md` Part 7).
+
+**Instances:** the 73.3 Hz floor against mains (Part 5, Question 4); the
+cross-check argument it invalidates (Part 7); `C21`'s `-1` sentinels, where a
+*declined* estimator's non-participation is likewise not reported in the figure.
