@@ -310,3 +310,62 @@ Fork commits for each fact, per the provenance mechanism being added:
 `596cc2a` (`OC-10`, the NDEBUG flip and the chain), `301fae0` (`OC-7`, C23),
 `44baeba` (`OC-12`, C22 closed), `d6004a9` (`OC-11`, the H_I chain),
 and this commit for the canary.
+
+---
+
+## XR-05 — two hard requirements for OneRNG raw capture, both from firmware source
+
+Established from `github.com/OneRNG/firmware` `cdc_app.c` (repo last pushed
+2015-06-18). Full working in `ONERNG-RAW-MODE-FROM-SOURCE.md`. Relevant only if
+a OneRNG is acquired; recorded now so it is not rediscovered during capture.
+
+Raw avalanche with the whitener off and RF off is **`cmd1`** — the mode digit is
+a bitmask (bit 0 disables CRC16 whitening, bit 1 enables RF, bit 2 disables
+avalanche), and the firmware permits it with no restriction.
+
+### 1. Re-send the mode command every session; it cannot be read back
+
+The mode lives in three `__bit` RAM variables with compile-time initialisers
+(`no_crc=0`, `no_avalanche=0`, `rf_source=0`). The device therefore powers up in
+**`cmd0` — avalanche, whitened** — and there is **no persistence**: no flash or
+EEPROM write of the mode exists in the firmware. A selection survives only until
+the next power-cycle, re-plug or host reset.
+
+**A reverted mode produces whitened output that is indistinguishable from raw
+output at the byte level.** The firmware offers no command to read the current
+mode back, so the harness cannot verify it — only re-assert it. Send the mode at
+the start of **every** capture session, not once at setup.
+
+### 2. Do not let the device's pool overflow, or the data is XOR-mixed
+
+`queue_pool_data` has two paths, and **the whitener setting gates neither**:
+
+- pool not full → `*pool_in++ = x`, stored verbatim
+- **pool full → `*pool_update++ ^= x`, XORed into an existing stored byte**
+
+`POOL_SIZE = 7168` (`Makefile:61`). At the community figure of 0.35 Mbit/s
+(≈43,750 B/s) the pool fills in **≈0.164 s**, so a read gap beyond roughly
+**160 ms** begins silently XOR-mixing samples.
+
+**The direction matters:** XOR-combining independent samples *raises* apparent
+entropy per bit. An overflowing capture measures a min-entropy rate **higher
+than the source deserves** — permissive, which is the dangerous direction. This
+happens with `cmd1` set, because the overflow path ignores the whitener bit.
+
+So raw capture must sustain reads without stalling for a sixth of a second. A
+disk flush, a log write or a scheduler hiccup crosses that threshold.
+
+*(7168 is exact, from the Makefile. The 160 ms derives from a community
+throughput figure rather than a vendor specification, so treat it as the right
+order of magnitude and leave margin.)*
+
+### Not established
+
+Whether a currently-shipping hardware **V3** unit runs firmware matching this
+2015 source. Note the naming trap: hardware "V3" and firmware "Version 3" are
+unrelated and the coincidence is misleading. `cmdv` reports the firmware version
+and should be checked on receipt, before the unit is trusted for assessment.
+
+No min-entropy-per-bit claim exists for this device in any source examined, so
+there is nothing to record even as a claim. The real figure waits for the tools —
+and, per `XR-04`, for build provenance.
