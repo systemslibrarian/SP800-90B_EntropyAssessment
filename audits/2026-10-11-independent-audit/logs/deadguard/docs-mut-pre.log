@@ -1,0 +1,12 @@
+  every commit SHA in NOTICE and the tracker resolves: yes
+  every repo path referenced in the docs exists:       yes
+  every local markdown link target resolves:           yes
+  every regression the tracker names exists:           yes
+  tracker counts match its own sections:               yes (30 findings)
+  pinned figures quoted in docs are consistent:        reference 0.12644573619605429, this build 0.12644573619604868
+  no built program links MPFR or GMP:                  confirmed
+  quoted permutation rate matches the table:           0.94 s per thousand bits
+  no previously-corrected claim has reappeared:        none
+  no NIST attribution in cpp/ comments:                none
+
+regression-docs: PASS

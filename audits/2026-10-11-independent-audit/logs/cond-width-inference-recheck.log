@@ -1,0 +1,34 @@
+### low7
+n_in = 1024
+n_out = 8
+nw = 8
+h_in = 1000
+h' = 0.8944051755544167869871
+Attempting to compute entropy with 2048 bits of precision.
+Output_Entropy(*) = 8; Close to n_out (epsilon = 2^(-508.7356168135275424901)); Close to nw (epsilon = 2^(-508.7356168135275424901))
+0.999 * n_out = 7.991999999999999992894
+h' * n_out = 7.155241404435334295897
+(Non-vetted) h_out = 7.155241404435334295897
+exit=0
+### msbset
+n_in = 1024
+n_out = 8
+nw = 8
+h_in = 1000
+h' = 0.5648118634409018401498
+Attempting to compute entropy with 2048 bits of precision.
+Output_Entropy(*) = 8; Close to n_out (epsilon = 2^(-508.7356168135275424901)); Close to nw (epsilon = 2^(-508.7356168135275424901))
+0.999 * n_out = 7.991999999999999992894
+h' * n_out = 4.518494907527214721199
+(Non-vetted) h_out = 4.518494907527214721199
+exit=0
+
+### repair branch (2d4b135), low7.bin
+h' = 0.8944051755544167869871
+h' * n_out = 7.155241404435334295897
+(Non-vetted) h_out = 7.155241404435334295897
+
+### upstream (87c104d), low7.bin
+h' = 0.8944051755544167869871
+h' * n_out = 7.155241404435334295897
+(Non-vetted) h_out = 7.155241404435334295897

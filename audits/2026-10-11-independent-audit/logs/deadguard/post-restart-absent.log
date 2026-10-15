@@ -1,0 +1,23 @@
+N-04 H_I='nan' refused:                            refused (exit 255)
+N-04 H_I='NAN' refused:                            refused (exit 255)
+N-04 H_I='inf' refused:                            refused (exit 255)
+N-04 H_I='-inf' refused:                           refused (exit 255)
+N-04 H_I='abc' refused:                            refused (exit 255)
+N-04 H_I='1.5x' refused:                           refused (exit 255)
+N-04 H_I='(empty)' refused:                        refused (exit 255)
+N-04 H_I='3.2e' refused:                           refused (exit 255)
+N-04 negative H_I keeps its own message:           refused as nonnegative
+N-04 valid H_I=3.2 still runs:                     ran
+N-04 valid H_I=8 still runs:                       ran
+N-04 valid H_I=0 still runs:                       ran
+R-3 -i read failure recorded in JSON:              errorLevel set with a message
+R-3 -n read failure recorded in JSON:              errorLevel set with a message
+R-3 successful run still errorLevel 0:             yes
+N-06 -i no hash invented on failure:               errorLevel set, sha256 absent
+N-06 -n no hash invented on failure:               errorLevel set, sha256 absent
+N-06 valid run records the real hash:              matches
+R-2:                                               COULD NOT RUN (no generator at /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/a3b01f18-b6b3-44a0-8c60-e2c7009fbc54/scratchpad/fixwt/audits/2026-09-30/novel-findings/generators/restart/gen_debruijn.py)
+R-2 ordinary dataset unaffected:                   passed
+
+regression-restart: COULD NOT RUN (1 case(s) had no input; 0 of the cases that ran failed)
+EXIT=2

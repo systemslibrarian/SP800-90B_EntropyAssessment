@@ -1,0 +1,10 @@
+compliant input, LRS cannot run, is recorded:          LRS Test/literal
+a skipped estimator is not an error:                   errorLevel 0
+truerand_8bit.bin carries no skip flags:               none
+truerand_1bit.bin carries no skip flags:               none
+ringOsc-nist.bin carries no skip flags:                none
+normal.bin carries no skip flags:                      none
+short input names the estimators that cannot run:      Compression Test (for bit strings only)/literal;Multi Most Common in Window Test/literal
+
+regression-notrun: PASS
+EXIT=0

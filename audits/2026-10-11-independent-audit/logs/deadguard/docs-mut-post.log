@@ -1,0 +1,17 @@
+  commit SHA extraction from NOTICE and the tracker:   extracted only 0 item(s), floor is 10 - the pattern no longer matches, so this check verifies nothing
+  every commit SHA in NOTICE and the tracker resolves: yes
+  repo-path extraction from the docs:                  64 item(s) extracted (floor 20)
+  every repo path referenced in the docs exists:       yes
+  markdown link extraction from the docs:              11 item(s) extracted (floor 5)
+  every local markdown link target resolves:           yes
+  regression-script names extracted from the tracker:  14 item(s) extracted (floor 8)
+  every regression the tracker names exists:           yes
+  tracker counts match its own sections:               yes (30 findings)
+  pinned-figure extraction across the docs:            2 item(s) extracted (floor 1)
+  pinned figures quoted in docs are consistent:        reference 0.12644573619605429, this build 0.12644573619604868
+  no built program links MPFR or GMP:                  confirmed
+  quoted permutation rate matches the table:           0.94 s per thousand bits
+  no previously-corrected claim has reappeared:        none
+  no NIST attribution in cpp/ comments:                none
+
+regression-docs: FAIL (1 checks)
