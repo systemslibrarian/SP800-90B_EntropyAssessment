@@ -87,8 +87,36 @@ verdict over it. `verify-fixture-inventory.sh` already does this with an exact
 `11`; `regression-docs.sh` now does it with floors, because documentation grows
 and a hand-maintained exact count is itself `SHAPE-05`.
 
+### The second direction, found 2026-10-15 (`OC-20`)
+
+The same loop is blind on the **other** side, and `compareresults.pl` shows both
+in one file. Missing keys are enforced; **extra keys are not**:
+
+```perl
+foreach my $newKey (keys %$newResults) {
+   print "$ARGV[0]: Found extra data item: $newKey -> $newResults->{$newKey}\n";
+}
+```
+
+No `$retstatus`. So a key present in new output and absent from the reference is
+**announced and ignored** — the evidence is printed and the verdict is PASS.
+Measured consequence: this fork extended the parser to collect the final combined
+figures, naming *"dropping the n x H_bitstring term"* as the fault it was closing,
+but the eleven references were never regenerated — so `H_bitstring Per Symbol`
+(exactly `n × H_bitstring`, verified bit-identical) is emitted on 6 files,
+present in 0 references, and compared on **none**. The one key with no reference
+is the term the fix was written for.
+
+**The general form, now stated for both directions:** a comparison driven by one
+side's key set cannot see what is missing from that side. Iterating the reference
+misses additions; iterating the new output would miss deletions. **A comparison
+that must be total has to assert the two key sets are equal**, not iterate one of
+them — and expected asymmetries have to be enumerated rather than left to a
+print statement.
+
 **Instances:** `C08` (`compareresults.pl`, truncated and emptied references, a
-dropped `Assessed min entropy` key), `regression-docs.sh` ×4,
+dropped `Assessed min entropy` key), `OC-20` (the same file's unenforced extra
+keys, and eleven stale references), `regression-docs.sh` ×4,
 `check-notices.sh:124` (**withdrawn** — it already had the floor).
 
 ---

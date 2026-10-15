@@ -1176,6 +1176,32 @@ Part 8 showed *that* a detection can fail to reach the verdict. This quantifies
 it for all ten estimators, from five independent clean fair-coin streams. Same
 binary and provenance as Part 8.
 
+> ## ⚠ SCOPE OF THIS TABLE — read before using any number in it
+>
+> **This table characterises the INSTRUMENT on ideal input. It does not
+> characterise any device.**
+>
+> Every figure below was measured on **fair-coin data at ~1.0 bit/bit**. The
+> conclusion people will quote from it — *"nine estimators are decorative"* — is
+> **conditional on Compression being the binding estimator**, and that has been
+> tested **only at 1.0**.
+>
+> **At a real unit's 0.7–0.86 bit/bit the binding estimator is UNKNOWN and must
+> be measured.** If it is not Compression, this table is not shifted, it is
+> **invalidated**: every headroom is computed against Compression's clean
+> minimum, so a different binder recomputes all ten rows and changes which
+> estimators can reach a verdict. `cpp/selftest/regression-outside-battery.sh`
+> pins the binding assumption on clean data precisely so that a change is
+> reported rather than assumed away — but it pins it *at 1.0*, which is the only
+> place it has ever been checked.
+>
+> **Consequence for the method, which runs in both directions:** synthetic data
+> calibrated this instrument and that was legitimate. **It cannot produce a
+> device baseline.** A per-device baseline is a claim about a **source**, so
+> anything that synthesised one would be the exact claim upgrade the standing
+> constraint forbids. Per-device baselines stay **NOT RUN** until hardware
+> exists. See **Part 11** for the single statement of that distinction.
+
 **Headroom = an estimator's clean mean minus the clean binding minimum.** It is
 the **detection budget that estimator wastes**: a defect must move it by *more*
 than its headroom before the verdict changes at all, however statistically
@@ -1398,6 +1424,38 @@ scope is source claims:
 The same distinction already governs `tools/build-provenance-canary.sh`, which
 classifies a binary using a generated input. Nobody objected to that, for the
 same reason.
+
+## The rule cuts BOTH ways, and the second way is the one that constrains design
+
+The first direction licenses work: Parts 8-10 and 12-13 are instrument claims, so
+synthetic input is correct there.
+
+**The second direction forbids work, and it is now load-bearing.** `OC-18`
+established that a defect can be visible *only* in the per-estimator breakdown,
+which makes a **baseline** necessary to read that breakdown. A per-device
+baseline is a statement about what **that physical unit** does. It is therefore a
+**source claim**, and:
+
+- **It can never be synthesised.** Not from a fair-coin stream, not from a
+  model of the device, not from another unit's figures, not by scaling this
+  audit's clean baselines to a device's expected rate. Any of those would be
+  precisely the claim upgrade the standing constraint forbids — and would be
+  worse than having no baseline, because a synthetic baseline produces
+  confident-looking deltas against a reference that never measured anything.
+- **It stays NOT RUN until hardware exists.** No baseline figure appears
+  anywhere in this audit, and none can.
+- **It inherits `XR-04`.** A baseline is a set of figures, so it is
+  uninterpretable without the build provenance of the binary that produced it.
+- **It is per-device, not per-model.** Two units of the same design are two
+  sources (Part 3's whole argument), so one unit's baseline is synthetic
+  evidence with respect to the other.
+
+**So the division is:** synthetic data told us *what the instrument can see*
+(verified, reproducible, no hardware needed). Only real captures can tell us
+*what a device does* (not run, no hardware). The two must never be mixed in one
+figure, and a store that holds both must refuse to compare across the boundary —
+which is why `XR-07` states it as a constraint on the baseline store rather than
+a note for its users.
 
 **The rule that does apply here, and was followed:** *suspect the instrument
 before the thing measured.* Part 5 reasoned about the instrument and got it

@@ -466,3 +466,109 @@ synthetic data is the correct and only way to establish that, and why it does
 not breach *no claim upgrades from synthetic evidence* (which governs claims
 about **sources**). **No hardware claim is upgraded; physical items stay NOT
 RUN; the 0.696 stays uninterpretable pending build provenance.**
+
+---
+
+## XR-07 — a defect can be invisible to the battery AND to the outside check; the breakdown needs a per-device baseline, and that baseline can never be synthesised
+
+**Finding only. Reported, not acted on — TruePad's file, TruePad's change.**
+State read: `master @ 7e24e8b` (== `origin/master`). Evidence:
+`SECOND-SOURCE-SEARCH.md` Parts 12-13, `ORCHESTRATOR-CHECKS.md` OC-18/OC-19.
+Reproduce with `generators/blindspot_streams.py`.
+
+**Sent now because TruePad is building the baseline comparison, and the second
+half changes what should be built.**
+
+### Half 1 — the case is real, so storing the breakdown is not sufficient
+
+`G_xor13_02`: `x_i = x_{i-1} XOR x_{i-3}` with probability 2 %, else a fair coin.
+1,000,000 one-bit samples, globally unbiased.
+
+| | measurement |
+|---|---|
+| `H_original` | **0.860003 — INSIDE** the clean range [0.843936, 0.865774], +0.6 sd |
+| Compression (binds) | +0.0054 — 0.3 × its 2 sd, **noise** |
+| **MultiMMC** | **−0.0266 — 9.0 × its 3 sd, strongly real** |
+| MultiMMC headroom | 0.1417 — the drop is **5× too small to bind** |
+| `outside-battery-check` | **4.30 σ / 16.5× — SILENT on both checks** |
+
+**Both tools report clean. Only the per-estimator breakdown sees it.** The band
+is p ≈ 1–2 %, bounded below by MultiMMC's noise and above by Compression's
+(Compression tracks MultiMMC at ≈0.76× with a 20× larger noise floor).
+
+**Therefore:** storing the breakdown is necessary but **not sufficient** — the
+harness must **compare each estimator against a baseline**, because
+`MultiMMC = 0.9697` is unremarkable in isolation and damning as **−0.0266 against
+0.996306 ± 0.000986**. **A scalar figure without that comparison cannot be
+published**, and a harness that logs the breakdown without a baseline holds the
+evidence and cannot read it.
+
+### Half 2 — the baselines are NOT transferable. This is a constraint on the store.
+
+The baselines in `OC-16` were measured on **fair-coin data at ~1.0 bit/bit**.
+They are a **method demonstration**: they establish the noise floors (predictor
+sd 0.0005–0.0010, so a 0.027 bit drop is 27 sd) and nothing about any device.
+
+**At a real unit's 0.7–0.86 bit/bit, Compression may not be the binding estimator
+at all — which would invalidate the headroom table rather than shift it.** The
+noise floors also depend on sample count and symbol width, so they are a function
+of the capture configuration, not constants.
+
+**A real unit needs its own baseline, from its own real captures, with known
+build provenance (`XR-04`) — and those are SOURCE claims, which stay NOT RUN
+until hardware exists.**
+
+**So the baseline store must, by construction:**
+
+1. **Be keyed per device**, not per model. Two units of one design are two
+   sources, so unit A's baseline is synthetic evidence with respect to unit B.
+   Record serial and batch markings alongside (Part 4 item 1).
+2. **Refuse to compare a capture against a baseline measured on a different
+   device.** Not warn — refuse.
+3. **Refuse to compare against a baseline derived from synthetic data**, which
+   means the store must record each baseline's provenance as *real capture* or
+   *synthetic*, and never silently promote the latter. A synthetic baseline is
+   worse than none: it yields confident-looking deltas against a reference that
+   measured nothing.
+4. **Refuse to compare across capture configurations** (sample count, symbol
+   width) or across assessing-binary provenance, since both move the baseline.
+5. **Record the binding estimator per baseline.** If it is not Compression for a
+   given device, any headroom reasoning imported from this audit does not apply
+   to that device.
+
+These are design constraints, not notes for the user of the store. The canonical
+statement of why (3) is non-negotiable is `SECOND-SOURCE-SEARCH.md` Part 11:
+synthetic data establishes claims about **instruments**, never about **sources**,
+and a per-device baseline is a source claim.
+
+### The thing that makes the band findable — needed by whoever builds detection
+
+**Tap choice decides whether the structure is linearly visible, and a naive
+attempt to reproduce this case will fail without knowing it.**
+
+In ±1 terms XOR is multiplication, so the pairwise correlation
+`E[x_i x_{i-d}] = p·E[x_{i-a} x_{i-b} x_{i-d}]` is a **triple** product, which
+vanishes **unless the three indices close through the recurrence**.
+
+- **Taps whose sum is itself a tap CLOSE the triple product and fire the
+  autocorrelation check.** Taps (1,2): `a+b = 3` is a tap, so
+  `x_{i-1}x_{i-2}x_{i-3}` closes and the check fires at **+50 σ at lag 3**. I
+  predicted silence here and was wrong; that is how the mechanism was found.
+- **Taps whose sum is not a tap are silent.** Measured at p = 0.3, max |z| over
+  lags 1..400: (1,3) −3.51, (2,5) +3.28, (3,7) +2.98, (7,16) −3.17, (11,16)
+  −2.82 — all indistinguishable from clean.
+
+So (1,2) is the counterexample, not the case; it is kept in the corpus as
+`F_xor30` for exactly that reason. **Anyone reproducing this must pick taps whose
+sum is not a tap**, or they will get a 50 σ autocorrelation hit and conclude the
+combined blind spot does not exist.
+
+### Status
+
+**Instrument claim, VERIFIED** and pinned by
+`cpp/selftest/regression-outside-battery.sh`, which is itself shown failing
+against perturbed builds (OC-19) and which asserts `G_xor13_02` stays **silent**
+— if a future check fires on it, coverage has changed and this finding must be
+re-documented rather than the change accepted. **No hardware claim is upgraded.
+Physical items stay NOT RUN. 0.696 stays uninterpretable pending build
+provenance.**

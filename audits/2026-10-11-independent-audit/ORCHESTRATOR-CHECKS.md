@@ -1687,6 +1687,32 @@ corrected general form.
 Five independent clean fair-coin streams. **Headroom = clean mean − clean binding
 minimum**, i.e. the detection budget an estimator wastes.
 
+> ## ⚠ SCOPE OF THIS TABLE — read before using any number in it
+>
+> **This table characterises the INSTRUMENT on ideal input. It does not
+> characterise any device.**
+>
+> Every figure below was measured on **fair-coin data at ~1.0 bit/bit**. The
+> conclusion people will quote from it — *"nine estimators are decorative"* — is
+> **conditional on Compression being the binding estimator**, and that has been
+> tested **only at 1.0**.
+>
+> **At a real unit's 0.7–0.86 bit/bit the binding estimator is UNKNOWN and must
+> be measured.** If it is not Compression, this table is not shifted, it is
+> **invalidated**: every headroom is computed against Compression's clean
+> minimum, so a different binder recomputes all ten rows and changes which
+> estimators can reach a verdict. `cpp/selftest/regression-outside-battery.sh`
+> pins the binding assumption on clean data precisely so that a change is
+> reported rather than assumed away — but it pins it *at 1.0*, which is the only
+> place it has ever been checked.
+>
+> **Consequence for the method, which runs in both directions:** synthetic data
+> calibrated this instrument and that was legitimate. **It cannot produce a
+> device baseline.** A per-device baseline is a claim about a **source**, so
+> anything that synthesised one would be the exact claim upgrade the standing
+> constraint forbids. Per-device baselines stay **NOT RUN** until hardware
+> exists. See **Part 11** for the single statement of that distinction.
+
 | estimator | clean mean | sd | headroom | binds on clean data? |
 |---|---:|---:|---:|---|
 | MCV | 0.994603 | 0.000464 | +0.1400 | no |
@@ -1858,3 +1884,101 @@ stated rather than implied.
 **One check guards a false negative:** `G_xor13_02` must stay **silent**. If a
 future version fires on it, coverage has genuinely changed and `OC-18`/`XR-06`
 must be re-documented. A check that fires on everything pins nothing.
+
+---
+
+## OC-20 — "pre-existing and known" interrogated: two possibilities closed, a third one found
+
+State read: `master @ 7e24e8b` (== `origin/master`), binaries built from that tree
+with `cpp/Makefile`'s own flags.
+
+I labelled a `selftest` failure on `biased-random-bytes.bin` and
+`ringOsc-nist.bin` as "the documented upstream #155 macOS arm64 delta". **The
+label was doing work that the mechanism behind it cannot do**: `C08`/`OC-4`
+already established that `--allow-known-platform-deltas` matches **by filename
+with no magnitude bound**, demonstrated by corrupting `ringOsc-nist`'s assessed
+figure by 0.096 bit and still getting PASS. So "known" cannot mean "bounded".
+Three possibilities were put; they resolve differently.
+
+### Possibility 1 — the allowance was not applied. CONFIRMED, and it is the whole explanation of the label.
+
+`run-all-checks.sh:73` excuses selftest only when `--allow-known-platform-deltas`
+is passed. **I did not pass it.** Re-run with the flag, same tree:
+
+```
+  selftest                           PASS (only the known upstream #155 platform files)
+```
+
+So the FAIL was the harness correctly refusing to excuse a known delta that
+nobody asked it to excuse. Benign; the differing flag path is simply my omission.
+
+### Possibility 2 — the delta has grown. REFUTED, with numbers.
+
+Measured against what `BUILDING.md` documents:
+
+| file | measured now | documented |
+|---|---|---|
+| `biased-random-bytes.bin` | **7 values, max 3.659e-10** | "3.7e-10, 7 predictor values > 1e-10" |
+| `ringOsc-nist.bin` | **1 value, 1.547e-10** | "1.5e-10, 1 predictor value > 1e-10" |
+
+Counts match exactly, magnitudes to two significant figures. The affected values
+are MultiMCW / MultiMMC / Lag `min entropy` and `P_local` — the predictor family
+upstream #155 concerns. **No drift.** Worth stating plainly because the allowance
+could not have told us this: it was established by measuring, not by the flag.
+
+### Possibility 3 — something else changed. CONFIRMED. This is a new finding.
+
+**All eleven reference files predate this fork's own extension of
+`compareresults.pl`.** The parser's comment says group-2 final figures "was
+previously not collected at all, so a fault confined to the final combination
+(for instance **dropping the n x H_bitstring term**, or failing to fold in
+`H_original`) left every collected value unchanged and the comparison passed."
+The collection was duly added. **The references were not regenerated.**
+
+Consequence, measured:
+
+- `H_bitstring Per Symbol` is emitted on **6 of 11** files (the multi-bit ones)
+  and appears in **0 of 11** references.
+- `compareresults.pl:53-55` prints extra keys and **never touches
+  `$retstatus`**:
+  ```perl
+  foreach my $newKey (keys %$newResults) {
+     print "$ARGV[0]: Found extra data item: $newKey -> $newResults->{$newKey}\n";
+  }
+  ```
+  A key present in new output and absent from the reference is **announced and
+  not enforced.** (The reverse — a key missing from new output — *is* enforced,
+  `$retstatus = 1`.)
+- So that value is compared on **zero** files. On 4 of the 6 it coincides with
+  `Assessed min entropy`, which *is* compared, so it is incidentally covered. On
+  **`normal` (4.1000957831102802 vs 4.1000957831103086)** and **`truerand_8bit`
+  (7.2338614551796505 vs 7.233861455178495)** it differs from every compared
+  value and is **genuinely unchecked**.
+
+**And it is the worst possible key to have missed.** `H_bitstring Per Symbol` is
+exactly `n × H_bitstring` — verified: `0.032217608875810141 × 8 ==
+0.25774087100648113`, bit-identical to the emitted value. **The one group-2 key
+with no reference to compare against is the very term the comment names as the
+motivating fault.** A fault confined to that output path would print "Found extra
+data item" and pass.
+
+`H_original` is **not** affected: references use the `H_original:` colon form, the
+parser's second regex collects it, and it is compared (delta 6e-17, far under the
+1e-10 epsilon). So the gap is one key wide, not general.
+
+**Direction: PERMISSIVE.** An unenforced extra key means *any* newly added output
+field is unchecked until references are regenerated, and the harness reports PASS
+while printing the evidence. **This is `SHAPE-03` in its second direction** —
+`C08` found the comparison blind to an empty reference (nothing examined reads as
+success); this is the same loop blind to additions on the other side.
+
+**NOT FIXED in this pass**, following the dead-guard sweep's precedent: recorded,
+not repaired. The fix is two separable things — set `$retstatus` on an extra key
+(or classify expected additions explicitly), and regenerate the eleven references
+against a build whose provenance is recorded (`XR-04`). Regenerating pinned
+reference data is not a change to make unprompted.
+
+**What the challenge was right about:** the substance of my earlier statement held
+(the deltas are the documented ones and predate my work), but "pre-existing and
+known" rested on a filename match I had myself shown to be unbounded, and
+interrogating it surfaced a real third defect that the label would have buried.
