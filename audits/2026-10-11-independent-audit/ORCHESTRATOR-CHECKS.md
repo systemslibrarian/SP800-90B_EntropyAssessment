@@ -1499,3 +1499,119 @@ argument that the verdict's inputs are all critical-region protected.
 cannot change a verdict rests on the monotonicity and data-flow argument above,
 which is a correctness argument rather than a sampling one — but it is an
 argument, not a dynamic measurement, and is labelled as such.
+
+---
+
+## OC-14 — C14: the consumer contract, five of eight members verified
+
+The last on-path cluster. `XR-01` (the stale report file) was verified earlier;
+this completes the rest. Everything here is about what a harness reads, which is
+why it is on-path.
+
+### Verified by execution
+
+**`oac-16` — `--version` anywhere in argv exits 0, including as the filename.**
+`non_iid_main.cpp:91-97` scans **all of `argv` from `i=0`** for the literal
+string, before `getopt`:
+
+```
+ea_non_iid -q -o v.json "--version" 1      -> rc=0, prints "noniid 1.1.8", NO JSON
+ea_non_iid -q -o v.json -- "--version" 1   -> rc=0, same; the `--` separator does not help
+```
+
+A harness invoking the tool on a file named `--version`, or with that string
+anywhere in its argument vector, gets **exit 0 with nothing assessed and no
+output file**. On the exit-status channel that is a fail-open.
+
+**`oac-5` — every failure is `255`, and the one outcome worth distinguishing is `0`.**
+
+| invocation | rc | `errorLevel` |
+|---|---:|---|
+| `-l 5,0` (invalid argument) | 255 | -1 |
+| nonexistent file | 255 | -1 |
+| `-Z` (unknown option) | 255 | *no JSON at all* |
+
+A harness cannot tell an invalid argument from a missing file from an unknown
+option. And the outcome it most needs — a *statistical* rejection — is not 255
+at all: on master `ea_iid` returns **0** for a failed IID suite (`C03`). So the
+status channel conflates every error and excludes the one result that matters.
+
+**`oac-12` — four distinct file problems, one message, no provenance.**
+
+| path | rc | `errorMessage` | `filename` | `sha256` |
+|---|---:|---|---|---|
+| `/nonexistent/f.bin` | 255 | `Error: could not hash the input file.` | `None` | `None` |
+| a directory | 255 | *identical* | `None` | `None` |
+| mode-000 file | 255 | *identical* | `None` | `None` |
+| `/dev/zero` | 255 | *identical* | `None` | `None` |
+
+Nonexistent, directory, permission denied and not-a-regular-file are
+indistinguishable, and the report does not record which path was attempted.
+
+**`oac-6` / `restart-9` — `-q` strips the verdict from stdout, but the JSON keeps
+the failure.** On a genuine sanity-check failure (forced `X_max = 28`, `H_I = 7`):
+
+| | verbose | `-q` |
+|---|---|---|
+| stdout | `X_cutoff: 27`, `X_max: 28`, `*** Restart Sanity Check Failed ***` | **14 bytes: `H_I: 7.000000`** |
+| rc | 255 | 255 |
+| JSON | — | written: `errorLevel -1`, `errorMessage "Restart Sanity Check Failed."` |
+
+**The finder's claim is partly overstated**: `-q` does remove the verdict and
+both deciding numbers from stdout, but a harness using `-o` still learns that
+the sanity check failed, and why. What it never learns — on either path, quiet
+or not — is `X_max` and `X_cutoff`, which is the `OC-11` gap. Refined
+statement: **the failure is machine-detectable; the margin never is.**
+
+### Source-confirmed, not executed
+
+**`oac-13` — the report write is not atomic.** `TestRunUtils.h:33-52`:
+`output.open(path.c_str())` truncates the final path immediately, then writes,
+then `close()` — with the close error correctly checked (that is `N-09`,
+repaired). There is **no temp-file-and-rename**. So a signal or power loss
+between open and close leaves a truncated, syntactically invalid JSON at the
+path a consumer reads, and a concurrent reader can observe a partial file.
+Labelled source-confirmed: I did not time a signal into the write window, and
+I am not claiming an execution I did not perform. The fix is
+write-temp-then-`rename`, which is atomic on POSIX.
+
+### Not reached, with the reason
+
+**`restart-8` — I could not construct an input that fails the §3.1.4.3
+validation test while passing the sanity check**, so I cannot say what the
+validation-failure JSON contains. The reason is structural and worth recording:
+in `-i` mode both gates are driven by the same statistic. The sanity check
+passes only if `X_max ≤ cutoff(H_I)`, and `H_r` is bounded below by roughly
+`-log2(X_max/1000)`, so
+
+| H_I | cutoff | implied `H_r` floor | `H_I/2` | can validation fail? |
+|---:|---:|---|---:|---|
+| 1 | 572 | 0.806 | 0.5 | no |
+| 2 | 316 | 1.66 | 1.0 | no |
+| 8 | 19 | 5.72 | 4.0 | no |
+
+In every case the implied floor on `H_r` exceeds `H_I/2`, which suggests **the
+validation test may be unreachable in `-i` mode whenever the sanity check
+passed** — i.e. redundant. That is a hypothesis from three data points and the
+relationship between `H_r` and `X_max`, **not a verified claim**: I have not
+confirmed that `H_r` in `-i` mode is exactly the MCV estimate over rows, and a
+counterexample at some other `H_I` would refute it. Recorded because if true it
+is a more interesting finding than `restart-8` itself.
+
+### C14 status
+
+| member | status |
+|---|---|
+| `oac-4` stale report file | **VERIFIED** (`XR-01`) |
+| `oac-5` uniform 255 | **VERIFIED** |
+| `oac-12` collapsed file errors | **VERIFIED** |
+| `oac-16` `--version` exit 0 | **VERIFIED** |
+| `oac-6` / `restart-9` `-q` suppression | **VERIFIED**, finder partly overstated |
+| `oac-13` non-atomic write | source-confirmed, not executed |
+| `restart-8` validation-failure JSON | **not reached**; path may be unreachable |
+
+Direction for the cluster: **UNKNOWN resolves to permissive-on-the-status-channel.**
+Three independent ways for a harness to read success where there is none —
+a stale file (`XR-01`), `exit 0` on a `--version`-named input (`oac-16`), and
+`exit 0` for a failed IID suite (`C03`) — against one way to read failure
+without a cause (`oac-5`, `oac-12`).
