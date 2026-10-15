@@ -1024,3 +1024,132 @@ without complaint and scaled by an inferred width.
 and the `NDEBUG` configuration. **Not verified**: whether any upstream issue
 covers the missing intake rule, and the behaviour of the remaining
 `ea_conditioning` items in `C21`.
+
+---
+
+## OC-10 — the NDEBUG re-classification: C07 flips from conservative to permissive
+
+**This corrects the direction triage.** `C07` was classified CONSERVATIVE and
+fail-closed on the explicit grounds that `NDEBUG` is not defined in
+`cpp/Makefile`, so its asserts are live. That is a claim about a build, not
+about the code. Built with `-DNDEBUG` — the same commit, the same data — one of
+`C07`'s two sites **publishes an IID min-entropy figure instead of refusing**.
+
+### Enumeration — every classification in this audit resting on an assert
+
+| Finding | Assert | Classification that rested on it |
+|---|---|---|
+| `C07` site B | `lrs_test.h:683` `p_colPower >= LDBL_MIN` | CONSERVATIVE, fail-closed |
+| `C07` site A | `lrs_test.h:652` `p_col >= 1.0L/k` | CONSERVATIVE, fail-closed |
+| `C09` | `most_common.h:14` `len > 1` | CONSERVATIVE in shipped build |
+| `C05` | `restart_main.cpp:134` `k_effective <= k` | CONSERVATIVE, abort with no report |
+| `C11` | *none* — ASan `alloc_dealloc_mismatch`, not an assert | CONSERVATIVE, "observed as an abort under ASan" |
+
+Also present but without direction consequence: `lrs_test.h:20,54,87-110,130-224`
+(suffix-array preconditions), `conditioning_main.cpp:603` (`C21`, proven
+unfireable).
+
+### Measured, both builds, same commit and data
+
+| Finding | asserts live (shipped `Makefile`) | `-O2 -DNDEBUG` (packager default) |
+|---|---|---|
+| **`C07` site B** `lrsrep-2000.bin` | `rc=134` SIGABRT, no JSON | **`rc=0`, `errorLevel 0`, `"IID": true`, `hAssessed 0.995373734104443`**, `passedLongestRepeatedSubstringTest: false` |
+| **`C07` site A** `bal125.bin` | `rc=134` SIGABRT, no JSON | `rc=0`, all three tests **pass**, `hAssessed 6.79603697656858` |
+| **`C05`** sparse 8-bit, `H_I=2` | `rc=134`, `Assertion failed: (k_effective <= k)` | `rc=255`, `X_cutoff: 316`, `X_max: 385`, `*** Restart Sanity Check Failed ***` |
+| **`C09`** all-zero | `rc=134`, `Assertion failed: (len > 1)` | ASan: **heap-buffer-overflow READ**, `markov_test.h:48`; `-c iid`: `rc=0`, `h' = -0` |
+
+### Re-classification, and why site B is the serious one
+
+**`C07` site B — CONSERVATIVE with asserts live, PERMISSIVE under NDEBUG.**
+The code path is predictable from the source and the execution confirms it:
+`p_colPower` underflows to 0, `log1pl(-0.0)` is `-0.0`, and the verdict
+`return logl(0.999L) >= ((long double)N) * logProbNoColsPerPair` becomes
+`-1.0005e-3 >= -0.0`, which is **false** — so the LRS test reports **failure**.
+It has not detected anything about the data; it ran out of exponent range.
+
+That failure is then **discarded by `C03`**, which is open on master. The result
+is a published `hAssessed` of **0.9954 bit/bit** with `errorLevel 0` and
+`"IID": true`, on data the tool could not evaluate. **This is a chain, and it
+reports its ceiling:** an arithmetic representability limit becomes a test
+failure, and a defect that discards test failures turns that into a passing
+assessment above the project's 0.5 bit/bit threshold.
+
+**`C07` site A — the assert is the whole defect.** Under NDEBUG the run
+completes, all three IID tests pass, and `hAssessed = 6.79603697656858` for a
+125-symbol exactly-balanced alphabet, against a ceiling of `log2(125) = 6.966`.
+That figure is *correct*. So site A's assert does nothing but deny a legitimate
+assessment of a perfectly uniform source — the best kind of source there is.
+Direction: CONSERVATIVE with asserts live, **harmless and correct** under
+NDEBUG.
+
+**`C05` — better under NDEBUG.** The abort becomes a clean `rc=255` refusal
+naming the reason (`X_max: 385` against `X_cutoff: 316`), which is what the tool
+should have done. The cutoff 316 matches `OC-7`'s measured value at `H_I=2`.
+CONSERVATIVE in both builds, but only informative in one.
+
+**`C11` — the classification was never about an assert.** The scalar `delete`
+of an array is detected by ASan's `alloc_dealloc_mismatch`, not by a compiled-in
+check. In a shipped build it is silent: `simulateBound` was called and returned
+in all 27 `OC-7` cutoff runs and in the `C05` runs above, on both assert-live
+and NDEBUG builds, with no crash. So `C11` is **not** conservative — it is
+silent undefined behaviour with no observed effect. Re-classified NEUTRAL with a
+memory-safety flag, and the earlier "observed as an abort" wording was an
+artefact of only ever running it under a sanitizer.
+
+### Can the fork assume NDEBUG is off downstream? No.
+
+Structural facts, checked:
+
+- **Nothing in the tracked tree sets, requires, or documents `NDEBUG`.** The
+  only occurrences are in prior audit records. No `#error` guard, no build
+  check, no note in `README.md`, `BUILDING.md` or `NOTICE`.
+- **`cpp/Makefile:31` *assigns* `CXXFLAGS`** rather than appending:
+  `CXXFLAGS = -std=c++11 … -O2 -ffloat-store …`. A packager who overrides
+  `CXXFLAGS` on the `make` command line — the ordinary distribution build
+  idiom — replaces the entire set. That silently drops `-ffloat-store` as well,
+  which this audit's own platform work shows affects the numerics.
+- `-DNDEBUG` is the default for release configurations in common build systems
+  (CMake's `Release` and `RelWithDebInfo` add it unconditionally), so a
+  downstream repackaging that does not reuse this Makefile verbatim is likely to
+  define it.
+- The repository offers **no way to tell from a built binary's output** whether
+  asserts were live. Nothing in the JSON records it.
+
+**Therefore the NDEBUG classification is the one that matters for anything
+shipped, and the live-assert classification is the optimistic case.** An
+aggregate over mixed evidence reports its floor: `C07` must be carried as
+**PERMISSIVE**.
+
+### This shape is already in the fork's own records
+
+The 2026-09-30 audit filed `N-03` with exactly this two-build structure —
+*"assert abort, no JSON; with `-DNDEBUG` a heap over-read and a wild write"*,
+categorised *"D in the shipped build; B under `-DNDEBUG`"*, with
+*"the NDEBUG+ASan build is clean"* as a stated regression requirement. The
+repository already knows that asserts-versus-NDEBUG changes a finding's class
+and already has a vocabulary for it. The 2026-10-11 audit's direction triage
+did not apply it. `C09`'s crash half is a **re-confirmation of `N-03`**, at the
+same site (`markov_test.h:48`; the allocation line has drifted from
+`utils.h:329` to `utils.h:406`), not a new finding.
+
+### Recommended repair
+
+The fork already has the right pattern and applied it four times — `F11`, `F12`,
+`F15`, `F16` all replaced an abort with a **declined estimator** returning the
+`-1` sentinel, kept out of the minimum by an explicit guard. The safety-critical
+asserts should be the same: a runtime check that declines and reports, not a
+compiled-in abort that disappears under a flag the project does not control.
+Specifically for site B, the condition is a known, documented, *expected*
+representability limit — the code comment says so — which makes it exactly a
+"decline, report, and do not fold into the minimum" case rather than an
+assertion about a programming error.
+
+Minimum interim mitigation: an `#if defined(NDEBUG)` `#error` in a shared
+header, so a build that would silently remove these checks fails to compile
+instead. That is one line and it converts an unknown into a build failure.
+
+**Correct and verified**: all four rows of the measurement table, by execution,
+on both builds, with the shipped-Makefile column matching what was reported
+earlier. **Not verified**: whether any specific downstream packaging of this
+fork defines `NDEBUG` — the claim made here is structural (nothing prevents it,
+nothing detects it, and release configurations commonly add it), not a survey.

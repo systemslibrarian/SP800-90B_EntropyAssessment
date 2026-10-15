@@ -1,0 +1,10 @@
+Opening file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/2744130e-74f7-4e44-aae2-a42d4e4f034c/scratchpad/fixtures/valid/uniform-sparse-8bit.bin' (SHA-256 hash 6f3fe369c5bd5b0ca56db4e4a1ac8a71783bab06e9838ad3d941b3442cc239f2)
+Loaded 1000000 samples made up of 3 distinct 8-bit-wide symbols.
+
+Symbols have been translated.
+
+H_I: 2.000000
+ALPHA: 5.0251553006530614e-06, X_cutoff: 316
+X_max: 385
+
+*** Restart Sanity Check Failed ***

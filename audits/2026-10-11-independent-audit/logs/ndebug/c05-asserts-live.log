@@ -1,0 +1,2 @@
+Assertion failed: (k_effective <= k), function simulateBound, file restart_main.cpp, line 134.
+H_I: 2.000000

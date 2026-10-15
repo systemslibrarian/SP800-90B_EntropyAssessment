@@ -120,3 +120,66 @@ these are the changes.
 is `H_I/2`, `H_I` is user-supplied and parsed permissively, and the sanity
 check guarding it is now known to be more permissive than the standard. Those
 two defects compose in the same direction on the same test.
+
+---
+
+# CORRECTION 2026-10-15 — the NDEBUG re-classification, and the TruePad reachability test
+
+## `C07` moves from CONSERVATIVE to PERMISSIVE
+
+`OC-10` invalidates the classification this file originally gave `C07`. It was
+filed conservative *because* `NDEBUG` is not set in `cpp/Makefile` — a claim
+about a build, not about the code. Measured under `-O2 -DNDEBUG`:
+
+| | asserts live | `-DNDEBUG` |
+|---|---|---|
+| `C07` site B, `lrsrep-2000.bin` | `rc=134`, no JSON | **`rc=0`, `errorLevel 0`, `"IID": true`, `hAssessed 0.995373734104443`** |
+| `C07` site A, `bal125.bin` | `rc=134`, no JSON | `rc=0`, all tests pass, `hAssessed 6.79603697656858` (correct) |
+| `C05` | `rc=134` assert | `rc=255`, clean refusal naming `X_max: 385` vs `X_cutoff: 316` |
+| `C09` | `rc=134` assert | heap-buffer-overflow READ; `-c iid` `rc=0`, `h' = -0` |
+
+Site B under NDEBUG is a **chain reporting its ceiling**: an underflow makes the
+LRS test return *failure*, and `C03` discards test failures, so the run publishes
+**0.9954 bit/bit** — above the project's 0.5 threshold — on data the tool could
+not evaluate. Since the fork cannot assume `NDEBUG` is off downstream (nothing
+sets, requires, documents or detects it, and `cpp/Makefile:31` *assigns*
+`CXXFLAGS` so an overriding packager loses `-ffloat-store` too), the NDEBUG
+column is the one to carry.
+
+`C11` is also re-classified: its "abort" was only ever an ASan report.
+`simulateBound` returned normally in all 27 `OC-7` runs and the `C05` runs, both
+builds. **NEUTRAL with a memory-safety flag**, not conservative.
+
+Revised counts: **PERMISSIVE 9** (was 8), **CONSERVATIVE 1** (was 3 — `C05`
+remains, `C07` moved out, `C11` moved out), NEUTRAL 8, UNKNOWN 5.
+
+## Reachability test — what TruePad actually consumes
+
+Standing instruction, 2026-10-15: verify while useful to TruePad. A cluster is
+worth verifying if a defect in it could change, suppress or inflate the
+min-entropy figure per bit per source, the restart assessment, the health-test
+verdicts, the exit statuses and output files the desktop harness reads, or the
+memory safety of a tool TruePad invokes on user data.
+
+### On-path, unverified — the remaining work, in order
+
+| Cluster | Why TruePad reaches it |
+|---|---|
+| **`C16`** (chain) | `H_I` is user-supplied, parsed with `strtod`, and sets the restart validation threshold `H_I/2`. `OC-7` proved the sanity check guarding that same test is already more permissive than the standard. Two permissive defects on one gate — **chains outrank items**. |
+| **`C22`** remainder | `P_local` quantisation and `P_global'` at `N == 1` are in the estimators that produce the min-entropy figure. |
+| **`C20`** | Races on `test_status[]` in the `ea_iid` permutation region — a health-test verdict TruePad consumes. |
+| **`C21`** (partial) | Only the `periodicity()`/`covariance()` out-of-bounds reads: they are permutation statistics, so on-path for a verdict and for memory safety on user data. The `ea_conditioning` members are **not**. |
+| **`C14`** remainder | Seven members about exit statuses and output files — precisely what the desktop harness reads. `XR-01` is verified; the rest are not. |
+
+### Set aside as unverified-because-unreachable
+
+Recorded with the specific reason and what would put each back on the path.
+**None of these has been checked and found fine. They have not been checked.**
+
+| Cluster | Reason TruePad cannot reach it | What would make it reachable again |
+|---|---|---|
+| `C06`, `C09` (already verified), `C12`, and the `ea_conditioning` members of `C21` | TruePad does not ship `ea_conditioning`, and Chor–Goldreich two-source extraction consumes **raw per-source min-entropy**, not conditioned output, so `h'`/`h_out` enter no TruePad figure | TruePad adding a conditioning component to the chain, or any use of `h_out` as an input to the secrecy claim. `C06`'s `h_out 7.1552` against a 7-bit ceiling would then be directly on-path. |
+| `C18` | LLP64-only: `long` is 32-bit on Windows, 64-bit on the macOS arm64 and Linux x86-64 builds in use | A Windows build of the tools, or any build where `sizeof(long) == 4` |
+| `C17` | Last-digit platform divergence, ≤ 2e-14 bit — below any decision the 0.5 bit/bit threshold makes. **Note:** this is *not* the same as `REPRO-01`, which is a different-figure-or-no-figure divergence and is on-path | A threshold decision at a precision where 1e-14 matters, which the goal does not have |
+| `C10`, `C13`, `C15`, `C19` | Diagnostics, `errorMessage` text, negative-zero presentation, documentation. None changes a figure, a verdict, an exit status, or memory safety | A consumer parsing `errorMessage` text or the sign of a zero as control flow — which `XR-01` shows is the kind of thing a harness does do, so `C15` would move on-path if TruePad branched on a figure's string form |
+| `C04` | Verified NEUTRAL: the computed verdict is identical to a spec-correct implementation's on every `df < 1` input | Nothing; this one is closed, not set aside |
