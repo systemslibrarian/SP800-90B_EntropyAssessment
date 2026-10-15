@@ -13,3 +13,6 @@ ea_transpose
 *.json
 .DS_Store
 *.res
+
+# built by hand from its own header BUILD line; source is tracked, binary is not
+tools/outside-battery-check

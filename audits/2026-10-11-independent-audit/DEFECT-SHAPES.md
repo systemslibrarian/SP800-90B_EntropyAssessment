@@ -174,56 +174,63 @@ same shape with the sentinel leaking into a figure instead of a verdict.
 
 ---
 
-## SHAPE-07 — a bounded-reach instrument reporting an unbounded verdict
+## SHAPE-07 — an aggregate that discards the evidence of its own components
 
-The SP 800-90B estimator battery has a **finite lag reach**. The longest
-explicit window in the whole battery is MultiMCW's **4095 samples** (§6.3.7);
-Markov reaches lag 1, MultiMMC and LZ78Y reach depth 16, the Lag predictor
-reaches 128. At the Infinite Noise's ~0.3 Mbit/s that longest window is
-13.65 ms, a **frequency floor of 73.3 Hz** (`SECOND-SOURCE-SEARCH.md` Part 5,
-Question 4).
+> **This shape was first written as "a bounded-reach instrument reporting an
+> unbounded verdict" and that framing was REFUTED BY MEASUREMENT.** The reach
+> bound is real but it is not the mechanism. `SECOND-SOURCE-SEARCH.md` Parts 8-9
+> have the measurement; the corrected shape is below and the superseded text
+> follows it for the record.
 
-The output is `min-entropy = H` bit/bit, with **no stated reach**. Nothing in
-the JSON, the console output, or the standard's reporting requirements says
-*"periodicity slower than 73.3 Hz was not examined."* So a source with a clean
-figure and a 60 Hz mains component in it produces the same output as a source
-with neither — and the mains fundamental (5000-6000 samples) is beyond 4095
-while its own rectified second harmonic (2500-3000 samples) is inside. **The
-battery can see the harmonic of a defect it cannot see.**
+**Measured:** a binary stream carrying a **+40 σ** autocorrelation at lag 5000
+produced `H_original = 0.856713`, inside the clean-control range
+`[0.843936, 0.865774]` — statistically indistinguishable from a fair coin. The
+one estimator that detected it, LRS at −0.0223, reads **0.1164 bit above the
+binding minimum**, so its detection could not reach the verdict.
 
-**The general form:** an instrument whose coverage is bounded along some
-dimension — lag, frequency, alphabet size, time, input length — emits a verdict
-phrased as a property of the thing measured rather than of the measurement. The
-bound is real, documented in the algorithm, and absent from the result. Readers
-then treat silence about the unexamined region as evidence about it.
+**The mechanism is the aggregation, not any component.** The SP 800-90B non-IID
+verdict is `min` over ten estimators. On near-uniform data Compression binds
+(0.8546 ± 0.0092 on a fair coin) and the other nine sit **0.060 to 0.143 bit
+above it**. Each one's *headroom* is a detection budget it wastes: a defect must
+move it by more than that headroom before the verdict changes at all. Five of the
+ten never came within a factor of five of their own headroom on any defect
+tested.
 
-**Why it is distinct from `SHAPE-06`:** `SHAPE-06` is a limit *reached and
-mislabelled* — the arithmetic underflows and the tool says "test failed."
-`SHAPE-07` is a limit *never reached and never mentioned* — nothing goes wrong,
-no code path is exercised, and the figure is correct about everything it looked
-at. `SHAPE-06` produces a wrong answer; `SHAPE-07` produces a right answer to a
-narrower question than the reader thinks was asked. That makes it harder to
-find, because there is no failure to notice.
+**The general form:** an aggregate reported as a single number, computed as an
+extremum over components, **discards every component's evidence except the
+extremum's**. A component that reliably sits far from the extremum can detect
+anything and change nothing. The aggregate's resolution is the *most extreme*
+component's noise, not the *most sensitive* component's signal.
 
-**Where to look for it:** any aggregate presented without its support. Every
-estimator with a fixed window, depth, or `D`/`k` cap; every "passed" that is
-really "passed within the examined range"; `ea_restart`'s 1000×1000 matrix,
-which examines exactly the restart structure it samples and nothing about
-longer-period drift; and — the reason this matters past this repo — **any
-consumer that stores a min-entropy figure as a scalar property of a source.**
-A downstream system cannot recover a bound the upstream figure never carried.
+**Why it is worse than a reach bound.** A reach bound is fixed by adding reach.
+This is not fixed by adding components: a new, exquisitely sensitive estimator
+that is not the minimum contributes exactly nothing. It is also not fixed by
+buying a better source, because it is a property of the measurement, not the
+measured.
 
-**The fix shape:** emit the reach alongside the verdict. A field recording the
-longest lag actually examined turns an unbounded claim into a bounded one and
-costs nothing, since the battery already knows its own windows — the same
-principle as *a test that asserts about a quantity must emit that quantity*,
-applied to the test's domain instead of its subject. Where the standard's output
-cannot be changed, the gap must be closed **outside** the battery: a long-lag
-autocorrelation, a spectrum, or an estimator family the standard does not
-include. No additional *source* closes it, because the bound belongs to the
-instrument and a second source is measured with the same instrument
-(`SECOND-SOURCE-SEARCH.md` Part 7).
+**Where to look for it:** any `min`, `max`, or worst-case over a panel reported
+without the panel. Any score that is "the weakest link" where the links' values
+are computed but not emitted. Any consumer storing such an aggregate as a scalar.
 
-**Instances:** the 73.3 Hz floor against mains (Part 5, Question 4); the
-cross-check argument it invalidates (Part 7); `C21`'s `-1` sentinels, where a
-*declined* estimator's non-participation is likewise not reported in the figure.
+**The fix shape:** **emit the components, not just the aggregate.** The breakdown
+contains LRS's −0.0223; the minimum does not. Here it is free — the tools already
+print it under `-v` — which makes it the cheapest mitigation in the audit
+(`XR-06`). Where the aggregate cannot change, the gap must be closed by an
+instrument *outside* the panel: `tools/outside-battery-check` finds at 40.21 σ
+what the whole battery reports as clean. Related rule: *a test that asserts about
+a quantity must emit that quantity* — here, about **each** quantity it computed.
+
+**Instances:** the 40 σ stream invisible in `H_original` (Part 8); the headroom
+table (Part 9); `C21`'s `-1` sentinels, where a declined estimator's
+non-participation is likewise absent from the figure.
+
+### Superseded framing, kept for the record
+
+The original claim was that the battery's longest explicit window — MultiMCW's
+4095 samples (`multi_mcw_test.h:9`), 13.65 ms at ~0.3 Mbit/s, a **73.3 Hz
+floor** — put mains at 50/60 Hz (lags 6000/5000) in a blind spot. **The reach
+figures are correct and the conclusion was wrong**, because a slow bias drift is
+detected by *short* windows, not long ones: W = 63 on a period-5000 oscillation
+sees a nearly-constant local bias and predicts it. Measured, MultiMCW fell 0.163
+on exactly that stream. The error was assuming a window must exceed the period.
+**Keep the reach table, discard the floor.**

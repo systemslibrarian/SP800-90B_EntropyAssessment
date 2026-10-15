@@ -369,3 +369,70 @@ and should be checked on receipt, before the unit is trusted for assessment.
 No min-entropy-per-bit claim exists for this device in any source examined, so
 there is nothing to record even as a claim. The real figure waits for the tools —
 and, per `XR-04`, for build provenance.
+
+---
+
+## XR-06 — the SP 800-90B verdict can be unchanged by a 40 σ defect, so the tools' output is not sufficient on its own
+
+**Finding only. Reported, not acted on — this is TruePad's file and TruePad's
+change to make.** Evidence: `SECOND-SOURCE-SEARCH.md` Parts 8-10 (OC-15, OC-16,
+OC-17), reproducible from `generators/blindspot_streams.py`.
+
+### The measurement
+
+A 1,000,000-sample binary stream carrying a **+40.4 σ** autocorrelation at lag
+5000 was assessed by `cpp/ea_non_iid` built from `dd2996f` with the repository's
+own flags (asserts live):
+
+| | value |
+|---|---|
+| `H_original` on the defective stream | **0.856713** |
+| clean fair-coin range, 5 independent streams | **[0.843936, 0.865774]** |
+| position within that range | **+0.23 sd from the clean mean** |
+| estimator that detected it | LRS, −0.0223 |
+| LRS's distance above the binding minimum | **+0.1164 bit** |
+| `tools/outside-battery-check` on the same stream | **40.21 σ at lag 5000** |
+
+**The verdict was statistically indistinguishable from clean.** Not because any
+estimator is individually blind, but because the verdict is `min` over ten
+estimators, Compression binds at 0.8546 ± 0.0092 on near-uniform data, and the
+nine others sit 0.060-0.143 bit above it. A detection that is not the minimum
+does not reach the figure. `DEFECT-SHAPES.md` `SHAPE-07`.
+
+### What this means for the harness
+
+1. **A passing SP 800-90B figure is not sufficient evidence that a source is
+   sound.** The harness currently treats the tools' output as the authority on
+   the source. On this evidence it cannot be the only authority.
+2. **Run an outside-the-battery check alongside the tools**, and **refuse — or at
+   minimum flag — when it fires regardless of what the battery reports.** A
+   figure that passes the battery and fails autocorrelation is the exact case
+   this finding exists to catch, and the battery will not mention it.
+3. **Store the per-estimator breakdown, not the minimum.** The breakdown
+   contains LRS's −0.0223 on this stream; the minimum does not. The tools already
+   emit it under `-v`, so this costs nothing but schema. **A consumer that stores
+   a min-entropy figure as a scalar cannot recover a bound the figure never
+   carried** — and cannot later tell a clean source from this one.
+4. **Keep the two checks separate in the record.** The spectrum reads this same
+   stream at 15.7×, *below* the clean maximum of 20.3× — it does not see it.
+   Autocorrelation and spectrum are complementary; neither alone suffices, and a
+   harness that runs one and reports "outside-battery check passed" is making a
+   claim it has not tested.
+
+### Scope limits the harness must carry forward
+
+`tools/outside-battery-check` finds **linear** correlation at the **lags
+tested**. It is blind to nonlinear structure (`x_i = x_{i-k} XOR x_{i-m}` has
+zero autocorrelation everywhere) and to lags above `--max-lag`. Its thresholds
+are calibrated for 1,000,000 one-bit samples and are **not** universal. **A pass
+is the absence of one kind of evidence, not an entropy claim** — if the harness
+surfaces it as "verified independent" it will have overstated it exactly the way
+the battery does.
+
+### Status
+
+**Instrument claim, VERIFIED** against known input — see Part 11 for why
+synthetic data is the correct and only way to establish that, and why it does
+not breach *no claim upgrades from synthetic evidence* (which governs claims
+about **sources**). **No hardware claim is upgraded; physical items stay NOT
+RUN; the 0.696 stays uninterpretable pending build provenance.**

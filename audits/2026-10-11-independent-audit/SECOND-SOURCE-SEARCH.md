@@ -627,7 +627,15 @@ Before any combination, extraction, or Tier 2 claim:
     and record the inter-unit peak coherence per condition — that second
     statistic is the sharper test, because independence is what CG needs and
     coupling is what breaks it.
-11. **Build the outside-the-battery checks** — long-lag autocorrelation to ~10⁵
+11. ~~**Build the outside-the-battery checks**~~ **DONE 2026-10-15 — built,
+    calibrated and shown failing: `tools/outside-battery-check.cpp`, Part 10 /
+    `OC-17`.** It is no longer a January item but a January *input*: run it on
+    every raw capture in items 2, 9 and 10, alongside the battery, and **treat a
+    firing as disqualifying regardless of what the battery reports.** Note its
+    recorded limits — linear correlation only, lags tested only, thresholds
+    calibrated for 1,000,000 one-bit samples — so a pass is never written up as
+    "verified independent". Original item text, which the measurement overtook:
+    **build the outside-the-battery checks** — long-lag autocorrelation to ~10⁵
     lags and a power spectrum of the raw stream. **Part 5 established that the
     estimator battery's frequency floor is 73.3 Hz** (MultiMCW's 4095-sample
     window at ~0.3 Mbit/s), so **mains at 50 Hz (6000 samples) and 60 Hz (5000
@@ -840,12 +848,32 @@ So the blind spot is **not** reached by any RC in the circuit.
 | **mains fundamental, 60 Hz** | **5000 samples** | **BEYOND 4095 — blind** |
 | **mains fundamental, 50 Hz** | **6000 samples** | **BEYOND 4095 — blind** |
 
-The battery's frequency floor is **73.3 Hz**. Mains at 50 and 60 Hz sits just
-below it; the rectified second harmonic sits just above. **The mains fundamental
-is in the blind spot and its own second harmonic is not** — which is the single
-most useful thing this schematic read produced, because it names the frequency,
-the mechanism (VREF off an unisolated rail through a 3 kHz corner), and the
-check.
+> ## ⚠ CORRECTED BY MEASUREMENT — see Part 8
+>
+> **The two tables above are wrong, and I refuted them myself by running the
+> battery instead of reasoning about it a third time.** The error: I assumed a
+> window must be **≥** the period to see a periodic effect. For a *slow bias
+> drift* the opposite holds — a **short** window tracks it better, because
+> W = 63 on a period-5000 oscillation sees a nearly-constant local bias and
+> predicts it successfully.
+>
+> **Measured (Part 8): a period-5000 bias oscillation is DETECTED, strongly.**
+> MultiMCW fell 0.998 → 0.835, a drop of 0.163, despite its longest window being
+> 4095 < 5000. Compression fell 0.235, Collision 0.128, t-tuple 0.104. There is
+> no 73.3 Hz blind spot for bias drift, so **the VREF mechanism this schematic
+> read identified is visible to the battery** — which is good news for the
+> hardware and relocates the risk.
+>
+> **The blind spot is real but it is a different thing**, and the bounded-reach
+> half of the argument did survive: on a long-lag correlation with *no* local
+> bias, every predictor was blind (all drops < 0.004). What makes it invisible in
+> the *reported figure* is not reach at all — it is the **minimum-of-ten
+> aggregation discarding the one estimator that detected it.** Part 8 has the
+> measurement; `DEFECT-SHAPES.md` `SHAPE-07` has the corrected general form.
+>
+> The schematic read's value is undiminished — it identified a real mechanism and
+> the frequency — but the claim that the battery cannot see that mechanism was
+> mine, was arithmetic, and was wrong.
 
 ## What the schematic establishes, rules out, and cannot settle
 
@@ -985,3 +1013,384 @@ Part 5 — which identified a specific mechanism (VREF on an unisolated rail), a
 specific frequency (mains, 5000–6000 samples), and a specific reason the battery
 cannot see it (floor 73.3 Hz) — it is plausibly the highest-value thing on the
 whole Tier 2 list, ahead of the second unit it would be assessing.
+
+---
+
+# Part 8 — OC-15: the battery measured against known defects
+
+**Parts 5-7 rested on an arithmetic argument about what the estimators can see.
+Standing rule: suspect the instrument before the thing measured. So I tested the
+instrument, and it refuted my own claim.**
+
+Testing an estimator with synthetic input is the **one** legitimate use of
+synthetic data here, and it does not breach *no claim upgrades from synthetic
+evidence*: that rule governs claims about an **entropy source**. This is
+instrument calibration — a known input is the only way to establish what a
+detector detects. **No claim about any Infinite Noise unit is upgraded by any
+number below.**
+
+## Method
+
+- Binary: `cpp/ea_non_iid`, built from commit `dd2996f` with the repository's own
+  `cpp/Makefile` flags — Apple clang, arm64, `-O2 -ffloat-store`, **`NDEBUG`
+  absent so asserts are live.** This is build provenance by construction (known
+  commit, known flags), which the canary's own header calls strictly stronger
+  than the canary.
+- Five streams, 1,000,000 one-bit samples each, from
+  `generators/blindspot_streams.py` (seeded; digests printed, rerun confirmed
+  byte-identical). **All five are globally unbiased**, so the most-common-value
+  estimator cannot separate any of them from a fair coin — every effect lives in
+  the correlation.
+- Five *additional independent* fair-coin controls to establish the battery's own
+  run-to-run spread before attributing any difference to a defect.
+
+## Result 1 — slow bias drift is detected, and my claim was wrong
+
+Per-estimator, `-v`, drop versus control:
+
+| estimator | control | bias T=5000 | bias T=500 | lag-5000 (strong) |
+|---|---:|---:|---:|---:|
+| MCV | 0.995221 | −0.000 | +0.001 | −0.000 |
+| Collision | 0.920578 | **−0.128** | **−0.134** | +0.017 |
+| Markov | 0.999225 | −0.028 | −0.027 | −0.000 |
+| Compression | 0.847017 | **−0.235** | **−0.143** | +0.003 |
+| t-Tuple | 0.934685 | **−0.104** | −0.077 | −0.013 |
+| LRS | 0.995382 | −0.020 | −0.052 | **−0.377** |
+| MultiMCW | 0.998217 | **−0.163** | **−0.123** | −0.003 |
+| Lag | 0.994685 | −0.026 | −0.025 | +0.000 |
+| MultiMMC | 0.996185 | −0.054 | −0.053 | −0.003 |
+| LZ78Y | 0.996437 | −0.027 | −0.028 | −0.000 |
+
+**A period-5000 bias oscillation is caught hard**, MultiMCW included, with its
+longest window at 4095 < 5000. The 73.3 Hz floor does not exist for bias drift.
+
+**And the reach argument survived its half:** against the lag-5000 correlation,
+**every predictor was blind** — MultiMCW −0.003, Lag +0.000, MultiMMC −0.003,
+LZ78Y −0.000, Markov −0.000 — exactly as the window bounds predict. **LRS caught
+it at −0.377**, because that construction copies `x_{i-5000}` and therefore
+creates exact repeated substrings. My own "obvious objection" section named that
+loophole and the measurement walked straight into it.
+
+## Result 2 — the real blind spot, and it is not about reach
+
+So the genuine gap needs structure that is at once **beyond predictor reach**,
+**not local bias**, and **not exact repetition**. Stream E: `x_i = x_{i-5000}`
+with probability 0.04, else a fair coin. P(agree) = 0.5203 — a **+40.4 σ**
+autocorrelation signal (control: +0.8 σ) with almost no exact repetition.
+
+| estimator | control | **E (40 σ defect)** | drop |
+|---|---:|---:|---:|
+| MCV | 0.995221 | 0.995187 | −0.0000 |
+| Collision | 0.920578 | 0.909693 | −0.0109 |
+| Markov | 0.999225 | 0.997835 | −0.0014 |
+| **Compression (binding)** | **0.847017** | **0.856713** | **+0.0097** (= +0.23 sd: noise) |
+| t-Tuple | 0.934685 | 0.916625 | −0.0181 |
+| LRS | 0.995382 | 0.973087 | −0.0223 |
+| MultiMCW | 0.998217 | 0.997076 | −0.0011 |
+| Lag | 0.994685 | 0.996103 | +0.0014 |
+| MultiMMC | 0.996185 | 0.995699 | −0.0005 |
+| LZ78Y | 0.996437 | 0.994725 | −0.0017 |
+
+**`H_original` on E was 0.856713, against this control's 0.847017.** The figure
+did **not** rise — see the correction below; 0.0097 is inside Compression's own
+run-to-run spread, so the honest statement is **no reduction**, not an increase.
+
+Against the battery's own spread, from five independent clean fair-coin streams:
+
+| | Compression (= the binding minimum in all five) |
+|---|---:|
+| control 0 | 0.847017 |
+| control 1 | 0.843936 |
+| control 2 | 0.861222 |
+| control 3 | 0.855238 |
+| control 4 | 0.865774 |
+| mean / sd | 0.854637 / **0.009224** |
+| **E, 40 σ defect** | **0.856713 — inside [0.843936, 0.865774]** |
+
+**E's figure lands in the middle of the clean range** — +0.23 sd from the clean
+mean. The defect is not merely undetected, it is *undetectable from the figure*:
+it moves the verdict by less than the battery's own sampling noise.
+
+**Correction to my first reading of this.** I initially wrote that the figure
+"went UP". It did not: +0.0097 is 0.23 sd of Compression's clean spread
+(sd = 0.0092), so noise explains it entirely and claiming an increase would be
+reading a direction into noise — the same error in the opposite direction from
+the one the audit exists to catch. **The correct claim is NO REDUCTION:** a 40 σ
+defect produced a verdict statistically indistinguishable from clean. That is
+the finding, and it does not need the figure to have risen.
+
+## Why — and this is the finding
+
+Not reach. **The minimum-of-ten rule discards the only estimator that saw it.**
+
+- LRS detected E, at −0.0223 — the largest true detection in the table.
+- LRS on E reads **0.973087**, which is **0.1164 bit ABOVE** E's binding minimum.
+- Compression binds instead, in every control and in E, and its own run-to-run
+  sd is **0.0092** — larger than LRS's entire detection.
+
+So a detection only reaches the verdict **if the detecting estimator is the
+minimum.** An estimator that reliably sits far above the minimum can detect
+anything at all and never change the reported figure. The aggregation throws its
+evidence away by construction, and the figure's resolution is set by whichever
+estimator is *most pessimistic*, not by whichever is *most sensitive*.
+
+That is strictly worse than a reach bound, because adding estimators does not
+fix it: a new, sensitive estimator that is not the minimum contributes nothing.
+
+## What this changes
+
+1. **Part 5's 73.3 Hz blind spot is withdrawn.** Bias drift is detected. The
+   schematic's VREF mechanism is visible to the battery — a hardware risk
+   relieved.
+2. **Part 6 (host-supply experiment) survives and is now better grounded.** If
+   mains ripple reaches VREF it produces bias drift, and Result 1 shows the
+   battery responds to bias drift strongly (MultiMCW −0.163). The experiment's
+   figures are a real instrument for that mechanism. **Keep the pre-registered
+   0.013 bit floor** — Result 2 shows the binding estimator's sd is 0.0092, so a
+   floor near 0.013 was the right order by luck as much as judgement, and it
+   should now be read as *just above* the instrument's own noise.
+3. **Part 7's conclusion is confirmed, by measurement rather than argument.** A
+   trivial autocorrelation found at **40 σ** what the entire battery missed, and
+   the gap is in the *aggregation*, which no purchase can change. The
+   outside-the-battery check is not a nice-to-have; it is the only thing in this
+   document shown to detect a defect the standard's own figure reports as clean.
+4. **New, and it generalises past this hardware:** any consumer treating
+   `H_original` as a sensitive defect detector is relying on a statistic whose
+   resolution is its most pessimistic estimator's sampling noise. **Record the
+   full per-estimator breakdown, not the minimum** — the breakdown contains
+   LRS's −0.0223 and the minimum does not. That is `XR-04`'s sibling and it is
+   free.
+
+## Status
+
+**VERIFIED as an instrument property**, reproducibly, from this repository's own
+source and binary. Claims about hardware: **unchanged and still NOT RUN.** The
+0.696 remains uninterpretable pending build provenance. Reproduce with
+`generators/blindspot_streams.py`; every digest is in that file's output.
+
+---
+
+# Part 9 — OC-16: the detection budget each estimator wastes
+
+Part 8 showed *that* a detection can fail to reach the verdict. This quantifies
+it for all ten estimators, from five independent clean fair-coin streams. Same
+binary and provenance as Part 8.
+
+**Headroom = an estimator's clean mean minus the clean binding minimum.** It is
+the **detection budget that estimator wastes**: a defect must move it by *more*
+than its headroom before the verdict changes at all, however statistically
+significant the movement is.
+
+| estimator | clean mean | sd | min | max | **headroom** | binds on clean data? |
+|---|---:|---:|---:|---:|---:|---|
+| MCV | 0.994603 | 0.000464 | 0.993997 | 0.995221 | **+0.1400** | no |
+| Collision | 0.914996 | 0.014876 | 0.892528 | 0.931558 | **+0.0604** | no |
+| Markov | 0.997987 | 0.001125 | 0.996413 | 0.999225 | **+0.1433** | no |
+| **Compression** | **0.854637** | **0.009224** | 0.843936 | 0.865774 | **0 — binds** | **YES, all 5** |
+| t-Tuple | 0.925195 | 0.009810 | 0.914226 | 0.936354 | **+0.0706** | no |
+| LRS | 0.993369 | 0.002444 | 0.990152 | 0.996220 | **+0.1387** | no |
+| MultiMCW | 0.998065 | 0.000725 | 0.997220 | 0.999171 | **+0.1434** | no |
+| Lag | 0.995904 | 0.001415 | 0.994685 | 0.997880 | **+0.1413** | no |
+| MultiMMC | 0.996306 | 0.000986 | 0.995043 | 0.997472 | **+0.1417** | no |
+| LZ78Y | 0.995533 | 0.000673 | 0.994725 | 0.996437 | **+0.1409** | no |
+
+Mean binding minimum **0.854637**. **Compression binds in all five** clean
+streams; no other estimator binds in any of them.
+
+## Decorative for verdict purposes on a near-uniform source
+
+**Nine of the ten cannot affect the verdict on clean-ish data.** Each one's
+entire clean range sits above Compression's entire clean range, so on a source
+near uniform the reported figure is *Compression's reading and nothing else*.
+What each would have to overcome:
+
+| estimator | must move more than | largest movement actually observed (B/C/D/E) | reaches the verdict? |
+|---|---:|---:|---|
+| MCV | 0.1400 | 0.0006 | never, in any test |
+| Markov | 0.1433 | 0.0266 | never |
+| Lag | 0.1413 | 0.0275 | never |
+| LZ78Y | 0.1409 | 0.0264 | never |
+| MultiMMC | 0.1417 | 0.0545 | never |
+| Collision | 0.0604 | 0.1224 | exceeded its headroom, but Compression fell further |
+| t-Tuple | 0.0706 | 0.0946 | exceeded, same reason |
+| MultiMCW | 0.1434 | 0.1629 | exceeded, same reason |
+| **LRS** | 0.1387 | **0.3754** | **yes — binds on D** |
+
+**Only LRS was ever the binding estimator on any test stream** (on D, the 600 σ
+copy-correlation). Five estimators — MCV, Markov, Lag, LZ78Y, MultiMMC — never
+came within a factor of five of their own headroom on any defect tested.
+
+## The finding a reader needs
+
+**The battery has ten estimators and the verdict is determined by one.** The
+other nine contribute only if they fall by more than a headroom that **nobody
+publishes** — it is not in SP 800-90B, not in the tools' output, and not
+recoverable from a reported figure. A reader who sees "min-entropy 0.85" has no
+way to know that MCV would have had to drop 0.14 bit to matter.
+
+Three consequences:
+
+1. **The figure's resolution is its most pessimistic estimator's sampling
+   noise**, here Compression's sd = 0.0092. Nothing finer than that is
+   detectable in the verdict, by any estimator, regardless of significance.
+2. **Adding estimators does not help.** A new, exquisitely sensitive estimator
+   that is not the minimum contributes nothing. This is why the gap is not
+   closable by a better battery and not closable by a purchase.
+3. **Record the per-estimator breakdown, not the minimum.** The breakdown
+   contains LRS's −0.0223 on E; the minimum does not. This is free — the tools
+   already print it under `-v` — and it is the single cheapest mitigation in this
+   document. `XR-06`.
+
+**Status: VERIFIED as an instrument property.** Synthetic input, deliberately —
+see Part 11. No claim about any hardware.
+
+---
+
+# Part 10 — OC-17: the outside-the-battery check, built and calibrated
+
+`tools/outside-battery-check.cpp`. Self-contained C++11, no dependencies (an
+inline radix-2 FFT), so a consumer who did not build the rest of the repo can
+still run it. **It is not an entropy estimator and emits no entropy figure.** It
+answers one question: does this stream carry structure the battery's aggregation
+would discard?
+
+## What it tests, and what sets the bounds
+
+**Autocorrelation over lags 1 .. 100,000** (default), via FFT — all lags from one
+transform, O(N log N).
+
+- **Lower bound 1.** Overlapping the battery's own range is free and harmless.
+- **Upper bound 100,000**, set by two things. *Statistical power:* each lag uses
+  N−k pairs, so the standard error grows with lag; the tool clamps `--max-lag` to
+  N/2 so every lag keeps at least half the samples. *Physics:* at the Infinite
+  Noise's ~0.3 Mbit/s, 100,000 samples is 0.33 s ≈ **3 Hz**, which covers mains
+  (50/60 Hz, lags 6000/5000), its harmonics, USB frame rate (1 kHz), and
+  switching-regulator ripple, with room to spare. Drift slower than ~3 Hz is a
+  trend rather than a periodicity and wants a different instrument.
+
+**Power spectrum** from the same transform, which localises a periodic mechanism
+to a *frequency* — the thing the schematic read was actually looking for.
+
+## Pre-registered thresholds, and the false-positive arithmetic
+
+**Autocorrelation: 5.731 σ.** Bonferroni, family-wise α = 0.001 over 100,000
+lags — per-lag two-sided α = 5×10⁻⁹. Bonferroni is the right correction because
+sample autocorrelations of a white process are asymptotically independent across
+lags; it is mildly conservative. **Testing 100,000 lags at an uncorrected 3 σ
+would expect ~270 hits on clean data**, which is why the correction is not
+optional.
+
+**Spectrum: 30× mean power, and this one is EMPIRICAL because my analytic model
+was wrong.** The Exp(1) periodogram model gives `log(K/α)`. Measured on 25 clean
+streams, spectral check isolated:
+
+| threshold | source | clean streams fired |
+|---|---|---:|
+| 18.5× | analytic, α = 0.01 | **2 / 25 (8 %, nominal 1 %)** |
+| 20.8× | analytic, α = 0.001 | 0 / 25 — but clean max was 20.3×, a **2 % margin** |
+| **30×** | **empirical** | **0 / 25, margin 1.48×** |
+
+The rejection is of the model's **tail shape**, not one threshold: 2× zero-padding
+correlates adjacent bins, so observed clean maxima (13.0 .. 20.3) have a fatter
+tail than Exp(1) predicts, and no α can be trusted to deliver its stated rate.
+α = 0.001 passes on this set by 2 %, which is not a margin to rely on.
+
+## Calibration set
+
+**25 independent clean streams**, 1,000,000 samples each — 5 from Mersenne
+Twister and **20 from `os.urandom`**, deliberately two different generators so
+the calibration does not rest on one RNG's quality.
+
+- Autocorrelation max |z|: **4.04 .. 5.18**, mean 4.47, sd 0.28. **0/25** over
+  5.731.
+- Spectrum top line: **13.0 .. 20.3**, mean 14.7, sd 1.9. **0/25** over 30×.
+
+## Demonstrated: fires on all four defects, silent on all 25 controls
+
+| stream | autocorr | spectrum | verdict |
+|---|---|---|---|
+| 25 clean controls | max 5.18 σ | max 20.3× | **silent, 0/25** |
+| B, bias T=5000 | 79,644 lags over | **8538.7× at 59.938 Hz** | FOUND |
+| C, bias T=500 | 81,145 lags over | 9263.3× at 599.957 Hz | FOUND |
+| D, strong lag corr | 24 lags over | 44.5× | FOUND |
+| **E, 40 σ weak lag corr** | **40.21 σ at lag 5000 = 60.000 Hz** | 15.7× (**silent**) | **FOUND** |
+
+**B's spectrum recovers the mechanism directly**: 8538.7× at 59.938 Hz, from a
+stream whose only structure is a period-5000 bias oscillation. If the VREF path
+in Part 5 ever modulates a real unit at mains frequency, this is what it looks
+like.
+
+**And the two checks are complementary — neither alone suffices.** E reads
+40.21 σ on autocorrelation but **15.7× on the spectrum, below the clean maximum
+of 20.3×**: the spectrum does not see E at all. Conversely the spectrum names a
+frequency, which autocorrelation does not. Run both; this is why the tool does
+both by default.
+
+## Shown failing — three ways
+
+*A check never seen to fail proves nothing.*
+
+1. **Weaken the σ threshold past E's signal:** `--sigma 5.73/20/40` all detect;
+   **`--sigma 50` MISSES E** (exit 0). The threshold is load-bearing and the
+   margin is 7×.
+2. **Remove the multiple-comparison correction:** `--no-correction` (3 σ) fires
+   on **5 of 5** clean streams, 160 false lag hits on one control against the
+   ~270 predicted. The correction is what makes a quiet result mean anything.
+3. **Lower the spectral threshold below the clean maximum:** 30× → 0/25;
+   **20× → 2/25**; **13× → 24/25**. The 1.48× margin is doing real work.
+
+## What it does NOT cover — stated so a pass is not read as closure
+
+- **Linear correlation only.** A stream with `x_i = x_{i-k} XOR x_{i-m}` has zero
+  autocorrelation at every lag and passes. Nonlinear and higher-order structure
+  needs a different instrument; this tool is blind to it by construction.
+- **Only the lags tested.** Structure above `--max-lag` is not examined, and a
+  pass does not report it as absent.
+- **A pass is not an entropy claim** and not a compliance statement. It is the
+  absence of one specific kind of evidence.
+- **It says nothing about physical soundness** — a well-shielded broken source
+  can be spectrally clean.
+- The calibration is for **1,000,000 one-bit samples**. Other lengths or symbol
+  widths need recalibrating; the thresholds are not universal constants.
+
+**Status: BUILT and VERIFIED against known input. NOT RUN on hardware** — no
+physical unit exists to run it on, and the 0.696 stays uninterpretable.
+
+---
+
+# Part 11 — the synthetic-data distinction, stated for the taxonomy
+
+**This exists so the next reader of the standing constraint does not delete
+Parts 8-10 for violating it.**
+
+The standing rule is **"no claim upgrades from synthetic evidence."** Parts 8-10
+rest entirely on synthetic streams. That is not a violation, and the reason is a
+distinction the rule does not spell out:
+
+| | claim about a **SOURCE** | claim about an **INSTRUMENT** |
+|---|---|---|
+| example | "this unit delivers 0.87 bit/bit" | "this estimator detects a 40 σ lag correlation" |
+| synthetic data | **cannot establish it.** Nothing about generated bits tells you what a physical device does. | **is the correct and only way to establish it.** You cannot characterise a detector without input whose structure you already know. |
+| real data | required | insufficient alone — you do not know what is in it, so you cannot tell a miss from a clean sample |
+
+**Measuring a detector requires known input, and known input is synthetic by
+definition.** A physical capture cannot calibrate a detector, because its true
+structure is exactly what is unknown. So the rule's force is undiminished and its
+scope is source claims:
+
+- **Nothing in Parts 8-11 upgrades any claim about any Infinite Noise unit**,
+  about the 0.696, or about hardware independence. Every physical item stays
+  **NOT RUN**.
+- **What Parts 8-10 do establish** is a property of `cpp/ea_non_iid` as built
+  from this repository at commit `dd2996f`, and a calibration of
+  `tools/outside-battery-check`. Both are instrument claims, both reproducible
+  from `generators/blindspot_streams.py`, both independent of any hardware.
+
+The same distinction already governs `tools/build-provenance-canary.sh`, which
+classifies a binary using a generated input. Nobody objected to that, for the
+same reason.
+
+**The rule that does apply here, and was followed:** *suspect the instrument
+before the thing measured.* Part 5 reasoned about the instrument and got it
+wrong; Part 8 measured it and found the real mechanism. Instrument calibration is
+how that rule gets obeyed rather than merely cited.
