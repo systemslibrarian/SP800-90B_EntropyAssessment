@@ -613,3 +613,301 @@ Before any combination, extraction, or Tier 2 claim:
 
 Physical items remain **NOT RUN**. No figure here is measured; the 0.696 remains
 one unit's prior measurement and uninterpretable pending build provenance.
+
+---
+
+# Part 5 — the schematic read, done now (2026-10-15)
+
+Source: `waywardgeek/infnoise`, `eagle/infnoise.sch` (Eagle 7.1.0 **XML**, so
+greppable) and `eagle/infnoise_SBA_BOM.csv`. Netlist extracted by parsing the
+`<net>` elements. This cost nothing and needed no hardware.
+
+## The complete parts list
+
+| ref | part | role |
+|---|---|---|
+| `AMP1` | **TSV912IQ2T** | dual rail-to-rail op-amp — the two amplifier channels |
+| `COMP1` | **TC75W57FK** | **dual** comparator — both channels' decisions, one package |
+| `SW1`, `SW2` | **MC74VHC1G66** ×2 | analog switches — the switched-capacitor phases |
+| `USB1` | **FT240XQ** | USB FIFO, and the 3.3 V supply |
+| `L1` | ferrite bead 0603 | EMI filter on the 5 V input — **not** a power inductor |
+| R1,R2 27Ω · R3,R4,R5,R8,R9 10K · R6,R7 8.2K | | USB termination, VREF divider, gain network |
+| C1,C7 10nF · C2 4.7µF · C3,C6 100nF · C4,C5 47pF · C8,C9 220pF | | |
+
+**No switching regulator. No charge pump. No crystal or oscillator part.**
+
+## Question 1 — switching elements: none unintended, but switching is intrinsic
+
+There is no buck, boost, or charge pump anywhere. `L1` is a ferrite bead on the
+USB 5 V input, not an inductor in a switching topology. The FT240X uses its
+internal oscillator, so there is no separate clock part.
+
+**But the design is a switched-capacitor circuit by construction**, and the
+switches sit directly in the analog signal path:
+
+```
+SW1EN  (2): SW1.IN, USB1.D2          <- bit-bang pin drives the switch
+SW2EN  (2): SW2.IN, USB1.D0
+AMP1OUT(4): AMP1.OUT1, R6.2, R9.1, SW2.COM
+A      (4): AMP1.IN1+, C8.2, COMP1.IN1+, SW1.NO
+```
+
+So periodic switching at the sample-clock rate is the mechanism, not an
+artefact. The question that matters is whether that periodicity reaches the
+decision, and **Question 2 shows a path by which it does.**
+
+## Question 2 — supply topology: regulated, and that is not the end of it
+
+**Better than the worst case: the analog section does *not* run off raw USB
+5 V.** The netlist is unambiguous:
+
+```
+VCCIN (3): C1.1, L1.1, X1.VCC                        <- USB 5 V in
+VCC   (4): C2.1, C3.1, L1.2, USB1.VCC                <- 5 V after the bead
+VCC33 (10): AMP1.VCC, COMP1.VDD, SW1.VCC, SW2.VCC,
+            R3.1, R9.2, C6.1, USB1.3V3OUT,
+            USB1.VCCIO, USB1.RESET#
+```
+
+Everything analog — op-amp, comparator, both switches, the VREF divider — runs
+from **`USB1.3V3OUT`, the FT240X's internal 3.3 V LDO**, decoupled by C6 = 100nF
+alone.
+
+**Three consequences the schematic establishes:**
+
+1. **The FT240X's own I/O rail shares that node.** `USB1.VCCIO` is on `VCC33`.
+   So every bit-bang transition — including the `SW1EN`/`SW2EN` lines that drive
+   the switches — draws I/O current from the same regulator node that sets the
+   comparator's supply, with 100nF of local decoupling and no RC isolation
+   between the digital and analog rails. Design-shared, present in every unit,
+   periodic at the sample clock.
+
+2. **`VREF` is a divider off `VCC33`, shared by *both* comparators, filtered by
+   only 10nF:**
+
+   ```
+   VREF (5): C7.1, COMP1.IN1-, COMP1.IN2-, R3.2, R4.2
+   ```
+
+   R3 = R4 = 10K, so VREF = VCC33/2, with τ = 10nF × (10K∥10K) = **50 µs**, a
+   corner near **3 kHz**. Any ripple on VCC33 **below ~3 kHz passes essentially
+   unattenuated into the threshold of both comparators simultaneously.**
+
+3. **So the host-dependence reading is supported.** Host supply ripple that the
+   FT240X's internal LDO does not reject appears on VCC33, passes the 3 kHz
+   corner into VREF, and modulates both channels' decisions in common mode. The
+   LDO attenuates, and its PSRR falls with frequency and is not a precision
+   part's. **Testable consequence, exactly as proposed: the same two units
+   should read differently on hosts with different power sources.** That is now
+   a prediction from the netlist, not a guess — see Part 6.
+
+## Question 3 — the gain network and the comparator
+
+**K = 1.82 confirmed from the netlist, on both channels:**
+
+```
+FB1 (3): AMP1.IN1-, R5.2, R6.1        R5 = 10K (from COMP1.OUT1), R6 = 8.2K (from AMP1.OUT1)
+FB2 (3): AMP1.IN2-, R7.2, R8.1        R7 = 8.2K, R8 = 10K          <- symmetric
+COMP1 (3): COMP1.OUT1, R5.1, USB1.D1  <- comparator output feeds back through R5
+```
+
+Gain `1 + R6/R5 = 1 + 8.2/10 = 1.82`, so the theoretical rate is
+`log2(1.82) = 0.8638` bit/bit. This matches `DESIGN_K` in the driver and sits
+above the 0.696 measured after margin, consistently.
+
+**Tolerances are NOT in the BOM — this cannot be settled on paper.** The
+expected unit-to-unit spread, which is the yardstick for reading a difference
+between the two units:
+
+| resistor tolerance | K range | entropy/bit range | spread |
+|---|---|---|---|
+| ±1% | 1.804 – 1.836 | 0.851 – 0.877 | **±0.013 bit** |
+| ±5% | 1.738 – 1.902 | 0.797 – 0.928 | **±0.065 bit** |
+
+So a measured difference between the two units **below ~0.013 bit is consistent
+with 1% parts and says nothing**; a difference above ~0.065 bit exceeds even 5%
+parts and demands explanation.
+
+**One finding the BOM made visible: `COMP1` is a *dual* comparator in a single
+package** (TC75W57FK). Both channels' comparators share a die, a supply pin and
+the single VREF node. So the two channels **within** a unit are not independent
+— and since the driver interleaves them into even and odd bit positions
+(`libinfnoise.c:100-101`), any offset mismatch produces a **period-2 structure**
+in the output. That one is comfortably inside the estimator battery's reach
+(Markov lag-1, Lag predictor), so it would be caught. Worth knowing that the
+"two channels" are not two sources.
+
+## Question 4 — time constants against what the estimators actually probe
+
+**What the battery probes**, computed at the Infinite Noise's ~0.3 Mbit/s:
+
+| estimator | lag reach | = time | frequency floor |
+|---|---:|---:|---:|
+| Markov §6.3.3 (first order) | 1 | 0.003 ms | 300 kHz |
+| MultiMMC §6.3.9 (depth) | 16 | 0.053 ms | 18.8 kHz |
+| LZ78Y §6.3.10 (prefix) | 16 | 0.053 ms | 18.8 kHz |
+| Lag predictor §6.3.8 | 128 | 0.427 ms | 2.34 kHz |
+| **MultiMCW §6.3.7 (longest window)** | **4095** | **13.65 ms** | **73.3 Hz** |
+
+t-tuple/LRS reach is data-dependent; compression (bzip2) catches general
+redundancy but is not a sensitive detector of weak periodicity.
+
+**No time constant in the design exceeds that reach.** VREF's 50 µs is ~15
+samples; C8/C9 at 220pF are sub-sample; C6 and C2 filter only high frequencies.
+So the blind spot is **not** reached by any RC in the circuit.
+
+**It is reached by external periodicity, and the margin is uncomfortably tight:**
+
+| source | period | verdict |
+|---|---:|---|
+| USB frame, 1 kHz | 300 samples | within 4095 — visible |
+| rectified ripple, 120 Hz | 2500 samples | within 4095 — visible |
+| rectified ripple, 100 Hz | 3000 samples | within 4095 — visible |
+| **mains fundamental, 60 Hz** | **5000 samples** | **BEYOND 4095 — blind** |
+| **mains fundamental, 50 Hz** | **6000 samples** | **BEYOND 4095 — blind** |
+
+The battery's frequency floor is **73.3 Hz**. Mains at 50 and 60 Hz sits just
+below it; the rectified second harmonic sits just above. **The mains fundamental
+is in the blind spot and its own second harmonic is not** — which is the single
+most useful thing this schematic read produced, because it names the frequency,
+the mechanism (VREF off an unisolated rail through a 3 kHz corner), and the
+check.
+
+## What the schematic establishes, rules out, and cannot settle
+
+**Establishes:** no switching regulator; the analog rail is the FT240X internal
+LDO; VCCIO shares that rail with no isolation; VREF is a VCC33/2 divider shared
+by both comparators with a 3 kHz corner; K = 1.82 on both channels; the two
+channels share one comparator die and interleave into even/odd bits; no design
+time constant exceeds 4095 samples.
+
+**Rules out:** an unintended switcher or charge pump as the periodic-modulation
+source; raw-5 V operation of the analog section; a long design RC as the
+blind-spot mechanism.
+
+**Cannot settle on paper:** resistor tolerances (absent from the BOM); the
+FT240X LDO's actual PSRR at mains frequencies; whether ripple reaching VREF is
+large enough to move comparator decisions measurably; and the actual layout
+coupling between the digital and analog sections, which is a `.brd` question and
+a measurement question, not a netlist one.
+
+## Is the signature detectable outside the battery? Yes, and cheaply
+
+This is the check worth building **before** January, not after:
+
+- **Autocorrelation of the raw stream out to ~10⁵ lags.** Covers mains
+  fundamental (5000–6000), its harmonics, and slower drift. The battery stops at
+  4095, so everything beyond is new information.
+- **A power spectrum of the raw bit stream.** A line at 50/60 Hz or at the
+  host's switching frequency is a direct observation of the mechanism this
+  schematic read predicts, and needs no hardware beyond the units themselves.
+- **Cross-spectrum between the two units**, per Part 3's requirement 2. Common
+  modulation shows as coherence at the offending frequency, which per-stream
+  tests cannot see at all.
+
+None of these are in SP 800-90B, which is the point: the blind spot belongs to
+the battery, so only a check outside it can look there.
+
+---
+
+# Part 6 — the host-supply experiment, pre-registered
+
+Free, tests the dominant risk directly, and the netlist in Part 5 predicts a
+specific outcome. **Registered in advance so the result cannot be read
+selectively.**
+
+## Hypothesis
+
+Host-supply ripple below ~3 kHz reaches VREF (Part 5, Question 2) and modulates
+both comparators' thresholds in common mode. If so, measured figures and/or
+inter-unit coupling will depend on the host's power source.
+
+## Conditions, in this order
+
+| # | condition |
+|---|---|
+| A | laptop on **battery** (no mains path at all) |
+| B | the **same laptop on mains**, same USB ports, same session |
+| C | **powered hub with its own supply**, laptop on battery |
+
+Both units captured **simultaneously** in every condition — that is what makes
+the coupling measurable.
+
+## Captures and quantities
+
+- **5 captures per unit per condition**, 1,000,000 samples each, `--raw`, no
+  whitening, no `/dev/random`. 2 units × 3 conditions × 5 = **30 captures**.
+- Per capture record: the SP 800-90B minimum-of-ten figure, **the full
+  per-estimator breakdown**, and the assessing binary's build provenance
+  (`XR-04`).
+- Per condition record, **per unit, never averaged across units**: the mean and
+  sample standard deviation of the 5 figures.
+- Per condition also record: **cross-correlation between the two units' streams**
+  at lags 0 to 10⁵, and the **peak coherence** between them.
+
+## Decision rule, fixed now
+
+Let `s_w` be the pooled within-condition standard deviation of the per-unit
+figures across the 5 repeats.
+
+- **Evidence of host-supply dependence** iff, for either unit, the
+  between-condition difference in mean figure exceeds **3 × s_w** *and* exceeds
+  an absolute floor of **0.013 bit** — the ±1% resistor-tolerance band from Part
+  5, below which a difference is not interpretable regardless of its
+  significance.
+- **Evidence of host-induced coupling** iff peak inter-unit coherence in
+  condition B exceeds condition A's by more than **3 ×** the within-condition
+  spread of that statistic. This is the sharper test: independence is what CG
+  needs, and coupling is the thing that breaks it.
+- **A null result** is `A ≈ B ≈ C` on both measures within those bounds. It is
+  evidence that mains ripple does not measurably reach the decision — **not**
+  evidence that the units are independent, since a design-shared structure
+  present in all three conditions would be invisible to this experiment by
+  construction.
+
+Pre-registering the floor at 0.013 bit matters because without it any
+sufficiently repeatable experiment eventually clears 3 σ on noise that the
+component tolerances already explain.
+
+## Guard shown failing, before the result is trusted
+
+The cross-correlation and coherence code must be **demonstrated detecting a
+known coupling** before it is used in anger: inject a synthetic common-mode
+sinusoid at 60 Hz-equivalent lag into two otherwise independent captured
+streams, at descending amplitude, and record the smallest amplitude it detects.
+A test that has never been shown to fire proves nothing — and a coupling
+detector that cannot find a coupling you planted is worse than no detector,
+because it produces a null result that reads as reassurance.
+
+---
+
+# Part 7 — correction to the cross-check idea
+
+The proposal earlier suggested a different device family could cross-check the
+entropy figure and close the estimation-error gap. **Part 3's correction narrows
+that, and the narrowing is right: if the blind spot belongs to the estimator
+rather than the unit, measuring a different device with the same battery
+inherits the same blind spot.**
+
+So the cross-check survives, weaker, and **only via disagreement**:
+
+- Device A carries blind-spot structure, device B does not → A reads high, B
+  reads correctly, **they disagree** → informative.
+- Both carry it → **they agree and both are wrong** → the agreement is worthless.
+
+Which is Part 4's inversion again, and it generalises: **disagreement is the
+informative outcome; agreement is ambiguous.** Recorded as detecting
+*design-specific* structure, not estimator blind spots in general.
+
+**And the conclusion that follows, which is the most important item on the Tier 2
+list: nothing purchasable closes the estimator blind spot.** No second device, no
+third device, no mechanism diversity. Only a check *outside* the battery can look
+there — a spectrum, a long-lag autocorrelation, or an estimator family the
+standard does not include.
+
+**That is a software item, not a hardware one, it costs nothing but time, it
+needs no purchase and no schedule, and it is available now.** On the evidence of
+Part 5 — which identified a specific mechanism (VREF on an unisolated rail), a
+specific frequency (mains, 5000–6000 samples), and a specific reason the battery
+cannot see it (floor 73.3 Hz) — it is plausibly the highest-value thing on the
+whole Tier 2 list, ahead of the second unit it would be assessing.
