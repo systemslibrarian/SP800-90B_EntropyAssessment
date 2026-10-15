@@ -1277,3 +1277,123 @@ JSON. **Not verified**: whether any realistic TruePad invocation path can
 produce a mis-scaled `H_I` string — that is a question about TruePad's code,
 which this session has not read and must not touch. The hazard is recorded in
 `CROSS-REPO-FINDINGS.md` as `XR-03`.
+
+---
+
+## OC-12 — C22's remainder: conservative, not permissive. The cluster clears the register.
+
+**Verdict: `C22` is re-classified from PERMISSIVE to CONSERVATIVE.** Its one
+permissive-by-description item (`ZALPHA`, `OC-8`) is not a defect, and the
+remainder under-reports entropy at every extreme tested. One fragility is
+recorded.
+
+### `predictors-9` — the `N == 1` division by zero does not escape
+
+`utils.h:1043`:
+
+```c
+if(p_global > 0) p_globalPrime = min(1.0, p_global + ZALPHA*sqrt((p_global*(1.0-p_global))/((double)N-1.0)));
+else              p_globalPrime = 1.0 - pow(0.01, 1.0/(double)N);
+```
+
+At `N == 1` the divisor `(double)N-1.0` is exactly zero. Tested at the extremes
+through a harness calling the production header directly:
+
+| `C` | `N` | `k` | `P_global` | `P_global'` | min entropy | `isnan` |
+|---:|---:|---:|---|---|---|---:|
+| 1 | 1 | 2 | 1 | 1 | **-0** | 0 |
+| 1 | 1 | 256 | 1 | 1 | **-0** | 0 |
+| 0 | 1 | 2 | 0 | 0.98999999999999999 | 0.014499569695115089 | 0 |
+| 1 | 2 | 2 | 0.5 | 1 | -0 | 0 |
+| 2 | 2 | 2 | 1 | 1 | -0 | 0 |
+| 10⁶ | 10⁶ | 256 | 1 | 1 | -0 | 0 |
+
+**No NaN and no Infinity reaches the returned estimate at any extreme.** At
+`N == 1` with `C == N` the expression is `sqrt(0/0)` = NaN, and at `N == 1` with
+`0 < C < N` it is `sqrt(positive/0)` = ∞; both are absorbed and the result is
+`min entropy = -0` — **zero entropy, the maximally conservative answer**. The
+`C == 0` case never divides, taking the documented `1 - 0.01^(1/N)` branch.
+
+So `predictors-9` is **CONSERVATIVE**, matching the finder's own `underestimate`
+direction, and the user's concern about an Infinity or NaN passing a comparison
+silently does not materialise here. Three guards are responsible, and it is
+worth separating the deliberate from the lucky:
+
+| Guard | Form | NaN-safe? |
+|---|---|---|
+| `if(p_global > 0)` | NaN fails the test, takes the `else` | **deliberate** — this is the `!(x > 0)` idiom in its positive form |
+| `fmax(curMax, p_globalPrime)` | `fmax` is specified to return the non-NaN operand | **deliberate** — measured: `fmax(0.5,NaN)` and `fmax(NaN,0.5)` both give 0.5 |
+| `if(curMax < 1.0)` | NaN fails the test, `p_local` is skipped | **deliberate** |
+| `min(1.0, …)` | returns the **first** argument when the comparison is false | **accidental** |
+
+### The one fragility: NaN suppression depends on argument order
+
+Measured:
+
+```
+std::min(1.0, NaN) = 1      <- the form at utils.h:1043
+std::min(NaN, 1.0) = nan    <- the same expression, arguments swapped
+```
+
+`std::min(a,b)` returns `(b < a) ? b : a`, and every comparison with NaN is
+false, so it returns `a`. The NaN at `N == 1, C == N` is suppressed **only
+because `1.0` is written first**. Swap the arguments — a change a reviewer would
+read as cosmetic — and NaN reaches `entEst`, is returned, and enters the `min()`
+folds in `non_iid_main.cpp`. That is exactly prior finding **`F13` ("NaN into
+std::min"), still carried as UNCONFIRMED**: the code is one argument-order edit
+away from making it real. Worth a comment at the site, or `fmax`-style explicit
+handling, so the property is stated rather than incidental.
+
+I did **not** establish whether the division raises `FE_DIVBYZERO`/`FE_INVALID`
+at runtime: my probe was constant-folded at `-O2` and reported no flags, which
+is a compile-time artefact rather than a measurement. Unverified either way, and
+the tool checks FP flags nowhere regardless.
+
+### `predictors-5` — `P_local`'s quantisation, conservative at every extreme
+
+`calc_p_local(maxrun, N, ldomain)` bisects for `p` where
+`prediction_estimate_function(p, maxrun+1, N) = log(0.99)`. The harness reports
+the achieved `f(p)` beside the target:
+
+| call | returned `p` | `f(p)` | target `log(0.99)` | side |
+|---|---|---|---|---|
+| `cpl 23 1000000 0.5` | 0.50000000002910383 | -0.029801688496229006 | -0.010050335853501451 | below |
+| `cpl 1000000 1000000 0.5` | 0.9999954705124896 | -0.010050335873434884 | -0.010050335853501451 | below by 2.0e-11 |
+| `cpl 60 1000000 0.001` | 0.75675162425223963 | -0.01005033604720024 | -0.010050335853501451 | below by 1.9e-10 |
+| `cpl 1 1000000 0.5` | 0.75 | -287700.98301988264 | — | below |
+| `cpl 1 4503599627370496 0.5` | 0.75 | -1295604871231189 | — | below |
+| `cpl 0 1 0.5` | 0.50000000000000011 | -1.3307755363153915 | — | below |
+
+`prediction_estimate_function` is decreasing in `p`, so `f(p) < log(0.99)`
+means the returned `p` is **at or above** the true root. A larger `p` raises
+`curMax`, and `entEst = -log2(curMax)` is therefore **lower** — an
+under-estimate. **Every extreme tested lands on the conservative side.**
+
+**I did not reproduce the finder's worst non-conservative case of
++1.6e-11 bit.** That specific number remains their claim, unverified by me. What
+is verified is that the quantisation exists, that its effect on `f` is at most
+~2e-10 at these extremes, and that the sign at every extreme is conservative.
+
+One extreme is worth naming: `cpl 1 1000000 0.999999` returns exactly **1.0**,
+for which `f(1.0)` is NaN. In production that NaN is never computed — the
+guard `if((curMax < 1.0) && (f(curMax) > log(0.99)))` evaluates `f` at `curMax`
+*before* calling `calc_p_local`, never at the returned value — and
+`fmax(curMax, 1.0) = 1.0` gives `entEst = -0`. Conservative. The NaN in the
+table above is my harness evaluating `f` at the returned `p`, not a production
+path; recorded so it is not mistaken for one.
+
+### Register consequence
+
+`C22` leaves the permissive register. Its three parts: `ZALPHA` measured at
++3.80e-06 bit and **not a defect** (`OC-8`); `predictors-9` **conservative**,
+reporting zero entropy at `N == 1`; `predictors-5` **conservative** at every
+extreme tested. The remaining members (`predictors-3`, `-4`, `-7`, and the
+`estimators-mcv-*` and `estimators-ttuple-lrs-*` items already covered in that
+dimension's own report) are all claimed conservative or neutral by their
+finders and none is claimed permissive, so nothing in `C22` now sits on the
+permissive register.
+
+**Correct and verified**: the `N == 1` extremes, the three NaN guards, the
+argument-order fragility, and the conservative sign of `P_local`'s quantisation
+at six extremes. **Not verified**: the finder's +1.6e-11 bit non-conservative
+case, and whether the `N == 1` division raises FP flags at runtime.
