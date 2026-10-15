@@ -1,0 +1,6 @@
+Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+
+*** Warning: dataset contains 200 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+

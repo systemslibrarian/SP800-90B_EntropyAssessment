@@ -1,0 +1,60 @@
+=================================================================
+==38836==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x603000026730 at pc 0x000104b14788 bp 0x00016b325080 sp 0x00016b325078
+READ of size 1 at 0x603000026730 thread T0
+    #0 0x000104b14784 in periodicity(unsigned char const*, unsigned int, unsigned int)+0x238 (ea_iid-ndebug-asan:arm64+0x10003c784)
+    #1 0x000104b16dc8 in periodicity_tests(unsigned char const*, int, int, long double*, bool const*)+0x474 (ea_iid-ndebug-asan:arm64+0x10003edc8)
+    #2 0x000104b18a9c in run_tests(data_t const*, unsigned char const*, unsigned char const*, double, double, long double*, bool const*)+0x1d4 (ea_iid-ndebug-asan:arm64+0x100040a9c)
+    #3 0x000104b1e990 in permutation_tests(data_t const*, double, double, int, IidTestCase&)+0x348 (ea_iid-ndebug-asan:arm64+0x100046990)
+    #4 0x000104b2d504 in main+0xf28 (ea_iid-ndebug-asan:arm64+0x100055504)
+    #5 0x000186b304e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+0x603000026730 is located 7 bytes after 25-byte region [0x603000026710,0x603000026729)
+allocated by thread T0 here:
+    #0 0x000105e9c150 in _Znwm+0x74 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x50150)
+    #1 0x000104ae689c in std::__1::vector<unsigned char, std::__1::allocator<unsigned char>>::__vallocate[abi:nqe220106](unsigned long)+0x3c (ea_iid-ndebug-asan:arm64+0x10000e89c)
+    #2 0x000104b0fa0c in std::__1::vector<unsigned char, std::__1::allocator<unsigned char>>::vector[abi:nqe220106](unsigned long, unsigned char const&)+0x100 (ea_iid-ndebug-asan:arm64+0x100037a0c)
+    #3 0x000104b0f5f0 in conversion1(unsigned char const*, int)+0x58 (ea_iid-ndebug-asan:arm64+0x1000375f0)
+    #4 0x000104b16b74 in periodicity_tests(unsigned char const*, int, int, long double*, bool const*)+0x220 (ea_iid-ndebug-asan:arm64+0x10003eb74)
+    #5 0x000104b18a9c in run_tests(data_t const*, unsigned char const*, unsigned char const*, double, double, long double*, bool const*)+0x1d4 (ea_iid-ndebug-asan:arm64+0x100040a9c)
+    #6 0x000104b1e990 in permutation_tests(data_t const*, double, double, int, IidTestCase&)+0x348 (ea_iid-ndebug-asan:arm64+0x100046990)
+    #7 0x000104b2d504 in main+0xf28 (ea_iid-ndebug-asan:arm64+0x100055504)
+    #8 0x000186b304e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow (ea_iid-ndebug-asan:arm64+0x10003c784) in periodicity(unsigned char const*, unsigned int, unsigned int)+0x238
+Shadow bytes around the buggy address:
+  0x603000026480: fd fd fa fa 00 00 00 fa fa fa 00 00 00 00 fa fa
+  0x603000026500: 00 00 00 fa fa fa 00 00 00 00 fa fa 00 00 00 00
+  0x603000026580: fa fa fd fd fd fd fa fa 00 00 00 fa fa fa 00 00
+  0x603000026600: 00 00 fa fa fd fd fd fd fa fa 00 00 00 fa fa fa
+  0x603000026680: fd fd fd fd fa fa fd fd fd fd fa fa fd fd fd fd
+=>0x603000026700: fa fa 00 00 00 01[fa]fa fa fa fa fa fa fa fa fa
+  0x603000026780: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x603000026800: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x603000026880: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x603000026900: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x603000026980: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==38836==ABORTING
+
+*** Warning: dataset contains 200 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+

@@ -1397,3 +1397,105 @@ permissive register.
 argument-order fragility, and the conservative sign of `P_local`'s quantisation
 at six extremes. **Not verified**: the finder's +1.6e-11 bit non-conservative
 case, and whether the `N == 1` division raises FP flags at runtime.
+
+---
+
+## OC-13 — C21's permutation statistics and C20's races: two more register entries clear
+
+### C21 — the out-of-bounds reads are real, unreachable on a supported path, and guarded only by an assert
+
+`permutation_tests.h`:
+
+```c
+unsigned int periodicity(const uint8_t data[], const unsigned int p, const unsigned int n){
+	unsigned int T = 0;
+	assert(n>=p);                        // :256  -- A GUARD EXISTS
+	for(unsigned int i = 0; i < n-p; ++i){ …
+
+unsigned long int covariance(const uint8_t data[], const unsigned int p, const unsigned int n){
+	unsigned long int T = 0;
+	for(unsigned int i = 0; i < n-p; ++i){ …   // :275  -- NO GUARD OF ANY KIND
+```
+
+`n` and `p` are both `unsigned`, and `p` comes from the fixed set {1, 2, 8, 16,
+32}, so `n < p` makes `n-p` wrap to roughly 4·10⁹ and the loop runs far past the
+buffer.
+
+**Two corrections to the finder's claim.** `memory-safety-fuzz-6` says
+*"covariance has no guard at all, so … the same in the assert-enabled build,
+because covariance has no assert."* The first half is right; the second is wrong
+for the path that actually executes:
+
+| build | observed |
+|---|---|
+| assert-live (shipped) | `Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256` — **`periodicity` aborts first**; `covariance` is never reached, because `periodicity_tests` runs before `covariance_tests` |
+| `-DNDEBUG` + ASan | `heap-buffer-overflow READ of size 1` in **`periodicity`** ← `periodicity_tests` ← `run_tests` |
+
+The finder's covariance-specific evidence came from a direct harness call
+(`harness_ndebug covariance 31 32`), which bypasses `periodicity`. That is a
+valid isolated test but not the production path, and the record presents it as
+though it were.
+
+**Reachability — unreachable on a supported path.** `conversion1` is applied
+only for binary data and divides the length by 8, so a compliant 1,000,000-sample
+input gives `cs1.size() ≈ 125,000`, far above 32. Reaching `n < 32` needs fewer
+than ~256 samples. Measured:
+
+```
+200 samples, no escape          -> rc=255  "requires at least 1000000"
+-l 0,200 subset of a 1M file    -> rc=255  "requires at least 1000000"
+200 samples, EA_ALLOW_SHORT_DATASET=1, assert-live  -> rc=134, periodicity assert
+200 samples, EA_ALLOW_SHORT_DATASET=1, NDEBUG+ASan  -> heap-buffer-overflow READ
+```
+
+**A `-l` subset cannot bypass the rule** — the §3.1.1 check applies to the count
+actually loaded, after the subset. So this is reachable only with the test-only
+escape set.
+
+**Direction: NEUTRAL on a supported path** (unreachable), **memory-unsafe under
+`-DNDEBUG` with the escape**. Another instance of `SHAPE-02`: the only guard is
+an assert, so it exists in one build and not the other.
+
+**One forward-looking note.** `covariance`'s missing guard is currently *masked*
+by `periodicity`'s assert killing the process first. Repairing `periodicity`
+alone — converting its assert to a decline, which is the right fix — would
+**expose** `covariance` as the live out-of-bounds site. The two must be fixed
+together, and a regression must exercise both.
+
+### C20 — the races are real and cannot change a verdict
+
+`test_status[]` is written inside `#pragma omp critical(resultUpdate)`
+(`:670`) and read outside it, both at `:650` and inside `run_tests`. That is a
+genuine data race. It cannot change the outcome, and the reason is structural
+rather than statistical:
+
+1. **`test_status[j]` is monotone.** Initialised `true` at `:598` and only ever
+   assigned `false` at `:670`. Never set back.
+2. **A stale `true` costs only redundant work.** A thread may compute statistic
+   `j` for one extra round; the aggregation at `:661` re-reads `test_status[j]`
+   *inside* the critical region and skips the update, so the extra result is
+   discarded.
+3. **An early-visible `false` drops a round that was already redundant.** The
+   condition for setting `false` — `(C[j][0]+C[j][1] > 5) && (C[j][1]+C[j][2] > 5)`
+   — is exactly the final pass condition, so once it is set the test has already
+   met its threshold and further rounds cannot change its outcome.
+4. **The verdict does not read `test_status[]` at all.** `:731-736` computes it
+   from `C[][]`, and `C[][]` is modified only inside the critical region.
+
+So every input to the verdict is protected, and the raced variable is not an
+input to it. **Direction: NEUTRAL.**
+
+The `completed` counter is a separate matter and genuinely inconsistent: it is
+incremented inside the critical region at `:676` and via `#pragma omp atomic` at
+`:720`, which do not synchronise with each other. Its only consumer is the
+progress string at `:696` (`100.0*completed/PERMS`). **Consequence: a wrong
+progress percentage.** Cosmetic.
+
+**Correct and verified**: the guard asymmetry between `periodicity` and
+`covariance`, both builds' behaviour on a 200-sample input, the refusal of both
+a short file and a short `-l` subset on a supported path, and the four-step
+argument that the verdict's inputs are all critical-region protected.
+**Not verified**: I did not run ThreadSanitizer. The claim that these races
+cannot change a verdict rests on the monotonicity and data-flow argument above,
+which is a correctness argument rather than a sampling one — but it is an
+argument, not a dynamic measurement, and is labelled as such.
