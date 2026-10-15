@@ -1,0 +1,11 @@
+canary input sha256 a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+canary: digest  a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2 (matches)
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/a3b01f18-b6b3-44a0-8c60-e2c7009fbc54/scratchpad/ndebug/ea_iid-ndebug-o2
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.oKs6yP/canary-lrsrep-2000.bin (1,000,000 one-bit samples, implanted repeat W=2000)
+canary: exit    0
+canary: BUILD   NDEBUG
+canary: meaning asserts are compiled OUT.
+canary:         On this input the tool published a min-entropy figure derived
+canary:         from an underflow, after reporting an LRS failure it did not
+canary:         detect. ANY FIGURE FROM THIS BINARY IS UNINTERPRETABLE.
+canary: NOTE    This identifies the NDEBUG state only; see the header.

@@ -1,0 +1,12 @@
+canary input sha256 a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+canary: digest  a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2 (matches)
+./tools/build-provenance-canary.sh: line 136: 78332 Abort trap: 6           OMP_NUM_THREADS=${OMP_NUM_THREADS:-2} timeout "${CANARY_TIMEOUT:-1800}" "$TOOL" -i -v -o "$JSON" "$INPUT" 1 > "$OUT" 2>&1
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/2744130e-74f7-4e44-aae2-a42d4e4f034c/scratchpad/wt/master/cpp/ea_iid
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.6yLEiq/canary-lrsrep-2000.bin (1,000,000 one-bit samples, implanted repeat W=2000)
+canary: exit    134
+canary: BUILD   ASSERTS-LIVE
+canary: meaning the assert at shared/lrs_test.h:683 is compiled in.
+canary:         On this input the tool fails closed and publishes no figure.
+canary: NOTE    This identifies the NDEBUG state only. It does not establish
+canary:         the commit, the compiler, other flags, or that the binary is
+canary:         unmodified. Building from the pinned commit is stronger.

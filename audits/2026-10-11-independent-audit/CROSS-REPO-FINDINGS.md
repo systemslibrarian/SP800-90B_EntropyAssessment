@@ -190,3 +190,113 @@ harness cannot audit the margin — it cannot distinguish a pass against a
 legitimate cutoff from a pass against a cutoff of 1000. Fixing that is this
 fork's work, tracked in `OC-11`; it is listed here so the harness does not
 assume the information is available.
+
+---
+
+## XR-04 — a figure from these tools is uninterpretable without build provenance
+
+**The most serious cross-repo finding so far — more serious than `XR-01`.**
+Verified in this repository as `OC-10`, at fork commit `596cc2a`.
+
+### The finding
+
+The tools behave differently depending on whether they were compiled with
+`-DNDEBUG`, which **no target in `cpp/Makefile` sets** but which release
+configurations in common build systems add by default. On one input the
+difference is not a rounding detail:
+
+| build | same commit, same data |
+|---|---|
+| asserts live | `rc=134` SIGABRT, no JSON, **no figure** |
+| `-DNDEBUG` | `rc=0`, `errorLevel 0`, `"IID": true`, **`hAssessed 0.995373734104443`** |
+
+The chain: `p_colPower` underflows to zero at `shared/lrs_test.h:683`,
+`log1pl(-0.0)` is `-0.0`, and the verdict
+`logl(0.999) >= N*logProbNoColsPerPair` evaluates **false** — so the
+longest-repeated-substring test reports **failure having detected nothing about
+the data**. A second defect (`C03`, open on `master`) discards that failure, and
+the tool publishes **≈0.9954 bit/bit**, above the 0.5 threshold Chor–Goldreich
+needs.
+
+**Nothing in the JSON records which build produced it.** Not the flags, not
+`sizeof(long double)`, not the NDEBUG state. So a figure carries no evidence of
+its own interpretability.
+
+### Why this outranks XR-01
+
+`XR-01` was about **freshness** — a figure that was true of different data.
+`XR-04` is about **interpretability** — a figure that may be an artefact of the
+arithmetic. The same shape applies to both: **unknowable means refuse, not
+assume.** But a stale figure is at least a real measurement of something,
+whereas an NDEBUG figure on this path measures nothing at all, and it is high
+rather than low — it clears the threshold twice over.
+
+### What this fork has provided: a canary
+
+`tools/build-provenance-canary.sh` in this repository, committed with this
+finding. It takes a path to `ea_iid` and reports `ASSERTS-LIVE`, `NDEBUG`, or
+`INDETERMINATE`. Demonstrated on all three outcomes, each guard shown failing:
+
+| case | result | exit |
+|---|---|---:|
+| shipped Makefile build | `BUILD ASSERTS-LIVE` | 0 |
+| `-O2 -DNDEBUG` build | `BUILD NDEBUG` | 0 |
+| wrong tool (`ea_non_iid`) | `BUILD INDETERMINATE` | **3** |
+| expected input digest deliberately wrong | refuses to classify | **2** |
+
+It generates its input from a fixed seed (1,000,000 one-bit samples, implanted
+repeat W=2000, SHA-256 `a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2`)
+and **verifies that digest before classifying** — a declared-but-unchecked
+expected digest would be the dead-assertion shape this canary exists because of.
+
+**What the canary does not establish, and this matters:** it identifies the
+NDEBUG state *only*. Not the commit, not the compiler, not any other flag — in
+particular not `-ffloat-store`, which `cpp/Makefile` sets and which a packager
+overriding `CXXFLAGS` also loses. Not that the binary is unmodified. And it is a
+statement about the binary passed to it at the moment it ran, **not a property
+of a figure produced earlier by some other binary**. A consumer that treats a
+canary pass as full provenance has substituted one unknown for another.
+
+**It also has a platform limit.** The underflow bound is `W > 1022` on a 64-bit
+`long double` (arm64) and `W > 16382` on 80-bit (x86-64). With `W = 2000` the
+canary discriminates on arm64 and returns `INDETERMINATE` on x86-64, where an
+asserts-live build completes normally and matches neither signature. That is
+reported honestly in the `INDETERMINATE` output rather than silently guessed.
+See `REPRO-01` for the separate finding that this divergence is itself a
+reproducibility defect.
+
+### What the harness session needs to decide — not done here
+
+These are TruePad's, and this session has not touched them:
+
+1. **Refuse any figure whose build provenance cannot be established.** Same
+   shape as the `XR-01` freshness rule.
+2. **Establish provenance by the strongest available means, and record which.**
+   Building the tools from the pinned commit with known flags is strictly
+   stronger than the canary. The canary is for consumers who did not compile
+   them, and it answers one bit.
+3. **Add the failure shape** — distinct from the existing four.
+4. **Test it with the defect staged**, as was done for `XR-01`: a figure
+   present, provenance unestablishable, harness refuses, and the figure appears
+   nowhere in the output.
+5. **`docs/WHAT-IS-LEFT.md`** is TruePad's file. Its current statement — that no
+   min-entropy figure should be treated as a floor until `C23` and `C22` are
+   verified — is **stale in one part and understated in another**:
+   - `C22` was re-classified **CONSERVATIVE and closed** at fork commit
+     `44baeba` (`OC-12`): its `ZALPHA` item measured +3.80e-06 bit and is not a
+     defect, `N == 1` yields zero entropy, and `P_local`'s quantisation is
+     conservative at every extreme tested.
+   - `C23` was **verified permissive** at fork commit `301fae0` (`OC-7`): the
+     restart cutoff is a Monte Carlo order statistic where §3.1.4.3 prescribes a
+     closed form, more permissive at all nine H_I values tested, up to 0.341 bit
+     of equivalent slack, with a window of false acceptance demonstrated.
+   - The stronger statement, from `OC-10` at fork commit `596cc2a`: **no figure
+     from these tools is interpretable at all until build provenance is
+     established**, and because the `C07`/`C03` chain publishes ≈0.9954 bit/bit
+     from an underflow, **a wrong figure can be high rather than low.** A floor
+     is the wrong frame — the failure is not conservative.
+
+Fork commits for each fact, per the provenance mechanism being added:
+`596cc2a` (`OC-10`, the NDEBUG flip and the chain), `301fae0` (`OC-7`, C23),
+`44baeba` (`OC-12`, C22 closed), `d6004a9` (`OC-11`, the H_I chain),
+and this commit for the canary.

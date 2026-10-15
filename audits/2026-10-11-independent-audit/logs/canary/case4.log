@@ -1,0 +1,5 @@
+canary input sha256 a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+canary-broken.sh: canary input digest mismatch -- the generator or python RNG differs
+canary-broken.sh:   expected 0000000000000000000000000000000000000000000000000000000000000000
+canary-broken.sh:   actual   a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+canary-broken.sh: refusing to classify against an input the signatures were not calibrated on

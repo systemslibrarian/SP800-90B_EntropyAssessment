@@ -1,0 +1,27 @@
+canary input sha256 a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+canary: digest  a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2 (matches)
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/2744130e-74f7-4e44-aae2-a42d4e4f034c/scratchpad/wt/master/cpp/ea_non_iid
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.C3ZUFo/canary-lrsrep-2000.bin (1,000,000 one-bit samples, implanted repeat W=2000)
+canary: exit    0
+canary: BUILD   INDETERMINATE
+canary: The outcome matched neither signature. This is NOT a pass.
+canary: Refuse any figure from this binary until provenance is established
+canary: by other means. Known causes of a legitimate INDETERMINATE:
+canary:   * an 80-bit long double platform (x86-64), where the underflow
+canary:     bound is W > 16382 and W=2000 does not reach it, so an
+canary:     asserts-live build completes normally and looks like neither
+canary:     signature. This canary discriminates on 64-bit long double
+canary:     platforms (arm64) only.
+canary:   * a timeout (CANARY_TIMEOUT, currently 300s)
+canary:   * a tool that is not ea_iid
+canary: ---- captured output (last 10 lines) ----
+canary:   Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.50114944709155385 (C = 499830) Plocal can't affect result (r = 20)
+canary:   	Multi Most Common in Window (MultiMCW) Prediction Test Estimate = 0.996687 / 1 bit(s)
+canary:   Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.50059641401649591 (C = 499308) Plocal can't affect result (r = 21)
+canary:   	Lag Prediction Test Estimate = 0.998280 / 1 bit(s)
+canary:   Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.50087991533886389 (C = 499591) Plocal can't affect result (r = 22)
+canary:   	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate = 0.997463 / 1 bit(s)
+canary:   Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.50037640860722354 (C = 499080) Plocal can't affect result (r = 19)
+canary:   	LZ78Y Prediction Test Estimate = 0.998914 / 1 bit(s)
+canary:   
+canary:   H_original: 0.016514
