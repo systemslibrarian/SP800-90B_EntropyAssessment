@@ -85,3 +85,38 @@ This is the list that matters. Nothing else in the audit comes close.
    produces estimates — which is the rule "suspect the instrument before the
    thing measured" in its strongest form so far: the harness accepts a **0-byte
    reference file** as a pass.
+
+---
+
+# Status update — 2026-10-14, after verifying C23, C22's ZALPHA item and C14
+
+Three register entries moved. The counts above are the triage as first written;
+these are the changes.
+
+| Cluster | Was | Now |
+|---|---|---|
+| **`C23` / `restart-12`** | PERMISSIVE, unverified, top of the register | **PERMISSIVE, VERIFIED** (`OC-7`). The standard specifies a deterministic binomial tail and the tool takes a Monte Carlo order statistic; the gap is systematic at every H_I sampled, +1 to +6 counts, effective type-I error 2.3× to 340× smaller than intended. Acceptance of spec-rejected data demonstrated at H_I=7 for X_max = 24 and 25 with a working positive control at 28. **Still the audit's top finding**, now with numbers. The "deliberate implementation choice" defence is refuted by §3.1.4.3's own text. |
+| **`C22`** | PERMISSIVE, unverified | **Partially verified.** The `ZALPHA` item is measured (`OC-8`): worst +3.80e-06 bit, permissive in sign, and **not a defect** — `2.576` is the standard's rounding of the quantile the tool uses correctly, which is prior `F07`. The rest of the cluster (`P_local` quantisation, the `x` recurrence, `P_global'` at `N == 1`) is unverified and stays on the register. |
+| **`C14`** | UNKNOWN, unverified | **One member verified** (`XR-01`, `CROSS-REPO-FINDINGS.md`): the stale `-o` file survives byte-identical, exit 255, and a consumer reading the file sees `errorLevel 0` with a complete figure. Direction confirmed as history-dependent: the stale number may be higher or lower than the truth, so the cluster stays UNKNOWN. Seven members unverified. |
+
+## Two new findings, outside the cluster scheme
+
+| ID | Direction | Summary |
+|---|---|---|
+| **`REPRO-01`** | **architecture-dependent** | The same input aborts on arm64 (`W > 1022`) and is assessed on x86-64 (`W > 16382`). Conservative on one host, permissive on the other, and the JSON records nothing about which bound applied. This is the only finding whose direction is not a property of the defect. |
+| **`REPAIR-BLOCK-01`** | NEUTRAL for the figure | The repair branch reports the `long double` underflow as `** Failed length of longest repeated substring test` — an arithmetic limit presented as a statistical rejection of the operator's hardware. **Blocks the rebase.** |
+
+## Revised register — permissive or unknown, still unverified
+
+1. **`C09`** — PERMISSIVE. `ea_conditioning -i` accepts a 125,000-byte file with `errorLevel 0`. Next.
+2. **`C22`** remainder — PERMISSIVE. `P_local` quantisation and `P_global'` at `N == 1`.
+3. **`C16`** — UNKNOWN, mixed. `H_I` via `strtod` sets the restart threshold `H_I/2`; a mis-parsed lower `H_I` is permissive, and `OC-7` now shows the restart sanity check is the wrong place to be adding slack.
+4. **`C21`** — UNKNOWN, mixed. Out-of-bounds reads in `periodicity()`/`covariance()`, which are permutation statistics.
+5. **`C20`** — UNKNOWN. Races on `test_status[]` in the permutation region.
+6. **`C14`** remainder — UNKNOWN. Seven members.
+7. **`C18`** — UNKNOWN, platform not in use.
+
+`C16` rises in importance because of `OC-7`: the restart validation threshold
+is `H_I/2`, `H_I` is user-supplied and parsed permissively, and the sanity
+check guarding it is now known to be more permissive than the standard. Those
+two defects compose in the same direction on the same test.

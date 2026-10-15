@@ -624,3 +624,278 @@ statement that the repair branch "partly closes it — two of the three halves
 fully, one left" was wrong about which half remained; the `restart` gate is
 present. What is genuinely left is the *class-wide* issue that the `IID` field
 is a compile-time constant on master's error paths, demonstrated above.
+
+---
+
+## OC-7 — `restart-12`: the restart sanity check awards estimates the standard says must not be awarded
+
+Verification of the item previously filed as **Info** inside
+`C23-misc-reporting`. **Verdict: confirmed, permissive, and the "implementation
+choice" defence does not survive the standard's own text. This is the audit's
+top finding for the goal.**
+
+### Impact lens — the standard specifies a formula, not a method
+
+§3.1.4.3 does **not** sanction simulation. It gives a closed form:
+
+> 1. Let p = 2^(−H_I). Let α be 0.000 005.
+> 5. Calculate P(X ≥ X_max) = Σ_{j=X_max}^{1000} C(1000,j) p^j (1−p)^(1000−j).
+>    **If Pr(X ≥ X_max) < α, the test fails.** Otherwise, the test passes.
+
+and states the consequence of failure plainly:
+
+> If this frequency is significantly greater than the expected value, given the
+> initial entropy estimate H_I … the restart test fails. **In this case, the
+> validation fails no entropy estimate is awarded.**
+
+The finding's own `expected` field reads "a deterministic cutoff", and its
+`uncertainty` field then dispositions it as "an implementation choice,
+deliberately taken upstream, so it is Info rather than a defect." **That
+disposition is wrong.** The standard prescribes a deterministic binomial tail.
+A Monte Carlo estimate of that tail is not a permitted variation on a formula;
+it is a different test, and here a weaker one.
+
+### The implementation does simulate
+
+`restart_main.cpp:108-163`, `simulateBound(alpha, k, H_I, rounds)`:
+`p = 2^-H_I`, `k_effective = ceil(1/p)`, then `DEFAULT_SIMULATION_ROUNDS =
+5000000` Monte Carlo trials of `simulateCount`, sorted, and the cutoff taken as
+the empirical order statistic `results[floor((1-alpha)*rounds) - 1]`. With
+α ≈ 5.03e-6 and 5e6 rounds that is the 4,999,974th of 5,000,000 samples — an
+extreme-quantile estimate with roughly 26 observations above it.
+
+`alpha = 1 - exp(log(0.99)/(r+c))` = 5.0251553006155243e-06, the exact Šidák
+value for 2000 experiments where the standard prints the Bonferroni
+approximation 0.000005. **That difference is immaterial**: recomputed at every
+H_I below, both α values give the identical exact cutoff.
+
+### Reproduction — by execution, against the real binaries
+
+Exact cutoffs computed independently in `mpmath` at dps 60 (largest count that
+PASSES, matching the tool's convention) against the tool's printed `X_cutoff`,
+**three draws at each of nine H_I values — 27 runs, every gap positive**,
+`ea_restart -i -v uniform-8bit.bin 8 <H_I>`:
+
+| H_I | exact | tool draws | gap | effective α (median) | vs intended α | entropy-equivalent slack |
+|---|---:|---|---:|---:|---:|---|
+| 1 | 570 | 572, 572, 571 | +1…+2 | 2.18e-06 | 2× smaller | 0.0051 bit |
+| 2 | 312 | 316, 316, 316 | +4 | 1.09e-06 | 5× smaller | 0.0184 bit |
+| 3 | 173 | 179, 178, 178 | +5…+6 | 5.82e-07 | 9× smaller | 0.0411 bit |
+| 4 | 99 | 103, 104, 104 | +4…+5 | 2.20e-07 | 23× smaller | 0.0711 bit |
+| 5 | 58 | 63, 63, 63 | +5 | 1.08e-07 | 47× smaller | 0.1193 bit |
+| 6 | 36 | 40, 40, 40 | +4 | 4.95e-08 | 102× smaller | 0.1520 bit |
+| 7 | 23 | 27, 27, 27 | +4 | 1.47e-08 | 341× smaller | 0.2313 bit |
+| 7.5 | 19 | 22, 23, 22 | +3…+4 | 2.03e-08 | 247× smaller | 0.2115 bit |
+| 8 | 15 | 19, 19, 19 | +4 | 6.12e-09 | **821× smaller** | **0.3410 bit** |
+
+Intended α = 5.0251553006155243e-06 throughout. The exact column is reproducible
+with `oracles/restart_cutoff_exact.py`, which was written from the standard's
+formula without reference to the finder's oracle and which reproduces their
+"spec" values digit for digit at all nine points. The finder had H_I=8 as
+"modelled 19"; it is now **measured** 19.
+
+**The gap is systematic, not sampling noise at a few points.** All 27 draws are
+above the exact cutoff. Several H_I values returned the same cutoff on all three
+draws (2, 5, 6, 7, 8). The gap is +1 to +6 counts absolutely, and its *relative*
+size grows sharply with H_I — 0.35 % at H_I=1 against 27 % at H_I=8. The
+direction is permissive at every point.
+
+**Effective α is the real type-I error of the tool's cutoff**, i.e. how often it
+rejects a source that genuinely has the claimed H_I. It is **2× to 821×
+smaller than intended**, worsening monotonically with H_I: the test rejects far
+less often than the standard specifies, and most so exactly where a
+high-entropy claim is being made.
+
+### Acceptance of spec-rejected data — demonstrated, bracketed both sides
+
+8-bit 1000×1000 matrices with column 17 forced to an exact count, H_I = 7
+(exact cutoff 23, so the standard rejects X_max ≥ 24):
+
+| forced X_max | tool | standard |
+|---:|---|---|
+| 24 | `X_cutoff: 27`, `X_max: 24`, **Restart Sanity Check Passed…** | fails |
+| 25 | `X_cutoff: 27`, `X_max: 25`, **Restart Sanity Check Passed…** | fails |
+| 28 | `X_cutoff: 27`, `X_max: 28`, `*** Restart Sanity Check Failed ***` | fails |
+
+The X_max=28 row is the positive control: the comparison does fire, so the two
+passes above are not a broken test but a wider one. At H_I=7 the window of
+false acceptance is **X_max ∈ {24, 25, 26, 27}**.
+
+### A second defect in the same mechanism: the verdict is not a function of the input
+
+The cutoff is drawn from `/dev/urandom`-seeded simulation and **varies between
+runs** — 571/572 at H_I=1, 178/179 at H_I=3, 103/104 at H_I=4. So a matrix with
+`X_max = 572` at H_I=1 **passes or fails depending on the draw**. An assessment
+that is not a deterministic function of its input is not reproducible, and
+reproducibility is the whole of what a self-attested measurement has.
+
+### Provenance — checked, and it holds
+
+Every path `restart-12` cites resolves under this audit's own agent directory
+(`out/cutoff_oracle.txt` 3,100 bytes, `cutoff_oracle.py` 5,896, `LOG.md`
+38,159, `data/manifest.json` 8,117, and the `bnd1_master_X570…X573` output
+pairs). Its `LOG.md` references `wt/master`, `wt/upstream` and `wt/repair` —
+**this audit's builds**. Unlike C04, the cited execution is where it claims to
+be. Its own positive control is sound: at H_I=0.05 the exact oracle and all
+three builds agree on 988.
+
+### Consequence for the goal
+
+The restart half is one of the two halves of the assessment, and TruePad's
+desktop harness now runs it. §3.1.4.3's failure consequence is categorical —
+**no entropy estimate is awarded**. So the defect is not a shifted number: it is
+that a restart matrix which the standard says must receive **no estimate at
+all** receives one, and the run then proceeds to publish `min(H_r, H_c, H_I)`
+as if the sanity check had been passed.
+
+The size of the window, in the statistic the check actually measures: the tool
+tolerates a most-common-value frequency corresponding to **0.005 bit (H_I=1) to
+0.341 bit (H_I=8)** less entropy than the standard sanctions. For a project
+whose threshold is 0.5 bit per bit per source, a **0.34-bit** tolerance in the
+restart sanity check — two thirds of the entire threshold — is not a rounding
+concern. And it is worst precisely at the high-H_I end, which is where a source
+good enough to support the goal would be assessed.
+
+**Correct and verified**: the spec reading, the simulation mechanism, the cutoff
+gap at six H_I values with three draws each, the acceptance of X_max = 24 and
+25 at H_I = 7 with a working positive control, the non-determinism, and the
+provenance. **Not verified**: behaviour above H_I = 8 (`k_effective = ceil(2^H_I)` must not
+exceed the 256-symbol alphabet, so H_I = 8 is the ceiling for byte data),
+behaviour with `-s` above the default 5,000,000 rounds, and whether a larger round count would
+close the gap or merely narrow it — the bias is a property of taking an extreme
+order statistic, so more rounds should reduce it but the exact convergence was
+not measured.
+
+### Recommended disposition
+
+Replace the simulation with the standard's closed form. The exact binomial tail
+at n=1000 is a 1000-term sum computable in double precision, or in `long
+double` with a log-gamma formulation; it is deterministic, far cheaper than
+5,000,000 simulated experiments, and it is what §3.1.4.3 specifies. A
+regression for it must assert the cutoff at several H_I against independently
+computed values — and must be shown failing against the current simulated
+cutoff, which it would be at every H_I in the table above.
+
+---
+
+## OC-8 — C22's `ZALPHA`: "tiny" measured. Merely small, not below precision — and not a defect.
+
+`predictors-6` says `ZALPHA` is the exact 0.995 quantile `2.5758293035489008`
+where the spec text prints `2.576`, which "raises every prediction estimate".
+"Magnitudes tiny" was the finder's claim. Measured, on real values harvested
+from a real run (`ea_non_iid -i -a -vv uniform-8bit.bin 8`):
+
+| predictor | H with tool `ZALPHA` | H with spec `2.576` | delta |
+|---|---|---|---|
+| Bitstring MultiMCW | 0.99911507785502614 | 0.99911499084098192 | **+8.70e-08** bit |
+| Literal MultiMCW | 7.9611632356166352 | 7.9611594334062937 | **+3.80e-06** bit |
+| Bitstring Lag | 0.998936306150716 | 0.99893621914778806 | **+8.70e-08** bit |
+
+My recomputation of `P_global'` from the published `P_global` and `N` reproduces
+the tool's own printed `P_global'` **exactly** on all three predictors, which is
+what validates the measurement against the real artifact rather than against my
+model of it.
+
+**Answering the question directly: "tiny" means merely small, not below the
+reported precision.** The worst delta, 3.80e-06 bit, sits at the sixth decimal
+place of a figure the tool prints to 17 significant digits — so it is far above
+the printed precision floor. Against the project's 0.5 bit-per-bit threshold it
+is 7.6e-06 relative. It would matter only to a measurement landing within four
+millionths of a bit of the threshold.
+
+**Direction: permissive, and nonetheless not a defect.** The sign is positive —
+the tool's constant yields the higher estimate. But `2.576` is itself a
+*rounded* printing of the true 0.995 quantile, so the tool uses the correct
+constant and the standard's text uses the rounding. This is prior `F07`, already
+dispositioned NOT-A-BUG on exactly that reasoning, and `predictors-6` restates
+it. **No change recommended.** Recorded so that the permissive direction is
+on file with a measured magnitude instead of an adjective.
+
+The rest of `C22` — `P_local`'s bisection quantisation (claimed worst
+non-conservative +1.6e-11 bit), the `x` recurrence iterated to convergence
+rather than the spec's fixed 10 iterations, `P_global'` dividing by `N-1` at
+`N == 1` — **remains unverified**.
+
+---
+
+# New findings raised by this pass
+
+These are findings in their own right, not details inside clusters.
+
+## REPRO-01 — an assessment whose verdict depends on the build host
+
+**Severity: High. Direction: see below — this is the one case where the
+direction question has a different answer on each architecture.**
+
+The same input yields a verdict on one architecture and an abort on another:
+
+| | arm64 (`sizeof(long double) == 8`) | x86-64 (80-bit `long double`) |
+|---|---|---|
+| `LDBL_MIN` | 2.225e-308 | 3.362e-4932 |
+| `p_colPower = p_col^W` underflows at | **W > 1022** | W > 16382 |
+| 1-bit source with a 2000-bit repeat | `SIGABRT`, no JSON, **no figure** | assessed normally |
+
+Measured on arm64 (`OC-5`): implanted repeat W=1000 passes, **W=1100 aborts**,
+against a predicted boundary of 1022. The x86-64 bound follows from
+`LDBL_MIN` and is consistent with the `linux-x86-docker` agent's observation
+that an x86 build assesses data arm64 refuses; I have **not** re-run the x86
+side myself and do not claim it as my measurement.
+
+Two separate consequences, which is why this is its own finding:
+
+1. **Reproducibility.** A self-attested measurement has nothing going for it
+   except that anyone can repeat it and get the same answer. Here two
+   conforming builds of the same commit, on the same data, disagree about
+   whether a figure exists at all. That is not a precision difference like
+   upstream #155 — it is the difference between a number and no number.
+2. **The direction is architecture-dependent.** On arm64 the defect is
+   conservative (fail-closed, no figure). On x86-64 the same input is assessed
+   and a figure is published. So which way this defect pushes a claim depends
+   on the host that produced it, and a figure carries no record of which bound
+   applied. Nothing in the JSON reports `sizeof(long double)`.
+
+The fork's documented build platform is macOS arm64 — the stricter side — so
+current local assessments fail closed. The hazard is a figure produced on x86
+being compared with, or substituted for, one produced on arm64.
+
+**Recommended:** record `sizeof(long double)` and the underflow bound in the
+JSON provenance block, so a figure states the arithmetic that produced it; and
+treat the underflow as a declined estimator rather than an abort, which is what
+the fork already does for other representability limits (`F11`, `F12`, `F15`).
+
+## REPAIR-BLOCK-01 — the repair branch must not merge while it reports an arithmetic limit as a hardware failure
+
+**Blocks: the `repair/2026-10-09-verified-defects` rebase. Direction: NEUTRAL
+for the figure, harmful for the operator.**
+
+On the repair branch, `C07` site B no longer aborts — it reports:
+
+```
+	Pr(X >= 1): 0.000000
+** Failed length of longest repeated substring test
+
+** Skipped IID permutation tests after an earlier required IID test failure
+
+IID test suite failed: no IID min-entropy estimate was awarded.
+```
+
+with `errorLevel 2`, `IID: false`, `hAssessed` withheld, exit 1. The
+fail-closed plumbing is correct and is a real improvement over the `SIGABRT`.
+
+**The stated reason is wrong.** `p_col^W` underflowing a 64-bit `long double`
+is a representability limit of the build platform. The branch reports it as
+`** Failed length of longest repeated substring test` — a statistical rejection
+of the user's entropy source. An operator reading that will investigate their
+TRNG. The correct message is that the tool ran out of exponent range on this
+platform and declined to compute the test.
+
+This is a misreport in the direction of alarming the user about the wrong
+thing, and it is worse than the abort it replaces in one specific respect: an
+abort is obviously a tool failure, whereas "Failed length of longest repeated
+substring test" is a credible, actionable-looking verdict about the hardware.
+
+**Must be fixed before that branch merges.** The fix is small: distinguish
+"declined — not representable on this platform" from "failed", which the fork
+already does elsewhere (the `-1` sentinel and the `nonCompliant*` flags are
+precedents). Added to the merge record's blocking list alongside the Claim 2
+and Claim 3 guard rewrites.
