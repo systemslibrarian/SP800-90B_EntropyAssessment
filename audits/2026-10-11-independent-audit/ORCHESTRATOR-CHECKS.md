@@ -1153,3 +1153,127 @@ on both builds, with the shipped-Makefile column matching what was reported
 earlier. **Not verified**: whether any specific downstream packaging of this
 fork defines `NDEBUG` — the claim made here is structural (nothing prevents it,
 nothing detects it, and release configurations commonly add it), not a survey.
+
+---
+
+## OC-11 — C16 verified as a chain: a typed `1e-400` disables both restart gates and reports success
+
+**Verdict: the chain is real and reaches its ceiling, but not through the link
+the cluster named.** `N-04` is already repaired on master and repaired well.
+What survives is narrower and sharper than the cluster claimed, and it composes
+with `OC-7`.
+
+### Link 1 — what the `H_I` parse actually accepts
+
+`restart_main.cpp:317-355` is a strict parse and its own comment already
+documents the NaN hazard in full, including the consequence I was asked to
+check:
+
+> *"Every comparison with NaN is false, so a NaN H_I passes both the `H_I < 0`
+> check here and the `H_I > word_size` check further down. It then reaches
+> `p = pow(2.0, -H_I)`, which is NaN, and the index expression
+> `(int)floor(randomUnit(...) / p)` … converts that NaN to int. That conversion
+> is undefined behaviour and the result indexes `counts[]` out of bounds."*
+
+So the fail-open-on-NaN that the sibling session's JavaScript finding predicted
+**was already found and fixed here**. Measured on master:
+
+| argument | result |
+|---|---|
+| `nan`, `inf`, `1e400` | **rejected** — "H_I must be a finite decimal number" |
+| `1.0abc`, `1.0 ` (trailing space), `0,7` (locale comma) | **rejected** — partial parse caught by `*H_I_end != '\0'` |
+| `-0.5` | rejected by the `H_I < 0` check |
+| `1.0`, `.5`, `+0.5` | accepted, correct |
+| ` 1.0` (leading space) | **accepted** — `strtod` skips leading whitespace. Harmless. |
+| `0x1` → 1.0, `0x0.8p0` → **0.5** | **accepted** — C99 hex-float syntax |
+| `1e-400`, `1e-320` | **accepted as 0.000000** — `errno` is set to 0 before the call and **never tested**, so `ERANGE` on underflow is ignored |
+
+Two holes remain: hex-float syntax, and the unchecked `ERANGE`. **Neither is
+closed on the repair branch** — `0`, `1e-400` and `0x0.8p0` are accepted
+identically there.
+
+### Link 2 — what `H_I = 0` does to both gates
+
+`H_I = 0` is reachable from a typed `1e-400`, which is the kind of string a
+mis-scaled script or a hand-entered scientific-notation estimate produces. It is
+also accepted directly. Executed on master, `uniform-1bit.bin`:
+
+```
+H_I: 0.000000
+ALPHA: 5.0251553006530614e-06, X_cutoff: 1000
+X_max: 558
+Restart Sanity Check Passed...
+H_r: 0.993899   H_c: 0.993899   H_I: 0.000000
+Validation Test Passed...
+min(H_r, H_c, H_I): 0.000000
+rc=0    JSON errorLevel: 0   IID: true
+```
+
+**`X_cutoff: 1000` is the maximum attainable value.** With `H_I = 0`,
+`p = 2^0 = 1` and `k_effective = ceil(1/p) = 1`, so the simulation draws a
+one-symbol source whose every row count is 1000. The §3.1.4.3 sanity check
+therefore **cannot fail for any input**. And `H_I/2 = 0` makes
+`min(H_r,H_c) < 0` false, so the §3.1.4.3 validation test **cannot fail
+either**. Both restart gates are disabled, and both report PASS.
+
+### The chain, at its ceiling
+
+1. `strtod`'s `ERANGE` is not checked → a typed `1e-400` becomes `H_I = 0`.
+2. `H_I = 0` → `k_effective = 1` → simulated cutoff **1000** → the sanity check
+   is unconditionally satisfied.
+3. `H_I/2 = 0` → the validation test is unconditionally satisfied.
+4. `rc=0`, `errorLevel 0`, `"IID": true`, "Restart Sanity Check Passed",
+   "Validation Test Passed".
+5. `OC-7` composes *on top*: even with a correctly typed `H_I` the cutoff is
+   already more permissive than the standard sanctions, by up to 0.34 bit of
+   equivalent slack. `H_I = 0` is that same mechanism driven to no constraint at
+   all.
+
+**Direction: PERMISSIVE for the verdict, conservative for the figure.** The
+published `min(H_r, H_c, H_I)` is `0.000000`, so a consumer reading the *figure*
+gets a useless number. A consumer reading the *restart verdict* — which is what
+the reachability test says TruePad consumes, the restart assessment being one of
+the two halves — sees a passed sanity check and a passed validation test on a
+run where neither could have failed.
+
+### A separate defect this exposed: the test emits neither quantity it asserts about
+
+The JSON report contains **no sanity-check field at all**. The Overall test case
+carries `h_c, h_i, h_r, mean, median, passedChiSquareTests,
+passedIidPermutationTests, passedLongestRepeatedSubstringTest,
+permutationTestResults, testCaseDesc` — and **neither `X_max` nor `X_cutoff`
+nor any `passedRestartSanityCheck`**. On a *failure* the result reaches the
+consumer as `errorLevel -1` with `errorMsg "Restart Sanity Check Failed."`; on a
+*pass* there is no positive record and the two numbers that decided it are
+stdout-only.
+
+So a consumer cannot distinguish "passed with `X_max 558` against a legitimate
+cutoff of 570" from "passed because the cutoff was 1000". The margin is
+unauditable from the report. **A test that asserts about a quantity must emit
+that quantity** — this one asserts about two and emits neither.
+
+### Recommended repairs
+
+1. Check `errno == ERANGE` after `strtod` and reject. One condition, alongside
+   the three already there.
+2. Reject hex-float syntax, or document that it is accepted. The existing
+   strictness makes the hex acceptance look like an oversight rather than a
+   choice.
+3. **Reject `H_I = 0`** for the restart test, or flag it: an entropy claim of
+   zero makes both gates vacuous, and there is nothing to validate against a
+   claim of no entropy.
+4. Emit `X_max`, `X_cutoff` and a `passedRestartSanityCheck` boolean in the
+   JSON, so the margin is auditable and `OC-7`'s permissiveness is visible to a
+   consumer.
+
+A regression must be shown failing: construct `H_I = 1e-400`, assert the run is
+refused, and confirm the assertion fails against current master, which accepts
+it and reports `X_cutoff: 1000`.
+
+**Correct and verified**: the parse table by execution on master; the repair
+branch accepting the same three values; `H_I = 0` producing `X_cutoff: 1000`
+with both gates passing and `rc=0`; the absence of sanity-check fields from the
+JSON. **Not verified**: whether any realistic TruePad invocation path can
+produce a mis-scaled `H_I` string — that is a question about TruePad's code,
+which this session has not read and must not touch. The hazard is recorded in
+`CROSS-REPO-FINDINGS.md` as `XR-03`.

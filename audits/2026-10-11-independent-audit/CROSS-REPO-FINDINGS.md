@@ -126,3 +126,67 @@ take ownership of it, review it, and decide whether to keep, amend or drop it.
 Its commit message records the mechanism — `grep -c .` printing `0` while
 exiting `1`, so a `|| echo 0` fallback fires alongside a successful print — so
 the broken form is not reintroduced.
+
+---
+
+## XR-03 — a mis-scaled `H_I` argument silently disables both restart gates
+
+**Verified in this repository on both branches** (`OC-11`). Reported for the
+TruePad session because `H_I` is an argument *the caller supplies*, and
+TruePad's desktop harness is the caller.
+
+`ea_restart` takes the initial entropy estimate `H_I` as a command-line
+argument. On master and on the repair branch:
+
+```
+ea_restart -i -v <1M file> 1 1e-400
+  H_I: 0.000000
+  ALPHA: 5.0251553006530614e-06, X_cutoff: 1000     <-- maximum possible
+  X_max: 558
+  Restart Sanity Check Passed...
+  Validation Test Passed...
+  min(H_r, H_c, H_I): 0.000000
+  rc=0    errorLevel 0    "IID": true
+```
+
+`1e-400` underflows to zero. `errno` is set before the `strtod` call and never
+tested, so `ERANGE` is ignored and `H_I` becomes `0`. With `H_I = 0` the §3.1.4.3
+sanity-check cutoff is computed as **1000** — no constraint — and the validation
+threshold `H_I/2` is `0`, so neither gate can fail. Both report PASS, exit
+status is 0, `errorLevel` is 0.
+
+### What this means for the harness
+
+The published figure is `0.000000`, so a consumer reading
+`min(H_r, H_c, H_I)` gets a useless number and will not mistake it for a good
+one. **The exposure is in the verdict channel, not the figure.** If the harness
+treats "the restart assessment passed" as a gate — exit status 0, `errorLevel 0`,
+no error message — it will record a passed restart test for a run in which
+neither restart test could have failed.
+
+`0x0.8p0` is also accepted, as `0.5`, via C99 hex-float syntax. So is a leading
+space. Trailing garbage, `nan`, `inf`, overflow and a locale comma are all
+correctly rejected — the parse is strict apart from these.
+
+### What the TruePad session can check
+
+1. **How is `H_I` produced?** If it is formatted from a float, a very small or
+   mis-scaled value becomes `1e-400`-shaped text rather than an error. If it is
+   a literal or comes from a validated field, this is not reachable and should
+   be recorded as such.
+2. **Is `H_I = 0` meaningful to the harness?** An entropy claim of zero makes
+   both gates vacuous. Rejecting it caller-side costs one comparison.
+3. **Does the harness consume the restart verdict separately from the figure?**
+   If it reads only `min(H_r,H_c,H_I)`, the conservative `0.000000` protects it.
+   If it reads the pass/fail, it does not.
+
+### A related gap the harness cannot work around
+
+The JSON report contains **no `X_max`, no `X_cutoff`, and no
+`passedRestartSanityCheck` field**. A sanity-check *failure* surfaces as
+`errorLevel -1` with `errorMsg "Restart Sanity Check Failed."`; a *pass* has no
+positive record, and the two numbers that decided it are stdout-only. So the
+harness cannot audit the margin — it cannot distinguish a pass against a
+legitimate cutoff from a pass against a cutoff of 1000. Fixing that is this
+fork's work, tracked in `OC-11`; it is listed here so the harness does not
+assume the information is available.
