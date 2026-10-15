@@ -1,0 +1,2 @@
+../../bin/rand8_short.bin : rand8_short.bin
+./generate-refdata: line 16: ../ea_non_iid: No such file or directory

@@ -1,0 +1,12 @@
+pinned figure and reference comparison
+  pin-check                          PASS
+  selftest                           FAIL
+        selftest: FAIL (1 of 1 files): ringOsc-nist.bin
+        these are the known upstream #155 platform files; --allow-known-platform-deltas accepts exactly these
+
+regression scripts (discovered)
+  none found — that is itself wrong
+
+run-all-checks: 1 passed, 2 failed (0 regression scripts discovered)
+failed: selftest
+EXIT=1

@@ -1,0 +1,4 @@
+rand8_short.bin: rand8_short.res: Found extra data item: H_bitstring Per Symbol -> 5.8608937444852494
+Maximum delta: 3.4173055689894e-12
+
+selftest: PASS (1 files)

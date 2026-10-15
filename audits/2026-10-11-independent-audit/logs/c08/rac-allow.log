@@ -1,0 +1,10 @@
+pinned figure and reference comparison
+  pin-check                          PASS
+  selftest                           PASS (only the known upstream #155 platform files)
+
+regression scripts (discovered)
+  none found — that is itself wrong
+
+run-all-checks: 2 passed, 1 failed (0 regression scripts discovered)
+failed:
+EXIT=1

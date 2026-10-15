@@ -1,0 +1,5 @@
+rand8_short.bin: rand8_short.res: Significant difference for Assessed min entropy (reference: 7.9999999999 new: 5.8608937444852494 delta: 0.267388281930186)
+rand8_short.res: Found extra data item: H_bitstring Per Symbol -> 5.8608937444852494
+Maximum delta: 0.267388281930186
+
+selftest: FAIL (1 of 1 files): rand8_short.bin

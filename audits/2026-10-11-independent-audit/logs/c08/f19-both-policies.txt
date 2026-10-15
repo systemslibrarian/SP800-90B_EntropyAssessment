@@ -1,0 +1,4 @@
+master rc=0
+repair rc=0
+master sha256= f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313 | scope= (absent) | assessed= (absent)
+repair sha256= f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313 | scope= assessed-sample-bytes | assessed= 1000000

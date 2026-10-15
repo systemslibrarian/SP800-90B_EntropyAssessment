@@ -1,0 +1,102 @@
+rand8_short.bin: rand8_short.res: Found extra data item: Literal MultiMMC Prediction Estimate: r -> 2
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: min entropy -> 6.6364412870612322
+rand8_short.res: Found extra data item: Bitstring Most Common Value Estimate: min entropy -> 0.9833867846591503
+rand8_short.res: Found extra data item: Literal MultiMCW Prediction Estimate: C -> 43
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: N -> 9999
+rand8_short.res: Found extra data item: Bitstring Compression Estimate: min entropy -> 0.73261171806065617
+rand8_short.res: Found extra data item: Bitstring Lag Prediction Estimate: N -> 79999
+rand8_short.res: Found extra data item: Bitstring LRS Estimate: p_u -> 0.5063018434594207528576
+rand8_short.res: Found extra data item: Bitstring MultiMCW Prediction Estimate: N -> 79937
+rand8_short.res: Found extra data item: Literal LZ78Y Prediction Estimate: min entropy -> 7.3533553938353844
+rand8_short.res: Found extra data item: Bitstring MultiMCW Prediction Estimate: r -> 15
+rand8_short.res: Found extra data item: Literal LZ78Y Prediction Estimate: P_global' -> 0.0061153238036365468
+rand8_short.res: Found extra data item: Bitstring MultiMMC Prediction Estimate: C -> 39974
+rand8_short.res: Found extra data item: Bitstring t-Tuple Estimate: min entropy -> 0.91078644573541423
+rand8_short.res: Found extra data item: Literal LRS Estimate: p-hat -> 0.004642362596824388225325
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: P_0 -> 0.5012375
+rand8_short.res: Found extra data item: Bitstring Compression Estimate: p -> 0.047508507395589983
+rand8_short.res: Found extra data item: Bitstring MultiMMC Prediction Estimate: r -> 15
+rand8_short.res: Found extra data item: Bitstring MultiMCW Prediction Estimate: min entropy -> 0.99453711551450596
+rand8_short.res: Found extra data item: Literal MultiMCW Prediction Estimate: r -> 2
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: min entropy -> 0.83205298221524804
+rand8_short.res: Found extra data item: Literal t-Tuple Estimate: p-hat_max -> 0.00579999999999999960032
+rand8_short.res: Found extra data item: Bitstring Compression Estimate: X-bar' -> 5.1887036615688391
+rand8_short.res: Found extra data item: Bitstring LRS Estimate: v -> 31
+rand8_short.res: Found extra data item: Literal MultiMCW Prediction Estimate: P_global -> 0.004327261749018819
+rand8_short.res: Found extra data item: Bitstring MultiMMC Prediction Estimate: P_global' -> 0.50424104259707803
+rand8_short.res: Found extra data item: Literal Most Common Value Estimate: min entropy -> 7.0104540377360411
+rand8_short.res: Found extra data item: Assessed min entropy -> 5.8608937444852494
+rand8_short.res: Found extra data item: Bitstring Lag Prediction Estimate: P_global -> 0.49903123789047366
+rand8_short.res: Found extra data item: Bitstring LRS Estimate: min entropy -> 0.98193035773637416
+rand8_short.res: Found extra data item: Literal MultiMMC Prediction Estimate: C -> 45
+rand8_short.res: Found extra data item: Bitstring Most Common Value Estimate: p_u -> 0.50579098043220405
+rand8_short.res: Found extra data item: Bitstring t-Tuple Estimate: p_u -> 0.5318950641399130541132
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: p-hat_max -> 3.5960141043503829e-39
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: Sum t_i -> 79999
+rand8_short.res: Found extra data item: Bitstring MultiMCW Prediction Estimate: C -> 39756
+rand8_short.res: Found extra data item: Bitstring MultiMMC Prediction Estimate: min entropy -> 0.98781454404229407
+rand8_short.res: Found extra data item: Bitstring LZ78Y Prediction Estimate: C -> 39959
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: min entropy -> 0.99772497672796534
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: X-bar' -> 2.4923789816296962
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: X-bar -> 2.4995781909076706
+rand8_short.res: Found extra data item: Literal LZ78Y Prediction Estimate: r -> 2
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: P_{1,0} -> 0.5016791979949875
+rand8_short.res: Found extra data item: Literal MultiMMC Prediction Estimate: P_global' -> 0.0062253571422864543
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: p -> 0.56172932192363623
+rand8_short.res: Found extra data item: Bitstring LZ78Y Prediction Estimate: r -> 15
+rand8_short.res: Found extra data item: Bitstring LZ78Y Prediction Estimate: P_global' -> 0.5041476404203914
+rand8_short.res: Found extra data item: Literal LZ78Y Prediction Estimate: N -> 9983
+rand8_short.res: Found extra data item: H_bitstring -> 0.73261171806065617
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: P_global' -> 0.0070534187484469447
+rand8_short.res: Found extra data item: Literal LZ78Y Prediction Estimate: C -> 44
+rand8_short.res: Found extra data item: Bitstring Lag Prediction Estimate: C -> 39922
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: r -> 3
+rand8_short.res: Found extra data item: H_bitstring Per Symbol -> 5.8608937444852494
+rand8_short.res: Found extra data item: Literal MultiMMC Prediction Estimate: min entropy -> 7.3276276791880877
+rand8_short.res: Found extra data item: Literal MultiMMC Prediction Estimate: N -> 9998
+rand8_short.res: Found extra data item: Bitstring t-Tuple Estimate: p-hat_max -> 0.5273483862919730036367
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: P_{0,0} -> 0.50078555574951988
+rand8_short.res: Found extra data item: Literal LRS Estimate: v -> 3
+rand8_short.res: Found extra data item: Bitstring MultiMMC Prediction Estimate: P_global -> 0.49968749218730468
+rand8_short.res: Found extra data item: Bitstring MultiMCW Prediction Estimate: P_global' -> 0.50189688057077464
+rand8_short.res: Found extra data item: Literal MultiMCW Prediction Estimate: min entropy -> 7.3751922497299107
+rand8_short.res: Found extra data item: Bitstring Most Common Value Estimate: p-hat -> 0.5012375
+rand8_short.res: Found extra data item: Literal Most Common Value Estimate: Mode count -> 58
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: sigma-hat -> 0.50000763353681899
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: P_global -> 0.0052005200520052006
+rand8_short.res: Found extra data item: Bitstring Compression Estimate: X-bar -> 5.212412765159554
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: C -> 52
+rand8_short.res: Found extra data item: Bitstring Lag Prediction Estimate: r -> 14
+rand8_short.res: Found extra data item: Literal MultiMCW Prediction Estimate: N -> 9937
+rand8_short.res: Found extra data item: Literal Lag Prediction Estimate: P_local -> 0.010051528494081152
+rand8_short.res: Found extra data item: Literal LRS Estimate: p_u -> 0.006393409992100355064559
+rand8_short.res: Found extra data item: Bitstring LZ78Y Prediction Estimate: min entropy -> 0.98808180379990307
+rand8_short.res: Found extra data item: Literal MultiMMC Prediction Estimate: P_global -> 0.0045009001800360073
+rand8_short.res: Found extra data item: Bitstring Lag Prediction Estimate: P_global' -> 0.50358475218219034
+rand8_short.res: Found extra data item: Bitstring Lag Prediction Estimate: min entropy -> 0.98969349388795491
+rand8_short.res: Found extra data item: Literal LRS Estimate: min entropy -> 7.2891986717206523
+rand8_short.res: Found extra data item: Literal Most Common Value Estimate: p_u -> 0.0077560937775866317
+rand8_short.res: Found extra data item: Bitstring LZ78Y Prediction Estimate: P_global -> 0.49959366365352637
+rand8_short.res: Found extra data item: Literal MultiMCW Prediction Estimate: P_global' -> 0.0060234583131241982
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: P_{1,1} -> 0.4983208020050125
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: P_{0,1} -> 0.49921444425048012
+rand8_short.res: Found extra data item: Bitstring Compression Estimate: sigma-hat -> 1.0221918650488746
+rand8_short.res: Found extra data item: Bitstring LRS Estimate: p-hat -> 0.5017483769192231379819
+rand8_short.res: Found extra data item: Bitstring LZ78Y Prediction Estimate: N -> 79983
+rand8_short.res: Found extra data item: Bitstring Markov Estimate: P_1 -> 0.4987625
+rand8_short.res: Found extra data item: H_original -> 6.6364412870612322
+rand8_short.res: Found extra data item: Literal LRS Estimate: u -> 2
+rand8_short.res: Found extra data item: Bitstring MultiMCW Prediction Estimate: P_global -> 0.49734165655453672
+rand8_short.res: Found extra data item: Literal t-Tuple Estimate: min entropy -> 7.0104540377360411
+rand8_short.res: Found extra data item: Literal LZ78Y Prediction Estimate: P_global -> 0.0044074927376540115
+rand8_short.res: Found extra data item: Bitstring MultiMMC Prediction Estimate: N -> 79998
+rand8_short.res: Found extra data item: Literal t-Tuple Estimate: t -> 1
+rand8_short.res: Found extra data item: Literal t-Tuple Estimate: p_u -> 0.007756093777586630863552
+rand8_short.res: Found extra data item: Bitstring LRS Estimate: u -> 13
+rand8_short.res: Found extra data item: Bitstring Most Common Value Estimate: Mode count -> 40099
+rand8_short.res: Found extra data item: Bitstring t-Tuple Estimate: t -> 12
+rand8_short.res: Found extra data item: Bitstring Collision Estimate: v -> 32005
+rand8_short.res: Found extra data item: Literal Most Common Value Estimate: p-hat -> 0.0057999999999999996
+Maximum delta: 0
+
+selftest: PASS (1 files)

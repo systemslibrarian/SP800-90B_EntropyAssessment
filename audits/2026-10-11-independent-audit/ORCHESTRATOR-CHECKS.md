@@ -189,3 +189,418 @@ Both of the finder's numbers reproduce (739 and 126; the subdirectory count is
 directories that directly contain a file are counted — the documented 118 is
 neither). The claim stands, and nothing in the repository checks these
 hand-maintained figures, which is the finding's actual point.
+
+---
+
+## OC-4 — C08: the harness **can** fail. What it cannot do is notice absent reference data.
+
+Verification of cluster `C08-harness-cannot-fail` (14 members), run by the
+coordinating session against the real harness with real binaries at HEAD
+`1da491d`. **Verdict: confirmed, and the cluster's name is wrong.** The harness
+is not inert. It fails exactly as designed when a reference value is wrong. Its
+defect is narrower and more specific: it **fails open on absent reference data**,
+and it **excuses by filename rather than by magnitude**.
+
+### What the harness claims to check
+
+| Component | Claim | Scale |
+|---|---|---|
+| `selftest` + `compareresults.pl` | this build's `ea_non_iid -vv` output matches `refdata/` for every sample in `bin/` | 11 reference files, **967 key comparisons** (65 keys for 1-bit files, 107 for multi-bit) |
+| 14 × `regression-*.sh` | named prior defects stay repaired | **166 reported checks**, 81 failure-increment sites |
+| `run-all-checks.sh` | one aggregate verdict over all of the above | discovers `regression-*.sh`, runs `pin-check` and `selftest` |
+
+### Positive control first: the harness does fail
+
+Corrupting one value in a real reference file (`Assessed min entropy` in
+`rand8_short.res`) against a real `ea_non_iid -vv` run:
+
+```
+rand8_short.res: Significant difference for Assessed min entropy
+    (reference: 7.9999999999 new: 5.8608937444852494 delta: 0.267388281930186)
+selftest: FAIL (1 of 1 files): rand8_short.bin        exit 1
+```
+
+So "cannot fail" is false as stated. Everything below is measured against this
+control.
+
+### Found 1 — `compareresults.pl` is driven by the reference, and a missing key is never a failure
+
+`compareresults.pl:20` iterates `keys %$refResults`. A key absent from the
+reference is therefore never compared, and the extra-item loop at `:53-55`
+prints `Found extra data item` **without setting `$retstatus`**. Three
+mutations, each against a real `ea_non_iid -vv` output:
+
+| Reference | Keys compared | Result |
+|---|---:|---|
+| pristine | 107 of 107 | exit 0 (correct) |
+| **truncated to 40 lines** | 34 of 107 | **exit 0** |
+| **emptied (0 bytes)** | 0 of 107 | **exit 0** |
+| **one key dropped — `Assessed min entropy` itself** | 106 of 107 | **exit 0** |
+
+End-to-end through the real `selftest`: a 0-byte reference file yields
+`selftest: PASS (1 files)`, **exit 0**.
+
+**The chain is reachable.** `generate-refdata` has no `set -e` and no status
+check, and its redirection truncates the reference *before* running the tool.
+Demonstrated: with the tool absent, a 6,160-byte reference became **0 bytes**,
+and `selftest` then reported `PASS`, exit 0. The realistic trigger is not a
+missing binary but a tool that aborts on *some* inputs — which `OC-5` below
+shows this build does, on ordinary data.
+
+Mechanism: **status plumbing — an empty accumulator reads as success.**
+
+### Found 2 — one of the four final figures is compared against nothing, on every run
+
+`H_bitstring Per Symbol` appears in **no** reference file, while every real
+`-vv` run prints it. It therefore lands in the extra-item loop every time. This
+is visible in the pristine baseline, i.e. in normal operation:
+
+```
+rand8_short.res: Found extra data item: H_bitstring Per Symbol -> 5.8608937444852494
+Maximum delta: 3.4173055689894e-12
+```
+
+`compareresults.pl`'s own header comment says the final figures were added
+because "the final figure is the number an assessment is actually reported
+with, so it is the one that most needs checking." One of the four was added to
+the collector and never to the references.
+
+Mechanism: **status plumbing**, same root as Found 1.
+
+### Found 3 — the documented macOS escape excuses any magnitude
+
+`run-all-checks.sh:23` is `KNOWN_PLATFORM_FILES="biased-random-bytes.bin
+ringOsc-nist.bin"`, matched by filename with no bound on the delta.
+Demonstrated by corrupting `ringOsc-nist.res`'s assessed figure from
+`0.12644573619605429` to `0.03` — an error of **0.096 bit**, four orders of
+magnitude beyond any platform delta the fork documents (its own precision audit
+measures ≤ 9.1e-12 and pins tolerance at 1e-9):
+
+```
+with --allow-known-platform-deltas:   selftest   PASS (only the known upstream #155 platform files)
+without it:                           selftest   FAIL (1 of 1 files): ringOsc-nist.bin
+```
+
+`--allow-known-platform-deltas` is the invocation `BUILDING.md` documents for
+this platform. (The aggregate still exited 1 in that run because the regression
+scripts had been moved aside for speed and `run-all-checks` correctly flags
+"none found"; the excusal of the corrupted figure is the `selftest` line.)
+
+Mechanism: **evidence type — a filename stands in for a magnitude bound.**
+
+### Found 4 — `reg-quality-5`: a guard that passes under both policies it is meant to distinguish
+
+`regression-subset.sh:88-97` asserts "sha256 still identifies the whole file"
+against `ok.json`, which comes from `-l 0,1000000` on a **1,000,000-sample**
+file — the subset is the entire file, so the whole-file hash and the
+assessed-bytes hash are the same bytes. Executed on both branches:
+
+```
+master  sha256=f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313  scope=(absent)
+repair  sha256=f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313  scope=assessed-sample-bytes
+```
+
+Identical values, and equal to the whole-file hash, under two **incompatible**
+policies. A tautological guard cannot be "shown failing"; the demonstration
+that it is tautological is that it passes identically on both sides of the
+policy change it was written to pin. Mechanism: **evidence type.**
+
+### Found 5 — cosmetic, and correctly classified as such
+
+`build-port-12`: `selftest:48-49` prints `FAILED (ea_non_iid exited $?)` from
+inside `if ! ../ea_non_iid …`, where `$?` is the *negation's* status and so is
+always 0. The message is wrong; `fail_count` still increments and the verdict
+and exit status are correct. **Misreport, not a dead guard.**
+
+### Also visible, already tracked
+
+`HARNESS-AUD-01`: ten of the eleven fixtures were removed from `bin/` for speed
+and `selftest` reported `PASS (1 files)`, exit 0 — no expected-fixture count on
+master. Repaired only on the repair branch.
+
+### Examined alongside found
+
+Of the harness's **166 reported regression checks** and **967 reference-key
+comparisons**: three confirmed defects in the `selftest` core (Found 1-3), one
+confirmed tautological regression assertion (Found 4), one cosmetic misreport
+(Found 5), two confirmed and now **fixed** on master (`reg-quality-4`,
+`build-port-10` in part, commit `1da491d`), and four that are repair-branch-only
+and so do not ship (`reg-quality-1`, `-2`, `-3`, `build-port-4`,
+`build-port-13`). Two members remain unverified: `reg-quality-6` (the MultiMMC
+binary-path check not discriminating) and `reg-quality-9` (coverage gaps in the
+N-08 transpose hunk and all of `ea_conditioning`).
+
+This is not a wholly inert harness. It is a harness whose 967 value comparisons
+are all conditional on the reference containing the key, whose aggregate accepts
+any magnitude of error in two named files, and which has at least one assertion
+that cannot distinguish the policies it names.
+
+### Consequence for batch 1 — it does not fall
+
+The premise "if the harness cannot fail, every verdict is suspect" does not
+transfer, because **batch 1 did not consume the harness.** Its fifteen lenses
+ran the `ea_*` binaries directly and compared against independently
+constructed references:
+
+- `C04`'s reproduction matched every figure digit for digit against the tool's
+  own stdout and JSON, on its own fixtures. Independent of the harness.
+- `C01`'s refutation wrote a fresh SP 800-90B §6.3.9 implementation from the
+  specification text and validated it against **the publication's own worked
+  example** before using it. Independent of the harness.
+- `C03`'s reproduction built its own 1M fixture and read exit status and JSON
+  fields directly. Independent.
+- `C05` reproduced an abort by exit status. Independent.
+- `C02` ran the tools and read JSON fields. Independent.
+
+What C08 **does** bear on is `REGRESSION-LEDGER.md`:
+
+- **Claim 1** ("23 repairs whose guard was seen to fail") is weakened but not
+  voided: its evidence is that each guard *did* fail under mutation with a named
+  assertion, which is the opposite of inertness. The exposure is that a guard
+  may have failed for a reason other than the one claimed.
+- **Claim 3** is strengthened as a warning: `reg-quality-5` is now confirmed
+  tautological by execution, and `build-port-4`'s mechanism is explained
+  quantitatively by `OC-5` below.
+- The fork's own "the suite is green" statement is worth less than it reads,
+  for the three reasons above.
+
+Nothing here changes an entropy figure. Every defect in this cluster is in the
+*checking* of figures, not in their computation.
+
+---
+
+## OC-5 — C07: a fail-closed abort in the IID track, at **four** distinct asserts, not one
+
+Verification of cluster `C07-lrs-underflow-abort` (5 members). **Verdict:
+confirmed by independent reproduction, with the cluster's mechanism corrected:
+it conflates two unrelated asserts, and the logs show four.**
+
+`NDEBUG` is **not** defined anywhere in `cpp/Makefile`, and the assert strings
+are present in the shipped `ea_iid`. Asserts are live in the release build, so
+every site below is a `SIGABRT`.
+
+### Fail-closed, decisively
+
+```
+ea_iid -i -o out.json bal125.bin   ->  rc=134,  out.json: NOT WRITTEN
+ea_restart -i -q    bal125.bin     ->  rc=134
+ea_non_iid -i -q    bal125.bin     ->  rc=0     (the conservative track is unaffected)
+```
+
+`len_LRS_test` is called only from `iid_main.cpp` and `restart_main.cpp`. **The
+user gets no number, not a wrong one.** Fail-closed. This is a different class
+from `C04`, which was a misreport: here nothing is published, and the fallback
+to `ea_non_iid` yields a *lower*, conservative figure.
+
+### Site A — `lrs_test.h:652`, `assert(p_col >= 1.0L / k)`: exact equidistribution
+
+Mathematically `p_col = Σpᵢ² ≥ 1/k` with equality **iff** the alphabet is
+perfectly uniform. The assert therefore compares two differently-computed
+expressions for the same number at the boundary, and the left side can land one
+ULP low. Ten exactly-balanced 1,000,000-sample alphabets (`a=[i%k …]` shuffled,
+seed `0xB41A`, each symbol exactly `L/k` times — a construction independent of
+the finder's seed 2501):
+
+| k | 20 | 25 | 32 | 40 | 50 | 64 | 100 | 125 | 200 | 250 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| rc | 0 | **134** | 0 | 0 | 0 | 0 | **134** | **134** | **134** | **134** |
+
+Five of ten abort. The pattern is representability: `k = 32, 64` make `1/k` an
+exact binary fraction and pass; `k = 25, 100, 125, 200, 250` do not.
+
+**The threshold demonstrated at its extremes.** Perturbing two symbol counts by
+±1 in 1,000,000 — the smallest possible departure from exact balance — clears
+the assert, because any imbalance raises `Σpᵢ²` strictly above `1/k` by far more
+than the rounding error:
+
+| perturbation | ±1 | ±2 | ±10 | ±100 | ±1000 | exact |
+|---|---|---|---|---|---|---|
+| rc | 0 | 0 | 0 | 0 | 0 | **134** |
+
+So site A needs *exact* equidistribution. That is not what a physical source
+produces — but it is precisely what a synthetic test vector, a counter stream,
+or a balanced permutation produces.
+
+### Site B — `lrs_test.h:683`, `assert(p_colPower >= LDBL_MIN)`: underflow, and the dominant site in the logs
+
+This is the site the code **intends**: its own comment says "There isn't
+anything we can do about this error condition without moving to an arbitrary
+precision calculation, so for now, we'll just detect this condition and abort
+the calculation." The abort is deliberate. The defect is its reachability here.
+
+`p_col^W < LDBL_MIN` with `p_col ≈ 0.5` requires `W > 1022` on this platform
+(`sizeof(long double) = 8`, `LDBL_MIN = 2.225e-308`). On x86-64 with an 80-bit
+`long double` the same bound is `W > 16382` — sixteen times higher. Bracketed by
+implanting a repeated block of length `W` into a 1-bit stream:
+
+| implanted W | 500 | 1000 | **1100** | **2000** |
+|---|---|---|---|---|
+| rc | 0 | 0 | **134 at :683** | **134 at :683** |
+
+Predicted boundary `W > 1022`; measured between 1000 and 1100. **A repeated
+substring longer than ~1022 bits in a 1-bit source makes `ea_iid` unassessable
+on arm64 while an x86-64 build assesses it.** A 1024- or 2048-bit repeated block
+is ordinary in real data. This is the consequential half of C07 and it needs no
+exact balance.
+
+### Sites C and D — observed, not reproduced here
+
+The finders' logs show `lrs_test.h, line 684` (287 occurrences) and `line 683`
+(242) dominating, against `line 652` (63), plus a few at `626` and `657`. Line
+684 is `assert(p_colPower <= 1.0L - LDBL_EPSILON)`. I did not reproduce 684 and
+do not claim it. The occurrence counts reflect how many log lines matched across
+scanning loops, not how often each fires in practice.
+
+**Correction to the cluster:** `memory-safety-fuzz-1` and
+`estimators-ttuple-lrs-1` name site A; `build-portability-harness-docs-1` and
+`restart-2` name site B. These are different defects with different triggers,
+different platform dependence, and — as shown next — different fates on the
+repair branch. They should not have been one cluster.
+
+### Provenance checked, per the C04 lesson — this one holds up
+
+Every evidence path cited by `memory-safety-fuzz-1` and `linux-x86-docker-1`
+resolves to a real file under that agent's directory (`raw/verify/v1.log` 1,064
+bytes; `out/T4-r1.log` 3,670 bytes; and so on). The `$A`/`$S` prefixes in the
+records are unexpanded placeholders in the text, not missing evidence. Unlike
+C04, no sanitizer claim here is sourced from outside this audit's builds.
+
+### The repair branch fixes site B and **not** site A
+
+| | master `f069898` | repair `2d4b135` |
+|---|---|---|
+| site B (`lrsrep-2000.bin`) | rc=134, no JSON | **rc=1**, JSON written: `errorLevel 2`, `IID: false`, `assessmentComplete: true`, `hAssessed` absent, "IID test suite failed; no IID min-entropy estimate was awarded." |
+| site A (`bal125.bin`) | rc=134, no JSON | **still `Assertion failed: (p_col >= 1.0L / ((long double) k)) … line 652`**, no JSON |
+
+So the repair branch converts the underflow into a proper fail-closed verdict
+with a report, and leaves the exact-equidistribution abort untouched.
+
+**One concern about how it fixes site B.** It reports the underflow as
+`** Failed length of longest repeated substring test` with `Pr(X >= 1):
+0.000000` — that is, it converts *"this platform's `long double` cannot
+represent the intermediate"* into *"the source failed an independence test"*.
+The direction is conservative and the report is honest about the verdict, but
+the stated **reason** is wrong, and an operator debugging it would examine their
+entropy source rather than their build platform. Worth recording against the
+repair branch rather than treated as closed.
+
+---
+
+## OC-6 — C03's `ea_restart -i` half: the same mechanism, same shape, still open
+
+**Verdict: the C03 mechanism does apply to the `-i` path. Source-confirmed;
+the compliant execution was still running when this was written and is marked
+below.** It **misreports** — it does not abort.
+
+### The mechanism, at source
+
+`restart_main.cpp` computes all three Section 5 tests in the `-i` branch:
+
+```c
+bool chi_square_test_pass = chi_square_test_pass_row && chi_square_test_pass_col;   // :794
+tcOverallIid.passed_chi_square_tests = chi_square_test_pass;                        // :796
+bool len_LRS_test_pass = len_LRS_test_pass_row && len_LRS_test_pass_col;            // :818
+tcOverallIid.passed_longest_repeated_substring_test = len_LRS_test_pass;            // :820
+bool perm_test_pass = perm_test_pass_row && perm_test_pass_col;                     // :840-852
+```
+
+and then **never reads any of them**. The only gate after the IID block is
+
+```c
+if (min(H_r, H_c) < H_I / 2.0) { … exit(-1); }     // :882
+```
+
+which is the §3.1.4.3 validation test on the *entropy estimates*, wholly
+independent of the Section 5 outcomes. Control then falls through to
+
+```c
+testRunIid.testCases.push_back(tcOverallIid);
+testRunIid.errorLevel = 0;      // :900  — unconditional
+…
+return 0;                       // :930  — unconditional
+```
+
+This is the same defect as the `ea_iid` half: the verdict is computed, stored,
+printed, and discarded. Because `IidTestRun::IID` is the compile-time
+`const bool IID = true`, the JSON also reports `"IID": true`.
+
+**Misreport, not an abort.** A caller reading exit status, `errorLevel` and the
+`IID` field sees success, and `h_r`/`h_c`/`h_i` are all published. Contrast
+`OC-5`, where nothing is published at all.
+
+### Incidental confirmation of the constant `IID` field
+
+`ea_restart -i` on a 10,000-sample file is refused — the 1000×1000 matrix is
+mandatory and `EA_ALLOW_SHORT_DATASET` does **not** bypass it:
+
+```
+rc=255   errorLevel: -1   IID: true
+errorMessage: *** Error: data (len = 10000) does not contain 1000000 samples ***
+```
+
+`"IID": true` on a path where **no IID test was ever run**. That is
+`output-automation-contracts-3` confirmed by execution, and it is the cleanest
+possible demonstration that the field reports which binary was invoked rather
+than any conclusion.
+
+### C07 masks C03 on the obvious data
+
+The first three candidate fixtures — `markov-stay99-1bit`, `period6-1bit`,
+`alternating-1bit` — all abort with `rc=134` before reaching the unconditional
+`errorLevel = 0`, because highly repetitive data has a long repeated substring
+and trips `OC-5` site B. **The two defects interact: on exactly the data that
+would demonstrate the misreport, the abort fires first.** Demonstrating C03's
+restart half therefore requires data that fails an IID test *without* a long
+repeat — weak serial correlation — which is what the pending run uses
+(1,000,000-sample 1-bit streams at p(stay) = 0.55, 0.60, 0.70, seed
+`0x90B2026C03`, no implanted repeat, not exactly balanced, with `H_I = 0.1` so
+that `min(H_r,H_c) ≥ H_I/2` and validation passes on its own terms).
+
+### Status of this check
+
+- **Correct**: the mechanism is established from the source with no ambiguity —
+  three booleans computed and never read, then an unconditional `errorLevel = 0`
+  and `return 0`.
+- **Verified**: not yet, for the compliant 1,000,000-sample case. `ea_restart -i`
+  runs the permutation battery twice (rows and columns) over 1M samples and the
+  run had not completed. The short-matrix shortcut is unavailable because the
+  tool mandates exactly 1,000,000 samples.
+- The `"IID": true` constant is verified by execution, on an error path.
+
+### Correction, made while writing this entry
+
+I first wrote that this half is open "on master and on the repair branch", with
+the `restart_main.cpp` check listed as not yet done. I then did it, and it
+contradicts that sentence. The repair branch **does** close the restart half,
+with the same shape as the `ea_iid` half:
+
+```c
+iid_test_suite_pass = chi_square_test_pass && len_LRS_test_pass && perm_test_pass;   // repair :823
+testRunIid.assessmentComplete = true;
+testRunIid.iidClaimAccepted = iid_test_suite_pass;                                   // :825
+
+if (iid && !iid_test_suite_pass) {                                                   // :830
+    tcOverallIid.h_r = -1.0;  tcOverallIid.h_c = -1.0;  tcOverallIid.h_i = -1.0;
+    testRunIid.errorLevel = 2;
+    testRunIid.errorMsg = "IID restart test suite failed; no IID restart entropy estimate was awarded.";
+    …
+    return 1;                                                                        // :846
+}
+```
+
+It is stronger than the `ea_iid` half: besides `errorLevel 2`, exit 1 and
+`IID: false`, it overwrites `h_r`, `h_c` and `h_i` with `-1.0` so no figure is
+published even inside the test case. It also skips the permutation battery after
+an earlier required test fails, and says so.
+
+**Accurate status: OPEN on `master`, which is the branch that ships and the
+branch every current assessment is produced by. Closed on the unmerged repair
+branch.** It is not part of a closed finding — the fix exists only in code that
+has not landed, and the rebase that would land it is not authorized.
+
+So the C03 cluster as a whole: the `ea_iid` half and the `ea_restart -i` half
+are both open on master and both closed on `2d4b135`. The audit's earlier
+statement that the repair branch "partly closes it — two of the three halves
+fully, one left" was wrong about which half remained; the `restart` gate is
+present. What is genuinely left is the *class-wide* issue that the `IID` field
+is a compile-time constant on master's error paths, demonstrated above.
