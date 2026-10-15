@@ -48,6 +48,8 @@
 #
 # USAGE
 #   tools/build-provenance-canary.sh <path-to-ea_iid> [work-directory]
+#
+# Environment: CANARY_TIMEOUT (seconds, default 1800), OMP_NUM_THREADS
 
 set -u
 
@@ -73,19 +75,26 @@ else
     mkdir -p "$WORK" || exit 2
 fi
 
-INPUT="$WORK/canary-lrsrep-2000.bin"
-EXPECTED_SHA="a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2"
+INPUT="$WORK/canary-lrsrep-20000.bin"
+EXPECTED_SHA="327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c"
 
 # ---------------------------------------------------------------- the input
 #
-# 1,000,000 one-bit samples from a fixed seed, with a 2000-sample block copied
-# over a later position so the longest repeated substring is at least 2000.
+# 1,000,000 one-bit samples from a fixed seed, with a 20000-sample block copied
+# over a later position so the longest repeated substring is at least 20000.
 #
-# The threshold that matters: p_colPower = p_col^W underflows a 64-bit long
-# double once W exceeds about 1022 (p_col is about 0.5, LDBL_MIN is 2.225e-308).
-# W = 2000 clears that with margin. On an 80-bit long double the same bound is
-# W > 16382, so THIS CANARY DOES NOT DISCRIMINATE ON SUCH A PLATFORM -- see the
-# INDETERMINATE note at the bottom.
+# The threshold that matters: p_colPower = p_col^W underflows once p_col^W falls
+# below LDBL_MIN (p_col is about 0.5). That needs
+#       W > 1022    on a 64-bit long double  (arm64,  LDBL_MIN 2.225e-308)
+#       W > 16382   on an 80-bit long double (x86-64, LDBL_MIN 3.362e-4932)
+# W = 20000 clears BOTH, by 3618 binary orders on the stricter one, so the canary
+# discriminates on either platform. An earlier version used W = 2000 and was
+# arm64-only.
+#
+# Measured on arm64: asserts-live rc=134, NDEBUG rc=0 with hAssessed
+# 0.9959462013452722 and the LRS test reporting failure. The x86-64 side follows
+# from the exponent range above and has NOT been measured here -- that is an
+# arithmetic argument, not an observation.
 #
 # The file is generated rather than shipped so this script stays self-contained
 # and the input is verifiable from its seed.
@@ -94,7 +103,7 @@ python3 - "$INPUT" <<'PY' || { echo "$PROG: could not generate the canary input"
 import random, sys, hashlib
 r = random.Random(0x90B2026C07)
 b = bytearray(r.getrandbits(1) for _ in range(1000000))
-W = 2000
+W = 20000
 b[600000:600000 + W] = bytes(b[1000:1000 + W])
 d = bytes(b)
 open(sys.argv[1], 'wb').write(d)
@@ -170,7 +179,7 @@ PY
 fi
 
 echo "canary: tool    $TOOL"
-echo "canary: input   $INPUT (1,000,000 one-bit samples, implanted repeat W=2000)"
+echo "canary: input   $INPUT (1,000,000 one-bit samples, implanted repeat W=20000)"
 echo "canary: exit    $RC"
 
 if [ "$asserts_live" -eq 1 ] && [ "$ndebug" -eq 0 ]; then
@@ -197,11 +206,10 @@ echo "canary: BUILD   INDETERMINATE"
 echo "canary: The outcome matched neither signature. This is NOT a pass."
 echo "canary: Refuse any figure from this binary until provenance is established"
 echo "canary: by other means. Known causes of a legitimate INDETERMINATE:"
-echo "canary:   * an 80-bit long double platform (x86-64), where the underflow"
-echo "canary:     bound is W > 16382 and W=2000 does not reach it, so an"
-echo "canary:     asserts-live build completes normally and looks like neither"
-echo "canary:     signature. This canary discriminates on 64-bit long double"
-echo "canary:     platforms (arm64) only."
+echo "canary:   * a long double wider than 80 bits, where W=20000 may not reach"
+echo "canary:     the underflow bound. W=20000 covers 64-bit (W>1022) and 80-bit"
+echo "canary:     (W>16382) long doubles; the 80-bit case is an exponent-range"
+echo "canary:     argument, not a measurement taken on that platform."
 echo "canary:   * a timeout (CANARY_TIMEOUT, currently ${CANARY_TIMEOUT:-1800}s)"
 echo "canary:   * a tool that is not ea_iid"
 echo "canary: ---- captured output (last 10 lines) ----"

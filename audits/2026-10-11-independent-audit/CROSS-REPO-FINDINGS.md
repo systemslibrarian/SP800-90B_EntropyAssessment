@@ -257,13 +257,23 @@ statement about the binary passed to it at the moment it ran, **not a property
 of a figure produced earlier by some other binary**. A consumer that treats a
 canary pass as full provenance has substituted one unknown for another.
 
-**It also has a platform limit.** The underflow bound is `W > 1022` on a 64-bit
-`long double` (arm64) and `W > 16382` on 80-bit (x86-64). With `W = 2000` the
-canary discriminates on arm64 and returns `INDETERMINATE` on x86-64, where an
-asserts-live build completes normally and matches neither signature. That is
-reported honestly in the `INDETERMINATE` output rather than silently guessed.
-See `REPRO-01` for the separate finding that this divergence is itself a
-reproducibility defect.
+**Platform coverage — corrected 2026-10-15.** The underflow bound is
+`W > 1022` on a 64-bit `long double` (arm64) and `W > 16382` on 80-bit (x86-64).
+The first version used `W = 2000` and was **arm64-only**. It now uses
+**`W = 20000`**, which clears the stricter bound by 3618 binary orders and so
+discriminates on either platform. Input digest is now
+`327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c`; all four
+guards re-demonstrated at the new width.
+
+**Honest limit on that claim:** the arm64 behaviour is measured (asserts-live
+`rc=134`; NDEBUG `rc=0` with `hAssessed 0.9959462013452722` and the LRS test
+reporting failure). **The x86-64 side is an exponent-range argument, not an
+observation** — no x86-64 build was run against it here. The audit has a
+working Docker amd64 route if that measurement is wanted.
+
+See `REPRO-01` for the separate finding that this same divergence is itself a
+reproducibility defect: two conforming builds of one commit disagree about
+whether a figure exists.
 
 ### What the harness session needs to decide — not done here
 
