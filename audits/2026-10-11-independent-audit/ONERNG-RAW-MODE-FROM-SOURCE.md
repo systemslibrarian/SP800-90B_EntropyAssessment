@@ -195,6 +195,26 @@ removed is the ability to transmit and to be updated remotely.
 | Whether a current V3 unit runs this firmware | **NOT ESTABLISHED** — check `cmdv` on receipt |
 | Min-entropy per bit | **No claim found anywhere.** Waits for the tools, and now also for build provenance (`XR-04`) |
 
+## ELIMINATED — see `SECOND-SOURCE-SEARCH.md`
+
+**2026-10-15: OneRNG is out, on design rather than availability.** The raw-mode
+question settled above is genuine and the device is still eliminated, for the two
+properties recorded in sections 3 and 4:
+
+1. **The mode is set-only** — powers up whitened, no persistence, no read-back
+   command. Raw mode can be asserted and never verified. Disqualifying on its own
+   for a project built on refusing unverifiable assertions.
+2. **`queue_pool_data` XORs into stored bytes on overflow**, the whitener bit
+   does not gate it, XOR raises apparent entropy per bit, and nothing in the
+   protocol reports that it happened. Permissive, and unmitigable from the host.
+
+Plus the version trap in section 5: hardware "V3" and firmware "Version 3" are
+unrelated, and the firmware repo stopped in 2015 while hardware moved into 2017,
+so even this research may not describe a unit one would receive.
+
+The frozen storefront is now the least interesting reason this device is out.
+A storefront reopening would not revive it.
+
 ## Consequences
 
 **For the purchase.** The raw-mode question that was going to need a vendor
