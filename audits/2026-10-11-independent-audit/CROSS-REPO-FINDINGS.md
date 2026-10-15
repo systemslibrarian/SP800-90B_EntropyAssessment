@@ -408,11 +408,30 @@ does not reach the figure. `DEFECT-SHAPES.md` `SHAPE-07`.
    minimum flag — when it fires regardless of what the battery reports.** A
    figure that passes the battery and fails autocorrelation is the exact case
    this finding exists to catch, and the battery will not mention it.
-3. **Store the per-estimator breakdown, not the minimum.** The breakdown
-   contains LRS's −0.0223 on this stream; the minimum does not. The tools already
-   emit it under `-v`, so this costs nothing but schema. **A consumer that stores
-   a min-entropy figure as a scalar cannot recover a bound the figure never
-   carried** — and cannot later tell a clean source from this one.
+3. **Store the per-estimator breakdown, not the minimum — and COMPARE each
+   estimator against a baseline.** Storing it is necessary but not sufficient.
+   `OC-18` found a case that makes this concrete: `G_xor13_02` (a third-order
+   XOR structure at 2 %) produces `H_original = 0.860003`, **inside** the clean
+   range, **and** a silent outside-battery check, while **MultiMMC drops 0.0266,
+   which is 9× its 3 sd**. The defect exists *only* in the breakdown. But a
+   logged reading of `MultiMMC = 0.9697` is unremarkable in isolation — it is
+   meaningful only as **−0.0266 against 0.996306 ± 0.000986**. **A harness that
+   logs the breakdown without a baseline holds the evidence and cannot read
+   it.** A drop of 0.05 bit in MultiMMC is invisible in the scalar and
+   significant against the baseline.
+
+   **Which baseline — and this is the part that constrains the design.** The
+   fair-coin baselines measured here are tight enough to serve as the method's
+   noise-floor reference (predictor sd 0.0005–0.0010, so a 0.027 bit drop is
+   27 sd) but they are **the wrong baseline for a real device**: a real source is
+   not at 1.0 bit/bit, and at ~0.7–0.86 the estimators stand in different
+   relationships — **Compression may not be the binding estimator at all**, which
+   would invalidate the headroom table rather than shift it. The baselines also
+   depend on sample count and symbol width. **So the harness needs per-device
+   baselines**, taken from that unit's own real captures when believed healthy,
+   with known build provenance (`XR-04`) — a drift detector, not an absolute
+   one. Per-device baselines are claims about a **source**, so they must never be
+   synthesised.
 4. **Keep the two checks separate in the record.** The spectrum reads this same
    stream at 15.7×, *below* the clean maximum of 20.3× — it does not see it.
    Autocorrelation and spectrum are complementary; neither alone suffices, and a
@@ -428,6 +447,17 @@ are calibrated for 1,000,000 one-bit samples and are **not** universal. **A pass
 is the absence of one kind of evidence, not an entropy claim** — if the harness
 surfaces it as "verified independent" it will have overstated it exactly the way
 the battery does.
+
+### Pinned, so it cannot rot between now and January
+
+`cpp/selftest/regression-outside-battery.sh` pins the measured outcomes — not
+the threshold constants — and is itself **shown failing** against perturbed
+builds: a broken bit-reversal and a 1e-3 twiddle error each fail B's spectral
+peak; `sqrt(N)` for `sqrt(N−k)` fails E's sigma; lowering the spectral threshold
+fails both the clean-stream check and the `OC-18` coverage check. Measured
+coverage limit, recorded: a twiddle error of 1e-5 or smaller is **not** caught.
+The corpus regenerates from seeds and is digest-verified, because a seed that
+does not reproduce is not a pin.
 
 ### Status
 

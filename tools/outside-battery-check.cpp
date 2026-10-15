@@ -37,10 +37,16 @@
 // Autocorrelation: Bonferroni over the number of lags tested. Sample
 // autocorrelations of a white process are asymptotically independent across
 // lags, so this is right and mildly conservative. Default family-wise alpha
-// 0.001 over 100,000 lags gives 5.73 sigma. MEASURED on 25 independent clean
-// streams (5 Mersenne Twister, 20 os.urandom, 1,000,000 samples each): max |z|
-// observed 5.18, mean 4.47, sd 0.28. Zero exceedances. The 40-sigma reference
-// defect (lag 5000) reads 40.21 -- seven times the threshold.
+// 0.001 over 100,000 lags gives 5.731 sigma. MEASURED on 25 independent clean
+// streams, 1,000,000 samples each, from TWO different generators (5 Mersenne
+// Twister, 20 SHA-256 counter mode), all seeded and reproducible:
+// max |z| observed 5.01, mean 4.31, sd 0.25. Zero exceedances. The 40-sigma
+// reference defect (lag 5000) reads 40.21 -- seven times the threshold.
+// (An earlier calibration used os.urandom for the 20 secondary controls and
+// measured 5.18 / 4.47 / 0.28. Those streams could not be regenerated, and a
+// seed that does not reproduce is not a pin, so they were replaced with the
+// SHA-256 generator and the calibration re-measured. The numbers moved in the
+// third decimal and no conclusion changed.)
 //
 // Spectrum: the analytic Exp(1) periodogram model WAS MEASURED AND REJECTED,
 // and the measurement is stated precisely because the rate depends on alpha:
@@ -48,12 +54,12 @@
 //   analytic, alpha = 0.01   -> 18.5x threshold -> 2 of 25 clean streams fired
 //                               (8%, against a nominal 1%)  *** TAIL IS WRONG
 //   analytic, alpha = 0.001  -> 20.8x threshold -> 0 of 25 fired, but the
-//                               observed clean max was 20.3x: a 2% margin
-//   empirical, 30x           -> 0 of 25 fired, margin 1.48x over the clean max
+//                               observed clean max was 20.2x: a 3% margin
+//   empirical, 30x           -> 0 of 25 fired, margin 1.49x over the clean max
 //
 // The rejection is of the model's TAIL SHAPE, demonstrated at alpha = 0.01, not
 // merely of one threshold: 2x zero-padding correlates adjacent bins, so the
-// observed maxima (13.0 .. 20.3) have a fatter tail than Exp(1) predicts and no
+// observed maxima (12.8 .. 20.2) have a fatter tail than Exp(1) predicts and no
 // alpha can be trusted to deliver the stated rate. At alpha = 0.001 it happens
 // to pass on this calibration set, by 2%, which is not a margin worth relying
 // on. The default is therefore the empirical 30x.
@@ -62,7 +68,8 @@
 // oscillation reads 8538x and is localised to 59.938 Hz, i.e. the tool recovers
 // the 60 Hz mechanism directly -- and on a strong lag correlation at 44.5x.
 // Shown failing: lowering it to 20x fires on 2 of 25 clean streams and to 13x
-// on 24 of 25.
+// on 24 of 25. Pinned by cpp/selftest/regression-outside-battery.sh, which is
+// itself shown failing against deliberately perturbed builds (OC-19).
 //
 // THE TWO CHECKS ARE COMPLEMENTARY AND NEITHER ALONE SUFFICES. The weak
 // long-lag reference defect (E) reads 40.21 sigma on autocorrelation but only
@@ -274,7 +281,7 @@ int main(int argc, char **argv) {
             printf("\n");
             if (specratio > 0.0)
                 printf("                threshold %.1fx  (EMPIRICAL: 1.48x the observed clean max of\n"
-                       "                20.3 over 25 clean streams. The analytic Exp(1) model was\n"
+                       "                20.2 over 25 clean streams. The analytic Exp(1) model was\n"
                        "                rejected: at alpha=0.01 it thresholds at 18.5x and fired on\n"
                        "                2 of those 25.) lines over: %d\n",
                        spec_thresh, spec_hits);

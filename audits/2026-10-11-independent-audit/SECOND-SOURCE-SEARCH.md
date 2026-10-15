@@ -1298,18 +1298,27 @@ tail than Exp(1) predicts, and no α can be trusted to deliver its stated rate.
 ## Calibration set
 
 **25 independent clean streams**, 1,000,000 samples each — 5 from Mersenne
-Twister and **20 from `os.urandom`**, deliberately two different generators so
-the calibration does not rest on one RNG's quality.
+Twister and 20 from a **seeded SHA-256 counter-mode** generator, deliberately
+two different algorithms so the calibration does not rest on one RNG's quality.
 
-- Autocorrelation max |z|: **4.04 .. 5.18**, mean 4.47, sd 0.28. **0/25** over
+- Autocorrelation max |z|: **3.90 .. 5.01**, mean 4.31, sd 0.25. **0/25** over
   5.731.
-- Spectrum top line: **13.0 .. 20.3**, mean 14.7, sd 1.9. **0/25** over 30×.
+- Spectrum top line: **12.8 .. 20.2**, mean 14.6, sd 1.5. **0/25** over 30×.
+
+> **Corrected 2026-10-15.** The first calibration used `os.urandom` for the 20
+> secondary controls and measured max |z| 5.18 and spectrum max 20.3×. Those
+> streams **could not be regenerated**, and a seed that does not reproduce is
+> not a pin, so they were replaced with the seeded SHA-256 generator and the
+> calibration **re-measured**. The numbers moved in the third decimal, the
+> false-positive count stayed 0/25, and no conclusion changed. The five Mersenne
+> Twister controls kept their original seeds, so the published `OC-16` baseline
+> reproduces byte-for-byte. See Part 13.
 
 ## Demonstrated: fires on all four defects, silent on all 25 controls
 
 | stream | autocorr | spectrum | verdict |
 |---|---|---|---|
-| 25 clean controls | max 5.18 σ | max 20.3× | **silent, 0/25** |
+| 25 clean controls | max 5.01 σ | max 20.2× | **silent, 0/25** |
 | B, bias T=5000 | 79,644 lags over | **8538.7× at 59.938 Hz** | FOUND |
 | C, bias T=500 | 81,145 lags over | 9263.3× at 599.957 Hz | FOUND |
 | D, strong lag corr | 24 lags over | 44.5× | FOUND |
@@ -1322,7 +1331,7 @@ like.
 
 **And the two checks are complementary — neither alone suffices.** E reads
 40.21 σ on autocorrelation but **15.7× on the spectrum, below the clean maximum
-of 20.3×**: the spectrum does not see E at all. Conversely the spectrum names a
+of 20.2×**: the spectrum does not see E at all. Conversely the spectrum names a
 frequency, which autocorrelation does not. Run both; this is why the tool does
 both by default.
 
@@ -1337,7 +1346,7 @@ both by default.
    on **5 of 5** clean streams, 160 false lag hits on one control against the
    ~270 predicted. The correction is what makes a quiet result mean anything.
 3. **Lower the spectral threshold below the clean maximum:** 30× → 0/25;
-   **20× → 2/25**; **13× → 24/25**. The 1.48× margin is doing real work.
+   **20× → 2/25**; **13× → 24/25**. The ~1.5× margin is doing real work.
 
 ## What it does NOT cover — stated so a pass is not read as closure
 
@@ -1394,3 +1403,177 @@ same reason.
 before the thing measured.* Part 5 reasoned about the instrument and got it
 wrong; Part 8 measured it and found the real mechanism. Instrument calibration is
 how that rule gets obeyed rather than merely cited.
+
+---
+
+# Part 12 — OC-18: the case both tools miss. REACHABLE, and confirmed.
+
+Put `OC-16`'s headroom table next to `OC-17`'s limits section and an uncovered
+case falls out: a structure that trips only the **decorative** predictors, by
+**less than their headroom**, is invisible to the battery's verdict; and if it
+also has no linear correlation, it is invisible to the outside check. **Neither
+tool sees it and the published figure is unchanged.**
+
+**It is reachable. Here it is.**
+
+## Construction, and the detour that found the mechanism
+
+`x_i = x_{i-a} XOR x_{i-b}` with probability p, else a fair coin. In ±1 terms
+XOR is multiplication, so `E[x_i x_{i-d}] = p·E[x_{i-a} x_{i-b} x_{i-d}]`: the
+pairwise correlation is a *triple* product, which vanishes unless the three
+indices close through the recurrence.
+
+**First attempt, taps (1,2), failed instructively.** I predicted zero linear
+correlation and the outside check fired at **50 σ**. Reason: **a+b = 3 is itself
+a tap**, so `x_{i-1}x_{i-2}x_{i-3}` closes and a strong linear correlation
+appears at lag 3. Measured across tap choices at p = 0.3:
+
+| taps | max \|z\|, lags 1..400 | |
+|---|---:|---|
+| **(1,2)** | **+50.21 at lag 3** | fires — a+b is a tap |
+| (1,3) | −3.51 | silent |
+| (2,5) | +3.28 | silent |
+| (3,7) | +2.98 | silent |
+| (7,16) | −3.17 | silent |
+| (11,16) | −2.82 | silent |
+
+**Tap choice decides linear visibility.** (1,2) is the pathological case, kept in
+the corpus as `F_xor30` precisely because it is the counterexample.
+
+## The confirmed case: taps (1,3), p = 2 %
+
+`G_xor13_02`. Order 3, so comfortably inside MultiMMC's depth-16 reach; `a+b = 4`
+is not a tap, so no linear correlation at any lag.
+
+| | measurement | against |
+|---|---:|---|
+| **`H_original`** | **0.860003** | clean range **[0.843936, 0.865774]** — **INSIDE**, +0.6 sd |
+| **Compression** (binds) | **+0.0054** | 0.3 × its 2 sd — **noise** |
+| **MultiMMC** | **−0.0266** | **9.0 × its 3 sd — strongly real** |
+| MultiMMC headroom | 0.1417 | the drop is **5× too small to bind** |
+| **outside check, autocorr** | **4.30 σ** | threshold 5.731 — **silent** |
+| **outside check, spectrum** | **16.5×** | threshold 30× — **silent** |
+
+**Both tools report clean. MultiMMC shows a 9 σ-equivalent drop. The only place
+that drop exists is the per-estimator breakdown.**
+
+Tuning confirms the window rather than a lucky point. The drop scales with p
+while Compression tracks MultiMMC at ≈0.76×, so Compression's 20× larger noise
+floor opens a band:
+
+| p | `H_original` | inside clean range? | MultiMMC Δ (× its 3 sd) | Compression Δ (× its 2 sd) | outside check |
+|---:|---:|---|---:|---:|---|
+| **1 %** | 0.865096 | **YES** | −0.0137 (4.6×) | +0.0105 (0.6×) | **silent** |
+| **2 %** | 0.860003 | **YES** | −0.0266 (9.0×) | +0.0054 (0.3×) | **silent** |
+| 3 % | 0.824439 | no | −0.0411 (13.9×) | −0.0302 (1.6×) | silent |
+| 5 % | 0.833548 | no | −0.0699 (23.6×) | −0.0211 (1.1×) | silent |
+| 10 % | 0.749411 | no | −0.1387 (46.9×) | −0.1052 (5.7×) | silent |
+| 30 % | — | no | — | — | fires (7.40 σ) |
+
+The band is **p ≈ 1–2 %**, bounded below by MultiMMC's noise and above by
+Compression's. It is narrow but it is real, and nothing warns you when a device
+sits in it.
+
+## What follows
+
+1. **The per-estimator breakdown is not merely useful, it is NECESSARY.** `XR-06`
+   previously recommended storing it. This case makes it the *only* place the
+   defect is visible: the scalar is clean and the outside check is clean.
+2. **And storing it is not enough — it must be COMPARED against a baseline.** A
+   reading of `MultiMMC = 0.9697` is unremarkable in isolation. It is only
+   meaningful as **−0.0266 against 0.996306 ± 0.000986**. A harness that logs the
+   breakdown without a baseline has the evidence and cannot read it.
+3. **The combined blind spot is bounded, usefully.** Everything that reaches it
+   must be simultaneously below Compression's noise, below every predictor's
+   headroom, and linearly uncorrelated. That is a narrow set — a 40 σ defect
+   (`E`) escapes the battery but not the outside check; a 2 % third-order
+   structure escapes both but costs only ~0.027 bit of a non-binding estimator.
+   **Neither case is catastrophic; both are undetectable in the published
+   figure**, which is the point.
+
+## Are the clean baselines stable enough to serve? Partly — and NOT per device.
+
+Asked directly, because the recommendation in point 2 depends on it.
+
+**Stable enough as a method.** Over five independent clean streams the predictor
+baselines are extremely tight — MultiMMC sd **0.000986**, MCV 0.000464, MultiMCW
+0.000725, LZ78Y 0.000673 — so a 0.027 bit drop is 27 sd and trivially
+detectable. The power is there.
+
+**But the fair-coin baseline is the WRONG baseline for a real device, for three
+reasons:**
+
+1. **A real source is not at 1.0 bit/bit.** The Infinite Noise's design figure is
+   ~0.864 and its measured figure ~0.696. At that level the estimators stand in
+   different relationships to each other — most obviously, **Compression may no
+   longer be the binding estimator**, and if it is not, the entire headroom table
+   is recomputed and `OC-16`'s numbers do not transfer. The regression pins this
+   assumption so a change is caught rather than assumed away.
+2. **The noise floors are not universal.** They were measured at 1,000,000
+   samples and 1-bit symbols. Different lengths and symbol widths give different
+   estimator bias and spread; Compression's sd (0.0092) is 10–20× the
+   predictors', so the band in the table above is a function of the
+   configuration, not a constant.
+3. **The quantity of interest is CHANGE, which needs that device's own history.**
+   The useful comparison is this unit now against this unit when believed
+   healthy — a drift detector.
+
+**So: per-device baselines, established from captures whose build provenance is
+known (`XR-04`), with the fair-coin baselines retained only as the method's
+noise-floor reference.** And a per-device baseline inherits the standing rule:
+it is a claim about a source, so it must come from that source's real captures,
+never from synthetic input.
+
+---
+
+# Part 13 — OC-19: the regression, and shown failing
+
+`cpp/selftest/regression-outside-battery.sh`. Picked up automatically by
+`run-all-checks.sh` (it globs `regression-*.sh`; master has no hand-maintained
+count to break). **Fast mode runs in ~3 s**; `OUTSIDE_BATTERY_FULL=1` adds all
+25 clean streams and the `ea_non_iid` binding check.
+
+**The corpus is reproducible, which it was not before.** The original
+calibration drew 20 of its 25 controls from `os.urandom`. Those cannot be
+regenerated, and **a seed that does not reproduce is not a pin**, so they were
+replaced with a seeded SHA-256 counter-mode generator — still a second,
+genuinely different algorithm from Mersenne Twister — and the calibration was
+**re-measured**:
+
+| | published (5 MT + 20 urandom) | re-measured (5 MT + 20 SHA-256) |
+|---|---:|---:|
+| autocorr max \|z\| | 5.18 | **5.01** |
+| spectrum max | 20.3× | **20.2×** |
+| false positives | 0/25 | **0/25** |
+
+Third-decimal movement; **no conclusion changed.** The five Mersenne Twister
+controls kept their original seeds, so **the published `OC-16` baseline
+reproduces byte-for-byte** — verified: the full run returns Compression =
+0.847017, 0.843936, 0.861222, 0.855238, 0.865774, exactly the published figures.
+
+**It pins outcomes, not constants**, so a change in the FFT or the correlation
+code fails it even with every threshold untouched. Digest mismatch is a
+**failure**, not a warning.
+
+## Shown failing — and the coverage division came out cleaner than expected
+
+| perturbation | result | named failure |
+|---|---|---|
+| bit-reversal permutation broken | **FAIL** | *B spectral peak: got 8538.9x, want 8538.7x* → "the FFT, the mean-centering, or the power normalisation changed" |
+| twiddle error 1e-3 | **FAIL** | same check, 8534.1x |
+| `sqrt(N)` for `sqrt(N−k)` | **FAIL** | *E: got 40.31 σ, want 40.21* → "the correlation accumulator or the z normalisation changed" |
+| spectral threshold 30 → 13 | **FAIL (2)** | 5/5 clean false positives **and** the OC-18 coverage check |
+| twiddle error **1e-5 or smaller** | **PASS — NOT CAUGHT** | a real coverage limit, recorded |
+
+**Two things measurement corrected about my assumptions.** First, **E's sigma is
+insensitive to every FFT perturbation tried** — because `r = c[k]/c[0]` is a
+ratio and the errors cancel. So E pins the *accumulator*, and **B pins the FFT**;
+they are not redundant. Second, a twiddle perturbation at 1e-5 or below changes
+no pinned outcome and is **not caught**. That magnitude is far below what matters
+for these statistics, but it is a limit and it is stated rather than implied.
+
+**And one check exists to catch a false negative, not a false positive:**
+`G_xor13_02` must stay **silent**. It is invisible to this tool by construction,
+so a future version that starts firing on it has genuinely changed coverage, and
+`OC-18` and `XR-06` must be re-documented rather than the change silently
+accepted. **A check that fires on everything pins nothing.**

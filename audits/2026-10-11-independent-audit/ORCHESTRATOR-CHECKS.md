@@ -1771,3 +1771,90 @@ and **not** universal; **a pass is the absence of one kind of evidence, not an
 entropy claim.**
 
 **Status: BUILT and VERIFIED against known input. NOT RUN on hardware.**
+
+---
+
+## OC-18 — the case both tools miss: REACHABLE, confirmed
+
+`OC-16`'s headroom table and `OC-17`'s limits section combine to predict an
+uncovered case: a structure that trips only the decorative predictors by less
+than their headroom, and has no linear correlation, is invisible to the battery's
+verdict *and* to the outside check. **It is reachable.** Full derivation in
+`SECOND-SOURCE-SEARCH.md` Part 12.
+
+`G_xor13_02`: `x_i = x_{i-1} XOR x_{i-3}` with probability 2 %, else a fair coin.
+
+| | measurement |
+|---|---|
+| `H_original` | **0.860003 — INSIDE** the clean range [0.843936, 0.865774], +0.6 sd |
+| Compression (binds) | +0.0054 — 0.3 × its 2 sd, **noise** |
+| **MultiMMC** | **−0.0266 — 9.0 × its 3 sd, strongly real** |
+| MultiMMC headroom | 0.1417 — the drop is **5× too small to bind** |
+| outside check | **4.30 σ / 16.5× — silent on both** |
+
+**Both tools report clean; the defect exists only in the per-estimator
+breakdown.**
+
+**The mechanism, found by being wrong first.** I predicted taps (1,2) would have
+zero linear correlation; the outside check fired at **50 σ at lag 3**, because
+**a+b = 3 is itself a tap** and the triple product closes through the recurrence.
+Taps whose sum is not a tap — (1,3), (2,5), (3,7), (7,16), (11,16) — are all
+linearly silent at max |z| ≈ 3. Tap choice decides linear visibility, and (1,2)
+is kept in the corpus as `F_xor30`, the counterexample.
+
+**The band is p ≈ 1–2 %**, bounded below by MultiMMC's noise and above by
+Compression's, since Compression tracks MultiMMC at ≈0.76× with a 20× larger
+noise floor. Narrow, real, and unannounced.
+
+**Consequence, now in `XR-06`:** the breakdown is not merely useful but
+**necessary** — and insufficient without a **baseline**, since `MultiMMC =
+0.9697` is unremarkable in isolation and damning as −0.0266 against
+0.996306 ± 0.000986. **The fair-coin baselines will not serve per device**: a
+real source is not at 1.0 bit/bit, and at ~0.7–0.86 Compression may not be the
+binding estimator at all, which would invalidate the headroom table rather than
+shift it. Per-device baselines are required, from real captures with known
+provenance — and being source claims, they must never be synthesised.
+
+---
+
+## OC-19 — the regression, with the corpus made reproducible and the checks shown failing
+
+`cpp/selftest/regression-outside-battery.sh`, picked up automatically by
+`run-all-checks.sh`. ~3 s in fast mode. Part 13 has the detail.
+
+**First, a defect in my own earlier work, fixed.** The published calibration drew
+20 of its 25 controls from `os.urandom`, which **cannot be regenerated** — so the
+calibration rested on streams nobody could reproduce. Replaced with a seeded
+SHA-256 counter-mode generator (still a second, different algorithm) and
+**re-measured**: max |z| 5.18 → **5.01**, spectrum max 20.3× → **20.2×**, false
+positives **0/25 either way**. No conclusion changed. The five Mersenne Twister
+controls kept their original seeds, so the `OC-16` baseline **reproduces
+byte-for-byte** — the full run returns Compression = 0.847017, 0.843936,
+0.861222, 0.855238, 0.865774, exactly as published.
+
+**It pins outcomes, not constants** — B's peak at 8538.7× / 59.938 Hz, E at
+40.21 σ / lag 5000 — so an FFT or accumulator change fails it with every
+threshold untouched. It also pins **Compression as the binding estimator on 5/5
+clean streams at 0.8546 ± 0.0092**, because `OC-16`'s whole table assumes it; a
+future build that changes this is told the table is invalid rather than left to
+publish it. Digest mismatch is a failure, not a warning.
+
+**Shown failing, with distinct named failures:**
+
+| perturbation | result |
+|---|---|
+| bit-reversal permutation broken | FAIL — B's peak, 8538.9× |
+| twiddle error 1e-3 | FAIL — B's peak, 8534.1× |
+| `sqrt(N)` for `sqrt(N−k)` | FAIL — E's sigma, 40.31 |
+| spectral threshold 30 → 13 | FAIL ×2 — 5/5 clean false positives **and** the OC-18 coverage check |
+| **twiddle error ≤ 1e-5** | **PASS — not caught; a real limit, recorded** |
+
+**Measurement corrected two assumptions.** E's sigma is **insensitive to every
+FFT perturbation tried**, because `r = c[k]/c[0]` is a ratio in which the errors
+cancel — so **B pins the FFT and E pins the accumulator**, and they are not
+redundant. And the 1e-5 limit is below what matters for these statistics but is
+stated rather than implied.
+
+**One check guards a false negative:** `G_xor13_02` must stay **silent**. If a
+future version fires on it, coverage has genuinely changed and `OC-18`/`XR-06`
+must be re-documented. A check that fires on everything pins nothing.
