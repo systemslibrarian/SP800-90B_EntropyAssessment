@@ -2146,3 +2146,197 @@ fixes the *key-set completeness* defect and the *one* value that arithmetic coul
 pin. **It does not make the reference corpus trustworthy**, and the corpus still
 must not be regenerated from these tools while they carry known permissive
 defects.
+
+## OC-22 — C22's bound: measured, and shown to be set by the arithmetic. The floor expression written out.
+
+`REPAIR-STRATEGY.md` carried `C22` as "Class 2, bound NOT YET MEASURED" — the
+one Class 2 entry without a number, and the hole in the floor-by-subtraction
+route. `OC-12` had already shown the remainder of the cluster conservative *at
+the extremes tested*; what it had not done was state a ceiling on the
+**permissive** side and say whether that ceiling comes from the arithmetic or
+from the data. This check does both, for all three parts of the cluster. Harness:
+`reproducers/c22_bound.cpp` calls the production `calc_p_local`,
+`prediction_estimate_function`, `predictionEstimate` and `com_exp` directly.
+Oracle: `oracles/p_local_exact.py`, 50-digit `mpmath`, written from the
+standard's §6.3.7 formula and **not** from the tool's code. Log:
+`logs/c22/oc22-oracle.log`.
+
+**The oracle is pinned independently of the tool.** The standard's P_local
+equation is Feller's run-probability approximation; exponentiating the oracle's
+`f` and comparing against an exact transfer-matrix computation of
+*P(no run of r in N trials)* agrees to 1.5e-16 relative at four (p, r, N) points.
+So the oracle computes what the standard says, checked against first principles,
+not against the tool.
+
+### Part 1 — `P_local`'s bisection quantisation (`predictors-5`)
+
+**Mechanism.** The objective `f(p)` carries the term `(N+1)·log(x)` where `x` is
+the fixed point of `x = 1 + q·p^r·x^(r+1)`, computed in `long double` which on
+this build is 64-bit (`sizeof(long double) == 8`, `REPRO-01`). `x` lies in
+`[1, 2)`, so it is representable only in steps of `2^-52`, and rounding it to
+nearest leaves an error of at most `2^-53`; multiplied by `(N+1)` that is the
+quantisation step of `f`. The bisection returns `hbound`, the side on which
+*computed* `f ≤ ln 0.99`; when the computed `f` is below the exact `f` by up to
+that step, `hbound` can sit **below** the exact root by `ε_f / |f'(p*)|`, and
+`entEst = −log2(curMax)` is then too **high** by `ε_f / (|f'(p*)|·p*·ln 2)`.
+That is the permissive path. The pre-guard
+`prediction_estimate_function(curMax) > log(0.99)` can skip the search by the
+same error, bounded by the same quantity.
+
+**Measured, 592 near-root points** (`p* × (1 ± 10^-3 … 10^-12)`, N from 2 to
+2^40, r from 2 to 256): the tool's `f` differs from the exact `f` by at most
+**0.4991 × (N+1) × 2^-52**, i.e. the predicted half-ULP of `x` amplified by
+`(N+1)`, at every N. The per-N maxima sit at 0.33–0.50 of that unit with no
+trend. Far from the root the tool's `f` can be badly wrong — the 66-step
+recurrence cap (`predictors-7`) lives there — but the bisection consumes only
+the sign of `f − ln 0.99`, and at **0 of 238** far-from-root points is the sign
+wrong.
+
+**Measured, 634 sweep points** (`calc_p_local` versus the exact root, 18 values
+of N from 2 to 2^53, 14 values of r from 2 to 1024, four `ldomain` values):
+
+| N | worst permissive inflation (bit) | at r | ceiling `c·(N+1)·2^-52 / (|f'(p*)| p* ln 2)` |
+|---:|---:|---:|---:|
+| 1 000 | +4.1e-12 | 3 | 5.3e-12 |
+| 100 000 | +2.8e-10 | 2 | 8.0e-10 |
+| 1 000 000 | +1.1e-09 | 5 | 3.2e-09 |
+| 7 999 937 (the harvested bitstring N) | +8.1e-09 | 10 | 1.3e-08 |
+| 8 000 000 | **+4.0e-08** | 2 | **6.4e-08** |
+| 1e9 | +3.0e-06 | 2 | 8.0e-06 |
+| 2^53 | −3.3 (conservative) | 2 | — |
+
+The realised inflation is at most **0.928** of the per-point ceiling across all
+634 points. It is linear in N, as the mechanism says it must be.
+
+**Is it bounded by the arithmetic, or by the data?** Both inputs to the ceiling
+are pinned. `c = 0.4991` is the half-ULP of `x` — arithmetic. The denominator
+`|f'(p*)|·p*` has a **minimum over the sweep of 1.979e-02 at r = 2, N = 5**, and
+the analytic form `0.01005·(r − p/q)` explains it: it is smallest at the smallest
+admissible `r`, and `r = 1` cannot reach `P_local` at all (a run length of 0 means
+`C = 0`, which takes the `1 − 0.01^(1/N)` branch and fails the guard). So the
+sensitivity is bounded below over every `(r, p*)` the search can be asked for.
+What remains is `N`, the number of predictions — **a property of the
+procedure (sample count × word size), not of the stream**. The ceiling is
+therefore a function of a configured quantity, which is Class 2:
+
+```
+B_Plocal(N) = c · K · (N+1)  with  c = 0.4991,  K = 2^-52 / min(|f'(p*)| p* ln 2) = 1.619e-14 bit
+            = 8.08e-15 · (N+1) bit         → 6.5e-08 bit at N = 8e6;  8.1e-09 bit at N = 1e6
+```
+
+It is **per-estimator** (each of the four predictors, each path), and because
+the final figure is a minimum over estimators it bounds the final figure too.
+Architecture: this is the 64-bit-`long double` value; on x86-64's 80-bit
+`long double` the step is 2048× smaller, so the stated bound is valid on both.
+
+The finder's "+1.6e-11 bit" (`CLUSTERS.md`) is consistent with this at
+N ≈ 10^6 on a 64-bit `long double` and was presumably a single instance; the
+ceiling above supersedes it.
+
+### Part 2 — `P_global'` dividing by `N − 1` on the approach to `N == 1` (`predictors-9`)
+
+Production `predictionEstimate` versus the standard's formula with the exact
+quantile and with the literal `2.576`, every `C ∈ {0, 1, 2, N/2, N−1, N}` for
+`N ∈ {1, 2, 3, 4, 5, 8, 16, 64, 1000, 10^6, 8·10^6}` and `k ∈ {2, 256}` (72
+rows in the log):
+
+- **tool − formula(exact z)**: between −5.9e-17 and +8.4e-15 at every row —
+  rounding, nothing else. The code *is* the formula.
+- **`N == 1`**: `−0` for every `C ≥ 1` (the `sqrt(0/0)`/`sqrt(x/0)` is absorbed,
+  `OC-12`), and `0.0145` bit for `C == 0` from the documented branch. Zero
+  entropy is the conservative end; there is **no inflation to bound**.
+- **`N = 2 … 5`**: the `min(1, …)` clamp fires for every `C ≥ 2`, giving `−0`;
+  the only non-clamped rows are `C = 1`, and those are where the literal-text
+  delta sits.
+- **tool − formula(literal 2.576)**: at most **+6.8867e-05 bit**, always at
+  `C = 1`, independent of N. That is the `ZALPHA` item, Part 3.
+
+**Conclusion: the `N − 1` divisor contributes 0 to the permissive bound at
+every N ≥ 1.** `B_Pglobal' = 0`.
+
+### Part 3 — `ZALPHA` versus the literal `2.576`, on every estimator that uses it
+
+`OC-8` measured this on real values for three predictors and called it "not a
+defect" (`F07`: `2.576` is the standard's rounding of the quantile the tool
+uses). That disposition stands. But `ZALPHA` is in **eight** of the ten
+estimators (`most_common.h`, `lrs_test.h` ×4, `collision_test.h`,
+`compression_test.h`, `utils.h`), not only the predictors, and a floor that is
+defensible against the *literal* text needs the ceiling, so it is measured here
+and carried as a **separately labelled term** that a reader who accepts `F07`
+sets to zero.
+
+`Δz = 2.576 − 2.5758293035489008 = 1.70696e-04`.
+
+**Closed-form estimators** — MCV, t-Tuple, LRS, and the predictors' `P_global'`
+all use `p_u = min(1, p̂ + z·sqrt(p̂(1−p̂)/(n−1)))`. Since the count behind `p̂`
+is at least 1, `p̂ ≥ 1/n`, which gives `sqrt(p̂(1−p̂)/(n−1)) ≤ p̂` exactly, and
+hence
+
+```
+ΔH ≤ Δz / ((1 + z_tool)·ln 2) = 6.887e-05 bit     per estimator, any n, any p̂
+```
+
+attained at count = 1 (the grid in Part 2 hits 6.8867e-05 at `C = 1`). On the
+harvested run the instances are +8.7e-08 (bitstring) and +3.7e-06 to +3.8e-06
+(literal, per symbol) — the table in the log lists all fourteen.
+
+**Collision** (bitstring only). `X' = X̄ − z·s/√v`, `p = ½ + sqrt(1.25 − X'/2)`,
+capped at `H = 1` when `X' ≥ 2.5`. The sensitivity `dH/dX'` is **not** bounded —
+it diverges as `X' → 2.5` — but the inflation is, because `H` is capped: scanning
+every `X'` on the approach to the cap gives `max ΔH = (2/ln 2)·sqrt(ΔX'/2)` with
+`ΔX' ≤ Δz·½/√(n/3)` (`t ∈ {2,3}` bounds `s ≤ ½`, and `v ≥ n/3`):
+
+| n | ΔX' ≤ | ceiling (scan) | closed form | instance on the real run |
+|---:|---:|---:|---:|---:|
+| 1e6 | 1.48e-07 | **7.84e-04 bit** | 7.84e-04 | — |
+| 8e6 | 5.23e-08 | **4.66e-04 bit** | 4.66e-04 | +2.5e-06 bit |
+
+**Compression** (bitstring only). The solved quantity is `com_exp(p) = X'` with
+`com_exp(p) = G(p) + 63·G((1−p)/63)`, which is **stationary at p = 1/64** (the
+two `G'` terms cancel at the uniform point), so the sensitivity is quadratic on
+the approach to the cap exactly as for collision, and a linearised bound would
+be wrong. Measured by scanning `X'` from the cap `G(1/64)` downward through the
+**production** solve (`comp` with `σ = 0`), with
+`ΔX' ≤ Δz·σ_max/√v`, `σ_max = 0.5907·log2(num_blocks)/2` (Popoviciu, the
+per-block values lie in `[0, log2 num_blocks]`):
+
+| n | num_blocks | ΔX' ≤ | ceiling (scan) | where | instance on the real run |
+|---:|---:|---:|---:|---|---:|
+| 1e6 | 166 666 | 2.15e-06 | **3.36e-03 bit** | 1.0 ΔX' below the cap | — |
+| 8e6 | 1 333 333 | 8.89e-07 | **2.16e-03 bit** | 1.0 ΔX' below the cap | +4.0e-06 bit |
+
+The ceiling is reached only by a source whose compression statistic lands within
+one `ΔX'` of the uniform expectation — a figure the estimator would print as
+≈ 1.0 bit — whereas the harvested ideal-uniform run sits at 0.926 with an
+instance of 4.0e-06. **It is a ceiling set by `Δz`, the cap, and `n`; nothing in
+it is a statistic of the stream.** So `C22` does **not** move to Class 4.
+
+**The final-figure `ZALPHA` term** is the maximum over estimators of these
+per-estimator ceilings (a minimum is 1-Lipschitz in each argument). The
+literal-path ceilings are per *symbol* and divide by the word size when the
+per-bit figure is formed, so the bitstring compression term dominates:
+
+```
+B_z(n) = 3.36e-03 bit at n = 1e6 bits;  2.16e-03 bit at n = 8e6 bits;   0 under F07's reading
+```
+
+### What this settles
+
+| part | direction | ceiling | set by | class |
+|---|---|---|---|---|
+| `P_local` quantisation | permissive, linear in N | `8.08e-15·(N+1)` bit; **6.5e-08 at N = 8e6** | half-ULP of `x` × (N+1), minimum sensitivity at r = 2 | 2 |
+| `P_global'` at/near `N == 1` | conservative | **0** | `−0` at N = 1; clamp for N ≤ 5 | 2 |
+| `ZALPHA` vs literal `2.576` | permissive | **3.36e-03 at n = 1e6, 2.16e-03 at n = 8e6** (compression binds) | `Δz`, the cap, `n` | 2, and 0 under `F07` |
+
+All three are per-estimator ceilings that bound the final figure. The
+floor-by-subtraction expression is now written out in `REPAIR-STRATEGY.md`
+("The floor, as arithmetic").
+
+**Verified**: the oracle against first principles; `c = 0.4991`; the sign check;
+634 sweep points under the ceiling; `P_global'` at 72 rows; the closed-form
+`ZALPHA` bound and its attainment at `C = 1`; collision and compression scans
+through production code, with the production solve reproducing the harvested
+run's printed `p` and `H` to the last digit. **Not verified**: the x86-64
+`long double` value of `c` (argued from the format, not measured); any claim
+about a *source* — every input here is synthetic, which is the licensed use for
+a claim about an instrument.

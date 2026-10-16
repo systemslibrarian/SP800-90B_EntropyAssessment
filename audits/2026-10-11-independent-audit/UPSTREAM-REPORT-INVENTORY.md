@@ -5,6 +5,16 @@ joshuaehill/proportionRounding"); fork `master @ ea2b726`, **84 commits ahead**.
 Every "upstream presence" row below was probed against `upstream/master` with
 `git grep` / `git show`, not inferred. **Nothing sent. Inventory only.**
 
+> **Decision, 2026-10-15 (Paul): no upstream report.** The fork is to be
+> repaired and documented instead. Basis: a previous upstream PR went
+> unacknowledged. This inventory is **kept, not sent** — it documents what is
+> wrong with the tool being run, and its separation of upstream defects from
+> fork-specific ones is what makes the repair work legible. The sequencing
+> recommendation at the end of this document is therefore moot as a sending
+> plan; it stands as a priority order for the repair record. `C22`'s bound,
+> which item 4 of that recommendation was waiting on, is now measured in
+> `ORCHESTRATOR-CHECKS.md` `OC-22`.
+
 **The criterion that sorts this document:** a defect reproducible on **clean
 upstream at a named commit** is a strong report. A defect reproducible only on
 our modified tree is a weak report, because the reader must first accept 84

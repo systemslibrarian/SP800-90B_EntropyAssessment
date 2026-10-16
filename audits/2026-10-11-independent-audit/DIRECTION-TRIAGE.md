@@ -183,3 +183,14 @@ Recorded with the specific reason and what would put each back on the path.
 | `C17` | Last-digit platform divergence, ≤ 2e-14 bit — below any decision the 0.5 bit/bit threshold makes. **Note:** this is *not* the same as `REPRO-01`, which is a different-figure-or-no-figure divergence and is on-path | A threshold decision at a precision where 1e-14 matters, which the goal does not have |
 | `C10`, `C13`, `C15`, `C19` | Diagnostics, `errorMessage` text, negative-zero presentation, documentation. None changes a figure, a verdict, an exit status, or memory safety | A consumer parsing `errorMessage` text or the sign of a zero as control flow — which `XR-01` shows is the kind of thing a harness does do, so `C15` would move on-path if TruePad branched on a figure's string form |
 | `C04` | Verified NEUTRAL: the computed verdict is identical to a spec-correct implementation's on every `df < 1` input | Nothing; this one is closed, not set aside |
+
+# Status update — 2026-10-15, after measuring C22's bound (OC-22)
+
+`C22` is **bounded, in full**. `P_local` quantisation: permissive, ceiling
+`8.08e-15·(N+1)` bit (6.5e-08 at N = 8e6), set by the half-ULP of `x`.
+`P_global'` at `N == 1` and on the approach: conservative, contributes 0.
+`ZALPHA` versus the literal `2.576`: ceiling 2.16e-03 bit at n = 8e6
+(compression binds), zero under `F07`. The cluster stays Class 2; nothing in it
+scales with a statistic of the stream. The floor-by-subtraction expression is
+written out in `REPAIR-STRATEGY.md`. Paul's decision of 2026-10-15: **no
+upstream report** — the inventory is kept as documentation, not sent.

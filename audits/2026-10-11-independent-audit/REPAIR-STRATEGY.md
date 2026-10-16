@@ -44,7 +44,7 @@ not a ceiling.
 | **`C03`** IID verdict discards a failed test | **3 → NEEDS CODE** (unboundable) | none — track-selection gap is data-dependent | **YES — verified** |
 | **`C07`** underflow → fabricated figure | **1 + 4** | asserts live ⇒ fail-closed; under `NDEBUG` **no bound exists** | **YES — verified, and build-independent** |
 | **`C23`** restart cutoff above the exact binomial | **2 → BOUNDABLE** | exact oracle exists; slack measured | **no — untouched** |
-| **`C22`** `ZALPHA` raises every prediction estimate | **2, bound NOT YET MEASURED** | boundable in principle; "tiny" is a claim | **no — untouched** |
+| **`C22`** `ZALPHA` raises every prediction estimate; `P_local` quantisation; `P_global'` at `N == 1` | **2 → BOUNDABLE, measured (`OC-22`)** | `P_local`: **8.08e-15·(N+1) bit** (6.5e-08 at N = 8e6); `P_global'`: **0**; `ZALPHA` vs literal 2.576: **2.16e-03 bit** at n = 8e6 (3.36e-03 at n = 1e6), **0 under `F07`** | **no — untouched; needs no patch** |
 | **`C01`** two-sided comparison error | **2 → BOUNDABLE** | **±3.69e-4 bit**, measured | no |
 | **`C02`** `hAssessed` carries `word_size × h'` | **1 → CONFIGURATION/READING** | exact factor `word_size` ∈ 1..8 | no (F23 decision stands) |
 | **`C06`** `h_out` 7.1552 vs a 7-bit ceiling | **3**, but **OFF-PATH** | — | no |
@@ -104,21 +104,35 @@ accept/reject decision against the exact oracle** and treat the tool's verdict
 as advisory. That is strictly better than a subtraction because the oracle gives
 the *right* answer rather than a conservative envelope.
 
-**`C22` — boundable in principle; the bound is NOT measured.** `ZALPHA` is the
-exact 0.995 quantile where the spec text prints 2.576, and by the finder's own
-description it "raises every prediction estimate" — i.e. **permissive on the
-figure itself**, which `C23` is not. **"Magnitudes tiny" is a claim, not a
-measurement**, and it is the only unmeasured item standing between the current
-figure and a defensible floor. **This is the highest-value open measurement in
-this document**: quantifying it either moves `C22` into Class 2 with a usable
-bound, or proves it needs code. It needs no hardware and no patch.
+**`C22` — bounded, measured (`OC-22`, 2026-10-15).** Three parts, each with
+a ceiling set by the arithmetic and none by a statistic of the stream, so the
+cluster stays in Class 2 rather than joining `C03` in Class 4:
+
+- **`P_local` bisection quantisation** — permissive, **linear in N**: the
+  objective's `(N+1)·log x` term is quantised at the half-ULP of `x`, and the
+  root's sensitivity is bounded below (minimum at `r = 2`). Ceiling
+  `8.08e-15·(N+1)` bit per estimator: **6.5e-08 bit at N = 8e6** (1,000,000
+  8-bit samples on the bitstring path), 8.1e-09 at N = 1e6. N is the number of
+  predictions — set by the procedure, not the data. Realised worst over 634
+  sweep points is 0.93 of the ceiling.
+- **`P_global'` with the `N − 1` divisor** — conservative at every N; `−0` at
+  `N == 1`; the clamp absorbs `N ≤ 5` for `C ≥ 2`. Contributes **0**.
+- **`ZALPHA` versus the literal `2.576`** — permissive, present in eight of ten
+  estimators. Closed-form estimators: ≤ 6.887e-05 bit each. Collision and
+  compression are quadratic on the approach to their caps; scanned through
+  production code, the ceiling is **2.16e-03 bit at n = 8e6** and 3.36e-03 at
+  n = 1e6, with compression binding. This is **not a defect** (`F07`, `OC-8`:
+  the tool uses the exact quantile; the text prints its rounding), so it is a
+  *literal-text parity* term, carried separately and **zero under `F07`'s
+  reading**.
+
+The measurement needed no hardware and no patch, which is what Class 2 means.
 
 ---
 
 ## Class 3 — needs code. And the validation problem is the hard part.
 
-**`C03`** (unboundable; code written on the repair branch), **`C22`** if its
-bound turns out to matter, **`C08`** (partly closed today), **`C06`**/**`C09`**
+**`C03`** (unboundable; code written on the repair branch), **`C08`** (partly closed today), **`C06`**/**`C09`**
 (off-path), and every unknown-direction cluster once its direction is settled.
 
 ### How a code fix could be validated, given that the corpus cannot vouch for it
@@ -251,18 +265,69 @@ yes, for a reason that was not visible before this assessment.**
    branch. It is written, and it now has corpus-free validation (build-
    differential plus a constructed input).
 2. **Everything left after the rebase is Class 1 or Class 2** on the
-   Chor–Goldreich path: `C22` (bound unmeasured), `C01` (±3.69e-4), `C02`
+   Chor–Goldreich path: `C22` (bounded, `OC-22`), `C01` (±3.69e-4), `C02`
    (read `h'`), `C23` (use the exact oracle for the restart decision). That is a
    defensible floor; the current state is not.
 3. **Before the rebase, two things that are cheaper than it and do not depend on
-   it:** measure `C22`'s bound, and apply `C23`'s oracle to the restart
-   decision. Both are free, neither touches the tools, and `C22` is the only
-   unmeasured quantity between the figure and a floor.
+   it:** measure `C22`'s bound — **done, `OC-22`** — and apply `C23`'s oracle to
+   the restart decision. Neither touches the tools; with `C22` measured, no
+   unmeasured quantity remains between the figure and a floor.
 4. **Enforce `ASSERTS-LIVE` regardless.** It is the cheapest treatment, it is
    already mechanised, and it remains necessary for `C09` and for any binary
    whose provenance is not ours.
 5. **`REPAIR-BLOCK-01` needs an explicit decision**, not an inference, before the
    branch merges.
+
+### The floor, as arithmetic
+
+Written out so that in January it is read, not reconstructed. All terms are
+**per bit**. `h'` is the per-bit figure the tool prints — `min(H_bitstring,
+H_original / word_size)` — **not** `hAssessed`, which carries `word_size × h'`
+(`C02`). `N` is the predictor sample count (≈ the bitstring length), `n` the
+bitstring length; both are set by the procedure (1,000,000 samples × word size).
+
+```
+H_floor  =  h'                                   the reported per-bit figure, asserts-live build, Chor–Goldreich path
+          − 3.69e-04                             C01: two-sided last-digit comparison error, measured bound, sign chosen by the data
+          − 8.08e-15 · (N + 1)                   C22a: P_local bisection quantisation, half-ULP of x amplified by N  (6.5e-08 at N = 8e6)
+          − 0                                    C22b: P_global' at N == 1 — conservative at every N, nothing to subtract
+          − B_z(n)                               C22c: ZALPHA vs the literal 2.576; B_z = 2.16e-03 at n = 8e6, 3.36e-03 at n = 1e6
+                                                       (compression binds); B_z = 0 under F07's reading, which is the audit's own disposition
+
+  subject to  RESTART-ACCEPT(exact)             C23: not a subtraction. Recompute the §3.1.4.3 accept/reject decision with
+                                                       oracles/restart_cutoff_exact.py; if the exact cutoff rejects, no figure is awarded.
+                                                       Subtracting its 0.341-bit slack from h' would be a category error — it governs
+                                                       acceptance, not the per-bit figure.
+
+  excluded    C07, C03                           closed by code, not bounded: the repair branch's log-domain LRS and the
+                                                       fail-closed IID verdict. Until merged, the exclusion holds only for a figure
+                                                       produced by that branch with asserts live; on master it does not hold.
+  excluded    C02                                a reading, not a subtraction: use h', never hAssessed.
+```
+
+**Evaluated for the procedure this project runs** (1,000,000 8-bit samples, so
+`N ≈ n = 8e6` on the bitstring path):
+
+```
+H_floor = h' − 3.69e-04 − 6.5e-08 − 2.16e-03  ≈  h' − 2.53e-03      (literal-text reading)
+H_floor = h' − 3.69e-04 − 6.5e-08                ≈  h' − 3.69e-04           (F07 reading: 2.576 is a rounding)
+```
+
+Worked on the harvested ideal-uniform run (`logs/c22/predictor-intermediates.log`,
+compression binding at `h' = 0.92641`): **0.9239** under the literal reading,
+**0.9260** under `F07`. The 0.5 bit-per-bit threshold is three orders of
+magnitude away from either term, so for this project the floor and the figure
+decide identically; the expression exists so that the claim "it is a floor" rests
+on written arithmetic rather than on an adjective.
+
+**What makes each term a bound rather than an instance** — `C01`: a last-digit
+comparison error, intrinsically ±1 ULP of the compared quantity. `C22a`: the
+quantisation step of `f` is `2^-53·(N+1)` by the representation of `x`, and the
+root's sensitivity is bounded below over every admissible `(r, p)` (`OC-22`,
+Part 1). `C22c`: `Δz` is a fixed constant and every estimator's inflation is
+capped by its own ceiling (`H ≤ 1`, `p ≥ 1/64`), with the maximum over the
+approach to the cap scanned through production code (`OC-22`, Part 3). None
+scales with a statistic of the stream, which is the test `C03` fails.
 
 ### The governing constraint: two figures, always
 
