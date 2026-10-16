@@ -41,8 +41,8 @@ not a ceiling.
 
 | Defect | Treatment | Bound / configuration | Closed on repair branch? |
 |---|---|---|---|
-| **`C03`** IID verdict discards a failed test | **3 → NEEDS CODE** (unboundable) | none — track-selection gap is data-dependent | **YES — verified** |
-| **`C07`** underflow → fabricated figure | **1 + 4** | asserts live ⇒ fail-closed; under `NDEBUG` **no bound exists** | **YES — verified, and build-independent** |
+| **`C03`** IID verdict discards a failed test | **3 → CLOSED BY CODE** (was Class 4) | none — track-selection gap is data-dependent | **YES — merged to master `d226f18`, 2026-10-15** |
+| **`C07`** underflow → fabricated figure | **CLOSED BY CODE** (was 1 + 4) | log-domain LRS; identical in both builds | **YES — merged to master `d226f18`, 2026-10-15; build-differential re-run after the merge** |
 | **`C23`** restart cutoff above the exact binomial | **2 → BOUNDABLE** | exact oracle exists; slack measured | **no — untouched** |
 | **`C22`** `ZALPHA` raises every prediction estimate; `P_local` quantisation; `P_global'` at `N == 1` | **2 → BOUNDABLE, measured (`OC-22`)** | `P_local`: **8.08e-15·(N+1) bit** (6.5e-08 at N = 8e6); `P_global'`: **0**; `ZALPHA` vs literal 2.576: **2.16e-03 bit** at n = 8e6 (3.36e-03 at n = 1e6), **0 under `F07`** | **no — untouched; needs no patch** |
 | **`C01`** two-sided comparison error | **2 → BOUNDABLE** | **±3.69e-4 bit**, measured | no |
@@ -256,8 +256,7 @@ made on evidence; **the rebase remains NOT authorized.**
 
 ## Recommendation
 
-**Repair, by rebasing — and the answer to "is the rebase worth reopening" is
-yes, for a reason that was not visible before this assessment.**
+**Repair, by merging the branch — done 2026-10-15, see "Register after the merge" below. The reasoning that led there is kept as written:**
 
 1. **The repair branch is the only thing that closes the two unboundable
    defects.** `C03` and `C07` have no bound to subtract, so documentation and
@@ -276,7 +275,75 @@ yes, for a reason that was not visible before this assessment.**
    already mechanised, and it remains necessary for `C09` and for any binary
    whose provenance is not ours.
 5. **`REPAIR-BLOCK-01` needs an explicit decision**, not an inference, before the
-   branch merges.
+   branch merges. **Decided by Paul, 2026-10-15: lifted; branch merged.**
+
+### Register after the merge — 2026-10-15
+
+`repair/2026-10-09-verified-defects` is on master at merge commit `d226f18`,
+authorised by Paul after `REPAIR-BLOCK-01` was lifted on the finding above. The
+last unrepaired master is tagged `unrepaired-reference-2026-10-15`
+(`BUILDING.md`, "The unrepaired reference tool", gives the build command).
+
+**How the merge was chosen.** Drift measured first (merge-base `106d31c`):
+62 files changed only on the branch (+3328/−398, of which `cpp/` +1300/−311);
+17 non-audit files plus 210 audit files changed only on master; **4 changed on
+both** (`.gitignore` 3/1, `regression-docs.sh` 37−3/20−4,
+`regression-restart.sh` 10−1/70−0, `run-all-checks.sh` 22−3/67−9), all four
+auto-merged with **zero textual conflicts** in a dry run. Rebase was rejected
+even though it was the original plan: the branch's own handoff pins its
+reviewed revision by hash (`b3db7ab`), which a rebase rewrites. Adopt-by-file
+and reimplementation had nothing to offer against zero conflicts. A true
+`--no-ff` merge was used. Two **semantic** conflicts the auto-merge could not
+see were fixed in the merge commit and would otherwise have failed the suite
+closed: the branch's script inventory lacked master's
+`regression-outside-battery.sh`, and its fixture manifest pinned six reference
+files master had amended in `OC-21`.
+
+**Validation, by build-differential first** (`reproducers/build-differential.sh`,
+inputs generated from the fixed seed, correct verdict known by construction):
+
+| | W = 2000 | W = 20000 |
+|---|---|---|
+| **before** (tag, control — the guard shown failing) | asserts-live **134**, NDEBUG **0** with `hAssessed 0.99578` | asserts-live **134**, NDEBUG **0** with `hAssessed 0.99595` — **FAIL** |
+| **after** (`d226f18`) | both builds exit **1**, `IID test suite failed`, no `hAssessed` — **AGREE** | both builds exit **1**, no `hAssessed` — **AGREE** |
+
+Logs: `logs/ndebug/premerge-build-differential-control.log`,
+`logs/ndebug/postmerge-build-differential.log`. The asserts-live `ea_iid` was
+built twice and hashed identically (`logs/merge/binaries.sha256`).
+
+Then the suite, macOS arm64, Apple clang, the Makefile's own flags, at
+`d226f18` (`logs/merge/`):
+
+| run | result |
+|---|---|
+| `run-all-checks.sh --allow-known-platform-deltas` | **20 passed, 0 failed (18 regression scripts)** — pin-check, selftest, and all 18 including `regression-iid-failclosed`, `regression-selftest-inventory`, `regression-outside-battery` |
+| `run-all-checks.sh` (strict) | 19 passed, 1 failed: `selftest`, exactly `biased-random-bytes.bin ringOsc-nist.bin`, the documented upstream #155 platform deltas and nothing else |
+| `harness-inventory-mutation-test.sh` | PASS (complete, deletion, injection, rename, duplicate controls) |
+| `tools/build-provenance-canary.sh` on both builds | **INDETERMINATE, both** — see below |
+
+**What the merge closes.** `C07` and `C03` leave Class 4; nothing is left in
+Class 4. Class 1: `C02` (read `h'`), `REPRO-01` (pin the architecture),
+`C09` (asserts live; off-path). Class 2: `C01` (±3.69e-4), `C22` (bounded,
+`OC-22`), `C23` (exact-oracle restart decision). Class 3 still needing code:
+`C08` (partly closed, `OC-21`), `C06`/`C09` (off-path conditioning tool), and
+every unknown-direction cluster — `C14`, `C16`, `C18`, `C20`, `C21` — once its
+direction is settled.
+
+**What the merge does NOT close, so that the record resists being read as
+"the audit is closed":** `C23` (the simulated restart cutoff still sits above the
+exact one; use the oracle), `C22` (bounded, not removed — the floor still
+subtracts it), `C08`, the off-path conditioning clusters, the five
+unknown-direction clusters, `C-01` (carried, `restart_main.cpp`), the x86-64
+`long double` path (unverified), and every physical item (NOT RUN). It also
+**changes one control**: the provenance canary's two signatures describe the
+unrepaired tool, so on master it now returns INDETERMINATE for *both* builds and
+no longer discriminates NDEBUG — recorded in the canary header and
+`BUILDING.md`; a repaired-tool NDEBUG probe is new work, and until it exists the
+route is to build from the pinned commit.
+
+**Evidentiary standing, unchanged by the merge:** the repairs are self-authored
+and unreviewed. Every figure from the repaired build is reported with that
+sentence and with the tag's figure beside it.
 
 ### The floor, as arithmetic
 
@@ -299,9 +366,11 @@ H_floor  =  h'                                   the reported per-bit figure, as
                                                        Subtracting its 0.341-bit slack from h' would be a category error — it governs
                                                        acceptance, not the per-bit figure.
 
-  excluded    C07, C03                           closed by code, not bounded: the repair branch's log-domain LRS and the
-                                                       fail-closed IID verdict. Until merged, the exclusion holds only for a figure
-                                                       produced by that branch with asserts live; on master it does not hold.
+  excluded    C07, C03                           closed by code, not bounded — IN FACT since the 2026-10-15 merge (d226f18):
+                                                       master's LRS is log-domain and the IID verdict fails closed, with both
+                                                       builds measured identical after the merge. For a figure from the tag
+                                                       unrepaired-reference-2026-10-15 the exclusion does NOT hold and no bound
+                                                       exists; that figure is the reference, reported alongside, never the floor.
   excluded    C02                                a reading, not a subtraction: use h', never hAssessed.
 ```
 

@@ -1,0 +1,20 @@
+input W=2000 sha256 a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+W=2000  exit: asserts-live=1  ndebug=1
+  live:   ** Passed chi square tests
+  live:   ** Failed length of longest repeated substring test
+  live:   IID test suite failed: no IID min-entropy estimate was awarded.
+  ndebug: ** Passed chi square tests
+  ndebug: ** Failed length of longest repeated substring test
+  ndebug: IID test suite failed: no IID min-entropy estimate was awarded.
+  AGREE: both builds refuse identically
+input W=20000 sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+W=20000  exit: asserts-live=1  ndebug=1
+  live:   ** Passed chi square tests
+  live:   ** Failed length of longest repeated substring test
+  live:   IID test suite failed: no IID min-entropy estimate was awarded.
+  ndebug: ** Passed chi square tests
+  ndebug: ** Failed length of longest repeated substring test
+  ndebug: IID test suite failed: no IID min-entropy estimate was awarded.
+  AGREE: both builds refuse identically
+build-differential: PASS
+diff exit 0

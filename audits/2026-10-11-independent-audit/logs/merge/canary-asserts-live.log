@@ -1,0 +1,27 @@
+canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/ea_iid.merged.live
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.cWOmmS/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: exit    1
+canary: BUILD   INDETERMINATE
+canary: The outcome matched neither signature. This is NOT a pass.
+canary: Refuse any figure from this binary until provenance is established
+canary: by other means. Known causes of a legitimate INDETERMINATE:
+canary:   * a long double wider than 80 bits, where W=20000 may not reach
+canary:     the underflow bound. W=20000 covers 64-bit (W>1022) and 80-bit
+canary:     (W>16382) long doubles; the 80-bit case is an exponent-range
+canary:     argument, not a measurement taken on that platform.
+canary:   * a timeout (CANARY_TIMEOUT, currently 1800s)
+canary:   * a tool that is not ea_iid
+canary: ---- captured output (last 10 lines) ----
+canary:   
+canary:   Literal Longest Repeated Substring results
+canary:   	P_col: 0.500000
+canary:   	Length of LRS: 20002
+canary:   	Pr(X >= 1): 0.000000
+canary:   ** Failed length of longest repeated substring test
+canary:   
+canary:   ** Skipped IID permutation tests after an earlier required IID test failure
+canary:   
+canary:   IID test suite failed: no IID min-entropy estimate was awarded.
+canary exit 3

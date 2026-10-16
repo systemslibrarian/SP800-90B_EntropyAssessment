@@ -1,0 +1,2 @@
+harness-inventory-mutation-test: PASS (complete, deletion, injection, rename, duplicate controls)
+exit 0

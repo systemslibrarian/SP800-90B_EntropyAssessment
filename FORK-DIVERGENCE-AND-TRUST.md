@@ -128,6 +128,13 @@ item:
 These do not recreate the arbitrary-executable TruePad bypass, but they prevent
 an honest claim that every known implementation issue is fixed.
 
+**2026-10-15.** `repair/2026-10-09-verified-defects` is merged into master
+(`d226f18`), so the IID fail-closed verdict and the log-domain LRS probability
+are now master behaviour (audit clusters `C07` and `C03` closed in fact). The
+unrepaired tool is pinned at tag `unrepaired-reference-2026-10-15` for the
+two-figure reporting rule. The merge closes those two items and nothing else on
+this list; the repairs are self-authored and unreviewed.
+
 The later `IND-01`, `IND-02`, and `IND-03` findings have repair-engineering
 fixes and regression evidence. Their remediation commits still require a
 separate independent review.
@@ -167,8 +174,9 @@ source, or generated pad material.
 
 ## Current readiness statement
 
-The repaired branches are suitable candidates for independent review. They are
-not sufficient evidence for production entropy approval.
+The repaired code — on master since the 2026-10-15 merge — is a suitable
+candidate for independent review. It is not sufficient evidence for production
+entropy approval.
 
 Until independent source review, build verification, artifact approval,
 physical-source evidence, and release-governance requirements are satisfied,

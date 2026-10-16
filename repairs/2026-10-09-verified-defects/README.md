@@ -72,3 +72,27 @@ Linux and Windows builds were not available in this repair environment.
 Passing software controls do not validate a physical entropy source,
 stationarity, operating conditions, health-test suitability, extractor-seed
 quality or independence, pad transfer, or one-time-pad security.
+
+## Merged into master — 2026-10-15
+
+Authorised by Paul on 2026-10-15, lifting `REPAIR-BLOCK-01` on the finding
+(`audits/2026-10-11-independent-audit/REPAIR-STRATEGY.md`) that its premise did
+not survive the log-domain rewrite. Merge commit `d226f18`, a true `--no-ff`
+merge so the hashes this directory pins (`b3db7ab`, tree `5697a86`) are
+unchanged. The last pre-merge master is tagged
+**`unrepaired-reference-2026-10-15`**; how to build the reference figure from it
+is in `BUILDING.md` ("The unrepaired reference tool").
+
+Two semantic conflicts were resolved in the merge commit: master's
+`regression-outside-battery.sh` was added to `regression-script-inventory.txt`
+(now 18 scripts, 20 checks), and six `fixture-manifest.txt` hashes were re-pinned
+to the reference files master had amended in `OC-21` (derived line appended;
+provenance in each file). Post-merge validation — build-differential (asserts
+live vs `-DNDEBUG` agree and refuse), the full suite in both modes, and the
+inventory mutation controls — is recorded in
+`audits/2026-10-11-independent-audit/logs/merge/` and `REPAIR-STRATEGY.md`
+("Register after the merge").
+
+The repairs remain **self-authored and unreviewed**. Merging does not change
+their evidentiary standing; "independent verification pending" in the table
+above still holds.

@@ -36,6 +36,13 @@
 #     moment you ran this. It is not a property of a figure produced earlier by
 #     some other binary.
 #
+# SCOPE AFTER THE 2026-10-15 MERGE (master d226f18): the signatures below
+# describe the UNREPAIRED tool, pinned at tag unrepaired-reference-2026-10-15.
+# The repaired tool refuses this input identically in both builds (exit 1, no
+# figure), so this canary reports INDETERMINATE for BOTH builds of master --
+# measured, audits/2026-10-11-independent-audit/logs/merge/canary-*.log. It
+# therefore no longer discriminates NDEBUG on master; it still does on the tag.
+#
 # Building the tools yourself from the pinned commit with known flags is
 # strictly stronger than this canary and should be preferred whenever possible.
 # This exists for consumers who did not compile them.

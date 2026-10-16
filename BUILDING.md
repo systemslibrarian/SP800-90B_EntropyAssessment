@@ -555,6 +555,43 @@ findings".
 
 ---
 
+## The unrepaired reference tool — tag `unrepaired-reference-2026-10-15`
+
+On 2026-10-15 `repair/2026-10-09-verified-defects` was merged into master
+(merge commit `d226f18`), closing `C07` (the LRS `p_col^W` underflow, which
+aborted with asserts live and **fabricated** a figure under `-DNDEBUG`) and `C03`
+(a failed IID battery still awarded a figure). From that commit on, master
+builds the **repaired** tool. The standing reporting rule is two figures, always:
+whatever the repaired fork reports, the reference tool's own figure must stay
+reportable with the delta explained (`audits/2026-10-11-independent-audit/
+REPAIR-STRATEGY.md`, "The governing constraint"). The reference figure is only
+producible if the pre-merge tool can be built, so the last pre-merge master is
+pinned by an annotated tag. "It is in git history" is not a build instruction;
+this is:
+
+```sh
+git worktree add /tmp/unrepaired unrepaired-reference-2026-10-15
+cd /tmp/unrepaired/cpp && make non_iid iid restart
+/tmp/unrepaired/cpp/ea_non_iid -i -a -vv <capture.bin> <bits-per-symbol>
+```
+
+Asserts are live in that build (no Makefile target sets `-DNDEBUG`); do not add
+it. `tools/build-provenance-canary.sh` run against `/tmp/unrepaired/cpp/ea_iid`
+reports `ASSERTS-LIVE`; against a `-DNDEBUG` build of the same tag it reports
+`NDEBUG` — those are the signatures it was calibrated on.
+
+**The canary does not discriminate on the repaired tool.** Both builds of
+master at `d226f18` refuse the canary input identically (exit 1, no figure), so
+the canary reports `INDETERMINATE` for both — measured, logs in
+`audits/2026-10-11-independent-audit/logs/merge/canary-*.log`. That is the
+repair working, not the canary failing, but it means NDEBUG provenance for a
+repaired binary needs a different probe. Until one exists, build from the pinned
+commit yourself, which the canary's own header already calls the stronger route.
+
+**Evidentiary standing.** The repairs are self-authored and unreviewed; the
+merge changes nothing about that. Figures from the repaired build are to be
+reported with that statement beside them.
+
 ## Cost of conditioned IID testing (`ea_iid -c`)
 
 Since the #271 repair, `-c` runs the Section 5 batteries on the conditioned
