@@ -1,0 +1,22 @@
+A-1 parent regression with transported committed test
+date_local=2026-10-10T05:25:24-0400
+source_sha=031d7eefe6801c8370c9882cb81348d7cf1df388
+source_parent_of_094189c=031d7eefe6801c8370c9882cb81348d7cf1df388
+test_commit=094189cdc6dd2b2d975abcbe00d7018628c50bee
+test_blob=ddbfb3acd6c3196c20cfbae5c25507a072437c98
+test_sha256=db1fd5caf8ee438e1afededd64ad84e9950aeb19c77c85e1df8b543326d83b06
+command=cpp/selftest/regression-iid-json.sh
+--- complete stdout/stderr ---
+binary -i omits hBitstring:                            absent
+N-10 JSON uses explicit statistic names:               ambiguous or missing fields
+-c omits hOriginal:                                    absent
+hAssessed at -q matches the -vvv figure:               0.9950430151312257
+N-10 stdout labels the translated median:              still says only Median
+N-10 sparse-alphabet domains are distinguishable:      labels or values wrong
+hAssessed is not the word-size placeholder:            ok
+bin.json still reports hOriginal:                      0.9950430151312257
+cond.json still reports hBitstring:                    0.9986867452731383
+
+regression-iid-json: FAIL (3 checks)
+--- end stdout/stderr ---
+exit_status=1

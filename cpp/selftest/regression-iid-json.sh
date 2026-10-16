@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Regression for NOVEL-02 and the verbosity coupling in the same block.
+# Regression for NOVEL-02, N-10, and the verbosity coupling in the same block.
 #
 #   NOVEL-02  H_original and H_bitstring are initialised to data.word_size and
 #             1.0 so the final min() is well defined whichever branch runs.
@@ -14,6 +14,10 @@
 #   binary input under -i that is 1.0 against a correct 0.995: too high, which
 #   is the dangerous direction. Upstream PR #251 addresses the same coupling
 #   and is open and untouched.
+#
+#   N-10      The permutation tests use a median of translated symbol indices,
+#             but stdout and JSON called it only "Median". JSON must name the
+#             raw-value mean and translated-index median explicitly.
 
 set -u
 
@@ -44,8 +48,26 @@ else
 	fails=$((fails + 1))
 fi
 
-# Conditioned input: no literal assessment is made, so hOriginal must be absent.
-"${tool}" -c -q -o "${work}/cond.json" "${repo}/bin/truerand_8bit.bin" 8 >/dev/null 2>&1
+if python3 - "${work}/bin.json" <<'PY'
+import json, sys
+tc = json.load(open(sys.argv[1]))["testCases"][0]
+ok = ("rawMean" in tc and "translatedSymbolMedian" in tc
+      and "mean" not in tc and "median" not in tc)
+sys.exit(0 if ok else 1)
+PY
+then
+	note "N-10 JSON uses explicit statistic names:" "rawMean and translatedSymbolMedian"
+else
+	note "N-10 JSON uses explicit statistic names:" "ambiguous or missing fields"
+	fails=$((fails + 1))
+fi
+
+# Conditioned input: no literal assessment is made, so hOriginal must be
+# absent. Use a standards-sized deterministic dependent input so it fails an
+# early IID prerequisite instead of stochastically entering the very expensive
+# 8,000,000-bit permutation battery.
+python3 -c "open('$work/cond-dependent.bin','wb').write(bytes((0 if i & 1 else 255) for i in range(1000000)))"
+"${tool}" -c -q -o "${work}/cond.json" "${work}/cond-dependent.bin" 8 >/dev/null 2>&1
 got=$(field "${work}/cond.json" hOriginal)
 if [ "${got}" = "absent" ]; then
 	note "-c omits hOriginal:" "absent"
@@ -56,7 +78,8 @@ fi
 
 # The assessed figure in the report must be the real one at any verbosity,
 # and must equal what -vvv prints.
-text=$("${tool}" -vvv "${repo}/bin/truerand_1bit.bin" 1 2>/dev/null | sed -n 's/^Assessed min entropy: //p' | head -1)
+text=$("${tool}" -vvv "${repo}/bin/truerand_1bit.bin" 1 2>/dev/null \
+	| tee "${work}/bin-vvv.txt" | sed -n 's/^Assessed min entropy: //p' | head -1)
 json=$(field "${work}/bin.json" hAssessed)
 if [ -n "${text}" ] && python3 -c "
 import sys
@@ -65,6 +88,26 @@ sys.exit(0 if abs(t - j) <= 1e-12 * max(1.0, abs(t)) else 1)" "${text}" "${json}
 	note "hAssessed at -q matches the -vvv figure:" "${json}"
 else
 	note "hAssessed at -q matches the -vvv figure:" "json ${json} vs text ${text}"
+	fails=$((fails + 1))
+fi
+
+if grep -qE 'Translated Symbol Index Median(:| =)' "${work}/bin-vvv.txt" && \
+   ! grep -qE '^[[:space:]]*Median(:| =)' "${work}/bin-vvv.txt"; then
+	note "N-10 stdout labels the translated median:" "explicit"
+else
+	note "N-10 stdout labels the translated median:" "still says only Median"
+	fails=$((fails + 1))
+fi
+
+# Positive semantic control: this sparse raw alphabet has raw mean 127.5 but
+# translated indices 0 and 1, whose Section 5 median is 0.5. It is deliberately
+# dependent so the valid one-million-sample run stops before permutations.
+"${tool}" -i -v "${work}/cond-dependent.bin" 8 >"${work}/sparse.txt" 2>&1
+if grep -q 'Raw Mean: 127.500000' "${work}/sparse.txt" && \
+   grep -q 'Translated Symbol Index Median: 0.500000' "${work}/sparse.txt"; then
+	note "N-10 sparse-alphabet domains are distinguishable:" "raw 127.5, translated 0.5"
+else
+	note "N-10 sparse-alphabet domains are distinguishable:" "labels or values wrong"
 	fails=$((fails + 1))
 fi
 

@@ -1,0 +1,9 @@
+commit=ea87f1e1321594a421b949c855bf4e59da0a72c5
+tree=f1b97935a6a6e0eea91fa15e4a1c65100ddb6789
+repository=https://github.com/systemslibrarian/SP800-90B_EntropyAssessment.git
+51552d829c342cda967f3f36587079617147ae9ffb43ca46626fedf3bb8c63d1  cpp/ea_non_iid
+92284eeda542cb21f667d6fb29ade644290253e4c8ca280bf4347139754c6cba  cpp/ea_iid
+43b532b4da52183f2ed36dbbc569ae576b71ee41e86912858de8552dbc784fbb  cpp/ea_restart
+noniid 1.1.8
+iid 1.1.8
+restart 1.1.8

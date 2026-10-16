@@ -1,0 +1,66 @@
+input W=2000 sha256 a803412ee2c496a6d1c8c047be641c5d8b502a9c7556f66d678b541ec19fb5f2
+audits/2026-10-11-independent-audit/reproducers/build-differential.sh: line 48: 51985 Abort trap: 6           OMP_NUM_THREADS=${OMP_NUM_THREADS:-4} "$bin" -i -v -o "$work/$tag.json" "$IN" 1 > "$work/$tag.out" 2>&1
+W=2000  exit: asserts-live=134  ndebug=0
+  live:   Assertion failed: (p_colPower >= LDBL_MIN), function len_LRS_test, file lrs_test.h, line 683.
+  live:   ** Passed chi square tests
+  ndebug: ** Passed chi square tests
+  ndebug: ** Failed length of longest repeated substring test
+  ndebug: ** Passed IID permutation tests
+  DIVERGE: exit codes differ
+  DIVERGE: per-test verdict lines differ
+  FAIL: ndebug published hAssessed on a known-non-IID input
+  DIVERGE: JSON differs after normalisation
+    1c1,88
+    < (no json)
+    ---
+    > {
+    >  "IID": true,
+    >  "bitsPerSymbol": 1,
+    >  "bitsPerSymbolInferred": false,
+    >  "errorLevel": 0,
+    >  "testCases": [
+    >   {
+    >    "binary": true,
+    >    "hAssessed": 0.9957764511240947,
+    >    "hOriginal": 0.9957764511240947,
+    >    "mean": 0.499822,
+    >    "median": 0.5,
+    >    "passedChiSquareTests": true,
+    >    "passedIidPermutationTests": true,
+    >    "passedLongestRepeatedSubstringTest": false,
+    >    "permutationTestResults": [
+    >     {
+input W=20000 sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+audits/2026-10-11-independent-audit/reproducers/build-differential.sh: line 48: 53196 Abort trap: 6           OMP_NUM_THREADS=${OMP_NUM_THREADS:-4} "$bin" -i -v -o "$work/$tag.json" "$IN" 1 > "$work/$tag.out" 2>&1
+W=20000  exit: asserts-live=134  ndebug=0
+  live:   Assertion failed: (p_colPower >= LDBL_MIN), function len_LRS_test, file lrs_test.h, line 683.
+  live:   ** Passed chi square tests
+  ndebug: ** Passed chi square tests
+  ndebug: ** Failed length of longest repeated substring test
+  ndebug: ** Passed IID permutation tests
+  DIVERGE: exit codes differ
+  DIVERGE: per-test verdict lines differ
+  FAIL: ndebug published hAssessed on a known-non-IID input
+  DIVERGE: JSON differs after normalisation
+    1c1,88
+    < (no json)
+    ---
+    > {
+    >  "IID": true,
+    >  "bitsPerSymbol": 1,
+    >  "bitsPerSymbolInferred": false,
+    >  "errorLevel": 0,
+    >  "testCases": [
+    >   {
+    >    "binary": true,
+    >    "hAssessed": 0.9959462013452722,
+    >    "hOriginal": 0.9959462013452722,
+    >    "mean": 0.499881,
+    >    "median": 0.5,
+    >    "passedChiSquareTests": true,
+    >    "passedIidPermutationTests": true,
+    >    "passedLongestRepeatedSubstringTest": false,
+    >    "permutationTestResults": [
+    >     {
+build-differential: FAIL (2 input(s) diverged or published a figure)
+diff exit 1

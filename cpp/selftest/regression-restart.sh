@@ -17,6 +17,11 @@
 #   R-3   An -i run that could not read its input wrote a JSON report saying
 #         errorLevel 0: the error level was set on the non-IID report object
 #         while the IID one was written.
+#   N-08  Integer options must be unsigned decimal strings consumed in full.
+#   N-10  IID restart JSON must carry the actual baseline statistics under
+#         names that identify the raw-value and translated-index domains.
+#   NOVEL-03 Restart row and column permutation result groups must carry
+#         distinct layout labels rather than repeating bare iterations 0-2.
 
 set -u
 
@@ -34,12 +39,77 @@ cannot_run=0
 note() { printf '%-50s %s\n' "$1" "$2"; }
 [ -x "${tool}" ] || { echo "regression-restart: ${tool} missing (run 'make restart')" >&2; exit 2; }
 
+# ---------------------------------------------------------- NOVEL-03
+# This exercises the exact JSON population helper with synthetic counters. It
+# avoids a vacuous source grep and avoids the cost and randomness of two full
+# permutation batteries over a million samples.
+label_test="${here}/restart-report-label-test"
+build_out=$(make -s -C "${here}/.." selftest/restart-report-label-test 2>&1); build_rc=$?
+if [ "${build_rc}" -ne 0 ]; then
+	note "NOVEL-03 row/column label test builds:" "failed (exit ${build_rc})"
+	printf '%s\n' "${build_out}" | tail -4 | sed 's/^/    /'
+	fails=$((fails + 1))
+elif out=$("${label_test}" 2>&1); then
+	note "NOVEL-03 permutation groups are labelled:" "rows 0-2, columns 0-2"
+else
+	note "NOVEL-03 permutation groups are labelled:" "failed"
+	printf '%s\n' "${out}" | tail -4 | sed 's/^/    /'
+	fails=$((fails + 1))
+fi
+
 # ea_restart requires exactly 1,000,000 samples (a 1000 x 1000 restart matrix).
 python3 -c "
 import random, sys
 r = random.Random(8)
 open(sys.argv[1], 'wb').write(bytes(r.randrange(256) for _ in range(1000000)))
 " "${work}/r8.bin"
+
+# ---------------------------------------------------------------- N-08
+# Use an absent input so a permissive pre-fix parse is distinguishable from a
+# parser refusal without running the restart simulation.
+for bad in 8x +8 0x8; do
+	out=$("${tool}" -n "${work}/absent.bin" "${bad}" 1 2>&1); rc=$?
+	if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'unsigned decimal'; then
+		note "N-08 restart refuses width ${bad}:" "refused"
+	else
+		note "N-08 restart refuses width ${bad}:" "exit ${rc}, parser accepted it"
+		fails=$((fails + 1))
+	fi
+done
+
+for bad in 5000000x +5000000 0x5000000; do
+	out=$("${tool}" -n -s "${bad}" "${work}/absent.bin" 8 1 2>&1); rc=$?
+	if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'unsigned decimal'; then
+		note "N-08 restart refuses -s ${bad}:" "refused"
+	else
+		note "N-08 restart refuses -s ${bad}:" "exit ${rc}, parser accepted it"
+		fails=$((fails + 1))
+	fi
+done
+
+# ---------------------------------------------------------------- N-10
+# H_I=0 makes the restart sanity bound permissive, while this deterministic
+# period-two matrix fails an IID test before the expensive permutation stage.
+# It is nevertheless a standards-sized 1000 x 1000 restart capture, so the
+# report path is exercised with the required sample count and dimensions.
+python3 -c "open('$work/alternating.bin','wb').write(bytes((i & 1) for i in range(1000000)))"
+"${tool}" -i -q -o "${work}/alternating.json" "${work}/alternating.bin" 1 0 >/dev/null 2>&1
+rc=$?
+if [ "${rc}" -ne 0 ] && python3 - "${work}/alternating.json" <<'PY'
+import json, math, sys
+d = json.load(open(sys.argv[1]))
+tc = d.get("testCases", [{}])[0]
+ok = (math.isclose(tc.get("rawMean", -1), 0.5)
+      and math.isclose(tc.get("translatedSymbolMedian", -1), 0.5)
+      and "mean" not in tc and "median" not in tc)
+sys.exit(0 if ok else 1)
+PY
+then
+	note "N-10 restart reports actual named statistics:" "rawMean 0.5, translatedSymbolMedian 0.5"
+else
+	note "N-10 restart reports actual named statistics:" "missing, zero, or ambiguously named"
+	fails=$((fails + 1))
+fi
 
 # ---------------------------------------------------------------- N-04
 # Each of these must be refused, with a nonzero exit and no crash.

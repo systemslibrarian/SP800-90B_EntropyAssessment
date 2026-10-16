@@ -12,7 +12,13 @@ class IidTestRun : public TestRunBase {
 public:
     string GetAsJson() {
         Json::Value json = TestRunBase::GetBaseJson();
-        json["IID"] = IID;
+        // "IID" is a verdict, not merely the mode selected on the command
+        // line. Before #252 it was a constant true even when required tests
+        // failed. assessmentComplete distinguishes an explicit failed verdict
+        // from an input/tool error before the battery completed.
+        json["IID"] = iidClaimAccepted;
+        json["assessmentComplete"] = assessmentComplete;
+        json["assessmentMode"] = "IID";
 
         Json::Value testCasesJson;
         for (int i = 0; i < (int)testCases.size(); i++){
@@ -25,7 +31,8 @@ public:
         return styled.write(json);
     }
 
-    const bool IID = true;
+    bool iidClaimAccepted = false;
+    bool assessmentComplete = false;
     vector<IidTestCase> testCases;
 };
 #endif /* IIDTESTRUN_H */

@@ -8,7 +8,6 @@
 #include "shared/TestRunUtils.h"
 #include "iid/permutation_tests.h"
 #include "iid/chi_square_tests.h"
-#include <openssl/sha.h>
 #include <omp.h>
 #include <getopt.h>
 #include <limits.h>
@@ -60,14 +59,14 @@ int main(int argc, char* argv[]) {
 
     bool initial_entropy, all_bits;
     int verbose = 1; //verbose 0 is for JSON output, 1 is the normal mode, 2 is the NIST tool verbose mode, and 3 is for extra verbose output
-    double rawmean, median;
+    double rawmean, translated_symbol_median;
     char* file_path;
     data_t data;
     int opt;
     unsigned long subsetIndex = ULONG_MAX;
     unsigned long subsetSize = 0;
-    unsigned long long inint;
-    char *nextOption;
+    unsigned long inint;
+    const char *nextOption;
 
     data.word_size = 0;
     initial_entropy = true;
@@ -109,11 +108,12 @@ int main(int argc, char* argv[]) {
                 verbose++;
                 break;
             case 'l':
-                inint = strtoull(optarg, &nextOption, 0);
-                if ((inint > ULONG_MAX) || (errno == EINVAL) || (nextOption == NULL) || (*nextOption != ',')) {
+                if (!parse_unsigned_decimal(optarg, inint, &nextOption) || (nextOption == NULL) || (*nextOption != ',')) {
 
                     testRun.errorLevel = -1;
-                    testRun.errorMsg = "Error on index/samples.";
+                    testRun.errorMsg = "Error: -l requires unsigned decimal <index>,<samples>.";
+
+                    printf("Error: -l requires unsigned decimal <index>,<samples>.\n");
 
                     if (jsonOutput) {
                         writeJsonReport(outputfilename, testRun.GetAsJson());
@@ -124,10 +124,11 @@ int main(int argc, char* argv[]) {
 
                 nextOption++;
 
-                inint = strtoull(nextOption, NULL, 0);
-                if ((inint > ULONG_MAX) || (errno == EINVAL)) {
+                if (!parse_unsigned_decimal(nextOption, inint)) {
                     testRun.errorLevel = -1;
-                    testRun.errorMsg = "Error on index/samples.";
+                    testRun.errorMsg = "Error: -l requires unsigned decimal <index>,<samples>.";
+
+                    printf("Error: -l requires unsigned decimal <index>,<samples>.\n");
 
                     if (jsonOutput) {
                         writeJsonReport(outputfilename, testRun.GetAsJson());
@@ -190,47 +191,21 @@ int main(int argc, char* argv[]) {
 
     if (argc == 2) {
         // get bits per word
-        data.word_size = atoi(argv[1]);
-        if (data.word_size < 1 || data.word_size > 8) {
+        if (!parse_unsigned_decimal(argv[1], inint) || inint < 1 || inint > 8) {
 
             testRun.errorLevel = -1;
-            testRun.errorMsg = "Invalid bits per symbol: " + std::to_string(data.word_size) + ".";
+            testRun.errorMsg = "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.";
 
             if (jsonOutput) {
                 writeJsonReport(outputfilename, testRun.GetAsJson());
             }
 
-            printf("Invalid bits per symbol: %d.\n", data.word_size);
+            printf("Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.\n");
             print_usage();
         }
+        data.word_size = (int)inint;
     }
 
-    // Record hash of input file
-    char hash[2*SHA256_DIGEST_LENGTH+1];
-
-    // sha256_file's status was discarded, so a failure left hash
-    // uninitialised and it was printed and recorded anyway.
-    hash[0] = '\0';
-    if (sha256_file(file_path, hash) != 0) {
-        testRun.errorLevel = -1;
-        testRun.errorMsg = "Error: could not hash the input file.";
-
-        if (jsonOutput) {
-            writeJsonReport(outputfilename, testRun.GetAsJson());
-        }
-
-        printf("Error: could not hash the input file.\n");
-        exit(-1);
-    }
-    testRun.sha256 = hash;
-
-    if (verbose > 1) {
-        if (subsetSize == 0) {
-            printf("Opening file: '%s' (SHA-256 hash %s)\n", file_path, hash);
-        } else {
-            printf("Opening file: '%s' (SHA-256 hash %s), reading block %lu of size %lu\n", file_path, hash, subsetIndex, subsetSize);
-        }
-    }
     // Remember whether the width came from the command line, before
     // read_file_subset fills in an inferred one.
     int bitsPerSymbolGiven = data.word_size;
@@ -242,6 +217,14 @@ int main(int argc, char* argv[]) {
 
         printf("Error reading file.\n");
         print_usage();
+    }
+
+    if (verbose > 1) {
+        if (subsetSize == 0) {
+            printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes)\n", file_path, testRun.sha256.c_str());
+        } else {
+            printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes), block %lu of size %lu\n", file_path, testRun.sha256.c_str(), subsetIndex, subsetSize);
+        }
     }
 
     // A request for the last block of a file usually yields fewer samples
@@ -359,21 +342,21 @@ int main(int argc, char* argv[]) {
     if ((verbose == 1) || (verbose == 2))
         printf("Calculating baseline statistics...\n");
 
-    calc_stats(&testdata, rawmean, median);
+    calc_stats(&testdata, rawmean, translated_symbol_median);
 
     if (verbose == 2) {
         printf("\tRaw Mean: %f\n", rawmean);
-        printf("\tMedian: %f\n", median);
+        printf("\tTranslated Symbol Index Median: %f\n", translated_symbol_median);
         printf("\tBinary: %s\n\n", (test_alphabet_size == 2 ? "true" : "false"));
     } else if (verbose > 2) {
         printf("Raw Mean = %.17g\n", rawmean);
-        printf("Median = %.17g\n", median);
+        printf("Translated Symbol Index Median = %.17g\n", translated_symbol_median);
         printf("Binary = %s\n", (test_alphabet_size == 2 ? "true" : "false"));
     }
 
     IidTestCase tc;
-    tc.mean = rawmean;
-    tc.median = median;
+    tc.raw_mean = rawmean;
+    tc.translated_symbol_median = translated_symbol_median;
     tc.binary = (test_alphabet_size == 2);
 
     double H_original = data.word_size;
@@ -405,29 +388,6 @@ int main(int argc, char* argv[]) {
         h_assessed = min(h_assessed, H_original);
     }
 
-    if ((verbose == 1) || (verbose == 2)) {
-        if (initial_entropy) {
-            printf("H_original: %f\n", H_original);
-            if (data.alph_size > 2) {
-                printf("H_bitstring: %f\n", H_bitstring);
-                printf("min(H_original, %d X H_bitstring): %f\n", data.word_size, min(H_original, data.word_size * H_bitstring));
-            }
-        } else {
-            printf("h': %f\n", H_bitstring);
-        }
-    } else if (verbose > 2) {
-        if ((data.alph_size > 2) || !initial_entropy) {
-            printf("H_bitstring = %.17g\n", H_bitstring);
-            printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
-        }
-
-        if (initial_entropy) {
-            printf("H_original = %.17g\n", H_original);
-        }
-
-        printf("Assessed min entropy: %.17g\n", h_assessed);
-    }
-
     // Record only the values that were computed. H_original and H_bitstring
     // are initialised to data.word_size and 1.0 so that the min() above is
     // well defined whichever branch runs; reporting those initialisers as if
@@ -442,10 +402,9 @@ int main(int argc, char* argv[]) {
         tc.h_bitstring = H_bitstring;
     }
 
-    tc.h_assessed = h_assessed;
-
     // Compute chi square stats
     bool chi_square_test_pass = chi_square_tests(testdata.symbols, test_sample_size, test_alphabet_size, verbose);
+    tc.ran_chi_square_tests = true;
     tc.passed_chi_square_tests = chi_square_test_pass;
 
     if ((verbose == 1) || (verbose == 2)) {
@@ -462,42 +421,78 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Compute length of the longest repeated substring stats
-    bool len_LRS_test_pass = len_LRS_test(testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
+    // The deterministic chi-square and LRS suites both provide required IID
+    // evidence and exercise different representations in conditioned mode.
+    // Run both even if the first already rejected the claim (#271). The
+    // expensive stochastic permutation battery may be skipped after either
+    // deterministic rejection because the aggregate verdict is then final.
+    tc.ran_longest_repeated_substring_test = true;
+    bool len_LRS_test_pass = len_LRS_test(
+        testdata.symbols, test_sample_size, test_alphabet_size, verbose, test_label);
     tc.passed_longest_repeated_substring_test = len_LRS_test_pass;
 
     if ((verbose == 1) || (verbose == 2)) {
-        if (len_LRS_test_pass) {
-            printf("** Passed length of longest repeated substring test\n\n");
-        } else {
-            printf("** Failed length of longest repeated substring test\n\n");
-        }
+        printf("** %s length of longest repeated substring test\n\n", len_LRS_test_pass ? "Passed" : "Failed");
     } else if (verbose > 2) {
-        if (len_LRS_test_pass) {
-            printf("Length of longest repeated substring test: Passed\n");
-        } else {
-            printf("Length of longest repeated substring test: Failed\n");
-        }
+        printf("Length of longest repeated substring test: %s\n", len_LRS_test_pass ? "Passed" : "Failed");
     }
 
-    // Compute permutation stats
-    bool perm_test_pass = permutation_tests(&testdata, rawmean, median, verbose, tc);
-    tc.passed_iid_permutation_tests = perm_test_pass;
+    bool perm_test_pass = false;
+    if (chi_square_test_pass && len_LRS_test_pass) {
+        tc.ran_iid_permutation_tests = true;
+        perm_test_pass = permutation_tests(&testdata, rawmean, translated_symbol_median, verbose, tc, "input");
+        tc.passed_iid_permutation_tests = perm_test_pass;
 
+        if ((verbose == 1) || (verbose == 2)) {
+            printf("** %s IID permutation tests\n\n", perm_test_pass ? "Passed" : "Failed");
+        } else if (verbose > 2) {
+            printf("IID permutation tests: %s\n", perm_test_pass ? "Passed" : "Failed");
+        }
+    } else if (verbose > 0) {
+        printf("** Skipped IID permutation tests after an earlier required IID test failure\n\n");
+    }
+
+    const bool iid_test_suite_pass =
+        chi_square_test_pass && len_LRS_test_pass && perm_test_pass;
+    testRun.assessmentComplete = true;
+    testRun.iidClaimAccepted = iid_test_suite_pass;
+
+    if (!iid_test_suite_pass) {
+        testRun.errorLevel = 2;
+        testRun.errorMsg = "IID test suite failed; no IID min-entropy estimate was awarded.";
+        testRun.testCases.push_back(tc);
+        if (verbose > 0) printf("IID test suite failed: no IID min-entropy estimate was awarded.\n");
+        if (jsonOutput && !writeJsonReport(outputfilename, testRun.GetAsJson())) {
+            free_data(&data);
+            return -1;
+        }
+        free_data(&data);
+        return 1;
+    }
+
+    // Only a complete passing IID battery may expose the final IID entropy
+    // figure. The component MCV values remain available as diagnostic evidence
+    // on a failed run, but hAssessed is deliberately absent.
     if ((verbose == 1) || (verbose == 2)) {
-        if (perm_test_pass) {
-            printf("** Passed IID permutation tests\n\n");
+        if (initial_entropy) {
+            printf("H_original: %f\n", H_original);
+            if (data.alph_size > 2) {
+                printf("H_bitstring: %f\n", H_bitstring);
+                printf("min(H_original, %d X H_bitstring): %f\n", data.word_size, min(H_original, data.word_size * H_bitstring));
+            }
         } else {
-            printf("** Failed IID permutation tests\n\n");
+            printf("h': %f\n", H_bitstring);
         }
     } else if (verbose > 2) {
-        if (perm_test_pass) {
-            printf("IID permutation tests: Passed\n");
-        } else {
-            printf("IID permutation tests: Failed\n");
+        if ((data.alph_size > 2) || !initial_entropy) {
+            printf("H_bitstring = %.17g\n", H_bitstring);
+            printf("H_bitstring Per Symbol = %.17g\n", H_bitstring * data.word_size);
         }
+        if (initial_entropy) printf("H_original = %.17g\n", H_original);
+        printf("Assessed min entropy: %.17g\n", h_assessed);
     }
 
+    tc.h_assessed = h_assessed;
     testRun.testCases.push_back(tc);
     testRun.errorLevel = 0;
 

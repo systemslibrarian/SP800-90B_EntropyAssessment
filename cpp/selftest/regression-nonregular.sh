@@ -10,13 +10,11 @@
 # drive from a harness. This test exists so the hardening is not lost, not as
 # evidence of a standards defect.
 #
-# sha256_file read to EOF before any size check, so a character device never
-# ended the loop; a FIFO blocked even earlier, inside fopen. The file type is
-# now established from the path before the file is opened.
+# The file type is established before the assessment read, while the digest is
+# now calculated from the loaded immutable sample buffer (N-07).
 #
 # Also covers N-06 for ea_iid, and REV-006's sustained half. The stat/S_ISREG
-# check and the status check both live in the SHARED sha256_file
-# (cpp/shared/TestRunUtils.h), so every program that calls it is affected, but
+# check and identity recording both live in shared intake code, but
 # this script used to assert ea_iid merely EXISTED and then exercise only
 # ea_non_iid. The independent re-audit of 2026-10-01 confirmed that gap: an
 # ea_iid build that ignores sha256_file's status passed the whole script. The

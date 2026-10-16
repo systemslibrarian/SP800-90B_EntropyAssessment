@@ -1,0 +1,30 @@
+{
+  "format": "sp800-90b-repair-engineering-results",
+  "version": 1,
+  "date": "2026-10-09",
+  "selectedCodeCommit": "b3db7ab17692d5b577f8558f4fecee6a5cb98ce6",
+  "selectedCodeTree": "5697a86c5f3bf79e3296f03d67dbe243527150ee",
+  "upstreamBase": "87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289",
+  "environment": {
+    "os": "macOS 26.6.2 (25G83)",
+    "architecture": "arm64",
+    "cpu": "Apple M5",
+    "compiler": "Apple clang 21.0.0 (clang-2100.3.34.2)"
+  },
+  "checks": [
+    { "name": "supported-clean-build", "command": "make -C cpp clean && make -C cpp non_iid iid restart", "status": "pass" },
+    { "name": "strict-suite", "command": "cpp/selftest/run-all-checks.sh", "exitStatus": 1, "passed": 18, "failed": 1, "regressionScripts": 17, "classification": "documented macOS #155 reference delta only" },
+    { "name": "documented-platform-suite", "command": "cpp/selftest/run-all-checks.sh --allow-known-platform-deltas", "exitStatus": 0, "passed": 19, "failed": 0, "regressionScripts": 17 },
+    { "name": "c01-fixed-asan-ubsan", "command": "EA_RESTART_SANITIZER_BIN=FIXED cpp/selftest/sanitizer-restart-c01.sh", "exitStatus": 0, "status": "pass" },
+    { "name": "c01-vulnerable-parent-control", "commit": "65de84c924ff70e0193cc5c9fe3dff0135131895", "exitStatus": 134, "status": "expected-sanitizer-rejection", "diagnostic": "alloc-dealloc-mismatch at restart_main.cpp:161" },
+    { "name": "iid-valid-widths-1-through-8", "command": "cpp/selftest/regression-iid-failclosed.sh", "exitStatus": 0, "status": "pass" },
+    { "name": "fixture-inventory-mutations", "command": "cpp/selftest/regression-selftest-inventory.sh", "exitStatus": 0, "mutationsRejected": 7 },
+    { "name": "input-identity-race", "command": "cpp/selftest/regression-input-identity.sh", "exitStatus": 0, "status": "pass" }
+  ],
+  "platforms": {
+    "darwin-arm64": "tested",
+    "linux": "not tested in this environment",
+    "windows": "not tested in this environment"
+  },
+  "independentlyVerified": false
+}
