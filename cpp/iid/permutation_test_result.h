@@ -9,8 +9,8 @@ using namespace std;
 
 class PermutationTestResult {
 public:
-    
-    int iteration;
+    int iteration = -1;
+    string dataLayout;
 
     double excursion = -1.0;
     double numDirectionalRuns = -1.0;
@@ -37,6 +37,8 @@ public:
         
         if(iteration != -1)
             testResultJson["iteration"] = iteration;
+        if(!dataLayout.empty())
+            testResultJson["dataLayout"] = dataLayout;
         
         if(excursion != -1)
             testResultJson["excursion"] = excursion;

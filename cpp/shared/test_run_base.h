@@ -16,17 +16,17 @@ public:
     string errorMsg;
     string type;
     string commandline;
+    // Number of one-byte sample values represented by sha256. The digest is
+    // computed over the exact immutable buffer consumed by the estimators,
+    // rather than over a separate read of the pathname (N-07).
+    long assessedSampleCount = 0;
     // True only when a run below the SP 800-90B Section 3.1.1 minimum sample
     // count was allowed to proceed by EA_ALLOW_SHORT_DATASET. Such a run is
     // not a compliant assessment, so any report it produces says so.
     bool nonCompliantShortDataset = false;
-    // Subset provenance, recorded only when -l was used. sha256 stays the hash
-    // of the WHOLE file: @joshuaehill on #260, "I think that the SHA sum acting
-    // on the file is the most reasonable behavior ... the file hash is more
-    // useful in this setting." These three fields are what make the assessed
-    // bytes identifiable alongside it, since the report otherwise did not say
-    // that only part of the file was read, nor how much of it was actually
-    // obtained when the last block was short.
+    // Subset provenance, recorded only when -l was used. sha256 identifies the
+    // exact assessed subset bytes; these fields also locate those bytes within
+    // the operator-supplied source file.
     // The symbol width the assessment actually used, and whether it was taken
     // from the command line or inferred from the data. @joshuaehill on #254:
     // "Certainly reporting the evident symbol width in JSON would be useful."
@@ -69,6 +69,8 @@ protected:
         }
         if(!sha256.empty()) {
             baseJson["sha256"] = sha256;
+            baseJson["sha256Scope"] = "assessed-sample-bytes";
+            baseJson["assessedSampleCount"] = (Json::Int64)assessedSampleCount;
         }
         return baseJson;
     }

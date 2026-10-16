@@ -20,11 +20,14 @@ are described below.
 Upstream baseline: `usnistgov/SP800-90B_EntropyAssessment` at
 `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289`.
 
-`ea_non_iid`, `ea_iid` and `ea_restart` are built here; the repairs and the
-regression suite cover all three. **Do not run plain `make`** (the `all`
-target) for a shippable build: it also builds `ea_conditioning`, the one
-program that links GNU MPFR and GMP (LGPL). None of the three programs this
-fork builds links either; see "LGPL isolation".
+`ea_non_iid`, `ea_iid` and `ea_restart` are the supported build; the repairs
+and regression suite cover all three. Plain `make` now builds exactly those
+three. `cpp/selftest/regression-docs.sh` inspects the expanded forced dry-run
+plan and fails if `ea_conditioning` or `ea_transpose` enters it, or if a
+supported executable disappears. `ea_conditioning` remains an explicit
+unsupported development target and is the one program that links GNU MPFR and
+GMP (LGPL).
+None of the three supported programs links either; see "LGPL isolation".
 
 ---
 
@@ -177,7 +180,7 @@ epsilon of 1e-10. That is the platform difference recorded in upstream
 issue #155 and in the precision audit below; it is not introduced by any
 change here, and was previously invisible only because the harness
 discarded the comparison's exit status. Every other sample passes and
-all eight regression scripts pass. On a Linux x86-64 build, selftest is
+every discovered regression script passes. On a Linux x86-64 build, selftest is
 expected to pass outright.
 
 ---
@@ -201,10 +204,11 @@ and re-checked after this fork's repairs; the third was re-run on
   `otool -L` lists no MPFR or GMP library and
   `nm -u <binary> | grep -c -E '_mpfr|gmp'` → 0.
 
-None of the three programs this fork builds carries LGPL code.
-`make non_iid`, `make iid` and `make restart` never compile
-`conditioning_main.cpp`; MPFR and GMP need not be installed to build or
-run any of them.
+None of the three supported programs carries LGPL code. `make` (equivalently,
+`make non_iid iid restart`) never compiles `conditioning_main.cpp`; MPFR and
+GMP need not be installed to build or run the supported tools. The separate
+`make conditioning` target is outside the supported product scope and retains
+known, unfixed N-03, N-05, and N-11 defects.
 
 ---
 

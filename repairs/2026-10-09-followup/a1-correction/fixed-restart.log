@@ -1,0 +1,40 @@
+A-1 fixed-head restart regression
+date_local=2026-10-10T05:26:54-0400
+source_sha=baa51b352928db83f0620c2559cb1641914127e0
+test_blob=5f9ba6074492de7aee11d3d2e77be13603e78e48
+command=cpp/selftest/regression-restart.sh
+--- complete stdout/stderr ---
+NOVEL-03 permutation groups are labelled:          rows 0-2, columns 0-2
+N-08 restart refuses width 8x:                     refused
+N-08 restart refuses width +8:                     refused
+N-08 restart refuses width 0x8:                    refused
+N-08 restart refuses -s 5000000x:                  refused
+N-08 restart refuses -s +5000000:                  refused
+N-08 restart refuses -s 0x5000000:                 refused
+N-10 restart reports actual named statistics:      rawMean 0.5, translatedSymbolMedian 0.5
+N-04 H_I='nan' refused:                            refused (exit 255)
+N-04 H_I='NAN' refused:                            refused (exit 255)
+N-04 H_I='inf' refused:                            refused (exit 255)
+N-04 H_I='-inf' refused:                           refused (exit 255)
+N-04 H_I='abc' refused:                            refused (exit 255)
+N-04 H_I='1.5x' refused:                           refused (exit 255)
+N-04 H_I='(empty)' refused:                        refused (exit 255)
+N-04 H_I='3.2e' refused:                           refused (exit 255)
+N-04 negative H_I keeps its own message:           refused as nonnegative
+N-04 valid H_I=3.2 still runs:                     ran
+N-04 valid H_I=8 still runs:                       ran
+N-04 valid H_I=0 still runs:                       ran
+R-3 -i read failure recorded in JSON:              errorLevel set with a message
+R-3 -n read failure recorded in JSON:              errorLevel set with a message
+R-3 successful run still errorLevel 0:             yes
+N-06 -i no hash invented on failure:               errorLevel set, sha256 absent
+N-06 -n no hash invented on failure:               errorLevel set, sha256 absent
+N-06 valid run records the real hash:              matches
+R-2 the LRS estimate really does decline:          yes (precondition holds)
+R-2 the -1 sentinel is not folded in:              H_r 6.583332
+R-2 no false validation failure:                   passed
+R-2 ordinary dataset unaffected:                   passed
+
+regression-restart: PASS
+--- end stdout/stderr ---
+exit_status=0

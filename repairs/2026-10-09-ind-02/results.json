@@ -1,0 +1,33 @@
+{
+  "format": "sp800-90b-ind-02-repair-evidence",
+  "version": 1,
+  "date": "2026-10-09",
+  "repository": "https://github.com/systemslibrarian/SP800-90B_EntropyAssessment.git",
+  "baseline": "99dfb82418bbdb68635368a5cd8fce242e181ab6",
+  "codeCommit": "ea87f1e1321594a421b949c855bf4e59da0a72c5",
+  "codeTree": "f1b97935a6a6e0eea91fa15e4a1c65100ddb6789",
+  "finding": "IND-02",
+  "before": {
+    "regressionScripts": 16,
+    "passed": 18,
+    "failed": 0,
+    "exitStatus": 0
+  },
+  "after": {
+    "requiredRegressionScripts": 17,
+    "requiredTotalChecks": 19,
+    "missingScriptExitStatus": 2,
+    "injectedScriptExitStatus": 2,
+    "strict": { "passed": 18, "failed": 1, "exitStatus": 1 },
+    "documentedMacosMode": { "passed": 19, "failed": 0, "exitStatus": 0 }
+  },
+  "periodTwo": {
+    "samples": 1000000,
+    "inputSha256": "2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3",
+    "exitStatus": 1,
+    "iid": false,
+    "hAssessedPresent": false
+  },
+  "physicalHardwareTested": false,
+  "independentlyVerified": false
+}

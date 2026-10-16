@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     const int r = 1000;
     const int c = 1000;
     int opt;
-    unsigned long long inint;
+    unsigned long inint;
     unsigned long subsetIndex = ULONG_MAX;
     unsigned long subsetSize = 0;
     data_t data;
@@ -54,8 +54,8 @@ int main(int argc, char* argv[]) {
                 verbose++;
                 break;
             case 'l':
-                inint = strtoull(optarg, NULL, 0);
-                if ((inint > ULONG_MAX) || (errno == EINVAL)) {
+                if (!parse_unsigned_decimal(optarg, inint)) {
+                    printf("Subset index must be an unsigned decimal integer.\n");
                     print_usage();
                 }
                 subsetIndex = inint;

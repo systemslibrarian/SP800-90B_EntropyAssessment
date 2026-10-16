@@ -107,7 +107,7 @@ else bad "regressions named but absent:" "${missing}"; fi
 
 # --------------------------------- 5. tracker counts match the tracker itself
 mismatch=""
-for st in NEEDS-FIX UPSTREAM-FIX-PENDING FIXED-UPSTREAM-VERIFY FORK-FIX-REQUIRED FORK-FIXED VERIFIED; do
+for st in NEEDS-FIX UPSTREAM-FIX-PENDING FIXED-UPSTREAM-VERIFY FORK-FIX-REQUIRED FORK-FIXED SUPPORTED-SCOPE-FIXED EXCLUDED-UNSUPPORTED BLOCKED-HARDWARE VERIFIED; do
     claimed=$(grep -oE "^  - \`${st}\`: [0-9]+" "${TRACKER}" | grep -oE '[0-9]+$' | head -1)
     [ -z "${claimed}" ] && continue
     actual=$(grep -cE "^- \*\*State:\*\* \`${st}\`" "${TRACKER}")
@@ -160,7 +160,23 @@ cond=$(grep -c 'COND_LIB' cpp/Makefile)
 if [ -z "${leak}" ] && [ "${cond}" -ge 1 ]; then note "no built program links MPFR or GMP:" "confirmed"
 else bad "MPFR/GMP linkage found in:" "${leak}"; fi
 
-# --------------------------- 8. the quoted rate matches the measured table
+# ------------------------------------------- 8. supported build is bounded
+# The supported product scope is exactly the three assessed and regression-
+# tested programs. Inspect make's forced dry-run plan rather than grepping one
+# variable, so a future indirect dependency on ea_conditioning also fails.
+build_plan=$(make -Bn -C cpp all 2>&1); build_plan_rc=$?
+missing_supported=""
+for b in ea_non_iid ea_iid ea_restart; do
+    printf '%s\n' "${build_plan}" | grep -qE "(^|[[:space:]])-o[[:space:]]+${b}([[:space:]]|$)" || missing_supported="${missing_supported} ${b}"
+done
+unexpected=$(printf '%s\n' "${build_plan}" | sed -nE 's/.* -o (ea_conditioning|ea_transpose)( |$).*/\1/p' | sort -u | tr '\n' ' ')
+if [ "${build_plan_rc}" -eq 0 ] && [ -z "${missing_supported}" ] && [ -z "${unexpected}" ]; then
+    note "make all builds exactly the supported programs:" "ea_non_iid ea_iid ea_restart"
+else
+    bad "supported build plan drifted:" "exit ${build_plan_rc}; missing${missing_supported:- none}; unexpected ${unexpected:-none}"
+fi
+
+# --------------------------- 9. the quoted rate matches the measured table
 # The permutation-cost rate was stated in ms where the measurements give
 # seconds, a factor of 1000, while the run times derived from it were right.
 # Recompute from the table in BUILDING.md rather than trusting the sentence.
@@ -176,7 +192,7 @@ else
     note "permutation rate check:" "skipped (table row not found)"
 fi
 
-# ------------------------- 9. claims that were false before must not reappear
+# ------------------------ 10. claims that were false before must not reappear
 # Each of these was in the documentation after the fork had been modified, and
 # each had to be corrected. They are listed verbatim so a reintroduction fails.
 #
@@ -262,7 +278,7 @@ PY
 if [ -z "${hit}" ]; then note "no previously-corrected claim has reappeared:" "none"
 else bad "stale claims present again:" "${hit}"; fi
 
-# ------------------------------- 10. NIST attributions in cpp/ comments
+# ------------------------------- 11. NIST attributions in cpp/ comments
 # Every reply on this fork's upstream issues and pull requests came from
 # @joshuaehill, who is not a NIST account and who deferred to "the NIST folks"
 # on PR #268. The 2026-10-02 sweep corrected the documents; three comments

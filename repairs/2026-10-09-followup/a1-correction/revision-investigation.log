@@ -1,0 +1,19 @@
+A-1 revision investigation
+command=git log --all --format=%H_%P_%s -- cpp/selftest/regression-iid-json.sh
+094189cdc6dd2b2d975abcbe00d7018628c50bee 031d7eefe6801c8370c9882cb81348d7cf1df388 N-10: make IID report statistics unambiguous
+9f64f62079f8ec1bf2ece7fb6051bdc4ee0b2d37 47d662443d93b6d1b47624baff362fd4edeb5ff2 iid: report only the figures that were computed, at every verbosity (NOVEL-02)
+
+command=git rev-parse <commit>:cpp/selftest/regression-iid-json.sh
+031d7ee 456d9768766d94083f49ce949c8e19d2eb8679fa
+094189c ddbfb3acd6c3196c20cfbae5c25507a072437c98
+baa51b3 ddbfb3acd6c3196c20cfbae5c25507a072437c98
+
+command=rg current two-check claims
+audits/2026-09-30/FINDINGS-TRACKER.md:821:- **Verification:** Before the fix, `regression-iid-json.sh` failed two N-10 checks and `regression-restart.sh` failed one. Both now pass, including an exact 1,000,000-sample sparse-alphabet control with raw mean 127.5 and translated-index median 0.5.
+audits/2026-09-30/FINDINGS-TRACKER.md:1214:new script, mutant build:  FAIL (2 checks)
+repairs/2026-10-09-followup/REPORT.md:51:regression-iid-json: FAIL (2 checks)
+
+command=search unreachable commits that change regression-iid-json.sh
+unreachable_matching_commits=0
+
+conclusion=No committed or unreachable Git revision contains the reported two-check final N-10 regression. The committed 094189c test adds all three N-10 assertions in one blob; the two-check observation was made against an uncommitted intermediate test state before the sparse-alphabet control was added. That intermediate state has no immutable SHA or preserved log.

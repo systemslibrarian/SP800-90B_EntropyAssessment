@@ -260,6 +260,27 @@ A second repair pass on the same date, working the remaining queue:
             PR #256 question recorded as answered on 2026-10-01 with the
             decision it leaves open; regression-docs.sh carries the
             corrected phrasings. Documentation only; no source change.
+2026-10-09  cpp/Makefile: restrict the default all target to ea_non_iid,
+            ea_iid and ea_restart. ea_conditioning and ea_transpose remain
+            explicit unsupported development targets. cpp/selftest/
+            regression-docs.sh checks make's expanded build plan and fails
+            if that supported boundary drifts. README.md and BUILDING.md make
+            the exclusion and the carried conditioning defects explicit.
+2026-10-09  cpp/shared/utils.h and the supported command-line programs:
+            parse integer arguments as complete unsigned decimal strings,
+            rejecting signs, suffixes and overflow. The unsupported
+            ea_conditioning parser was deliberately not changed. Commit
+            031d7ee.
+2026-10-09  cpp/iid_main.cpp, cpp/restart_main.cpp and cpp/shared/
+            iid_test_case.h: distinguish the raw-sample mean from the
+            translated-symbol median in text and JSON, and make restart
+            reports contain the values actually calculated. The unsupported
+            ea_conditioning report was deliberately not changed. Commit
+            094189c.
+2026-10-09  cpp/shared/iid_test_case.h, cpp/iid/permutation_tests.h,
+            cpp/iid_main.cpp and cpp/restart_main.cpp: label permutation
+            results by assessed layout (`input`, `rows`, or `columns`) so
+            restart row and column results are not ambiguous. Commit 25fbb54.
 
 The scope statement at the head of this section covers these too: no
 unintended numerical change was observed on the datasets tested, with

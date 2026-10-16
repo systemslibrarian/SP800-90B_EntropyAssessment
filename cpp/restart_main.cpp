@@ -22,7 +22,6 @@
 #include <limits.h>
 #include <iostream>
 #include <fstream>
-#include <openssl/sha.h>
 
 //Each test has a targeted chance of roughly 0.000005, and we need to witness at least 5 failures, so this should be no less than 1000000
 #define DEFAULT_SIMULATION_ROUNDS 5000000UL
@@ -158,7 +157,10 @@ int simulateBound(double alpha, int k, double H_I, unsigned long int simulation_
 
     returnValue = (int)results[returnIndex];
 
-    delete results;
+    // C-01: results is allocated with new[] above and must be released with
+    // the matching array form.  Scalar delete is undefined behaviour and was
+    // sanitizer-reproducible on a standards-sized 1000 x 1000 restart input.
+    delete[] results;
 
     return returnValue;
 }
@@ -175,11 +177,12 @@ int main(int argc, char* argv[]) {
     int i, j;
     int X_i, X_r, X_c, X_max;
     double H_I, H_r, H_c, alpha, ret_min_entropy;
-	double rawmean, median;
+	double rawmean, translated_symbol_median;
     uint8_t *rdata, *cdata, *crawdata;
     unsigned long int inul;
     data_t data;
     int opt;
+    bool iid_test_suite_pass = true;
 
     iid = false;
     data.word_size = 0;
@@ -216,7 +219,10 @@ int main(int argc, char* argv[]) {
                 outputfilename = optarg;
                 break;
             case 's':
-                inul = strtoul(optarg, NULL, 10);
+                if (!parse_unsigned_decimal(optarg, inul)) {
+                    printf("Simulation count must be an unsigned decimal integer.\n");
+                    print_usage();
+                }
 		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
                     print_usage();
                 } else {
@@ -256,58 +262,25 @@ int main(int argc, char* argv[]) {
     testRunNonIid.filename = file_path;
     testRunNonIid.commandline = commandline;
 
-    // sha256_file()'s status was discarded and the buffer was left
-    // uninitialised, so a failure (a missing or unreadable file, or one that
-    // is not a regular file) put whatever happened to be on the stack into the
-    // report's "sha256" field, and the run continued and exited 0. The field
-    // was simply omitted whenever the first stack byte happened to be zero.
-    // Hashing is now done after both report objects exist, so a failure can be
-    // reported properly.
-    char hash[2*SHA256_DIGEST_LENGTH+1];
-
-    hash[0] = '\0';
-    if (sha256_file(file_path, hash) != 0) {
-        string msg = "Error: could not hash the input file.";
-
-        printf("%s\n", msg.c_str());
-
-        if (jsonOutput) {
-            if (iid) {
-                testRunIid.errorLevel = -1;
-                testRunIid.errorMsg = msg;
-                writeJsonReport(outputfilename, testRunIid.GetAsJson());
-            } else {
-                testRunNonIid.errorLevel = -1;
-                testRunNonIid.errorMsg = msg;
-                writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
-            }
-        }
-
-        exit(-1);
-    }
-
-    testRunIid.sha256 = hash;
-    testRunNonIid.sha256 = hash;
-
     if (argc == 2) {
         // get bits per word
-        data.word_size = atoi(argv[0]);
-        if (data.word_size < 1 || data.word_size > 8) {
-            printf("Invalid bits per symbol.\n");
+        if (!parse_unsigned_decimal(argv[0], inul) || inul < 1 || inul > 8) {
+            printf("Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.\n");
             if (jsonOutput) {
                 if (iid) {
                     testRunIid.errorLevel = -1;
-                    testRunIid.errorMsg = "Invalid bits per symbol.";
+                    testRunIid.errorMsg = "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.";
                     writeJsonReport(outputfilename, testRunIid.GetAsJson());
                 } else {
                     testRunNonIid.errorLevel = -1;
-                    testRunNonIid.errorMsg = "Invalid bits per symbol.";
+                    testRunNonIid.errorMsg = "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.";
                     writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
                 }
             }
 
             print_usage();
         }
+        data.word_size = (int)inul;
         argv++;
         argc--;
     }
@@ -369,8 +342,7 @@ int main(int argc, char* argv[]) {
         print_usage();
     }
 
-    if (verbose > 1) printf("Opening file: '%s' (SHA-256 hash %s)\n", file_path, hash);
-
+    int bitsPerSymbolGiven = data.word_size;
     if (!read_file(file_path, &data, &testRunNonIid)) {
         printf("Error reading file.\n");
 
@@ -395,6 +367,14 @@ int main(int argc, char* argv[]) {
 
         print_usage();
     }
+
+    testRunIid.sha256 = testRunNonIid.sha256;
+    testRunIid.assessedSampleCount = testRunNonIid.assessedSampleCount;
+    testRunIid.bitsPerSymbol = data.word_size;
+    testRunIid.bitsPerSymbolInferred = (bitsPerSymbolGiven == 0);
+    testRunNonIid.bitsPerSymbol = data.word_size;
+    testRunNonIid.bitsPerSymbolInferred = (bitsPerSymbolGiven == 0);
+    if (verbose > 1) printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes)\n", file_path, testRunNonIid.sha256.c_str());
 
     if (verbose > 1) printf("Loaded %ld samples made up of %d distinct %d-bit-wide symbols.\n", data.len, data.alph_size, data.word_size);
 
@@ -534,7 +514,7 @@ int main(int argc, char* argv[]) {
     if ((verbose == 1) || (verbose == 2))
         printf("Calculating baseline statistics...\n");
 
-    calc_stats(&data, rawmean, median);
+    calc_stats(&data, rawmean, translated_symbol_median);
 
     // The maximum min-entropy is -log2(1/2^word_size) = word_size
     H_c = data.word_size;
@@ -575,6 +555,8 @@ int main(int argc, char* argv[]) {
     tcOverallIid.h_c = H_c;
     tcOverallIid.h_i = H_I;
     tcOverallIid.testCaseNumber = "Overall";
+    tcOverallIid.raw_mean = rawmean;
+    tcOverallIid.translated_symbol_median = translated_symbol_median;
 
 
     if (!iid) {
@@ -793,6 +775,7 @@ int main(int argc, char* argv[]) {
         bool chi_square_test_pass_col = chi_square_tests(cdata, sample_size, alphabet_size, verbose);
         bool chi_square_test_pass = chi_square_test_pass_row && chi_square_test_pass_col;
 
+        tcOverallIid.ran_chi_square_tests = true;
         tcOverallIid.passed_chi_square_tests = chi_square_test_pass;
 
         if ((verbose == 1) || (verbose == 2)) {
@@ -812,64 +795,56 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        // Compute length of the longest repeated substring stats
-        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Literal");
-        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Literal");
+        tcOverallIid.ran_longest_repeated_substring_test = true;
+        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
+        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
         bool len_LRS_test_pass = len_LRS_test_pass_row && len_LRS_test_pass_col;
-
         tcOverallIid.passed_longest_repeated_substring_test = len_LRS_test_pass;
+        if (verbose > 0) printf("** %s length of longest repeated substring tests\n\n", len_LRS_test_pass ? "Passed" : "Failed");
 
-        if ((verbose == 1) || (verbose == 2)) {
-            if (len_LRS_test_pass) {
-                printf("** Passed length of longest repeated substring test\n\n");
-            }
-            else {
-                printf("** Failed length of longest repeated substring test\n\n");
-            }
-        }
-        else if (verbose > 2) {
-            if (len_LRS_test_pass) {
-                printf("Length of longest repeated substring test: Passed\n");
-            }
-            else {
-                printf("Length of longest repeated substring test: Failed\n");
-            }
-        }
+        bool perm_test_pass = false;
+        if (chi_square_test_pass && len_LRS_test_pass) {
+            tcOverallIid.ran_iid_permutation_tests = true;
+            bool perm_test_pass_row = permutation_tests(&data, rawmean, translated_symbol_median, verbose, tcOverallIid, "rows");
 
-        // Compute permutation stats
-        bool perm_test_pass_row = permutation_tests(&data, rawmean, median, verbose, tcOverallIid);
-
-        data_t data_col;
-        // He rest of the data_col entries are invariant under permutation, so we just copy them.
-        memcpy(&data_col, &data, sizeof(data));
-        // Both the translated and raw data are used, and are not invariant under permutation
-        data_col.symbols = cdata;
-        data_col.rawsymbols = crawdata;
-
-        bool perm_test_pass_col = permutation_tests(&data_col, rawmean, median, verbose, tcOverallIid);
-
-        bool perm_test_pass = perm_test_pass_row && perm_test_pass_col;
-
-        tcOverallIid.passed_iid_permutation_tests = perm_test_pass;
-
-        if ((verbose == 1) || (verbose == 2)) {
-            if (perm_test_pass) {
-                printf("** Passed IID permutation tests\n\n");
-            }
-            else {
-                printf("** Failed IID permutation tests\n\n");
-            }
-        }
-        else if (verbose > 2) {
-            if (perm_test_pass) {
-                printf("IID permutation tests: Passed\n");
-            }
-            else {
-                printf("IID permutation tests: Failed\n");
-            }
+            data_t data_col;
+            // The rest of data_col is invariant under permutation.
+            memcpy(&data_col, &data, sizeof(data));
+            data_col.symbols = cdata;
+            data_col.rawsymbols = crawdata;
+            bool perm_test_pass_col = permutation_tests(&data_col, rawmean, translated_symbol_median, verbose, tcOverallIid, "columns");
+            perm_test_pass = perm_test_pass_row && perm_test_pass_col;
+            tcOverallIid.passed_iid_permutation_tests = perm_test_pass;
+            if (verbose > 0) printf("** %s IID permutation tests\n\n", perm_test_pass ? "Passed" : "Failed");
+        } else if (verbose > 0) {
+            printf("** Skipped IID permutation tests after an earlier required IID test failure\n\n");
         }
 
+        iid_test_suite_pass = chi_square_test_pass && len_LRS_test_pass && perm_test_pass;
+        testRunIid.assessmentComplete = true;
+        testRunIid.iidClaimAccepted = iid_test_suite_pass;
 
+
+    }
+
+    if (iid && !iid_test_suite_pass) {
+        tcOverallIid.h_r = -1.0;
+        tcOverallIid.h_c = -1.0;
+        tcOverallIid.h_i = -1.0;
+        testRunIid.testCases.push_back(tcOverallIid);
+        testRunIid.errorLevel = 2;
+        testRunIid.errorMsg = "IID restart test suite failed; no IID restart entropy estimate was awarded.";
+        if (verbose > 0) printf("IID restart test suite failed: no IID restart entropy estimate was awarded.\n");
+        if (jsonOutput && !writeJsonReport(outputfilename, testRunIid.GetAsJson())) {
+            free(cdata);
+            free(crawdata);
+            free_data(&data);
+            return -1;
+        }
+        free(cdata);
+        free(crawdata);
+        free_data(&data);
+        return 1;
     }
 
     if (verbose > 0) {
