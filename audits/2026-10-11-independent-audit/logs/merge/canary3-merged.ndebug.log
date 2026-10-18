@@ -1,0 +1,16 @@
+canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/ea_iid.merged.ndebug
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.Wa4JnA/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: exit    1
+canary: TREE    REPAIRED
+canary: BUILD   NOT-DISTINGUISHED
+canary: meaning the binary has the repaired tree's behaviour: the IID verdict
+canary:         fails closed (errorLevel 2) and the LRS probability is formed in
+canary:         the log domain, so asserts-live and -DNDEBUG give the same
+canary:         answer and the build cannot be told apart from here -- by design.
+canary: NOTE    REPAIRED is not REVIEWED: the repairs are self-authored and
+canary:         unreviewed. This does not establish the commit, the compiler,
+canary:         other flags, or that the binary is unmodified. Building from
+canary:         the pinned commit is stronger.
+canary exit 0

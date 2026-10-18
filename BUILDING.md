@@ -580,13 +580,26 @@ it. `tools/build-provenance-canary.sh` run against `/tmp/unrepaired/cpp/ea_iid`
 reports `ASSERTS-LIVE`; against a `-DNDEBUG` build of the same tag it reports
 `NDEBUG` — those are the signatures it was calibrated on.
 
-**The canary does not discriminate on the repaired tool.** Both builds of
-master at `d226f18` refuse the canary input identically (exit 1, no figure), so
-the canary reports `INDETERMINATE` for both — measured, logs in
-`audits/2026-10-11-independent-audit/logs/merge/canary-*.log`. That is the
-repair working, not the canary failing, but it means NDEBUG provenance for a
-repaired binary needs a different probe. Until one exists, build from the pinned
-commit yourself, which the canary's own header already calls the stronger route.
+**The canary was re-signatured on 2026-10-18.** Its old question — asserts
+live or NDEBUG — is moot on the repaired tree, where both builds refuse the
+canary input identically, and the old two-signature version reported
+`INDETERMINATE` for both builds of master (measured, `logs/merge/canary-*.log`),
+which TruePad's harness treats as a refusal (`CROSS-REPO-FINDINGS.md` `XR-08`).
+It now answers the question that has something behind it: **repaired tree or
+unrepaired tree**, with the build kept as a sub-result under UNREPAIRED.
+Demonstrated on all four builds plus a control, `logs/merge/canary3-*.log`:
+
+| binary | `canary: TREE` | `canary: BUILD` |
+|---|---|---|
+| master `d226f18`, asserts live | REPAIRED | NOT-DISTINGUISHED |
+| master `d226f18`, `-DNDEBUG` | REPAIRED | NOT-DISTINGUISHED |
+| tag, asserts live | UNREPAIRED | ASSERTS-LIVE |
+| tag, `-DNDEBUG` | UNREPAIRED | NDEBUG |
+| `/bin/ls` | INDETERMINATE | INDETERMINATE (exit 3) |
+
+`NOT-DISTINGUISHED` is the expected value for a repaired binary, not a gap.
+REPAIRED is not reviewed. Measured on arm64; the x86-64 side of every
+signature is an exponent-range argument, not an observation.
 
 **Evidentiary standing.** The repairs are self-authored and unreviewed; the
 merge changes nothing about that. Figures from the repaired build are to be

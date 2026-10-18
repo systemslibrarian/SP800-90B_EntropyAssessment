@@ -1,0 +1,15 @@
+canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
+tools/build-provenance-canary.sh: line 158:  4520 Abort trap: 6           OMP_NUM_THREADS=${OMP_NUM_THREADS:-2} timeout "${CANARY_TIMEOUT:-1800}" "$TOOL" -i -v -o "$JSON" "$INPUT" 1 > "$OUT" 2>&1
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/ea_iid.tag.live
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.tWhcRx/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: exit    134
+canary: TREE    UNREPAIRED
+canary: BUILD   ASSERTS-LIVE
+canary: meaning the old tool (tag unrepaired-reference-2026-10-15 or earlier),
+canary:         with the assert at shared/lrs_test.h:683 compiled in. On this
+canary:         input it aborts and publishes no figure. This is the reference
+canary:         build for the two-figure rule; it carries C07 and C03.
+canary: NOTE    This does not establish the commit, the compiler, other flags,
+canary:         or that the binary is unmodified.
+canary exit 0

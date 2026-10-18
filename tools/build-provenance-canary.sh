@@ -2,55 +2,56 @@
 #
 # Build-provenance canary for the SP 800-90B assessment tools.
 #
-# WHY THIS EXISTS
+# THE QUESTION THIS ANSWERS -- changed 2026-10-18
 #
-# These tools behave differently depending on whether they were compiled with
-# -DNDEBUG, which no target in cpp/Makefile sets but which release
-# configurations in common build systems add by default. On one specific input
-# the difference is not a rounding detail, it is a different answer:
+# Until the 2026-10-15 merge (master d226f18) this script answered one question:
+# were asserts compiled in, or was the binary built -DNDEBUG? That mattered
+# because the UNREPAIRED tool gave a different answer in each build on one
+# input -- asserts live aborted, -DNDEBUG fabricated a figure (XR-04, OC-10).
+# The repair closes that: both builds of the repaired tool refuse the same
+# input identically (build-differential, REPAIR-STRATEGY.md). So on master the
+# NDEBUG question has nothing behind it, and a canary that keeps asking it
+# reports INDETERMINATE for every repaired binary -- measured, both builds,
+# audits/2026-10-11-independent-audit/logs/merge/canary-*.log, and TruePad's
+# harness treats INDETERMINATE as a refusal (XR-08).
 #
-#   asserts live   ea_iid aborts (SIGABRT, exit 134), writes no JSON, and
-#                  therefore publishes no figure.
-#   -DNDEBUG       the assert at shared/lrs_test.h:683 is compiled out,
-#                  p_colPower underflows to zero, log1pl(-0.0) is -0.0, and the
-#                  verdict `logl(0.999) >= N*logProbNoColsPerPair` evaluates
-#                  false -- so the longest-repeated-substring test reports
-#                  FAILURE having detected nothing about the data. On master a
-#                  second defect discards that failure, and the tool exits 0
-#                  with errorLevel 0, "IID": true and a published min-entropy
-#                  figure of roughly 0.9954 bit/bit.
+# The question that matters now is: IS THIS BINARY FROM THE REPAIRED TREE OR
+# THE UNREPAIRED ONE? The same control input discriminates it, because the two
+# trees cannot both be right about it:
 #
-# Nothing in the tools' JSON records which build produced it. A figure is
-# therefore not interpretable without establishing build provenance separately.
-# This script establishes ONE BIT of that provenance: whether asserts are live.
+#   REPAIRED     refuses -- exit 1, errorLevel 2, "IID test suite failed", no
+#                hAssessed -- in EITHER build. The build is not distinguished
+#                because the repaired tree gives the same answer in both.
+#   UNREPAIRED   the old tool, in one of two builds, both reported as
+#                UNREPAIRED with the build kept as a sub-result (it still
+#                matters for the reference figure built from the tag):
+#                  ASSERTS-LIVE  aborts, SIGABRT 134, assert at lrs_test.h:683
+#                  NDEBUG        exit 0, LRS failure reported, figure published
+#   INDETERMINATE matches none of the three. Still not a pass.
 #
 # WHAT THIS DOES NOT ESTABLISH -- read this before relying on it
 #
-#   * It does not establish the commit the binary was built from.
-#   * It does not establish the compiler, its version, or any flag other than
-#     the presence or absence of NDEBUG. In particular it says nothing about
-#     -ffloat-store, which cpp/Makefile sets and which a packager overriding
-#     CXXFLAGS also loses.
+#   * It does not establish the commit the binary was built from, only which of
+#     the two trees' behaviours it has on this input.
+#   * It does not establish the compiler, its version, or any flag. It says
+#     nothing about -ffloat-store, which cpp/Makefile sets and which a packager
+#     overriding CXXFLAGS loses.
 #   * It does not establish that the binary is unmodified.
-#   * A reported build is a statement about the binary you passed in, at the
-#     moment you ran this. It is not a property of a figure produced earlier by
-#     some other binary.
+#   * REPAIRED does not mean reviewed: the repairs are self-authored and
+#     unreviewed, and this canary does not change that.
+#   * A result is a statement about the binary you passed in, at the moment you
+#     ran this. It is not a property of a figure produced earlier.
 #
-# SCOPE AFTER THE 2026-10-15 MERGE (master d226f18): the signatures below
-# describe the UNREPAIRED tool, pinned at tag unrepaired-reference-2026-10-15.
-# The repaired tool refuses this input identically in both builds (exit 1, no
-# figure), so this canary reports INDETERMINATE for BOTH builds of master --
-# measured, audits/2026-10-11-independent-audit/logs/merge/canary-*.log. It
-# therefore no longer discriminates NDEBUG on master; it still does on the tag.
-#
-# Building the tools yourself from the pinned commit with known flags is
-# strictly stronger than this canary and should be preferred whenever possible.
-# This exists for consumers who did not compile them.
+# Building the tools yourself from a pinned commit with known flags is strictly
+# stronger and should be preferred whenever possible. The unrepaired tool is at
+# tag unrepaired-reference-2026-10-15 (BUILDING.md, "The unrepaired reference
+# tool"); the repaired one is master at or after d226f18.
 #
 # EXIT STATUS
-#   0  the build was positively identified; the identification is on stdout
-#   3  INDETERMINATE -- the outcome matched no known signature. This is not a
-#      pass. An unidentifiable build means refuse the figure, not assume it.
+#   0  positively identified; the identification is on stdout as
+#        canary: TREE    REPAIRED | UNREPAIRED
+#        canary: BUILD   ASSERTS-LIVE | NDEBUG | NOT-DISTINGUISHED
+#   3  INDETERMINATE -- matched no signature. Not a pass. Refuse the figure.
 #   2  usage or environment error (tool missing, cannot generate the input)
 #
 # USAGE
@@ -90,18 +91,23 @@ EXPECTED_SHA="327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c"
 # 1,000,000 one-bit samples from a fixed seed, with a 20000-sample block copied
 # over a later position so the longest repeated substring is at least 20000.
 #
-# The threshold that matters: p_colPower = p_col^W underflows once p_col^W falls
-# below LDBL_MIN (p_col is about 0.5). That needs
-#       W > 1022    on a 64-bit long double  (arm64,  LDBL_MIN 2.225e-308)
-#       W > 16382   on an 80-bit long double (x86-64, LDBL_MIN 3.362e-4932)
-# W = 20000 clears BOTH, by 3618 binary orders on the stricter one, so the canary
-# discriminates on either platform. An earlier version used W = 2000 and was
-# arm64-only.
+# PLATFORM LIMIT, re-checked for the three-way signature (2026-10-18):
 #
-# Measured on arm64: asserts-live rc=134, NDEBUG rc=0 with hAssessed
-# 0.9959462013452722 and the LRS test reporting failure. The x86-64 side follows
-# from the exponent range above and has NOT been measured here -- that is an
-# arithmetic argument, not an observation.
+#   UNREPAIRED side. p_colPower = p_col^W underflows once p_col^W < LDBL_MIN
+#   (p_col is about 0.5), i.e. W > 1022 on a 64-bit long double (arm64) and
+#   W > 16382 on an 80-bit one (x86-64). W = 20000 clears both by 3618 binary
+#   orders on the stricter, so the abort / fabrication signatures fire on either.
+#
+#   REPAIRED side. The log-domain LRS forms W*log(p_col) ~ -13863 (always
+#   representable) and the expected number of colliding pairs
+#   pairs * exp(that) ~ 10^-6000, below LDBL_MIN on BOTH formats (64-bit
+#   2.2e-308, 80-bit 3.4e-4932), so probabilityAtLeastOne is 0 and the test
+#   fails -- the correct statistical conclusion for a 20000-bit exact repeat --
+#   on either platform. The refusal is a verdict, not an underflow, so it does
+#   not depend on exponent range at all.
+#
+#   Measured on arm64 only (all four cases, logs/merge/canary3-*.log). The
+#   x86-64 side is the exponent-range argument above, NOT an observation.
 #
 # The file is generated rather than shipped so this script stays self-contained
 # and the input is verifiable from its seed.
@@ -152,24 +158,18 @@ OMP_NUM_THREADS=${OMP_NUM_THREADS:-2} timeout "${CANARY_TIMEOUT:-1800}" \
     "$TOOL" -i -v -o "$JSON" "$INPUT" 1 >"$OUT" 2>&1
 RC=$?
 
-# --------------------------------------------------------- the two signatures
+# ------------------------------------------------------- the three signatures
 #
-# Deliberately behavioural rather than numeric. The figure under NDEBUG is about
-# 0.9954 on this platform, but pinning that number would make the canary fail on
-# any build whose arithmetic differs slightly, and a canary that reports
-# INDETERMINATE for a legitimate build is a canary nobody keeps using.
+# Deliberately behavioural rather than numeric. Pinning the unrepaired NDEBUG
+# figure (about 0.9959 here) would make the canary fail on any build whose
+# arithmetic differs slightly, and a canary that reports INDETERMINATE for a
+# legitimate build is a canary nobody keeps using.
 
-asserts_live=0
-ndebug=0
-
-# ASSERTS LIVE: aborted, and the abort names the site.
-if [ "$RC" -eq 134 ] && grep -q "Assertion failed" "$OUT" && grep -q "lrs_test.h" "$OUT"; then
-    asserts_live=1
-fi
-
-# NDEBUG: completed, the LRS test reported failure, and a figure was published.
-if [ "$RC" -eq 0 ] && grep -qiE "Failed length of longest repeated substring" "$OUT"; then
-    if [ -s "$JSON" ] && python3 - "$JSON" <<'PY'
+# json_check <mode>: REPAIRED needs errorLevel 2 and NO hAssessed;
+#                    NDEBUG needs a figure AND the LRS test reported failed.
+json_check() {
+    [ -s "$JSON" ] || return 1
+    python3 - "$JSON" "$1" <<'PY'
 import json, sys
 try:
     d = json.load(open(sys.argv[1]))
@@ -178,47 +178,86 @@ except Exception:
 tcs = d.get('testCases') or []
 has_figure = any('hAssessed' in t for t in tcs)
 lrs_failed = any(t.get('passedLongestRepeatedSubstringTest') is False for t in tcs)
+if sys.argv[2] == 'REPAIRED':
+    sys.exit(0 if (d.get('errorLevel') == 2 and not has_figure) else 1)
 sys.exit(0 if (has_figure and lrs_failed) else 1)
 PY
-    then
-        ndebug=1
-    fi
+}
+
+repaired=0
+unrep_live=0
+unrep_ndebug=0
+
+# REPAIRED (either build): exit 1, the suite-failed line, errorLevel 2, no figure.
+if [ "$RC" -eq 1 ] && grep -q "IID test suite failed" "$OUT" \
+   && grep -qiE "Failed length of longest repeated substring" "$OUT" \
+   && json_check REPAIRED; then
+    repaired=1
+fi
+
+# UNREPAIRED, asserts live: aborted, and the abort names the site.
+if [ "$RC" -eq 134 ] && grep -q "Assertion failed" "$OUT" && grep -q "lrs_test.h" "$OUT"; then
+    unrep_live=1
+fi
+
+# UNREPAIRED, -DNDEBUG: completed, LRS failure reported, and a figure published.
+if [ "$RC" -eq 0 ] && grep -qiE "Failed length of longest repeated substring" "$OUT" \
+   && json_check NDEBUG; then
+    unrep_ndebug=1
 fi
 
 echo "canary: tool    $TOOL"
 echo "canary: input   $INPUT (1,000,000 one-bit samples, implanted repeat W=20000)"
 echo "canary: exit    $RC"
 
-if [ "$asserts_live" -eq 1 ] && [ "$ndebug" -eq 0 ]; then
+matched=$((repaired + unrep_live + unrep_ndebug))
+
+if [ "$matched" -eq 1 ] && [ "$repaired" -eq 1 ]; then
+    echo "canary: TREE    REPAIRED"
+    echo "canary: BUILD   NOT-DISTINGUISHED"
+    echo "canary: meaning the binary has the repaired tree's behaviour: the IID verdict"
+    echo "canary:         fails closed (errorLevel 2) and the LRS probability is formed in"
+    echo "canary:         the log domain, so asserts-live and -DNDEBUG give the same"
+    echo "canary:         answer and the build cannot be told apart from here -- by design."
+    echo "canary: NOTE    REPAIRED is not REVIEWED: the repairs are self-authored and"
+    echo "canary:         unreviewed. This does not establish the commit, the compiler,"
+    echo "canary:         other flags, or that the binary is unmodified. Building from"
+    echo "canary:         the pinned commit is stronger."
+    exit 0
+fi
+
+if [ "$matched" -eq 1 ] && [ "$unrep_live" -eq 1 ]; then
+    echo "canary: TREE    UNREPAIRED"
     echo "canary: BUILD   ASSERTS-LIVE"
-    echo "canary: meaning the assert at shared/lrs_test.h:683 is compiled in."
-    echo "canary:         On this input the tool fails closed and publishes no figure."
-    echo "canary: NOTE    This identifies the NDEBUG state only. It does not establish"
-    echo "canary:         the commit, the compiler, other flags, or that the binary is"
-    echo "canary:         unmodified. Building from the pinned commit is stronger."
+    echo "canary: meaning the old tool (tag unrepaired-reference-2026-10-15 or earlier),"
+    echo "canary:         with the assert at shared/lrs_test.h:683 compiled in. On this"
+    echo "canary:         input it aborts and publishes no figure. This is the reference"
+    echo "canary:         build for the two-figure rule; it carries C07 and C03."
+    echo "canary: NOTE    This does not establish the commit, the compiler, other flags,"
+    echo "canary:         or that the binary is unmodified."
     exit 0
 fi
 
-if [ "$ndebug" -eq 1 ] && [ "$asserts_live" -eq 0 ]; then
+if [ "$matched" -eq 1 ] && [ "$unrep_ndebug" -eq 1 ]; then
+    echo "canary: TREE    UNREPAIRED"
     echo "canary: BUILD   NDEBUG"
-    echo "canary: meaning asserts are compiled OUT."
-    echo "canary:         On this input the tool published a min-entropy figure derived"
-    echo "canary:         from an underflow, after reporting an LRS failure it did not"
-    echo "canary:         detect. ANY FIGURE FROM THIS BINARY IS UNINTERPRETABLE."
-    echo "canary: NOTE    This identifies the NDEBUG state only; see the header."
+    echo "canary: meaning the old tool with asserts compiled OUT. On this input it"
+    echo "canary:         published a min-entropy figure derived from an underflow, after"
+    echo "canary:         reporting an LRS failure it did not detect."
+    echo "canary:         ANY FIGURE FROM THIS BINARY IS UNINTERPRETABLE."
     exit 0
 fi
 
+echo "canary: TREE    INDETERMINATE"
 echo "canary: BUILD   INDETERMINATE"
-echo "canary: The outcome matched neither signature. This is NOT a pass."
+echo "canary: The outcome matched none of the three signatures ($matched matched). NOT a pass."
 echo "canary: Refuse any figure from this binary until provenance is established"
 echo "canary: by other means. Known causes of a legitimate INDETERMINATE:"
-echo "canary:   * a long double wider than 80 bits, where W=20000 may not reach"
-echo "canary:     the underflow bound. W=20000 covers 64-bit (W>1022) and 80-bit"
-echo "canary:     (W>16382) long doubles; the 80-bit case is an exponent-range"
-echo "canary:     argument, not a measurement taken on that platform."
 echo "canary:   * a timeout (CANARY_TIMEOUT, currently ${CANARY_TIMEOUT:-1800}s)"
 echo "canary:   * a tool that is not ea_iid"
+echo "canary:   * a long double wider than 80 bits on the UNREPAIRED tool, where"
+echo "canary:     W=20000 may not reach the underflow bound (the REPAIRED signature"
+echo "canary:     does not depend on exponent range)"
 echo "canary: ---- captured output (last 10 lines) ----"
 tail -10 "$OUT" | sed 's/^/canary:   /'
 exit 3

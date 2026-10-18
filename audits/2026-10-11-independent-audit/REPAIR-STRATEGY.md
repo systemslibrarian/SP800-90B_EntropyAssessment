@@ -335,11 +335,13 @@ exact one; use the oracle), `C22` (bounded, not removed — the floor still
 subtracts it), `C08`, the off-path conditioning clusters, the five
 unknown-direction clusters, `C-01` (carried, `restart_main.cpp`), the x86-64
 `long double` path (unverified), and every physical item (NOT RUN). It also
-**changes one control**: the provenance canary's two signatures describe the
-unrepaired tool, so on master it now returns INDETERMINATE for *both* builds and
-no longer discriminates NDEBUG — recorded in the canary header and
-`BUILDING.md`; a repaired-tool NDEBUG probe is new work, and until it exists the
-route is to build from the pinned commit.
+**changed one control**: the provenance canary's two signatures described the
+unrepaired tool, so on master it returned INDETERMINATE for *both* builds and
+TruePad's harness, which refuses on INDETERMINATE, would have rejected every
+repaired figure. **Re-signatured 2026-10-18** around the question that still
+has something behind it — repaired tree or unrepaired — with the build kept as
+a sub-result under UNREPAIRED; all four builds plus a control demonstrated
+(`logs/merge/canary3-*.log`), reported to TruePad as `XR-08`.
 
 **Evidentiary standing, unchanged by the merge:** the repairs are self-authored
 and unreviewed. Every figure from the repaired build is reported with that

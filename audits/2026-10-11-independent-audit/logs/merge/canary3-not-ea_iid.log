@@ -1,0 +1,20 @@
+canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
+canary: tool    /bin/ls
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.xefpmy/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: exit    1
+canary: TREE    INDETERMINATE
+canary: BUILD   INDETERMINATE
+canary: The outcome matched none of the three signatures (0 matched). NOT a pass.
+canary: Refuse any figure from this binary until provenance is established
+canary: by other means. Known causes of a legitimate INDETERMINATE:
+canary:   * a timeout (CANARY_TIMEOUT, currently 1800s)
+canary:   * a tool that is not ea_iid
+canary:   * a long double wider than 80 bits on the UNREPAIRED tool, where
+canary:     W=20000 may not reach the underflow bound (the REPAIRED signature
+canary:     does not depend on exponent range)
+canary: ---- captured output (last 10 lines) ----
+canary:   ls: /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.xefpmy/canary.json: No such file or directory
+canary:   ls: 1: No such file or directory
+canary:   66333582 -rw-r--r--@ 1 gmcas  1000000 Oct 18 16:04 /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.xefpmy/canary-lrsrep-20000.bin
+canary exit 3

@@ -572,3 +572,83 @@ against perturbed builds (OC-19) and which asserts `G_xor13_02` stays **silent**
 re-documented rather than the change accepted. **No hardware claim is upgraded.
 Physical items stay NOT RUN. 0.696 stays uninterpretable pending build
 provenance.**
+
+## XR-08 — INDETERMINATE from the pre-2026-10-18 canary against merged master means the canary is stale, not that provenance is unknowable; here is the replacement
+
+**Finding only. Reported, not acted on — TruePad's harness, TruePad's change.**
+State read: fork `master @ 9560e8f` plus this commit; the merge is `d226f18`.
+Evidence: `logs/merge/canary-*.log` (old canary, both builds INDETERMINATE),
+`logs/merge/canary3-*.log` (new canary, all five outcomes),
+`logs/ndebug/postmerge-build-differential.log`.
+
+**Sent now because the integration is broken as of `d226f18`.** TruePad built
+a refusal around the canary's `XR-04` answer — INDETERMINATE ⇒ refuse the
+figure — and that was right. But the repair merged on 2026-10-15 makes
+asserts-live and `-DNDEBUG` builds of `ea_iid` behave identically on the
+canary input (that was the point: `C07` closed at the root, build-differential
+PASS), so the old canary, which only knew the two *unrepaired* signatures,
+returns INDETERMINATE for **every** binary built from master at or after
+`d226f18`. Measured, both builds. Under the existing refusal rule TruePad now
+rejects every figure the repaired tool produces.
+
+### What changed and why the old question is moot
+
+The old canary asked "asserts live or NDEBUG?" because the unrepaired tool gave
+a different answer in each build. On the repaired tree the answer is the same
+in both, so the question has nothing behind it. **The question with something
+behind it is: is this binary from the repaired tree or the unrepaired one?**
+The same control input (1,000,000 bits, a 20,000-bit exact repeat implanted,
+digest `327773dd…`) discriminates it, because the two trees cannot both be
+right about it.
+
+### The replacement — `tools/build-provenance-canary.sh`, re-signatured, three outcomes
+
+| outcome | signature on the control input | stdout | exit |
+|---|---|---|---|
+| **REPAIRED** | exit 1, `IID test suite failed`, JSON `errorLevel 2`, **no** `hAssessed` — identical in either build | `canary: TREE    REPAIRED` / `canary: BUILD   NOT-DISTINGUISHED` | 0 |
+| **UNREPAIRED** / asserts live | SIGABRT 134, `Assertion failed` naming `lrs_test.h` | `canary: TREE    UNREPAIRED` / `canary: BUILD   ASSERTS-LIVE` | 0 |
+| **UNREPAIRED** / NDEBUG | exit 0, LRS failure reported, a figure published | `canary: TREE    UNREPAIRED` / `canary: BUILD   NDEBUG` | 0 |
+| **INDETERMINATE** | none of the above | `canary: TREE    INDETERMINATE` / `canary: BUILD   INDETERMINATE` | 3 |
+
+The build distinction is kept as a sub-result under UNREPAIRED because it still
+matters for the reference figure built from tag `unrepaired-reference-2026-10-15`.
+
+**Demonstrated, all four builds plus a control, arm64, 2026-10-18:**
+
+| binary | from | canary says | exit |
+|---|---|---|---|
+| `ea_iid` asserts live | master `d226f18` | TREE REPAIRED, BUILD NOT-DISTINGUISHED | 0 |
+| `ea_iid -DNDEBUG` | master `d226f18` | TREE REPAIRED, BUILD NOT-DISTINGUISHED | 0 |
+| `ea_iid` asserts live | tag `unrepaired-reference-2026-10-15` (`655bd10`) | TREE UNREPAIRED, BUILD ASSERTS-LIVE | 0 |
+| `ea_iid -DNDEBUG` | tag | TREE UNREPAIRED, BUILD NDEBUG | 0 |
+| `/bin/ls` (guard shown failing) | — | INDETERMINATE | 3 |
+
+The last row matters: `ls` exits 1 too, and the REPAIRED signature did **not**
+fire on a bare exit 1 — it needs the suite-failed line, `errorLevel 2` and the
+absence of `hAssessed` together.
+
+**Platform limit, re-checked.** The unrepaired signatures need
+`p_col^W < LDBL_MIN`: W = 20000 clears 64-bit (W > 1022) and 80-bit
+(W > 16382) `long double`. The REPAIRED signature is a *verdict*, not an
+underflow: the log-domain LRS forms `W·log p_col ≈ −13863`, always
+representable, and the expected number of colliding pairs `≈ 10^-6000` is below
+`LDBL_MIN` on both formats, so the test fails — correctly — on either platform.
+**Measured on arm64 only; the x86-64 side is an exponent-range argument, not
+an observation**, exactly as before.
+
+### What TruePad should change
+
+1. **Parse `canary: TREE`** and treat `REPAIRED` as the acceptable provenance
+   for a figure from the repaired fork, `UNREPAIRED` as the provenance for the
+   reference figure (two-figure rule), and `INDETERMINATE` as a refusal, as now.
+   The old `canary: BUILD   ASSERTS-LIVE | NDEBUG` strings still appear, under
+   UNREPAIRED only; `NOT-DISTINGUISHED` is new and is the expected value for a
+   repaired binary.
+2. **Do not read `BUILD NOT-DISTINGUISHED` as a gap.** It is the repair working.
+   NDEBUG provenance on the repaired tree is not establishable by behaviour on
+   this input and does not need to be: the two builds agree.
+3. **Keep the standing caveats.** `REPAIRED` is not `REVIEWED` — the repairs are
+   self-authored and unreviewed, and a canary result is about the binary at the
+   moment it ran, not about a figure produced earlier. `productionApprovalEnabled`
+   stays false and `approvedBuilds` stays empty on this finding's account; it
+   restores the ability to *interpret* a figure, not the authority to approve one.
