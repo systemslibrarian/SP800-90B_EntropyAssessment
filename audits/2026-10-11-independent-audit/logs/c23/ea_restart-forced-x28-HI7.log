@@ -1,0 +1,9 @@
+Loaded file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/c23-x28.bin' (SHA-256 hash b1674405ab5a7f01847ad522f9cdb0a898ff946249d7a00ffae7ecac3f37cf93 of assessed bytes)
+Loaded 1000000 samples made up of 256 distinct 8-bit-wide symbols.
+H_I: 7.000000
+ALPHA: 5.0251553006530614e-06, X_cutoff: 27
+X_max: 28
+
+*** Restart Sanity Check Failed ***
+OMP_NUM_THREADS=4 $R/cpp/ea_restart -v $S/c23-x$X.bin 8 7  4.50s user 0.03s system 383% cpu 1.182 total
+exit 255

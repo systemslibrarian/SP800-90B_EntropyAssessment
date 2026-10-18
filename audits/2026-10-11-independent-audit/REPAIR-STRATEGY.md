@@ -269,7 +269,7 @@ made on evidence; **the rebase remains NOT authorized.**
    defensible floor; the current state is not.
 3. **Before the rebase, two things that are cheaper than it and do not depend on
    it:** measure `C22`'s bound — **done, `OC-22`** — and apply `C23`'s oracle to
-   the restart decision. Neither touches the tools; with `C22` measured, no
+   the restart decision — **done as a script, `OC-26`; awaiting a real restart dataset**. Neither touches the tools; with `C22` measured, no
    unmeasured quantity remains between the figure and a floor.
 4. **Enforce `ASSERTS-LIVE` regardless.** It is the cheapest treatment, it is
    already mechanised, and it remains necessary for `C09` and for any binary
@@ -365,7 +365,8 @@ H_floor  =  h'                                   the reported per-bit figure, as
                                                        (compression binds); B_z = 0 under F07's reading, which is the audit's own disposition
 
   subject to  RESTART-ACCEPT(exact)             C23: not a subtraction. Recompute the §3.1.4.3 accept/reject decision with
-                                                       oracles/restart_cutoff_exact.py; if the exact cutoff rejects, no figure is awarded.
+                                                       oracles/restart_decision_exact.py <ea_restart -v log> (OC-26); if the exact
+                                                       cutoff rejects, no figure is awarded.
                                                        Subtracting its 0.341-bit slack from h' would be a category error — it governs
                                                        acceptance, not the per-bit figure.
 

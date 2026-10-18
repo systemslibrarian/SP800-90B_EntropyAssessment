@@ -1,0 +1,52 @@
+Loaded file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/c23-x24.bin' (SHA-256 hash 8da941675ca1e288c1d0d06d8099faa9f20fec502a9028a3ed581cae0675405b of assessed bytes)
+Loaded 1000000 samples made up of 256 distinct 8-bit-wide symbols.
+H_I: 7.000000
+ALPHA: 5.0251553006530614e-06, X_cutoff: 27
+X_max: 24
+
+Restart Sanity Check Passed...
+Calculating baseline statistics...
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+Literal MCV Estimate: mode = 4078, p-hat = 0.004078, p_u = 0.0042421547940145353
+	Most Common Value Estimate (Rows) = 7.880987 / 8 bit(s)
+Literal MCV Estimate: mode = 4078, p-hat = 0.004078, p_u = 0.0042421547940145353
+	Most Common Value Estimate (Cols) = 7.880987 / 8 bit(s)
+
+Running Tuple Estimates...
+Literal t-Tuple Estimate: t = 2, p-hat_max = 0.005916082741141725706568, p_u = 0.006113618597830375832325
+Literal LRS Estimate: u = 3, v = 4, p-hat = 0.0039079456334066599, p_u = 0.0040686550376972542
+Literal t-Tuple Estimate: t = 2, p-hat_max = 0.006855658028230914718959, p_u = 0.007068201639925012803867
+Literal LRS Estimate: u = 3, v = 23, p-hat = 0.30999163873488084, p_u = 0.31118293413097287
+	T-Tuple Test Estimate (Rows) = 7.353758 / 8 bit(s)
+	T-Tuple Test Estimate (Cols) = 7.144441 / 8 bit(s)
+	LRS Test Estimate (Rows) = 7.941232 / 8 bit(s)
+	LRS Test Estimate (Cols) = 1.684165 / 8 bit(s)
+
+Running Predictor Estimates...
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.003973023722721577 (C = 3814) Plocal can't affect result (r = 3)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (Rows) = 7.975547 / 8 bit(s)
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.0040863157314730463 (C = 3925) Plocal = 0.46126405358504063 (r = 23)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (Cols) = 1.116335 / 8 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.0040534070560576067 (C = 3893) Plocal can't affect result (r = 3)
+	Lag Prediction Test Estimate (Rows) = 7.946649 / 8 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.0040187077609908266 (C = 3859) Plocal can't affect result (r = 3)
+	Lag Prediction Test Estimate (Cols) = 7.959053 / 8 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.0039176575558081518 (C = 3760) Plocal = 0.010037857695357805 (r = 4)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (Rows) = 6.638405 / 8 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.0041187191634261232 (C = 3957) Plocal = 0.42724519720764259 (r = 21)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (Cols) = 1.226864 / 8 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.0039166954135147775 (C = 3759) Plocal = 0.010037895410368827 (r = 4)
+	LZ78Y Prediction Test Estimate (Rows) = 6.638399 / 8 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.0041187809404466631 (C = 3957) Plocal = 0.42724551376552178 (r = 21)
+	LZ78Y Prediction Test Estimate (Cols) = 1.226863 / 8 bit(s)
+
+H_r: 6.638399
+H_c: 1.116335
+H_I: 7.000000
+
+*** min(H_r, H_c) < H_I/2, Validation Testing Failed ***
+OMP_NUM_THREADS=4 $R/cpp/ea_restart -v $S/c23-x$X.bin 8 7  10.72s user 0.10s system 147% cpu 7.350 total
+exit 255

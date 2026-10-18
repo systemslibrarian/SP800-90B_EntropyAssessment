@@ -2518,3 +2518,44 @@ which are immutable there and corrected on master's `BUILDING.md`:
    2.0.1`, `libomp 23.1.2`) and omitted `openssl@3`, though the link against it
    succeeded. A direct query shows `openssl@3 3.6.4` installed. Recorded as
    seen rather than smoothed over; the versions match the tag's own table.
+
+## OC-26 — C23 applied as a recomputed decision: the script exists, and the flip is shown on a named matrix
+
+`C23`'s treatment was never a subtraction (`REPAIR-STRATEGY.md`, "The floor,
+as arithmetic"): the tool's simulated restart cutoff sits above the exact
+§3.1.4.3 binomial cutoff, so the correct response is to **recompute the
+accept/reject decision** against the exact cutoff and treat the tool's verdict
+as advisory. `oracles/restart_decision_exact.py` does that: it reads an
+`ea_restart -v` log (or `--manual H_I X_max`), names every input the decision
+depends on, and prints the exact decision beside the tool's.
+
+**Inputs the decision depends on** — `H_I`, the initial estimate passed on the
+command line (`p = 2^-H_I`); `X_max`, the largest symbol count in any row or
+column of the 1000×1000 matrix, printed by the tool; `α = 1 − 0.99^(1/2000)`,
+the tool's own Šidák value, which gives the same cutoff as the standard's
+printed 0.000005 at every `H_I` in 1..8 (`OC-7`); and `N = 1000`. The cutoff
+comes from `oracles/restart_cutoff_exact.py`, pinned against the standard's
+closed form, not the tool.
+
+**Demonstrated on three forced-count matrices** (`generators/c23_forced_count.py`,
+column 17 forced to exactly X zeros; `H_I = 7`; `logs/c23/`):
+
+| matrix (digest) | `X_max` | tool `X_cutoff` | tool said | exact cutoff | exact decision | |
+|---|---:|---:|---|---:|---|---|
+| X = 20 | 20 | 27 | Passed | 23 | **ACCEPT** | agree |
+| X = 24 (`8da94167…`) | 24 | 27 | **Passed** | 23 | **REJECT**, P(X ≥ 24 \| H_I = 7) = 2.2e-06 < α | **the tool accepts a matrix the standard rejects** |
+| X = 28 (`b1674405…`) | 28 | 27 | Failed | 23 | REJECT | agree |
+
+The middle row is the `C23` defect as a decision rather than as a 0.341-bit
+slack figure: with the exact cutoff the restart dataset is **not accepted and
+no figure is awarded**, which is what the standard requires. (The X = 24 run
+then fails the separate validation test, `min(H_r, H_c) < H_I/2`, for reasons
+of its own — the forced column makes the matrix non-uniform — but that is the
+second gate; the sanity check is the one `C23` governs.)
+
+**What this does not do.** There is no real restart dataset to decide: the
+physical items are NOT RUN and the device arrives in January 2027. When it
+does, the restart run's `-v` log goes through this script, and the figure is
+awarded only if the **exact** decision is ACCEPT. Synthetic matrices establish
+that the instrument's decision differs from the standard's and that the script
+computes the standard's; they say nothing about any source.

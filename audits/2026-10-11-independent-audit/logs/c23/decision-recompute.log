@@ -1,0 +1,18 @@
+audits/2026-10-11-independent-audit/logs/c23/ea_restart-forced-x20-HI7.log
+  inputs: H_I=7  X_max=20  alpha=5.025155301e-06 (Sidak, tool's own)  N=1000
+  exact cutoff (largest passing count): 23   P(X >= X_max | H_I) = 1.743e-04
+  EXACT decision:  ACCEPT  (X_max <= 23)
+  tool  decision:  ACCEPT  (simulated X_cutoff 27; tool printed "Restart Sanity Check Passed")
+  => AGREE
+audits/2026-10-11-independent-audit/logs/c23/ea_restart-forced-x24-HI7.log
+  inputs: H_I=7  X_max=24  alpha=5.025155301e-06 (Sidak, tool's own)  N=1000
+  exact cutoff (largest passing count): 23   P(X >= X_max | H_I) = 2.215e-06
+  EXACT decision:  REJECT  (X_max > 23)
+  tool  decision:  ACCEPT  (simulated X_cutoff 27; tool printed "Restart Sanity Check Passed")
+  => DISAGREE: the tool accepts a matrix the standard rejects
+audits/2026-10-11-independent-audit/logs/c23/ea_restart-forced-x28-HI7.log
+  inputs: H_I=7  X_max=28  alpha=5.025155301e-06 (Sidak, tool's own)  N=1000
+  exact cutoff (largest passing count): 23   P(X >= X_max | H_I) = 1.475e-08
+  EXACT decision:  REJECT  (X_max > 23)
+  tool  decision:  REJECT  (simulated X_cutoff 27; tool printed "Restart Sanity Check Failed")
+  => AGREE
