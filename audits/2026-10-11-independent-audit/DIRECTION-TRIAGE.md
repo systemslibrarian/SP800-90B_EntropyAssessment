@@ -194,3 +194,16 @@ Recorded with the specific reason and what would put each back on the path.
 scales with a statistic of the stream. The floor-by-subtraction expression is
 written out in `REPAIR-STRATEGY.md`. Paul's decision of 2026-10-15: **no
 upstream report** — the inventory is kept as documentation, not sent.
+
+# Status update — 2026-10-18, the five unknown-direction clusters settled (OC-28)
+
+| Cluster | Was | Now |
+|---|---|---|
+| **`C16`** | UNKNOWN, mixed | **PERMISSIVE on the restart gates** given a mis-scaled `H_I`; demonstrated on master today (`H_I = 1e-400` → both gates pass, exit 0). **Next piece of work** (`OC-11`'s regression). |
+| **`C14`** | UNKNOWN, seven members | **PERMISSIVE on the status channel** (`OC-14`); no member changes a figure's value. |
+| **`C18`** | UNKNOWN, platform not in use | **NEUTRAL on this host** (`sizeof(long) = 8`, measured); UNKNOWN on LLP64 until a Windows build exists. |
+| **`C20`** | UNKNOWN | **NEUTRAL** (`OC-13`, data-flow argument, no TSan). |
+| **`C21`** | UNKNOWN, mixed | **NEUTRAL on the supported path** (`OC-13`, measured refusals); off-path conditioning members stay off-path. |
+| **`C23`** | PERMISSIVE, verified | mechanism named (`OC-27`): a different statistic — max over k_eff cells — not an off-by-one; systematic +2…+5 at every H_I and every α; "exact" anchored by exact rational arithmetic. |
+
+No cluster remains with an unknown direction on the platform in use.

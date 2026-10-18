@@ -1,0 +1,7 @@
+CORPUS citation disagrees (OC-17: 0/N false positives):    audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md says 24, this script expects 25
+
+regression-outside-battery: FAIL (corpus: 1 problem(s); nothing was measured)
+  The corpus behind every pinned figure (0/25 clean, B, E, the Compression
+  binding) is not the one the calibration was measured on, or cannot be
+  counted. Fix the manifest or the generator deliberately; do not widen.
+exit 1

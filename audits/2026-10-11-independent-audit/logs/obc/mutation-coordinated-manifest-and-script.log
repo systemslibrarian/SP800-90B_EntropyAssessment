@@ -1,0 +1,12 @@
+CORPUS citation disagrees (tool header: clean total):      tools/outside-battery-check.cpp says 25, this script expects 24
+CORPUS citation disagrees (tool header: MT family):        tools/outside-battery-check.cpp says 5, this script expects 4
+CORPUS citation disagrees (generator docstring: total):    audits/2026-10-11-independent-audit/generators/blindspot_streams.py says 25, this script expects 24
+CORPUS citation disagrees (generator docstring: mt range): audits/2026-10-11-independent-audit/generators/blindspot_streams.py says 04, this script expects 03
+CORPUS citation disagrees (OC-17: calibration total):      audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md says 25, this script expects 24
+CORPUS citation disagrees (OC-17: 0/N false positives):    audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md says 25, this script expects 24
+
+regression-outside-battery: FAIL (corpus: 6 problem(s); nothing was measured)
+  The corpus behind every pinned figure (0/25 clean, B, E, the Compression
+  binding) is not the one the calibration was measured on, or cannot be
+  counted. Fix the manifest or the generator deliberately; do not widen.
+exit 1

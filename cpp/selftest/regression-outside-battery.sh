@@ -153,6 +153,39 @@ done
 for n in ${MT}; do [ "${n}" != "${n#mt}" ] || cbad "family mt entry not an mt stream:" "${n}"; done
 for n in ${SHA}; do [ "${n}" != "${n#sha}" ] || cbad "family sha entry not a sha stream:" "${n}"; done
 
+# ---- the citation link: the counts this script expects are also stated, as
+# literals, in the tool's header, the generator's docstring and the audit's
+# OC-17 text. A corpus edit cannot reach those, and an edit to this script's
+# EXPECT_* alone leaves them disagreeing. So the expected set is anchored in
+# four places that must all agree; a "0 of 25" in a document is only as good
+# as this link (OC-23 follow-up, 2026-10-18). OUTSIDE_BATTERY_CITE_ROOT points
+# the check at mirrored copies, for demonstrating it failing.
+cite_root="${OUTSIDE_BATTERY_CITE_ROOT:-${repo}}"
+cite_total=$((EXPECT_MT + EXPECT_SHA))
+cite() { # cite <label> <file> <grep-regex> <sed-extract> <expected>
+	local label=$1 file=$2 rx=$3 ex=$4 want=$5 got
+	if [ ! -r "${cite_root}/${file}" ]; then cbad "citation source missing:" "${file}"; return; fi
+	got=$(grep -oE "${rx}" "${cite_root}/${file}" | head -1 | sed "${ex}")
+	if [ -z "${got}" ]; then cbad "citation not found (${label}):" "${file} has no match for '${rx}'"
+	elif [ "${got}" != "${want}" ]; then cbad "citation disagrees (${label}):" "${file} says ${got}, this script expects ${want}"; fi
+}
+cite "tool header: clean total"   tools/outside-battery-check.cpp 'MEASURED on [0-9]+ independent clean' 's/MEASURED on \([0-9]*\).*/\1/' "${cite_total}"
+cite "tool header: MT family"     tools/outside-battery-check.cpp '\([0-9]+ Mersenne' 's/(\([0-9]*\).*/\1/' "${EXPECT_MT}"
+cite "tool header: SHA family"    tools/outside-battery-check.cpp ', [0-9]+ SHA-256 counter mode' 's/, \([0-9]*\).*/\1/' "${EXPECT_SHA}"
+cite "generator docstring: total" audits/2026-10-11-independent-audit/generators/blindspot_streams.py 'CLEAN \([0-9]+,' 's/CLEAN (\([0-9]*\).*/\1/' "${cite_total}"
+cite "generator docstring: mt range" audits/2026-10-11-independent-audit/generators/blindspot_streams.py 'mt00\.\.mt[0-9]+' 's/mt00\.\.mt//' "$(printf '%02d' $((EXPECT_MT - 1)))"
+cite "generator docstring: sha range" audits/2026-10-11-independent-audit/generators/blindspot_streams.py 'sha00\.\.sha[0-9]+' 's/sha00\.\.sha//' "$((EXPECT_SHA - 1))"
+cite "OC-17: calibration total"   audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md 'Calibration: [0-9]+ independent clean streams' 's/Calibration: \([0-9]*\).*/\1/' "${cite_total}"
+cite "OC-17: 0/N false positives" audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md '\*\*0/[0-9]+\*\* over 5\.731' 's/\*\*0\/\([0-9]*\).*/\1/' "${cite_total}"
+for fig in 8538.7 59.938 40.21 0.8546; do   # the figures this script pins must still be the ones the record cites
+	grep -q -- "${fig}" "${cite_root}/audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md" 2>/dev/null \
+		|| cbad "pinned figure no longer cited in ORCHESTRATOR-CHECKS.md:" "${fig}"
+done
+for nm in B_osc5000 E_weaklag5000 G_xor13_; do  # and the names behind them must be the generator's names (G is built from a format string)
+	grep -q -- "${nm}" "${cite_root}/audits/2026-10-11-independent-audit/generators/blindspot_streams.py" 2>/dev/null \
+		|| cbad "named input not defined by the generator:" "${nm}"
+done
+
 CLEAN_FAST="${MT# }"
 CLEAN_REST="${SHA# }"
 if [ "${full}" = "1" ]; then

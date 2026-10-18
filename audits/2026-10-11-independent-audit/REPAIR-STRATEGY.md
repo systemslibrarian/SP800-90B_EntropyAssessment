@@ -330,10 +330,12 @@ every unknown-direction cluster — `C14`, `C16`, `C18`, `C20`, `C21` — once i
 direction is settled.
 
 **What the merge does NOT close, so that the record resists being read as
-"the audit is closed":** `C23` (the simulated restart cutoff still sits above the
-exact one; use the oracle), `C22` (bounded, not removed — the floor still
+"the audit is closed":** `C23` (the tool simulates the max over all symbols where
+the standard specifies one binomial — `OC-27`; use the decision oracle), `C16`
+(permissive on the same gates given a mis-scaled `H_I`; next piece of work,
+`OC-28`), `C22` (bounded, not removed — the floor still
 subtracts it), `C08`, the off-path conditioning clusters, the five
-unknown-direction clusters, `C-01` (carried, `restart_main.cpp`), the wide
+formerly-unknown clusters now settled in direction (`OC-28`: `C14` permissive on the status channel, `C18`/`C20`/`C21` neutral on this host), `C-01` (carried, `restart_main.cpp`), the wide
 `long double` formats (x87, binary128: a bounded argument since `OC-24`,
 settled by one canary run on such a host), and every physical item (NOT RUN). It also
 **changed one control**: the provenance canary's two signatures described the

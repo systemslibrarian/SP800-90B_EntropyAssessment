@@ -1,0 +1,55 @@
+alpha_tool = 0.0000050251553006155240 (80-digit decimal); restart_cutoff_exact's alpha = 5.0251553006155243e-06
+
+## Anchor 1: standard's binomial cutoff, Fraction/Decimal recurrence vs restart_cutoff_exact.py (mpmath binomial)
+| H_I | anchor (exact rational) | restart_cutoff_exact | agree | Pr[X >= cutoff+1] |
+|---:|---:|---:|---|---:|
+| 1 | 570 | 570 | yes | 3.987e-06 |
+| 2 | 312 | 312 | yes | 4.136e-06 |
+| 3 | 173 | 173 | yes | 4.759e-06 |
+| 4 | 99 | 99 | yes | 3.546e-06 |
+| 5 | 58 | 58 | yes | 4.172e-06 |
+| 6 | 36 | 36 | yes | 2.356e-06 |
+| 7 | 23 | 23 | yes | 2.215e-06 |
+| 7.5 | 19 | 19 | yes | 1.402e-06 |
+| 8 | 15 | 15 | yes | 3.407e-06 |
+
+## alpha_tool = 1 - 0.99^(1/2000)
+| H_I | k_eff | standard cutoff (single binomial) | tool-statistic cutoff (max over k_eff cells, exact) | gap | tool measured (simulation) |
+|---:|---:|---:|---:|---:|---|
+| 1 | 2 | 570 | 572 | +2 | 571 |
+| 2 | 4 | 312 | 316 | +4 | 316 |
+| 3 | 8 | 173 | 178 | +5 | 177 |
+| 4 | 16 | 99 | 104 | +5 | 103 |
+| 5 | 32 | 58 | 63 | +5 | 63 |
+| 6 | 64 | 36 | 40 | +4 | 40 |
+| 7 | 128 | 23 | 27 | +4 | 27 |
+| 7.5 | 182 | 19 | 22 | +3 | 22 |
+| 8 | 256 | 15 | 19 | +4 | 19 |
+
+## alpha = 0.000005 (the standard's printed Bonferroni)
+| H_I | k_eff | standard cutoff (single binomial) | tool-statistic cutoff (max over k_eff cells, exact) | gap | tool measured (simulation) |
+|---:|---:|---:|---:|---:|---|
+| 1 | 2 | 570 | 572 | +2 | - |
+| 2 | 4 | 312 | 316 | +4 | - |
+| 3 | 8 | 173 | 178 | +5 | - |
+| 4 | 16 | 99 | 104 | +5 | - |
+| 5 | 32 | 58 | 63 | +5 | - |
+| 6 | 64 | 36 | 40 | +4 | - |
+| 7 | 128 | 23 | 27 | +4 | - |
+| 7.5 | 182 | 19 | 22 | +3 | - |
+| 8 | 256 | 15 | 19 | +4 | - |
+
+## alpha = 0.001 (illustrative, 200x looser)
+| H_I | k_eff | standard cutoff (single binomial) | tool-statistic cutoff (max over k_eff cells, exact) | gap | tool measured (simulation) |
+|---:|---:|---:|---:|---:|---|
+| 1 | 2 | 549 | 552 | +3 | - |
+| 2 | 4 | 293 | 299 | +6 | - |
+| 3 | 8 | 158 | 165 | +7 | - |
+| 4 | 16 | 87 | 94 | +7 | - |
+| 5 | 32 | 50 | 55 | +5 | - |
+| 6 | 64 | 29 | 34 | +5 | - |
+| 7 | 128 | 18 | 22 | +4 | - |
+| 7.5 | 182 | 14 | 18 | +4 | - |
+| 8 | 256 | 11 | 15 | +4 | - |
+
+done

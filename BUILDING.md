@@ -576,7 +576,10 @@ cd /tmp/unrepaired/cpp && make non_iid iid restart
 ```
 
 Asserts are live in that build (no Makefile target sets `-DNDEBUG`); do not add
-it. **Walked end to end from a fresh clone on 2026-10-18** (`OC-25`,
+it. The corrections the tag itself cannot carry are in
+[docs/TAG-unrepaired-reference-2026-10-15.md](docs/TAG-unrepaired-reference-2026-10-15.md),
+named for the tag so a search for the tag name finds them. **Walked end to end
+from a fresh clone on 2026-10-18** (`OC-25`,
 `logs/merge/tag-walk-2026-10-18.log`): it builds, and the canary classifies the
 result UNREPAIRED / ASSERTS-LIVE. Two things the instructions *at the tag* do not
 say at the point you read them: the quick-start block builds only `ea_non_iid`,

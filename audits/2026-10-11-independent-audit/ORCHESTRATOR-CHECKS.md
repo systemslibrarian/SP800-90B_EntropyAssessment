@@ -2559,3 +2559,168 @@ does, the restart run's `-v` log goes through this script, and the figure is
 awarded only if the **exact** decision is ACCEPT. Synthetic matrices establish
 that the instrument's decision differs from the standard's and that the script
 computes the standard's; they say nothing about any source.
+
+## OC-23 addendum — where the counts live, the coordinated edit, and the citation link
+
+**Where the expected 5 is read from.** Not from the manifest. The manifest's
+header *states* the counts as prose, but the regression reads them from its
+own line `EXPECT_MT=5; EXPECT_SHA=20; EXPECT_DEFECT=5; EXPECT_BLINDSPOT=1`
+(`regression-outside-battery.sh:122`). So the mt02 mutation failed because the
+script's expectation disagreed with the manifest's count, not because the
+manifest noticed its own edit.
+
+**The coordinated edit, run** (`logs/obc/mutation-coordinated-manifest.log`):
+mt02's line removed *and* the header's "mt 5" changed to "mt 4" in the same
+file, the way a person tidying up would. **FAIL**: `family mt short or long: 4
+listed, 5 required`. The expectation and the set it governs do not share a
+file.
+
+**The edit one level up, also run** — manifest as above *plus* the script's
+`EXPECT_MT=5` changed to `4` (`logs/obc/mutation-coordinated-manifest-and-script.log`).
+Before today that passed. It now **fails with six disagreements**, because the
+counts are anchored in places a corpus-and-script edit does not reach, and the
+regression checks every one of them before measuring anything:
+
+| anchor | what it states | checked against |
+|---|---|---|
+| `tools/outside-battery-check.cpp:40-42` | "MEASURED on 25 independent clean streams … (5 Mersenne Twister, 20 SHA-256 counter mode)" | `EXPECT_MT + EXPECT_SHA`, `EXPECT_MT`, `EXPECT_SHA` |
+| `generators/blindspot_streams.py` docstring | "CLEAN (25, …)", "mt00..mt04", "sha00..sha19" | the same three |
+| `OC-17` | "Calibration: 25 independent clean streams", "**0/25** over 5.731" | the total |
+| `OC-17` / this regression | 8538.7, 59.938, 40.21, 0.8546 | the figures this script pins must still be the ones the record cites |
+| the generator | `B_osc5000`, `E_weaklag5000`, `G_xor13_` | the names behind the pinned figures must be names the generator defines |
+
+**The citation link, closed.** A figure that names its input was, until today,
+only as good as the document happening to agree with the manifest. Now a
+document claiming "0/24" fails the regression
+(`logs/obc/mutation-doc-count.log`: exactly one problem, `OC-17: 0/N false
+positives … says 24, this script expects 25`). The chain is: document count ⇔
+script expectation ⇔ manifest family count ⇔ files on disk ⇔ digests ⇔
+generator names. Changing the corpus now requires touching the manifest, the
+script, the tool header, the generator docstring and `OC-17` together — which
+is the point: five deliberate edits in five files is a decision, one edit in
+one file was an accident waiting to pass.
+
+Two of my first extraction patterns took the wrong number from a match (256 from
+"SHA-256", 731 from "5.731") and one looked for a literal `G_xor13_02` the
+generator builds from a format string; those produced false failures on the
+baseline, were fixed, and the baseline re-run passes
+(`logs/obc/baseline-fast.log`). Recorded for the same reason as the sed in
+`OC-23`: a check that fails for the wrong reason is as misleading as one that
+passes for the wrong reason.
+
+## OC-27 — C23's gap is not an off-by-one: the tool simulates a different statistic, systematically, at every H_I and every α
+
+`OC-26` showed one point: X_max 24 accepted by the tool and rejected by an exact
+cutoff of 23 at H_I = 7. That point is now scoped, its mechanism named, and the
+word "exact" anchored. `oracles/restart_cutoff_anchor.py`, `logs/c23/anchor.log`,
+`logs/c23/sweep/` (the tool at H_I = 1 … 8 on this machine, one run each).
+
+### Anchor first — is 23 the standard's number?
+
+`restart_cutoff_exact.py` uses `mpmath`'s `binomial()`. Independently of it, and
+of the tool: X ~ Binomial(1000, 2^-H_I) with the pmf built by the multiplicative
+recurrence `f(j+1) = f(j)·(N−j)/(j+1)·p/q` from `f(0) = q^N`, in
+**exact rational arithmetic** (`fractions.Fraction`; p is dyadic for integer
+H_I, so no floating point exists anywhere in the computation) and in
+80-digit `Decimal` for H_I = 7.5; cutoff = the largest x with
+Pr[X ≥ x] ≥ α. **Agrees with `restart_cutoff_exact.py` at all nine H_I**
+(570, 312, 173, 99, 58, 36, 23, 19, 15). "Exact" is now a cross-checked claim,
+not a label.
+
+### Mechanism — the lines
+
+`restart_main.cpp`, `simulateCount()`:
+
+```c
+for (int j = 0; j < 1000; j++)
+    counts[(int)floor(randomUnit(xoshiro256starstarState) / p)]++;   // k_eff cells, each at probability p
+for (int j = 0; j < k_effective; j++)
+    if (max_count < counts[j]) max_count = counts[j];               // the MAX over all cells
+return max_count;
+```
+
+and `simulateBound()`: `k_effective = ceil(1.0 / p)`,
+`returnIndex = floor((1 − α)·R) − 1`, `returnValue = results[returnIndex]`.
+
+§3.1.4.3 defines the null as a **single** Binomial(1000, p) for the most
+likely symbol and compares X_max against its tail. The tool instead simulates
+the **maximum count over all k_eff = 2^H_I equiprobable symbols** in 1000 draws
+and takes the (1 − α) order statistic of *that*. The maximum over k cells is
+stochastically larger than any one cell's count, so its quantile sits above the
+binomial's, and the tool accepts counts the standard rejects. It is not a strict
+versus non-strict comparison, not a ceiling for a floor, and not a boundary
+term in a tail sum: it is a different random variable. (The quantile index is a
+0-based rank that leaves ≈ α·R = 25 simulated maxima above the cutoff, which
+is the right convention for "counts equal to this value pass"; it contributes
+at most ±1 of simulation noise.)
+
+### Scope — the whole range, two α values, exact model against measurement
+
+The anchor script also computes the tool's *intended* statistic exactly —
+Pr[max over k_eff cells ≤ m] = 1000!·[x^1000] Π_j S_m(p_j x) by truncated
+polynomial powering, 40 digits — so the mechanism can be separated from
+simulation noise:
+
+| H_I | k_eff | standard (single binomial) | tool's statistic, exact quantile | gap | tool measured today | OC-7's three draws |
+|---:|---:|---:|---:|---:|---:|---|
+| 1 | 2 | 570 | 572 | +2 | 571 | 572, 572, 571 |
+| 2 | 4 | 312 | 316 | +4 | 316 | 316, 316, 316 |
+| 3 | 8 | 173 | 178 | +5 | 177 | 179, 178, 178 |
+| 4 | 16 | 99 | 104 | +5 | 103 | 103, 104, 104 |
+| 5 | 32 | 58 | 63 | +5 | 63 | 63, 63, 63 |
+| 6 | 64 | 36 | 40 | +4 | 40 | 40, 40, 40 |
+| 7 | 128 | 23 | 27 | +4 | 27 | 27, 27, 27 |
+| 7.5 | 182 | 19 | 22 | +3 | 22 | 22, 23, 22 |
+| 8 | 256 | 15 | 19 | +4 | 19 | 19, 19, 19 |
+
+The exact quantile of the max-over-cells statistic reproduces every measured
+tool cutoff to within ±1 — the simulation noise of a 5×10⁶-round order
+statistic at a 5×10⁻⁶ tail. **The mechanism accounts for the whole gap.** It is
+systematic across the usable range: +2 at H_I = 1 (two cells) rising to +5 and
+settling at +4 as the per-cell probability shrinks; there is no boundary inside
+the range where it appears or disappears.
+
+At the standard's printed α = 0.000005 the table is identical (the Šidák and
+Bonferroni values give the same cutoffs, as `OC-7` said). At an illustrative
+α = 0.001 the gap moves to +3 … +7 — the disagreement is α-dependent in size
+and present at every α, as a statistic mismatch must be and an off-by-one
+would not be.
+
+### Direction and standing
+
+**Permissive, verified, systematic.** The tool accepts restart matrices with
+X_max up to 2–5 counts above what §3.1.4.3 rejects, at every H_I. This is the
+`C23` register entry with its mechanism named; the treatment stays as
+`OC-26`: recompute the decision with the exact cutoff, never subtract. **The
+"deliberate implementation choice" reading is now also mechanically precise**:
+the tool's statistic is arguably the better-posed null for the quantity it
+measures (the max over symbols *is* what X_max is), but it is not the
+standard's test, and a figure claimed under SP 800-90B must pass the
+standard's. Nothing here decides a real device: there is no restart dataset,
+physical items stay NOT RUN. Measured on this machine; the mechanism and the
+exact quantiles are arithmetic and transfer; the simulation noise is the
+tool's and would be re-drawn anywhere.
+
+## OC-28 — the five unknown-direction clusters: direction only
+
+Direction decides whether a fix is owed; only permissive puts a figure at
+risk. Each line says what fixes the direction and whether that is a
+demonstration or an argument from reading code. Nothing here is a repair.
+
+| cluster | direction | fixed by | demonstration or argument |
+|---|---|---|---|
+| **`C16`** permissive parsing | **PERMISSIVE on the restart gates**, given a mis-scaled `H_I` string; conservative on the *returned* value | Re-run today on master: `ea_restart -v <8-bit matrix> 8 1e-400` → `H_I: 0.000000`, `X_cutoff: 1000`, `Restart Sanity Check Passed`, `Validation Test Passed`, `min(H_r,H_c,H_I): 0.000000`, **exit 0** (`logs/c23/c16-HI-1e-400.log`). Both gates vacuous; the tool reports success. The returned minimum is 0, so a consumer using the tool's own output gets a conservative number; a consumer that keeps its own `H_I` and reads the exit status gets an accepted restart it should not have (`XR-03`). The other members (`atoi` width truncation, `-s` allocation, octal `n_in`) are all marked off the supported path by their finders. | **Demonstration** (today, master) |
+| **`C14`** report contract | **PERMISSIVE on the status channel** | `OC-14`: three ways for a harness to read success where there is none — the stale `-o` file (`XR-01`), `exit 0` on a `--version`-named input, `exit 0` for a failed IID suite (`C03`, since closed by the merge) — against one way to read failure without a cause. No member changes a computed figure's value. | Demonstration (`OC-14`, by execution) |
+| **`C18`** LLP64 overflow | **NEUTRAL on this host; UNKNOWN on LLP64** | `sizeof(long) = 8` printed on this build today, so no counter in the cluster can overflow here. On Windows/LLP64 (`long` = 32-bit) `n_choose_2`'s wrap sign depends on `L`, so the direction there is undecidable by reading. The Windows route is documented and NOT verified (`BUILDING.md`) and is not in use. | Demonstration for this host; argument for LLP64, which is out of scope until a Windows build exists |
+| **`C20`** OpenMP races | **NEUTRAL** | `OC-13`: every input to the permutation verdict is written only inside the critical region, and the raced `test_status[]` is monotone and not an input to the verdict; the raced `completed` counter feeds only a progress percentage. | **Argument** (data-flow reading; ThreadSanitizer not run) |
+| **`C21`** conditioning and permutation misc | **NEUTRAL on the supported path**; off-path members are misreport/crash in `ea_conditioning`, which is not built | `OC-13`: the `periodicity`/`covariance` over-read needs `n < p` and every supported path refuses such an input (short file and short `-l` subset both refused, measured). The `fesetround` member is off-path and measured ±1e-12 in both directions. | Demonstration for the on-path members; the off-path members stay off-path |
+
+**Stop point.** `C16` is permissive, by demonstration, on the same gate `C23`
+is permissive on, and the two compose: a lower `H_I` lowers the validation
+threshold `H_I/2` *and* raises the sanity cutoff. **It is the next piece of
+work.** `OC-11` already specified the regression — construct `H_I = 1e-400`,
+assert the run is refused, and show the assertion failing against current
+master, which today still accepts it with `exit 0` — and the four hardening
+items. Not done here; direction only. `C14` is also permissive but on the
+status channel, and two of its three routes are TruePad-side or already
+closed; it ranks behind `C16`.
