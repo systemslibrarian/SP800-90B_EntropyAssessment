@@ -333,8 +333,9 @@ direction is settled.
 "the audit is closed":** `C23` (the simulated restart cutoff still sits above the
 exact one; use the oracle), `C22` (bounded, not removed — the floor still
 subtracts it), `C08`, the off-path conditioning clusters, the five
-unknown-direction clusters, `C-01` (carried, `restart_main.cpp`), the x86-64
-`long double` path (unverified), and every physical item (NOT RUN). It also
+unknown-direction clusters, `C-01` (carried, `restart_main.cpp`), the wide
+`long double` formats (x87, binary128: a bounded argument since `OC-24`,
+settled by one canary run on such a host), and every physical item (NOT RUN). It also
 **changed one control**: the provenance canary's two signatures described the
 unrepaired tool, so on master it returned INDETERMINATE for *both* builds and
 TruePad's harness, which refuses on INDETERMINATE, would have rejected every

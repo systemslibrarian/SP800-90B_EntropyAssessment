@@ -627,14 +627,15 @@ The last row matters: `ls` exits 1 too, and the REPAIRED signature did **not**
 fire on a bare exit 1 — it needs the suite-failed line, `errorLevel 2` and the
 absence of `hAssessed` together.
 
-**Platform limit, re-checked.** The unrepaired signatures need
-`p_col^W < LDBL_MIN`: W = 20000 clears 64-bit (W > 1022) and 80-bit
-(W > 16382) `long double`. The REPAIRED signature is a *verdict*, not an
-underflow: the log-domain LRS forms `W·log p_col ≈ −13863`, always
-representable, and the expected number of colliding pairs `≈ 10^-6000` is below
-`LDBL_MIN` on both formats, so the test fails — correctly — on either platform.
-**Measured on arm64 only; the x86-64 side is an exponent-range argument, not
-an observation**, exactly as before.
+**Platform limit, corrected in `OC-24` (2026-10-18).** "arm64" here is Apple
+arm64, where `long double` is IEEE double (53-bit, emin −1021) — the
+*narrowest* of the three formats a build can land on; x87 extended (x86-64) and
+binary128 (Linux aarch64) share emin −16382. At W = 20000, `p_col^W = 2^-20000`
+is below the subnormal floor of all three, so the unrepaired signatures are
+format-independent by the arithmetic; the REPAIRED signature is a verdict with
+a 13842 log-unit margin, not an underflow. **Measured on the IEEE-double
+format only; the wide formats are a bounded argument (`OC-24`), and the one
+thing that would settle them is a single canary run on an x86-64 host.**
 
 ### What TruePad should change
 
@@ -652,3 +653,49 @@ an observation**, exactly as before.
    moment it ran, not about a figure produced earlier. `productionApprovalEnabled`
    stays false and `approvedBuilds` stays empty on this finding's account; it
    restores the ability to *interpret* a figure, not the authority to approve one.
+
+## XR-09 — the build-state gap in TruePad's qualification record is moot for a repaired binary; the field it needs is TREE first, BUILD only under UNREPAIRED
+
+**Finding only. Reported, not acted on — TruePad's record, TruePad's change.**
+State read: fork `master @ b12247c` plus this commit. Evidence:
+`logs/merge/canary3-*.log`, `logs/ndebug/postmerge-build-differential.log`,
+`OC-24`, `OC-25`.
+
+TruePad's `QUALIFICATION-BINDING.md` names exactly one gap in its qualification
+record: the **build state of the binary** (`XR-04`), which the CLI path does not
+record. That gap was real when it was recorded, because the unrepaired tool
+gave a different answer in each build on one input. **Post-repair it is moot —
+for a repaired binary.** `XR-08`'s table shows master's asserts-live and
+`-DNDEBUG` builds both classified `TREE REPAIRED, BUILD NOT-DISTINGUISHED`, and
+the build-differential shows them refusing identically. There is no build state
+to record for a repaired binary because the two builds are identical in the
+dimension that used to matter; a field demanding one would stay empty forever
+and read as an open gap that is not one.
+
+**Scope, precisely.** The question is moot **only when `TREE` is REPAIRED.** An
+UNREPAIRED binary — the reference build from tag
+`unrepaired-reference-2026-10-15`, which the two-figure rule requires TruePad to
+keep producing — still has a build state that changes its behaviour: asserts
+live aborts, `-DNDEBUG` fabricates a figure silently (`XR-04`). So:
+
+| `TREE` | `BUILD` | meaning for the record |
+|---|---|---|
+| REPAIRED | NOT-DISTINGUISHED | the expected pair for a figure from the repaired fork; no build state exists to record |
+| UNREPAIRED | ASSERTS-LIVE | the reference tool, fail-closed on the canary input; its figure is reportable *as the reference* |
+| UNREPAIRED | NDEBUG | the reference tool with the defect firing silently; **any figure uninterpretable** |
+| INDETERMINATE | — | refuse, as now |
+
+**What the field should hold instead.** `TREE` first, with `BUILD` meaningful
+only when `TREE` is UNREPAIRED — plus enough to identify the binary itself,
+which the canary deliberately does not establish: **the SHA-256 of the
+executable**, or the commit plus compiler and flags. The canary result is a
+statement about the binary at the moment it ran; the hash is what ties a stored
+figure to that binary later. `OC-25` shows the shape: a tag-built `ea_iid`
+with its digest `5bece408…` and its canary line beside it.
+
+**Standing caveats, unchanged.** `REPAIRED` is not `REVIEWED` — the repairs are
+self-authored and unreviewed. `OC-24`: every canary signature is measured on
+the IEEE-double `long double` format only; the wide formats are a bounded
+argument, and if TruePad ever runs on x86-64 the one thing to do is run the
+canary once there. `productionApprovalEnabled` stays false and `approvedBuilds`
+stays empty on this finding's account.

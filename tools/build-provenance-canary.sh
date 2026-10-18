@@ -91,23 +91,26 @@ EXPECTED_SHA="327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c"
 # 1,000,000 one-bit samples from a fixed seed, with a 20000-sample block copied
 # over a later position so the longest repeated substring is at least 20000.
 #
-# PLATFORM LIMIT, re-checked for the three-way signature (2026-10-18):
+# PLATFORM LIMIT (corrected 2026-10-18, OC-24). Three long double formats:
+#   IEEE double    Apple arm64 (MEASURED here)   53-bit, emin -1021,  floor 2^-1074
+#   x87 extended   x86-64                        64-bit, emin -16382, floor 2^-16445
+#   binary128      Linux aarch64                113-bit, emin -16382, floor 2^-16494
 #
-#   UNREPAIRED side. p_colPower = p_col^W underflows once p_col^W < LDBL_MIN
-#   (p_col is about 0.5), i.e. W > 1022 on a 64-bit long double (arm64) and
-#   W > 16382 on an 80-bit one (x86-64). W = 20000 clears both by 3618 binary
-#   orders on the stricter, so the abort / fabrication signatures fire on either.
+#   UNREPAIRED side. p_colPower = p_col^W must fall below LDBL_MIN: W > 1022 on
+#   IEEE double, W > 16382 on BOTH wide formats (they share the exponent
+#   range; the narrow one is the measured platform). At W = 20000, 2^-20000 is
+#   below the subnormal floor of all three, so powl returns +0 everywhere and
+#   the abort / fabrication signatures follow identically. The formats DO
+#   diverge for W in 1022..16382 -- which is why this input is W = 20000.
 #
 #   REPAIRED side. The log-domain LRS forms W*log(p_col) ~ -13863 (always
-#   representable) and the expected number of colliding pairs
-#   pairs * exp(that) ~ 10^-6000, below LDBL_MIN on BOTH formats (64-bit
-#   2.2e-308, 80-bit 3.4e-4932), so probabilityAtLeastOne is 0 and the test
-#   fails -- the correct statistical conclusion for a 20000-bit exact repeat --
-#   on either platform. The refusal is a verdict, not an underflow, so it does
-#   not depend on exponent range at all.
+#   representable) and the decision compares it against ~ -20.7: false by a
+#   13842 log-unit margin on every format; no comparison sits near a rounding
+#   boundary and no double intermediate is on an underflow path. This is an
+#   ARGUMENT from reading lrs_test.h, confirmed numerically on one format.
 #
-#   Measured on arm64 only (all four cases, logs/merge/canary3-*.log). The
-#   x86-64 side is the exponent-range argument above, NOT an observation.
+#   Measured on IEEE double only (all five outcomes, logs/merge/canary3-*.log).
+#   What would settle the wide formats is one canary run on an x86-64 host.
 #
 # The file is generated rather than shipped so this script stays self-contained
 # and the input is verifiable from its seed.
@@ -255,9 +258,8 @@ echo "canary: Refuse any figure from this binary until provenance is established
 echo "canary: by other means. Known causes of a legitimate INDETERMINATE:"
 echo "canary:   * a timeout (CANARY_TIMEOUT, currently ${CANARY_TIMEOUT:-1800}s)"
 echo "canary:   * a tool that is not ea_iid"
-echo "canary:   * a long double wider than 80 bits on the UNREPAIRED tool, where"
-echo "canary:     W=20000 may not reach the underflow bound (the REPAIRED signature"
-echo "canary:     does not depend on exponent range)"
+echo "canary:   * a long double format other than the three in the header (W=20000"
+echo "canary:     is below every known subnormal floor; see OC-24)"
 echo "canary: ---- captured output (last 10 lines) ----"
 tail -10 "$OUT" | sed 's/^/canary:   /'
 exit 3

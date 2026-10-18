@@ -576,7 +576,14 @@ cd /tmp/unrepaired/cpp && make non_iid iid restart
 ```
 
 Asserts are live in that build (no Makefile target sets `-DNDEBUG`); do not add
-it. `tools/build-provenance-canary.sh` run against `/tmp/unrepaired/cpp/ea_iid`
+it. **Walked end to end from a fresh clone on 2026-10-18** (`OC-25`,
+`logs/merge/tag-walk-2026-10-18.log`): it builds, and the canary classifies the
+result UNREPAIRED / ASSERTS-LIVE. Two things the instructions *at the tag* do not
+say at the point you read them: the quick-start block builds only `ea_non_iid`,
+so use `make non_iid iid restart` as above; and its `./selftest` exits 1 on macOS
+arm64 for the two documented upstream #155 files — that is the platform delta,
+not a build failure, and `run-all-checks.sh --allow-known-platform-deltas` is
+the documented invocation. `tools/build-provenance-canary.sh` run against `/tmp/unrepaired/cpp/ea_iid`
 reports `ASSERTS-LIVE`; against a `-DNDEBUG` build of the same tag it reports
 `NDEBUG` — those are the signatures it was calibrated on.
 
@@ -598,8 +605,10 @@ Demonstrated on all four builds plus a control, `logs/merge/canary3-*.log`:
 | `/bin/ls` | INDETERMINATE | INDETERMINATE (exit 3) |
 
 `NOT-DISTINGUISHED` is the expected value for a repaired binary, not a gap.
-REPAIRED is not reviewed. Measured on arm64; the x86-64 side of every
-signature is an exponent-range argument, not an observation.
+REPAIRED is not reviewed. Measured on Apple arm64, where `long double` is
+IEEE double — the narrowest of the three formats a build can land on; the x87
+and binary128 sides are a bounded argument from the arithmetic (`OC-24`),
+settled by one canary run on such a host, not by re-running everything.
 
 **Evidentiary standing.** The repairs are self-authored and unreviewed; the
 merge changes nothing about that. Figures from the repaired build are to be

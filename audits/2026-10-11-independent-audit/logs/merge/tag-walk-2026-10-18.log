@@ -1,0 +1,419 @@
+# Tag walk, 2026-10-18T21:11Z, host arm64 26.6.2
+# Every command below was run as shown. Nothing from master was consulted during the build.
+$ git clone --quiet --branch unrepaired-reference-2026-10-15 --depth 1 https://github.com/systemslibrarian/SP800-90B_EntropyAssessment.git /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/tagclone
+warning: refs/tags/unrepaired-reference-2026-10-15 0fcdf16c60b5a502f75550d40ec67f0bba2e67c3 is not a commit!
+Note: switching to '655bd109ddb3fade10d2f60059a0a9672f959de7'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+warning: the following paths have collided (e.g. case-sensitive paths
+on a case-insensitive filesystem) and only one from the same
+colliding group is in the working tree:
+
+  'audits/2026-09-30/novel-findings/logs/restart/data/nan_NAN.txt'
+  'audits/2026-09-30/novel-findings/logs/restart/data/nan_nan.txt'
+[exit 0]
+$ git describe --tags
+unrepaired-reference-2026-10-15
+[exit 0]
+$ git log --oneline -1
+655bd10 audits: measure C22's bound (OC-22) and write the floor as arithmetic; record no-upstream decision
+[exit 0]
+# BUILDING.md at this commit, macOS quick-start block (the instructions followed):
+## macOS — verified 2026-09-30
+
+Verified on: macOS 26.6.2, Apple silicon (arm64), Apple clang 21.0.0
+(Xcode toolchain), GNU Make 3.81, Homebrew.
+
+```sh
+brew install libomp libdivsufsort jsoncpp openssl@3
+cd cpp
+make non_iid
+cd selftest
+./selftest                         # upstream's own regression check
+./pin-check.sh --prove-nonvacuous  # this fork's pinned-output check
+```
+
+# 'Running the checks' block at this commit:
+### Running the checks
+
+```sh
+cd cpp && make non_iid iid restart
+cd selftest && ./run-all-checks.sh
+```
+$ brew list --versions libomp libdivsufsort jsoncpp openssl@3
+jsoncpp 1.9.8
+libdivsufsort 2.0.1
+libomp 23.1.2
+openssl@3 3.6.4 3.6.3
+[exit 0]
+$ make non_iid iid restart
+clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include non_iid_main.cpp -o ea_non_iid -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from non_iid_main.cpp:3:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from non_iid_main.cpp:4:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from non_iid_main.cpp:7:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from non_iid_main.cpp:12:
+./non_iid/multi_mcw_test.h:13:26: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:26: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                      ^
+./non_iid/multi_mcw_test.h:13:58: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:58: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:47: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                      ^
+In file included from non_iid_main.cpp:13:
+./non_iid/compression_test.h:104:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  104 |         int64_t dict[alph_size];
+      |                      ^~~~~~~~~
+./non_iid/compression_test.h:104:15: note: read of non-const variable 'alph_size' is not allowed in a constant expression
+./non_iid/compression_test.h:96:22: note: declared here
+   96 |         unsigned int block, alph_size = 1 << b; 
+      |                             ^
+13 warnings generated.
+clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include iid_main.cpp -o ea_iid -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from iid_main.cpp:4:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from iid_main.cpp:5:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from iid_main.cpp:8:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from iid_main.cpp:9:
+./iid/permutation_tests.h:303:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  303 |                 res = sprintf(curmsg, "%u ", data[i]);
+      |                       ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+9 warnings generated.
+clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include restart_main.cpp -o ea_restart -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from restart_main.cpp:3:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from restart_main.cpp:4:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from restart_main.cpp:8:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from restart_main.cpp:13:
+./non_iid/multi_mcw_test.h:13:26: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:26: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                      ^
+./non_iid/multi_mcw_test.h:13:58: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                                 ^~~~~~~~~
+./non_iid/multi_mcw_test.h:13:58: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./non_iid/multi_mcw_test.h:7:52: note: declared here
+    7 | double multi_mcw_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
+      |                                                    ^
+./non_iid/multi_mcw_test.h:13:47: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+   13 |         long win_cnts[NUM_WINS][alph_size], win_poses[NUM_WINS][alph_size]; 
+      |                                                      ^
+In file included from restart_main.cpp:14:
+./non_iid/compression_test.h:104:15: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  104 |         int64_t dict[alph_size];
+      |                      ^~~~~~~~~
+./non_iid/compression_test.h:104:15: note: read of non-const variable 'alph_size' is not allowed in a constant expression
+./non_iid/compression_test.h:96:22: note: declared here
+   96 |         unsigned int block, alph_size = 1 << b; 
+      |                             ^
+In file included from restart_main.cpp:17:
+./iid/permutation_tests.h:303:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  303 |                 res = sprintf(curmsg, "%u ", data[i]);
+      |                       ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+14 warnings generated.
+[exit 0]
+$ ls -la ea_non_iid ea_iid ea_restart
+-rwxr-xr-x 1 gmcas wheel 176136 Oct 18 17:11 ea_iid
+-rwxr-xr-x 1 gmcas wheel 136728 Oct 18 17:11 ea_non_iid
+-rwxr-xr-x 1 gmcas wheel 213112 Oct 18 17:11 ea_restart
+[exit 0]
+$ ./selftest
+biased-random-bits.bin: Maximum delta: 8.22131945854565e-12
+biased-random-bytes.bin: biased-random-bytes.res: Significant difference for Bitstring Lag Prediction Estimate: min entropy (reference: 0.042001643639251546 new: 0.042001643772653606 delta: 1.33402060231713e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMCW Prediction Estimate: P_local (reference: 0.9713579012997926 new: 0.97135790142486211 delta: 1.25069510303888e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMMC Prediction Estimate: min entropy (reference: 0.041925153682126653 new: 0.041925153316192523 delta: 3.65934130219792e-10)
+biased-random-bytes.res: Significant difference for Literal Lag Prediction Estimate: P_local (reference: 0.72383949597417785 new: 0.72383949613215592 delta: 1.57978075066012e-10)
+biased-random-bytes.res: Significant difference for Literal Lag Prediction Estimate: min entropy (reference: 0.46625826502784795 new: 0.46625826471297949 delta: 3.14868464634799e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMCW Prediction Estimate: min entropy (reference: 0.041925133646315872 new: 0.04192513346055822 delta: 1.85757652315655e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMMC Prediction Estimate: P_local (reference: 0.9713578878098017 new: 0.97135788805618295 delta: 2.46381248736327e-10)
+Maximum delta: 3.65934130219792e-10
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+normal.bin: Maximum delta: 6.93196230865696e-15
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand8_short.bin: Maximum delta: 3.4173055689894e-12
+ringOsc-nist.bin: ringOsc-nist.res: Significant difference for Literal MultiMCW Prediction Estimate: min entropy (reference: 0.29051922736594488 new: 0.290519227211259 delta: 1.5468587521994e-10)
+Maximum delta: 1.5468587521994e-10
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_8bit.bin: Maximum delta: 1.59737663098659e-13
+
+selftest: FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin
+[exit 1]
+$ ./pin-check.sh --prove-nonvacuous
+sample: platform=Darwin arm64 expected=0.12644573619605429 got=0.12644573619604868 reldelta=4.43e-14 tol=1e-9
+sample: PASS
+perturbed: platform=Darwin arm64 expected=0.12644573619605429 got=0.12643698121829336 reldelta=6.92e-05 tol=1e-9
+perturbed: FAIL
+perturbed: expected FAIL observed (check is not vacuous)
+[exit 0]
+$ shasum -a 256 ea_iid ea_non_iid ea_restart
+5bece40867e91a428e36df19b1e2fd16ccf56ffba509bc2e40b70a2a83f60cc5  ea_iid
+47796ac9470137dbbe11439ebf22b45729414108add08ddabfe597e9cb4ad8bd  ea_non_iid
+d88e9d0e62f9e445fce32f479861d9c506390fdf9e3d92486080c2375c3b2fd0  ea_restart
+[exit 0]
+# Current canary (master tools/build-provenance-canary.sh) against the tag-built ea_iid:
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/tools/build-provenance-canary.sh /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/tagclone/cpp/ea_iid
+canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/tools/build-provenance-canary.sh: line 158: 15452 Abort trap: 6           OMP_NUM_THREADS=${OMP_NUM_THREADS:-2} timeout "${CANARY_TIMEOUT:-1800}" "$TOOL" -i -v -o "$JSON" "$INPUT" 1 > "$OUT" 2>&1
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/tagclone/cpp/ea_iid
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.2ClmIq/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: exit    134
+canary: TREE    UNREPAIRED
+canary: BUILD   ASSERTS-LIVE
+canary: meaning the old tool (tag unrepaired-reference-2026-10-15 or earlier),
+canary:         with the assert at shared/lrs_test.h:683 compiled in. On this
+canary:         input it aborts and publishes no figure. This is the reference
+canary:         build for the two-figure rule; it carries C07 and C03.
+canary: NOTE    This does not establish the commit, the compiler, other flags,
+canary:         or that the binary is unmodified.
+[exit 0]
+# and against an -DNDEBUG build of the same clone:
+$ make -B CXX=clang++ -DNDEBUG iid
+clang++ -DNDEBUG -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2 -ffloat-store -I/usr/include/jsoncpp  -I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include iid_main.cpp -o ea_iid -L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+In file included from iid_main.cpp:4:
+./shared/utils.h:386:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  386 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:386:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:226:15: note: declared here
+  226 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:233:69: warning: expression result unused [-Wunused-value]
+  233 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:303:51: warning: expression result unused [-Wunused-value]
+  303 |     testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                   ^~~~~~~~~
+./shared/utils.h:553:28: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+  553 |         int symbol_map_down_table[max_symbols];
+      |                                   ^~~~~~~~~~~
+./shared/utils.h:553:28: note: read of non-const variable 'max_symbols' is not allowed in a constant expression
+./shared/utils.h:435:15: note: declared here
+  435 |         int mask, j, max_symbols;
+      |                      ^
+./shared/utils.h:441:69: warning: expression result unused [-Wunused-value]
+  441 |                 testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+      |                                                                     ^~~~~~~~~
+./shared/utils.h:468:63: warning: expression result unused [-Wunused-value]
+  468 |                 testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+      |                                                               ^~~~~~~~~
+In file included from iid_main.cpp:5:
+./shared/most_common.h:9:14: warning: variable length arrays in C++ are a Clang extension [-Wvla-cxx-extension]
+    9 |         long counts[alph_size];
+      |                     ^~~~~~~~~
+./shared/most_common.h:9:14: note: function parameter 'alph_size' with unknown value cannot be used in a constant expression
+./shared/most_common.h:7:61: note: declared here
+    7 | double most_common(uint8_t* data, const long len, const int alph_size, const int verbose, const char *label, TestCaseBase &tc){
+      |                                                             ^
+In file included from iid_main.cpp:8:
+./shared/TestRunUtils.h:100:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  100 |         sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+      |         ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+In file included from iid_main.cpp:9:
+./iid/permutation_tests.h:303:9: warning: 'sprintf' is deprecated: This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead. [-Wdeprecated-declarations]
+  303 |                 res = sprintf(curmsg, "%u ", data[i]);
+      |                       ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_stdio.h:278:1: note: 'sprintf' has been explicitly marked deprecated here
+  278 | __deprecated_msg("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of sprintf(3), it is highly recommended that you use snprintf(3) instead.")
+      | ^
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h:227:48: note: expanded from macro '__deprecated_msg'
+  227 |         #define __deprecated_msg(_msg) __attribute__((__deprecated__(_msg)))
+      |                                                       ^
+9 warnings generated.
+[exit 0]
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/tools/build-provenance-canary.sh /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/tagclone/cpp/ea_iid
+canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
+canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
+canary: tool    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/tagclone/cpp/ea_iid
+canary: input   /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//sp90b-canary.fezVGq/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: exit    0
+canary: TREE    UNREPAIRED
+canary: BUILD   NDEBUG
+canary: meaning the old tool with asserts compiled OUT. On this input it
+canary:         published a min-entropy figure derived from an underflow, after
+canary:         reporting an LRS failure it did not detect.
+canary:         ANY FIGURE FROM THIS BINARY IS UNINTERPRETABLE.
+[exit 0]
+TAGWALK-DONE
+tagwalk exit 0

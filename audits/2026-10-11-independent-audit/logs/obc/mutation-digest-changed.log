@@ -1,0 +1,7 @@
+CORPUS DIGEST MISMATCH mt02                                want 7a915425cf36663f... got 7a915424cf36663f...
+
+regression-outside-battery: FAIL (corpus: 1 problem(s); nothing was measured)
+  The corpus behind every pinned figure (0/25 clean, B, E, the Compression
+  binding) is not the one the calibration was measured on, or cannot be
+  counted. Fix the manifest or the generator deliberately; do not widen.
+exit 1

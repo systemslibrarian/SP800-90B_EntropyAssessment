@@ -27,9 +27,11 @@
 #      changes which estimator binds, that table is invalid and this says so
 #      rather than letting it stand.
 #
-# The corpus is regenerated from seeds and verified against pinned SHA-256
-# digests. A seed that does not reproduce is not a pin, so a digest mismatch is
-# a FAILURE, not a warning.
+# The corpus is regenerated from seeds and verified against the pinned manifest
+# outside-battery-corpus.txt: identities, digests and PER-FAMILY COUNTS, in
+# both directions (missing and unlisted), in every mode. A seed that does not
+# reproduce is not a pin, and a corpus that cannot be counted does not support
+# a "0 of 25", so any of these is a FAILURE, not a warning (2026-10-18).
 #
 # WHAT EACH CHECK ACTUALLY PINS -- measured by perturbing the tool (OC-19), not
 # assumed. The division came out cleaner than expected:
@@ -59,6 +61,8 @@
 #                              demonstrate these checks FAILING against
 #                              deliberately perturbed builds; see OC-19.
 #   OUTSIDE_BATTERY_WORK=dir   reuse a corpus directory instead of a temp dir.
+#   OUTSIDE_BATTERY_CORPUS=f   use a different manifest. Only for demonstrating
+#                              the corpus checks FAILING (see OC-23).
 #
 # EXIT  0 pass   1 fail   2 could not run (missing tool/generator/python3)
 
@@ -98,88 +102,110 @@ if [ ! -x "${tool}" ]; then
 fi
 
 # ---------------------------------------------------------------- the corpus
-CLEAN_FAST="mt00 mt01 mt02 mt03 mt04"
-CLEAN_REST="sha00 sha01 sha02 sha03 sha04 sha05 sha06 sha07 sha08 sha09 sha10 sha11 sha12 sha13 sha14 sha15 sha16 sha17 sha18 sha19"
+#
+# THE EXPECTED SET LIVES IN outside-battery-corpus.txt, NOT HERE. Until
+# 2026-10-18 the stream lists were inline in this script, so deleting one
+# stream from the list produced a passing run whose "0 / 25" had quietly
+# become 0 / 24 -- the harness checked digests but could not count. Now:
+#   * the manifest's per-FAMILY counts must equal the expectations below
+#     (5 mt, 20 sha, 5 defect, 1 blindspot), checked separately so a family
+#     cannot be hollowed out while a total holds;
+#   * every listed stream must be regenerable from its seed and match its
+#     digest (a seed that does not reproduce is not a pin);
+#   * the corpus directory must contain NO stream the manifest does not list;
+#   * ALL of this is checked in every mode. Fast mode only RUNS the tool on a
+#     subset; the corpus behind every published figure is verified whole.
+# The whole set is 31 streams. Failing any of it is exit 1, a regression, not
+# exit 2: the corpus the figures rest on has changed or cannot be reproduced.
+corpus="${OUTSIDE_BATTERY_CORPUS:-${here}/outside-battery-corpus.txt}"
+[ -r "${corpus}" ] || { echo "regression-outside-battery: corpus manifest missing at ${corpus}" >&2; exit 2; }
+EXPECT_MT=5; EXPECT_SHA=20; EXPECT_DEFECT=5; EXPECT_BLINDSPOT=1
+
+corpus_bad=0
+cbad() { note "CORPUS $1" "$2"; corpus_bad=$((corpus_bad + 1)); }
+ALL_NAMES=""; MT=""; SHA=""; DEFECT_ALL=""; BLINDSPOT=""
+n_mt=0; n_sha=0; n_defect=0; n_blindspot=0; lineno=0
+while IFS=' ' read -r fam name sha extra || [ -n "${fam:-}" ]; do
+	lineno=$((lineno + 1))
+	case "${fam}" in ''|'#'*) continue ;; esac
+	if [ -n "${extra:-}" ] || ! printf '%s' "${sha:-}" | grep -Eq '^[0-9a-f]{64}$' \
+	   || ! printf '%s' "${name:-}" | grep -Eq '^[A-Za-z0-9_]+$'; then
+		cbad "malformed manifest line ${lineno}" "${fam} ${name:-} ${sha:-}"; continue
+	fi
+	case " ${ALL_NAMES} " in *" ${name} "*) cbad "duplicate manifest entry" "${name}"; continue ;; esac
+	case "${fam}" in
+		mt) MT="${MT} ${name}"; n_mt=$((n_mt + 1)) ;;
+		sha) SHA="${SHA} ${name}"; n_sha=$((n_sha + 1)) ;;
+		defect) DEFECT_ALL="${DEFECT_ALL} ${name}"; n_defect=$((n_defect + 1)) ;;
+		blindspot) BLINDSPOT="${BLINDSPOT} ${name}"; n_blindspot=$((n_blindspot + 1)) ;;
+		*) cbad "unknown family on line ${lineno}" "${fam}"; continue ;;
+	esac
+	ALL_NAMES="${ALL_NAMES} ${name}"
+	eval "DIGEST_${name}=${sha}"
+done < "${corpus}"
+[ "${n_mt}" -eq "${EXPECT_MT}" ] || cbad "family mt short or long:" "${n_mt} listed, ${EXPECT_MT} required (the OC-16 baseline and Compression-binding figure rest on exactly 5)"
+[ "${n_sha}" -eq "${EXPECT_SHA}" ] || cbad "family sha short or long:" "${n_sha} listed, ${EXPECT_SHA} required (the 0/25 false-positive figure needs 5 + 20)"
+[ "${n_defect}" -eq "${EXPECT_DEFECT}" ] || cbad "family defect short or long:" "${n_defect} listed, ${EXPECT_DEFECT} required"
+[ "${n_blindspot}" -eq "${EXPECT_BLINDSPOT}" ] || cbad "family blindspot short or long:" "${n_blindspot} listed, ${EXPECT_BLINDSPOT} required"
+for must in B_osc5000 E_weaklag5000 G_xor13_02; do
+	case " ${ALL_NAMES} " in *" ${must} "*) ;; *) cbad "named input missing from manifest:" "${must} (a pinned figure is measured on it)" ;; esac
+done
+for n in ${MT}; do [ "${n}" != "${n#mt}" ] || cbad "family mt entry not an mt stream:" "${n}"; done
+for n in ${SHA}; do [ "${n}" != "${n#sha}" ] || cbad "family sha entry not a sha stream:" "${n}"; done
+
+CLEAN_FAST="${MT# }"
+CLEAN_REST="${SHA# }"
 if [ "${full}" = "1" ]; then
 	CLEAN="${CLEAN_FAST} ${CLEAN_REST}"
-	DEFECTS="B_osc5000 C_osc500 D_lag5000 E_weaklag5000 F_xor30"
+	DEFECTS="${DEFECT_ALL# }"
 else
 	CLEAN="${CLEAN_FAST}"
 	DEFECTS="B_osc5000 E_weaklag5000"
 fi
-NEED="${CLEAN} ${DEFECTS} G_xor13_02"
+NEED="${ALL_NAMES# }"          # the WHOLE corpus is verified in every mode
 
-digest_of() {
-	case "$1" in
-	mt00) echo ba0af622c60742c366e2f628dc9a4012cfd162df7505c62109bb2680f77142e1;;
-	mt01) echo 9026925bb4b48e4830253bf0acc8255d225fccde9d82f3c4747a965d38626b16;;
-	mt02) echo 7a915424cf36663fae24fa8210fb51fbf670ac4efd91bca30954cf6bfeb29fed;;
-	mt03) echo f5b1cff45fe6546aad64b9350243b841847a64ee777a079867f72f9f9cca6f36;;
-	mt04) echo 6d98bdb30e3d3d8b5e9565f608ff727cd2d14c9ec3096d23f0ea96383b6a7b3e;;
-	sha00) echo 5c94a42fc7643f10c278bfc4b6605efb67139f4607d652d9a939809a1e124023;;
-	sha01) echo 2a9a5f99df9c766e840531ededd72d55f744d0d2d03f475088ff0aeaa2afb09e;;
-	sha02) echo b41dcf87d02d6f1e3feab0646fd3d7f31a80cbd81d62f10e932c86c9c582d36d;;
-	sha03) echo 3119d39caff77bf64a43fa151ca242f784700cd5163f768ca8faf5fdfca84b1b;;
-	sha04) echo 253bc56535fa1427f582f034d2a72816501b70be9a05db4060749526e479e351;;
-	sha05) echo b355047c07fd88bc6bfa5341b2344aee398084b859702c159d5e585cbcb9ed50;;
-	sha06) echo 5291a94c5dddfaf3e66fca4398849bd304b53f683117ba7a43ed55b717b48fcf;;
-	sha07) echo 2e4185d3f141cf4cba92b0425dc621ac59c37a971e07dbbfc93e35da01398b3f;;
-	sha08) echo f99f3dafe2a0d43285ba8503bb6a223cd6b93a67372f6a81dd90073097da03d2;;
-	sha09) echo a12b163a7ed7cddc2a259b4c00bb47a4804971fa679f6ae3610fc93d2821e80a;;
-	sha10) echo fba681a4d4bbe3003ffc84a52be23ce56ca9019fc49fe8bc94ae278cc0922412;;
-	sha11) echo 44da0ce86bad8f95594b3640d296cc21d7dd40f8bf47f3795ad79ec55e55c732;;
-	sha12) echo 1c7f7d438b6a5377a7758ce9e4ff617c37d5a7cb10f2737224e489c66910cbda;;
-	sha13) echo 9865dcbf2d547a17b66dde77e2d835960b0581dd58ebb1690baf9d691a7c4ed6;;
-	sha14) echo 6c5025b16082700bb5e95b2fb56e71d1a17eddd5a6d79f9e6b0528c1f3ef97fb;;
-	sha15) echo 3c00b742844e9cd242d285e4ffb56d3ca64c276aac94270bc854294374ed3348;;
-	sha16) echo 5fd291695d25580e597cda409c8aa38690285ddcf07d99b6b3e2232eec5fe94c;;
-	sha17) echo 68b759d81e9798ccb13175cbac46cfbdea254fc0373f0b2e8708341318b5e683;;
-	sha18) echo 4370510489db9ea42dd4e41b0ae343ec1beae4279d305648e8c823bae94365ee;;
-	sha19) echo afa5d96eb6d42c8376f1e9807eb81e154e5ce41ba6e1ea92b1d06df2bc9247f8;;
-	B_osc5000) echo 98b279d1c9826527b038d7b8b420382c2907932cdcee9ae5f811e1bd34706715;;
-	C_osc500) echo 5927c604939d0921438f6a497aa892a50f9e0ccb6ea8b9a99636262260a92513;;
-	D_lag5000) echo 0efbc90cacc8a5b299602340f9d293317413ffe9e6dbbc6b9a0f4b2fd439ffac;;
-	E_weaklag5000) echo 50104af027186907b1ececfd3d9efb314816b078da0820eb2a4dcc95a6e2e452;;
-	F_xor30) echo 8cb55830b5fd6dff9c4c2a2a33fefa50391f74812ab1c8852f8d8e866e881309;;
-	G_xor13_02) echo 99cca6b4efdfcfeaf2446f87ad404a3b08580cab2c54885d991bd784d75b9a48;;
-	*) echo "";;
-	esac
-}
+digest_of() { eval "printf '%s' \"\${DIGEST_$1:-}\""; }
 
 sha_of() {
 	if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d' ' -f1
 	else sha256sum "$1" | cut -d' ' -f1; fi
 }
 
-missing=""
-for n in ${NEED}; do
-	[ -s "${work}/${n}.bin" ] || missing="${missing} ${n}"
-done
-if [ -n "${missing}" ]; then
-	echo "regenerating from seeds:${missing}"
-	# shellcheck disable=SC2086
-	python3 "${gen}" "${work}" ${missing} >/dev/null 2>&1 || {
-		echo "regression-outside-battery: generator failed" >&2; exit 2; }
-fi
-
-# A seed that does not reproduce is not a pin.
-bad_digest=0
-for n in ${NEED}; do
-	want=$(digest_of "${n}")
-	got=$(sha_of "${work}/${n}.bin")
-	if [ "${want}" != "${got}" ]; then
-		note "DIGEST MISMATCH ${n}" "want ${want%%????????????????????????????????????????????????}… got ${got:0:16}…"
-		bad_digest=$((bad_digest + 1))
+if [ "${corpus_bad}" -eq 0 ]; then
+	missing=""
+	for n in ${NEED}; do
+		[ -s "${work}/${n}.bin" ] || missing="${missing} ${n}"
+	done
+	if [ -n "${missing}" ]; then
+		echo "regenerating from seeds:${missing}"
+		# shellcheck disable=SC2086
+		if ! python3 "${gen}" "${work}" ${missing} >"${work}/generator.log" 2>&1; then
+			cbad "generator cannot produce a listed stream:" "$(tail -1 "${work}/generator.log")"
+		fi
 	fi
-done
-if [ "${bad_digest}" -ne 0 ]; then
+	# set inequality, the other direction: a stream present that is not listed
+	for f in "${work}"/*.bin; do
+		[ -e "${f}" ] || continue
+		n=$(basename "${f}" .bin)
+		case " ${NEED} " in *" ${n} "*) ;; *) cbad "unlisted stream present in corpus:" "${n}" ;; esac
+	done
+	# a seed that does not reproduce is not a pin
+	for n in ${NEED}; do
+		want=$(digest_of "${n}")
+		if [ ! -s "${work}/${n}.bin" ]; then cbad "listed stream absent after regeneration:" "${n}"; continue; fi
+		got=$(sha_of "${work}/${n}.bin")
+		[ "${want}" = "${got}" ] || cbad "DIGEST MISMATCH ${n}" "want ${want:0:16}... got ${got:0:16}..."
+	done
+fi
+if [ "${corpus_bad}" -ne 0 ]; then
 	echo
-	echo "regression-outside-battery: FAIL (corpus not reproducible: ${bad_digest} digest mismatch(es))"
-	echo "  The generator no longer produces the bytes the calibration was measured on,"
-	echo "  so every pinned outcome below would be measured against a different corpus."
+	echo "regression-outside-battery: FAIL (corpus: ${corpus_bad} problem(s); nothing was measured)"
+	echo "  The corpus behind every pinned figure (0/25 clean, B, E, the Compression"
+	echo "  binding) is not the one the calibration was measured on, or cannot be"
+	echo "  counted. Fix the manifest or the generator deliberately; do not widen."
 	exit 1
 fi
-note "corpus reproduced from seeds (${bad_digest} mismatches)" "$(echo ${NEED} | wc -w | tr -d ' ') streams"
+note "corpus pinned, reproduced and counted:" "${n_mt} mt + ${n_sha} sha clean, ${n_defect} defect, ${n_blindspot} blindspot = $(echo ${NEED} | wc -w | tr -d ' ') streams"
 
 # ------------------------------------------------------- 1. clean must be silent
 fp=0

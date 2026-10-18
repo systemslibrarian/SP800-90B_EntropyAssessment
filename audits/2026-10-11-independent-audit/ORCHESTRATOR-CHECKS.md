@@ -2340,3 +2340,181 @@ run's printed `p` and `H` to the last digit. **Not verified**: the x86-64
 `long double` value of `c` (argued from the format, not measured); any claim
 about a *source* — every input here is synthetic, which is the licensed use for
 a claim about an instrument.
+
+## OC-23 — the outside-battery corpus could not count; now it is pinned, counted per family, and shown failing five ways
+
+`OC-22`'s merge-rule sweep (`BUG-REPAIR-GUIDE.md`) listed the outside-battery
+corpus as "digest mismatch caught, absent stream not". That is a detectable case
+with half a detector, and it sat directly under published numbers: the
+**0/25** false-positive figure behind the 5.731 σ and 30× thresholds
+(`OC-17`), **B** at 8538.7× / 59.938 Hz, **E** at 40.21 σ / lag 5000, and the
+Compression-binding figure 0.8546 ± 0.0092 on the five Mersenne Twister streams
+that `OC-16`'s headroom table rests on. The expected set lived only in the
+regression script's own lists, so deleting a stream from the list produced a
+passing run whose "0 / 25" had quietly become 0 / 24. The families are not
+interchangeable either: 5 MT and 20 SHA-256 counter-mode streams exercise
+different generators by design, so losing one of the five is a larger loss of
+coverage than 1/25.
+
+**Fixed the way `compareresults.pl` was fixed in `OC-21`** — key sets required
+equal, both directions. `cpp/selftest/outside-battery-corpus.txt` now pins
+every stream's family, identity and digest (31 streams), and
+`regression-outside-battery.sh` requires:
+
+- per-**family** counts equal to separate expectations — mt 5, sha 20,
+  defect 5, blindspot 1 — so a family cannot be hollowed out while a total holds;
+- the three named inputs behind pinned figures (`B_osc5000`, `E_weaklag5000`,
+  `G_xor13_02`) present by name;
+- every listed stream regenerable from its seed and matching its digest;
+- **no unlisted stream present** in the corpus directory;
+- all of it **in every mode**: fast mode only *runs* the tool on a subset, the
+  corpus behind every figure is verified whole (adds ≈1 min of generation).
+
+Failing any of it is exit 1 — a regression, not "could not run".
+
+**Shown failing, five ways** (`logs/obc/mutation-*.log`; baseline PASS in
+`logs/obc/baseline-fast.log`):
+
+| mutation | what the old script did | now |
+|---|---|---|
+| one stream removed from the manifest (`mt02`) | **passed** — this is the case that could not be counted | FAIL: `family mt short or long: 4 listed, 5 required` |
+| one stream added to the manifest (`sha20`, any digest) | passed | FAIL: `family sha short or long: 21 listed, 20 required` |
+| one unlisted file added to the corpus directory | passed | FAIL: `unlisted stream present in corpus: zz_extra` |
+| one digest changed (`mt02`, last hex digit) | failed | FAIL: `DIGEST MISMATCH mt02` |
+| a listed name the generator cannot build (`F_xor30` → `H_nonexistent`) | exit 2, could-not-run | FAIL, three problems: generator refuses, `F_xor30` now unlisted-present, `H_nonexistent` absent |
+
+A first attempt at the digest mutation edited the wrong line and the run
+passed; that was my sed, not the check, and the corrected mutation is the one
+in the table. Recorded because a mutation that does not mutate is the same
+vacuous-guard shape this project keeps finding.
+
+**The other cited figures.** B and E are named inputs in the same corpus and now
+carry their digests and family in the manifest; the Compression-binding figure
+is measured on exactly the five `mt` streams, which is why that family's count
+is a separate expectation. No cited figure in `OC-15`–`OC-19` rests on a corpus
+the harness cannot now count. The `OC-21` reference corpus is counted by
+`fixture-manifest.txt`; the `C07` fixtures and canary input are single
+seed-generated files checked by digest.
+
+## OC-24 — the `long double` argument named the wrong dimension: three formats, not two platforms
+
+The canary and `XR-08` said the unrepaired signatures need `W > 1022` "on a
+64-bit `long double` (arm64)" and `W > 16382` "on an 80-bit `long double`
+(x86-64)", and treated arm64 as the other case. Printed on this machine
+(Apple arm64, `logs/merge/tag-walk-2026-10-18.log` host line):
+
+```
+sizeof(long double)=8  LDBL_MANT_DIG=53  LDBL_MIN_EXP=-1021  LDBL_MIN=2.22507e-308  LDBL_TRUE_MIN=4.94066e-324
+```
+
+So "arm64" here means **Apple's arm64 ABI, where `long double` is IEEE
+double** (`REPRO-01`). It is not binary128: that is the *Linux* aarch64 ABI. The
+three formats a build of this tool can land on are:
+
+| format | where | significand | emin | `LDBL_MIN` | subnormal floor |
+|---|---|---:|---:|---|---|
+| IEEE double | Apple arm64 (**measured here**) | 53 | −1021 | 2.2e-308 | 2^-1074 |
+| x87 extended | x86-64 Linux, MSYS2/MinGW | 64 | −16382 | 3.36e-4932 | 2^-16445 |
+| binary128 | Linux aarch64 | 113 | −16382 | 3.36e-4932 | 2^-16494 |
+
+**Correction.** In the exponent dimension x87 extended and binary128 are
+identical (15-bit exponent, emin −16382); the odd one out is the platform the
+measurements were taken on, which has the *narrowest* range. So the earlier
+framing had it backwards twice: "16382" is not an x86-64 number, it is the
+number for both wide formats; and the measurement here does **not** settle the
+exponent question for them, because this format underflows 2^-1021 earlier,
+not later. What transfers is the chain's arithmetic, checked value by value
+(`scratchpad chain probe`, numbers below are this machine's; the wide-format
+numbers are computed from the format, not observed):
+
+**Unrepaired signatures, W = 20000, `p_col ≈ 0.5`.** `p_colPower = powl(p_col, W)`
+is 2^-20000, which is below the **subnormal floor of all three formats**
+(2^-1074, 2^-16445, 2^-16494), so `powl` returns +0 — measured here, with
+`FE_UNDERFLOW` raised — and every later step is identical on every format:
+asserts live, `assert(p_colPower >= LDBL_MIN)` is false → abort 134; `-DNDEBUG`,
+`N·log1pl(−0) = −0`, and `logl(0.999) = −0.0010005 ≥ −0` is false → the LRS
+test reports failure and a figure is published. The subnormal floors differ by
+49 binary orders between x87 and binary128, but 2^-20000 is 3500 orders below
+the nearer one; a subnormal `p_colPower` would need W between 16382 and 16445
+on x87 (16494 on binary128), and even then the signatures hold (a subnormal
+fails the `≥ LDBL_MIN` assert too, and `N·log1pl(−tiny)` is still above
+`logl(0.999)`). **Where the formats do diverge is W between 1022 and 16382**:
+this machine aborts there and the wide formats do not — which is exactly why
+the canary input is W = 20000 and not the W = 2000 used elsewhere.
+
+**Repaired signature.** `logCollisionPower = W·logl(p_col) = −13862.9`,
+representable on every format. Against `logl(LDBL_MIN)` — **−708.4 here,
+−11355.1 on both wide formats** — it is below on all, so the `else` branch runs
+on all; `logExpected = logl(N) + logCollisionPower = −13849.1`, below every
+`logl(LDBL_MIN)`, so `probabilityAtLeastOne = 0` on all; the decision
+`logCollisionPower ≥ logDecisionThreshold = −20.72` is false on all, by a
+margin of **13842 log-units**. The `if`/`else` branch choice differs between
+formats only for W in 1022..16382, and both branches compute the same
+probability; the decision itself flips only at W ≤ 29.9. **This paragraph is an
+argument from reading `lrs_test.h:679-741`, confirmed numerically on one
+format; it is not an observation on the wide formats.**
+
+**The three dimensions the question asked about:**
+
+- *Significand precision* (53 / 64 / 113 bits). A signature could diverge only
+  at a comparison near a rounding boundary. The nearest boundary in either
+  chain is thousands of log-units away (−13863 vs −11355; −13849 vs −11355;
+  −13863 vs −20.7); 53-bit rounding moves these by parts in 10^16. **Cannot
+  plausibly matter.**
+- *Subnormal floor* (2^-1074 / 2^-16445 / 2^-16494). The one quantity that
+  underflows, 2^-20000, is below all three; and the signatures are insensitive
+  to subnormal-versus-zero anyway (above). **Cannot matter at W = 20000.**
+- *Double intermediates.* The symbol frequencies `p[i]` are `vector<double>`
+  (`lrs_test.h:628`); `p_col` is accumulated from them in `long double` and is
+  ≈ 0.5, nowhere near any underflow point; `W` and `N` are integers; every other
+  intermediate in both chains is `long double`. **No double intermediate sits
+  on an underflow path.**
+
+**What the x86-64 item shrinks to.** Not "re-run everything": build once on an
+x86-64 host and run the canary once against each tree. The only things the
+argument above does not cover are the toolchain itself and `powl`'s underflow
+behaviour returning +0 on that libm, which IEEE 754 and C11 Annex F require
+and which was observed here on one libm. The same single run covers Linux
+aarch64 if that platform is ever used. Until then the register carries this as
+**a bounded argument, measured on one format**, not as an open platform risk.
+The canary header, `XR-08` and `BUILDING.md` are corrected to say this.
+
+## OC-25 — the tag built end to end from a fresh clone, following only what is at the tag
+
+`OC-22`'s push check verified that `unrepaired-reference-2026-10-15` resolves
+from a throwaway clone and then *argued* that the build steps work from either
+place. That path had never been walked. Walked 2026-10-18,
+`logs/merge/tag-walk-2026-10-18.log` — every command is in the log as run:
+
+```
+git clone --quiet --branch unrepaired-reference-2026-10-15 --depth 1 https://github.com/systemslibrarian/SP800-90B_EntropyAssessment.git <dir>
+git describe --tags                      -> unrepaired-reference-2026-10-15
+brew list --versions libomp libdivsufsort jsoncpp openssl@3
+cd cpp && make non_iid iid restart       -> exit 0, three executables
+cd selftest && ./selftest                -> exit 1: FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin
+./pin-check.sh --prove-nonvacuous        -> exit 0
+shasum -a 256 ea_iid ea_non_iid ea_restart
+<master>/tools/build-provenance-canary.sh cpp/ea_iid          -> TREE UNREPAIRED, BUILD ASSERTS-LIVE, exit 0
+make -B CXX="clang++ -DNDEBUG" iid; canary again              -> TREE UNREPAIRED, BUILD NDEBUG, exit 0
+```
+
+Nothing from master was used in the build; master's canary was used only to
+classify the result. Binaries: `ea_iid 5bece408…`, `ea_non_iid 47796ac9…`,
+`ea_restart d88e9d0e…`. **Verdict: the reference is buildable from the tag
+alone, and the current canary classifies both of its builds as UNREPAIRED
+with the build sub-result.** Three things about the instructions *at the tag*,
+which are immutable there and corrected on master's `BUILDING.md`:
+
+1. The macOS quick-start block says `make non_iid` only. `ea_iid`, the canary's
+   subject, comes from the "Running the checks" block (`make non_iid iid
+   restart`), which is what was run.
+2. The quick-start's `./selftest` exits 1 on macOS arm64 for the two documented
+   upstream #155 files. That is explained elsewhere in the same document and
+   excused by `run-all-checks.sh --allow-known-platform-deltas`, but a reader
+   following the block sees FAIL first. Not a build failure; `pin-check`
+   passes.
+3. The dependency line names four Homebrew packages; the walk's single
+   `brew list --versions` printed three (`jsoncpp 1.9.8`, `libdivsufsort
+   2.0.1`, `libomp 23.1.2`) and omitted `openssl@3`, though the link against it
+   succeeded. A direct query shows `openssl@3 3.6.4` installed. Recorded as
+   seen rather than smoothed over; the versions match the tag's own table.

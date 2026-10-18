@@ -1,0 +1,10 @@
+regenerating from seeds: H_nonexistent
+CORPUS generator cannot produce a listed stream:           unknown stream H_nonexistent
+CORPUS unlisted stream present in corpus:                  F_xor30
+CORPUS listed stream absent after regeneration:            H_nonexistent
+
+regression-outside-battery: FAIL (corpus: 3 problem(s); nothing was measured)
+  The corpus behind every pinned figure (0/25 clean, B, E, the Compression
+  binding) is not the one the calibration was measured on, or cannot be
+  counted. Fix the manifest or the generator deliberately; do not widen.
+exit 1
