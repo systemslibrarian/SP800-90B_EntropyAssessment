@@ -3902,5 +3902,17 @@ recognised there, which is already the macOS behaviour — so it is listed in
 because the standalone log was uploaded: after `libomp-dev` supplied `omp.h`,
 the sanitizer build failed on `json/json.h`. `cpp/Makefile` passes
 `-I/usr/include/jsoncpp` for the normal build and this regression's own build
-command did not. Added. Both regressions pass on macOS after the change, and
-the confirming x86-64 run is recorded in `logs/x86-64/`.
+command did not. Added. **Confirmed on x86-64** (`logs/x86-64/`, third run):
+`regression-restart` **PASS**, `regression-outside-battery` **PASS**, and the
+canary now gives all five outcomes correctly — two REPAIRED, two UNREPAIRED,
+one INDETERMINATE.
+
+**One gap remains and it is honest about itself.** After the include path was
+added, `regression-estimator-guards` fails at the **link** step on Linux: its
+sanitizer build command carries Homebrew library paths and macOS-specific
+OpenMP flags, so that regression is macOS-only. It reports **COULD NOT RUN
+(exit 2)** rather than passing, which is the designed behaviour — a check that
+did not execute supports no claim — and `run-all-checks.sh`'s total-count
+check then fails closed, which is also correct. Making that one build command
+portable is small and is listed in `CLOSING-INVENTORY.md`. Everything else in
+the suite runs on both platforms.

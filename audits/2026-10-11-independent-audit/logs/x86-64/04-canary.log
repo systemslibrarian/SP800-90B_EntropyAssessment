@@ -2,7 +2,7 @@
 canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
 canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
 canary: tool    /tmp/bins/ea_iid.master.live
-canary: input   /tmp/sp90b-canary.7yY9p7/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: input   /tmp/sp90b-canary.GtxwxH/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
 canary: exit    1
 canary: TREE    REPAIRED
 canary: BUILD   NOT-DISTINGUISHED
@@ -19,7 +19,7 @@ canary exit 0
 canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
 canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
 canary: tool    /tmp/bins/ea_iid.master.ndebug
-canary: input   /tmp/sp90b-canary.5EOTk5/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: input   /tmp/sp90b-canary.S5Z0th/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
 canary: exit    1
 canary: TREE    REPAIRED
 canary: BUILD   NOT-DISTINGUISHED
@@ -35,28 +35,24 @@ canary exit 0
 ===== ea_iid.tag.live
 canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
 canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
-tools/build-provenance-canary.sh: line 161:  3052 Aborted                 OMP_NUM_THREADS=${OMP_NUM_THREADS:-2} timeout "${CANARY_TIMEOUT:-1800}" "$TOOL" -i -v -o "$JSON" "$INPUT" 1 > "$OUT" 2>&1
+tools/build-provenance-canary.sh: line 161:  3023 Aborted                 OMP_NUM_THREADS=${OMP_NUM_THREADS:-2} timeout "${CANARY_TIMEOUT:-1800}" "$TOOL" -i -v -o "$JSON" "$INPUT" 1 > "$OUT" 2>&1
 canary: tool    /tmp/bins/ea_iid.tag.live
-canary: input   /tmp/sp90b-canary.fcA1kk/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: input   /tmp/sp90b-canary.VvF5Vp/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
 canary: exit    134
-canary: TREE    INDETERMINATE
-canary: BUILD   INDETERMINATE
-canary: The outcome matched none of the three signatures (0 matched). NOT a pass.
-canary: Refuse any figure from this binary until provenance is established
-canary: by other means. Known causes of a legitimate INDETERMINATE:
-canary:   * a timeout (CANARY_TIMEOUT, currently 1800s)
-canary:   * a tool that is not ea_iid
-canary:   * a long double format other than the three in the header (W=20000
-canary:     is below every known subnormal floor; see OC-24)
-canary: ---- captured output (last 10 lines) ----
-canary:   ea_iid.tag.live: shared/lrs_test.h:683: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_colPower >= LDBL_MIN' failed.
-canary:   timeout: the monitored command dumped core
-canary exit 3
+canary: TREE    UNREPAIRED
+canary: BUILD   ASSERTS-LIVE
+canary: meaning the old tool (tag unrepaired-reference-2026-10-15 or earlier),
+canary:         with the assert at shared/lrs_test.h:683 compiled in. On this
+canary:         input it aborts and publishes no figure. This is the reference
+canary:         build for the two-figure rule; it carries C07 and C03.
+canary: NOTE    This does not establish the commit, the compiler, other flags,
+canary:         or that the binary is unmodified.
+canary exit 0
 ===== ea_iid.tag.ndebug
 canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
 canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
 canary: tool    /tmp/bins/ea_iid.tag.ndebug
-canary: input   /tmp/sp90b-canary.GVWQMX/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: input   /tmp/sp90b-canary.FaDwbR/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
 canary: exit    0
 canary: TREE    UNREPAIRED
 canary: BUILD   NDEBUG
@@ -69,7 +65,7 @@ canary exit 0
 canary input sha256 327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c
 canary: digest  327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c (matches)
 canary: tool    /bin/ls
-canary: input   /tmp/sp90b-canary.PEMLSv/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
+canary: input   /tmp/sp90b-canary.nyPWnl/canary-lrsrep-20000.bin (1,000,000 one-bit samples, implanted repeat W=20000)
 canary: exit    2
 canary: TREE    INDETERMINATE
 canary: BUILD   INDETERMINATE
@@ -81,7 +77,7 @@ canary:   * a tool that is not ea_iid
 canary:   * a long double format other than the three in the header (W=20000
 canary:     is below every known subnormal floor; see OC-24)
 canary: ---- captured output (last 10 lines) ----
-canary:   /bin/ls: cannot access '/tmp/sp90b-canary.PEMLSv/canary.json': No such file or directory
+canary:   /bin/ls: cannot access '/tmp/sp90b-canary.nyPWnl/canary.json': No such file or directory
 canary:   /bin/ls: cannot access '1': No such file or directory
-canary:   8938970 -rw-r--r-- 1 runner 1000000 Oct 19 13:57 /tmp/sp90b-canary.PEMLSv/canary-lrsrep-20000.bin
+canary:   8937952 -rw-r--r-- 1 runner 1000000 Oct 19 14:50 /tmp/sp90b-canary.nyPWnl/canary-lrsrep-20000.bin
 canary exit 3

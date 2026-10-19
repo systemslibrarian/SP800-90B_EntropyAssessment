@@ -1,0 +1,4 @@
+regression-estimator-guards: AddressSanitizer build failed; see /tmp/ea-regguard.dLmqWf/build.log
+/usr/bin/ld: cannot find -lomp: No such file or directory
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+regression-estimator-guards exit 2

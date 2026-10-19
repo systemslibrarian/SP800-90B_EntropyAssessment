@@ -8,8 +8,8 @@ canary: TREE    REPAIRED
 canary: BUILD   NOT-DISTINGUISHED
 ===== ea_iid.tag.live
 canary: exit    134
-canary: TREE    INDETERMINATE
-canary: BUILD   INDETERMINATE
+canary: TREE    UNREPAIRED
+canary: BUILD   ASSERTS-LIVE
 ===== ea_iid.tag.ndebug
 canary: exit    0
 canary: TREE    UNREPAIRED
