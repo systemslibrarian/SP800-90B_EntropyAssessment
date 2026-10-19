@@ -1,0 +1,197 @@
+name: x86-64 platform facts
+
+# WHY THIS EXISTS
+#
+# Every float-environment claim in audits/2026-10-11-independent-audit/ is
+# measured on Apple arm64, where `long double` IS IEEE double (53-bit
+# significand, emin -1021) -- the NARROWEST of the three formats a build of this
+# tool can land on. x87 extended (x86-64) and binary128 (Linux aarch64) share
+# emin -16382. Three things were therefore arguments from reading the source
+# rather than observations, and CLOSING-INVENTORY.md listed them as needing "one
+# machine briefly":
+#
+#   * the four provenance-canary signatures (OC-24, OC-30)
+#   * REPRO-01, whose verdict differs by long double width
+#   * R-1, re-labelled NOT-REPRODUCIBLE-HERE by OC-34 -- its assert does not
+#     fire on this platform and nothing in the fork fixed it, so it is
+#     rounding-sensitive and its reachability elsewhere was unknown
+#
+# ubuntu-latest is x86-64 Linux on glibc, where `long double` is x87 80-bit
+# extended. So the machine is a workflow file. Manually triggered: this answers
+# questions, it does not gate anything.
+#
+# The platform is PRINTED, never assumed: step 1 records the actual float
+# environment, and every later conclusion is read against it.
+#
+# ABSENCE RULE (OC-36). No step below concludes anything from a missing line
+# without first confirming the output is a well-formed report of the expected
+# kind. A usage message, an empty file, a crash and a completed run that lacks
+# a given line are four distinguishable outcomes and only the last is evidence.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  platform-facts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # the tag build needs history
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libbz2-dev libdivsufsort-dev \
+                                  libjsoncpp-dev libssl-dev python3 python3-pip
+          python3 -m pip install --quiet mpmath || true
+          mkdir -p logs
+
+      - name: 1. Print the float environment (the platform fact, not an argument)
+        run: |
+          cat > /tmp/fp.c <<'EOF'
+          #include <stdio.h>
+          #include <float.h>
+          int main(void){
+            printf("uname/arch recorded separately\n");
+            printf("sizeof(long double) = %zu\n", sizeof(long double));
+            printf("LDBL_MANT_DIG   = %d\n", LDBL_MANT_DIG);
+            printf("LDBL_MIN_EXP    = %d\n", LDBL_MIN_EXP);
+            printf("LDBL_MIN        = %Lg\n", LDBL_MIN);
+            printf("LDBL_TRUE_MIN   = %Lg\n", LDBL_TRUE_MIN);
+            printf("LDBL_EPSILON    = %Lg\n", LDBL_EPSILON);
+          #ifdef FLT_EVAL_METHOD
+            printf("FLT_EVAL_METHOD = %d\n", FLT_EVAL_METHOD);
+          #else
+            printf("FLT_EVAL_METHOD = (not defined)\n");
+          #endif
+            printf("DBL_MANT_DIG    = %d\n", DBL_MANT_DIG);
+            /* The thresholds the canary signatures depend on. */
+            printf("W such that 0.5^W < LDBL_MIN  -> W > %.0f\n", -1.0*LDBL_MIN_EXP + 1);
+            return 0;
+          }
+          EOF
+          gcc -O0 -o /tmp/fp /tmp/fp.c
+          { uname -a; gcc --version | head -1; /tmp/fp; } | tee logs/01-float-environment.log
+          # The whole job is interpretable only if this is the wide format.
+          mant=$(sed -n 's/^LDBL_MANT_DIG *= *//p' logs/01-float-environment.log)
+          emin=$(sed -n 's/^LDBL_MIN_EXP *= *//p' logs/01-float-environment.log)
+          echo "LDBL_MANT_DIG=${mant} LDBL_MIN_EXP=${emin}" >> "$GITHUB_ENV"
+          if [ "${mant}" = "64" ] && [ "${emin}" = "-16381" ]; then
+            echo "PLATFORM: x87 80-bit extended, as expected for x86-64 glibc" | tee -a logs/01-float-environment.log
+          else
+            echo "PLATFORM: NOT the expected x87 extended format (mant ${mant}, emin ${emin})." | tee -a logs/01-float-environment.log
+            echo "Every conclusion below is about THIS format, whatever it is. Read the log." | tee -a logs/01-float-environment.log
+          fi
+
+      - name: 2. Build master (asserts live) and -DNDEBUG
+        run: |
+          set -x
+          ( cd cpp && make non_iid iid restart ) 2>&1 | tee logs/02-build-master.log
+          mkdir -p /tmp/bins
+          cp cpp/ea_iid /tmp/bins/ea_iid.master.live
+          cp cpp/ea_non_iid /tmp/bins/ea_non_iid.master
+          cp cpp/ea_restart /tmp/bins/ea_restart.master
+          ( cd cpp && make -B CXX="g++ -DNDEBUG" iid ) 2>&1 | tee -a logs/02-build-master.log
+          cp cpp/ea_iid /tmp/bins/ea_iid.master.ndebug
+          ( cd cpp && make -B iid ) 2>&1 | tee -a logs/02-build-master.log
+          sha256sum /tmp/bins/* | tee logs/02-binaries.sha256
+
+      - name: 3. Build the unrepaired reference from the tag
+        run: |
+          set -x
+          git worktree add /tmp/tagwt unrepaired-reference-2026-10-15
+          ( cd /tmp/tagwt/cpp && make iid ) 2>&1 | tee logs/03-build-tag.log
+          cp /tmp/tagwt/cpp/ea_iid /tmp/bins/ea_iid.tag.live
+          ( cd /tmp/tagwt/cpp && make -B CXX="g++ -DNDEBUG" iid ) 2>&1 | tee -a logs/03-build-tag.log
+          cp /tmp/tagwt/cpp/ea_iid /tmp/bins/ea_iid.tag.ndebug
+          sha256sum /tmp/bins/* | tee -a logs/02-binaries.sha256
+
+      - name: 4. The canary, all four builds plus a non-tool control
+        run: |
+          set +e
+          for c in master.live master.ndebug tag.live tag.ndebug; do
+            echo "===== ea_iid.${c}" | tee -a logs/04-canary.log
+            tools/build-provenance-canary.sh "/tmp/bins/ea_iid.${c}" >> logs/04-canary.log 2>&1
+            echo "canary exit $?" >> logs/04-canary.log
+          done
+          echo "===== /bin/ls (control: must be INDETERMINATE)" >> logs/04-canary.log
+          tools/build-provenance-canary.sh /bin/ls >> logs/04-canary.log 2>&1
+          echo "canary exit $?" >> logs/04-canary.log
+          # Report the TREE/BUILD pairs, which is what OC-24/OC-30 argued for.
+          grep -E '^=====|^canary: (TREE|BUILD|exit)' logs/04-canary.log | tee logs/04-canary-summary.log
+
+      - name: 5. R-1 at all five symbol counts (settles NOT-REPRODUCIBLE-HERE)
+        run: |
+          set +e
+          # Absence rule: a usage message, a crash and a completed run that
+          # lacks a line are different outcomes. Classify on POSITIVE markers.
+          for spec in 3:2 6:3 7:3 9:4 12:4; do
+            k=${spec%%:*}; w=${spec#*:}
+            python3 - "$k" <<'PY'
+          import random, sys
+          k = int(sys.argv[1]); L = (1000000 // k + 1) * k
+          r = random.Random(7)
+          a = [i % k for i in range(L)]
+          r.shuffle(a)
+          open('/tmp/bal%d.bin' % k, 'wb').write(bytes(a))
+          print('k=%d L=%d counts=%d' % (k, L, L // k))
+          PY
+            OMP_NUM_THREADS=2 timeout 1200 /tmp/bins/ea_iid.master.live -v "/tmp/bal${k}.bin" "$w" > "/tmp/bal${k}.out" 2>&1
+            rc=$?
+            if grep -qi 'assertion' "/tmp/bal${k}.out"; then
+              verdict="ABORTED: $(grep -i assertion "/tmp/bal${k}.out" | head -1)"
+            elif grep -qi 'usage is' "/tmp/bal${k}.out"; then
+              verdict="HARNESS ERROR: the tool printed usage; nothing was tested"
+            elif grep -qE '^\*\* (Passed|Failed) ' "/tmp/bal${k}.out"; then
+              verdict="completed the battery without aborting (rc ${rc}): $(grep -oE '^\*\* (Passed|Failed) [a-z ]+' "/tmp/bal${k}.out" | head -1)"
+            elif [ "${rc}" -eq 124 ]; then
+              verdict="TIMED OUT before any verdict line (rc 124) -- no conclusion"
+            else
+              verdict="INCONCLUSIVE (rc ${rc}): $(tail -1 "/tmp/bal${k}.out")"
+            fi
+            echo "k=${k} width=${w}: ${verdict}" | tee -a logs/05-r1.log
+          done
+
+      - name: 6. The full suite and the outside-battery regression
+        run: |
+          set +e
+          ( cd cpp/selftest && ./run-all-checks.sh ) > logs/06-run-all-checks-strict.log 2>&1
+          echo "strict suite exit $?" >> logs/06-run-all-checks-strict.log
+          ( cd cpp/selftest && ./run-all-checks.sh --allow-known-platform-deltas ) > logs/06-run-all-checks-platform.log 2>&1
+          echo "platform-flag suite exit $?" >> logs/06-run-all-checks-platform.log
+          ( cd cpp/selftest && ./regression-outside-battery.sh ) > logs/06-outside-battery.log 2>&1
+          echo "outside-battery exit $?" >> logs/06-outside-battery.log
+          ( cd cpp/selftest && ./harness-inventory-mutation-test.sh ) > logs/06-mutation-inventory.log 2>&1
+          echo "exit $?" >> logs/06-mutation-inventory.log
+          ( cd cpp/selftest && ./outside-battery-mutation-test.sh ) > logs/06-mutation-corpus.log 2>&1
+          echo "exit $?" >> logs/06-mutation-corpus.log
+          tail -3 logs/06-run-all-checks-strict.log logs/06-run-all-checks-platform.log \
+                  logs/06-outside-battery.log logs/06-mutation-inventory.log logs/06-mutation-corpus.log
+
+      - name: 7. Summary
+        if: always()
+        run: |
+          echo "## x86-64 platform facts" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat logs/01-float-environment.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "### canary" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat logs/04-canary-summary.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "### R-1" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat logs/05-r1.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: x86-64-platform-facts
+          path: logs/
+          retention-days: 90
