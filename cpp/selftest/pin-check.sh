@@ -50,10 +50,19 @@ run_tool() {
 
 check() {  # $1 = output text, $2 = label; prints verdict; returns 0 on pass
     local out=$1 label=$2 sha got
-    sha=$(printf '%s\n' "$out" | sed -n 's/.*SHA-256 hash \([0-9a-f]\{64\}\).*/\1/p' | head -1)
-    got=$(printf '%s\n' "$out" | sed -n 's/^Assessed min entropy: //p' | head -1)
-    if [ -z "$got" ]; then
+    # LABEL RULE (OC-36): both reads are anchored to their printed label, and
+    # the count is asserted rather than resolved by taking the first match.
+    # "head -1" on a label that appeared twice would silently pick one.
+    sha=$(printf '%s\n' "$out" | sed -n 's/.*SHA-256 hash \([0-9a-f]\{64\}\).*/\1/p')
+    got=$(printf '%s\n' "$out" | sed -n 's/^Assessed min entropy: //p')
+    nsha=$(printf '%s' "$sha" | grep -c . || true)
+    ngot=$(printf '%s' "$got" | grep -c . || true)
+    if [ "$ngot" -eq 0 ]; then
         echo "$label: FAIL (no 'Assessed min entropy' line in output)"
+        return 1
+    fi
+    if [ "$ngot" -ne 1 ] || [ "$nsha" -gt 1 ]; then
+        echo "$label: FAIL (expected one 'Assessed min entropy' line and at most one digest; got ${ngot} and ${nsha})"
         return 1
     fi
     awk -v a="$EXPECTED" -v b="$got" -v tol="$RELTOL" -v sha="$sha" -v want="$SAMPLE_SHA256" -v label="$label" -v plat="$(uname -sm)" '

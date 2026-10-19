@@ -48,7 +48,8 @@ def binom_pmf(H_I):
     """pmf of Bin(1000, 2^-H_I): exact Fraction for integer H_I, else 80-digit Decimal."""
     key = str(H_I)
     if key in _pmf_cache: return _pmf_cache[key]
-    p = Fraction(1, 2 ** int(H_I)) if float(H_I).is_integer() else Decimal(2) ** (-Decimal(str(H_I)))
+    # int(H_I) fails on '1.00'; go through float so '1', '1.0' and '1.00' all work.
+    p = Fraction(1, 2 ** int(float(H_I))) if float(H_I).is_integer() else Decimal(2) ** (-Decimal(str(H_I)))
     q = 1 - p
     f = q ** N
     pmf = [f]

@@ -41,25 +41,42 @@ instructions the tag itself carries, are in
 
 | item | what it is | why it is still open |
 |---|---|---|
+| **`oac-13`** the report write is not atomic — the last item in `C08` | A signal during the write leaves truncated JSON at the operator's path. `C14`'s placeholder narrowed this from "stale valid report" to "invalid JSON", which a consumer can detect by parsing, but did not close it. The rest of `C08` is **done** (`OC-38`): `errorClass` distinguishes `input` / `statistical` / `internal`, the filename is recorded on failure paths, and a comma-operator bug that was publishing the literal string `"Error: '%s' is empty"` to operators is fixed, with exit codes unchanged. | Write to a temporary file and rename. Small. |
 | **`F13`** NaN into `std::min` | `shared/utils.h:1153` suppresses a NaN only because `1.0` is written as the **first** argument of `min`. Swap them — a change a reviewer would read as cosmetic — and the NaN reaches the returned estimate. | Carried `UNCONFIRMED` since the batch phase. The property is incidental and still unmarked at the site. A comment, or explicit `fmax`-style handling, plus a regression that fails against the swapped form. |
-| **`oac-13`** the report write is not atomic | A signal during the write leaves truncated JSON at the operator's path. `C14`'s placeholder narrowed this from "stale valid report" to "invalid JSON", which a consumer can detect, but did not close it. | Write to a temporary file and rename. Small, and the last fail-open-shaped item on the report channel. |
-| **`C08`** residue | The named defect — the harness failing open on absent reference data — is **closed**. What remains of the 14-member cluster is that a failure's *cause* is not always distinguishable (`oac-5`: every failure is exit 255; `oac-12`: three file problems share one message). | Diagnosability, never a false success. Worth doing; nothing rests on it. |
-| **`C22c`** at other sample counts | `entropy_floor.py` refuses any `n` below 1,000,000 bits because the `ZALPHA` ceiling was measured at 1e6 and 8e6 only. | One run of `OC-22`'s harness per additional `n`. Needed only if the project ever assesses a different length. |
-| **`C06`** `h_out` exceeds the output's bit ceiling | `ea_conditioning` reports `h_out` 7.1552 for a 7-bit output. | Computable here, but the tool is not built (below). Listed here because the *measurement* needs nothing. |
+| **`C22c`** at other sample counts | `entropy_floor.py` refuses any `n` below 1,000,000 bits, and uses the value measured at the largest measured `n` not exceeding the actual one, because the `ZALPHA` ceiling was measured at 1e6 and 8e6 only. | One oracle run per additional `n`. Needed only if the project ever assesses a different length. |
+| **`C06`** `h_out` exceeds the output's bit ceiling | `ea_conditioning` reports `h_out` 7.1552 for a 7-bit output. | The *measurement* needs nothing, which is why it is here; the tool it concerns is deliberately not built (see the last bucket). |
 
-## Needs an x86-64 host
+## Needs an x86-64 host — which turned out to be a workflow file, not a machine
 
-One machine, briefly. These are all the same gap: every float-environment claim
-in this audit is measured on Apple arm64, where `long double` **is** IEEE
-double (53-bit, emin −1021) — the narrowest of the three formats a build can
-land on. x87 extended (x86-64) and binary128 (Linux aarch64) share emin −16382.
+**This bucket was wrong.** It read "one machine briefly", and nobody has an
+x86-64 machine. `ubuntu-latest` on GitHub Actions is x86-64 Linux on glibc,
+where `long double` is x87 80-bit extended — the exact format every
+float-environment claim in this audit argues about from the source rather than
+observing. The repository is public and Actions is enabled, so the whole bucket
+is reachable for free.
 
-| item | what one x86-64 run would settle |
+`.github/workflows/x86-64-platform-facts.yml`, manually triggered
+(`workflow_dispatch`), prints the float environment rather than assuming it,
+builds both configurations of master and of the tag, runs the canary on all
+four plus a non-tool control, runs `R-1` at all five symbol counts, and runs the
+full suite and the outside-battery regression so the pinned figures get a second
+platform. Logs upload as artifacts. Its R-1 step classifies on positive markers,
+so a usage message, a crash, a timeout and a completed run are distinguishable
+(`OC-36`'s absence rule, applied in the code that would otherwise repeat the
+error that taught it).
+
+| item | what the job settles |
 |---|---|
-| **provenance canary signatures** | `OC-24`/`OC-30` argue from the arithmetic that all four canary signatures hold on the wide formats: at W = 20000 the one underflowing quantity is below every subnormal floor, and the repaired decision has a 13 842 log-unit margin. **That is an argument from reading code, not an observation.** One run of `tools/build-provenance-canary.sh` against each tree on such a host converts it. |
-| **`REPRO-01`** | The same input aborts on a 64-bit `long double` and is assessed on an 80-bit one. Pinned by recording the architecture; confirming the other side needs the other side. |
-| **`R-1`** | Re-labelled by `OC-34`: it does **not** reproduce here at any of the five symbol counts its tracker entry names, the assert is still in the source, and the fork never touched the function — so it is rounding-sensitive, not hardware-blocked. Whether it fires on a wide `long double` is unknown. |
-| **`C18`** LLP64 integer widths | `sizeof(long) = 8` here, so nothing in the cluster can overflow. On Windows/LLP64 `long` is 32-bit and `n_choose_2` could wrap. This one needs **Windows**, not merely x86-64, and the Windows build route is documented and has never been run. |
+| the four canary signatures | `OC-24`/`OC-30` argue from the arithmetic that all four hold on the wide formats. The job observes them. |
+| **`REPRO-01`** | the same input aborts on a 64-bit `long double` and is assessed on an 80-bit one; this is the other side. |
+| **`R-1`** | `OC-34` re-labelled it `NOT-REPRODUCIBLE-HERE`. The job decides between `NOT-REPRODUCIBLE-ANYWHERE-WE-CAN-REACH` and `REPRODUCIBLE-ON-X86-64`. |
+| the pinned figures | a second platform for `pin-check` and the outside-battery corpus. |
+
+**What CI still cannot reach.** `C18` needs **Windows/LLP64**, where `long` is
+32 bits — not merely x86-64 — and the Windows build route is documented and has
+never been run; a `windows-latest` job with an MSYS2 toolchain is the obvious
+next step and is not written. Linux **aarch64** (binary128, 113-bit
+significand) is not a standard GitHub-hosted runner.
 
 ## Needs the physical device — arriving January 2027
 
@@ -68,7 +85,7 @@ claims about instruments, never about sources.
 
 | item | what it needs the device for |
 |---|---|
-| **the restart assessment** | A real restart dataset, decided with the corrected cutoff and **not** with §3.1.4.3's printed binomial formula, which rejects correctly-operating sources (`OC-30`, `XR-11`). The decision must be computed, recorded with `X_max`, `H_I`, the cutoff, the method and the binary's identity, and never upgraded by a later repair. |
+| **the restart assessment** | A real restart dataset, decided with the corrected cutoff and **not** with §3.1.4.3's printed binomial formula, which rejects correctly-operating sources (`OC-30`, `XR-11`). The decision must be computed, recorded with `X_max`, `H_I`, the cutoff, the method and the binary's identity, and never upgraded by a later repair. **At the width-1 operating point the two cutoffs are identical below H_I ≈ 0.989, so for this device the `C23` repair changes no verdict** — the table to read a cutoff out of is `XR-13`, and the entropy figure itself is still unmeasured. |
 | **the per-device baseline** | `XR-07`: a defect can be invisible to the estimator battery **and** to the outside-battery check at once, so the per-estimator breakdown needs a per-device baseline — and that baseline cannot be synthesised, by construction. |
 | **the pinned figure** | `pin-check.sh` is pinned on an upstream sample. It is to be re-based on a real capture when one exists (steps in `BUILDING.md`). |
 | **the 0.696 figure** | One unit's measurement, uninterpretable pending build provenance. |
@@ -94,6 +111,21 @@ This bucket is not a queue. Nothing here is pending.
 | **Regenerating the reference corpus from these tools.** | A reference produced by its subject cannot detect its subject changing. The corpus is made more complete only by derivation from data that predates the current build (`OC-21`). |
 | **Trusting the reference corpus.** | Ten of eleven key families are upstream-captured with no independent derivation. It is more complete than it was; it is not more trustworthy. "The selftest still passes" validates nothing on its own — use build-differential, spec-derived oracles, inputs whose verdict is known by construction, and metamorphic relations. |
 | **`ea_conditioning` / `ea_transpose` findings** (`N-03`, `N-05`, `N-11`, `C06`, `C09`, most of `C21`) | Not built, deliberately. They become active work before that scope can expand, and expanding it is not planned. |
+
+## The wall
+
+**With `C08` finished and the x86-64 bucket handed to CI, the fork is at the
+hardware wall.** What is left in the first bucket is one small item
+(`oac-13`'s atomic write) plus measurements nobody needs until the sample length
+changes. What is left in the second is Windows, which needs a route that has
+never been run. Everything that would move the project's central claim — what
+this device's entropy actually is, whether its restart data is accepted, whether
+a per-device baseline exists — waits on hardware arriving in January 2027, and
+nothing in software substitutes for it.
+
+That is the honest end state of the software work. The lists above are not a
+backlog implying progress is pending; they are a record of what the wall is made
+of.
 
 ## How to tell whether this document has gone stale
 

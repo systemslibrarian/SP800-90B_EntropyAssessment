@@ -215,6 +215,7 @@ bool record_assessed_data_identity(const uint8_t *bytes, size_t length, TestRunB
 	if(EVP_Digest(bytes, length, digest, &digestLength, EVP_sha256(), NULL) != 1 ||
 	   digestLength != SHA256_DIGEST_LENGTH) {
 		testRun->errorLevel = -1;
+		testRun->errorClass = "internal";
 		testRun->errorMsg = "Error: could not hash the loaded assessment bytes.";
 		return false;
 	}
@@ -248,11 +249,13 @@ bool input_path_is_regular(const char *file_path, TestRunBase *testRun) {
 	struct stat st;
 	if(stat(file_path, &st) != 0) {
 		testRun->errorLevel = -1;
+		testRun->errorClass = "input";
 		testRun->errorMsg = "Error: could not stat the input file.";
 		return false;
 	}
 	if(!S_ISREG(st.st_mode)) {
 		testRun->errorLevel = -1;
+		testRun->errorClass = "input";
 		testRun->errorMsg = "Error: input is not a regular file.";
 		fprintf(stderr, "Error: '%s' is not a regular file.\n", file_path);
 		return false;
@@ -301,6 +304,7 @@ bool dataset_meets_minimum(const data_t *dp, TestRunBase *testRun) {
 	}
 
 	testRun->errorLevel = -1;
+	testRun->errorClass = "input";
 	testRun->errorMsg = "Error: dataset contains " + std::to_string(dp->len) +
 		" samples; SP 800-90B Section 3.1.1 requires at least " + std::to_string(MIN_SIZE) + ".";
 
@@ -322,7 +326,12 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 	file = fopen(file_path, "rb");
 	if(!file){
                 testRun->errorLevel = -1;
-                testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+                // C08/oac-12: this was `errorMsg = "...'%s'...", file_path`, a comma
+                // operator -- the report received the FORMAT STRING, so a consumer
+                // read a literal %s and never learned which file failed.
+                testRun->errorClass = "input";
+                testRun->filename = string(file_path);
+                testRun->errorMsg = "Error: could not open '" + string(file_path) + "'.";
 		printf("Error: could not open '%s'\n", file_path);
 		return false;
 	}
@@ -330,7 +339,8 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 	rc = (long)fseek(file, 0, SEEK_END);
 	if(rc < 0) {
     testRun->errorLevel = -1;
-    testRun->errorMsg = "Error: fseek failed";
+    testRun->errorClass = "internal";
+		testRun->errorMsg = "Error: fseek failed";
     printf("Error: fseek failed\n");
 		fclose(file);
 		return false;
@@ -339,7 +349,8 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 	fileLen = ftell(file);
 	if(fileLen < 0){
     testRun->errorLevel = -1;
-    testRun->errorMsg = "Error: ftell failed";
+    testRun->errorClass = "internal";
+		testRun->errorMsg = "Error: ftell failed";
     printf("Error: ftell failed\n");
 		fclose(file);
 		return false;
@@ -381,7 +392,8 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 		rc = (long)fseek(file, subsetOffset, SEEK_SET);
 		if(rc < 0){
                         testRun->errorLevel = -1;
-                        testRun->errorMsg = "Error: fseek failed";
+                        testRun->errorClass = "internal";
+		testRun->errorMsg = "Error: fseek failed";
 			printf("Error: fseek failed\n");
 			fclose(file);
 			return false;
@@ -392,7 +404,10 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
 
 	if(dp->len == 0){
     testRun->errorLevel = -1;
-    testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+    // C08/oac-12: see the note above; same comma-operator defect.
+    testRun->errorClass = "input";
+    testRun->filename = string(file_path);
+    testRun->errorMsg = "Error: '" + string(file_path) + "' is empty.";
     printf("Error: '%s' is empty\n", file_path);
 		fclose(file);
 		return false;
@@ -468,6 +483,7 @@ bool read_file_subset(const char *file_path, data_t *dp, unsigned long subsetInd
                         testRun->errorMsg = "Warning: Symbols appear to be narrower than described.";
 		} else if( i > dp->word_size ) {
                         testRun->errorLevel = -1;
+                                                testRun->errorClass = "input";
                         testRun->errorMsg = "Error: Incorrect bit width specification: Data (" + std::to_string(i) + ") does not fit within described bit width: " + std::to_string(dp->word_size) + ".";
 			printf("Incorrect bit width specification: Data (%ld) does not fit within described bit width: %d.\n",i,dp->word_size); 
                         free(dp->symbols);
@@ -539,7 +555,12 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
 	file = fopen(file_path, "rb");
 	if(!file){
                 testRun->errorLevel = -1;
-                testRun->errorMsg = "Error: could not open '%s'\n", file_path;
+                // C08/oac-12: this was `errorMsg = "...'%s'...", file_path`, a comma
+                // operator -- the report received the FORMAT STRING, so a consumer
+                // read a literal %s and never learned which file failed.
+                testRun->errorClass = "input";
+                testRun->filename = string(file_path);
+                testRun->errorMsg = "Error: could not open '" + string(file_path) + "'.";
 		printf("Error: could not open '%s'\n", file_path);
 		return false;
 	}
@@ -547,7 +568,8 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
 	rc = (long)fseek(file, 0, SEEK_END);
 	if(rc < 0){
                 testRun->errorLevel = -1;
-                testRun->errorMsg = "Error: fseek failed";
+                testRun->errorClass = "internal";
+		testRun->errorMsg = "Error: fseek failed";
 		printf("Error: fseek failed\n");
 		fclose(file);
 		return false;
@@ -556,7 +578,8 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
 	dp->len = ftell(file);
 	if(dp->len < 0){
                 testRun->errorLevel = -1;
-                testRun->errorMsg = "Error: ftell failed";
+                testRun->errorClass = "internal";
+		testRun->errorMsg = "Error: ftell failed";
 		printf("Error: ftell failed\n");
 		fclose(file);
 		return false;
@@ -566,7 +589,10 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
 
 	if(dp->len == 0){
                 testRun->errorLevel = -1;
-                testRun->errorMsg = "Error: '%s' is empty\n", file_path;
+                // C08/oac-12: see the note above; same comma-operator defect.
+    testRun->errorClass = "input";
+    testRun->filename = string(file_path);
+    testRun->errorMsg = "Error: '" + string(file_path) + "' is empty.";
 		printf("Error: '%s' is empty\n", file_path);
 		fclose(file);
 		return false;
@@ -643,6 +669,7 @@ bool read_file(const char *file_path, data_t *dp, TestRunBase *testRun){
                         testRun->errorMsg = "Warning: Symbols appear to be narrower than described.";                  
                 } else if( i > dp->word_size ) {
                         testRun->errorLevel = -1;
+                                                testRun->errorClass = "input";
                         testRun->errorMsg = "Error: Incorrect bit width specification: Data (" + std::to_string(i) + ") does not fit within described bit width: " + std::to_string(dp->word_size) + ".";
 			printf("Incorrect bit width specification: Data (%ld) does not fit within described bit width: %d.\n",i,dp->word_size);
                         free(dp->symbols);

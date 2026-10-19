@@ -58,8 +58,14 @@ m1_sample=truerand_8bit
 m2_sample=biased-random-bits
 
 for s in "${m1_sample}" "${m2_sample}"; do
-	if out=$(compare "${work}/clean/ea_non_iid" "${s}") && \
-	   ! printf '%s' "${out}" | grep -q 'Significant difference'; then
+	# ABSENCE RULE (OC-36): "no 'Significant difference' line" is only evidence
+	# if a comparison actually ran. compareresults.pl prints a per-key summary;
+	# require it before reading the absence as cleanliness.
+	out=$(compare "${work}/clean/ea_non_iid" "${s}")
+	if ! printf '%s' "${out}" | grep -qE 'Comparing|key|[0-9]'; then
+		note "baseline ${s}:" "NO COMPARISON OUTPUT; nothing was concluded"
+		fails=$((fails + 1))
+	elif ! printf '%s' "${out}" | grep -q 'Significant difference'; then
 		note "baseline ${s}:" "clean (as required)"
 	else
 		note "baseline ${s}:" "UNEXPECTED mismatch on the unmutated build"
@@ -72,6 +78,13 @@ done
 # assert_caught <label> <sample> <compareresults output>
 assert_caught() {
 	local label=$1 out=$3
+	# ABSENCE RULE (OC-36): a missing "Significant difference" line means the
+	# mutant passed ONLY if the comparison ran at all.
+	if ! printf '%s' "${out}" | grep -qE 'Comparing|key|[0-9]'; then
+		note "${label}:" "NO COMPARISON OUTPUT; the mutant was not tested"
+		fails=$((fails + 1))
+		return
+	fi
 	if ! printf '%s' "${out}" | grep -q 'Significant difference'; then
 		note "${label}:" "NOT CAUGHT — the mutant passed the comparison"
 		fails=$((fails + 1))

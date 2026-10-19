@@ -67,7 +67,9 @@ import sys
 
 report, log_path, width = sys.argv[1], sys.argv[2], int(sys.argv[3])
 data = json.load(open(report, encoding="utf-8"))
-case = data["testCases"][0]
+_cs = (data)["testCases"]
+assert len(_cs) == 1, "expected exactly 1 testCase, got %d" % len(_cs)
+case = _cs[0]
 text = open(log_path, encoding="utf-8").read()
 
 if data.get("errorLevel") != 2:
@@ -121,7 +123,9 @@ set -e
 if [ "${restart_rc}" -eq 1 ] && python3 - "${work}/restart.json" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1], encoding="utf-8"))
-t = d["testCases"][0]
+_cs = (d)["testCases"]
+assert len(_cs) == 1, "expected exactly 1 testCase, got %d" % len(_cs)
+t = _cs[0]
 ok = (
     d.get("errorLevel") == 2
     and d.get("IID") is False
@@ -151,7 +155,9 @@ for control in truerand_1bit:1 truerand_8bit:8; do
     if [ "${rc}" -eq 0 ] && python3 - "${report}" <<'PY'
 import json, math, sys
 d = json.load(open(sys.argv[1], encoding="utf-8"))
-t = d["testCases"][0]
+_cs = (d)["testCases"]
+assert len(_cs) == 1, "expected exactly 1 testCase, got %d" % len(_cs)
+t = _cs[0]
 h = t.get("hAssessed")
 ok = (
     d.get("errorLevel") == 0

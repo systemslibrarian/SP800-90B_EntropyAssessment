@@ -34,7 +34,13 @@ note() { printf '%-54s %s\n' "$1" "$2"; }
 # field <json> <name>  -> prints the value or "absent"
 field() { python3 -c "
 import json,sys
-d=json.load(open(sys.argv[1]))['testCases'][0]
+d=json.load(open(sys.argv[1]))
+cs=d.get('testCases') or []
+# An ea_iid report has exactly one test case. Assert it rather than taking the
+# first of however many there are (OC-36's label rule: a positional read is
+# checked where no label exists to anchor to).
+assert len(cs)==1, 'expected exactly 1 testCase, got %d' % len(cs)
+d=cs[0]
 print(d.get(sys.argv[2], 'absent'))" "$1" "$2"; }
 
 # Binary input under -i: no bitstring assessment is made, so hBitstring must
@@ -50,7 +56,10 @@ fi
 
 if python3 - "${work}/bin.json" <<'PY'
 import json, sys
-tc = json.load(open(sys.argv[1]))["testCases"][0]
+_d = json.load(open(sys.argv[1]))
+_cs = _d.get("testCases") or []
+assert len(_cs) == 1, "expected exactly 1 testCase, got %d" % len(_cs)
+tc = _cs[0]
 ok = ("rawMean" in tc and "translatedSymbolMedian" in tc
       and "mean" not in tc and "median" not in tc)
 sys.exit(0 if ok else 1)
@@ -91,7 +100,14 @@ else
 	fails=$((fails + 1))
 fi
 
-if grep -qE 'Translated Symbol Index Median(:| =)' "${work}/bin-vvv.txt" && \
+# ABSENCE RULE (OC-36): the second clause below concludes from a MISSING line,
+# so the output must first be shown to be a well-formed -vvv report. A usage
+# message, an empty file and a crash all lack a bare "Median" line too, and
+# without this check each would read as the repair being present.
+if ! grep -qE '^Assessed min entropy:' "${work}/bin-vvv.txt"; then
+	note "N-10 stdout labels the translated median:" "NOT A WELL-FORMED REPORT (no 'Assessed min entropy' line); nothing was concluded"
+	fails=$((fails + 1))
+elif grep -qE 'Translated Symbol Index Median(:| =)' "${work}/bin-vvv.txt" && \
    ! grep -qE '^[[:space:]]*Median(:| =)' "${work}/bin-vvv.txt"; then
 	note "N-10 stdout labels the translated median:" "explicit"
 else

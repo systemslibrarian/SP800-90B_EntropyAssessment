@@ -774,10 +774,12 @@ int main(int argc, char* argv[]) {
         if (jsonOutput) {
             if(iid) {
                 testRunIid.errorLevel = -1;
+                testRunIid.errorClass = "statistical";
                 testRunIid.errorMsg = "Restart Sanity Check Failed.";
                 writeJsonReport(outputfilename, testRunIid.GetAsJson());
             } else {
                 testRunNonIid.errorLevel = -1;
+                testRunNonIid.errorClass = "statistical";
                 testRunNonIid.errorMsg = "Restart Sanity Check Failed.";
                 writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
             }
@@ -1139,10 +1141,12 @@ int main(int argc, char* argv[]) {
         if (jsonOutput) {
             if(iid) {
                 testRunIid.errorLevel = -1;
+                testRunIid.errorClass = "statistical";
                 testRunIid.errorMsg = "min(H_r, H_c) < H_I/2, Validation Testing Failed.";
                 writeJsonReport(outputfilename, testRunIid.GetAsJson());
             } else {
                 testRunNonIid.errorLevel = -1;
+                testRunNonIid.errorClass = "statistical";
                 testRunNonIid.errorMsg = "min(H_r, H_c) < H_I/2, Validation Testing Failed.";
                 writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
             }

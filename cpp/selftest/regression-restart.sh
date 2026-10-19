@@ -105,7 +105,9 @@ rc=$?
 if [ "${rc}" -ne 0 ] && python3 - "${work}/alternating.json" <<'PY'
 import json, math, sys
 d = json.load(open(sys.argv[1]))
-tc = d.get("testCases", [{}])[0]
+_cs = d.get("testCases") or []
+assert len(_cs) == 1, "expected exactly 1 testCase, got %d" % len(_cs)
+tc = _cs[0]
 ok = (math.isclose(tc.get("rawMean", -1), 0.5)
       and math.isclose(tc.get("translatedSymbolMedian", -1), 0.5)
       and "mean" not in tc and "median" not in tc)

@@ -14,6 +14,14 @@ public:
     string filename;
     int errorLevel = 0;
     string errorMsg;
+    // C08/oac-5: nothing in the report distinguished a statistical rejection
+    // from invalid input from an internal error -- every failure was exit 255
+    // with errorLevel -1. This says which, for a consumer that must decide
+    // whether to fix the data, the invocation, or the environment.
+    //   "input"        the data or the invocation was rejected before assessment
+    //   "statistical"  the data was assessed and a required test rejected it
+    //   "internal"     allocation, I/O or hashing failed; the run is inconclusive
+    string errorClass;
     string type;
     string commandline;
     // Number of one-byte sample values represented by sha256. The digest is
@@ -60,6 +68,7 @@ protected:
 
         if (errorLevel != 0){
             baseJson["errorMessage"] = errorMsg;
+            if (!errorClass.empty()) baseJson["errorClass"] = errorClass;
         }
         if (nonCompliantShortDataset) {
             baseJson["nonCompliantShortDataset"] = true;

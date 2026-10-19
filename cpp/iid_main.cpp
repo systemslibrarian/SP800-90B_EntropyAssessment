@@ -496,6 +496,7 @@ int main(int argc, char* argv[]) {
 
     if (!iid_test_suite_pass) {
         testRun.errorLevel = 2;
+        testRun.errorClass = "statistical";
         testRun.errorMsg = "IID test suite failed; no IID min-entropy estimate was awarded.";
         testRun.testCases.push_back(tc);
         if (verbose > 0) printf("IID test suite failed: no IID min-entropy estimate was awarded.\n");

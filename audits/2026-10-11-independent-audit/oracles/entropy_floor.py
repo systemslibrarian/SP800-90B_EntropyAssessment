@@ -33,7 +33,16 @@ WHAT THIS REFUSES TO DO
     (XR-04, XR-08, XR-09); run tools/build-provenance-canary.sh.
 
 Usage:  entropy_floor.py <ea_non_iid report.json> [...]
+        entropy_floor.py --from-log <ea_non_iid -vv output> [...]
         entropy_floor.py --manual <h_prime_per_bit> <bitstring_length_n>
+
+--from-log exists to recompute figures that were produced BY HAND from a -vv
+text log before this script existed, so the hand arithmetic can be checked by
+the thing that replaced it (OC-37). Every read in it is anchored to its printed
+LABEL, never to a line number or an ordinal: a missing label is an error, not a
+fallback to position (OC-36's second rule). That is the other half of the bug
+this script shipped with -- reading testCases[0] instead of the case labelled
+Overall.
 """
 import json, sys, os
 
@@ -120,6 +129,50 @@ def h_prime(report_path):
     n = int(d.get('assessedSampleCount') or 0) * w
     return hp, n, binder, cand, notes, d, tc
 
+def from_log(path):
+    """Read h', n and the symbol width from an ea_non_iid -vv text log, by label."""
+    notes = []
+    text = open(path, errors='replace').read()
+    def labelled(pattern, what):
+        import re
+        m = re.search(pattern, text, re.M)
+        if not m:
+            raise SystemExit("REFUSED: %s has no line labelled %s. This reader is label-anchored: "
+                             "a missing label is an error, never a fallback to a line number or an "
+                             "ordinal (OC-36)." % (path, what))
+        return m
+    import re
+    if re.search(r'^Usage is:', text, re.M):
+        raise SystemExit("REFUSED: %s is a usage message, not an assessment. The tool did not run "
+                         "on any data (OC-36's absence rule)." % path)
+    m = labelled(r'^Loaded\s+(\d+)\s+samples of\s+(\d+)\s+distinct\s+(\d+)-bit-wide symbols',
+                 "'Loaded N samples of K distinct W-bit-wide symbols'")
+    samples, _k, w = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    h_orig = float(labelled(r'^H_original\s*=\s*([0-9.eE+-]+)\s*$', "'H_original ='").group(1))
+    mb = re.search(r'^H_bitstring\s*=\s*([0-9.eE+-]+)\s*$', text, re.M)
+    cand = [("H_original / word_size", h_orig / w)]
+    if mb:
+        cand.append(("H_bitstring", float(mb.group(1))))
+    elif w > 1:
+        notes.append("no 'H_bitstring =' line for a %d-bit symbol; the bitstring pass did not run "
+                     "(-a / alphabet gate). h' rests on H_original / word_size alone." % w)
+    binder, hp = min(cand, key=lambda t: t[1])
+    # The tool also prints the assessed figure; check it against h' as C02 describes.
+    ma = re.search(r'^Assessed min entropy:\s*([0-9.eE+-]+)\s*$', text, re.M)
+    if ma:
+        a = float(ma.group(1))
+        if abs(a - w * hp) <= 1e-12 * max(1.0, abs(w * hp)):
+            notes.append("consistency: the printed 'Assessed min entropy' %.17g == word_size * h', "
+                         "as C02 describes (it is per symbol, not per bit)." % a)
+        elif abs(a - hp) <= 1e-12 * max(1.0, abs(hp)):
+            notes.append("the printed 'Assessed min entropy' %.17g equals h' itself (1-bit data)." % a)
+        else:
+            notes.append("the printed 'Assessed min entropy' %.17g is neither h' nor word_size * h' "
+                         "(%.17g) -- stop and resolve which figure is which before using either."
+                         % (a, w * hp))
+    notes.append("read from a -vv text log by label: width %d, %d samples." % (w, samples))
+    return hp, samples * w, binder, cand, notes
+
 def report(hp, n, binder=None, cand=None, notes=(), src=""):
     print("=" * 78)
     print(src)
@@ -169,6 +222,11 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     if not args:
         raise SystemExit(__doc__)
+    if args[0] == '--from-log':
+        for path in args[1:]:
+            hp, n, binder, cand, notes = from_log(path)
+            report(hp, n, binder, cand, notes, src="%s  (-vv text log)" % os.path.basename(path))
+        sys.exit(0)
     if args[0] == '--manual':
         if len(args) != 3:
             raise SystemExit("usage: entropy_floor.py --manual <h_prime_per_bit> <n_bits>")

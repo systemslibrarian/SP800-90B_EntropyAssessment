@@ -3597,3 +3597,176 @@ one labelled `Overall`; reading the first gave 0.983 instead of 0.904 on the
 is the `C02` reading trap one field over, in the script written to stop people
 falling into it. The case is now selected by name, and a report without an
 `Overall` case is refused rather than guessed at.
+
+## OC-36 — the two rules the landing detector does not cover, swept and controlled
+
+`OC-33` mechanised "show that the mutation landed". **Neither of the two errors
+found that same day was a mutation that failed to land**, so neither would have
+been caught by it. Both are separate classes, both generalise, and both are now
+rules beside the landing rule in `BUG-REPAIR-GUIDE.md` — with the explicit note
+that one mechanisation did not close all three.
+
+### Rule 2 — a conclusion from absence needs a well-formed report first
+
+The instance was mine: an `R-1` recheck declared the wrong symbol width, so
+`ea_iid` printed its usage text and exited 255, and my log recorded **"no LRS
+line seen"** — a statement about the arguments dressed as a statement about the
+data. A usage message, an empty file, a crash, a timeout and a completed run
+that happens to lack a line are **five** outcomes and only the last is evidence.
+
+**Swept** every harness that draws a verdict from a missing line. Three sites,
+and the honest result is mixed:
+
+| site | old behaviour on a malformed run | live false-pass window? |
+|---|---|---|
+| `regression-272.sh`, baseline and `assert_caught` — "no `Significant difference` line ⇒ clean" | `compareresults.pl` exiting 0 while comparing **zero keys** reads as cleanliness | **YES.** This is `OC-20`'s defect shape — a comparison total in one direction only — seen from the harness side. Now requires comparison output before reading absence. |
+| `regression-iid-json.sh` — "no bare `Median` line ⇒ the label repair is present" | a usage message has neither label, so the old test already said FAIL | no: it failed safe. The shape check closes the narrower window where the run died *after* printing the first label. |
+| the `R-1` recheck (mine) | reported absence as a data fact | **YES, and it did.** Fixed, and the same classification is built into the new CI job's R-1 step. |
+
+So the sweep found one live false-pass window in a shipped harness, one narrow
+one, and one that had already fired. **Negative control**: a usage message is
+now classified `NOT A WELL-FORMED REPORT` rather than contributing to a verdict.
+
+### Rule 3 — a labelled read is never a positional read
+
+The instance was also mine, and worse: `entropy_floor.py` read `testCases[0]`
+where the assessment is the case labelled `Overall`, producing 0.983 against
+0.904 on an 8-bit control — inside the script written to stop people making
+exactly that reading error (`OC-35`). No layout shifted; the ordinal was simply
+wrong, which is why "it works today" is not evidence for a positional read.
+
+**Swept** `head -1`, `tail -1`, `[0]`, line numbers and `awk` field positions
+across every harness and oracle. Converted, in order of what a wrong read would
+cost:
+
+| site | was | now |
+|---|---|---|
+| `pin-check.sh` — **the pinned figure**, and the input digest beside it | `sed … \| head -1` on each | label-anchored with the match **count asserted**: two `Assessed min entropy` lines, or two digests, now FAIL instead of silently using the first |
+| `regression-iid-json.sh`, `regression-iid-failclosed.sh`, `regression-restart.sh` — `testCases[0]` on `ea_iid`/`ea_restart` reports | took the first of however many | these reports carry **exactly one** case by design and carry no label to anchor to, so the count is now asserted; a second case is an error |
+| `entropy_floor.py` | `testCases[0]` | selected by `testCaseDesc == "Overall"`; a report without that case is **refused**, never guessed at |
+| `entropy_floor.py --from-log` (**new**) | — | added so figures produced by hand from a `-vv` text log can be recomputed by the tool that replaced them (`OC-37`); every field is read by its printed label and a missing label is an error |
+
+**Negative control**: a file with the pinned label printed twice now fails the
+read rather than resolving it by position.
+
+Left as positional deliberately: `regression-272.sh:122`'s
+`ls bin/* | head -1`, which picks an arbitrary fixture on purpose and asserts
+nothing about which, and index arithmetic inside the Python reference models,
+where the position *is* the meaning.
+
+## OC-37 — the one floor figure this project ever published, recomputed by the tool that replaced the hand process
+
+`OC-35` found the reading trap inside the calculator. The question that follows
+is whether the **hand** process — which produced every floor figure before the
+calculator existed — fell into the same one, and nobody had asked.
+
+**Searched**: every tracked document, every commit message on every branch, the
+cross-repo findings sent to TruePad, and the project memory notes. **There is
+exactly one published floor figure**, in `REPAIR-STRATEGY.md`'s worked example:
+**0.9239** under the literal reading and **0.9260** under `F07`, from the
+harvested ideal-uniform run with `h' = 0.92641`.
+
+**Recomputed through the calculator** (`entropy_floor.py --from-log`, against
+`logs/c22/predictor-intermediates.log`, the log it was derived from):
+
+| | |
+|---|---|
+| `H_original / word_size` | 0.98512337745550083 |
+| **`H_bitstring`** | **0.92641349982744703 ← binds** |
+| floor, literal reading | **0.9238844351874389** |
+| floor, `F07` reading | **0.92604443518743895** |
+
+**It matches.** 0.9238844 → 0.9239 and 0.9260444 → 0.9260. The published figure
+is correct, in neither direction wrong. That is the negative result, and it
+closes the question.
+
+**Why the hand process survived where the script did not**, which is the part
+worth keeping: the `-vv` **text** output prints a labelled aggregate,
+`H_bitstring = …`, which is already the minimum over bitstring estimators. The
+**JSON** has no such top-level field — the aggregate exists only inside the case
+labelled `Overall`, and must be selected. So the two surfaces do not carry the
+same trap: the text log hands you the right number under a label, and the JSON
+makes you choose. The hand process read the text log and was safe; the script
+read the JSON and was not. **The JSON is the more dangerous surface**, and
+`C02`'s warning should be read as applying to it in particular.
+
+## OC-38 — C08's last item: what a consumer sees when a run fails, and a format string that was being published
+
+`OC-34` found `C08`'s named defect closed and only diagnosability left, which
+made it the last software item on the list. Done, and it had a live bug in it.
+
+**The bug.** Four sites in `cpp/shared/utils.h` read
+`testRun->errorMsg = "Error: could not open '%s'\n", file_path;` — a **comma
+operator**, not a format call. The report received the **format string**. So an
+operator whose input file was empty got, in the JSON:
+
+```
+"errorMessage": "Error: '%s' is empty\n"
+```
+
+a literal `%s`, a stray newline, and no indication of which file. That is
+`oac-12`'s "those reports carry neither filename nor sha256", reproduced and
+now fixed: the message is built by concatenation, and the filename is recorded
+on the failure path.
+
+**The field.** `errorClass` is added to every report, emitted only on failure,
+with three values — `input` (the data or the invocation was rejected before
+assessment), `statistical` (the data was assessed and a required test rejected
+it), `internal` (allocation, I/O or hashing failed; the run is inconclusive).
+That is `oac-5`: nothing had distinguished those three, because every failure
+was exit 255 with `errorLevel -1`. **Exit codes are unchanged** — a consumer
+that keys on 255 keeps working, and one that wants the cause now has it.
+
+**Concretely, what a person sees that they did not see before**
+(`logs/c08/diagnosability.log`, each case run against both builds):
+
+| failure | the tag build says | master says |
+|---|---|---|
+| empty input file | `"Error: '%s' is empty\n"` | `Error: '/…/empty.bin' is empty.` + `errorClass input` |
+| file does not exist | `Error: could not hash the input file.`, **no filename** | `Error: could not stat the input file.` + filename + `errorClass input` |
+| input is a character device | `Error: could not hash the input file.` — **the same message as above**, so the two were indistinguishable | `Error: input is not a regular file.` + `errorClass input` |
+| declared width too narrow for the data | correct message, no class | same message + `errorClass input` |
+| a required IID test rejects the data | `errorLevel -1`, no class | + `errorClass statistical` |
+
+The second and third rows are the point: two different problems produced one
+message, which is what "collapse to one errorMessage" meant, and a consumer
+could not tell a missing file from an unusable one.
+
+**Still open, and now the only thing left in `C08`:** `oac-13`, the report write
+is not atomic. `C14`'s placeholder narrowed it from "stale valid report" to
+"invalid JSON", which a consumer can detect by parsing, and closing it properly
+needs write-to-temp-then-rename. Listed in `CLOSING-INVENTORY.md`.
+
+## OC-39 — the width-1 cutoff table, and the prediction that the C23 correction vanishes below full entropy
+
+Computed for `XR-13`, which is where the table and its use live. Recorded here
+for the method and the result.
+
+**Method.** Both cutoffs at every H_I from 0.50 to 1.00 in steps of 0.02 plus a
+fine sweep near the boundary: the printed §3.1.4.3 binomial tail, and the exact
+multinomial maximum by Levin's representation. False-reject rates measured on
+2000 full 1000×1000 matrices per H_I (4000 at the two boundary rows) whose most
+likely symbol has probability exactly `2^-H_I`, rows and columns both counted,
+so every rejection is false and the row/column dependence is included.
+
+**Result: the correction is exactly zero at every H_I from 0.50 to 0.989.** At
+width 1 and H_I < 1 the worst case is one cell at `p` plus a remainder cell at
+`1 − p`; the maximum over two asymmetric cells converges to the dominant cell's
+count, and the second cell's contribution to the tail is negligible. At H_I = 1
+the cells are equal, symmetry doubles the tail, and the gap is the familiar +2.
+The boundary sits **between 0.989 and 0.990**.
+
+**And the printed formula's over-rejection at width 1 is real but small**:
+measured 1.70 % [1.30–2.10] at the printed cutoff 570 against 0.93 %
+[0.63–1.22] at the corrected 572, at H_I = 1. Compare 83.2 % at 8 bits
+(`OC-30`). So the size of the `C23` defect is driven by the number of effective
+cells, `2^H_I`: it is a **wide-alphabet** phenomenon, and a one-bit source is
+affected only within about 1 % of full entropy.
+
+One consequence for the register: `C23` was, at the operating point this
+project actually uses, never going to change a verdict. That does not reduce
+the defect — a validation tool that does not implement the printed procedure is
+a problem at any width, and at 8 bits the printed procedure disqualifies five
+sound sources in six — but it does mean the `C23` work bought correctness
+rather than a changed figure. Worth stating because the opposite impression
+would be easy to form from `OC-30`'s 83 % alone.

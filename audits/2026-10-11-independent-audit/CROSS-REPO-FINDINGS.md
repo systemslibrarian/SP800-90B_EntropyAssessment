@@ -916,3 +916,125 @@ re-derived from the inputs rather than trusted.
 **Standing caveats.** The repair is self-authored and unreviewed.
 `productionApprovalEnabled` stays false and `approvedBuilds` empty on this
 finding's account. Nothing is sent upstream.
+
+## XR-13 — at width 1, C23's correction is zero below H_I ≈ 0.989, so at TruePad's operating point the defect has no effect; here is the table to read a cutoff out of
+
+**Finding only, and a table to use. Reported, not acted on — TruePad's
+procedure, TruePad's change.** Evidence: `OC-30` (the mechanism and the exact
+method), `OC-39`, `logs/width1/`. Supersedes `XR-11`'s implicit framing that the
+C23 correction matters at every operating point; `XR-11`'s instructions stand,
+and this says where they change nothing.
+
+**The operating point.** TruePad invokes at **width 1**, raw one-bit-per-byte,
+with `H_I` in bits per sample — which at width 1 is bits per bit — as a bare
+number. So the 8-bit rows that carry C23's large effects are unreachable, and
+not by a hard-coded literal: the width reaches `argv` from the record's own
+value. `XR-11`'s table was computed at integer widths and its H_I = 1 row is
+full entropy, which is not the device either. The device is quoted at roughly
+**0.696 bits per bit** — a figure taken from the vendor's repository that this
+project has never measured, and which stays **NOT RUN** until the hardware
+arrives.
+
+### The prediction, confirmed, and sharper than expected
+
+The expectation put to this session was: as H_I falls below 1 the two cells
+become asymmetric, the second cell's tail moves far out, the maximum over cells
+converges to the dominant cell's count, and so the multinomial-maximum
+correction shrinks toward zero — coinciding, or differing by one count,
+somewhere well above 0.696, and identical at 0.696 itself.
+
+**That holds, and the convergence is faster than "well above".** The two
+cutoffs are **identical at every H_I from 0.50 to 0.989**. The gap is +1 at
+0.99 and reaches +2 only at 0.999 and above. The mechanism is exactly as
+described: at width 1 and H_I < 1 the worst case is **one** cell at
+`p = 2^-H_I` plus a remainder cell at `1 − p`, and `P(max > m)` is
+`P(n₁ > m) + P(n₁ < 1000 − m)`, whose second term is negligible once `p` is
+clear of ½. At H_I = 1 exactly the cells are equal and symmetry doubles the
+tail, which is the whole of the +2.
+
+**At TruePad's quoted operating point the C23 defect has no effect.** At
+H_I = 0.70 the printed-formula cutoff and the corrected cutoff are both **683**,
+and the measured false-reject rate is 1.10 % against the 1 % the standard
+targets. **The repair matters for the tool's correctness, not for this device.**
+
+### Where the gap first becomes non-zero
+
+**Between H_I = 0.989 and H_I = 0.990.** Computed: gap 0 at 0.982, 0.984,
+0.985, 0.986, 0.988 and 0.989; gap +1 at 0.990 and 0.995; gap +2 at 0.999,
+0.9999, 0.99999 and 1.000. So a future one-bit device is affected only if its
+assessed entropy exceeds about 0.989 bits per bit — within roughly 1 % of full
+entropy. **That boundary is the thing to re-check if a different device is
+characterised**, and it is specific to width 1: at 8-bit the gap is 4 counts
+and the printed formula rejects 83 % of full-entropy matrices (`OC-30`), so the
+defect is a wide-alphabet phenomenon driven by the number of effective cells,
+`2^H_I`.
+
+### The table — read a cutoff out of this once the device is measured
+
+Width 1, α = 0.000005 per experiment (SP 800-90B §3.1.4.3 step 1; family-wise
+1 − (1 − α)²⁰⁰⁰ = 0.995 %, the standard's stated 1 % target). "Printed" is
+step 5 as written; "corrected" is the exact multinomial maximum (Levin) that
+the fork's repaired `ea_restart` computes. Measured rates are on 2000 full
+1000×1000 matrices per row whose most likely symbol has probability exactly
+`p`, so every rejection is a false one, with rows and columns both counted so
+the dependence is included. 95 % intervals in brackets.
+
+| H_I (bits/bit) | p = 2^−H_I | printed cutoff | corrected cutoff | gap | measured false-reject, printed | measured, corrected |
+|---:|---:|---:|---:|---:|---|---|
+| 0.50 | 0.707107 | 769 | 769 | **0** | 0.7500 % [0.3719–1.1281] | same cutoff |
+| 0.52 | 0.697372 | 760 | 760 | **0** | 1.2500 % [0.7631–1.7369] | same cutoff |
+| 0.54 | 0.687771 | 751 | 751 | **0** | 1.0000 % [0.5639–1.4361] | same cutoff |
+| 0.56 | 0.678302 | 742 | 742 | **0** | 1.2000 % [0.7228–1.6772] | same cutoff |
+| 0.58 | 0.668964 | 734 | 734 | **0** | 0.6500 % [0.2978–1.0022] | same cutoff |
+| 0.60 | 0.659754 | 725 | 725 | **0** | 0.9000 % [0.4861–1.3139] | same cutoff |
+| 0.62 | 0.650671 | 716 | 716 | **0** | 0.9500 % [0.5249–1.3751] | same cutoff |
+| 0.64 | 0.641713 | 708 | 708 | **0** | 1.0500 % [0.6033–1.4967] | same cutoff |
+| 0.66 | 0.632878 | 699 | 699 | **0** | 1.1500 % [0.6827–1.6173] | same cutoff |
+| 0.68 | 0.624165 | 691 | 691 | **0** | 1.2500 % [0.7631–1.7369] | same cutoff |
+| 0.70 | 0.615572 | 683 | 683 | **0** | 1.1000 % [0.6429–1.5571] | same cutoff ← TruePad's quoted operating point |
+| 0.72 | 0.607097 | 675 | 675 | **0** | 0.9500 % [0.5249–1.3751] | same cutoff |
+| 0.74 | 0.598739 | 666 | 666 | **0** | 1.2000 % [0.7228–1.6772] | same cutoff |
+| 0.76 | 0.590496 | 659 | 659 | **0** | 0.9000 % [0.4861–1.3139] | same cutoff |
+| 0.78 | 0.582367 | 651 | 651 | **0** | 0.9000 % [0.4861–1.3139] | same cutoff |
+| 0.80 | 0.574349 | 643 | 643 | **0** | 1.1500 % [0.6827–1.6173] | same cutoff |
+| 0.82 | 0.566442 | 635 | 635 | **0** | 1.1000 % [0.6429–1.5571] | same cutoff |
+| 0.84 | 0.558644 | 628 | 628 | **0** | 1.1000 % [0.6429–1.5571] | same cutoff |
+| 0.86 | 0.550953 | 620 | 620 | **0** | 1.0500 % [0.6033–1.4967] | same cutoff |
+| 0.88 | 0.543367 | 613 | 613 | **0** | 0.7000 % [0.3346–1.0654] | same cutoff |
+| 0.90 | 0.535887 | 605 | 605 | **0** | 1.1500 % [0.6827–1.6173] | same cutoff |
+| 0.92 | 0.528509 | 598 | 598 | **0** | 1.2000 % [0.7228–1.6772] | same cutoff |
+| 0.94 | 0.521233 | 591 | 591 | **0** | 1.0500 % [0.6033–1.4967] | same cutoff |
+| 0.96 | 0.514057 | 584 | 584 | **0** | 0.7500 % [0.3719–1.1281] | same cutoff |
+| 0.98 | 0.506980 | 577 | 577 | **0** | 0.8000 % [0.4096–1.1904] | same cutoff |
+| 0.99 | 0.503478 | 573 | 574 | +1 | 1.20 % [0.86–1.54] | 0.90 % [0.61–1.19] |
+| **1.00** | 0.500000 | 570 | **572** | **+2** | 1.70 % [1.30–2.10] | 0.93 % [0.63–1.22] |
+
+The last two rows are the boundary, measured on 4000 matrices each. **At full
+entropy the printed formula over-rejects**: 1.70 % against a 1 % target, which
+the correction brings to 0.93 %. That is the same defect `OC-30` measured at
+83 % on 8-bit data, here reduced to a factor of 1.7 because there are only two
+cells.
+
+### How to use it
+
+1. **Measure the device**, then read the row. The cutoff to decide with is the
+   **corrected** column; below 0.99 the printed column is the same number, so
+   either reading gives the same verdict.
+2. **Any H_I outside 0.50 to 1.00 needs a fresh computation, not
+   interpolation.** The cutoff is an integer order statistic of a discrete
+   distribution: it steps, and the step locations are not linear in H_I.
+   `oracles/restart_multinomial_max.py` computes both columns at any H_I, and
+   the fork's repaired `ea_restart` computes and reports both itself
+   (`restartXcutoff`, `restartXcutoffPrintedBinomial`, `restartCutoffMethod`).
+3. **A bare `H_I` is still refused by the repaired tool for widths above 1** —
+   but at width 1 a bare number is accepted, because per-bit and per-symbol
+   coincide there (`OC-29`). TruePad's invocation needs no change on that
+   account.
+4. **`XR-11`'s other items are unchanged**: record `X_max`, `H_I`, the cutoff,
+   the method and the binary's identity; a decision made by an unrepaired
+   binary is re-decided from its data, never upgraded by a later repair.
+
+**Standing caveats.** The 0.696 figure is the vendor's and has never been
+measured here; every number above is an instrument claim on synthetic data and
+says nothing about any source. Physical items stay **NOT RUN**. The repairs are
+self-authored and **unreviewed**. Nothing is sent upstream.

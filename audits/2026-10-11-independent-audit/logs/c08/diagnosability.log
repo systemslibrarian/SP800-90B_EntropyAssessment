@@ -1,0 +1,11 @@
+# C08 diagnosability: what a consumer sees on each failure class, after OC-38.
+# Compare the 'before' column, which is the tag build, with 'after' on master.
+  empty   tag    rc=255  errorClass=None         filename=yes   errorMessage="Error: '%s' is empty\n"
+  empty   master rc=255  errorClass='input'      filename=yes   errorMessage="Error: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/empty.bin' is empty."
+  missing tag    rc=255  errorClass=None         filename=NO    errorMessage='Error: could not hash the input file.'
+  missing master rc=255  errorClass='input'      filename=yes   errorMessage='Error: could not stat the input file.'
+  notregular tag    rc=255  errorClass=None         filename=NO    errorMessage='Error: could not hash the input file.'
+  notregular master rc=255  errorClass='input'      filename=yes   errorMessage='Error: input is not a regular file.'
+  short   tag    rc=255  errorClass=None         filename=yes   errorMessage='Error: Incorrect bit width specification: Data (8) does not fit within described bit width: 1.'
+  short   master rc=255  errorClass=None         filename=yes   errorMessage='Error: Incorrect bit width specification: Data (8) does not fit within described bit width: 1.'
+  short master errorClass= 'input'
