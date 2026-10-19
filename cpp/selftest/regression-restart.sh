@@ -122,6 +122,16 @@ fi
 
 # ---------------------------------------------------------------- N-04
 # Each of these must be refused, with a nonzero exit and no crash.
+# PLATFORM NOTE (OC-40). An argument starting with '-' is consumed differently
+# by the two getopt implementations: BSD getopt (macOS) stops scanning at the
+# first operand, so "-inf" in the H_I position reaches the H_I parser and gets
+# its specific message; GNU getopt (glibc) PERMUTES and keeps looking for
+# options after operands, so "-inf" is read as -i -n -f, -f is unknown, and the
+# tool exits through print_usage() instead. Both REFUSE; only the message
+# differs. This is C21's "BSD getopt stops at the first positional" finding seen
+# from the other side. The check below therefore requires a refusal and accepts
+# either the grammar message or the usage path for arguments beginning with '-',
+# and still requires the specific message for every other malformed value.
 for bad in nan NAN inf -inf abc 1.5x "" 3.2e; do
 	out=$("${tool}" -n "${work}/r8.bin" 8 "${bad}" 2>&1); rc=$?
 	label=${bad:-'(empty)'}
@@ -132,6 +142,9 @@ for bad in nan NAN inf -inf abc 1.5x "" 3.2e; do
 		fails=$((fails + 1))
 	elif [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'must be a finite decimal number'; then
 		note "N-04 H_I='${label}' refused:" "refused (exit ${rc})"
+	elif [ "${rc}" -ne 0 ] && case "${bad}" in -*) true ;; *) false ;; esac \
+	     && printf '%s' "${out}" | grep -q 'Usage is:'; then
+		note "N-04 H_I='${label}' refused:" "refused via the usage path (exit ${rc}); GNU getopt consumed it as options"
 	else
 		note "N-04 H_I='${label}' refused:" "exit ${rc}, expected a refusal"
 		fails=$((fails + 1))
@@ -142,8 +155,8 @@ done
 # message, and valid values still run.
 out=$("${tool}" -n "${work}/r8.bin" 8 -1 2>&1); rc=$?
 # Since C16 a leading '-' fails the grammar before any sign check, so either refusal message is the correct one.
-if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -qE 'must be greater than zero|must be a finite decimal number'; then
-	note "N-04 negative H_I refused with a reason:" "refused"
+if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -qE 'must be greater than zero|must be a finite decimal number|Usage is:'; then
+	note "N-04 negative H_I refused with a reason:" "refused (see the getopt note above)"
 else
 	note "N-04 negative H_I refused with a reason:" "exit ${rc}, no reason given"
 	fails=$((fails + 1))

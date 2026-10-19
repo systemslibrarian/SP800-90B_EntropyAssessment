@@ -3857,8 +3857,50 @@ sanitizer binary and Ubuntu's clang has no `omp.h` without `libomp-dev`. That
 is neither a pass nor a failure and also not a measurement; the package is now
 installed in the workflow.
 
-`regression-restart` **FAILED 2 checks**. The suite prints only each
+`regression-restart` **FAILED 2 checks**, and the suite prints only each
 regression's last four lines, so the cause was not in the artifact — a
-truncated failure is not a diagnosis. The workflow now runs that regression
-standalone so its full output is uploaded, and the result is recorded in the
-addendum below.
+truncated failure is not a diagnosis. The workflow now runs it standalone; see
+the addendum.
+
+### Addendum — both x86-64 failures diagnosed, and the C23 repair is portable
+
+**The C23 cutoffs are platform-independent, which was the thing most at risk.**
+The full standalone log shows every C23 check passing on x86-64: *"both cutoffs
+match the exact oracle: 32 H_I values × 2 columns"*, the deciding cutoff above
+the printed one at all five widths, the full-entropy 8-bit matrix accepted, and
+X_max 24 accepted with both numbers reported. So `exactBound` and `maxCellCdf`
+— written in `long double`, and therefore the obvious candidates for a
+platform-dependent verdict — give identical integers on a 53-bit and a 64-bit
+significand at all 64 pinned points. **`REPRO-01`'s shape does not recur in the
+repair.**
+
+**Failure 1 and 2 were both the same thing, and it is a CLI difference, not
+arithmetic.** The two failing checks are `N-04 H_I='-inf'` and `N-04 negative
+H_I`. An argument beginning with `-` is consumed differently by the two getopt
+implementations: **BSD getopt (macOS) stops scanning at the first operand**, so
+`-inf` in the H_I position reaches the H_I parser and gets its specific message;
+**GNU getopt (glibc) permutes** and keeps looking for options after operands, so
+`-inf` is read as `-i -n -f`, `-f` is unknown, and the tool exits through
+`print_usage()`. **Both refuse — only the message differs**, so there is no
+safety consequence; the expectation had been written against BSD behaviour and
+was platform-specific. This is `C21`'s *"BSD getopt stops at the first
+positional, so a trailing `-o` makes the run 'Incorrect usage'"* finding seen
+from the other side, and it is the second time in this entry that an expectation
+travelled worse than the thing it was checking.
+
+The check now requires a refusal and accepts either the grammar message or the
+usage path for arguments beginning with `-`, while still demanding the specific
+message for every other malformed value. **An owner decision is available and
+not taken**: prefixing each `getopt` optstring with `+` disables GNU permutation
+and makes argument handling identical on both platforms. That is a one-character
+change per tool and strictly better for reproducibility, but it *is* a
+behaviour change on Linux — options after the filename would stop being
+recognised there, which is already the macOS behaviour — so it is listed in
+`CLOSING-INVENTORY.md` under owner decisions rather than made here.
+
+**`regression-estimator-guards` could not run for a second reason**, found only
+because the standalone log was uploaded: after `libomp-dev` supplied `omp.h`,
+the sanitizer build failed on `json/json.h`. `cpp/Makefile` passes
+`-I/usr/include/jsoncpp` for the normal build and this regression's own build
+command did not. Added. Both regressions pass on macOS after the change, and
+the confirming x86-64 run is recorded in `logs/x86-64/`.

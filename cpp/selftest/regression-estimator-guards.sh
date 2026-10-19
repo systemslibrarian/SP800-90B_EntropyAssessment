@@ -39,7 +39,13 @@ note() { printf '%-52s %s\n' "$1" "$2"; }
 
 # An AddressSanitizer build of the tool as it stands.
 asan="${work}/ea_asan"
+# -I/usr/include/jsoncpp is where Debian and Ubuntu put json/json.h; cpp/Makefile
+# passes it for the normal build and this build needs it too. Without it the
+# sanitizer build failed on x86-64 CI with "json/json.h file not found" and the
+# whole regression reported COULD NOT RUN -- which is neither a pass nor a
+# failure, and also not a measurement (OC-40).
 if ! clang++ -std=c++11 -O1 -g -fsanitize=address -fno-omit-frame-pointer -w \
+	-I/usr/include/jsoncpp \
 	-Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include \
 	-I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include \
 	"${cpp}/non_iid_main.cpp" -o "${asan}" \
