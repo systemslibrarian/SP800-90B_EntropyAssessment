@@ -207,8 +207,26 @@ jobs:
           echo "exit $?" >> logs/06-mutation-inventory.log
           ( cd cpp/selftest && ./outside-battery-mutation-test.sh ) > logs/06-mutation-corpus.log 2>&1
           echo "exit $?" >> logs/06-mutation-corpus.log
-          tail -3 logs/06-run-all-checks-strict.log logs/06-run-all-checks-platform.log \
-                  logs/06-outside-battery.log logs/06-mutation-inventory.log logs/06-mutation-corpus.log
+          # An explicit verdict, so the job's red/green means something. A job that
+          # always reports failure is a job people stop reading, and the last
+          # command's incidental exit status is not a verdict. The strict suite is
+          # INFORMATIONAL: it carries the documented upstream #155 reference
+          # deltas, which are macOS-only -- on Linux it passes, and that is itself
+          # a second-platform result rather than a gate.
+          fail=0
+          gate() { # gate <label> <logfile> <expected-line>
+            if grep -q "$3" "$2"; then echo "GATE PASS  $1"
+            else echo "GATE FAIL  $1 (wanted '$3' in $2)"; fail=1; fi
+          }
+          gate "full suite (platform flag)" logs/06-run-all-checks-platform.log "20 passed, 0 failed"
+          gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
+          gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
+          gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"
+          gate "restart regression"         logs/06-regression-restart-full.log "regression-restart: PASS"
+          gate "estimator guards"           logs/06-regression-estimator-guards-full.log "regression-estimator-guards: PASS"
+          echo "--- informational (not gated) ---"
+          tail -2 logs/06-run-all-checks-strict.log
+          exit "${fail}"
 
       - name: 7. Summary
         if: always()
