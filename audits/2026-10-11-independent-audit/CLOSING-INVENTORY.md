@@ -42,6 +42,7 @@ instructions the tag itself carries, are in
 | item | what it is | why it is still open |
 |---|---|---|
 | **`oac-13`** the report write is not atomic — the last item in `C08` | A signal during the write leaves truncated JSON at the operator's path. `C14`'s placeholder narrowed this from "stale valid report" to "invalid JSON", which a consumer can detect by parsing, but did not close it. The rest of `C08` is **done** (`OC-38`): `errorClass` distinguishes `input` / `statistical` / `internal`, the filename is recorded on failure paths, and a comma-operator bug that was publishing the literal string `"Error: '%s' is empty"` to operators is fixed, with exit codes unchanged. | Write to a temporary file and rename. Small. |
+| **`R-1`** `assert(p_col >= 1/k)` aborts on valid balanced data | **Moved here from the x86-64 bucket on 2026-10-19 (`OC-40`): it is a live defect, measured.** On x86-64 `ea_iid` aborts with SIGABRT and writes no report for perfectly balanced alphabets at k = 3, 6, 7, 9 and 12. Invisible on arm64, which is why it sat mislabelled for so long. Upstream code at `lrs_test.h:652`, unchanged by this fork. | The repair shape is known — clamp `p_col` to `1/k` when the shortfall is within rounding, or accumulate `Σcᵢ²/L²` exactly — and the `C07` precedent (`a3dde6f` replaced asserts with log-domain arithmetic) shows this project does repair this class. **Needs an owner decision first**, because it changes an upstream assert in an estimator path and the standing rule is that estimator logic must never change by accident. A regression must fail against the current build, which now means it must run on x86-64 — the CI job is the place for it. |
 | **`F13`** NaN into `std::min` | `shared/utils.h:1153` suppresses a NaN only because `1.0` is written as the **first** argument of `min`. Swap them — a change a reviewer would read as cosmetic — and the NaN reaches the returned estimate. | Carried `UNCONFIRMED` since the batch phase. The property is incidental and still unmarked at the site. A comment, or explicit `fmax`-style handling, plus a regression that fails against the swapped form. |
 | **`C22c`** at other sample counts | `entropy_floor.py` refuses any `n` below 1,000,000 bits, and uses the value measured at the largest measured `n` not exceeding the actual one, because the `ZALPHA` ceiling was measured at 1e6 and 8e6 only. | One oracle run per additional `n`. Needed only if the project ever assesses a different length. |
 | **`C06`** `h_out` exceeds the output's bit ceiling | `ea_conditioning` reports `h_out` 7.1552 for a 7-bit output. | The *measurement* needs nothing, which is why it is here; the tool it concerns is deliberately not built (see the last bucket). |
@@ -65,12 +66,15 @@ so a usage message, a crash, a timeout and a completed run are distinguishable
 (`OC-36`'s absence rule, applied in the code that would otherwise repeat the
 error that taught it).
 
-| item | what the job settles |
+**It has been run (`OC-40`, 2026-10-19), and the bucket is answered:**
+
+| item | what the job found |
 |---|---|
-| the four canary signatures | `OC-24`/`OC-30` argue from the arithmetic that all four hold on the wide formats. The job observes them. |
-| **`REPRO-01`** | the same input aborts on a 64-bit `long double` and is assessed on an 80-bit one; this is the other side. |
-| **`R-1`** | `OC-34` re-labelled it `NOT-REPRODUCIBLE-HERE`. The job decides between `NOT-REPRODUCIBLE-ANYWHERE-WE-CAN-REACH` and `REPRODUCIBLE-ON-X86-64`. |
-| the pinned figures | a second platform for `pin-check` and the outside-battery corpus. |
+| the float environment | x87 80-bit extended confirmed: `LDBL_MANT_DIG 64`, `LDBL_MIN 3.3621e-4932`, `FLT_EVAL_METHOD 0`. **Printed, not argued.** |
+| the canary signatures | Four of five outcomes exactly as argued. The fifth — the tag's asserts-live build — aborted at the predicted site but was reported INDETERMINATE because the signature matched macOS/clang's `"Assertion failed"` wording and glibc words it differently. **The arithmetic held; the instrument's string match did not.** Fixed and verified on both wordings. |
+| **`R-1`** | **LIVE on x86-64**, aborting at all five symbol counts on valid balanced data, and invisible on arm64. Tracker state is now `REPRODUCIBLE-ON-X86-64`. This is the one item that moved from "probably nothing" to "a real upstream defect on the platform most users run". **It is now in the first bucket**: it needs no hardware, only a decision about whether this fork repairs an upstream assert it did not write. |
+| the pinned figures | `regression-outside-battery` **PASS** on x86-64 — the first independent-platform confirmation of the 0/25, B, E and Compression-binding figures. Both mutation harnesses pass there too. |
+| **`REPRO-01`** | partially: the wide-format side of the LRS underflow is now observed rather than argued. |
 
 **What CI still cannot reach.** `C18` needs **Windows/LLP64**, where `long` is
 32 bits — not merely x86-64 — and the Windows build route is documented and has

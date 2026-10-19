@@ -3770,3 +3770,95 @@ a problem at any width, and at 8 bits the printed procedure disqualifies five
 sound sources in six — but it does mean the `C23` work bought correctness
 rather than a changed figure. Worth stating because the opposite impression
 would be easy to form from `OC-30`'s 83 % alone.
+
+## OC-40 — x86-64 measured: R-1 is live there, one canary signature did not travel, and the arithmetic argument held
+
+`CLOSING-INVENTORY.md` listed three items as needing "one x86-64 machine
+briefly". The machine is a workflow file: `ubuntu-latest` is x86-64 Linux on
+glibc. `.github/workflows/x86-64-platform-facts.yml`, run 2026-10-19
+(`logs/x86-64/`). **Three results, and the most important one inverts an open
+item.**
+
+### The platform, printed rather than argued
+
+```
+Linux 6.17.0 x86_64 / gcc 13.3.0
+sizeof(long double) = 16   LDBL_MANT_DIG = 64   LDBL_MIN_EXP = -16381
+LDBL_MIN = 3.3621e-4932    LDBL_TRUE_MIN = 3.6452e-4951
+LDBL_EPSILON = 1.0842e-19  FLT_EVAL_METHOD = 0
+```
+
+x87 80-bit extended, as expected. One note for anyone comparing this against
+the audit's prose: the documents say "emin −16382", meaning `LDBL_MIN = 2^−16382`,
+which `3.3621e-4932` confirms; C's `LDBL_MIN_EXP` is one greater by definition
+(`−16381`). Both numbers describe the same format.
+
+### R-1 is LIVE on x86-64, at all five symbol counts
+
+`OC-34` re-labelled `R-1` from `BLOCKED-HARDWARE` to not-reproducible-here
+because its reproducer completes on this Mac. On x86-64 it **aborts every
+time**:
+
+```
+k = 3, 6, 7, 9 and 12, each at a width that fits:
+  shared/lrs_test.h:652: Assertion `p_col >= 1.0L / ((long double) k)' failed.
+```
+
+So the correct state is **`REPRODUCIBLE-ON-X86-64`**, and the item is more
+serious than either previous label suggested: `ea_iid` aborts with SIGABRT and
+writes no report on **perfectly balanced, entirely valid data**. The direction
+is fail-closed rather than permissive — it denies an assessment, it does not
+inflate one — but a sound dataset gets no figure. The assert is upstream code
+and `calc_collision_proportion` is unchanged from upstream, so this is an
+**upstream defect reachable on the platform most users run and invisible on the
+platform this fork is developed on**. It is `REPRO-01`'s shape with the roles
+reversed, and it is the clearest vindication available for the rule that a
+platform fact is printed on the platform rather than argued from the source: two
+sessions' worth of reasoning on one host concluded "not reproducible", and one
+CI run disproved it.
+
+### The canary: four of five outcomes as argued, and the fifth was the instrument
+
+| binary | expected from `OC-24`/`OC-30` | measured on x86-64 |
+|---|---|---|
+| master, asserts live | REPAIRED / NOT-DISTINGUISHED | **as argued** |
+| master, `-DNDEBUG` | REPAIRED / NOT-DISTINGUISHED | **as argued** |
+| tag, `-DNDEBUG` | UNREPAIRED / NDEBUG | **as argued** |
+| `/bin/ls` | INDETERMINATE | **as argued** |
+| **tag, asserts live** | UNREPAIRED / ASSERTS-LIVE | **INDETERMINATE** |
+
+**The arithmetic argument was right and the string match was wrong.** The tag's
+asserts-live build aborted at exactly the predicted place —
+`lrs_test.h:683`, `p_colPower >= LDBL_MIN`, which is what `OC-24` said would
+happen at W = 20000 on an 80-bit `long double` — and the canary still reported
+INDETERMINATE, because it matched the literal `"Assertion failed"`, which is
+macOS/clang's wording. glibc writes ``Assertion `expr' failed.`` So the
+signature was macOS-only and would have refused every unrepaired Linux binary
+it was shown. Direction conservative (INDETERMINATE means refuse the figure),
+but a detector that cannot identify the build it exists to identify is a defect.
+Fixed to match both wordings and verified against each; the four-outcome
+classification on macOS is unchanged.
+
+That distinction is worth keeping separate: `OC-24`'s *reasoning* about the wide
+formats survived contact with the platform intact. What did not survive was an
+implementation detail of the instrument, which no amount of reading the
+arithmetic would have caught.
+
+### The suite on a second platform
+
+`regression-outside-battery` **PASS** — so the pinned corpus figures (0/25
+clean, B at 8538.7×/59.938 Hz, E at 40.21 σ, Compression binding at
+0.8546 ± 0.0092) hold on x86-64 as well as arm64, which is the first
+independent-platform confirmation any of them has had. Both mutation harnesses
+**PASS** on the second platform too.
+
+`regression-estimator-guards` reported COULD NOT RUN: it builds its own clang
+sanitizer binary and Ubuntu's clang has no `omp.h` without `libomp-dev`. That
+is neither a pass nor a failure and also not a measurement; the package is now
+installed in the workflow.
+
+`regression-restart` **FAILED 2 checks**. The suite prints only each
+regression's last four lines, so the cause was not in the artifact — a
+truncated failure is not a diagnosis. The workflow now runs that regression
+standalone so its full output is uploaded, and the result is recorded in the
+addendum below.

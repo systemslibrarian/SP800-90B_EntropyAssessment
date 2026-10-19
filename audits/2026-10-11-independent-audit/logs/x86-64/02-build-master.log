@@ -1,0 +1,11 @@
++ cd cpp
++ make non_iid iid restart
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  non_iid_main.cpp -o ea_non_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  iid_main.cpp -o ea_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  restart_main.cpp -o ea_restart  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
++ cd cpp
++ make -B 'CXX=g++ -DNDEBUG' iid
+g++ -DNDEBUG -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  iid_main.cpp -o ea_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
++ cd cpp
++ make -B iid
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  iid_main.cpp -o ea_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto

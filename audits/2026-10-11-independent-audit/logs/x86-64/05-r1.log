@@ -1,0 +1,5 @@
+k=3 width=2: ABORTED: ea_iid.master.live: shared/lrs_test.h:652: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+k=6 width=3: ABORTED: ea_iid.master.live: shared/lrs_test.h:652: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+k=7 width=3: ABORTED: ea_iid.master.live: shared/lrs_test.h:652: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+k=9 width=4: ABORTED: ea_iid.master.live: shared/lrs_test.h:652: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.
+k=12 width=4: ABORTED: ea_iid.master.live: shared/lrs_test.h:652: bool len_LRS_test(const uint8_t*, int, int, int, const char*): Assertion `p_col >= 1.0L / ((long double) k)' failed.

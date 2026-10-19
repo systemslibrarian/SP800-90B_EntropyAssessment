@@ -1,0 +1,6 @@
++ cd /tmp/tagwt/cpp
++ make iid
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  iid_main.cpp -o ea_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
++ cd /tmp/tagwt/cpp
++ make -B 'CXX=g++ -DNDEBUG' iid
+g++ -DNDEBUG -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  iid_main.cpp -o ea_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto

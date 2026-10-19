@@ -1,0 +1,37 @@
+pinned figure and reference comparison
+  pin-check                          PASS
+  selftest                           PASS
+
+regression scripts (authoritative inventory verified)
+  regression-271                     PASS
+  regression-272                     PASS
+  regression-chisquare               PASS
+  regression-docs                    PASS
+  regression-estimator-guards        COULD NOT RUN (exit 2)
+        /home/runner/work/SP800-90B_EntropyAssessment/SP800-90B_EntropyAssessment/cpp/shared/utils.h:19:10: fatal error: 'omp.h' file not found
+           19 | #include <omp.h>                // openmp 4.0 with gcc 4.9
+              |          ^~~~~~~
+        1 error generated.
+  regression-iid-failclosed          PASS
+  regression-iid-json                PASS
+  regression-input-identity          PASS
+  regression-minsize                 PASS
+  regression-multimmc                PASS
+  regression-nonregular              PASS
+  regression-notrun                  PASS
+  regression-output                  PASS
+  regression-outside-battery         PASS
+  regression-restart                 FAIL (exit 1)
+        C23 X_max 28 at H_I 7 still rejected:              above the corrected cutoff 27
+        C23 X_max 20 at H_I 7 still passes the sanity check: passed
+        
+        regression-restart: FAIL (2 checks)
+  regression-selftest-inventory      PASS
+  regression-subset                  PASS
+  regression-width                   PASS
+run-all-checks: executed 19 total checks; expected 20
+
+run-all-checks: 18 passed, 2 failed, 1 could not run (18 regression scripts discovered)
+could-not-run: regression-estimator-guards
+failed: regression-restart total-check-count
+strict suite exit 1

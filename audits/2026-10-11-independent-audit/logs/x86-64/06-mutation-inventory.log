@@ -1,0 +1,8 @@
+  complete inventory                                     accepted with the expected summary
+  deleted script                                         rejected (exit 2)
+  injected script                                        rejected (exit 2)
+  renamed script                                         rejected (exit 2)
+  duplicate inventory entry                              rejected (exit 2)
+harness-inventory-mutation-test: 5 of 5 mutations landed and were caught
+harness-inventory-mutation-test: PASS
+exit 0

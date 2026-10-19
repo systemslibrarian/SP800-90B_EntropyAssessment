@@ -1,0 +1,14 @@
+regenerating from seeds: mt00 mt01 mt02 mt03 mt04 sha00 sha01 sha02 sha03 sha04 sha05 sha06 sha07 sha08 sha09 sha10 sha11 sha12 sha13 sha14 sha15 sha16 sha17 sha18 sha19 B_osc5000 C_osc500 D_lag5000 E_weaklag5000 F_xor30 G_xor13_02
+corpus pinned, reproduced and counted:                     5 mt + 20 sha clean, 5 defect, 1 blindspot = 31 streams
+clean streams silent:                                      0 / 5 fired
+defects detected:                                          2 / 2
+B spectral peak pinned:                                    8538.7x at 59.938 Hz
+E autocorrelation pinned:                                  40.21 sigma at lag 5000
+OC-18 blind spot still outside this tool:                  silent, as documented
+Compression binds 5/5 clean streams:                       SKIPPED (set OUTSIDE_BATTERY_FULL=1)
+
+regression-outside-battery: fast mode -- 5 clean, 2 defects.
+                            OUTSIDE_BATTERY_FULL=1 runs all 25 clean, all 5 defects,
+                            and the Compression-binding check.
+regression-outside-battery: PASS
+outside-battery exit 0

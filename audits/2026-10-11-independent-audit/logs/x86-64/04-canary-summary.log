@@ -1,0 +1,20 @@
+===== ea_iid.master.live
+canary: exit    1
+canary: TREE    REPAIRED
+canary: BUILD   NOT-DISTINGUISHED
+===== ea_iid.master.ndebug
+canary: exit    1
+canary: TREE    REPAIRED
+canary: BUILD   NOT-DISTINGUISHED
+===== ea_iid.tag.live
+canary: exit    134
+canary: TREE    INDETERMINATE
+canary: BUILD   INDETERMINATE
+===== ea_iid.tag.ndebug
+canary: exit    0
+canary: TREE    UNREPAIRED
+canary: BUILD   NDEBUG
+===== /bin/ls (control: must be INDETERMINATE)
+canary: exit    2
+canary: TREE    INDETERMINATE
+canary: BUILD   INDETERMINATE

@@ -1,0 +1,13 @@
+Linux runnervm8k3b6 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+uname/arch recorded separately
+sizeof(long double) = 16
+LDBL_MANT_DIG   = 64
+LDBL_MIN_EXP    = -16381
+LDBL_MIN        = 3.3621e-4932
+LDBL_TRUE_MIN   = 3.6452e-4951
+LDBL_EPSILON    = 1.0842e-19
+FLT_EVAL_METHOD = 0
+DBL_MANT_DIG    = 53
+W such that 0.5^W < LDBL_MIN  -> W > 16382
+PLATFORM: x87 80-bit extended, as expected for x86-64 glibc
