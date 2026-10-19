@@ -130,7 +130,10 @@ number is accepted only for 1-bit symbols.
 The Section 3.1.4.3 sanity-check cutoff is computed as the exact distribution
 of the multinomial maximum — the statistic that test actually forms — rather
 than from the single-binomial tail the text prints, because a cutoff derived
-from the printed formula rejects correctly-operating sources. Both values are
+from the printed formula rejects correctly-operating sources. The computation
+is anchored on a published third-party table at 14 of 15 rows on the
+printed-formula column and 12 of 15 on the simulated column, with every
+deviation accounted for. Both values are
 reported: `restartXcutoff` (the verdict) and `restartXcutoffPrintedBinomial`
 (conformance only), with `restartXmax`, `restartHI`, `restartCutoffMethod` and
 `passedRestartSanityCheck`. This fork; see

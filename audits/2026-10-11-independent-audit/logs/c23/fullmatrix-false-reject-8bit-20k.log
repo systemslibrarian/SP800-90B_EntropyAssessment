@@ -1,0 +1,4 @@
+8-bit full entropy, 20000 matrices (1000x1000, rows AND columns, dependence included):
+  cutoff   15 rejects 16499 of 20000 =  82.50%
+  cutoff   18 rejects   304 of 20000 =   1.52%
+  cutoff   19 rejects    53 of 20000 =   0.27%

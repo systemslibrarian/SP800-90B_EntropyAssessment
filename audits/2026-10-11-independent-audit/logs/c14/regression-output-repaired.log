@@ -1,0 +1,19 @@
+ea_non_iid -o /dev/full:                             skipped (no /dev/full)
+ea_non_iid -o into a missing directory:              refused (exit 255)
+ea_iid -o /dev/full:                                 skipped (no /dev/full)
+ea_iid -o into a missing directory:                  refused (exit 255)
+ea_restart -o /dev/full:                             skipped (no /dev/full)
+ea_restart -o into a missing directory:              refused (exit 255)
+ea_non_iid writable -o still works:                  wrote 2177 bytes
+ea_restart writable -o still works:                  wrote 2380 bytes
+
+C14 ea_non_iid leaves no stale report:               replaced by a fail-closed report
+C14 ea_iid leaves no stale report:                   replaced by a fail-closed report
+C14 ea_restart leaves no stale report:               replaced by a fail-closed report
+C14 ea_non_iid does not take a filename as --version: assessed the file (rc 0)
+C14 ea_iid does not take a filename as --version:    assessed the file (rc 0)
+C14 ea_non_iid --version still works as an option:   yes
+C14 ea_iid --version still works as an option:       yes
+C14 ea_restart --version still works as an option:   yes
+regression-output: PASS (3 skipped)
+repaired exit 0

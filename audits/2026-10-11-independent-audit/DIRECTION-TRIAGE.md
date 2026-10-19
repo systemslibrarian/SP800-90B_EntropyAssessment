@@ -221,3 +221,13 @@ upstream issue #56).
 So the permissive register's top entry was never permissive. `C16` is unaffected
 and its repair stands. The audit's remaining permissive path is `C14` (status
 channel, queued).
+
+# Status update — 2026-10-19 (later), C14 repaired
+
+`C14`'s two permissive routes are closed on master (`OC-31`): the stale `-o`
+report and `--version` as a filename, each shown failing against the tag build.
+`oac-5` and `oac-12` remain as diagnosability gaps, which lose a failure's cause
+but never turn a failure into a success. **No permissive path remains open on
+the supported build.** What is left is Class 1 and Class 2 treatment (`C02`,
+`C22`'s bound, `REPRO-01`), `C08` partly closed, the off-path conditioning
+clusters, and the single x86-64 canary run when a host exists.

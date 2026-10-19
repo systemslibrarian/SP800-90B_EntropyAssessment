@@ -221,6 +221,21 @@ A second repair pass on the same date, working the remaining queue:
             value. THIS WAS WRONG and was corrected the next day; see the
             2026-10-19 entry. Recorded rather than removed because the
             commit (a5005bd) is in the history.
+2026-10-19  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
+            a -o report target is claimed with a fail-closed placeholder when
+            the option is parsed, so a failed run can no longer leave the
+            previous run's report in place for a caller that checks the exit
+            status and then reads the file. This covers paths that never reach
+            the report writer at all -- a usage-path exit, an assert, a signal
+            -- which an error report on each failure path cannot. An -o path
+            that cannot be written now fails before the assessment rather than
+            after it. Also: --version is honoured only as an option, scanned
+            from argv[1] and stopping at "--" and at the first operand; it was
+            matched anywhere in argv, so a file of that name made the tool
+            print its version and exit 0 having assessed nothing and written
+            no report. Audit C14, OC-31. Regression: regression-output.sh,
+            shown failing against tag unrepaired-reference-2026-10-15.
+            Self-authored and unreviewed.
 2026-10-19  cpp/restart_main.cpp: the sanity-check cutoff is computed as the
             exact distribution of the MULTINOMIAL MAXIMUM (Levin's
             representation), which is the statistic 3.1.4.3 actually forms,

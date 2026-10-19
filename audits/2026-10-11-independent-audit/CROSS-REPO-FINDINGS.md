@@ -876,3 +876,43 @@ deliberately departs from the printed procedure — and nothing is sent upstream
 (decided 2026-10-15). Whether the standard's printed test or the multinomial
 maximum is the right null is an open question about the standard, recorded in
 `OC-30` as a question.
+
+## XR-12 — the exit-status-then-report sequence is repaired on the fork side; does anything already recorded rest on it?
+
+**Finding only, and a question. Reported, not acted on — TruePad's records,
+TruePad's answer.** Evidence: `OC-31`; `XR-01`, `XR-04`, `XR-08`.
+
+`C14`'s two permissive routes are closed on master (`OC-31`): a stale `-o`
+report can no longer survive a failed run — including a usage-path exit, an
+assert or a signal, which no "write an error report on every failure path" fix
+would have caught — and `--version` is no longer honoured as a filename. Both
+are shown failing against tag `unrepaired-reference-2026-10-15`.
+
+**What this changes for TruePad.** The harness sequence `XR-01` describes —
+check the exit status, then read the `-o` file — is now safe against both
+routes **when the binary carries the repair**. Against an unrepaired binary it
+is not, and the discriminator is the binary's identity (`XR-09`), not the
+file's contents: a stale report is byte-identical to a valid one.
+
+**A new field a consumer can use.** A repaired tool's placeholder carries
+`reportComplete: false` with `errorLevel -1`. A report lacking `reportComplete`
+is a *completed* report from a repaired binary (the key is written only by the
+placeholder) — but it is **also** what every unrepaired binary writes, so the
+key's absence is not evidence of either. Use it only in the positive direction:
+`reportComplete: false` means refuse, unconditionally.
+
+**The question, which this session cannot answer because it must not read
+TruePad.** Does anything already in TruePad's records rest on that channel
+having been trustworthy? On the fork's side the answer is no: nothing in this
+repository's record reads a report file after an exit-status check, and every
+physical run is NOT RUN, so no figure of record has passed through the
+sequence. If the same is true on TruePad's side the exposure is entirely
+prospective, like `XR-11`'s, and closing it is a matter of rebuilding before
+January. If any stored verdict, approval record or cached figure was produced by
+reading an `-o` file after an exit-status check from an unrepaired binary, that
+record cannot be distinguished from a stale one after the fact and should be
+re-derived from the inputs rather than trusted.
+
+**Standing caveats.** The repair is self-authored and unreviewed.
+`productionApprovalEnabled` stays false and `approvedBuilds` empty on this
+finding's account. Nothing is sent upstream.

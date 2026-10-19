@@ -3069,6 +3069,87 @@ approximation carried by every cutoff derived this way, the exact multinomial
 one included**: the exactness is in the distribution of the maximum, not in the
 independence of the 2000 experiments.
 
+### Why the corrected cutoff is still more conservative than 1 %, which is not a defect
+
+The table above has a number that needs accounting for before someone else
+finds it: the corrected 8-bit cutoff rejects far fewer than the 1 % the standard
+targets. Unexplained slack in an exact result is the same shape as the defect
+just repaired, pointing the other way. Four candidates were checked and the
+answer is **discreteness, with the first measurement's point estimate inflated
+by sampling error**; the other two contribute nothing.
+
+**1. The α the computation targets — correct, and consistent by design.** The
+Levin computation is evaluated at the **per-test α = 0.000005** of §3.1.4.3
+step 1, not at the 0.01 family-wise figure. Those two are the same requirement:
+1 − (1 − 5e-6)^2000 = **0.995 %**, which is the 0.01 the standard's second
+paragraph states for "the entire sanity check". So the per-test value is the
+right one to compute a per-experiment cutoff at, and the family-wise rates in
+the tables below are derived from it rather than targeted directly.
+
+**2. Discreteness — this is the explanation.** The counts are integers and the
+tail moves in large multiplicative steps, so the smallest count meeting the
+per-test target can land well inside it. Both numbers, at every width:
+
+| width | cutoff − 1 | per-test tail | family-wise | **cutoff used** | per-test tail | family-wise |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 571 | 5.914e-06 | **1.18 %** | 572 | 4.369e-06 | 0.87 % |
+| 2 | 315 | 6.120e-06 | **1.22 %** | 316 | 4.354e-06 | 0.87 % |
+| 4 | 103 | 6.258e-06 | **1.24 %** | 104 | 3.515e-06 | 0.70 % |
+| 8 | 18 | 8.241e-06 | **1.63 %** | 19 | 1.568e-06 | 0.31 % |
+
+At every width the next count down **exceeds** the target, so the value used is
+the smallest that meets it and the undershoot is forced. At 8 bits the step is
+coarsest — one count changes the tail by a factor of 5.26 there against ~1.4 at
+1 bit — which is exactly why the undershoot is worst at 8 bits. A cutoff of 18
+at 8 bits would be 1.6 times *too permissive*; 19 is three times too
+conservative; there is nothing in between. **The correct statement is that the
+8-bit cutoff is ~3× conservative by discreteness, not 5×** — the 5× reading
+came from the first measurement's point estimate, which was four events.
+
+**3. Sampling error — it accounted for the rest.** 0.20 % of 2000 matrices is
+four rejections, an interval far too wide to compare against 0.31 %. Re-measured
+at **20,000** matrices (`logs/c23/fullmatrix-false-reject.log`):
+
+| 8-bit cutoff | rejects | rate | 95 % interval | computed (independence) |
+|---:|---:|---:|---|---:|
+| 15 (printed) | 16499 / 20000 | 82.50 % | 81.97 – 83.03 % | 82.5 % |
+| 18 | 304 / 20000 | 1.52 % | 1.35 – 1.69 % | 1.63 % |
+| 19 (used) | 53 / 20000 | **0.27 %** | **0.19 – 0.34 %** | 0.31 % |
+
+The stable figure is 0.27 % with the computed 0.31 % inside its interval. The
+2000-matrix intervals for the other widths also all contain their computed
+values (1-bit 15/2000 = 0.75 %, 0.37–1.13 % against 0.87 %; 2-bit 13/2000 =
+0.65 %, 0.30–1.00 % against 0.87 %; 4-bit 18/2000 = 0.90 %, 0.49–1.31 % against
+0.70 %). Rates from small counts are reported with their intervals from here on.
+
+**4. Row/column dependence — contributes nothing measurable.** At the printed
+8-bit cutoff, where the rate is large enough to measure precisely, 20,000
+matrices give **82.50 %** against **82.5 %** computed under independence. At
+every other point the measured interval contains the computed value and the
+deviations scatter in both directions. So the dependence does not explain the
+gap and does not push the rate down: it is **below the measurement floor at
+these rates**, which is a stronger version of Hill's judgement that it "seems
+safe to ignore this theoretical problem". It remains a stated approximation,
+now with a bound: under half a point at the printed cutoff, and not separable
+from noise at the corrected one.
+
+**And a fifth thing, checked because the operating point is not where the method
+was validated.** Levin's representation was validated against brute-force
+enumeration only at small (n, k), where enumeration is possible. Validated now
+at the **actual parameters** — n = 1000, k = 256 — against 2,000,000 simulated
+single 1000-sample experiments, the same statistic `simulateCount()` forms
+(`logs/c23/levin-validation-at-operating-point.log`):
+
+| m | exact (Levin) | empirical, 2e6 rounds | 95 % interval |
+|---:|---:|---:|---|
+| 15 | 8.719e-04 | 8.495e-04 | 8.09e-04 – 8.90e-04 |
+| 18 | 8.241e-06 | 7.5e-06 | 3.70e-06 – 1.13e-05 |
+| 19 | 1.568e-06 | 1.0e-06 | 0.00 – 2.39e-06 |
+
+Agreement across five orders of magnitude of tail probability, every exact value
+inside the simulated interval. The method is sound at the point it is used, not
+only where it could be enumerated.
+
 ### The finding, in its corrected direction
 
 **The defective side is the standard's printed formula.** §3.1.4.3 step 5 prints
@@ -3198,3 +3279,168 @@ like every repair on master, and this entry is the second correction to my own
 C23 conclusion. Measured on this machine; the cutoffs are arithmetic and
 transfer, the simulation figures are upstream's and would be re-drawn anywhere.
 Nothing here decides anything about a device: physical items stay **NOT RUN**.
+
+## OC-31 — C14 repaired: both permissive routes on the status channel closed, each shown failing
+
+`OC-28`'s addendum left `C14` as a live permissive path on the exit-status and
+report channel, with two routes named and a consumer that acts on them. Both are
+repaired in `cpp/non_iid_main.cpp`, `cpp/iid_main.cpp` and
+`cpp/restart_main.cpp`. **Direction: permissive on the status channel, closed.**
+Self-authored and unreviewed.
+
+### Route 1 — a stale `-o` report could survive a failed run (`XR-01` / `oac-4`)
+
+Error paths that never reached `writeJsonReport()` left the **previous run's**
+report in place, so a harness that checks the exit status and then reads `-o`
+could read a complete, `errorLevel 0` figure belonging to different data.
+
+**Writing an error report on every failure path cannot close this**, which is
+why that was not the fix chosen: a usage-path `exit()`, an `assert` abort or a
+signal reaches none of them, and every new error path would have to remember.
+Instead the target is **claimed the moment `-o` is parsed** — a fail-closed
+placeholder (`errorLevel -1`, `reportComplete false`, and a message saying the
+assessment did not complete and the file must be refused) is written, and every
+completing path overwrites it. After any run, including an abort, the file is
+either this run's report or a report saying the run did not finish. It is never
+a stale success. A bonus property: an `-o` path that cannot be written now fails
+**before** the assessment rather than after it.
+
+Measured on the exact path that no "write on every error path" fix would have
+caught — `ea_restart -o <file>` with no further arguments, which prints usage and
+exits without ever reaching the writer:
+
+| build | after the failed run |
+|---|---|
+| tag `unrepaired-reference-2026-10-15` | **the previous report survives byte-identical** (`cmp` equal) |
+| master, repaired | `errorLevel -1`, `reportComplete false`, `testCases null` |
+
+### Route 2 — `--version` was honoured as a filename (`oac-16`)
+
+The scan ran over **all** of `argv`, including `argv[0]` and the input path, so a
+file named `--version` — or that string anywhere in the argument vector — made
+the tool print its version and **exit 0 with nothing assessed and no report
+written**. On the exit-status channel that is a fail-open. It is now treated as
+the option it is documented as: scanned from `argv[1]`, stopping at the `--`
+separator and at the first operand. `ea_non_iid --version` and `-q --version`
+still work; `-- --version` is a filename.
+
+| build | `ea_non_iid -q -o out.json -- --version 1`, in a directory holding a file of that name |
+|---|---|
+| tag | prints the version banner, **exit 0, assessed nothing, no report** |
+| master, repaired | assesses the file and writes a report |
+
+### What stays open
+
+`oac-5` (every failure is exit 255) and `oac-12` (three file problems collapse
+to one message) are **diagnosability** gaps, not permissive ones: they lose the
+*cause* of a failure, never turn a failure into a success. Recorded, not
+repaired. `oac-13` (the report write is not atomic — a signal mid-write leaves
+truncated JSON) is narrowed but not closed by route 1's placeholder: the window
+is now "truncated JSON" rather than "stale valid JSON", which a consumer can
+detect by parsing. Closing it properly needs write-to-temp-then-rename.
+
+### The regression, both routes, shown failing
+
+Added to `cpp/selftest/regression-output.sh` — which already owns the report and
+output contracts — rather than as a new script, so the suite's authoritative
+inventory and its expected counts stay as they are (`BUG-REPAIR-GUIDE.md`'s
+enumerating-file rule). `REGRESSION_OUTPUT_BINDIR` points the checks at another
+build. Against master: **PASS**. Against the tag:
+**FAIL, 6 checks** — three tools leaving a stale report, two tools printing the
+version for a filename, and one exit-status check
+(`logs/c14/regression-output-repaired.log`,
+`logs/c14/regression-output-vs-tag.log`). Full suite after the repair: **20
+passed, 0 failed** (`logs/c14/run-all-checks-after-c14.log`).
+
+My first version of the route-2 check passed `./--version` rather than
+`--version`, which the pre-repair scan never matched — so it "passed" against
+the tag and proved nothing until corrected. Recorded for the same reason as the
+sed in `OC-23` and the hex literal in `OC-30`.
+
+### Does anything already done rest on this channel being trustworthy?
+
+**On the fork's side, no.** Nothing in this repository's record depends on it:
+`pin-check.sh` and the self-test parse `ea_non_iid`'s stdout directly, and the
+audit's own figures come from `-vv` output rather than from a report file read
+after an exit-status check.
+
+**On TruePad's side the exposure is prospective, not historical, and for the
+same reason as `XR-11`.** The cross-repo record (`XR-01`, `XR-04`, `XR-08`)
+establishes that its harness checks the exit status and then reads the `-o`
+file, so the sequence is real. But every physical run is **NOT RUN** — the
+device arrives January 2027 — so no figure of record has passed through it.
+Whether TruePad has done anything else that rests on it is a question about
+TruePad's code and records, which this session must not read; it is put to them
+in `XR-12` rather than answered here.
+
+## OC-32 — the OC-30 lesson applied to the rest of the fork: Hill's comment list against this project's readings
+
+Chosen as the next item over `C22`'s bound (measured, `OC-22`), `C08` (partly
+closed), the off-path conditioning clusters, `C-01` (**already fixed** — the
+merge brought `delete[]` in `simulateBound`, so the memory's "live carried
+defect" note is stale) and the x86-64 canary run (no such host available).
+Reason: `OC-30` showed that a repair built on *reading the standard's printed
+text* can be confidently wrong, and this project has made roughly twenty such
+repairs. I now hold a published third-party list of defects in that same text
+(Hill/UL v1.9, 33 numbered comments). Cross-checking the two is the same class
+of error, looked for systematically instead of one at a time — and it is the
+only item on the list whose value comes from evidence that did not exist here
+last week.
+
+**Scope.** Most of Hill's 33 comments concern the standard's *requirements*
+(documentation, health tests, conditioning-component rules) and bear on no
+computation this tool performs. Three touch readings this project has recorded.
+
+**Comment 3 — the restart sanity check.** Already handled: it is `OC-30`, and it
+is the one that inverted.
+
+**Comment 33 — §6.3.1's worked example: corroborated, from an independent
+direction.** Hill: *"In Section 6.3.1, there is a typo in the worked example.
+The last line should be −log₂(0.6895) = 0.5363."* This project reached the same
+value twice, independently and years later: the 2026-09-30 audit ran the example
+on the built binary and recorded **0.5363**, "reproduc[ing] to the printed
+digits", and `EST-5` / `estimators-mcv-collision-markov-compression-5` found the
+**2025-05-29 errata item 2** for that same example arithmetically inconsistent
+with the step-2 formula, such that "a validator trusting it would wrongly judge
+the tool off by 1.1 %". So two independent parties, seven years apart, both say
+the published text of that example is wrong and both land on 0.5363 for its
+result — Hill against the 2018 original, this project against the 2025 errata
+that was meant to fix it. (The two printed figures are consistent with each
+other: −log₂(0.6895) = 0.53638, and 0.5363 is what the unrounded p_u gives,
+2^−0.5363 = 0.689537, so 0.6895 is the printed rounding of the same quantity.)
+**No change recommended.** Recorded because a reading corroborated by an
+independent published source is in a different evidentiary class from one this
+project reached alone, and `OC-30` is the reason that distinction now gets
+written down.
+
+**Comment 2.b — the bitstring representation is unspecified, which qualifies a
+withdrawn finding's reasoning.** Hill: *"This document does not specify how to
+represent the dataset as a bitstring of size L×n so this procedure is not
+completely specified. How are the symbols to be arranged, and how is each symbol
+to be encoded?"* This project independently found the same gap from the other
+end — `intake-noniid-aggregation-6` records that the tool's **MSB-first** order
+within the declared width (`utils.h:419`) is documented nowhere in the README,
+`BUILDING.md`, `NOTICE` or the usage text. The nuance worth recording: `F01` was
+**withdrawn** in part on the reasoning that the bitstring is "a deterministic
+symbol-wise expansion [that] can carry no structure the symbol battery hasn't
+seen". The withdrawal itself stands — it turned on what the standard means by
+"binary" (the alphabet, §4.4.2 and §5), which is settled text, not on the bit
+order. But "deterministic" is deterministic *given a choice the standard does
+not make*, and Hill says so in print. So the withdrawal's conclusion is
+unaffected and one clause of its supporting argument is weaker than it reads.
+Recorded rather than acted on: nothing is reported upstream, and reopening a
+withdrawn finding on a clause that does not carry its conclusion would be
+churn.
+
+**What the cross-check did not find.** No other repair or conclusion in this
+project rests on a printed-text reading that Hill identifies as defective. The
+estimator repairs are about the code failing to implement its own formula
+(underflow, truncation, a Null prediction ending a run), not about which formula
+to implement; the one place this project *chose* a reading over the printed text
+was `C23`, and that is the one that went wrong. The check was worth running for
+that reason and the result is a negative one, stated as such.
+
+**Limits.** Hill's document is v1.9 of a comment set on the final standard; it
+is one party's analysis, not an erratum, and this project's agreement with it is
+corroboration rather than confirmation. Measured and read on this machine; no
+claim here is about any source, and physical items stay **NOT RUN**.

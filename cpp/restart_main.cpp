@@ -328,6 +328,33 @@ int simulateBound(double alpha, int k, double H_I, unsigned long int simulation_
     return returnValue;
 }
 
+
+// C14 route 1 (audit XR-01 / OC-31): error paths that never reached
+// writeJsonReport() left the PREVIOUS run's report in place, so a harness that
+// checks the exit status and then reads -o could read a complete, errorLevel-0
+// figure belonging to different data. Writing an error report on every failure
+// path cannot close it -- an assert, a signal or an exec failure reaches none of
+// them. Instead the target is claimed the moment -o is parsed, with a
+// fail-closed placeholder that every completing path overwrites. After any run,
+// including an abort, the file is either this run's report or a report saying
+// the assessment did not complete. It is never a stale success.
+static bool claimReportTarget(const string &path, const string &type, const string &commandline) {
+    Json::Value j;
+    j["dateTimeStamp"] = getCurrentTimestamp();
+    j["commandline"] = commandline;
+    j["errorLevel"] = -1;
+    j["type"] = type;
+    j["toolVersion"] = VERSION;
+    j["errorMessage"] = "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.";
+    j["reportComplete"] = false;
+    Json::StyledWriter writer;
+    if (!writeJsonReport(path, writer.write(j))) {
+        fprintf(stderr, "Error: the output path '%s' cannot be written; refusing to assess.\n", path.c_str());
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char* argv[]) {
     bool iid;
     int verbose = 1; //verbose 0 is for JSON output, 1 is the normal mode, 2 is the NIST tool verbose mode, and 3 is for extra verbose output
@@ -356,8 +383,17 @@ int main(int argc, char* argv[]) {
     string outputfilename = timestamp + ".json";
     string commandline = recreateCommandLine(argc, argv);
 
-    for (int i = 0; i < argc; i++) {
-        std::string Str = std::string(argv[i]);
+    // C14 route 2 (audit OC-14 / OC-31): this scanned ALL of argv, including
+    // argv[0] and the input filename, so a file named "--version" -- or that
+    // string anywhere in the argument vector -- made the tool print its version
+    // and exit 0 with nothing assessed and no report written. On the exit-status
+    // channel that is a fail-open: a harness reads success where no assessment
+    // happened. Treat it as the option it is documented as: only before the
+    // first non-option argument, and never after the "--" separator.
+    for (int i = 1; i < argc; i++) {
+        const std::string Str = std::string(argv[i]);
+        if ("--" == Str) break;                 // end of options
+        if (Str.empty() || Str[0] != '-') break; // first operand: stop scanning
         if ("--version" == Str) {
             printVersion("restart");
             exit(0);
@@ -381,6 +417,7 @@ int main(int argc, char* argv[]) {
             case 'o':
                 jsonOutput = true;
                 outputfilename = optarg;
+                if (!claimReportTarget(outputfilename, "restart", commandline)) exit(-1);
                 break;
             case 's':
                 if (!parse_unsigned_decimal(optarg, inul)) {
