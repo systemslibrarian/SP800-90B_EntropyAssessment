@@ -1,0 +1,71 @@
+==============================================================================
+floor-demo8.json  (, 1.1.8)
+==============================================================================
+  H_original / word_size     0.98313975036244872 
+  H_bitstring                0.90423268189745631 <- binds
+  h' (per bit)               0.90423268189745631
+  n (bitstring length)       8000000 bits
+  NOTE: read the 'Overall' case (the minimum over estimators), not any single estimator's; the report carries 11 cases.
+  NOTE: the report carries hAssessed = 7.2338614551796505. NOT USED as the per-bit figure: it is word_size * h' (C02).
+  NOTE: consistency: hAssessed == word_size * h' to within 1e-12 relative, as C02 describes.
+
+  term                                     value        why
+  ---------------------------------------- ------------ ----------------------------------
+  C01 comparison error                     3.690e-04    measured two-sided bound
+  C22a P_local quantisation                6.464e-08    8.08e-15 x (n+1), n = 8000000
+  C22b P_global' at N == 1                 0.000e+00    conservative at every N
+  C22c ZALPHA vs the literal 2.576         2.160e-03    measured at n = 8000000 (ceiling falls with n)
+
+  FLOOR, literal-text reading   0.90170361725744819   (h' - 0.00252906)
+  FLOOR, F07 reading            0.90386361725744824   (h' - 0.000369065)
+    F07 is this audit's own disposition: the tool uses the exact 0.995 quantile and the
+    standard's text prints its rounding, so C22c is a literal-text parity term, not a defect.
+
+  EXCLUDED, not subtracted:
+    C07, C03  closed by code on master at d226f18 and later. For a figure from tag
+              unrepaired-reference-2026-10-15 the exclusion does NOT hold and no floor exists.
+    C02       a reading, not a subtraction: this script used h', never hAssessed.
+  SEPARATE, not a subtraction:
+    C23       the restart sanity check is an accept/reject decision, recomputed with
+              oracles/restart_decision_exact.py. A figure is awarded only if it ACCEPTS.
+              The printed 3.1.4.3 binomial formula must NOT be used for it (OC-30).
+  NOT ESTABLISHED HERE:
+    build provenance -- run tools/build-provenance-canary.sh. A figure from an
+    unidentified binary is uninterpretable whatever this arithmetic says.
+    The repairs these exclusions rest on are self-authored and UNREVIEWED.
+
+==============================================================================
+floor-demo.json  (, 1.1.8)
+==============================================================================
+  H_original / word_size     0.12644573619604868 <- binds
+  h' (per bit)               0.12644573619604868
+  n (bitstring length)       1000000 bits
+  NOTE: read the 'Overall' case (the minimum over estimators), not any single estimator's; the report carries 11 cases.
+  NOTE: the report carries hAssessed = 0.12644573619604868. NOT USED as the per-bit figure: it is word_size * h' (C02).
+  NOTE: consistency: hAssessed == word_size * h' to within 1e-12 relative, as C02 describes.
+
+  term                                     value        why
+  ---------------------------------------- ------------ ----------------------------------
+  C01 comparison error                     3.690e-04    measured two-sided bound
+  C22a P_local quantisation                8.080e-09    8.08e-15 x (n+1), n = 1000000
+  C22b P_global' at N == 1                 0.000e+00    conservative at every N
+  C22c ZALPHA vs the literal 2.576         3.360e-03    measured at n = 1000000 (ceiling falls with n)
+
+  FLOOR, literal-text reading   0.12271672811604059   (h' - 0.00372901)
+  FLOOR, F07 reading            0.12607672811604059   (h' - 0.000369008)
+    F07 is this audit's own disposition: the tool uses the exact 0.995 quantile and the
+    standard's text prints its rounding, so C22c is a literal-text parity term, not a defect.
+
+  EXCLUDED, not subtracted:
+    C07, C03  closed by code on master at d226f18 and later. For a figure from tag
+              unrepaired-reference-2026-10-15 the exclusion does NOT hold and no floor exists.
+    C02       a reading, not a subtraction: this script used h', never hAssessed.
+  SEPARATE, not a subtraction:
+    C23       the restart sanity check is an accept/reject decision, recomputed with
+              oracles/restart_decision_exact.py. A figure is awarded only if it ACCEPTS.
+              The printed 3.1.4.3 binomial formula must NOT be used for it (OC-30).
+  NOT ESTABLISHED HERE:
+    build provenance -- run tools/build-provenance-canary.sh. A figure from an
+    unidentified binary is uninterpretable whatever this arithmetic says.
+    The repairs these exclusions rest on are self-authored and UNREVIEWED.
+

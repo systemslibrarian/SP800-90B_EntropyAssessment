@@ -3122,16 +3122,36 @@ values (1-bit 15/2000 = 0.75 %, 0.37–1.13 % against 0.87 %; 2-bit 13/2000 =
 0.65 %, 0.30–1.00 % against 0.87 %; 4-bit 18/2000 = 0.90 %, 0.49–1.31 % against
 0.70 %). Rates from small counts are reported with their intervals from here on.
 
-**4. Row/column dependence — contributes nothing measurable.** At the printed
-8-bit cutoff, where the rate is large enough to measure precisely, 20,000
-matrices give **82.50 %** against **82.5 %** computed under independence. At
-every other point the measured interval contains the computed value and the
-deviations scatter in both directions. So the dependence does not explain the
-gap and does not push the rate down: it is **below the measurement floor at
-these rates**, which is a stronger version of Hill's judgement that it "seems
-safe to ignore this theoretical problem". It remains a stated approximation,
-now with a bound: under half a point at the printed cutoff, and not separable
-from noise at the corrected one.
+**4. Row/column dependence — bounded, from the measurement that constrains it.**
+Corrected 2026-10-19: this bound was first cited from the 82.5 % agreement at
+the *printed* cutoff, which was the wrong measurement to cite. Rejection there
+is a **bulk** event, and the independence approximation does its work in the
+**tail**; agreement at an 82.5 % rate says almost nothing about behaviour at
+0.3 %. The 82.5 % match is kept below as a check that the computation is right
+where the probability is large, and it carries no part of the dependence claim.
+
+The measurement that bounds it is the tail one, at the cutoff actually in use,
+re-measured at **100,000** matrices:
+
+| 8-bit cutoff | rejects | measured | 95 % interval | computed under independence |
+|---:|---:|---:|---|---:|
+| **19 (the cutoff in use)** | 293 / 100 000 | **0.293 %** | **0.260 – 0.327 %** | 0.31 % |
+| 18 | 1636 / 100 000 | 1.64 % | 1.56 – 1.72 % | 1.63 % |
+| 15 (printed) | 16 499 / 20 000 | 82.50 % | 81.97 – 83.03 % | 82.5 % |
+
+The computed value sits inside the interval at the cutoff in use, so the data
+are consistent with no dependence effect at all, and **any effect is below the
+interval half-width: ±0.034 points at the corrected 8-bit cutoff.** The second
+row is an independent tail check at a different rate — 1.64 % measured against
+1.63 % computed, agreeing to 0.01 points — so the independence approximation
+holds across two tail events two orders of magnitude apart in probability, not
+only in the bulk. **The bound holds at the corrected cutoff specifically**; it
+is not claimed for cutoffs far from it, and the 82.5 % row is evidence about the
+computation rather than about the dependence.
+
+That is a stronger and better-sited version of Hill's judgement that it "seems
+safe to ignore this theoretical problem", and it remains a stated approximation
+carried by every cutoff derived this way, the exact multinomial one included.
 
 **And a fifth thing, checked because the operating point is not where the method
 was validated.** Levin's representation was validated against brute-force
@@ -3444,3 +3464,136 @@ that reason and the result is a negative one, stated as such.
 is one party's analysis, not an erratum, and this project's agreement with it is
 corroboration rather than confirmation. Measured and read on this machine; no
 claim here is about any source, and physical items stay **NOT RUN**.
+
+## OC-33 — "show that the mutation landed" mechanised, because the base rate says it is being missed
+
+Counting the instrument errors this project has caught: a sed that edited the
+wrong line (`OC-23`), two extraction patterns that took the wrong number out of
+a longer string and one that searched for a name built from a format string
+(`OC-23`), a broken hex literal that printed a wall of `REFUSED` meaning "no
+input" (`OC-30`), a route-2 test that passed the wrong string and so passed
+against the build it was meant to fail (`OC-31`) — and **two more today**: an
+`R-1` recheck that declared the wrong symbol width, so the tool printed its
+usage text while the log recorded "no LRS line seen" (`OC-34`), and the first
+version of `entropy_floor.py`, which read `testCases[0]` and computed a floor
+from the Most Common Value estimator instead of the Overall case (`OC-35`).
+
+That is roughly one per round of work, every round, found only by looking. **A
+process with that base rate must not assume it finds them all.** The rule
+adopted after `OC-23` was right and was a thing to remember; it is now a thing
+that cannot be skipped.
+
+### The contract, in `cpp/selftest/mutation-lib.sh`
+
+A mutation that did not land may produce **neither a pass nor a fail**. It
+produces a third outcome, `MUTATION-DID-NOT-APPLY`, counted separately, which
+fails the harness and says the harness is broken rather than the guard. The
+guard's response is evaluated only after the mutation is shown to have taken
+effect, by the means appropriate to what was mutated:
+
+| what was mutated | how landing is proved |
+|---|---|
+| a file or a directory | digest before and after; a missing target digests as `ABSENT`, itself a change |
+| an argument or an input value | the value the **code under test received**, read back from the system — the tool's own recorded command line, or a failure mode that could only occur if the string arrived — never the harness's own variable, which is exactly what `OC-31` got wrong |
+| a rebuild with different flags | the binary differs from every other variant's |
+
+### Wired in, and what the count says
+
+| harness | mutations + controls | landing asserted by | result |
+|---|---:|---|---|
+| `regression-selftest-inventory.sh` (fixtures and references) | 7 + 2 | directory digests | **9 of 9 land, all caught** |
+| `harness-inventory-mutation-test.sh` (the script inventory) | 4 + 1 | directory and file digests | **5 of 5 land, all caught** |
+| `outside-battery-mutation-test.sh` (**new**: the `OC-23` corpus mutations, previously ad-hoc shell commands that were not repeatable) | 7 + 2 | file digests, plus an explicit `cmp` on the digest-mutation case that would have caught the original sed | **9 of 9 land, all caught** |
+| `reproducers/c16-c23-matrix.sh` (build-flag mutations) | 5 builds | all five binaries' digests distinct, printed | **5 of 5 land** |
+| `regression-output.sh` route 2 (an argument value) | 2 | the operand confirmed in the tool's own recorded `commandline`, or the version banner, which only prints if the string arrived | **2 of 2 reach the tool** |
+
+**All 25 land today.** That is the measurement asked for, and the honest reading
+of it is narrow: it says nothing was silently inert *at this moment*. The value
+is not the 25, it is that none of them can stop landing without saying so. The
+ones that historically failed to land are now the ones most tightly checked:
+the `OC-23` sed case carries its own `cmp`, the matrix fails closed on a missing
+input and prints every input digest, and the route-2 string is read back from
+the tool.
+
+**Shown failing, as the rule requires of itself.** A copy of
+`regression-selftest-inventory.sh` with one `mv` replaced by a no-op reports
+`8 of 9 mutations landed and were caught, 1 DID NOT APPLY`, names the mutation,
+says "the harness is broken, not the guard", and exits non-zero — where the old
+harness printed `FAIL (mutation passed)` and blamed the verifier.
+
+`mutation-lib.sh` and `outside-battery-mutation-test.sh` are deliberately named
+so they do not match `regression-*.sh`: `run-all-checks.sh`'s authoritative
+inventory does not discover them, so its counts are unchanged
+(`BUG-REPAIR-GUIDE.md`'s enumerating-file rule). Suite after the change: **20
+passed, 0 failed**.
+
+## OC-34 — the open-items list audited against the current tree; two entries were stale and one was mislabelled
+
+`C-01` was found fixed only incidentally. The whole carried list is now checked
+against master rather than assumed. **Two stale entries and one wrong label.**
+
+| item | carried as | checked against master | verdict |
+|---|---|---|---|
+| **`C-01`** `new uint16_t[]` freed with scalar `delete` in `ea_restart` | "the live carried defect" in the project memory | `restart_main.cpp:326` is `delete[] results;`; tracker already says `FORK-FIXED` via `6f84ad7`/`b3db7ab` | **STALE — fixed by the 2026-10-15 merge `d226f18`.** The memory note was wrong, the tracker was right. Corrected. |
+| **`R-1`** `assert(p_col >= 1/k)` aborts for perfectly balanced alphabets | **`BLOCKED-HARDWARE`** in the tracker | **Does not reproduce.** The tracker's own reproducer (balanced k symbols, `random.Random(7)`) run at all five named counts — k = 3, 6, 7, 9, 12, each at a width that fits — completes with `rc = 0` and reaches the test battery (`logs/mutation/r1-recheck.log`) | **MISLABELLED, twice.** It is not a hardware item: the reproducer needs none, and it ran here in minutes. And it no longer reproduces. The assert is still at `lrs_test.h:652` and `calc_collision_proportion` is **unchanged from upstream** (`git log -S` shows only upstream's own commits), so nothing in the fork fixed it — which makes it rounding- and platform-sensitive, the `REPRO-01` shape. Correct state: **not reproducible on this build; reachability on other float environments unknown**, and it belongs with the x86-64 items, not the hardware ones. |
+| **`C08`** the harness fails open on absent reference data (`OC-4`) | "partly closed" | `cpp/selftest/selftest:31` now calls `verify-fixture-inventory.sh` **before** any comparison and exits 1 if the manifest is not satisfied; `regression-selftest-inventory.sh` proves seven ways that it does | **The named defect is CLOSED** (`HARNESS-AUD-01`, carried in by the merge). What remains of the 14-member cluster is the diagnosability residue, not a fail-open. |
+| **`C22`** `P_local`, `P_global'`, `ZALPHA` | Class 2, bound measured (`OC-22`) | still a subtraction, and until today still performed by hand | **LIVE as arithmetic, now mechanised** (`OC-35`). |
+| **`C02`** `hAssessed` carries `word_size × h'` | Class 1, a reading | reproduced today: `hAssessed 7.2338614551796505 = 8 × 0.9042326818974563` on an 8-bit control | **LIVE and correct as recorded**; now checked mechanically by `entropy_floor.py`. |
+| **`C03`**, **`C07`** | closed by code, merged | `iid_main.cpp` fail-closed verdict and the log-domain LRS are on master; build-differential passes | **CLOSED on master; NOT closed at the tag.** |
+| **`C23`**, **`C16`** | repaired | `OC-30`, `OC-29`; regression passes, fails against the tag | **CLOSED on master, C23 after one wrong attempt.** |
+| **`C14`** | permissive, queued | both routes closed (`OC-31`), shown failing against the tag | **CLOSED on master.** |
+| **`C06`** `h_out` 7.1552 against a 7-bit ceiling, **`C09`** `ea_conditioning` intake | off-path | `cpp/Makefile:63` `SUPPORTED_TARGETS := iid non_iid restart` — `ea_conditioning` is not built | **LIVE but unreachable on the supported build.** Active work before that scope can expand, which is what `EXCLUDED-UNSUPPORTED` means in the tracker (3 entries: `N-03`, `N-05`, `N-11`). |
+| **`C18`** LLP64 integer widths | unknown direction | `sizeof(long) = 8` here | **NEUTRAL on this host; unknown on Windows/LLP64**, which is documented and NOT verified. |
+| **`C20`**, **`C21`** | neutral (`OC-13`) | unchanged | **NEUTRAL**; `C21`'s off-path members stay off-path. |
+| **`F13`** NaN into `std::min` | `UNCONFIRMED`, "one argument-order edit away" | `utils.h:1153` is still `min(1.0, p_global + …)` — the NaN suppression is still incidental to the argument order | **LIVE as a fragility**, unchanged, and still unmarked at the site. |
+| **`REPRO-01`** architecture-dependent verdict | Class 1, pin the architecture | unchanged | **LIVE**, neutralised by pinning plus provenance. |
+| **`F01`** | withdrawn; upstream issue #253 still open | unchanged; `OC-32` notes Hill comment 2.b weakens one clause of the withdrawal's argument without touching its conclusion | **WITHDRAWN, stands.** |
+| physical items | NOT RUN | unchanged | **NOT RUN.** |
+
+Two tracker-state corrections follow from this and are applied: `R-1` from
+`BLOCKED-HARDWARE` to not-reproducible-here, and the memory's `C-01` note.
+
+## OC-35 — the floor computed from a report instead of reconstructed from a document
+
+Chosen over `C08` as the most valuable remaining software item, with the reason:
+`C08`'s named defect is already closed (above), so work there is verification of
+a residue; whereas **every measurement in this audit exists to support one
+number — the floor — and that number was the only thing still produced by
+hand.** Two of the three steps in producing it are recorded defects of this
+project: finding the right field (`C02`) and remembering the terms (`C22`).
+
+`oracles/entropy_floor.py` reads an `ea_non_iid` JSON report and prints the
+floor with every term, its value and its source. On the 8-bit control
+(`logs/floor/floor-demo.log`):
+
+| | value |
+|---|---|
+| `H_original / word_size` | 0.98313975036244872 |
+| **`H_bitstring`** | **0.90423268189745631 ← binds** |
+| `h'` per bit | 0.90423268189745631 |
+| C01 | 3.690e-04 |
+| C22a, at n = 8 000 000 | 6.464e-08 |
+| C22b | 0 |
+| C22c (literal reading) | 2.160e-03 |
+| **floor, literal-text reading** | **0.90170361725744819** |
+| **floor, `F07` reading** | **0.90386361725744824** |
+
+It also **checks** `C02` rather than restating it: the report's
+`hAssessed = 7.2338614551796505` is confirmed to equal `word_size × h'` to
+within 1e-12 relative, and is reported as not used.
+
+**Its guards, shown failing.** It refuses a report carrying
+`reportComplete: false` (the `C14` placeholder — "the run did not finish"), a
+report with non-zero `errorLevel`, a report with no `Overall` case, and any
+`n` below 1,000,000 bits rather than extrapolating the `ZALPHA` ceiling it was
+not measured at. It states what it does **not** establish: build provenance,
+and the restart decision, which is `C23`'s separate accept/reject and never a
+subtraction.
+
+**My own error in it, recorded.** The first version read `testCases[0]`. A
+non-IID report carries **one test case per estimator** and the assessment is the
+one labelled `Overall`; reading the first gave 0.983 instead of 0.904 on the
+8-bit control, because Compression binds and Most Common Value does not. That
+is the `C02` reading trap one field over, in the script written to stop people
+falling into it. The case is now selected by name, and a report without an
+`Overall` case is refused rather than guessed at.

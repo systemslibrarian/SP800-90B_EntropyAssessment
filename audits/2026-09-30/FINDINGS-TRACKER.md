@@ -39,6 +39,7 @@ A coding agent can take work from this queue by selecting findings whose **State
 | `FORK-FIXED` | This fork contains the correction and a regression test proving it. |
 | `SUPPORTED-SCOPE-FIXED` | Every instance in the supported build is corrected and regression-tested; an instance remains only in an explicitly excluded executable, and a build-plan guard fails if that executable enters supported scope. |
 | `EXCLUDED-UNSUPPORTED` | The defect remains in an executable deliberately excluded from the supported aggregate build. It is not fixed and becomes active work before that scope can expand. |
+| `NOT-REPRODUCIBLE-HERE` | The recorded reproducer does not fire on the current tree on this platform, and nothing in the fork fixed it, so the defect is environment-sensitive rather than removed. Reachability elsewhere is unknown and is listed under the platform it needs in `audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md`. Not a fix, and not a dismissal. |
 | `BLOCKED-HARDWARE` | A confirmed platform-specific defect cannot be reproduced or a repair verified on the available architecture. It is retained as blocked evidence, not open repair work on this host. |
 | `VERIFIED` | Resolution confirmed: upstream or fork code corrected and the regression test passes. |
 | `NOT-A-BUG` | Spec-consistent, spec limitation/erratum, deliberate upstream design, or no observable effect. Kept for the record; not in the queue. |
@@ -84,7 +85,8 @@ the upstream position and this fork's position are never conflated.
   - `FORK-FIXED`: 24
   - `SUPPORTED-SCOPE-FIXED`: 2
   - `EXCLUDED-UNSUPPORTED`: 3
-  - `BLOCKED-HARDWARE`: 1
+  - `BLOCKED-HARDWARE`: 0
+  - `NOT-REPRODUCIBLE-HERE`: 1
   - `VERIFIED`: 0
 
   Fork disposition across all 30: `VERIFIED` 21, `RESOLVED-BY-GLOBAL-GUARD` 2,
@@ -854,9 +856,17 @@ the upstream position and this fork's position are never conflated.
 
 **Residual of #246: len_LRS_test asserts p_col ≥ 1/k and aborts when every symbol count is exactly equal and 1/k rounds down (k = 3, 6, 7, 9, 12, …)**
 
-- **State:** `BLOCKED-HARDWARE`
+- **State:** `NOT-REPRODUCIBLE-HERE` (was `BLOCKED-HARDWARE`; corrected 2026-10-19,
+  audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md OC-34). The label was
+  wrong twice over: the reproducer needs no hardware, and it no longer fires. Run
+  at all five named symbol counts (k = 3, 6, 7, 9, 12, each at a width that fits)
+  the tool completes with rc 0 and reaches the test battery. The assert is still at
+  `lrs_test.h:652` and `calc_collision_proportion` is unchanged from upstream, so
+  nothing in the fork fixed it: it is rounding- and platform-sensitive, the
+  `REPRO-01` shape. Reachability on a wide `long double` is unknown and is one of
+  the x86-64 items in CLOSING-INVENTORY.md.
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `BLOCKED-HARDWARE`
+- **Fork disposition:** `NOT-REPRODUCIBLE-HERE`
 - **Dangerous direction:** no (abort, no JSON)
 - **Affected source:** `cpp/shared/lrs_test.h`:626 len_LRS_test() `assert(p_col >= 1.0L / ((long double) k))`; `cpp/shared/utils.h` calc_proportions() (PR #248 fixed accumulation only) (upstream `87c104d`)
 - **Reproduce:**

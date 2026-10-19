@@ -1,0 +1,12 @@
+  positive control: the complete corpus is accepted      accepted
+  missing one fixture                                    rejected (exit 1)
+  missing one reference                                  rejected (exit 1)
+  missing one complete pair                              rejected (exit 1)
+  missing multiple complete pairs                        rejected (exit 1)
+  modified reference output                              rejected (exit 1)
+  missing entire fixture directory                       rejected (exit 1)
+  missing entire reference directory                     rejected (exit 1)
+  restored control: the corpus is accepted again         accepted
+regression-selftest-inventory: 9 of 9 mutations landed and were caught
+regression-selftest-inventory: PASS
+exit 0

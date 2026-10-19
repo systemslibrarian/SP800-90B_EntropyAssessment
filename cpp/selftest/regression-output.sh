@@ -121,17 +121,41 @@ fi
 # tool print its version and exit 0 with nothing assessed and no report (oac-16).
 vdir="${work}/vdir"; mkdir -p "${vdir}"
 cp "${repo}/bin/truerand_1bit.bin" "${vdir}/--version"
+# The input to this check is a VALUE -- the exact operand string -- so the
+# landing assertion is that the tool received it, read back from the tool
+# itself, never from the harness's own variable. The first version of this
+# check passed "./--version" where the code matches "--version"; it passed
+# against the build it was meant to fail and proved nothing (OC-31). A run
+# that cannot be shown to have received the string reports
+# INPUT-DID-NOT-REACH-THE-TOOL, which is neither a pass nor a fail for the
+# guard: see mutation-lib.sh for why that third outcome exists.
+[ -f "${vdir}/--version" ] || { note "C14 setup: a file named --version exists:" "it does not"; fails=$((fails + 1)); }
 for t in ea_non_iid ea_iid; do
 	out=$(cd "${vdir}" && EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}" \
 		"${bindir}/${t}" -q -o "${work}/c14-v-${t}.json" -- "--version" 1 2>&1); rc=$?
-	if printf '%s' "${out}" | grep -q 'Disclaimer: NIST-developed software'; then
+	banner=0; printf '%s' "${out}" | grep -q 'Disclaimer: NIST-developed software' && banner=1
+	received=0
+	# The version banner is itself proof the string reached the scan. Otherwise
+	# the tool's own recorded command line must contain it.
+	if [ "${banner}" -eq 1 ]; then
+		received=1
+	elif [ -s "${work}/c14-v-${t}.json" ] && python3 - "${work}/c14-v-${t}.json" <<-'PY'
+		import json, sys
+		try: d = json.load(open(sys.argv[1]))
+		except Exception: sys.exit(1)
+		sys.exit(0 if '--version' in (d.get('commandline') or '') else 1)
+		PY
+	then
+		received=1
+	fi
+	if [ "${received}" -eq 0 ]; then
+		note "C14 ${t} does not take a filename as --version:" "INPUT-DID-NOT-REACH-THE-TOOL (rc ${rc}); the guard was not tested"
+		fails=$((fails + 1))
+	elif [ "${banner}" -eq 1 ]; then
 		note "C14 ${t} does not take a filename as --version:" "printed the version and assessed nothing"
 		fails=$((fails + 1))
-	elif [ -s "${work}/c14-v-${t}.json" ]; then
-		note "C14 ${t} does not take a filename as --version:" "assessed the file (rc ${rc})"
 	else
-		note "C14 ${t} does not take a filename as --version:" "no report written (rc ${rc})"
-		fails=$((fails + 1))
+		note "C14 ${t} does not take a filename as --version:" "assessed the file (rc ${rc}), operand confirmed in the recorded command line"
 	fi
 done
 # and the option itself must still work

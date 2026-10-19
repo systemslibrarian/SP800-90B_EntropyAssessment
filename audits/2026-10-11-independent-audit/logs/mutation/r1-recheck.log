@@ -1,0 +1,14 @@
+# R-1 recheck against master, 2026-10-19. The tracker lists R-1 as BLOCKED-HARDWARE
+# with reproducer 'balanced k symbols, 1/k rounds down'. k and the declared width must
+# agree: a first attempt passed width 2 for k=6..12 and the tool printed usage (rc 255),
+# which is a harness error, not a result. Widths corrected below.
+k=3 width=2 L=1000002 counts=333334
+  k=3 reached the test battery without aborting (rc=0): ** Passed chi square tests
+k=6 width=3 L=1000002 counts=166667
+  k=6 reached the test battery without aborting (rc=0): ** Passed chi square tests
+k=7 width=3 L=1000006 counts=142858
+  k=7 reached the test battery without aborting (rc=0): ** Passed chi square tests
+k=9 width=4 L=1000008 counts=111112
+  k=9 reached the test battery without aborting (rc=0): ** Passed chi square tests
+k=12 width=4 L=1000008 counts=83334
+  k=12 reached the test battery without aborting (rc=0): ** Passed chi square tests

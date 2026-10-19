@@ -1,6 +1,11 @@
 input x24.bin        1000000 bytes sha256 8da941675ca1e288c1d0d06d8099faa9f20fec502a9028a3ed581cae0675405b
 input x20.bin        1000000 bytes sha256 5296df2b3a0b137e0683a64b450a1597e1bd5efb78661cc60ad8e028e0ee464f
 input fullent8.bin   1000000 bytes sha256 c7a56db87d911b2a58ea0969211ddddc32cdf9ae0df6616352686f0e51fedc4b
+build sim_oldparse     sha256 5cf75568c969197a5565fc30129186c25a717c04bbf97e9340a70b9a2adcf641
+build sim_strict       sha256 1489e3e1ccd0009bd3cea6684d0155e9822223d98fe37abf80fea1fd5ecc6bc1
+build printed_strict   sha256 2dd8daf6e7ade326b93f4539873526af35d2e8443b19a52de7587ac2e14574fc
+build exact_oldparse   sha256 fc70ff403c311a45244986549d12306c7a3dc35553eee200a92a346d3ed19909
+build exact_strict     sha256 1f0b6210397600a63e8c4e640cb563a69a398bba00139df54b352bcf4f8ffeea
 build          C23        | fullent 8-bit H_I 8 | sane X_max 24  | underflow   | wrong scale
 ---------------------------|------------------|----------------|-------------|-------------
 old/upstream-sim upstream-sim | accept (cut 19)  | accept (cut 27) | accept (cut 1000) | accept (cut 614)
@@ -19,6 +24,6 @@ and rejected by printed-bin (24 > 23).
   exact_strict   X_cutoff at H_I 8/symbol over 5 runs: 19 19 19 19 19
 
 ## Cost: the exact method replaces a 5,000,000-round simulation
-  sim_strict     full run: 6.8 s
-  exact_strict   full run: 5.3 s
+  sim_strict     full run: 7.7 s
+  exact_strict   full run: 6.4 s
 exit 0

@@ -53,10 +53,27 @@ for f in ('x24.bin', 'x20.bin', 'fullent8.bin'):
     print("input %-14s %d bytes sha256 %s" % (f, len(d), hashlib.sha256(d).hexdigest()))
 PY2
 
+sha() { if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d' ' -f1; else sha256sum "$1" | cut -d' ' -f1; fi; }
+# Each build here IS the mutation, so its landing has to be asserted: a flag
+# that silently did nothing would give a row of plausible results for a build
+# that is not the one named. Every variant's binary must differ from every
+# other's. mutation-lib.sh records why this is mechanised rather than assumed.
 build() { # build <name> <extra CXX flags>
     (cd "$repo/cpp" && make -B CXX="clang++ $2" restart >"$work/build-$1.log" 2>&1 \
         && cp ea_restart "$work/ea_restart.$1") || { echo "build $1 failed"; exit 2; }
+    local d; d=$(sha "$work/ea_restart.$1")
+    local prev
+    for prev in $BUILT; do
+        if [ "$d" = "$(sha "$work/ea_restart.$prev")" ]; then
+            echo "MUTATION-DID-NOT-APPLY: build '$1' is byte-identical to '$prev'," >&2
+            echo "  so its flags ($2) changed nothing. Refusing to report a matrix." >&2
+            exit 2
+        fi
+    done
+    BUILT="$BUILT $1"
+    printf 'build %-16s sha256 %s\n' "$1" "$d"
 }
+BUILT=""
 build sim_oldparse   "-DEA_RESTART_WITHOUT_C23_FIX -DEA_RESTART_WITHOUT_C16_FIX"
 build sim_strict     "-DEA_RESTART_WITHOUT_C23_FIX"
 build printed_strict "-DEA_RESTART_C23_PRINTED_BINOMIAL"

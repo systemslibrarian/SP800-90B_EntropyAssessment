@@ -1,0 +1,12 @@
+  baseline: the pinned corpus is accepted                accepted
+  stream removed from the manifest                       rejected (exit 1)
+  stream added to the manifest                           rejected (exit 1)
+  unlisted stream present on disk                        rejected (exit 1)
+  digest changed                                         rejected (exit 1)
+  listed stream the generator cannot build               rejected (exit 1)
+  a cited 0/N in the record changed to 0/24              rejected (exit 1)
+  coordinated edit: manifest and script expectation together rejected (exit 1)
+  restored control: the pinned corpus is accepted again  accepted
+outside-battery-mutation-test: 9 of 9 mutations landed and were caught
+outside-battery-mutation-test: PASS
+exit 0

@@ -10,10 +10,9 @@ ea_restart writable -o still works:                  wrote 2380 bytes
 C14 ea_non_iid leaves no stale report:               replaced by a fail-closed report
 C14 ea_iid leaves no stale report:                   replaced by a fail-closed report
 C14 ea_restart leaves no stale report:               replaced by a fail-closed report
-C14 ea_non_iid does not take a filename as --version: assessed the file (rc 0)
-C14 ea_iid does not take a filename as --version:    assessed the file (rc 0)
+C14 ea_non_iid does not take a filename as --version: assessed the file (rc 0), operand confirmed in the recorded command line
+C14 ea_iid does not take a filename as --version:    assessed the file (rc 0), operand confirmed in the recorded command line
 C14 ea_non_iid --version still works as an option:   yes
 C14 ea_iid --version still works as an option:       yes
 C14 ea_restart --version still works as an option:   yes
 regression-output: PASS (3 skipped)
-repaired exit 0

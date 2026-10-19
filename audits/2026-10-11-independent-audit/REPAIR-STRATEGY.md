@@ -329,6 +329,10 @@ Class 4. Class 1: `C02` (read `h'`), `REPRO-01` (pin the architecture),
 every unknown-direction cluster — `C14`, `C16`, `C18`, `C20`, `C21` — once its
 direction is settled.
 
+**The full remaining list, sorted by what unblocks it, is
+[CLOSING-INVENTORY.md](CLOSING-INVENTORY.md) — including the bucket of things
+that will never be done, which is not a queue.**
+
 **What the merge does NOT close, so that the record resists being read as
 "the audit is closed":** `C23` and `C16` — **both since repaired on master
 (`C16` at `OC-29`, `C23` corrected at `OC-30` after the first C23 repair was
@@ -352,6 +356,13 @@ and unreviewed. Every figure from the repaired build is reported with that
 sentence and with the tag's figure beside it.
 
 ### The floor, as arithmetic
+
+> **Computed, not reconstructed, since 2026-10-19 (`OC-35`).** Run
+> `oracles/entropy_floor.py <report.json>`: it reads `h'` correctly (the
+> `Overall` case, not a single estimator's, and never `hAssessed` — `C02`),
+> prints every term below with its value and source, gives the floor under both
+> readings, and refuses a report that did not complete. The arithmetic below is
+> the specification it implements; the script is what to use.
 
 Written out so that in January it is read, not reconstructed. All terms are
 **per bit**. `h'` is the per-bit figure the tool prints — `min(H_bitstring,
