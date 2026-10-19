@@ -47,7 +47,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential libbz2-dev libdivsufsort-dev \
-                                  libjsoncpp-dev libssl-dev python3 python3-pip
+                                  libjsoncpp-dev libssl-dev python3 python3-pip \
+                                  clang libomp-dev
+          # regression-estimator-guards builds its own clang sanitizer binary and
+          # needs omp.h; without libomp-dev it reports COULD NOT RUN, which is
+          # neither a pass nor a failure and also not a measurement.
           python3 -m pip install --quiet mpmath || true
           mkdir -p logs
 
@@ -164,6 +168,13 @@ jobs:
           echo "strict suite exit $?" >> logs/06-run-all-checks-strict.log
           ( cd cpp/selftest && ./run-all-checks.sh --allow-known-platform-deltas ) > logs/06-run-all-checks-platform.log 2>&1
           echo "platform-flag suite exit $?" >> logs/06-run-all-checks-platform.log
+          # The suite prints only each regression's last four lines. Run the two
+          # with platform-sensitive expectations standalone so their FULL output
+          # reaches the artifact: a truncated failure is not a diagnosis.
+          ( cd cpp/selftest && ./regression-restart.sh ) > logs/06-regression-restart-full.log 2>&1
+          echo "regression-restart exit $?" >> logs/06-regression-restart-full.log
+          ( cd cpp/selftest && ./regression-estimator-guards.sh ) > logs/06-regression-estimator-guards-full.log 2>&1
+          echo "regression-estimator-guards exit $?" >> logs/06-regression-estimator-guards-full.log
           ( cd cpp/selftest && ./regression-outside-battery.sh ) > logs/06-outside-battery.log 2>&1
           echo "outside-battery exit $?" >> logs/06-outside-battery.log
           ( cd cpp/selftest && ./harness-inventory-mutation-test.sh ) > logs/06-mutation-inventory.log 2>&1

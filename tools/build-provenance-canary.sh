@@ -199,7 +199,21 @@ if [ "$RC" -eq 1 ] && grep -q "IID test suite failed" "$OUT" \
 fi
 
 # UNREPAIRED, asserts live: aborted, and the abort names the site.
-if [ "$RC" -eq 134 ] && grep -q "Assertion failed" "$OUT" && grep -q "lrs_test.h" "$OUT"; then
+#
+# The two libcs word an assertion failure differently, and the first version of
+# this matched only one of them:
+#   macOS/clang  Assertion failed: (p_colPower >= LDBL_MIN), function ..., file lrs_test.h, line 683.
+#   glibc        ea_iid: shared/lrs_test.h:683: ...: Assertion `p_colPower >= LDBL_MIN' failed.
+# Matching the literal "Assertion failed" made this signature macOS-only, so on
+# x86-64 Linux an UNREPAIRED asserts-live build aborted at exactly the predicted
+# site -- lrs_test.h:683, p_colPower >= LDBL_MIN, which is what OC-24 argued
+# would happen -- and this canary nonetheless reported INDETERMINATE. MEASURED
+# on the x86-64 CI job of 2026-10-19, not argued (OC-40). The direction was
+# conservative (INDETERMINATE means refuse the figure), but it is a defect in
+# the instrument: match both wordings.
+if [ "$RC" -eq 134 ] \
+   && grep -qi "assertion" "$OUT" && grep -qi "failed" "$OUT" \
+   && grep -q "lrs_test.h" "$OUT"; then
     unrep_live=1
 fi
 
