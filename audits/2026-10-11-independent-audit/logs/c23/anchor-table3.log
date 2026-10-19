@@ -1,0 +1,59 @@
+## Method validation: Levin's representation vs brute-force enumeration
+| n | k | m | brute force | Levin | rel |
+|---:|---:|---:|---|---|---:|
+| 5 | 2 | 3 | 0.625000000000001 | 0.625000000000001 | 5.3e-16 |
+| 10 | 3 | 5 | 0.770309404054259 | 0.770309404054256 | 3.5e-15 |
+| 12 | 4 | 4 | 0.402045249938965 | 0.402045249938964 | 2.5e-15 |
+| 20 | 2 | 13 | 0.884681701660157 | 0.884681701660166 | 1.0e-14 |
+| 15 | 5 | 5 | 0.69967187017728 | 0.699671870177281 | 1.4e-15 |
+| 8 | 8 | 2 | 0.500779151916504 | 0.500779151916506 | 4.0e-15 |
+
+All agree to better than 1e-12.
+
+## Anchor: Hill v1.9 Table 3 (published) vs this machinery, alpha = 5e-06
+Simulated cutoffs are Hill's 2,000,000-round simulation; ours are exact (Levin).
+
+| min entropy | series | Hill binomial | ours (exact rational) | match | Hill simulated | ours (exact Levin) | delta |
+|---|---|---:|---:|---|---:|---:|---:|
+| 0.852803 | MedianEnt | 623 | 623 | yes | 625 | 623 | -2 |
+| 0.995319 | IIDMedianEnt | 571 | 571 | yes | 572 | 572 | +0 |
+| 1 | FullEnt | 570 | 570 | yes | 572 | 572 | +0 |
+| 1.86565 | MedianEnt | 338 | 338 | yes | 343 | 341 | -2 |
+| 1.9908 | IIDMedianEnt | 314 | 314 | yes | 317 | 317 | +0 |
+| 2 | FullEnt | 312 | 312 | yes | 318 | 316 | -2 |
+| 3.75695 | MedianEnt | 113 | 113 | yes | 118 | 118 | +0 |
+| 3.97586 | IIDMedianEnt | 100 | 100 | yes | 105 | 105 | +0 |
+| 4 | FullEnt | 99 | 99 | yes | 104 | 104 | +0 |
+| 7.41556 | MedianEnt | 19 | 19 | yes | 23 | 23 | +0 |
+| 7.87995 | IIDMedianEnt | 16 | 16 | yes | 20 | 20 | +0 |
+| 8 | FullEnt | 15 | 15 | yes | 19 | 19 | +0 |
+| 13.2812 | MedianEnt | 3 | 3 | yes | 6 | 6 | +0 |
+| 14.3163 | IIDMedianEnt | 3 | 3 | yes | 5 | 5 | +0 |
+| 16 | FullEnt | 3 | 2 | **NO** | 4 | 4 | +0 |
+
+binomial column: 14 of 15 exact matches
+simulated column: 12 of 15 exact matches; all deltas within the noise of a 2e6-round simulation at a 5e-6 tail (see the monotonicity note)
+
+### Hill's own table is non-monotonic, which bounds its simulation noise
+A lower min entropy means a larger p and therefore a cutoff that cannot be smaller.
+- H_I 1.9908 -> 317 and H_I 2 -> 318 (simulated): non-monotonic by 1
+- H_I 3.97586 -> 105 and H_I 4 -> 104 (simulated): monotonic
+- H_I 14.3163 -> 5 and H_I 16 -> 4 (simulated): monotonic
+
+## The direction, computed here rather than quoted: false-reject rate of each cutoff
+For a source whose true min entropy IS H_I (so every rejection is a false one),
+the exact per-experiment and overall rates of the ACTUAL statistic. Target: 0.01.
+
+| H_I (full entropy) | standard's printed cutoff | per-experiment | overall over 2000 | corrected cutoff | per-experiment | overall |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 570 | 7.974e-06 | **1.6%** | 572 | 4.369e-06 | 0.87% |
+| 2 | 312 | 1.655e-05 | **3.3%** | 316 | 4.354e-06 | 0.87% |
+| 4 | 99 | 5.673e-05 | **10.7%** | 104 | 3.515e-06 | 0.70% |
+| 8 | 15 | 8.719e-04 | **82.5%** | 19 | 1.568e-06 | 0.31% |
+| 16 | 2 | 3.753e-02 | **100.0%** | 4 | 4.416e-07 | 0.09% |
+
+Hill's reported rates for the original check are 1.2%, 1.7%, 6.5%, 32.4% and 25.1%
+at 1, 2, 4, 8 and 16 bits (v1.9 p.22), and 'a theoretical failure rate of nearly
+100% for wide data' (p.4). Compare the fourth column above.
+
+exit 0

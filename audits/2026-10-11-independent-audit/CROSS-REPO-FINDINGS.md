@@ -702,6 +702,18 @@ stays empty on this finding's account.
 
 ## XR-10 — the restart acceptance decision must not come from an unrepaired ea_restart; January's run is the one at risk
 
+> **SUPERSEDED — 2026-10-19, see `XR-11`. What changed: the direction.** This
+> finding told TruePad to decide restart acceptance with §3.1.4.3's printed
+> binomial formula, which I had called exact. That formula is not the
+> probability of the event being tested and rejects correctly-operating sources
+> — 83.2 % of full-entropy 8-bit matrices, measured (`OC-30`) — so following
+> this guidance would have disqualified a sound device in January. Kept, not
+> deleted, because a cross-repo finding that silently changed meaning is worse
+> than one that was wrong. **The gap table below is still correct arithmetic;
+> only its interpretation is inverted** — the "counts the old tool accepts that
+> the standard rejects" column is in fact a list of counts the standard wrongly
+> rejects.
+
 **Finding only. Reported, not acted on — TruePad's procedure, TruePad's change.**
 State read: fork `master` after `OC-29`. Evidence: `OC-27` (mechanism, exact
 model, anchor), `OC-29` (repair and matrix), `logs/c23/`.
@@ -779,3 +791,88 @@ items stay NOT RUN. The conformance finding is upstream's (`OC-27` addendum);
 whether the standard's single-binomial test or the tool's max-over-cells
 statistic is the better null is an open question about the standard and does
 not change what a lab claiming SP 800-90B conformance has to run.
+
+## XR-11 — decide restart acceptance with the corrected cutoff, and record the printed-formula value beside it (supersedes XR-10)
+
+**Finding only. Reported, not acted on — TruePad's procedure, TruePad's change.**
+Supersedes `XR-10`, whose direction was inverted. Evidence: `OC-30`; Hill/UL
+formal comments on SP 800-90B (final) v1.9, 2019-12-12, Table 3 and Section 3.2;
+upstream issue usnistgov/SP800-90B_EntropyAssessment#56.
+
+**Still time-sensitive, and for the opposite reason.** TruePad's restart
+evidence is physical and NOT RUN, with hardware testing planned for January
+2027. `XR-10` would have had TruePad decide that run with SP 800-90B
+§3.1.4.3's printed binomial formula. That formula tests the wrong distribution:
+the value measured is the maximum count of the row/column-specific most likely
+symbol — a multinomial maximum — not one symbol's binomial count. A cutoff
+derived from it **fails correctly-operating sources**, measured on synthetic
+full-entropy data at 2000 matrices per width:
+
+| symbol width | printed-formula cutoff | false rejects | corrected cutoff | false rejects |
+|---:|---:|---:|---:|---:|
+| 1-bit | 570 | 1.40 % | 572 | 0.75 % |
+| 2-bit | 312 | 3.15 % | 316 | 0.65 % |
+| 4-bit | 99 | 11.65 % | 104 | 0.90 % |
+| 8-bit | 15 | **83.20 %** | 19 | 0.20 % |
+
+against the 1 % the standard targets. A sanity-check failure means **no entropy
+estimate is awarded at all**, so at 8-bit symbols `XR-10`'s instruction had
+roughly five-in-six odds of disqualifying a sound device.
+
+### What to do instead
+
+1. **Decide with the corrected cutoff** — the exact distribution of the
+   multinomial maximum at α = 0.000005 under the worst-case symbol
+   configuration. `oracles/restart_multinomial_max.py` computes it standalone;
+   `oracles/restart_decision_exact.py` applies it to an `ea_restart -v` log; and
+   an `ea_restart` carrying the fork's `OC-30` repair computes it itself and
+   writes `restartXcutoff` with `restartCutoffMethod =
+   exact-multinomial-maximum`. The cutoffs for integer widths are 572 (1-bit),
+   316 (2-bit), 104 (4-bit) and 19 (8-bit) at full entropy; the full table in
+   0.25-bit steps is pinned in `cpp/selftest/regression-restart.sh`.
+2. **Record the printed-formula value beside it, for traceability, not for the
+   verdict.** A repaired `ea_restart` reports it as
+   `restartXcutoffPrintedBinomial` / `X_cutoff_printed_binomial`. A laboratory
+   claiming SP 800-90B conformance needs to be able to show what the printed
+   procedure would have said and why it was not used; that is the conformance
+   record, and the reason is `OC-30`.
+3. **Treat a verdict computed from the printed binomial formula alone as not
+   decisive in either direction.** It is too strict to use as a rejection and it
+   is not the tool's own statistic, so it supports neither outcome by itself.
+4. **Upstream's unrepaired `ea_restart` is acceptable for this decision**, which
+   `XR-10` got wrong: its simulated cutoff targets the correct statistic
+   (upstream issue #56 asked for exactly that) and lands within a count or two
+   of the exact value. Two caveats: it varies run to run where the distribution
+   is flat — measured 571/572/573 at H_I 1 over eight runs — and it records
+   neither the cutoff nor `X_max` in its report, so the decision cannot be
+   re-checked from the report afterwards. Prefer a repaired binary; if one is
+   not available, capture the `-v` output.
+5. **`XR-09`'s binary-identity requirement still holds**, with "repair" now
+   meaning the corrected statistic. A quick discriminator for `ea_restart`:
+   the repaired tool prints `X_cutoff: … (exact distribution of the multinomial
+   maximum …)` plus an `X_cutoff_printed_binomial` line, and refuses a bare
+   `H_I` on a multi-bit symbol; upstream's prints a simulated cutoff and accepts
+   the bare number. The identity itself is still the executable's hash, or the
+   commit plus compiler and flags.
+6. **A pre-repair run is not upgraded by the repair landing afterwards** — also
+   unchanged. It is re-decided from its data (`X_max` and `H_I` through the
+   corrected test) or the capture is re-run. Record `X_max`, `H_I`, the cutoff
+   used, the method, and the binary's identity, so re-deciding is a computation
+   and never a repeat of the physical test.
+
+### The C16 half of the fork's repair is unaffected and still changes the call
+
+For a symbol wider than one bit the repaired `ea_restart` requires the scale:
+`<value>/symbol` or `<value>/bit`; a bare `H_I` is refused. Pass `ea_non_iid`'s
+per-bit figure as `<h'>/bit` (see `C02` on reading `h'` rather than
+`hAssessed`), or the per-symbol figure as `/symbol`. A bare number that used to
+be accepted at the wrong scale produced a cutoff tens of counts wrong with no
+error — measured 614 where 27 was intended (`OC-30` matrix).
+
+**Standing caveats.** The repair is self-authored and unreviewed. This finding
+decides nothing about any device: physical items stay NOT RUN. The upstream
+defect is a documentation one — nothing in upstream's code records that it
+deliberately departs from the printed procedure — and nothing is sent upstream
+(decided 2026-10-15). Whether the standard's printed test or the multinomial
+maximum is the right null is an open question about the standard, recorded in
+`OC-30` as a question.

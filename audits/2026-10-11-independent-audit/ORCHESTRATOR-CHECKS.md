@@ -654,6 +654,18 @@ is a compile-time constant on master's error paths, demonstrated above.
 
 ## OC-7 — `restart-12`: the restart sanity check awards estimates the standard says must not be awarded
 
+> **SUPERSEDED IN ITS CONCLUSION — 2026-10-19, see `OC-30`.** Every measurement
+> in this entry stands: the tool's simulated cutoff does sit 2–5 counts above the
+> cutoff §3.1.4.3's printed formula gives, systematically, at every H_I. What is
+> wrong is the conclusion drawn from it. The printed formula is not the
+> probability of the event being tested, and a cutoff computed from it **rejects
+> correctly-operating sources** — 83.2 % of full-entropy 8-bit matrices,
+> measured. Upstream's higher simulated cutoff is a deliberate correction
+> (upstream issue #56), not an unsafe relaxation, so "effective α 2× to 821×
+> smaller than intended" describes a test being made *less* trigger-happy than a
+> formula that is itself wrong. This was the audit's top finding and that ranking
+> was mistaken.
+
 Verification of the item previously filed as **Info** inside
 `C23-misc-reporting`. **Verdict: confirmed, permissive, and the "implementation
 choice" defence does not survive the standard's own text. This is the audit's
@@ -2521,6 +2533,13 @@ which are immutable there and corrected on master's `BUILDING.md`:
 
 ## OC-26 — C23 applied as a recomputed decision: the script exists, and the flip is shown on a named matrix
 
+> **SUPERSEDED — 2026-10-19, see `OC-30`.** The script computed the printed
+> binomial decision and called it exact. Applying it as written would reject
+> sound restart data. `oracles/restart_decision_exact.py` has been corrected to
+> decide on the exact multinomial maximum and to report the printed-formula
+> value beside it; the X_max 24 case at H_I 7 is **accepted** by the corrected
+> statistic (cutoff 27), not rejected.
+
 `C23`'s treatment was never a subtraction (`REPAIR-STRATEGY.md`, "The floor,
 as arithmetic"): the tool's simulated restart cutoff sits above the exact
 §3.1.4.3 binomial cutoff, so the correct response is to **recompute the
@@ -2609,6 +2628,13 @@ baseline, were fixed, and the baseline re-run passes
 passes for the wrong reason.
 
 ## OC-27 — C23's gap is not an off-by-one: the tool simulates a different statistic, systematically, at every H_I and every α
+
+> **SUPERSEDED IN ITS DIRECTION — 2026-10-19, see `OC-30`.** The mechanism
+> identified here is right and is the same one Hill/UL identified in 2018: the
+> statistic is the maximum cell count of a multinomial, not one cell's binomial
+> count. The direction is inverted. The defective side is the standard's printed
+> formula; upstream's simulation compensates for it on purpose. The exact-model
+> arithmetic in this entry is reused unchanged in `OC-30`.
 
 `OC-26` showed one point: X_max 24 accepted by the tool and rejected by an exact
 cutoff of 23 at H_I = 7. That point is now scoped, its mechanism named, and the
@@ -2794,6 +2820,14 @@ Nothing is sent upstream (decided 2026-10-15); the inventory row is marked.
 
 ## OC-29 — C16 and C23 repaired together on the restart gate, with the four-state matrix
 
+> **SUPERSEDED FOR C23 — 2026-10-19, see `OC-30`.** The C23 half of this repair
+> installed the defect instead of removing it: it made the printed binomial
+> formula the deciding cutoff, which rejects correctly-operating sources. It is
+> replaced by the exact distribution of the multinomial maximum. **The C16 half
+> stands unchanged** — the H_I grammar, the scale requirement, the underflow and
+> non-positive refusals are unaffected by any of this. The four-state matrix is
+> rebuilt with the corrected C23 axis in `OC-30`.
+
 Two permissive defects on one gate are worse together than apart: `C16` makes
 the gate vacuous for a mis-scaled `H_I`, `C23` makes the cutoff too high when
 `H_I` is sane. Both are repaired in `cpp/restart_main.cpp`; the regression is
@@ -2912,3 +2946,255 @@ diagnosability gap, not a permissive one. Not repaired here; queued with its
 direction fixed by execution (`OC-14`) and its consumer named by the cross-repo
 record, which is an argument about TruePad's code that this session has not
 read.
+
+## OC-30 — C23 corrected: the printed formula is the defective side, the anchor is published, and the repair is the exact multinomial maximum
+
+**This entry supersedes `OC-7`'s conclusion, `OC-26`, `OC-27` and the C23 half
+of `OC-29`.** My own error, stated plainly: I treated closer adherence to
+§3.1.4.3's printed formula as evidence of a better test, called upstream's
+higher cutoff "permissive", and in commit `a5005bd` made the printed formula
+the deciding cutoff. That installed the flaw rather than removing it. The
+measurements I made were sound; the direction I drew from them was backwards,
+and three implementations agreeing on the printed formula's value did nothing
+to detect it, because they shared the same wrong choice of statistic.
+
+### The external anchor, which "exact and self-consistent" was not
+
+`OC-27`'s addendum said no published values existed and no third-party output
+was located. Both exist:
+
+- **Hill / UL, formal comments on SP 800-90B (final), v1.9, 2019-12-12**,
+  `https://www.untruth.org/~josh/sp80090b/`, file
+  *"UL SP800-90B-final comments v1.9 20191212.pdf"*, SHA-256
+  `35ea31cede99b8432f5f61b36dfa10c88aa268cc7d70bf7e0cedc272926b9c93`,
+  43 pages. Comment 3 (pp. 4–5) and Section 3.2 (pp. 21–25), Table 3 (p. 23).
+- **Upstream issue usnistgov/SP800-90B_EntropyAssessment#56**, "The restart
+  testing is more prone to failure than desired", opened 2018-09-21, closed
+  2019-02-04: *"This implementation follows the January 2018 SP800-90B test
+  specification, so as a result the restart testing has a higher than desired
+  chance of failure. … The tool should attempt to establish the correct cutoff
+  through simulation, given the specific assessment that is being used."*
+
+So upstream's simulated cutoff is a **deliberate, requested correction**, and
+`OC-27`'s "the defect is the silence" was the only part of that entry pointing
+the right way.
+
+**Anchor 1 — Hill's Table 3, both columns, all fifteen rows**
+(`oracles/restart_multinomial_max.py`, `logs/c23/anchor-table3.log`):
+
+| min entropy | series | Hill binomial | ours | Hill simulated | ours (exact) |
+|---|---|---:|---:|---:|---:|
+| 0.852803 | MedianEnt | 623 | **623** | 625 | 623 |
+| 0.995319 | IIDMedianEnt | 571 | **571** | 572 | **572** |
+| 1 | FullEnt | 570 | **570** | 572 | **572** |
+| 1.86565 | MedianEnt | 338 | **338** | 343 | 341 |
+| 1.9908 | IIDMedianEnt | 314 | **314** | 317 | **317** |
+| 2 | FullEnt | 312 | **312** | 318 | 316 |
+| 3.75695 | MedianEnt | 113 | **113** | 118 | **118** |
+| 3.97586 | IIDMedianEnt | 100 | **100** | 105 | **105** |
+| 4 | FullEnt | 99 | **99** | 104 | **104** |
+| 7.41556 | MedianEnt | 19 | **19** | 23 | **23** |
+| 7.87995 | IIDMedianEnt | 16 | **16** | 20 | **20** |
+| 8 | FullEnt | 15 | **15** | 19 | **19** |
+| 13.2812 | MedianEnt | 3 | **3** | 6 | **6** |
+| 14.3163 | IIDMedianEnt | 3 | **3** | 5 | **5** |
+| 16 | FullEnt | 3 | 2 | 4 | **4** |
+
+**14 of 15 on the printed-formula column, 12 of 15 on the simulated column**,
+and both discrepancies are diagnosed rather than left standing:
+
+- **The three simulated-column deltas are simulation noise in the published
+  table, not error in the exact computation.** All three sit where the
+  distribution is flattest: one count of cutoff changes the tail by a factor of
+  only ~1.35–1.41 there, so a 2,000,000-round order statistic with ~9 expected
+  exceedances lands a count or two high (at 8-bit the factor is 5.26 and the
+  table matches exactly). Two independent confirmations: Hill's own table is
+  **non-monotonic** across one of them (H_I 1.9908 → 317 but H_I 2 → 318, when a
+  *lower* min entropy cannot give a *smaller* cutoff), and **upstream's own
+  5,000,000-round simulation lands on our value, not the table's**, at every one
+  (`logs/c23/nist-sim-disputed-points.log`): H_I 0.852803 → 623, H_I 1.86565 →
+  341, H_I 2 → 316. Eight repeat runs at H_I 1.86565 span 340–342 and never
+  reach 343 (`logs/c23/determinism.log`).
+- **The 16-bit printed-formula entry does not follow from the printed rule.**
+  Pr[X ≥ 2 | Bin(1000, 2⁻¹⁶)] = 1.15e-04 ≥ α and Pr[X ≥ 3] = 5.84e-07 < α, so
+  by step 5 ("if Pr(X ≥ X_max) < α, the test fails") 3 **fails** and the largest
+  passing count is 2. Hill's 3 is the smallest *failing* count, a one-sided
+  convention difference at the one row where the cutoff is small enough for it
+  to show. Out of the tool's range regardless: it refuses symbols wider than
+  8 bits.
+
+**Anchor 2 — Hill's published failure-rate series, identified by computation.**
+Hill reports 1.2 %, 1.7 %, 6.5 % and 32.4 % at 1, 2, 4 and 8 bits (v1.9 p. 22).
+Computing the false-reject rate under each of his three hypotheses in turn
+identifies which series those are — and it is **not** the full-entropy one:
+
+| width | ours, FullEnt | ours, IIDMedianEnt | ours, MedianEnt | Hill's quoted |
+|---:|---:|---:|---:|---:|
+| 1 | 1.6 % | **1.2 %** | 0.0 % | 1.2 % |
+| 2 | 3.3 % | **1.7 %** | 0.0 % | 1.7 % |
+| 4 | 10.7 % | **6.4 %** | 0.0 % | 6.5 % |
+| 8 | 82.5 % | **32.3 %** | 0.3 % | 32.4 % |
+
+Four of four to within a tenth of a point, under IIDMedianEnt. The full-entropy
+rates are **worse** than the published figures, which strengthens the finding
+rather than weakening it, and matches Hill's own remark that the FullEnt track
+"best shows the problems in this test construction" with "a theoretical failure
+rate of nearly 100 % for wide data" (p. 4). Anyone repeating 32.4 % should say
+which series it is.
+
+**Anchor 3 — the method against brute force.** Levin's representation is
+validated against exact enumeration of the multinomial at six (n, k, m) points,
+agreeing to better than 1e-12 (`logs/c23/anchor-table3.log`, first table). This
+is the method check; the two anchors above are the result checks.
+
+**Anchor 4 — full matrices, with the dependence included.** The arithmetic above
+treats the 2000 row and column experiments as independent, which they are not
+(Hill comment 3.b). Measured instead on 2000 synthetic full-entropy 1000×1000
+matrices per width, counting rows *and* columns exactly as the tool does
+(`logs/c23/fullmatrix-false-reject.log`):
+
+| width | printed-formula cutoff | rejects | corrected cutoff | rejects |
+|---:|---:|---:|---:|---:|
+| 8 | 15 | **83.20 %** | 19 | 0.20 % |
+| 4 | 99 | **11.65 %** | 104 | 0.90 % |
+| 2 | 312 | **3.15 %** | 316 | 0.65 % |
+| 1 | 570 | **1.40 %** | 572 | 0.75 % |
+
+Against the 1 % the standard targets. The measured rates track the computed ones
+(83.20 vs 82.5, 11.65 vs 10.7, 3.15 vs 3.3, 1.40 vs 1.6), so the row/column
+dependence shifts the rate by well under a point at every width — Hill's
+judgement that it "seems safe to ignore this theoretical problem" is now
+measured here rather than taken on trust, and it is recorded as a **known
+approximation carried by every cutoff derived this way, the exact multinomial
+one included**: the exactness is in the distribution of the maximum, not in the
+independence of the 2000 experiments.
+
+### The finding, in its corrected direction
+
+**The defective side is the standard's printed formula.** §3.1.4.3 step 5 prints
+the tail of a single Binomial(1000, p), but the value tested is the largest
+count of the *row/column-specific* most likely symbol — the maximum cell count
+of a multinomial, which is stochastically larger. Hill comment 3.a: *"The
+underlying distribution for the existing test is really the maximum count of any
+symbol of a multinomial distribution; our testing indicates that the binomial
+distribution isn't a good approximation of the actual underlying
+distribution."* And comment 3.c: the printed p-value equation *"is incorrect, as
+this is not the probability of this event."* A cutoff computed from it
+disqualifies correctly-operating noise sources, and under §3.1.4 a sanity-check
+failure means **no entropy estimate is awarded at all** — Hill calls that
+outcome "catastrophic" from the vendor's perspective, which is why he stresses
+it is "vital to get this test 'right'".
+
+**Upstream's simulation is the workaround, and the real upstream defect is that
+it is silent.** `simulateCount()`/`simulateBound()` simulate the right statistic
+and are unchanged on `upstream/master` at `87c104d`. Nothing in
+`restart_main.cpp` records that the implementation deliberately departs from the
+printed procedure, which formula it departs from, or why — so a reader of the
+code cannot tell a deliberate correction from an error, and I could not either.
+**That is the finding: a documentation defect, upstream's, not a safety one.**
+
+**The conformance question, separately.** A tool that does not implement the
+printed procedure is a problem whichever test is better, because a laboratory
+using it is not running SP 800-90B's restart sanity check as written. That
+remains true and is why both numbers are now reported. But it is a conformance
+and traceability matter, not a reason to adopt the printed formula.
+
+**The correctness question, stated as a question about the standard.** On the
+evidence above the tool's statistic is the better-posed one and the standard's
+printed specification is the weaker choice: the standard corrects α for the 2000
+row/column experiments but then tests their maximum against one cell's binomial
+tail. This audit did not evaluate which null is right for an entropy-source
+validation; it computed both cutoffs and measured both false-reject rates.
+Recorded as a question, not as a defence of the tool.
+
+### The repair
+
+`cpp/restart_main.cpp` now computes the deciding cutoff as the **exact
+distribution of the multinomial maximum** — the first of the two exact methods
+Hill names (Levin, *"A Representation for Multinomial Cumulative Distribution
+Functions"*, Ann. Statist. 9(5), 1981), under his worst-case configuration
+(⌊1/p⌋ symbols at probability p plus one holding the remainder, matching the
+`k_effective` upstream already used). This is better than both the printed
+formula and a simulation: it targets the correct statistic *and* is exact and
+reproducible. Every factor in Levin's identity is a probability or a log-domain
+scalar, so nothing underflows.
+
+**Both numbers are reported.** `-v` prints the deciding cutoff and
+`X_cutoff_printed_binomial` beside it; the report carries `restartXcutoff`,
+`restartXcutoffPrintedBinomial` and `restartCutoffMethod`
+(`exact-multinomial-maximum`), alongside `restartHI`, `restartAlpha`,
+`restartXmax` and `passedRestartSanityCheck`. A reader can see the gap and which
+figure the verdict used.
+
+**Determinism and cost.** Upstream's simulated cutoff varies run to run where
+the distribution is flat — measured 571/572/573 at H_I 1, 316/317 at H_I 2,
+340/341/342 at H_I 1.86565 over eight runs each — while the exact method returns
+one value every time, and that value sits inside the simulation's spread
+(`logs/c23/determinism.log`). Cost is a modest improvement, not a dramatic one:
+a full `ea_restart` run drops from 6.8 s to 5.3 s on this machine, the
+difference being the 5,000,000-round simulation the exact method replaces.
+
+**The five-state matrix** (`reproducers/c16-c23-matrix.sh`,
+`logs/c23/c16-c23-matrix.log`). The C23 axis needs three states, not two,
+because the superseded repair is itself one of them and the record has to be
+able to show it (`EA_RESTART_C23_PRINTED_BINOMIAL`):
+
+| C16 / C23 | full-entropy 8-bit, H_I 8 (correct answer: accept) | X_max 24 at H_I 7 | H_I `1e-400` | `0.875` bare, wrong scale |
+|---|---|---|---|---|
+| old / upstream-sim (the tag) | accept, cutoff 19 | accept, 27 | **accept, cutoff 1000** | **accept, cutoff 614** |
+| strict / upstream-sim | accept, cutoff 19 | accept, 27 | REFUSED | REFUSED |
+| strict / **printed-bin** (superseded `a5005bd`) | **REJECT, cutoff 15** | **REJECT, 23** | REFUSED | REFUSED |
+| old / exact | accept, cutoff 19 | accept, 27 | **accept, cutoff 1000** | **accept, cutoff 614** |
+| strict / exact (shipped) | accept, cutoff 19 | accept, 27 | REFUSED | REFUSED |
+
+The first column is the one that settles it: the data is drawn uniformly, so the
+correct verdict is known by construction, and the printed-formula build is the
+only one that disqualifies it. The C16 columns are unchanged from `OC-29` — each
+fix still leaves the other's hole exactly where it was.
+
+A first run of this matrix printed a uniform wall of `REFUSED` because a broken
+hex literal in its own generator meant no input files existed. That is the
+false-green shape this project keeps finding, in my own harness: the script now
+fails closed if an input is missing, prints each input's digest, and
+distinguishes "no input" from "refused by the parse".
+
+**The regression** (`cpp/selftest/regression-restart.sh`, `C16 + C23` section).
+PASS on the shipped build: eight C16 refusals, `0.875/bit` resolving to the same
+cutoff as `7/symbol`, **both cutoff columns matching the exact oracle at 32
+values of H_I from 0.25 to 8**, the deciding cutoff strictly above the printed
+one at all five widths, a full-entropy 8-bit matrix accepted, X_max 24 accepted
+with both numbers in the JSON, X_max 28 still rejected. Shown failing against
+the superseded printed-binomial build — 3 checks, including the full-entropy
+matrix rejected at exit 255
+(`logs/c23/regression-restart-vs-printed-binomial.log`) — and against the tag
+build, 27 checks (`logs/c23/regression-restart-vs-tag.log`).
+
+### Task 4's two ambiguities
+
+**Mapped-down or original wide data (Hill comment 3.d).** Moot in this
+implementation, and settled from the code rather than argued: `ea_restart`
+refuses `bits_per_symbol` outside 1–8 (`restart_main.cpp:427`), reads one byte
+per sample, and `read_file()` maps the observed symbols down to a contiguous
+`alph_size` range (`utils.h:484-525`). Wide data cannot be loaded at all, so the
+question never arises here; the cutoff tables being anchored against assume the
+same 1000-sample, ≤256-symbol setting. One consequence of the repair worth
+recording: upstream's `simulateBound()` asserts `k_effective <= k` where `k` is
+the *observed* `alph_size`, which can abort when a dataset's observed alphabet
+is smaller than the claimed H_I implies; the exact method takes the worst case
+from H_I alone, as Hill specifies, and cannot abort there.
+
+**Row/column non-independence (Hill comment 3.b).** Recorded as a known
+approximation carried by every cutoff derived this way, the exact multinomial
+one included, with its size measured in Anchor 4 above: under a point at every
+width tested.
+
+### Standing
+
+`C23` leaves the permissive register entirely — it was never permissive in
+substance. What remains is an upstream documentation defect, now recorded, and a
+fork repair that implements the correct statistic exactly and reports the
+printed-formula figure beside it. The repair is **self-authored and unreviewed**,
+like every repair on master, and this entry is the second correction to my own
+C23 conclusion. Measured on this machine; the cutoffs are arithmetic and
+transfer, the simulation figures are upstream's and would be re-drawn anywhere.
+Nothing here decides anything about a device: physical items stay **NOT RUN**.

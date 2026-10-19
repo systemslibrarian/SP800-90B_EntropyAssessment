@@ -43,7 +43,7 @@ not a ceiling.
 |---|---|---|---|
 | **`C03`** IID verdict discards a failed test | **3 → CLOSED BY CODE** (was Class 4) | none — track-selection gap is data-dependent | **YES — merged to master `d226f18`, 2026-10-15** |
 | **`C07`** underflow → fabricated figure | **CLOSED BY CODE** (was 1 + 4) | log-domain LRS; identical in both builds | **YES — merged to master `d226f18`, 2026-10-15; build-differential re-run after the merge** |
-| **`C23`** restart cutoff above the exact binomial | **CLOSED BY CODE on master** (`OC-29`, 2026-10-18; was Class 2) | mechanism: max over 2^H_I cells vs one binomial (`OC-27`); exact cutoff now in the tool; oracle kept for unrepaired binaries | **YES — self-authored, unreviewed** |
+| **`C23`** the printed §3.1.4.3 formula tests the wrong distribution | **NOT A PERMISSIVE DEFECT — re-read 2026-10-19 (`OC-30`)**; upstream's higher simulated cutoff is a deliberate correction (upstream #56). What remains is an **upstream documentation defect**: nothing records the departure. | nothing to bound: the printed formula *over*-rejects (83.2 % of full-entropy 8-bit matrices). The fork now computes the exact multinomial maximum and reports the printed figure beside it. | **YES — self-authored, unreviewed** |
 | **`C22`** `ZALPHA` raises every prediction estimate; `P_local` quantisation; `P_global'` at `N == 1` | **2 → BOUNDABLE, measured (`OC-22`)** | `P_local`: **8.08e-15·(N+1) bit** (6.5e-08 at N = 8e6); `P_global'`: **0**; `ZALPHA` vs literal 2.576: **2.16e-03 bit** at n = 8e6 (3.36e-03 at n = 1e6), **0 under `F07`** | **no — untouched; needs no patch** |
 | **`C01`** two-sided comparison error | **2 → BOUNDABLE** | **±3.69e-4 bit**, measured | no |
 | **`C02`** `hAssessed` carries `word_size × h'` | **1 → CONFIGURATION/READING** | exact factor `word_size` ∈ 1..8 | no (F23 decision stands) |
@@ -330,8 +330,9 @@ every unknown-direction cluster — `C14`, `C16`, `C18`, `C20`, `C21` — once i
 direction is settled.
 
 **What the merge does NOT close, so that the record resists being read as
-"the audit is closed":** `C23` and `C16` — **both since repaired on master,
-`OC-29` (2026-10-18), self-authored and unreviewed, and absent from the tag and
+"the audit is closed":** `C23` and `C16` — **both since repaired on master
+(`C16` at `OC-29`, `C23` corrected at `OC-30` after the first C23 repair was
+found to have installed the defect), self-authored and unreviewed, and absent from the tag and
 from any binary TruePad invokes until it rebuilds (`XR-10`)** —, `C14` (third
 permissive path, status channel, queued — `OC-28` addendum), `C22` (bounded, not removed — the floor still
 subtracts it), `C08`, the off-path conditioning clusters, the five
@@ -366,12 +367,14 @@ H_floor  =  h'                                   the reported per-bit figure, as
           − B_z(n)                               C22c: ZALPHA vs the literal 2.576; B_z = 2.16e-03 at n = 8e6, 3.36e-03 at n = 1e6
                                                        (compression binds); B_z = 0 under F07's reading, which is the audit's own disposition
 
-  subject to  RESTART-ACCEPT(exact)             C23: not a subtraction. Since OC-29 the repaired ea_restart decides with the exact
-                                                       §3.1.4.3 cutoff and writes restartXmax/restartXcutoff/passedRestartSanityCheck;
-                                                       for ANY binary not carrying that repair (the tag, or whatever TruePad invokes
-                                                       until then) recompute with oracles/restart_decision_exact.py (OC-26, XR-10).
-                                                       A decision made by an unrepaired binary is re-decided from its data, never
-                                                       upgraded by the repair landing later.
+  subject to  RESTART-ACCEPT(correct)           C23: never a subtraction, and NOT the printed binomial formula -- deciding on
+                                                       that formula rejects correctly-operating sources (OC-30, corrected reading).
+                                                       The repaired ea_restart decides on the exact multinomial maximum and writes
+                                                       restartXmax / restartXcutoff / restartXcutoffPrintedBinomial /
+                                                       restartCutoffMethod / passedRestartSanityCheck. For a binary without that
+                                                       repair, recompute with oracles/restart_decision_exact.py (XR-11); upstream's
+                                                       simulated cutoff targets the same statistic and is acceptable, within a count
+                                                       or two. A pre-repair decision is re-decided from its data, never upgraded.
                                                        Subtracting its 0.341-bit slack from h' would be a category error — it governs
                                                        acceptance, not the per-bit figure.
 

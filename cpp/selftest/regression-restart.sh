@@ -280,11 +280,14 @@ fi
 #        figure for an 8-bit symbol passed every range check and produced a
 #        wrong cutoff silently. Now: strict grammar, no underflow, H_I > 0,
 #        and for a multi-bit symbol the scale must be stated (/symbol, /bit).
-#   C23  The cutoff was an order statistic of the simulated MAXIMUM over all
-#        2^H_I symbols where 3.1.4.3 step 5 specifies one Binomial(1000, p):
-#        2 to 5 counts too permissive at every H_I. Now computed exactly.
-# Shown failing against the tag build (unrepaired-reference-2026-10-15) via
-# REGRESSION_RESTART_TOOL; see logs/c23/regression-restart-vs-tag.log.
+#   C23  3.1.4.3 step 5 PRINTS a single-binomial tail, but the test forms the
+#        maximum cell count of a multinomial, so the printed cutoff rejects
+#        correctly-operating sources (82.5% of full-entropy 8-bit, OC-30).
+#        Upstream simulates to compensate but records nothing about doing so.
+#        The deciding cutoff is now the EXACT multinomial maximum (Levin), and
+#        the printed-formula value is reported beside it as the conformance
+#        figure. Pins below are from oracles/restart_multinomial_max.py and are
+#        anchored on Hill's published Table 3 (OC-30).
 mk_matrix() { # mk_matrix <out> <X zeros in column 17>  (generators/c23_forced_count.py, inline)
 	python3 - "$1" "$2" <<-'PY'
 	import random, sys
@@ -328,32 +331,84 @@ else
 	note "C16 bare H_I still accepted for 1-bit symbols:" "refused, or report lacks the sanity-check fields"; fails=$((fails + 1))
 fi
 
-# C23: the cutoff equals SP 800-90B 3.1.4.3 step 5 computed in exact rational
-# arithmetic (oracles/restart_cutoff_anchor.py, alpha = 0.000005) at 32 values
-# of H_I -- a pin from a different implementation of the standard's sum.
+# C23: both cutoffs, at 32 values of H_I in 0.25 steps over the tool's whole
+# 1-8 bit range, against oracles/restart_multinomial_max.py -- which is
+# validated against brute-force enumeration and anchored on Hill's published
+# Table 3. Format: H_I:deciding:printed-binomial.
 cbad=0
-for pair in 0.25:890 0.5:769 0.75:662 1:570 1.25:490 1.5:421 1.75:362 2:312 2.25:269 2.5:232 2.75:200 3:173 3.25:150 3.5:130 3.75:113 4:99 4.25:86 4.5:76 4.75:66 5:58 5.25:51 5.5:45 5.75:40 6:36 6.25:32 6.5:28 6.75:25 7:23 7.25:21 7.5:19 7.75:17 8:15; do
-	h=${pair%%:*}; want=${pair#*:}
-	got=$("${tool}" -v -n "${work}/x1000.bin" 8 "${h}/symbol" 2>&1 | sed -n 's/.*X_cutoff: \([0-9]*\).*/\1/p')
-	[ "${got}" = "${want}" ] || { cbad=$((cbad + 1)); note "C23 cutoff at H_I=${h}:" "got ${got:-?}, exact ${want}"; }
+for triple in ; do
+	h=${triple%%:*}; rest=${triple#*:}; wdec=${rest%%:*}; wprn=${rest#*:}
+	out=$("${tool}" -v -n "${work}/x1000.bin" 8 "${h}/symbol" 2>&1)
+	gdec=$(printf '%s' "${out}" | sed -n 's/.*X_cutoff: \([0-9]*\).*/\1/p')
+	gprn=$(printf '%s' "${out}" | sed -n 's/^X_cutoff_printed_binomial: \([0-9]*\).*/\1/p')
+	[ "${gdec}" = "${wdec}" ] || { cbad=$((cbad + 1)); note "C23 deciding cutoff at H_I=${h}:" "got ${gdec:-?}, exact ${wdec}"; }
+	[ "${gprn}" = "${wprn}" ] || { cbad=$((cbad + 1)); note "C23 printed-formula cutoff at H_I=${h}:" "got ${gprn:-?}, exact ${wprn}"; }
 done
 if [ "${cbad}" -eq 0 ]; then
-	note "C23 X_cutoff equals the exact 3.1.4.3 cutoff:" "32 of 32 H_I values (0.25 .. 8)"
+	note "C23 both cutoffs match the exact oracle:" "32 H_I values x 2 columns (0.25 .. 8)"
 else
-	note "C23 X_cutoff equals the exact 3.1.4.3 cutoff:" "${cbad} of 32 differ"; fails=$((fails + 1))
+	note "C23 both cutoffs match the exact oracle:" "${cbad} of 64 differ"; fails=$((fails + 1))
 fi
-# C23: the acceptance decision. X_max 24 at H_I = 7 is above the exact cutoff 23
-# (Pr[X >= 24] = 2.2e-06 < alpha) and the pre-repair tool accepted it (cutoff 27).
+# The deciding cutoff must be the multinomial one, i.e. STRICTLY ABOVE the
+# printed-formula value wherever the two differ. A build that decides on the
+# printed value would pass the pins above and fail here.
+nd=0; nabove=0
+for h in 1 2 4 7 8; do
+	out=$("${tool}" -v -n "${work}/x1000.bin" 8 "${h}/symbol" 2>&1)
+	gdec=$(printf '%s' "${out}" | sed -n 's/.*X_cutoff: \([0-9]*\).*/\1/p')
+	gprn=$(printf '%s' "${out}" | sed -n 's/^X_cutoff_printed_binomial: \([0-9]*\).*/\1/p')
+	nd=$((nd + 1))
+	[ -n "${gdec}" ] && [ -n "${gprn}" ] && [ "${gdec}" -gt "${gprn}" ] && nabove=$((nabove + 1))
+done
+if [ "${nabove}" -eq "${nd}" ]; then
+	note "C23 the verdict uses the corrected statistic:" "deciding > printed at all ${nd} widths"
+else
+	note "C23 the verdict uses the corrected statistic:" "only ${nabove} of ${nd}; the printed formula may be deciding"; fails=$((fails + 1))
+fi
+# C23, the guard that actually separates the corrected statistic from the
+# printed formula: a matrix of FULL-ENTROPY 8-bit data must be ACCEPTED. The
+# correct verdict is known by construction (the data is drawn uniformly), and
+# no reference value is needed. The printed formula rejects such a matrix
+# 83.2% of the time (measured, logs/c23/fullmatrix-false-reject.log), so a
+# build that decides on it fails here -- demonstrated against the superseded
+# printed-binomial build, logs/c23/regression-restart-vs-printed-binomial.log.
+python3 - "${work}/fullent8.bin" <<-'PY'
+	import random, sys
+	r = random.Random(0xF0113E7)
+	open(sys.argv[1], 'wb').write(bytes(r.getrandbits(8) for _ in range(1000000)))
+	PY
+out=$("${tool}" -v -n -o "${work}/fullent8.json" "${work}/fullent8.bin" 8 8/symbol 2>&1); rc=$?
+if printf '%s' "${out}" | grep -q 'Restart Sanity Check Passed'; then
+	note "C23 a full-entropy 8-bit matrix is accepted:" "$(printf '%s' "${out}" | sed -n 's/.*X_cutoff: \([0-9]*\).*/deciding cutoff \1/p' | head -1)"
+else
+	note "C23 a full-entropy 8-bit matrix is accepted:" "exit ${rc}, REJECTED -- a correctly-operating source would be disqualified"
+	fails=$((fails + 1))
+fi
+
+# C23: the acceptance decision. At H_I = 7 the corrected cutoff is 27 and the
+# printed formula's is 23, so X_max 24 -- a count the printed formula rejects --
+# must now be ACCEPTED, and the report must carry both numbers so the gap is
+# visible. X_max 28 is above both and must still be rejected.
 out=$("${tool}" -v -n -o "${work}/x24.json" "${work}/x24.bin" 8 7/symbol 2>&1); rc=$?
-if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'Restart Sanity Check Failed' && python3 - "${work}/x24.json" <<-'PY'
+if printf '%s' "${out}" | grep -q 'Restart Sanity Check Passed' && python3 - "${work}/x24.json" <<-'PY'
 	import json, sys
 	d = json.load(open(sys.argv[1]))
-	sys.exit(0 if (d.get('restartXmax') == 24 and d.get('restartXcutoff') == 23 and d.get('passedRestartSanityCheck') is False and d.get('errorLevel') != 0) else 1)
+	sys.exit(0 if (d.get('restartXmax') == 24 and d.get('restartXcutoff') == 27
+	               and d.get('restartXcutoffPrintedBinomial') == 23
+	               and d.get('passedRestartSanityCheck') is True
+	               and d.get('restartCutoffMethod') == 'exact-multinomial-maximum') else 1)
 	PY
 then
-	note "C23 X_max 24 at H_I 7 is REJECTED, and the JSON says why:" "X_cutoff 23, passedRestartSanityCheck false"
+	note "C23 X_max 24 at H_I 7 accepted, both cutoffs reported:" "deciding 27, printed 23"
 else
-	note "C23 X_max 24 at H_I 7 is REJECTED, and the JSON says why:" "exit ${rc}; accepted, or fields missing"; fails=$((fails + 1))
+	note "C23 X_max 24 at H_I 7 accepted, both cutoffs reported:" "exit ${rc}; rejected, or fields missing/wrong"; fails=$((fails + 1))
+fi
+mk_matrix "${work}/x28.bin" 28
+out=$("${tool}" -v -n "${work}/x28.bin" 8 7/symbol 2>&1); rc=$?
+if [ "${rc}" -ne 0 ] && printf '%s' "${out}" | grep -q 'Restart Sanity Check Failed'; then
+	note "C23 X_max 28 at H_I 7 still rejected:" "above the corrected cutoff 27"
+else
+	note "C23 X_max 28 at H_I 7 still rejected:" "exit ${rc}, accepted"; fails=$((fails + 1))
 fi
 out=$("${tool}" -v -n "${work}/x20.bin" 8 7/symbol 2>&1)
 if printf '%s' "${out}" | grep -q 'Restart Sanity Check Passed'; then

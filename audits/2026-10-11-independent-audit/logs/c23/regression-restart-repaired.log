@@ -36,10 +36,13 @@ C16 H_I='3 ' refused:                              refused (exit 255)
 C16 H_I='3/sym' refused:                           refused (exit 255)
 C16 H_I='7' refused:                               refused (exit 255)
 C16 H_I='3.2' refused:                             refused (exit 255)
-C16 0.875/bit resolves to 7/symbol:                both give X_cutoff 23
+C16 0.875/bit resolves to 7/symbol:                both give X_cutoff 27
 C16 bare H_I still accepted for 1-bit symbols:     accepted (report carries restartXcutoff)
-C23 X_cutoff equals the exact 3.1.4.3 cutoff:      32 of 32 H_I values (0.25 .. 8)
-C23 X_max 24 at H_I 7 is REJECTED, and the JSON says why: X_cutoff 23, passedRestartSanityCheck false
+C23 both cutoffs match the exact oracle:           32 H_I values x 2 columns (0.25 .. 8)
+C23 the verdict uses the corrected statistic:      deciding > printed at all 5 widths
+C23 a full-entropy 8-bit matrix is accepted:       deciding cutoff 19
+C23 X_max 24 at H_I 7 accepted, both cutoffs reported: deciding 27, printed 23
+C23 X_max 28 at H_I 7 still rejected:              above the corrected cutoff 27
 C23 X_max 20 at H_I 7 still passes the sanity check: passed
 
 regression-restart: PASS

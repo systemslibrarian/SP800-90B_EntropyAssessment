@@ -28,7 +28,7 @@ commits of our changes before the reproduction means anything.
 |---|---|---|---|
 | **`C07`** sites A & B — `assert(p_colPower >= LDBL_MIN)`, `assert(p_col >= 1/k)` | implementation | **PRESENT** (`cpp/shared/lrs_test.h`) | **no** |
 | **`C03`** — failed battery still yields `errorLevel 0` and a figure | implementation | **PRESENT** (`iid_main.cpp:341` prints the failure, `:370` sets `errorLevel = 0`) | **no** |
-| **`C23`** — the tool simulates the max over 2^H_I cells where §3.1.4.3 specifies one binomial (`OC-27`); **UPSTREAM defect**, `simulateCount`/`simulateBound` unchanged on `87c104d`; repaired in the fork `OC-29` | **both** | **PRESENT** (`restart_main.cpp`) | **no** |
+| **`C23`** — upstream simulates the multinomial maximum where §3.1.4.3 prints a single binomial, **deliberately** (upstream #56) and **without recording it**; the printed formula is the defective side and rejects good sources (`OC-30`). Upstream defect is the **silence**, not the statistic. | **both** | **PRESENT** (`restart_main.cpp`) | **no** |
 | **`C22`** — `ZALPHA` exact quantile vs printed 2.576 | **both** | **PRESENT** (`cpp/non_iid/collision_test.h`) | **no** |
 | **`C05`** — `assert(k_effective <= k)` | implementation | **PRESENT** | no — **already filed as upstream #195, open since 2022** |
 | **`C21`** — `fesetround(FE_TOWARDZERO)` left in effect; `periodicity()`/`covariance()` OOB reads | implementation | **PRESENT** | **no** (needs ASan) |

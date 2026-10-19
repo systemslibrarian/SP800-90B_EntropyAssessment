@@ -208,20 +208,33 @@ A second repair pass on the same date, working the remaining queue:
 2026-09-30  cpp/restart_main.cpp: H_I is parsed with strtod and must be
             finite, instead of atof, which accepted "abc" as 0 and let
             "nan" through to an out-of-bounds index. Commit db7a2ba.
-2026-10-18  cpp/restart_main.cpp: the 3.1.4.3 sanity-check cutoff is
-            computed exactly from the standard's step 5 (one binomial
-            tail at alpha = 0.000005) instead of simulated as the maximum
-            over all 2^H_I symbols, which sat 2-5 counts too high at every
-            H_I and accepted matrices the standard rejects (audit C23,
-            OC-27/OC-29; the simulated statistic is upstream code). -s is
-            accepted and ignored. H_I must be greater than zero, must not
+2026-10-18  cpp/restart_main.cpp: H_I must be greater than zero, must not
             underflow, and for a multi-bit symbol must state its scale as
-            '<v>/symbol' or '<v>/bit'; a bare number at the wrong scale
-            had produced a wrong cutoff silently (audit C16). The report
+            '<v>/symbol' or '<v>/bit'; a bare number at the wrong scale had
+            produced a wrong cutoff silently (audit C16, OC-29). The report
             gains restartHI, restartAlpha, restartXmax, restartXcutoff and
             passedRestartSanityCheck. Regression: regression-restart.sh,
             shown failing against tag unrepaired-reference-2026-10-15.
             Self-authored and unreviewed.
+2026-10-18  cpp/restart_main.cpp: the 3.1.4.3 sanity-check cutoff was made
+            the printed single-binomial tail instead of upstream's simulated
+            value. THIS WAS WRONG and was corrected the next day; see the
+            2026-10-19 entry. Recorded rather than removed because the
+            commit (a5005bd) is in the history.
+2026-10-19  cpp/restart_main.cpp: the sanity-check cutoff is computed as the
+            exact distribution of the MULTINOMIAL MAXIMUM (Levin's
+            representation), which is the statistic 3.1.4.3 actually forms,
+            and the printed single-binomial value is reported beside it as
+            the conformance figure (restartXcutoffPrintedBinomial,
+            restartCutoffMethod). The printed formula is not the probability
+            of the event tested and rejects correctly-operating sources:
+            83.2% of full-entropy 8-bit matrices, measured. Upstream
+            simulates the right statistic on purpose (upstream issue #56);
+            the upstream defect is that nothing records the departure from
+            the printed text. Anchored on Hill/UL's published comments on
+            SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
+            against brute-force enumeration. -s is accepted and ignored.
+            Audit C23, OC-30. Self-authored and unreviewed.
 2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
             report that is actually written. Commit 23dca69.
 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed

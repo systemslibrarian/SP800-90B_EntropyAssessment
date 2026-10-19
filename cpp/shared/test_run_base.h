@@ -44,7 +44,9 @@ public:
     double restartHI = -1.0;
     double restartAlpha = -1.0;
     int restartXmax = -1;
-    int restartXcutoff = -1;
+    int restartXcutoff = -1;                 // the deciding cutoff
+    int restartXcutoffPrintedBinomial = -1;  // 3.1.4.3 step 5 as printed: conformance only
+    string restartCutoffMethod;
     int restartSanityCheckPassed = -1;
 
 protected:
@@ -76,6 +78,8 @@ protected:
             baseJson["restartAlpha"] = restartAlpha;
             baseJson["restartXmax"] = restartXmax;
             baseJson["restartXcutoff"] = restartXcutoff;
+            if (restartXcutoffPrintedBinomial >= 0) baseJson["restartXcutoffPrintedBinomial"] = restartXcutoffPrintedBinomial;
+            if (!restartCutoffMethod.empty()) baseJson["restartCutoffMethod"] = restartCutoffMethod;
             baseJson["passedRestartSanityCheck"] = (restartSanityCheckPassed == 1);
         }
         if(!filename.empty()) {

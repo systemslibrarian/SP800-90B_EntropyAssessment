@@ -26,37 +26,127 @@
 //Each test has a targeted chance of roughly 0.000005, and we need to witness at least 5 failures, so this should be no less than 1000000
 #define DEFAULT_SIMULATION_ROUNDS 5000000UL
 
-// C23 (audit 2026-10-11, OC-7/OC-27): SP 800-90B 3.1.4.3 step 5 specifies the
-// sanity-check cutoff as the tail of a SINGLE Binomial(1000, p), p = 2^-H_I:
-// the test fails iff Pr(X >= X_max) < alpha. simulateBound() below instead
-// simulates the MAXIMUM count over all ceil(1/p) symbols and takes an order
-// statistic of that -- a stochastically larger variable -- so its cutoff sat
-// 2 to 5 counts above the standard's at every H_I and the tool accepted
-// restart matrices the standard rejects. This computes step 5 as written.
-// The largest X_max that passes is the largest x with Pr(X >= x) >= alpha
-// ("counts equal to this value should pass; larger values should fail").
-// Summed from the top in long double; checked against an exact-rational
-// evaluation of the same sum at 32 values of H_I in regression-restart.sh.
+// C23 (audit 2026-10-11; superseded reading in OC-27/OC-29, corrected in OC-30).
 //
-// EA_RESTART_WITHOUT_C23_FIX and EA_RESTART_WITHOUT_C16_FIX are audit-only
-// build knobs that restore the pre-repair behaviour of each defect
-// independently, so the joint behaviour of the two can be shown
-// (audits/2026-10-11-independent-audit/reproducers/c16-c23-matrix.sh).
-// No Makefile target sets either.
-static int exactBound(double alpha, double H_I) {
-    const int n = 1000;
+// SP 800-90B 3.1.4.3 step 5 PRINTS the tail of a single Binomial(1000, p),
+// p = 2^-H_I. But the value tested, X_max, is the largest count of the
+// ROW/COLUMN-SPECIFIC most likely symbol -- the maximum cell count of a
+// multinomial -- which is stochastically larger than any one cell's count. So
+// the printed formula is not the probability of the event being tested, and a
+// cutoff computed from it REJECTS CORRECTLY-OPERATING SOURCES: computed in
+// OC-30, the false-reject rate of the printed cutoff on full-entropy data is
+// 1.6% at 1 bit, 3.3% at 2, 10.7% at 4 and 82.5% at 8, against the 1% the
+// standard targets. Hill/UL formal comments on SP 800-90B (final, v1.9,
+// 2019-12-12, www.untruth.org/~josh/sp80090b/) comment 3.a names the same
+// mechanism; upstream issue #56 asks for a simulated cutoff for this reason,
+// which is why upstream simulates. THE DEFECT IS THE SILENCE: nothing upstream
+// records that the implementation deliberately departs from the printed text.
+//
+// This computes the exact cutoff for the statistic the test actually forms --
+// the first of the two exact methods Hill names (Levin, "A Representation for
+// Multinomial Cumulative Distribution Functions", Ann. Statist. 9(5), 1981) --
+// which is better than both the printed formula and a simulation. For any s>0,
+//   P(all cells <= m) = n!/(s^n e^-s) * P(W = n) * prod_j P(Poisson(s p_j) <= m)
+// where W sums independent Poisson(s p_j) each conditioned on being <= m.
+// Every factor is a probability or a log-domain scalar, so nothing underflows.
+// Worst case per Hill 3.a.i, matching the k_effective upstream already used:
+// floor(1/p) symbols at probability p plus one holding the remainder.
+//
+// Anchored in OC-30 against Hill's published Table 3 and against upstream's own
+// 5,000,000-round simulation; validated against brute-force enumeration; the
+// 32 pinned cutoffs are checked in cpp/selftest/regression-restart.sh. The
+// deciding cutoff and the printed-formula cutoff are BOTH reported, so the gap
+// and the figure the verdict used are both visible.
+//
+// Audit-only build knobs, for the matrix that shows each state failing.
+// EA_RESTART_WITHOUT_C23_FIX    decide on upstream's simulated cutoff.
+// EA_RESTART_C23_PRINTED_BINOMIAL  decide on the printed formula -- the
+//     SUPERSEDED repair of commit a5005bd, kept reproducible because it is the
+//     state that over-rejects and the record has to be able to show it.
+// EA_RESTART_WITHOUT_C16_FIX    restore the old H_I parse.
+// All three are for the matrix
+// (audits/2026-10-11-independent-audit/reproducers/c16-c23-matrix.sh). No
+// Makefile target sets either.
+#define RESTART_TRIALS 1000
+
+// SP 800-90B 3.1.4.3 step 5 exactly as printed. Reported as the conformance
+// figure; NOT the deciding cutoff, for the reason above.
+static int printedBinomialBound(double alpha, double H_I) {
+    const int n = RESTART_TRIALS;
     const long double p = powl(2.0L, -(long double) H_I);
-    if (p >= 1.0L) return n;                 // H_I <= 0: every count "passes"; the C16 parse refuses this upstream
+    if (p >= 1.0L) return n;
     const long double q = 1.0L - p;
     const long double lgn = lgammal((long double) n + 1.0L);
     long double tail = 0.0L;
     for (int x = n; x >= 0; x--) {
-        const long double logpmf = lgn - lgammal((long double) x + 1.0L) - lgammal((long double) (n - x) + 1.0L)
-                                   + (long double) x * logl(p) + (long double) (n - x) * logl(q);
-        tail += expl(logpmf);
+        tail += expl(lgn - lgammal((long double) x + 1.0L) - lgammal((long double) (n - x) + 1.0L)
+                     + (long double) x * logl(p) + (long double) (n - x) * logl(q));
         if (tail >= (long double) alpha) return x;
     }
     return 0;
+}
+
+// Normalised pmf of Poisson(lam) truncated to 0..m, and log P(Poisson(lam) <= m).
+static void truncPoisson(long double lam, int m, vector<long double> &pmf, long double &logTail) {
+    pmf.assign(m + 1, 0.0L);
+    if (lam <= 0.0L) { pmf[0] = 1.0L; logTail = 0.0L; return; }
+    const long double loglam = logl(lam);
+    long double mx = -LDBL_MAX;
+    vector<long double> lg(m + 1);
+    for (int i = 0; i <= m; i++) { lg[i] = (long double) i * loglam - lgammal((long double) i + 1.0L); if (lg[i] > mx) mx = lg[i]; }
+    long double tot = 0.0L;
+    for (int i = 0; i <= m; i++) { pmf[i] = expl(lg[i] - mx); tot += pmf[i]; }
+    for (int i = 0; i <= m; i++) pmf[i] /= tot;
+    logTail = -lam + mx + logl(tot);           // e^-lam * sum_i lam^i/i!
+}
+
+static void convTrunc(const vector<long double> &a, const vector<long double> &b, int limit, vector<long double> &out) {
+    out.assign(limit + 1, 0.0L);
+    for (size_t i = 0; i < a.size() && (int) i <= limit; i++) {
+        if (a[i] == 0.0L) continue;
+        const int jmax = min((int) b.size() - 1, limit - (int) i);
+        for (int j = 0; j <= jmax; j++) out[i + j] += a[i] * b[j];
+    }
+}
+
+// P(every cell count <= m) for the worst-case configuration at this H_I.
+static long double maxCellCdf(double H_I, int m) {
+    const int n = RESTART_TRIALS;
+    if (m >= n) return 1.0L;
+    if (m < 0) return 0.0L;
+    const long double p = powl(2.0L, -(long double) H_I);
+    if (p >= 1.0L) return 0.0L;
+    const long long kfloor = (long long) floorl(1.0L / p);
+    const long double rem = 1.0L - (long double) kfloor * p;
+    const long double s = (long double) n;
+    const int mm = min(m, n);
+
+    vector<long double> base, dist(1, 1.0L), tmp;
+    long double logp = 0.0L, logTail = 0.0L;
+    truncPoisson(s * p, mm, base, logTail);
+    long double logprod = (long double) kfloor * logTail;
+    for (long long e = kfloor; e > 0; e >>= 1) {       // binary powering
+        if (e & 1) { convTrunc(dist, base, n, tmp); dist.swap(tmp); }
+        if (e >> 1) { convTrunc(base, base, n, tmp); base.swap(tmp); }
+    }
+    if (rem > 1e-15L) {
+        vector<long double> remPmf;
+        truncPoisson(s * rem, mm, remPmf, logp);
+        convTrunc(dist, remPmf, n, tmp); dist.swap(tmp);
+        logprod += logp;
+    }
+    if ((int) dist.size() <= n || dist[n] <= 0.0L) return 0.0L;
+    const long double logpre = lgammal((long double) n + 1.0L) - (long double) n * logl(s) + s;
+    const long double r = expl(logpre + logl(dist[n]) + logprod);
+    return (r > 1.0L) ? 1.0L : r;
+}
+
+// The deciding cutoff: smallest m with P(max <= m) >= 1 - alpha, so counts equal
+// to it pass and larger ones fail -- upstream's own stated convention.
+static int exactMultinomialMaxBound(double alpha, double H_I) {
+    int m = printedBinomialBound(alpha, H_I);   // the max is never below one cell's quantile
+    while (m < RESTART_TRIALS && maxCellCdf(H_I, m) < 1.0L - (long double) alpha) m++;
+    return m;
 }
 
 // C16 (OC-11/OC-28): the H_I argument. Grammar is a plain decimal -- digits,
@@ -247,6 +337,7 @@ int main(int argc, char* argv[]) {
     int counts[256];
     unsigned long int simulation_rounds = DEFAULT_SIMULATION_ROUNDS;
     int X_cutoff;
+    int X_cutoff_printed;
     int i, j;
     int X_i, X_r, X_c, X_max;
     double H_I, H_r, H_c, alpha, ret_min_entropy;
@@ -568,18 +659,28 @@ int main(int argc, char* argv[]) {
 
     printf("H_I: %f\n", H_I);
 
-#ifdef EA_RESTART_WITHOUT_C23_FIX
-    alpha = 1 - exp(log(0.99) / (r + c));
-    X_cutoff = simulateBound(alpha, data.alph_size, H_I, simulation_rounds);
-    if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d (simulated max over symbols, pre-repair)\n", alpha, X_cutoff);
-#else
-    // C23: SP 800-90B 3.1.4.3 step 1 sets alpha = 0.000005; step 5 is a single
-    // binomial tail. (The Sidak value 1 - 0.99^(1/2000) the tool used gives
-    // the same cutoff at every H_I in 1..8, OC-7.) -s is accepted and ignored.
-    (void) simulation_rounds;
+    // 3.1.4.3 step 1 sets alpha = 0.000005, which is what Hill's published
+    // cutoffs target too; the Sidak value 1 - 0.99^(1/2000) upstream used gives
+    // the same cutoffs at every H_I in 1..8 (OC-7).
     alpha = 0.000005;
-    X_cutoff = exactBound(alpha, H_I);
-    if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d (exact binomial tail, SP 800-90B 3.1.4.3 step 5)\n", alpha, X_cutoff);
+    X_cutoff_printed = printedBinomialBound(alpha, H_I);
+#ifdef EA_RESTART_WITHOUT_C23_FIX
+    {
+        const double alpha_sim = 1 - exp(log(0.99) / (r + c));
+        X_cutoff = simulateBound(alpha_sim, data.alph_size, H_I, simulation_rounds);
+        if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d (upstream simulated maximum over symbols)\n", alpha_sim, X_cutoff);
+    }
+#elif defined(EA_RESTART_C23_PRINTED_BINOMIAL)
+    (void) simulation_rounds;
+    X_cutoff = X_cutoff_printed;        // SUPERSEDED (a5005bd): over-rejects, see OC-30
+    if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d (printed binomial formula -- SUPERSEDED, rejects correctly-operating sources)\n", alpha, X_cutoff);
+#else
+    (void) simulation_rounds;                   // -s is accepted and ignored
+    X_cutoff = exactMultinomialMaxBound(alpha, H_I);
+    if (verbose > 0) {
+        printf("ALPHA: %.17g, X_cutoff: %d (exact distribution of the multinomial maximum, the statistic 3.1.4.3 forms)\n", alpha, X_cutoff);
+        printf("X_cutoff_printed_binomial: %d (SP 800-90B 3.1.4.3 step 5 as printed; conformance figure, not the verdict -- it rejects correctly-operating sources, see OC-30)\n", X_cutoff_printed);
+    }
 #endif
 
     // get maximum row count
@@ -619,6 +720,16 @@ int main(int argc, char* argv[]) {
     testRunIid.restartAlpha = alpha;       testRunNonIid.restartAlpha = alpha;
     testRunIid.restartXmax = X_max;        testRunNonIid.restartXmax = X_max;
     testRunIid.restartXcutoff = X_cutoff;  testRunNonIid.restartXcutoff = X_cutoff;
+    testRunIid.restartXcutoffPrintedBinomial = X_cutoff_printed;
+    testRunNonIid.restartXcutoffPrintedBinomial = X_cutoff_printed;
+#ifdef EA_RESTART_WITHOUT_C23_FIX
+    testRunIid.restartCutoffMethod = "upstream-simulated-multinomial-maximum";
+#elif defined(EA_RESTART_C23_PRINTED_BINOMIAL)
+    testRunIid.restartCutoffMethod = "printed-binomial-SUPERSEDED";
+#else
+    testRunIid.restartCutoffMethod = "exact-multinomial-maximum";
+#endif
+    testRunNonIid.restartCutoffMethod = testRunIid.restartCutoffMethod;
     testRunIid.restartSanityCheckPassed = (X_max <= X_cutoff) ? 1 : 0;
     testRunNonIid.restartSanityCheckPassed = testRunIid.restartSanityCheckPassed;
     if (X_max > X_cutoff) {

@@ -1,7 +1,24 @@
-variant   | sane: H_I 7, X_max 24 (exact cutoff 23)    | underflow: H_I 1e-400, X_max 20      | scale: 0.875 meant per bit, bare
-----------|--------------------------------------------|--------------------------------------|------------------------------------
-neither   | ACCEPTED by sanity check, X_cutoff 27      | ACCEPTED by sanity check, X_cutoff 1000 | ACCEPTED by sanity check, X_cutoff 615
-c16only   | ACCEPTED by sanity check, X_cutoff 27      | REFUSED (exit 255)                   | REFUSED (exit 255)
-c23only   | REJECTED by sanity check, X_cutoff 23      | ACCEPTED by sanity check, X_cutoff 1000 | ACCEPTED by sanity check, X_cutoff 614
-both      | REJECTED by sanity check, X_cutoff 23      | REFUSED (exit 255)                   | REFUSED (exit 255)
+input x24.bin        1000000 bytes sha256 8da941675ca1e288c1d0d06d8099faa9f20fec502a9028a3ed581cae0675405b
+input x20.bin        1000000 bytes sha256 5296df2b3a0b137e0683a64b450a1597e1bd5efb78661cc60ad8e028e0ee464f
+input fullent8.bin   1000000 bytes sha256 c7a56db87d911b2a58ea0969211ddddc32cdf9ae0df6616352686f0e51fedc4b
+build          C23        | fullent 8-bit H_I 8 | sane X_max 24  | underflow   | wrong scale
+---------------------------|------------------|----------------|-------------|-------------
+old/upstream-sim upstream-sim | accept (cut 19)  | accept (cut 27) | accept (cut 1000) | accept (cut 614)
+strict/upstream-sim upstream-sim | accept (cut 19)  | accept (cut 27) | REFUSED     | REFUSED
+strict/printed-bin printed-bin | REJECT (cut 15)  | REJECT (cut 23) | REFUSED     | REFUSED
+old/exact      exact      | accept (cut 19)  | accept (cut 27) | accept (cut 1000) | accept (cut 614)
+strict/exact   exact      | accept (cut 19)  | accept (cut 27) | REFUSED     | REFUSED
+
+Expected: fullent must be ACCEPTED by every correct build (the data is uniform by
+construction) and is REJECTED by printed-bin. underflow and wrong scale must be
+REFUSED wherever C16 is strict. sane is accepted by the correct statistic (24 <= 27)
+and rejected by printed-bin (24 > 23).
+
+## Determinism: the exact method is reproducible, the simulation is not
+  sim_strict     X_cutoff at H_I 8/symbol over 5 runs: 19 19 19 19 19
+  exact_strict   X_cutoff at H_I 8/symbol over 5 runs: 19 19 19 19 19
+
+## Cost: the exact method replaces a 5,000,000-round simulation
+  sim_strict     full run: 6.8 s
+  exact_strict   full run: 5.3 s
 exit 0

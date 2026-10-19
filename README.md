@@ -125,10 +125,16 @@ The file should be in the "row dataset" format described in SP800-90B Section 3.
 `H_I` must be greater than zero and at most `bits_per_symbol`. For a symbol
 wider than one bit its scale must be stated: `4.0/symbol` (the per-symbol
 estimate) or `0.5/bit` (per bit, multiplied by `bits_per_symbol`); a bare
-number is accepted only for 1-bit symbols. The sanity-check cutoff is
-computed exactly from SP 800-90B 3.1.4.3 step 5 (this fork; see
-`audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md` OC-29), and the
-report carries `restartXmax`, `restartXcutoff` and `passedRestartSanityCheck`.
+number is accepted only for 1-bit symbols.
+
+The Section 3.1.4.3 sanity-check cutoff is computed as the exact distribution
+of the multinomial maximum — the statistic that test actually forms — rather
+than from the single-binomial tail the text prints, because a cutoff derived
+from the printed formula rejects correctly-operating sources. Both values are
+reported: `restartXcutoff` (the verdict) and `restartXcutoffPrintedBinomial`
+(conformance only), with `restartXmax`, `restartHI`, `restartCutoffMethod` and
+`passedRestartSanityCheck`. This fork; see
+`audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md` OC-30.
 
 * `-i`: Indicates IID data.
 * `-n`: Indicates non-IID data.

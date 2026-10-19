@@ -207,3 +207,17 @@ upstream report** — the inventory is kept as documentation, not sent.
 | **`C23`** | PERMISSIVE, verified | mechanism named (`OC-27`): a different statistic — max over k_eff cells — not an off-by-one; systematic +2…+5 at every H_I and every α; "exact" anchored by exact rational arithmetic. |
 
 No cluster remains with an unknown direction on the platform in use.
+
+# CORRECTION 2026-10-19 — C23's direction was inverted; it leaves the permissive register
+
+`OC-30`, on the published anchor this file's earlier entries said did not exist
+(Hill/UL formal comments on SP 800-90B final, v1.9, 2019-12-12, Table 3;
+upstream issue #56).
+
+| Cluster | Was | Now |
+|---|---|---|
+| **`C23` / `restart-12`** | PERMISSIVE, VERIFIED, "the audit's top finding" | **NOT PERMISSIVE.** The gap is real and systematic, but the defective side is the standard's printed formula, which tests a single binomial where the statistic is a multinomial maximum and so **rejects correctly-operating sources** (83.2 % of full-entropy 8-bit matrices, measured). Upstream's higher simulated cutoff is a deliberate correction requested in upstream #56. What remains is an **upstream documentation defect** — the departure is unrecorded — plus a conformance point. The fork's first C23 repair (`a5005bd`) installed the printed formula and was itself a defect; corrected in `OC-30` to the exact multinomial maximum. |
+
+So the permissive register's top entry was never permissive. `C16` is unaffected
+and its repair stands. The audit's remaining permissive path is `C14` (status
+channel, queued).

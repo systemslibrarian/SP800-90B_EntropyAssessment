@@ -1,0 +1,10 @@
+# Determinism of the cutoff: upstream's simulation vs the exact method.
+# Measured where the per-count tail ratio is ~1.4 (low H_I), which is where an order
+# statistic from a finite simulation is least pinned -- and where Hill's own published
+# Table 3 is non-monotonic. At 8-bit the ratio is 5.3 and the simulation is stable.
+upstream simulated, 1-bit H_I 1        : 572 572 573 572 572 572 571 571
+exact (this build),  1-bit H_I 1        : 572 572 572 572 572 572 572 572
+upstream simulated, 2-bit H_I 2        : 316 317 316 316 316 316 317 316
+exact (this build),  2-bit H_I 2        : 316 316 316 316 316 316 316 316
+upstream simulated, 2-bit H_I 1.86565  : 342 340 341 341 340 341 342 341
+exact (this build),  2-bit H_I 1.86565  : 341 341 341 341 341 341 341 341

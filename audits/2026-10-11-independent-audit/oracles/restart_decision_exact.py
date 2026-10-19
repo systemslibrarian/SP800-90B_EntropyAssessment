@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
-"""C23: recompute the SP 800-90B 3.1.4.3 restart sanity-check DECISION exactly.
+"""C23: recompute the restart sanity-check DECISION with the CORRECT statistic.
 
-The tool's X_cutoff is an order statistic of 5,000,000 simulated experiments and
-sits above the exact binomial cutoff (OC-7: H_I = 7 gives 27 against 23), so it
-accepts restart matrices the standard rejects. C23 governs ACCEPTANCE, not the
-per-bit figure: the treatment is not a subtraction, it is this recomputation.
+CORRECTED 2026-10-19 (OC-30). This script used to decide on SP 800-90B 3.1.4.3
+step 5 as printed -- the tail of a single binomial -- and called that exact.
+That formula is not the probability of the event being tested: the value tested
+is the maximum count of the row/column-specific most likely symbol, a
+multinomial maximum. Deciding on the printed formula REJECTS CORRECTLY-OPERATING
+SOURCES (83.2% of full-entropy 8-bit matrices, measured). The deciding cutoff
+here is now the exact distribution of the multinomial maximum (Levin), anchored
+on Hill/UL's published Table 3; the printed-formula value is reported beside it
+as the conformance figure only.
 
 Usage:  restart_decision_exact.py <ea_restart -v log> [...]
         restart_decision_exact.py --manual <H_I> <X_max>
@@ -22,20 +27,32 @@ the tool.
 import re, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from restart_cutoff_exact import exact_cutoff, alpha_tool, tail, power, mpf
+from restart_multinomial_max import maxcell_cutoff, binomial_cutoff
 
 def decide(H_I, X_max, tool_cutoff=None, tool_said=None, label=''):
-    a = alpha_tool()
-    cut = exact_cutoff(H_I, a)
+    ALPHA = 0.000005                      # 3.1.4.3 step 1, and the alpha Hill's cutoffs target
+    printed = binomial_cutoff(H_I, ALPHA)         # conformance figure only
+    cut = maxcell_cutoff(H_I, ALPHA, start=printed)  # the deciding cutoff
     exact = 'ACCEPT' if X_max <= cut else 'REJECT'
-    p = power(2, -mpf(H_I))
     print('%s' % label)
-    print('  inputs: H_I=%s  X_max=%d  alpha=%.10g (Sidak, tool\'s own)  N=1000' % (H_I, X_max, float(a)))
-    print('  exact cutoff (largest passing count): %d   P(X >= X_max | H_I) = %.3e' % (cut, float(tail(X_max, p))))
-    print('  EXACT decision:  %s  (X_max %s %d)' % (exact, '<=' if exact == 'ACCEPT' else '>', cut))
+    print('  inputs: H_I=%s  X_max=%d  alpha=%g  N=1000' % (H_I, X_max, ALPHA))
+    print('  DECIDING cutoff (exact multinomial maximum, the statistic 3.1.4.3 forms): %d' % cut)
+    print('  DECISION: %s  (X_max %s %d)' % (exact, '<=' if exact == 'ACCEPT' else '>', cut))
+    print('  conformance only -- 3.1.4.3 step 5 as printed would give cutoff %d (%s);' % (
+        printed, 'ACCEPT' if X_max <= printed else 'REJECT'))
+    print('    the printed formula tests a single binomial and rejects correctly-operating')
+    print('    sources, so it is recorded for traceability and is NOT the verdict (OC-30).')
     if tool_cutoff is not None:
         tool = 'ACCEPT' if X_max <= tool_cutoff else 'REJECT'
-        print('  tool  decision:  %s  (simulated X_cutoff %d%s)' % (tool, tool_cutoff, ('; tool printed "%s"' % tool_said) if tool_said else ''))
-        print('  => %s' % ('AGREE' if tool == exact else 'DISAGREE: the tool %s a matrix the standard %ss' % ('accepts' if tool == 'ACCEPT' else 'rejects', exact.lower())))
+        print('  the tool said: %s  (its X_cutoff %d%s)' % (tool, tool_cutoff,
+              ('; printed "%s"' % tool_said) if tool_said else ''))
+        if tool == exact:
+            print('  => AGREE with the corrected decision')
+        else:
+            print('  => DISAGREE: the tool %ss where the corrected statistic %ss' % (tool.lower(), exact.lower()))
+        if abs(tool_cutoff - cut) <= 2:
+            print('     (its cutoff is within 2 of the exact one, consistent with upstream\'s simulation')
+            print('      of the same statistic -- see XR-11 item 4)')
     return exact
 
 if __name__ == '__main__':
