@@ -613,6 +613,13 @@ IEEE double — the narrowest of the three formats a build can land on; the x87
 and binary128 sides are a bounded argument from the arithmetic (`OC-24`),
 settled by one canary run on such a host, not by re-running everything.
 
+**The tag's `ea_restart` is the pre-repair one.** It takes a bare `H_I` at any
+scale and computes its sanity-check cutoff by simulating the maximum over all
+symbols, 2–5 counts above the cutoff SP 800-90B 3.1.4.3 specifies (`OC-27`);
+master's `ea_restart` since `OC-29` requires the scale (`/symbol`, `/bit`) and
+computes the cutoff exactly. A restart decision from the tag's binary is to be
+recomputed with `oracles/restart_decision_exact.py` (`XR-10`).
+
 **Evidentiary standing.** The repairs are self-authored and unreviewed; the
 merge changes nothing about that. Figures from the repaired build are to be
 reported with that statement beside them.

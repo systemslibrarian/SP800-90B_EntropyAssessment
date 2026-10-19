@@ -39,6 +39,13 @@ public:
     unsigned long subsetIndex = 0;
     unsigned long subsetRequestedSamples = 0;
     long subsetActualSamples = 0;
+    // ea_restart only: the 3.1.4.3 sanity-check inputs and verdict, so a
+    // consumer can recompute the decision rather than read it (C16/C23 repair).
+    double restartHI = -1.0;
+    double restartAlpha = -1.0;
+    int restartXmax = -1;
+    int restartXcutoff = -1;
+    int restartSanityCheckPassed = -1;
 
 protected:
     Json::Value GetBaseJson() {
@@ -63,6 +70,13 @@ protected:
             baseJson["subsetIndex"] = (Json::UInt64)subsetIndex;
             baseJson["subsetRequestedSamples"] = (Json::UInt64)subsetRequestedSamples;
             baseJson["subsetActualSamples"] = (Json::Int64)subsetActualSamples;
+        }
+        if (restartXcutoff >= 0) {
+            baseJson["restartHI"] = restartHI;
+            baseJson["restartAlpha"] = restartAlpha;
+            baseJson["restartXmax"] = restartXmax;
+            baseJson["restartXcutoff"] = restartXcutoff;
+            baseJson["passedRestartSanityCheck"] = (restartSanityCheckPassed == 1);
         }
         if(!filename.empty()) {
             baseJson["filename"] = filename;

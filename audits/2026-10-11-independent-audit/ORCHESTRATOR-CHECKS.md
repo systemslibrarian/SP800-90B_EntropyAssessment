@@ -2724,3 +2724,191 @@ master, which today still accepts it with `exit 0` — and the four hardening
 items. Not done here; direction only. `C14` is also permissive but on the
 status channel, and two of its three routes are TruePad-side or already
 closed; it ranks behind `C16`.
+
+## OC-27 addendum — what anchors "exact", and conformance separated from correctness
+
+### Where the standard column comes from
+
+**Computed, not read.** SP 800-90B prints no cutoff values. §3.1.4.3 gives the
+procedure and nothing else — quoted from the reference PDF
+(`audits/2026-09-30/reference/NIST.SP.800-90B.pdf`, SHA-256 `9b0dd771…`, p. 14):
+
+> *1. Let p = 2^−H_I. Let α be 0.000 005. … 5. Calculate
+> P(X ≥ X_max) = Σ_{j=X_max}^{1000} C(1000, j) p^j (1−p)^{1000−j}. If
+> Pr(X ≥ X_max) < α, the test fails. Otherwise, the test passes.*
+
+There is no worked example and no table, so 570, 312, 173, 99, 58, 36, 23, 19
+and 15 are **this project's evaluations of that sum**, three times over:
+`restart_cutoff_exact.py` (mpmath `binomial()`), `restart_cutoff_anchor.py`
+(exact rational recurrence, no binomial coefficients, no floating point), and
+the finder's own oracle from the batch phase, which `OC-7` matched digit for
+digit. Three implementations agreeing removes floating point and a shared code
+path as failure modes. It does **not** remove a shared misreading of the
+sentence. The two readings that could be mistaken are both pinned to the text:
+the sum starts *at* `X_max` (inclusive, `j = X_max`), and equality passes
+(*"if … < α the test fails, otherwise passes"*). No published validation table
+and no third-party implementation's output for this test was located offline.
+
+**So the claim is: exact and self-consistent across three implementations of
+the standard's printed formula, pinned to the quoted text — not exact and
+independently anchored to published values.** A reader who wants the stronger
+claim needs an external number this project does not have.
+
+### The conformance finding, stated on its own
+
+`restart_main.cpp` does not implement the test §3.1.4.3 specifies. The
+standard's step 5 is the tail of one Binomial(1000, p); the tool's
+`simulateCount()` draws 1000 symbols over 2^H_I cells and returns the maximum
+over all cells, and `simulateBound()` takes the (1−α) order statistic of that.
+The two are different random variables; the tool's sits higher, by 2–5 counts
+at every H_I in 1..8, and the tool therefore accepts restart matrices the
+standard's test rejects. **That is the finding. It is permissive, it is
+established by exact computation and by measurement, and a laboratory running
+this binary is not running SP 800-90B's restart sanity check.**
+
+### The correctness question, stated separately — a question about the standard, not a defence of the tool
+
+Whether the tool's statistic is the *better* test is a different question with
+a different audience, and it is open. `X_max` as the standard defines it *is*
+a maximum over symbols within a row (step 2: *"Set X_Ri to the highest count
+value for row i"*) and then over 2000 rows and columns. The standard corrects
+for the 2000 rows and columns (α = 0.01 / 2000) but tests the resulting maximum
+against the tail of a single cell's binomial. If the intended null is "no cell
+is over-represented", then comparing a maximum over 2^H_I cells against one
+cell's tail inflates the false-positive rate by roughly the number of cells, and
+raising the cutoff to the quantile of the maximum — which is what the tool does
+— is the conventional response. On that reading the tool's statistic is the
+more defensible one and the standard's specification is the weaker choice.
+This is **not shown here** either way: this audit computed the two cutoffs, it
+did not evaluate which null is right for an entropy-source validation. It does
+not soften the conformance finding, because conformance is to the text as
+written. It is recorded so a reader does not take `OC-27` as a claim that the
+tool's statistics are wrong — that is not what was shown.
+
+### Upstream
+
+`simulateCount()` and `simulateBound()` are upstream code, present unchanged on
+`upstream/master` at `87c104d` (`git show upstream/master:cpp/restart_main.cpp`
+contains both). This finding sits squarely on the upstream side of the line.
+Nothing is sent upstream (decided 2026-10-15); the inventory row is marked.
+
+## OC-29 — C16 and C23 repaired together on the restart gate, with the four-state matrix
+
+Two permissive defects on one gate are worse together than apart: `C16` makes
+the gate vacuous for a mis-scaled `H_I`, `C23` makes the cutoff too high when
+`H_I` is sane. Both are repaired in `cpp/restart_main.cpp`; the regression is
+the `C16 + C23` section of `cpp/selftest/regression-restart.sh`. **Self-authored
+and unreviewed, like every repair on master.**
+
+### What changed
+
+**`C23`.** `X_cutoff` is now `exactBound(0.000005, H_I)`: §3.1.4.3 step 5
+summed from the top in `long double` through `lgammal`, returning the largest
+`x` with Pr[X ≥ x] ≥ α. α is the standard's literal 0.000005 (the Šidák value
+the tool used gives the same cutoff at every H_I in 1..8, `OC-7`). `-s` is
+accepted for compatibility and ignored, and the usage text says so. The report
+now carries `restartHI`, `restartAlpha`, `restartXmax`, `restartXcutoff` and
+`passedRestartSanityCheck` in both modes, so a consumer can recompute the
+decision instead of reading it (`OC-11` item 4, `XR-10`).
+
+**`C16`.** The `H_I` argument has an explicit grammar — digits, optional
+fraction, optional exponent, optionally followed by `/symbol` or `/bit`;
+hex floats, whitespace and trailing text are refused; `strtod` underflow or
+overflow (`ERANGE`) is refused, so `1e-400` no longer becomes 0; `H_I ≤ 0` is
+refused (an initial estimate of no entropy makes both gates vacuous); and
+**for a symbol wider than one bit the scale must be stated**: `7/symbol` is
+used as given, `0.875/bit` is multiplied by `bits_per_symbol`, and a bare `7`
+is refused with a message naming both forms. A bare number stays accepted for
+1-bit symbols, where the scales coincide. This is the answer to "a value of 0.5
+that should have been 4.0 passes any range check": the scale cannot be
+established from the number alone, so the number alone is refused. The
+pre-repair tool accepted the bare `0.875` on an 8-bit symbol with a cutoff of
+615 (matrix below) — the wrong scale, silently, with a cutoff thirty times
+too permissive.
+
+**The valid domain, stated:** a finite decimal, `0 < H_I ≤ bits_per_symbol`
+after scale resolution, scale stated whenever `bits_per_symbol > 1`.
+
+### The matrix — each fix shown against the other's state
+
+Built four ways from the same source with the audit-only knobs
+`EA_RESTART_WITHOUT_C16_FIX` / `EA_RESTART_WITHOUT_C23_FIX`
+(`reproducers/c16-c23-matrix.sh`, `logs/c23/c16-c23-matrix.log`; the pre-C16
+parse cannot take `/symbol`, so the sane input is `7` for those builds and
+`7/symbol` for the C16 builds — same intent, the only syntax each accepts):
+
+| build | sane: H_I 7, X_max 24 (exact cutoff 23) | underflow: H_I `1e-400`, X_max 20 | scale: `0.875` meant per bit, bare, 8-bit |
+|---|---|---|---|
+| neither (the tag) | **ACCEPTED**, cutoff 27 | **ACCEPTED**, cutoff 1000 | **ACCEPTED**, cutoff 615 |
+| C16 only | **ACCEPTED, cutoff 27** — still too permissive | REFUSED | REFUSED |
+| C23 only | REJECTED, cutoff 23 | **ACCEPTED, cutoff 1000** — correct cutoff, vacuous gate | **ACCEPTED, cutoff 614** — correct cutoff for the wrong H_I |
+| both | REJECTED, cutoff 23 | REFUSED | REFUSED |
+
+Each fix alone leaves the other's hole exactly where the other was: with `C16`
+fixed and `C23` not, a sane `H_I` still reaches a cutoff four counts too high;
+with `C23` fixed and `C16` not, the exact cutoff is reachable only when `H_I`
+is in range and at the right scale, and a wrong-scale `H_I` gets an exact
+cutoff for the wrong p. Only the bottom row closes the gate.
+
+### The regression, shown failing
+
+`regression-restart.sh` against the repaired build: PASS, including the
+`C16 + C23` section (`logs/c23/regression-restart-repaired.log`): eight
+refusals, `0.875/bit` resolving to the same cutoff as `7/symbol`, a 1-bit bare
+`H_I` still accepted, **32 of 32 cutoffs equal to the exact-rational table**
+at H_I = 0.25 … 8 in steps of 0.25 (`restart_cutoff_anchor.py`, α = 0.000005),
+X_max 24 at H_I 7 rejected with the JSON saying `restartXcutoff 23,
+passedRestartSanityCheck false`, X_max 20 still passing.
+Against the tag build via `REGRESSION_RESTART_TOOL`: **FAIL**
+(`logs/c23/regression-restart-vs-tag.log`): `1e-400` and `0` accepted with
+exit 0, every cutoff absent or different, X_max 24 accepted.
+
+Three of the script's older cases had to move: the N-10 case used `H_I = 0`
+(now inadmissible) on a row-alternating matrix whose constant columns give
+X_max = 1000, which passed only because the cutoff was 1000 — it now uses a
+checkerboard at H_I = 1; a leading `-` now fails the grammar before any sign
+check, so `-1` is refused with the grammar message; and every bare `H_I` on an
+8-bit symbol in `regression-restart.sh` and `regression-output.sh` is written
+`/symbol`. Those are the only callers in this repository; `regression-iid-
+failclosed.sh` and `sanitizer-restart-c01.sh` use 1-bit symbols and are
+unchanged.
+
+### What the C23 repair does to published figures
+
+**Nothing, and explicitly so.** No figure in this repository or its documents
+rests on a restart acceptance: `pin-check.sh` and the selftest reference corpus
+are `ea_non_iid` only; the 2026-09-30 and 2026-10-11 audit logs that contain
+"Restart Sanity Check Passed" are synthetic instrument runs (alternating,
+uniform, de Bruijn and forced-count matrices) made to test the tool, not
+figures about any source; TruePad's restart evidence is physical and **NOT
+RUN**. That absence is what makes this repairable without a claim revision —
+and it is also why `XR-10` is time-sensitive: the first real restart run is
+planned for January 2027, and it must not be the one decided by the old
+cutoff.
+
+**Measured on this machine.** The exact cutoff is arithmetic and transfers;
+the `long double` summation is the only numeric step, and the 32-point check
+against exact rational values is the guard on it. The tag build keeps the old
+cutoff and the old bare-`H_I` syntax; it is the reference tool, not a repaired
+one.
+
+## OC-28 addendum — C14: what reads the status channel, and what it decides
+
+`C14` was left as "permissive on the status channel". That is a disposition
+only if nothing acts on the channel. Something does:
+
+| reader | what it does with exit status / the `-o` report | consequence of a false success |
+|---|---|---|
+| `cpp/selftest/run-all-checks.sh` and every `regression-*.sh` | treat non-zero as FAIL, 2 as could-not-run | test-side only: a false 0 hides a regression from the suite, it does not produce a figure |
+| TruePad's harness (per `XR-01`, `XR-04`, `XR-08`: it checks the exit status and then reads the `-o` file, and it refuses on the canary's INDETERMINATE) | decides whether to read a figure, and which figure, from these two channels | a stale `-o` file after an exit-255 run reads as a complete, errorLevel-0 figure (`XR-01`); `exit 0` on a `--version`-named input reads as success with no figure at all (`oac-16`) |
+
+So the channel is acted on downstream and **`C14` is a third permissive path,
+not a cosmetic finding.** It joins the queue behind `C16`/`C23` (now
+repaired). Its two live routes are fork-side repairable: write the error
+report on *every* failure path, or unlink the `-o` target before assessing,
+so no stale report can survive; and stop scanning `argv` for `--version`
+after `getopt` has started. The uniform `255` (`oac-5`) stays a
+diagnosability gap, not a permissive one. Not repaired here; queued with its
+direction fixed by execution (`OC-14`) and its consumer named by the cross-repo
+record, which is an argument about TruePad's code that this session has not
+read.

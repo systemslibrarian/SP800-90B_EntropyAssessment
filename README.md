@@ -122,6 +122,14 @@ Running this is similar.
 
 The file should be in the "row dataset" format described in SP800-90B Section 3.1.4.1.
 
+`H_I` must be greater than zero and at most `bits_per_symbol`. For a symbol
+wider than one bit its scale must be stated: `4.0/symbol` (the per-symbol
+estimate) or `0.5/bit` (per bit, multiplied by `bits_per_symbol`); a bare
+number is accepted only for 1-bit symbols. The sanity-check cutoff is
+computed exactly from SP 800-90B 3.1.4.3 step 5 (this fork; see
+`audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md` OC-29), and the
+report carries `restartXmax`, `restartXcutoff` and `passedRestartSanityCheck`.
+
 * `-i`: Indicates IID data.
 * `-n`: Indicates non-IID data.
 * `-v`: Optional verbosity flag for more output. Can be used multiple times.

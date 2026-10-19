@@ -1,0 +1,46 @@
+NOVEL-03 permutation groups are labelled:          rows 0-2, columns 0-2
+N-08 restart refuses width 8x:                     refused
+N-08 restart refuses width +8:                     refused
+N-08 restart refuses width 0x8:                    refused
+N-08 restart refuses -s 5000000x:                  refused
+N-08 restart refuses -s +5000000:                  refused
+N-08 restart refuses -s 0x5000000:                 refused
+N-10 restart reports actual named statistics:      rawMean 0.5, translatedSymbolMedian 0.5
+N-04 H_I='nan' refused:                            refused (exit 255)
+N-04 H_I='NAN' refused:                            refused (exit 255)
+N-04 H_I='inf' refused:                            refused (exit 255)
+N-04 H_I='-inf' refused:                           refused (exit 255)
+N-04 H_I='abc' refused:                            refused (exit 255)
+N-04 H_I='1.5x' refused:                           refused (exit 255)
+N-04 H_I='(empty)' refused:                        refused (exit 255)
+N-04 H_I='3.2e' refused:                           refused (exit 255)
+N-04 negative H_I refused with a reason:           refused
+N-04 valid H_I=3.2/symbol still runs:              ran
+N-04 valid H_I=8/symbol still runs:                ran
+N-04 valid H_I=0.4/bit still runs:                 ran
+R-3 -i read failure recorded in JSON:              errorLevel set with a message
+R-3 -n read failure recorded in JSON:              errorLevel set with a message
+R-3 successful run still errorLevel 0:             yes
+N-06 -i no hash invented on failure:               errorLevel set, sha256 absent
+N-06 -n no hash invented on failure:               errorLevel set, sha256 absent
+N-06 valid run records the real hash:              matches
+R-2 the LRS estimate really does decline:          yes (precondition holds)
+R-2 the -1 sentinel is not folded in:              H_r 6.583332
+R-2 no false validation failure:                   passed
+R-2 ordinary dataset unaffected:                   passed
+C16 H_I='1e-400' refused:                          refused (exit 255)
+C16 H_I='0' refused:                               refused (exit 255)
+C16 H_I='0x1p3' refused:                           refused (exit 255)
+C16 H_I=' 3' refused:                              refused (exit 255)
+C16 H_I='3 ' refused:                              refused (exit 255)
+C16 H_I='3/sym' refused:                           refused (exit 255)
+C16 H_I='7' refused:                               refused (exit 255)
+C16 H_I='3.2' refused:                             refused (exit 255)
+C16 0.875/bit resolves to 7/symbol:                both give X_cutoff 23
+C16 bare H_I still accepted for 1-bit symbols:     accepted (report carries restartXcutoff)
+C23 X_cutoff equals the exact 3.1.4.3 cutoff:      32 of 32 H_I values (0.25 .. 8)
+C23 X_max 24 at H_I 7 is REJECTED, and the JSON says why: X_cutoff 23, passedRestartSanityCheck false
+C23 X_max 20 at H_I 7 still passes the sanity check: passed
+
+regression-restart: PASS
+exit 0

@@ -1,0 +1,82 @@
+NOVEL-03 permutation groups are labelled:          rows 0-2, columns 0-2
+N-08 restart refuses width 8x:                     exit 255, parser accepted it
+N-08 restart refuses width +8:                     exit 255, parser accepted it
+N-08 restart refuses width 0x8:                    exit 255, parser accepted it
+N-08 restart refuses -s 5000000x:                  exit 255, parser accepted it
+N-08 restart refuses -s +5000000:                  exit 255, parser accepted it
+N-08 restart refuses -s 0x5000000:                 exit 255, parser accepted it
+./regression-restart.sh: line 99: 97502 Abort trap: 6           "${tool}" -i -q -o "${work}/alternating.json" "${work}/alternating.bin" 1 0 > /dev/null 2>&1
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//ea-regrst.vsrtBy/alternating.json'
+N-10 restart reports actual named statistics:      missing, zero, or ambiguously named
+N-04 H_I='nan' refused:                            refused (exit 255)
+N-04 H_I='NAN' refused:                            refused (exit 255)
+N-04 H_I='inf' refused:                            refused (exit 255)
+N-04 H_I='-inf' refused:                           refused (exit 255)
+N-04 H_I='abc' refused:                            refused (exit 255)
+N-04 H_I='1.5x' refused:                           refused (exit 255)
+N-04 H_I='(empty)' refused:                        refused (exit 255)
+N-04 H_I='3.2e' refused:                           refused (exit 255)
+N-04 negative H_I keeps its own message:           exit 255, message changed
+N-04 valid H_I=3.2/symbol still runs:              refused
+N-04 valid H_I=8/symbol still runs:                refused
+N-04 valid H_I=0.4/bit still runs:                 refused
+R-3 -i read failure recorded in JSON:              errorLevel set with a message
+R-3 -n read failure recorded in JSON:              errorLevel set with a message
+R-3 successful run still errorLevel 0:             changed
+N-06 -i no hash invented on failure:               errorLevel set, sha256 absent
+N-06 -n no hash invented on failure:               errorLevel set, sha256 absent
+N-06 valid run records the real hash:              matches
+R-2 the LRS estimate really does decline:          no; this input no longer exercises R-2
+R-2 the -1 sentinel is not folded in:              H_r 
+R-2 no false validation failure:                   still fails validation
+R-2 ordinary dataset unaffected:                   verdict changed
+C16 H_I='1e-400' refused:                          exit 0, ACCEPTED or wrong message
+C16 H_I='0' refused:                               exit 0, ACCEPTED or wrong message
+C16 H_I='0x1p3' refused:                           exit 255, ACCEPTED or wrong message
+C16 H_I=' 3' refused:                              exit 255, ACCEPTED or wrong message
+C16 H_I='3 ' refused:                              refused (exit 255)
+C16 H_I='3/sym' refused:                           refused (exit 255)
+C16 H_I='7' refused:                               exit 255, ACCEPTED or wrong message
+C16 H_I='3.2' refused:                             exit 255, ACCEPTED or wrong message
+C16 0.875/bit resolves to 7/symbol:                X_cutoff ? vs ?
+C16 bare H_I still accepted for 1-bit symbols:     refused, or report lacks the sanity-check fields
+C23 cutoff at H_I=0.25:                            got ?, exact 890
+C23 cutoff at H_I=0.5:                             got ?, exact 769
+C23 cutoff at H_I=0.75:                            got ?, exact 662
+C23 cutoff at H_I=1:                               got ?, exact 570
+C23 cutoff at H_I=1.25:                            got ?, exact 490
+C23 cutoff at H_I=1.5:                             got ?, exact 421
+C23 cutoff at H_I=1.75:                            got ?, exact 362
+C23 cutoff at H_I=2:                               got ?, exact 312
+C23 cutoff at H_I=2.25:                            got ?, exact 269
+C23 cutoff at H_I=2.5:                             got ?, exact 232
+C23 cutoff at H_I=2.75:                            got ?, exact 200
+C23 cutoff at H_I=3:                               got ?, exact 173
+C23 cutoff at H_I=3.25:                            got ?, exact 150
+C23 cutoff at H_I=3.5:                             got ?, exact 130
+C23 cutoff at H_I=3.75:                            got ?, exact 113
+C23 cutoff at H_I=4:                               got ?, exact 99
+C23 cutoff at H_I=4.25:                            got ?, exact 86
+C23 cutoff at H_I=4.5:                             got ?, exact 76
+C23 cutoff at H_I=4.75:                            got ?, exact 66
+C23 cutoff at H_I=5:                               got ?, exact 58
+C23 cutoff at H_I=5.25:                            got ?, exact 51
+C23 cutoff at H_I=5.5:                             got ?, exact 45
+C23 cutoff at H_I=5.75:                            got ?, exact 40
+C23 cutoff at H_I=6:                               got ?, exact 36
+C23 cutoff at H_I=6.25:                            got ?, exact 32
+C23 cutoff at H_I=6.5:                             got ?, exact 28
+C23 cutoff at H_I=6.75:                            got ?, exact 25
+C23 cutoff at H_I=7:                               got ?, exact 23
+C23 cutoff at H_I=7.25:                            got ?, exact 21
+C23 cutoff at H_I=7.5:                             got ?, exact 19
+C23 cutoff at H_I=7.75:                            got ?, exact 17
+C23 cutoff at H_I=8:                               got ?, exact 15
+C23 X_cutoff equals the exact 3.1.4.3 cutoff:      32 of 32 differ
+C23 X_max 24 at H_I 7 is REJECTED, and the JSON says why: exit 255; accepted, or fields missing
+C23 X_max 20 at H_I 7 still passes the sanity check: did not pass
+
+regression-restart: FAIL (26 checks)
+exit 1

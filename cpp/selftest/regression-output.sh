@@ -53,14 +53,14 @@ done
 
 [ -x "${here}/../ea_restart" ] || { echo "regression-output: ea_restart missing" >&2; exit 2; }
 if [ -c /dev/full ]; then
-	check_fail "ea_restart -o /dev/full" "${here}/../ea_restart" -n -o /dev/full "${work}/r8.bin" 8 3.2
+	check_fail "ea_restart -o /dev/full" "${here}/../ea_restart" -n -o /dev/full "${work}/r8.bin" 8 3.2/symbol
 else
 	note "ea_restart -o /dev/full:" "skipped (no /dev/full)"; skipped=$((skipped + 1))
 fi
-check_fail "ea_restart -o into a missing directory" "${here}/../ea_restart" -n -o "${work}/no_such_dir/x.json" "${work}/r8.bin" 8 3.2
+check_fail "ea_restart -o into a missing directory" "${here}/../ea_restart" -n -o "${work}/no_such_dir/x.json" "${work}/r8.bin" 8 3.2/symbol
 
 # A writable path must still work and produce a non-empty report.
-for t in "ea_non_iid:${repo}/bin/truerand_1bit.bin 1" "ea_restart:-n ${work}/r8.bin 8 3.2"; do
+for t in "ea_non_iid:${repo}/bin/truerand_1bit.bin 1" "ea_restart:-n ${work}/r8.bin 8 3.2/symbol"; do
 	tool=${t%%:*}; args=${t#*:}
 	out="${work}/${tool}.json"
 	if "${here}/../${tool}" -q -o "${out}" ${args} >/dev/null 2>&1 && [ -s "${out}" ]; then

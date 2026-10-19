@@ -55,6 +55,13 @@ cd selftest && ./run-all-checks.sh --allow-known-platform-deltas   # instead of 
 Asserts are live in that build; no Makefile target sets `-DNDEBUG`, and adding
 it reproduces the fabrication (`XR-04`).
 
+**Its `ea_restart` is the pre-repair one** (`OC-29`): it accepts a bare `H_I`
+at any scale, accepts `1e-400` as 0, and computes the sanity-check cutoff by
+simulating the maximum over all symbols — 2 to 5 counts above the cutoff
+§3.1.4.3 specifies. Any restart decision from this binary is recomputed with
+`audits/2026-10-11-independent-audit/oracles/restart_decision_exact.py`
+(`XR-10`).
+
 ## Which instrument classified it, so the result is reproducible rather than believed
 
 The canary was re-signatured *after* the tag was cut (`XR-08`, 2026-10-18), so

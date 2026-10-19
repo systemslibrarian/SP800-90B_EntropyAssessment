@@ -699,3 +699,83 @@ the IEEE-double `long double` format only; the wide formats are a bounded
 argument, and if TruePad ever runs on x86-64 the one thing to do is run the
 canary once there. `productionApprovalEnabled` stays false and `approvedBuilds`
 stays empty on this finding's account.
+
+## XR-10 — the restart acceptance decision must not come from an unrepaired ea_restart; January's run is the one at risk
+
+**Finding only. Reported, not acted on — TruePad's procedure, TruePad's change.**
+State read: fork `master` after `OC-29`. Evidence: `OC-27` (mechanism, exact
+model, anchor), `OC-29` (repair and matrix), `logs/c23/`.
+
+**Why this is time-sensitive.** TruePad's restart evidence is physical and NOT
+RUN; the hardware testing is planned for January 2027. When it happens, the
+restart acceptance decision will come from `ea_restart`, and every `ea_restart`
+built before the `C23` repair takes a cutoff 2–5 counts above the one SP 800-90B
+§3.1.4.3 specifies. A restart matrix could therefore pass in January and be
+recorded as accepted when the standard's own test rejects it. **Nothing is
+contaminated today precisely because nothing has been run.** That is the only
+reason this is cheap now.
+
+### 1. The size of the correction at each H_I
+
+Exact cutoffs at the standard's α = 0.000005 (`restart_cutoff_anchor.py`,
+exact rational arithmetic, cross-checked three ways) against the pre-repair
+tool's measured cutoffs:
+
+| H_I | standard's cutoff | pre-repair tool | counts the old tool accepts that the standard rejects |
+|---:|---:|---:|---|
+| 1 | 570 | 571–572 | 571–572 |
+| 2 | 312 | 316 | 313–316 |
+| 3 | 173 | 177–179 | 174–178 |
+| 4 | 99 | 103–104 | 100–104 |
+| 5 | 58 | 63 | 59–63 |
+| 6 | 36 | 40 | 37–40 |
+| 7 | 23 | 27 | 24–27 |
+| 7.5 | 19 | 22–23 | 20–22 |
+| 8 | 15 | 19 | 16–19 |
+
+Non-integer H_I in steps of 0.25 are in `regression-restart.sh`'s pinned
+table. The device's H_I is not known yet; whichever row it lands on, the
+window of counts the old tool wrongly accepts is the last column.
+
+### 2. Compute the decision with the exact oracle until the repair is in the binary you invoke
+
+Until the `ea_restart` TruePad actually invokes carries the `C23` repair
+(`OC-29`), **the acceptance decision is to be computed from the data, not read
+from the tool's verdict**: take `X_max` and `H_I`, and decide with
+`oracles/restart_decision_exact.py` (or any evaluation of §3.1.4.3 step 5 at
+α = 0.000005). A repaired `ea_restart` prints the exact cutoff and writes
+`restartXmax`, `restartXcutoff` and `passedRestartSanityCheck` into its report,
+so the same recomputation can be made from the report; an unrepaired one prints
+`X_max` only with `-v` and writes none of them.
+
+**Which binary has the repair is a question of the binary's identity, per
+`XR-09`** — the executable's hash, or the commit plus compiler and flags —
+not of the canary, which classifies `ea_iid`, and not of the tool's output
+looking plausible. A quick discriminator for `ea_restart` specifically: the
+repaired tool refuses a bare `H_I` on a multi-bit symbol and prints
+`X_cutoff: … (exact binomial tail, SP 800-90B 3.1.4.3 step 5)`; the
+unrepaired tool accepts the bare number and prints the simulated cutoff.
+
+**The `C16` half of the same repair changes the call.** For a symbol wider
+than one bit the repaired `ea_restart` requires the scale: `<value>/symbol`
+or `<value>/bit`; a bare `H_I` is refused. If TruePad passes the per-bit
+figure from `ea_non_iid` (`h'`, see `C02`), write it as `<h'>/bit`; if it
+passes the per-symbol figure, `/symbol`. A bare number that used to be accepted
+at the wrong scale produced a cutoff tens of counts too permissive (`OC-29`
+matrix, 615 against 23) with no error.
+
+### 3. A run made before the repair is not upgraded by the repair landing afterwards
+
+A restart assessment decided by an unrepaired binary stays an unrepaired
+decision when the repair is merged or deployed. It has to be **re-decided from
+its data** — `X_max` and `H_I` through the exact test — or the capture re-run
+through a repaired binary. The record of a restart acceptance should therefore
+carry `X_max`, `H_I`, the cutoff used and the binary's identity, so that
+re-deciding is a computation and not a repeat of the physical test.
+
+**Standing caveats.** The repair is self-authored and unreviewed; merging it
+does not change that. This finding decides nothing about any device: physical
+items stay NOT RUN. The conformance finding is upstream's (`OC-27` addendum);
+whether the standard's single-binomial test or the tool's max-over-cells
+statistic is the better null is an open question about the standard and does
+not change what a lab claiming SP 800-90B conformance has to run.

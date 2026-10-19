@@ -208,6 +208,20 @@ A second repair pass on the same date, working the remaining queue:
 2026-09-30  cpp/restart_main.cpp: H_I is parsed with strtod and must be
             finite, instead of atof, which accepted "abc" as 0 and let
             "nan" through to an out-of-bounds index. Commit db7a2ba.
+2026-10-18  cpp/restart_main.cpp: the 3.1.4.3 sanity-check cutoff is
+            computed exactly from the standard's step 5 (one binomial
+            tail at alpha = 0.000005) instead of simulated as the maximum
+            over all 2^H_I symbols, which sat 2-5 counts too high at every
+            H_I and accepted matrices the standard rejects (audit C23,
+            OC-27/OC-29; the simulated statistic is upstream code). -s is
+            accepted and ignored. H_I must be greater than zero, must not
+            underflow, and for a multi-bit symbol must state its scale as
+            '<v>/symbol' or '<v>/bit'; a bare number at the wrong scale
+            had produced a wrong cutoff silently (audit C16). The report
+            gains restartHI, restartAlpha, restartXmax, restartXcutoff and
+            passedRestartSanityCheck. Regression: regression-restart.sh,
+            shown failing against tag unrepaired-reference-2026-10-15.
+            Self-authored and unreviewed.
 2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
             report that is actually written. Commit 23dca69.
 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed

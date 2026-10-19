@@ -1,0 +1,7 @@
+variant   | sane: H_I 7, X_max 24 (exact cutoff 23)    | underflow: H_I 1e-400, X_max 20      | scale: 0.875 meant per bit, bare
+----------|--------------------------------------------|--------------------------------------|------------------------------------
+neither   | ACCEPTED by sanity check, X_cutoff 27      | ACCEPTED by sanity check, X_cutoff 1000 | ACCEPTED by sanity check, X_cutoff 615
+c16only   | ACCEPTED by sanity check, X_cutoff 27      | REFUSED (exit 255)                   | REFUSED (exit 255)
+c23only   | REJECTED by sanity check, X_cutoff 23      | ACCEPTED by sanity check, X_cutoff 1000 | ACCEPTED by sanity check, X_cutoff 614
+both      | REJECTED by sanity check, X_cutoff 23      | REFUSED (exit 255)                   | REFUSED (exit 255)
+exit 0

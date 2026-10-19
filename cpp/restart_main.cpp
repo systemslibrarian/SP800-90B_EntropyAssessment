@@ -26,14 +26,87 @@
 //Each test has a targeted chance of roughly 0.000005, and we need to witness at least 5 failures, so this should be no less than 1000000
 #define DEFAULT_SIMULATION_ROUNDS 5000000UL
 
+// C23 (audit 2026-10-11, OC-7/OC-27): SP 800-90B 3.1.4.3 step 5 specifies the
+// sanity-check cutoff as the tail of a SINGLE Binomial(1000, p), p = 2^-H_I:
+// the test fails iff Pr(X >= X_max) < alpha. simulateBound() below instead
+// simulates the MAXIMUM count over all ceil(1/p) symbols and takes an order
+// statistic of that -- a stochastically larger variable -- so its cutoff sat
+// 2 to 5 counts above the standard's at every H_I and the tool accepted
+// restart matrices the standard rejects. This computes step 5 as written.
+// The largest X_max that passes is the largest x with Pr(X >= x) >= alpha
+// ("counts equal to this value should pass; larger values should fail").
+// Summed from the top in long double; checked against an exact-rational
+// evaluation of the same sum at 32 values of H_I in regression-restart.sh.
+//
+// EA_RESTART_WITHOUT_C23_FIX and EA_RESTART_WITHOUT_C16_FIX are audit-only
+// build knobs that restore the pre-repair behaviour of each defect
+// independently, so the joint behaviour of the two can be shown
+// (audits/2026-10-11-independent-audit/reproducers/c16-c23-matrix.sh).
+// No Makefile target sets either.
+static int exactBound(double alpha, double H_I) {
+    const int n = 1000;
+    const long double p = powl(2.0L, -(long double) H_I);
+    if (p >= 1.0L) return n;                 // H_I <= 0: every count "passes"; the C16 parse refuses this upstream
+    const long double q = 1.0L - p;
+    const long double lgn = lgammal((long double) n + 1.0L);
+    long double tail = 0.0L;
+    for (int x = n; x >= 0; x--) {
+        const long double logpmf = lgn - lgammal((long double) x + 1.0L) - lgammal((long double) (n - x) + 1.0L)
+                                   + (long double) x * logl(p) + (long double) (n - x) * logl(q);
+        tail += expl(logpmf);
+        if (tail >= (long double) alpha) return x;
+    }
+    return 0;
+}
+
+// C16 (OC-11/OC-28): the H_I argument. Grammar is a plain decimal -- digits,
+// optional fraction, optional exponent -- optionally followed by "/symbol" or
+// "/bit". Hex floats, inf, nan, leading whitespace and trailing junk are
+// refused. For a symbol wider than one bit the scale MUST be stated, because a
+// per-bit figure (0.5) and a per-symbol one (4.0) are both in range and the
+// tool cannot tell from the number which was meant; a wrong-scale H_I passes
+// every range check and yields a wrong cutoff silently.
+enum HIUnit { HI_UNIT_NONE, HI_UNIT_SYMBOL, HI_UNIT_BIT };
+static bool parseHIArgument(const char *arg, double &value, HIUnit &unit, const char **why) {
+    const char *s = arg;
+    size_t n = 0;
+    *why = "";
+    while (s[n] >= '0' && s[n] <= '9') n++;
+    size_t intDigits = n;
+    size_t fracDigits = 0;
+    if (s[n] == '.') { n++; while (s[n] >= '0' && s[n] <= '9') { n++; fracDigits++; } }
+    if (intDigits == 0 && fracDigits == 0) { *why = "not a decimal number"; return false; }
+    if (s[n] == 'e' || s[n] == 'E') {
+        size_t m = n + 1;
+        if (s[m] == '+' || s[m] == '-') m++;
+        size_t expDigits = 0;
+        while (s[m] >= '0' && s[m] <= '9') { m++; expDigits++; }
+        if (expDigits == 0) { *why = "incomplete exponent"; return false; }
+        n = m;
+    }
+    unit = HI_UNIT_NONE;
+    if (strcmp(s + n, "/symbol") == 0) unit = HI_UNIT_SYMBOL;
+    else if (strcmp(s + n, "/bit") == 0) unit = HI_UNIT_BIT;
+    else if (s[n] != '\0') { *why = "trailing characters (only '/symbol' or '/bit' may follow the number)"; return false; }
+    char *end = NULL;
+    errno = 0;
+    value = strtod(std::string(s, n).c_str(), &end);
+    if (errno == ERANGE) { *why = "out of range for a double (underflow or overflow)"; return false; }
+    if (!std::isfinite(value)) { *why = "not finite"; return false; }
+    return true;
+}
+
 [[ noreturn ]] void print_usage() {
     printf("Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>\n\n");
     printf("\t <file_name>: Must be relative path to a binary file with at least 1 million entries (samples),\n");
     printf("\t and in the \"row dataset\" format described in SP800-90B Section 3.1.4.1.\n");
     printf("\t [bits_per_symbol]: Must be between 1-8, inclusive.\n");
-    printf("\t <H_I>: Initial entropy estimate.\n");
+    printf("\t <H_I>: Initial entropy estimate, 0 < H_I <= bits_per_symbol. For a symbol wider than one bit\n");
+    printf("\t        the scale must be stated: '<value>/symbol' (as assessed) or '<value>/bit' (multiplied\n");
+    printf("\t        by bits_per_symbol). A bare number is accepted only for 1-bit symbols.\n");
     printf("\t [-i|-n]: '-i' for IID data, '-n' for non-IID data. Non-IID is the default.\n");
-    printf("\t -s <simulation count>: Establish cutoff using <simulation count> rounds.\n");
+    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+    printf("\t        computed exactly from SP 800-90B 3.1.4.3 step 5, not simulated.\n");
     printf("\t -v: Optional verbosity flag for more output.\n");
     printf("\t -q: Quiet mode, less output to screen.\n");
     printf("\n");
@@ -298,18 +371,29 @@ int main(int argc, char* argv[]) {
     // result indexes counts[] out of bounds; the observed effect is a crash.
     //
     // Parse strictly: the whole argument must be consumed and the value must
-    // be finite.
+    // be finite. C16: the grammar is explicit (no hex floats, no whitespace),
+    // underflow/overflow is refused, the value must be positive, and for a
+    // multi-bit symbol the scale must be stated (resolved after the data is
+    // read, when bits_per_symbol is known).
+    HIUnit H_I_unit = HI_UNIT_NONE;
     {
-        char *H_I_end = NULL;
-
-        errno = 0;
-        H_I = strtod(argv[0], &H_I_end);
-
-        if ((H_I_end == argv[0]) || (*H_I_end != '\0') || !std::isfinite(H_I)) {
-            printf("H_I must be a finite decimal number: '%s'.\n", argv[0]);
+        const char *why = "";
+        bool ok = parseHIArgument(argv[0], H_I, H_I_unit, &why);
+#ifdef EA_RESTART_WITHOUT_C16_FIX
+        // pre-repair parse: strtod, whole argument consumed, finite
+        {
+            char *H_I_end = NULL;
+            errno = 0;
+            H_I = strtod(argv[0], &H_I_end);
+            ok = !((H_I_end == argv[0]) || (*H_I_end != '\0') || !std::isfinite(H_I));
+            H_I_unit = HI_UNIT_SYMBOL;
+        }
+#endif
+        if (!ok) {
+            printf("H_I must be a finite decimal number: '%s' (%s).\n", argv[0], why);
 
             if (jsonOutput) {
-                string msg = "H_I must be a finite decimal number: '" + string(argv[0]) + "'.";
+                string msg = "H_I must be a finite decimal number: '" + string(argv[0]) + "' (" + string(why) + ").";
                 if (iid) {
                     testRunIid.errorLevel = -1;
                     testRunIid.errorMsg = msg;
@@ -325,16 +409,21 @@ int main(int argc, char* argv[]) {
         }
     }
 
+#ifdef EA_RESTART_WITHOUT_C16_FIX
     if (H_I < 0) {
-        printf("H_I %f must be nonnegative.\n", H_I);
+#else
+    if (H_I <= 0) {
+#endif
+        printf("H_I %g must be greater than zero: an initial estimate of no entropy makes both restart gates vacuous.\n", H_I);
         if (jsonOutput) {
+            string msg = "H_I must be greater than zero: " + std::to_string(H_I) + ".";
             if (iid) {
                 testRunIid.errorLevel = -1;
-                testRunIid.errorMsg = "H_I must be nonnegative: " + std::to_string(H_I) + ".";
+                testRunIid.errorMsg = msg;
                 writeJsonReport(outputfilename, testRunIid.GetAsJson());
             } else {
                 testRunNonIid.errorLevel = -1;
-                testRunNonIid.errorMsg = "H_I must be nonnegative: " + std::to_string(H_I) + ".";
+                testRunNonIid.errorMsg = msg;
                 writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
             }
         }
@@ -377,6 +466,30 @@ int main(int argc, char* argv[]) {
     if (verbose > 1) printf("Loaded file: '%s' (SHA-256 hash %s of assessed bytes)\n", file_path, testRunNonIid.sha256.c_str());
 
     if (verbose > 1) printf("Loaded %ld samples made up of %d distinct %d-bit-wide symbols.\n", data.len, data.alph_size, data.word_size);
+
+#ifndef EA_RESTART_WITHOUT_C16_FIX
+    // C16: resolve the stated scale now that the symbol width is known.
+    if (H_I_unit == HI_UNIT_BIT) {
+        H_I = H_I * data.word_size;
+    } else if (H_I_unit == HI_UNIT_NONE && data.word_size > 1) {
+        printf("H_I '%s' must state its scale for a %d-bit symbol: '%s/symbol' (the per-symbol estimate) or '%s/bit' (per bit, multiplied by %d). A bare number is accepted only for 1-bit symbols, where the two coincide.\n",
+               argv[0], data.word_size, argv[0], argv[0], data.word_size);
+        if (jsonOutput) {
+            string msg = "H_I '" + string(argv[0]) + "' must state its scale ('/symbol' or '/bit') for a " + std::to_string(data.word_size) + "-bit symbol.";
+            if (iid) {
+                testRunIid.errorLevel = -1;
+                testRunIid.errorMsg = msg;
+                writeJsonReport(outputfilename, testRunIid.GetAsJson());
+            } else {
+                testRunNonIid.errorLevel = -1;
+                testRunNonIid.errorMsg = msg;
+                writeJsonReport(outputfilename, testRunNonIid.GetAsJson());
+            }
+        }
+        free_data(&data);
+        exit(-1);
+    }
+#endif
 
     if (H_I > data.word_size) {
         printf("H_I (%f) must be at most 'bits_per_symbol' (%d).\n", H_I, data.word_size);
@@ -455,9 +568,19 @@ int main(int argc, char* argv[]) {
 
     printf("H_I: %f\n", H_I);
 
+#ifdef EA_RESTART_WITHOUT_C23_FIX
     alpha = 1 - exp(log(0.99) / (r + c));
     X_cutoff = simulateBound(alpha, data.alph_size, H_I, simulation_rounds);
-    if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d\n", alpha, X_cutoff);
+    if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d (simulated max over symbols, pre-repair)\n", alpha, X_cutoff);
+#else
+    // C23: SP 800-90B 3.1.4.3 step 1 sets alpha = 0.000005; step 5 is a single
+    // binomial tail. (The Sidak value 1 - 0.99^(1/2000) the tool used gives
+    // the same cutoff at every H_I in 1..8, OC-7.) -s is accepted and ignored.
+    (void) simulation_rounds;
+    alpha = 0.000005;
+    X_cutoff = exactBound(alpha, H_I);
+    if (verbose > 0) printf("ALPHA: %.17g, X_cutoff: %d (exact binomial tail, SP 800-90B 3.1.4.3 step 5)\n", alpha, X_cutoff);
+#endif
 
     // get maximum row count
     X_r = 0;
@@ -490,6 +613,14 @@ int main(int argc, char* argv[]) {
     // perform sanity check on rows and columns of restart data (Section 3.1.4.3)
     X_max = max(X_r, X_c);
     if (verbose > 0) printf("X_max: %d\n", X_max);
+    // The sanity-check inputs and verdict go into the report so a consumer can
+    // recompute the decision (OC-11 item 4, XR-10) instead of trusting it.
+    testRunIid.restartHI = H_I;            testRunNonIid.restartHI = H_I;
+    testRunIid.restartAlpha = alpha;       testRunNonIid.restartAlpha = alpha;
+    testRunIid.restartXmax = X_max;        testRunNonIid.restartXmax = X_max;
+    testRunIid.restartXcutoff = X_cutoff;  testRunNonIid.restartXcutoff = X_cutoff;
+    testRunIid.restartSanityCheckPassed = (X_max <= X_cutoff) ? 1 : 0;
+    testRunNonIid.restartSanityCheckPassed = testRunIid.restartSanityCheckPassed;
     if (X_max > X_cutoff) {
         if (verbose > 0) printf("\n*** Restart Sanity Check Failed ***\n");
         if (jsonOutput) {
