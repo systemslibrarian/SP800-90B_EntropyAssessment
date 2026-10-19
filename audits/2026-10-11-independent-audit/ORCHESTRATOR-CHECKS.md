@@ -2949,6 +2949,20 @@ read.
 
 ## OC-30 — C23 corrected: the printed formula is the defective side, the anchor is published, and the repair is the exact multinomial maximum
 
+> **SCOPE, narrowed 2026-10-19 once the boundary was measured (`OC-39`,
+> `XR-13`).** This entry is a conformance finding and a correctness argument,
+> and its *magnitude* scales with the number of effective cells, `2^H_I` — it is
+> a **wide-alphabet** phenomenon. At 8 bits the printed formula rejects 83 % of
+> full-entropy matrices and at 4 bits 12 %. At **width 1 it vanishes below
+> H_I ≈ 0.989**: the printed and corrected cutoffs are identical from 0.50 to
+> 0.989, and at the 0.696 operating point this project actually uses both are
+> **683** with a measured false-reject rate of **1.10 %** against the 1 %
+> target. So at that point the repair bought **correctness, not a changed
+> figure**. The conformance point stands at every width — a tool that does not
+> implement the printed procedure is a problem whichever test is better — but
+> the permissiveness is real only where the alphabet is wide, and the figures
+> below should be read with that scope attached.
+
 **This entry supersedes `OC-7`'s conclusion, `OC-26`, `OC-27` and the C23 half
 of `OC-29`.** My own error, stated plainly: I treated closer adherence to
 §3.1.4.3's printed formula as evidence of a better test, called upstream's
@@ -3916,3 +3930,120 @@ did not execute supports no claim — and `run-all-checks.sh`'s total-count
 check then fails closed, which is also correct. Making that one build command
 portable is small and is listed in `CLOSING-INVENTORY.md`. Everything else in
 the suite runs on both platforms.
+
+## OC-41 — R-1 diagnosed, scoped and repaired; and the rule the CI run established
+
+### The rule first, because it is the general lesson
+
+**A platform claim established by reading the source is provisional until the
+source has been run on that platform, and "we could not reproduce it here" is a
+statement about here.** `OC-34` concluded R-1 was not reproducible, from two
+sessions' reasoning on one host. One CI run disproved it. Recorded as a rule in
+`BUG-REPAIR-GUIDE.md` beside the other three.
+
+### What the assert asserts, and why a wider long double is stricter
+
+`lrs_test.h` computed `p_col = Σ p_i²` and asserted `p_col >= 1/k`. By
+Cauchy–Schwarz `Σ p_i² ≥ (Σ p_i)²/k = 1/k`, **with equality exactly at the
+uniform distribution**, so the mathematical quantity can never be below `1/k`
+and any shortfall is rounding.
+
+The mechanism is the same one the canary work turned on: **`p[]` is accumulated
+in `double` by `calc_proportions()` while the threshold `1/k` is formed in
+`long double`.** On a wider `long double` the threshold is the *more accurate*
+of the two, so the comparison is **stricter** and more alphabet sizes fail. That
+is the inverse of the usual expectation and it is why the defect is worse on
+x86-64 than on arm64. Worked at k = 3: the double `p` is 0.33333333333333331483,
+below the true ⅓; in 80-bit the threshold is 0.3333333333333333333, so the sum
+sits below it and the assert fires, while in 53-bit both sides round to the same
+value and it does not.
+
+### The blast radius, measured through the production functions
+
+A first harness re-implemented `calc_proportions` and
+`calc_collision_proportion` by hand. **It disagreed with the tool** and was
+discarded: a re-implementation is not the instrument. The harness now calls the
+production functions compiled with the project's own flags
+(`reproducers/r1_pcol_sweep.cpp`, `logs/r1/blast-radius-arm64.txt`):
+
+| | |
+|---|---|
+| alphabet sizes affected at exact balance, arm64 | **117 of 255** (k = 17, 21, 23, 25, 27, 29, 34 … 254) |
+| powers of two | **none affected, by arithmetic**: `1/2^j` is exactly representable, so `p = 1/k` exactly and `p_col = k·(1/k)² = 1/k` exactly |
+| **width 1** | **unaffected.** It can only yield k = 1, refused earlier, or k = 2 |
+| with **one sample** moved off exact balance | **0 of 117 still abort** — `p_col` rises by about `2/L² = 2e-12` against a rounding deficit of order 1e-17 |
+| which tools reach it | **`ea_iid` and `ea_restart` only.** `ea_non_iid` never calls `len_LRS_test` |
+
+**Reproduction and repair, both demonstrated at the function level on arm64**:
+calling the production `len_LRS_test` directly at k = 17 and k = 25 aborts on
+the tag tree (`Assertion failed: (p_col >= 1.0L / ((long double) k))`,
+`lrs_test.h:652`) and returns normally on the repaired tree.
+
+**One limit, stated rather than smoothed.** End-to-end through `ea_iid` the
+abort was observed on x86-64 at k = 3, 6, 7, 9 and 12, and was **not** observed
+on arm64 at k = 25 even though the function aborts there when called directly.
+I did not determine what the end-to-end path passes differently, so the
+end-to-end radius is bounded by what was measured — those five on x86-64 — and
+not by the 117-size function-level set.
+
+### What an operator sees, and the direction
+
+`ea_iid` or `ea_restart -i` dies with SIGABRT, exit 134, and **writes no
+report**. The direction is fail-closed: the tool refuses rather than publishing
+a wrong figure. But it refuses **valid data**, so a sound dataset is denied an
+assessment, and on the affected platform-and-alphabet combinations a validation
+tool is unusable for it. That is worth saying plainly rather than as a
+rounding-sensitivity note. What keeps the practical exposure small is the
+**exact-balance** requirement: real noise never produces exactly equal counts,
+while a counter-mode or round-robin source, or a constructed test vector, does
+so reliably — so the realistic victims are test corpora and deterministic
+sources, which for a validation tool is still a real problem.
+
+**Upstream and platform-specific.** The assert is upstream code and
+`calc_collision_proportion` is unchanged from upstream (`git log -S` shows only
+upstream's own commits), so a reader on Linux is looking at an inherited defect,
+not one this fork introduced. Nothing is sent upstream (decided 2026-10-15).
+
+### The repair, and why it cannot move a figure
+
+The assert is replaced by a clamp to the proven bound, with the Cauchy–Schwarz
+justification at the site. It is **exact, not a tolerance**: it substitutes the
+value the mathematics requires for an abort. It **cannot change any published
+figure**, because `p_col` feeds only the §5.2.5 LRS decision and every affected
+case previously produced no figure at all — there is nothing to change. That is
+the test the decision turned on. Self-authored and unreviewed, like every repair
+here.
+
+### Task 3's sweep: guards coupled to the host's wording
+
+`OC-40` found the canary matching macOS's phrasing of an assertion failure,
+which on Linux produced a **false third outcome** — INDETERMINATE for a
+legitimately unrepaired binary, which looks like honesty and is not. Swept every
+guard that matches runtime-emitted text. **Two existed**, and both are now
+structural first:
+
+| site | was | now |
+|---|---|---|
+| `tools/build-provenance-canary.sh` | the literal `"Assertion failed"` | exit status 134 **plus** wording-independent confirmation; fixed in `OC-40` and verified against both libcs |
+| `regression-estimator-guards.sh:170` | `rc == 134` **or** the literal `"Assertion failed"` | the structural signal (exit 134, which is the thing being detected) with the text as wording-independent secondary confirmation |
+
+Nothing else in the project matches libc error strings, compiler diagnostics,
+signal descriptions or locale-sensitive formatting for a verdict.
+
+**Keep the distinction `OC-40` drew**: the arithmetic argument held at exactly
+the predicted site. The model was right and the instrument was parochial.
+
+### Task 5: the Linux job can now run the whole suite
+
+`regression-estimator-guards` built its sanitizer binary with Homebrew paths and
+the macOS OpenMP flag form, so on Linux it reported COULD NOT RUN and the
+suite's count check failed closed — both correct, and both leaving the Linux job
+unable to run the suite that had just found three things. The build now detects
+its platform the way `cpp/Makefile` does. **"Could not run" is never counted as
+a pass**, which is why the count check failing was the right behaviour and why
+it had to be fixed rather than excused.
+
+### Task 6: the workflow runs on every push
+
+Promoted from manual-only. The class it detects — a claim true only on the
+development host — is invisible from that host by construction.

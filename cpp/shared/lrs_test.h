@@ -649,7 +649,32 @@ bool len_LRS_test(const uint8_t data[], const int L, const int k, const int verb
 	long double p_col = 0.0;
 	calc_collision_proportion(p, p_col);
 
-	assert(p_col >= 1.0L / ((long double) k));
+	// R-1 (audit 2026-10-09 / OC-41). This was
+	//     assert(p_col >= 1.0L / ((long double) k));
+	// and it ABORTED ea_iid and ea_restart -i on perfectly valid data: a
+	// dataset whose symbol counts are all exactly equal. By Cauchy-Schwarz
+	//     sum p_i^2  >=  (sum p_i)^2 / k  =  1/k,
+	// with equality exactly at the uniform distribution, so the mathematical
+	// quantity can never be below 1/k and ANY shortfall is rounding. It arises
+	// because p[] is accumulated in double by calc_proportions() while the
+	// threshold 1/k is formed in long double: on a wider long double the
+	// threshold is MORE accurate than the sum, so the comparison is stricter
+	// and more alphabet sizes fail. Measured at exact balance over k in 2..256:
+	// 117 of 255 sizes abort on a 53-bit long double (arm64) and a different,
+	// larger set on x87 80-bit (x86-64) -- which is why this went unseen here
+	// for so long. No power-of-two alphabet is affected, so width 1 (k = 2)
+	// never trips it. One sample off exact balance clears it at every k,
+	// because p_col rises by about 2/L^2 against a rounding deficit of order
+	// 1e-17. Clamping to the proven bound is therefore exact, not a tolerance:
+	// it replaces an abort with the value the mathematics requires. It cannot
+	// change any published figure, because p_col feeds only the 5.2.5 LRS
+	// decision and every affected case previously produced no figure at all.
+	// The assert is upstream code and calc_collision_proportion() is unchanged
+	// from upstream; this clamp is the fork's.
+	{
+		const long double p_col_min = 1.0L / ((long double) k);
+		if(p_col < p_col_min) p_col = p_col_min;
+	}
 	assert(p_col <= 1.0L);
 
 	// It is possible for p_col to be exactly 1 (e.g., if the input data is all one symbol)

@@ -29,6 +29,14 @@ name: x86-64 platform facts
 # a given line are four distinguishable outcomes and only the last is evidence.
 
 on:
+  # Promoted from manual-only on 2026-10-19. Its first run found a live defect
+  # (R-1 on x86-64), a guard coupled to the host's wording of an assertion, and
+  # the first second-platform confirmation of the outside-battery figures. The
+  # class it detects -- a claim true only on the development host -- is
+  # invisible from that host by construction, so it runs on every push.
+  push:
+    branches: [master]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -160,6 +168,24 @@ jobs:
             fi
             echo "k=${k} width=${w}: ${verdict}" | tee -a logs/05-r1.log
           done
+
+      - name: 5b. R-1's blast radius through the production functions
+        run: |
+          set +e
+          g++ -std=c++11 -fopenmp -O2 -I/usr/include/jsoncpp \
+              -Icpp/shared -Icpp/non_iid \
+              audits/2026-10-11-independent-audit/reproducers/r1_pcol_sweep.cpp \
+              -o /tmp/r1sweep -lbz2 -lpthread -ldivsufsort -ldivsufsort64 \
+              -ljsoncpp -lcrypto 2>&1 | tail -5
+          if [ -x /tmp/r1sweep ]; then
+            /tmp/r1sweep > logs/05b-r1-blast-radius.log 2>&1
+            echo "sweep exit $?" >> logs/05b-r1-blast-radius.log
+            grep -E 'sizeof|aborting alphabet|^aborting k|powers of two|width 1|still aborting' \
+                 logs/05b-r1-blast-radius.log
+          else
+            echo "SWEEP DID NOT BUILD; no blast-radius measurement on this platform" \
+                 | tee logs/05b-r1-blast-radius.log
+          fi
 
       - name: 6. The full suite and the outside-battery regression
         run: |

@@ -44,14 +44,28 @@ asan="${work}/ea_asan"
 # sanitizer build failed on x86-64 CI with "json/json.h file not found" and the
 # whole regression reported COULD NOT RUN -- which is neither a pass nor a
 # failure, and also not a measurement (OC-40).
+# The build is platform-aware for the same reason cpp/Makefile is: the Homebrew
+# paths and -Xpreprocessor -fopenmp form are macOS-only, and hard-coding them
+# made this regression report COULD NOT RUN on Linux -- correct behaviour, since
+# a check that did not execute supports no claim, but it also left the Linux CI
+# job unable to run the whole suite (OC-40, OC-41).
+if [ "$(uname -s)" = "Darwin" ]; then
+	brew_prefix=$(brew --prefix 2>/dev/null || echo /opt/homebrew)
+	omp_prefix=$(brew --prefix libomp 2>/dev/null || echo "${brew_prefix}/opt/libomp")
+	ssl_prefix=$(brew --prefix openssl@3 2>/dev/null || echo "${brew_prefix}/opt/openssl@3")
+	asan_inc="-Xpreprocessor -fopenmp -I${omp_prefix}/include -I${brew_prefix}/include -I${ssl_prefix}/include"
+	asan_lib="-L${brew_prefix}/lib -L${ssl_prefix}/lib -L${omp_prefix}/lib -lomp"
+else
+	asan_inc="-fopenmp -I/usr/include/jsoncpp"
+	asan_lib=""
+fi
+# shellcheck disable=SC2086
 if ! clang++ -std=c++11 -O1 -g -fsanitize=address -fno-omit-frame-pointer -w \
-	-I/usr/include/jsoncpp \
-	-Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include \
-	-I/opt/homebrew/include -I/opt/homebrew/opt/openssl@3/include \
+	${asan_inc} \
 	"${cpp}/non_iid_main.cpp" -o "${asan}" \
-	-L/opt/homebrew/lib -L/opt/homebrew/opt/openssl@3/lib \
+	${asan_lib} \
 	-lbz2 -lpthread -ldivsufsort -ldivsufsort64 \
-	-L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto >"${work}/build.log" 2>&1; then
+	-ljsoncpp -lcrypto >"${work}/build.log" 2>&1; then
 	echo "regression-estimator-guards: AddressSanitizer build failed; see ${work}/build.log" >&2
 	sed -n '1,20p' "${work}/build.log" >&2
 	exit 2
@@ -167,7 +181,15 @@ done
 check_no_abort() { # check_no_abort <file> <bits> <label>
 	local out rc
 	out=$("${asan}" -q "${work}/$1" "$2" 2>&1); rc=$?
-	if [ "${rc}" -eq 134 ] || printf '%s' "${out}" | grep -q 'Assertion failed'; then
+	# TEXT-COUPLING RULE (OC-41). "Assertion failed" is macOS/clang's wording;
+	# glibc writes "Assertion `expr' failed." The canary matched only the first
+	# and returned INDETERMINATE on Linux for a legitimately unrepaired binary
+	# (OC-40) -- a false third outcome, which looks like honesty. Here the
+	# STRUCTURAL signal is the exit status (134 = SIGABRT), which is the thing
+	# being detected; the text is a secondary confirmation and is matched in a
+	# wording-independent way.
+	if [ "${rc}" -eq 134 ] || { printf '%s' "${out}" | grep -qi 'assertion' \
+	                            && printf '%s' "${out}" | grep -qi 'failed'; }; then
 		note "#261 $3:" "ABORTED (exit ${rc})"
 		fails=$((fails + 1))
 	else

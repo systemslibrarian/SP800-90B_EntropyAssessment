@@ -1038,3 +1038,64 @@ cells.
 measured here; every number above is an instrument claim on synthetic data and
 says nothing about any source. Physical items stay **NOT RUN**. The repairs are
 self-authored and **unreviewed**. Nothing is sent upstream.
+
+## XR-14 — R-1 does NOT reach TruePad's path: width 1 is not among the affected alphabet sizes, and the tool TruePad ships never calls the function
+
+**Finding only, and an explicit all-clear with the list rather than safety
+inferred from silence. Reported, not acted on.** Evidence: `OC-40`, `OC-41`,
+`logs/r1/`, `logs/x86-64/05-r1.log`.
+
+`R-1` is a live defect: on x86-64 Linux `ea_iid` aborts with SIGABRT and writes
+no report on perfectly valid data whose symbol counts are exactly equal. The
+entropy-tools gate runs on Linux, so the question is immediate.
+
+### The answer is no, on three independent grounds
+
+**1. The symbol counts observed to abort end-to-end are k = 3, 6, 7, 9 and 12,
+and width 1 is not among them.** `k` is the number of **distinct observed
+symbols** (`data.alph_size`), not `2^width`. Width 1 can only produce k = 1,
+which the tool refuses earlier with "Symbol alphabet consists of 1 symbol", or
+k = 2. **No power-of-two alphabet is affected, and that is arithmetic rather
+than luck**: `1/2^j` is exactly representable, so every `p_i` equals `1/k`
+exactly, `p_col = k·(1/k)²= 1/k` exactly, and the comparison holds with
+equality. Measured through the production functions: of 255 alphabet sizes from
+2 to 256, the affected set on arm64 is 117 values and **k = 2, 4, 8, 16, 32,
+64, 128 and 256 are all safe**.
+
+**2. `ea_non_iid` never calls the function.** `len_LRS_test` is called only from
+`iid_main.cpp` and `restart_main.cpp` — the §5.2.5 IID test. The fork's record
+is that TruePad **ships only `ea_non_iid`**, which cannot reach the assert at
+any width or alphabet size. If the gate also invokes `ea_iid` or
+`ea_restart -i`, those two can reach it — at affected alphabet sizes only, and
+width 1 is not one.
+
+**3. It requires EXACT balance.** Every symbol count must be exactly equal.
+Moving **one sample** off balance clears it at every affected alphabet size (0
+of 117), because `p_col` rises by about `2/L² = 2e-12` against a rounding
+deficit of order 1e-17. Real noise never produces exactly equal counts; a
+counter-mode or round-robin source, or a constructed test vector, does so
+reliably.
+
+So TruePad's January path is clear on the tool it ships, clear at the width it
+invokes, and clear on the data a physical source produces. **That is an explicit
+all-clear with the list, not an inference from silence.**
+
+### What would change the answer
+
+- Invoking `ea_iid` or `ea_restart -i` **at a width above 1** on data whose
+  observed alphabet lands on an affected size **and** is exactly balanced. The
+  affected set is platform-dependent: on x86-64 it includes small sizes
+  (3, 6, 7, 9, 12) that arm64 does not.
+- A **deterministic or counter-mode** source, or a synthetic test vector, at
+  such a width — that is the realistic victim, and for a validation tool's own
+  corpus it is a real problem.
+
+### Status in the fork
+
+**Repaired** (`OC-41`): the assert is replaced by a clamp to the Cauchy–Schwarz
+bound `Σp² ≥ 1/k`, which is exact rather than a tolerance. It cannot change any
+published figure, because `p_col` feeds only the §5.2.5 LRS decision and every
+affected case previously produced no figure at all. The assert is **upstream
+code**, unchanged by this fork until now, so a reader on Linux is looking at an
+inherited defect. Nothing is sent upstream. Self-authored and **unreviewed**.
+Physical items stay **NOT RUN**.
