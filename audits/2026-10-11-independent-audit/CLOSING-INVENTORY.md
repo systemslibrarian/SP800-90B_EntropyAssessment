@@ -1,8 +1,20 @@
 # What is left — closing inventory
 
-Date: **2026-10-20**, rewritten after the Windows measurement (`OC-48`). State:
+Date: **2026-10-20**, rewritten after the Windows measurement (`OC-48`) and
+again after an outside read-only audit (`OC-49`–`OC-52`). State:
 `master` at the commit adding this revision. Written to be read cold, by
 someone who has not followed the work.
+
+**An outside read-only audit, 2026-10-20, pinned at fork `769115d8`,
+reproduced defects in this tree and in this audit's own oracles.** Everything
+it reported that was checked here held, with one correction in the fork's
+favour: Windows now builds. Its highest-priority item was a **data-destroying
+regression introduced by one of this audit's own repairs** — `-o <input>` with
+the output path equal to the input replaced a 1,000,000-byte capture with a
+602-byte error report before a single sample was read (`A05`). Repaired, with
+18 alias cases shown refused and shown failing against the pre-fix build. In
+January the input is a capture that cannot be recreated, so that item mattered
+more than everything else on the list put together.
 
 **The headline changed in this revision.** The previous version said the fork
 had reached the hardware wall and the first bucket was down to one small item.
@@ -55,10 +67,20 @@ instructions the tag itself carries, are in
 | **`C22c`** at other sample counts | `entropy_floor.py` refuses any `n` below 1,000,000 bits, and uses the value measured at the largest measured `n` not exceeding the actual one, because the `ZALPHA` ceiling was measured at 1e6 and 8e6 only. | One oracle run per additional `n`. Needed only if the project ever assesses a different length. |
 | **`C06`** `h_out` exceeds the output's bit ceiling | `ea_conditioning` reports `h_out` 7.1552 for a 7-bit output. | The *measurement* needs nothing, which is why it is here; the tool it concerns is deliberately not built (see the last bucket). |
 
+| **`A02`** the `C01` floor subtraction is justified by the wrong mechanism | The term is argued as a one-ULP effect; the mechanism is **dictionary saturation**. An observed 3.69e-04 discrepancy is therefore not a bound, it is one measurement of a quantity the argument does not constrain. | **Accepted-pending** (`OC-52`), not disputed. Needs the subtraction re-derived from the saturation mechanism with a real bound, or relabelled honestly as a measured maximum over a stated input set. It changes a published figure. |
+| **`A06`** `--allow-known-platform-deltas` tolerates by filename | It decides what to tolerate by looking at **file identity**, so a change from **0.85 to 0.01** in a tolerated file is accepted. A guard that cannot tell a 1e-10 platform delta from a 0.84 collapse is not guarding. | **Accepted-pending** (`OC-52`). Needs tolerance bounded by **magnitude**, which needs the measured size of each known delta from the two platform jobs first, and a demonstration against an injected large change. |
+
 `oac-13` has left this bucket: the atomic write was implemented and measured
 (`OC-47`), five runs of five leaving a complete document against one of five
 before. `C24` is what that repair turned out to cost on a platform it had not
 been run on — not a reason to undo it.
+
+`A05` and `A04` have left it, repaired this round, with
+`cpp/selftest/regression-output-aliasing.sh` (27 checks) holding them and shown
+failing against a pre-fix build. `A07` and `A08` have left it too: this audit's
+own oracles were exiting 0 on malformed and unrelated input, and
+`oracles/oracle-selftest.sh` (12 cases) now holds each refusal against the
+reason it is supposed to fail for.
 
 ## Needs another platform — now genuinely empty, and measured rather than argued
 
@@ -80,6 +102,16 @@ Everything that was in this bucket has left it:
 | the Linux job's own coverage | the sanitizer build is platform-aware, so the Linux job runs the **whole** suite — "could not run" is never counted as a pass |
 | **Windows** — "assessed and not started, pending the owner" | **measured** (`OC-48`). It needed no machine and no owner decision to *measure*; only to *repair*. |
 | build state on an unmet platform | the probe **refused** on Windows as designed, and has since been taught PE/COFF as a calibrated fallback; it now gives a real verdict there, labelled `via=full` because that test is the weaker one |
+
+**Windows builds today, and the owner's cost estimate should rest on that.**
+An outside audit, pinned at an earlier commit, found the workflow green while
+all three executables failed to build on the missing `libdivsufsort` package.
+That was true then and is not true now: all three **compile and link**, with
+OpenMP, gated and green. The blocker is **not** the absence of a build and it
+is **not** `seed()` — it is `C18` and `C24`, two measured fail-closed defects
+in a tree that otherwise builds and runs there. `seed()` is not even reached,
+because `C18` fails the LRS test before the permutation stage that calls it
+(`OC-50`).
 
 **What Windows measured.** MSYS2 is preinstalled; `libdivsufsort` has no
 `mingw-w64` package (`BUILDING.md` is right) and builds from source; `libgomp`
@@ -123,7 +155,8 @@ claims about instruments, never about sources.
 | **Upstream issue #253 is still open.** | `F01` was withdrawn and the PR closed, but closing the issue was never authorised. With "nothing upstream" standing, it stays open indefinitely unless the owner says otherwise. |
 | **Force POSIX argument order (`+` on each `getopt` optstring).** | GNU getopt permutes and BSD does not, so an argument beginning with `-` is consumed differently on Linux and macOS (`OC-40`). Both platforms refuse bad input, so this is reproducibility rather than safety. A one-character change per tool, but a behaviour change on Linux: options after the filename would stop being recognised there, which is already the macOS behaviour and already what `C21` documents. |
 | **Does TruePad's harness ever invoke these tools on a user's Windows machine?** | The question has **changed shape** now that Windows is measured (`OC-48`). It no longer decides whether to *measure* Windows; it decides whether to *repair* what the measurement found. If yes: **`C18` must be repaired** — the §5.2.5 LRS test fails unconditionally there on any standards-sized input — and `C24` with it. If no: both close as will-not-be-done, and the measurement is still worth having, because it is what turned `C18` from a reading into a fact. Not answerable from this repository — it is a question about TruePad's deployment. |
-| **`C18`: widen `n_choose_2()`'s arithmetic.** | Measured, not argued: `((n*n) - n) / 2` in `long int` wraps on LLP64 and the §5.2.5 decision is then taken against a NaN. The repair is to compute in a fixed-width 64-bit type. It is in the owner's hands rather than the first bucket because it changes an **estimator decision path** — the kind of change this project's hard rule reserves for a deliberate decision — even though the current behaviour is arithmetically indefensible and the direction of the fix is not in doubt. Affects LLP64 only; Linux and macOS are LP64 and unaffected. |
+| **`C18`: widen `n_choose_2()`'s arithmetic.** | **Scoped precisely by `OC-50`.** One caller in the tree (`lrs_test.h:709`, inside the §5.2.5 LRS pass/fail test, reached from `ea_iid` and from `ea_restart`'s rows and columns); **no entropy estimator reaches it**, so it cannot corrupt a figure — `len_LRS_test` returns a `bool`. Direction enumerated over every value a wrapped `N` can take: **uniformly conservative**, because a wrapped `N` is always smaller in magnitude and a smaller `N` raises the threshold. Cost: a fixed-width 64-bit type, plus `data_t`'s `long len`/`long blen` in the same pass, plus **bit-identity evidence on LP64** before and after and a sign-and-verdict match on LLP64. |
+| **`C18`, why it is a decision and not a task.** | Measured, not argued: `((n*n) - n) / 2` in `long int` wraps on LLP64 and the §5.2.5 decision is then taken against a NaN. The repair is to compute in a fixed-width 64-bit type. It is in the owner's hands rather than the first bucket because it changes an **estimator decision path** — the kind of change this project's hard rule reserves for a deliberate decision — even though the current behaviour is arithmetically indefensible and the direction of the fix is not in doubt. Affects LLP64 only; Linux and macOS are LP64 and unaffected. |
 | **`OC-42`'s second half stays UNTESTED on Windows.** | `ea_iid` and `ea_restart` were predicted to die at `seed()`, which opens `/dev/urandom`. They never reach it: `seed()` is called in the permutation stage, and `C18` fails the LRS test first, so the stage is unreachable for any standards-sized input. Repairing `C18` is what would let that prediction be put to the question. Until then it is **untested, not refuted** — and fixing `seed()` remains an entropy-relevant change in its own right. |
 | **Hill's third proposal.** | `OC-30` implements the exact multinomial maximum. Hill also proposes a *corrected binomial* restart check — count one fixed symbol, chosen from the whole dataset — which is easier to model but has less statistical power. Adopting it, or offering it, is a design choice. |
 | **Whether the fork's figure is ever reported alone.** | The standing rule is two figures, always. Relaxing it would be an owner decision, and nothing in the audit supports relaxing it. |

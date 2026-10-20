@@ -4842,3 +4842,237 @@ steps straight over. Added to `audits/BUG-REPAIR-GUIDE.md` as the sixth
 instrument rule. The project's operating practice is unchanged and already
 correct on the other half of the audit's prescription: the tool computes the
 cutoff from the H_I it is actually given, every run.
+
+---
+
+## OC-50 — C18 from the source: one caller, no estimator, uniformly conservative, and Windows DOES build
+
+Item 5 of the outside audit asks four questions about `C18` and one correction
+to the Windows record. Taken in order.
+
+### Which estimators reach the multiplication? None. One test does.
+
+`n_choose_2` has exactly **one caller in the entire tree**:
+
+```
+cpp/shared/utils.h:997    long int n_choose_2(const long int n) { return ((n*n) - n) / 2; }
+cpp/shared/lrs_test.h:709 long int N = n_choose_2(L - W + 1);
+```
+
+and that line is inside `len_LRS_test()`, the **§5.2.5 longest-repeated-substring
+pass/fail test**, which is reached from:
+
+| caller | what it gates |
+|---|---|
+| `cpp/iid_main.cpp:489` | the IID test suite's required LRS test |
+| `cpp/restart_main.cpp:1103-1104` | the restart test suite, rows **and** columns |
+
+**No §6.3.x entropy estimator reaches it.** `ea_non_iid`'s "LRS Test Estimate"
+is the §6.3.6 *estimator*, a different function that does not call
+`n_choose_2`. That is why `ea_non_iid` ran the complete non-IID battery to
+completion on Windows while `ea_iid` and `ea_restart` both failed: the overflow
+is in a **gate**, not in an estimate. `len_LRS_test` returns a `bool`. It
+cannot corrupt an entropy figure, because it never computes one.
+
+### What does the overflow produce?
+
+For a 1,000,000-sample input whose longest repeated substring is 40, so
+`n = L - W + 1 = 999961`: the product `n*n` is **999,922,001,521**, which does
+not fit in a 32-bit signed `long`, and the whole expression evaluates before
+the division by 2:
+
+| | |
+|---|---:|
+| true `N` | 499,960,500,780 |
+| `N` as a 32-bit `long` | **−403,189,204** |
+
+Measured consequence, `ea_iid` on `windows-latest` against an input macOS
+passes: `Pr(X >= 1)` printed as **−0.000367** where macOS prints **+0.365370**,
+same `P_col`, same LRS length. Reproduced exactly from the integer arithmetic
+alone by `reproducers/c18_llp64_overflow.c` — no floating-point platform
+difference is involved.
+
+And the decision is worse than the printed probability. `lrs_test.h:765-766` is
+
+```
+logCollisionPower >= logl(-expm1l(logl(0.999L) / (long double) N))
+```
+
+so a negative `N` makes `logl`'s argument negative and the threshold **NaN**,
+and every comparison against NaN is false.
+
+### Permissive, conservative, or unknown? **Conservative, in every case.**
+
+Not asserted — enumerated over everything a wrapped `N` can be, with the
+threshold computed from the production expression:
+
+| `N` | threshold | verdict | |
+|---|---:|---|---|
+| 499,960,500,780 (true) | −33.8451 | PASS | the correct answer |
+| **−403,189,204** (measured wrap) | **NaN** | **FAIL** | every comparison false |
+| 1,744,294,444 (a positive wrap) | −28.1869 | PASS | still passes, but from a **higher** bar |
+| 1 (smallest positive wrap) | −6.90776 | FAIL | |
+| −1 | NaN | FAIL | |
+| 0 | 0 | FAIL | `logCollisionPower < 0` always, since `p_col < 1` |
+
+The general argument, not just the table: a wrapped `N` is always **smaller in
+magnitude** than the true one, because the true value exceeds 2³¹ whenever it
+overflows at all. A smaller `N` makes `log(0.999)/N` more negative,
+`-expm1l()` of it larger, and its logarithm **higher** — a higher bar to clear.
+So the test can only become harder to pass, never easier. **There is no
+permissive case.** `C18` denies assessments on valid data; it never awards one
+it should not, and no published figure is wrong.
+
+That is the same direction as `R-1`, in the same file, for an unrelated reason.
+
+### What does fixing it cost?
+
+The type change is three characters wide and the regression evidence is not.
+
+- **The change.** `n_choose_2` should compute in a fixed-width 64-bit type —
+  `uint64_t`/`int64_t` from `<cstdint>` — and `N` should hold it. `long long`
+  would also work but `long` is exactly the mistake being corrected, so a
+  fixed-width type is the right spelling. While there: `data_t` holds
+  `long len` and `long blen` with `blen = len * word_size` (`utils.h:518,705`),
+  which is the same defect at a larger threshold — it overflows on LLP64 once
+  `len * word_size` exceeds 2³¹, i.e. beyond 268,435,455 8-bit samples. Not
+  reached at this project's 1,000,000, and it should be fixed in the same pass
+  rather than left as a second instance of a known bug.
+- **Why it is not a free change.** It is **estimator-adjacent arithmetic** that
+  decides a required test. The project's hard rule reserves that for a
+  deliberate decision even when the current behaviour is indefensible, and it
+  is indefensible here.
+- **The evidence a repair owes.** On LP64 the value of `N` must not change for
+  any input, so every figure and every verdict must be **bit-identical** before
+  and after — the full suite plus the pinned figures, on macOS arm64 and on the
+  x86-64 CI job. On LLP64 the `Pr(X >= 1)` sign must become positive and the
+  LRS verdict must match the LP64 verdict on the same input, which the Windows
+  job already measures and gates. A reproducer exists; a regression that fails
+  against the unfixed arithmetic does not yet, and should be written with the
+  repair rather than after it.
+
+### The Windows record, corrected in the direction the audit did not expect
+
+The audit reports the workflow **green while all three executables failed to
+build**, on the missing `libdivsufsort` package. That was true of the commit it
+was pinned at. It is not true now, and the owner's cost estimate should rest on
+the current measurement:
+
+| | |
+|---|---|
+| **Windows builds today.** | All three executables **compile and link** on `windows-latest`, with OpenMP. Gated and green in `.github/workflows/windows-platform-facts.yml`. |
+| two dependency steps are needed, and neither is in `BUILDING.md`'s original text | `libdivsufsort` has **no** `mingw-w64` package and must be built from source — with `-DCMAKE_POLICY_VERSION_MINIMUM=3.5` and a generator that is **not** `MinGW Makefiles` — and `libgomp` comes from `mingw-w64-x86_64-gcc-libs`, which the preinstalled toolchain does not pull in. |
+| the audit is right that the green-while-broken state existed | It did, for several runs, and `OC-48` records it as one of nine instrument faults in that job, along with the "nothing ran, therefore the prediction was refuted" narrative the audit notes was already corrected. |
+
+So the blocker is **not** the absence of a build, and it is **not** `seed()`.
+It is two measured, fail-closed defects — `C18` and `C24` — in a tree that
+otherwise builds and runs there. `seed()` is not even reached: it is called in
+the permutation stage, and `C18` fails the LRS test first, so `OC-42`'s
+prediction about it remains **UNTESTED on Windows rather than refuted**.
+Repairing `C18` is what would let that question be asked at all.
+
+**The owner's decision, stated as it now is.** Windows tier support costs: one
+estimator-adjacent type change with two-platform bit-identity evidence
+(`C18`), one portability change at a single choke point (`C24`,
+`MoveFileEx` with `MOVEFILE_REPLACE_EXISTING`), two documented dependency
+steps, and then `seed()` — which is a genuine entropy-path decision and is
+still unmeasured because nothing has yet reached it. It is more than "the
+blocker is small", and less than "there is no build".
+
+---
+
+## OC-51 — C14 is improved, not closed; the members that remain; and the consumer rule
+
+`C14` has been described in this record as closed. It is not, and the outside
+audit's `A04` is the proof: `ea_non_iid -o --version absent-data 1` exited **0**,
+printed version information, assessed nothing and left any previous report in
+place. Exit status 0 beside a stale report is precisely the fail-open `C14`
+exists to prevent, reached through the option parser rather than through an
+error path. Repaired now, and the closure claim is withdrawn.
+
+### Members, with their state
+
+| member | state |
+|---|---|
+| **route 1** — error paths that never reached the writer left the previous run's report in place | **CLOSED.** The `-o` target is claimed with a fail-closed placeholder as soon as the path is known, and every completing path overwrites it. |
+| **route 2** — `--version` matched anywhere in `argv`, including `argv[0]` and the input filename | **CLOSED** for that shape (`OC-31`), and **re-opened and re-closed** for a shape the first fix did not cover: the prescan did not know that `-o` and `-l`/`-s` consume a following element, so `--version` as an option's ARGUMENT was honoured as an option (`A04`). The prescan now walks `argv` the way `getopt` will. |
+| **route 3** — a report write that silently failed | **CLOSED** (`N-09`): every write is checked, and a failure fails the run. |
+| **the atomic write** (`oac-13`) | **CLOSED on POSIX** (`OC-47`), and **NOT PORTABLE**: see `C24`. On Windows the placeholder makes every later write fail. |
+| **argument-parse failures above the claim** | **OPEN, and small.** A usage error that exits before `-o` has been parsed writes no report and leaves any previous one in place. The exit status is nonzero, so a consumer following the rule below is not misled; but the file at the path is stale, and that is a real residue. |
+| **a signal or `_exit` between the claim and the final write** | **OPEN by design, and covered.** The placeholder is what a reader finds, which is the fail-closed outcome rather than a stale success. This is the member the placeholder exists for, not a gap. |
+
+So: **three routes closed, one closed twice, one closed only on POSIX, one
+small residue open, one covered by design.** `C14` is improved, not closed.
+
+### The consumer rule, recorded because it is the durable lesson
+
+The audit names it and it is worth more than any of the individual repairs:
+
+> **A consumer must require a successful process AND a complete, fresh,
+> identity-bound result. Never exit status alone.**
+
+Concretely, for anything reading a report from these tools:
+
+1. **a successful process** — exit status 0, and not killed by a signal;
+2. **complete** — the JSON parses, and `reportComplete` is not `false`;
+3. **fresh** — the report's own `dateTimeStamp` belongs to the run just made,
+   not to a previous one;
+4. **identity-bound** — the report's `filename` and `sha256` identify the input
+   that was meant to be assessed, and the `commandline` is the one issued;
+5. **errorLevel 0**, present. A missing `errorLevel` is not a zero one — that
+   mistake was live in this audit's own floor oracle until `A08` found it.
+
+Every one of those five exists because some path through these tools can
+satisfy the other four. `C14` route 1 defeats exit-status-alone; `A04` defeats
+it again by a different route; the placeholder is what makes (2) meaningful;
+`C24` is why (3) matters on Windows, where the report can be the *previous* run's
+because the new one could not be written; and `A05` is why (4) matters, because
+the thing at the path was briefly the input capture itself.
+
+---
+
+## OC-52 — accepted-pending: A02 and A06, with the audit's acceptance criteria
+
+Both are **accepted as real and queued**, not disputed. Recorded here so that
+the queue is not mistaken for a disagreement. Neither is repaired in this round
+because both change figures or guard behaviour and each needs its own evidence.
+
+### A02 — the `C01` floor subtraction is justified by the wrong mechanism
+
+**The finding, as the audit states it.** The floor term for `C01` is justified
+as a one-ULP effect, but the mechanism is **dictionary saturation**, not
+rounding. An observed discrepancy of **3.69e-04** is therefore **not a bound**:
+it is one measurement of a quantity whose size is set by how the dictionary
+fills, and nothing in the one-ULP argument constrains it.
+
+**Acceptance criteria, quoted from the audit's framing:** an observed maximum
+is not a bound. The subtraction must either be re-derived from the saturation
+mechanism, with an argument that bounds it, or be replaced by a term that is
+honestly labelled as a measured maximum over a stated input set and not as a
+bound.
+
+**Why queued.** It changes the floor, which is a published figure, and the
+re-derivation is a piece of analysis rather than an edit.
+
+### A06 — `--allow-known-platform-deltas` accepts an enormous change because it only inspects filenames
+
+**The finding.** The flag is meant to tolerate the known upstream `#155`
+platform deltas. It decides what to tolerate by looking at **filenames**, so a
+change from **0.85 to 0.01** in a tolerated file is accepted. A guard that
+cannot distinguish a known 1e-10 platform delta from a 0.84 collapse is not
+guarding.
+
+**Acceptance criteria.** The tolerance must be bounded by **magnitude**, not by
+file identity: a delta is tolerated only if it is within the measured size of
+the known platform difference for that quantity, and anything larger fails
+however familiar the filename. The guard must be shown failing against an
+injected large change in a tolerated file.
+
+**Why queued.** It is a change to what the suite accepts, so it needs the
+measured magnitudes for each tolerated quantity first, and those come from the
+two platform jobs.
+
+### A11 — out of scope, as the audit itself says
+
+The IID-track races stay out of scope while the IID battery is excluded from
+TruePad's path. Recorded, not queued.
