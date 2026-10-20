@@ -552,7 +552,19 @@ SEQEOF
                           # survived the first fix: use the tool's own block.
                           if awk -v m="ea_${t} [pass 1" 'index($0,m){f=1;next} f&&/^===== /{exit} f' "$L" \
                                | grep -q 'Skipped IID permutation'; then
-                            gate FAIL "ea_${t} SKIPPED the permutation tests after an earlier required test failed, so seed() was never reached: OC-42 is UNTESTED for this tool -- the input, not the platform, is what stopped it"
+                            # DO NOT ASSERT A CAUSE THIS GATE HAS NOT
+                            # ESTABLISHED. An earlier version said flatly "the
+                            # input, not the platform, is what stopped it",
+                            # which was true of the periodic LCG input and
+                            # FALSE once the input was fixed -- with splitmix64
+                            # it is C18 that fails the LRS test. Read the sign
+                            # of Pr(X >= 1) and say which.
+                            if awk -v m="ea_${t} [pass 1" 'index($0,m){f=1;next} f&&/^===== /{exit} f' "$L" \
+                                 | grep -qE 'Pr\(X >= 1\): *-'; then
+                              gate FAIL "ea_${t} SKIPPED the permutation tests, so seed() was never reached: OC-42 is UNTESTED for this tool -- and what stopped it is C18, this platform's own defect (Pr(X >= 1) is negative). Repairing C18 is what would let the seed() prediction be put to the question."
+                            else
+                              gate FAIL "ea_${t} SKIPPED the permutation tests after an earlier required test failed, so seed() was never reached: OC-42 is UNTESTED for this tool. Pr(X >= 1) is not negative here, so this is the input rather than C18 -- the input must pass the required tests for the stage under test to run."
+                            fi
                           else
                             gate FAIL "ea_${t} reached neither seed() nor a figure ($f); read $L -- nothing is concluded"
                           fi ;;
