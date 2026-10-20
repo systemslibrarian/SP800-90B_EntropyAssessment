@@ -29,12 +29,16 @@ Followed from a fresh `git clone --branch unrepaired-reference-2026-10-15
 1. **The macOS quick-start block builds only `ea_non_iid`** (`make non_iid`).
    The reference *IID* tool, which the provenance canary classifies, needs the
    "Running the checks" block's `make non_iid iid restart`.
-2. **The quick-start's bare `./selftest` exits 1 on macOS arm64**, reporting
-   `FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin`. Those are
-   the documented upstream #155 platform deltas, explained elsewhere in the
-   same `BUILDING.md`, not a build failure. `pin-check.sh --prove-nonvacuous`
-   passes. The documented invocation that excuses exactly those two files is
-   `cpp/selftest/run-all-checks.sh --allow-known-platform-deltas`.
+2. **The quick-start's bare `./selftest` exits 1 — on macOS arm64 only.** It
+   reports `FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin`.
+   Those are the documented upstream #155 platform deltas, explained elsewhere
+   in the same `BUILDING.md`, not a build failure; `pin-check.sh
+   --prove-nonvacuous` passes, and the invocation that excuses exactly those two
+   files is `cpp/selftest/run-all-checks.sh --allow-known-platform-deltas`.
+   **The deltas are macOS-only**: measured 2026-10-19 on x86-64 Linux CI, the
+   strict suite is a full pass, 20 of 20 (`OC-40`). So someone following the
+   tag's instructions on Linux will not hit this, and the gap recorded here is
+   the macOS case — which is the platform the walk was done on.
 
 A third observation, recorded as seen: the walk's single
 `brew list --versions libomp libdivsufsort jsoncpp openssl@3` printed three

@@ -1062,12 +1062,25 @@ equality. Measured through the production functions: of 255 alphabet sizes from
 2 to 256, the affected set on arm64 is 117 values and **k = 2, 4, 8, 16, 32,
 64, 128 and 256 are all safe**.
 
-**2. `ea_non_iid` never calls the function.** `len_LRS_test` is called only from
-`iid_main.cpp` and `restart_main.cpp` — the §5.2.5 IID test. The fork's record
-is that TruePad **ships only `ea_non_iid`**, which cannot reach the assert at
-any width or alphabet size. If the gate also invokes `ea_iid` or
-`ea_restart -i`, those two can reach it — at affected alphabet sizes only, and
-width 1 is not one.
+**2. The function IS reached through `ea_restart`, which TruePad does invoke —
+and width 1 is what makes that harmless.** Corrected 2026-10-19: an earlier
+version of this finding said the call site was out of reach because
+`ea_non_iid` never calls `len_LRS_test` and that is the tool TruePad ships.
+**That reason does not apply to TruePad**, which runs `ea_restart` as well, with
+width 1 and an `H_I` taken from the `ea_non_iid` run. What is true:
+
+- `len_LRS_test` is called from `iid_main.cpp` and from `restart_main.cpp`
+  lines 1080–1081 (rows and columns). `ea_non_iid` does not call it.
+- In `ea_restart` the call is on the **`-i` track only** — measured: a width-1
+  run with `-i` prints the longest-repeated-substring verdict and a run with
+  `-n` does not.
+- At that call site `k = data.alph_size` (`restart_main.cpp:792`), the
+  **observed** alphabet. At width 1 that is 2, and k = 2 is safe by the
+  arithmetic in ground 1.
+
+So the call site is reachable and the width is what protects it. Ground 1 does
+the work on its own; this ground now says where the call happens rather than
+wrongly asserting it cannot.
 
 **3. It requires EXACT balance.** Every symbol count must be exactly equal.
 Moving **one sample** off balance clears it at every affected alphabet size (0

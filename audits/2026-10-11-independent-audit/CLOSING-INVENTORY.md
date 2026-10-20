@@ -67,12 +67,27 @@ Everything that was in this bucket has left it:
 | **`REPRO-01`** | the wide-format side of the LRS underflow is observed rather than argued |
 | the Linux job's own coverage | the sanitizer build is platform-aware, so the Linux job runs the **whole** suite — "could not run" is never counted as a pass |
 
-**What remains that CI cannot reach, but a person could:** `C18` needs
-**Windows/LLP64**, where `long` is 32 bits. A `windows-latest` job with an
-MSYS2 toolchain is the obvious next step, the Windows build route has never been
-run anywhere, and writing that job is the one piece of platform work left. Linux
-**aarch64** (binary128, 113-bit significand) is not a standard GitHub-hosted
-runner; nothing in the audit currently turns on it.
+**What remains that CI cannot reach without a decision first: Windows.**
+Assessed in `OC-42` and **not started**, pending the owner. The short version:
+MinGW-w64 / MSYS2 UCRT64 is the only plausible route (MSVC lacks `getopt.h`,
+`unistd.h`, the GCC builtins and VLAs); `libdivsufsort` must be built from
+source there; and `BUILDING.md`'s claim that the route needs no source changes
+**is wrong** — `seed()` opens `/dev/urandom` and exits if it cannot, so `ea_iid`
+and `ea_restart` would die at the permutation stage while `ea_non_iid` would
+run. Fixing that means changing an entropy-relevant code path, which is a
+decision rather than a build detail. On MSVC `long double` is double-width so
+R-1's precision asymmetry would not arise; on MinGW it is x87 and would behave
+like Linux.
+
+**The question that decides it is in the owner-decision bucket below**: whether
+TruePad's harness ever invokes these tools on a user's Windows machine. If yes,
+the Windows build is a product requirement and two of the three tools do not run
+there today. If the tools only ever run on the owner's own machine for
+qualification, Windows is moot and this closes as will-not-be-done. `C18`
+(LLP64 integer widths) rides on the same answer.
+
+Linux **aarch64** (binary128, 113-bit significand) is not a standard
+GitHub-hosted runner; nothing in the audit currently turns on it.
 
 ## Needs the physical device — arriving January 2027
 
@@ -93,6 +108,7 @@ claims about instruments, never about sources.
 |---|---|
 | **Upstream issue #253 is still open.** | `F01` was withdrawn and the PR closed, but closing the issue was never authorised. With "nothing upstream" standing, it stays open indefinitely unless the owner says otherwise. |
 | **Force POSIX argument order (`+` on each `getopt` optstring).** | GNU getopt permutes and BSD does not, so an argument beginning with `-` is consumed differently on Linux and macOS (`OC-40`). Both platforms refuse bad input, so this is reproducibility rather than safety. A one-character change per tool, but a behaviour change on Linux: options after the filename would stop being recognised there, which is already the macOS behaviour and already what `C21` documents. |
+| **Does TruePad's harness ever invoke these tools on a user's Windows machine?** | This is the question that decides whether the Windows bucket is a product requirement or moot (`OC-42`). If yes: `ea_iid` and `ea_restart` do not run on Windows today at all, because `seed()` opens `/dev/urandom`, and fixing that changes an entropy-relevant code path. If no: Windows and `C18` close as will-not-be-done. Not answerable from this repository — it is a question about TruePad's deployment. |
 | **Hill's third proposal.** | `OC-30` implements the exact multinomial maximum. Hill also proposes a *corrected binomial* restart check — count one fixed symbol, chosen from the whole dataset — which is easier to model but has less statistical power. Adopting it, or offering it, is a design choice. |
 | **Whether the fork's figure is ever reported alone.** | The standing rule is two figures, always. Relaxing it would be an owner decision, and nothing in the audit supports relaxing it. |
 | **`productionApprovalEnabled`.** | Stays `false` with `approvedBuilds` empty. Flipping it depends on independent review, build verification and physical evidence, none of which exist; it is listed here because it is the decision everything else feeds. |

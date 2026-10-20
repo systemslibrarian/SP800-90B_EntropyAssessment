@@ -359,7 +359,18 @@ to be treated as unverified until then.
 
 ### Route: MSYS2 UCRT64 (MinGW-w64 GCC) — recommended
 
-This is the only route that needs **no source changes**. `getopt.h`,
+**Correction (2026-10-19, `OC-42`): this route does NOT work without a source
+change for `ea_iid` and `ea_restart`.** `seed()` at `cpp/shared/utils.h:795`
+opens `/dev/urandom` and calls `exit(-1)` if it cannot. A native UCRT64 binary
+has no `/dev/urandom` — the MSYS2 POSIX emulation layer does, but binaries built
+for UCRT64 do not use it — and `seed()` is called from
+`cpp/iid/permutation_tests.h:606` and `cpp/restart_main.cpp:298`. So those two
+tools would exit at the permutation stage, while `ea_non_iid`, which never calls
+`seed()`, would run. A Windows port needs a seeding source (`BCryptGenRandom`,
+or `std::random_device`); that is a change to an entropy-relevant code path and
+so a deliberate decision, not a build detail. Nothing below has been run.
+
+Apart from that, this is the route that needs **the fewest source changes**. `getopt.h`,
 `__int128`, `__builtin_inf`, `__builtin_popcount`, VLAs and `<omp.h>` are
 all GCC features the code relies on, and MinGW-w64 GCC provides them, an
 80-bit `long double` like Linux GCC, `libgomp` for OpenMP, and

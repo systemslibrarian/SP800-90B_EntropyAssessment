@@ -1,0 +1,19 @@
+| file | bytes | k | counts exactly equal | k affected arm64 | k affected x86-64 | ABORTS |
+|---|---:|---:|---|---|---|---|
+| alt.bin | 1000000 | 2 | yes | False | False | no |
+| bal12.bin | 1000008 | 12 | yes | False | True | **x86-64** |
+| bal25.bin | 1000025 | 25 | yes | True | False | **arm64** |
+| bal3.bin | 1000002 | 3 | yes | False | True | **x86-64** |
+| bal6.bin | 1000002 | 6 | yes | False | True | **x86-64** |
+| bal7.bin | 1000006 | 7 | yes | False | True | **x86-64** |
+| bal9.bin | 1000008 | 9 | yes | False | True | **x86-64** |
+
+examined: 57 files
+exactly balanced: 7
+would abort on some platform: 6
+  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/bal12.bin  k=12  arm64=False  x86-64=True
+  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/bal25.bin  k=25  arm64=True  x86-64=False
+  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/bal3.bin  k=3  arm64=False  x86-64=True
+  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/bal6.bin  k=6  arm64=False  x86-64=True
+  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/bal7.bin  k=7  arm64=False  x86-64=True
+  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/bal9.bin  k=9  arm64=False  x86-64=True

@@ -3979,12 +3979,11 @@ calling the production `len_LRS_test` directly at k = 17 and k = 25 aborts on
 the tag tree (`Assertion failed: (p_col >= 1.0L / ((long double) k))`,
 `lrs_test.h:652`) and returns normally on the repaired tree.
 
-**One limit, stated rather than smoothed.** End-to-end through `ea_iid` the
-abort was observed on x86-64 at k = 3, 6, 7, 9 and 12, and was **not** observed
-on arm64 at k = 25 even though the function aborts there when called directly.
-I did not determine what the end-to-end path passes differently, so the
-end-to-end radius is bounded by what was measured — those five on x86-64 — and
-not by the 117-size function-level set.
+**The end-to-end gap is closed — see `OC-42`.** It was my own instrument error:
+the arm64 "could not reproduce" came from running the tag worktree's `-DNDEBUG`
+binary, left there by the canary tests, with the assert compiled out. With
+asserts live the end-to-end run aborts on arm64 too. **The end-to-end radius is
+the function-level set**, platform by platform.
 
 ### What an operator sees, and the direction
 
@@ -4047,3 +4046,117 @@ it had to be fixed rather than excused.
 
 Promoted from manual-only. The class it detects — a claim true only on the
 development host — is invisible from that host by construction.
+
+## OC-42 — the end-to-end gap was a stale NDEBUG binary; the corpora are clean; and what Windows would cost
+
+### Task 2 — the gap, explained by instrumenting rather than reasoning
+
+`OC-41` reported that the production `len_LRS_test` aborts on arm64 at k = 25
+when called directly, while the end-to-end `ea_iid` run did not, and bounded
+the radius by measurement rather than explaining it. Instrumented the call site
+on a scratch copy (never committed) to record what the function actually
+receives:
+
+```
+[TRACE] len_LRS_test k=25 L=1000025 nonzero=25
+        p_min=p_max=0.040000000000000000833
+        p_col=0.0399999999999999938938  thr=0.0400000000000000008327  WOULD_ABORT=1
+```
+
+So the end-to-end path presents **exactly the violating values** — all 25
+proportions equal, `p_col` below the threshold. None of the three candidate
+explanations applies: the path does present equal counts, nothing upstream
+perturbs or clamps them, and it does reach k = 25.
+
+**The gap was mine.** The arm64 run I compared against was the tag worktree's
+`-DNDEBUG` binary, left in that worktree by the canary tests, with the assert
+compiled out. Rebuilt with asserts live, the same input on the same host gives
+`rc=134`, `Assertion failed: (p_col >= 1.0L / ((long double) k)), lrs_test.h:652`.
+
+The instrument built for exactly this question would have said so immediately:
+run against that binary, the provenance canary reports `BUILD NDEBUG`. I did not
+run it. **That is this round's instrument error, and it is the fourth of its
+kind to be a stale or mis-built artefact rather than a wrong idea.**
+
+**Consequences.** R-1 is reproducible end-to-end on **both** platforms; only the
+*set of affected alphabet sizes* differs — 117 of 255 on arm64, 155 of 255 on
+x86-64. The end-to-end radius is the function-level set, and `OC-41`'s caveat is
+withdrawn. The repair is unaffected and still demonstrated against the tag on
+both.
+
+### Task 3 — the fork's own evidence sets, scanned
+
+R-1 needs exactly equal counts, which makes **constructed** data the exposed
+case — and constructed data is what this project's corpora are. Scanned with
+`reproducers/r1_corpus_scan.py`, which checks every file for exactly equal
+counts and tests the observed alphabet size against both platforms' measured
+affected sets (`logs/r1/corpus-scan.log`):
+
+| | |
+|---|---:|
+| files examined | **57** |
+| exactly balanced | **7** |
+| would abort on some platform | **6** |
+
+**All six are the R-1 reproducers themselves** — `bal3`, `bal6`, `bal7`,
+`bal9`, `bal12` (x86-64) and `bal25` (arm64) — which exist in order to be
+exposed. The seventh balanced file is the checkerboard restart matrix at k = 2,
+safe by the power-of-two argument.
+
+**Nothing in the fork's committed evidence is exposed**: the eleven reference
+fixtures under `bin/`, the 31 outside-battery calibration streams (1-bit,
+k = 2), the forced restart matrices (column 17 forced, so counts are not equal),
+and the uniform test matrices are all either not exactly balanced or at a
+power-of-two alphabet. **The answer is none**, and the count is stated beside
+it. One generator to watch: `generators/c07_lrs_fixtures.py` builds `bal<k>.bin`
+for k ∈ {20, 25, 32, 40, 50, 64, 100, 125, 200, 250} deliberately — those are
+C07 site-A reproducers and are the same family; they are inputs to a regression
+that expects a refusal, not evidence anything reads a figure from.
+
+### Task 5 — what Windows would cost, and the question that decides whether it matters
+
+**Assessment only. No Windows work started**, per instruction.
+
+**Does it build today?** Unknown, and that status is now explicit: nothing in
+`BUILDING.md`'s Windows section has ever been run anywhere. What can be said
+from the source:
+
+| | |
+|---|---|
+| **MinGW-w64 / MSYS2 UCRT64** | the plausible route. The code needs `getopt.h` (5 sites), `unistd.h`, `signal.h`, `sys/stat.h`, `__int128`, `__builtin_inf`, VLAs and `<omp.h>` — all GCC features MinGW provides. `uname -s` reports `MINGW64_NT-…`, so the Makefile takes its non-Darwin path unchanged. |
+| **MSVC** | not a route without source work: no `getopt.h`, no `unistd.h`, and the GCC builtins and VLAs are unavailable. |
+| **a dependency that is not packaged** | `libdivsufsort` must be built from source for Windows; `jsoncpp`, `bzip2` and OpenSSL are packaged for MSYS2. |
+
+**`BUILDING.md`'s claim that the MSYS2 route "needs no source changes" is
+wrong, and this is a defect found without running anything.** `seed()` at
+`utils.h:795` opens **`/dev/urandom`** and calls `exit(-1)` if it cannot. A
+native MinGW/UCRT64 binary has no `/dev/urandom` — the MSYS2 POSIX emulation
+layer does, but binaries built for UCRT64 do not use it. `seed()` is called from
+`permutation_tests.h:606` and `restart_main.cpp:298`, so **`ea_iid` and
+`ea_restart` would exit at the permutation stage on Windows while `ea_non_iid`,
+which never calls it, would run.** A Windows port therefore needs a seeding
+source (`BCryptGenRandom`, or `std::random_device`), which is a source change to
+an entropy-relevant code path and so an owner decision in its own right.
+`BUILDING.md` is corrected to say so.
+
+**What R-1 would do there.** On **MSVC** `long double` is the same width as
+`double`, so the precision asymmetry behind R-1 does not arise and the affected
+set would be empty or near it. On **MinGW** `long double` is x87 80-bit, so it
+would behave like Linux — the 155-size set. Either way the fork's clamp removes
+it; this is about what an *unrepaired* Windows build would do.
+
+**Cost, if the answer to the next question is yes:** a `windows-latest` job is a
+workflow file like the Linux one, *provided* the build succeeds — so the honest
+estimate is one session to attempt the MSYS2 build in CI and find out, plus
+whatever the `/dev/urandom` change turns out to require, plus a decision about
+making that change at all. If the build fails for a reason not listed above,
+that is unbounded and should be re-estimated then rather than guessed now.
+
+**The question for the owner, which is not mine to answer.** TruePad's desktop
+app targets Windows and Mac. **If its harness ever invokes these tools on a
+user's Windows machine, the Windows build is a product requirement**, and the
+`/dev/urandom` failure means `ea_iid` and `ea_restart` do not run there at all
+today. **If the tools only ever run on the owner's own machine for
+qualification, Windows is moot** and the bucket closes as will-not-be-done. This
+session cannot answer it: it is a question about TruePad's deployment, and
+reading TruePad is out of scope.
