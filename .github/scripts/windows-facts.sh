@@ -292,8 +292,28 @@ runtime)
   # python3 is not on PATH in this shell (first run, OC-48), so generate the
   # input with the compiler that is certainly here.
   cat > /tmp/gen.c <<'EOF'
+/* splitmix64, bit 0 of each output.
+ *
+ * The first version of this was an LCG mod 2^32 emitting bit 16, and bit 16 of
+ * such an LCG has period 2^17 = 131072. ea_iid duly reported a longest
+ * repeated substring of 868928 = 1000000 - 131072, FAILED the LRS test, and
+ * then printed "Skipped IID permutation tests after an earlier required IID
+ * test failure" -- so seed() was never reached and the OC-42 prediction was
+ * never put to the question. The input has to get PAST the required tests for
+ * the stage under test to run at all (OC-48). */
 #include <stdio.h>
-int main(void){ unsigned s=11u; for(long i=0;i<1000000;i++){ s=s*1103515245u+12345u; putchar((int)((s>>16)&1u)); } return 0; }
+int main(void){
+  unsigned long long x = 0x90B2026ULL;
+  for(long i=0;i<1000000;i++){
+    x += 0x9E3779B97F4A7C15ULL;
+    unsigned long long z = x;
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+    z =  z ^ (z >> 31);
+    putchar((int)(z & 1ULL));
+  }
+  return 0;
+}
 EOF
   gcc -O1 -o /tmp/gen.exe /tmp/gen.c 2>>"$L" && /tmp/gen.exe > /tmp/w1.bin 2>>"$L"
   if [ ! -s /tmp/w1.bin ]; then
@@ -422,15 +442,24 @@ static bool writeJsonReport(const string &path, const string &json, int *err) {
     *err = 0; return true;
 }
 int main(void) {
-    int e = 0;
+    /* Each case is SEQUENCED before it is printed. The first version passed
+     * the call and `e` as sibling arguments to printf, and C++ leaves the
+     * evaluation order of arguments unspecified: `e` was read before the call
+     * that set it, so every line carried the PREVIOUS case's errno. Case 2
+     * printed 0 and case 3 printed 17, which is case 2's. An instrument that
+     * reports the right verdict beside the wrong number is still wrong. */
+    int e = 0; bool ok;
     remove("seq.json");
+    ok = writeJsonReport("seq.json", "{\"placeholder\":true}", &e);
     printf("1. fresh path, first write (the C14 placeholder): %s errno=%d (%s)\n",
-           writeJsonReport("seq.json", "{\"placeholder\":true}", &e) ? "OK" : "FAILED", e, strerror(e));
+           ok ? "OK" : "FAILED", e, strerror(e));
+    ok = writeJsonReport("seq.json", "{\"report\":1}", &e);
     printf("2. same path, second write (every later report):  %s errno=%d (%s)\n",
-           writeJsonReport("seq.json", "{\"report\":1}", &e) ? "OK" : "FAILED", e, strerror(e));
+           ok ? "OK" : "FAILED", e, strerror(e));
     remove("seq.json");
+    ok = writeJsonReport("seq.json", "{\"single\":1}", &e);
     printf("3. fresh path again, single write only:           %s errno=%d (%s)\n",
-           writeJsonReport("seq.json", "{\"single\":1}", &e) ? "OK" : "FAILED", e, strerror(e));
+           ok ? "OK" : "FAILED", e, strerror(e));
     remove("seq.json");
     return 0;
 }
@@ -469,18 +498,42 @@ SEQEOF
   # as the prediction being refuted, when in fact NO BINARY EXISTED and
   # `timeout` had reported "No such file or directory" with exit 127. A
   # prediction is UNTESTED until something ran.
+  # OC-42 IS A PER-TOOL PREDICTION, SO READ IT PER TOOL.
+  #
+  # Run 7's gate declared the prediction BROKEN because "a tool produced a
+  # figure" -- and the tool that did was ea_non_iid, which OC-42 predicts
+  # RUNS. The two tools predicted to die had not reached seed() at all. A gate
+  # that reads a per-tool prediction out of a whole log will find whichever
+  # half it greps for first. And the absence rule applies to each tool
+  # separately: a tool that never reached the permutation stage has not
+  # refuted anything.
+  far_of() { sed -n "/ea_$1 \[pass 1/,/^$/p" "$L" | sed -n 's/^how far: //p' | head -1; }
   built=0
   for b in ./cpp/ea_non_iid ./cpp/ea_iid ./cpp/ea_restart; do
     if [ -x "$b" ] || [ -x "$b.exe" ]; then built=$((built + 1)); fi
   done
   if [ "$built" -eq 0 ]; then
     gate FAIL "no tool was built, so the seed()//dev/urandom prediction is UNTESTED -- not refuted, not confirmed"
-  elif sed -n '/pass 1/,/pass 2/p' "$L" | grep -q 'DIED at seed'; then
-    gate PASS "the seed()//dev/urandom prediction is CONFIRMED for at least one tool -- see which, above"
-  elif sed -n '/pass 1/,/pass 2/p' "$L" | grep -q 'produced a figure'; then
-    gate FAIL "a tool produced a figure in pass 1 where seed() was predicted to kill it: the OC-42 prediction is BROKEN and what actually happens is the finding"
   else
-    gate FAIL "pass 1 tools ran but neither died at seed() nor produced a figure; read $L before concluding anything -- how far each got is printed there"
+    # ea_non_iid: predicted to run. It does not call seed().
+    case "$(far_of non_iid)" in
+      *figure*) gate PASS "ea_non_iid runs the whole non-IID battery and produces a figure -- the half of OC-42 that predicted this is CONFIRMED" ;;
+      *)        gate FAIL "ea_non_iid did not produce a figure: $(far_of non_iid) -- OC-42's first half is BROKEN and what happens instead is the finding" ;;
+    esac
+    # ea_iid and ea_restart: predicted to die at seed(), which only the
+    # permutation stage reaches.
+    for t in iid restart; do
+      f=$(far_of "$t")
+      case "$f" in
+        *"DIED at seed"*) gate PASS "ea_${t} DIED at seed(): no /dev/urandom -- OC-42 CONFIRMED for this tool" ;;
+        *figure*)         gate FAIL "ea_${t} produced a figure where seed() was predicted to kill it -- OC-42 is BROKEN for this tool, and /dev/urandom evidently resolves here" ;;
+        *)                if sed -n "/ea_${t} \[pass 1/,/^$/p" "$L" | grep -q 'Skipped IID permutation'; then
+                            gate FAIL "ea_${t} SKIPPED the permutation tests after an earlier required test failed, so seed() was never reached: OC-42 is UNTESTED for this tool -- the input, not the platform, is what stopped it"
+                          else
+                            gate FAIL "ea_${t} reached neither seed() nor a figure ($f); read $L -- nothing is concluded"
+                          fi ;;
+      esac
+    done
   fi
   ;;
 

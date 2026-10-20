@@ -109,19 +109,31 @@ bs_calibrate() {
        || ! "$cc" -O0 -DNDEBUG -o "$d/nd" "$d/p.c" 2>/dev/null; then
         BS_CAL_NOTE='calibration programs did not build'; rm -rf "$d"; return 0
     fi
-    # RESOLVE WHAT THE COMPILER ACTUALLY WROTE. On MinGW, gcc appends .exe when
-    # -o carries no suffix, so `$d/live` does not exist even though gcc returned
-    # 0 -- and nm on a missing file reports no symbols, which looked exactly like
-    # "the pattern does not discriminate here". The Windows run refused for that
-    # reason while the diagnostic printed beside it, in the same shell, showed
-    # the full listing discriminating 2 to 0. A probe must not be defeated by a
-    # filename (OC-48). Never infer the artefact's name; look for it, and if the
-    # compiler claimed success and nothing can be found, say THAT.
+    # RESOLVE THE ARTEFACT WITH THE TOOL THAT WILL READ IT, NOT WITH THE SHELL.
+    #
+    # On MinGW gcc appends .exe when -o carries no suffix, so the compiler
+    # returns 0 having written `live.exe`. The first attempt at this resolved
+    # the name with `[ -f ]`, and that was wrong in a way worth recording: the
+    # MSYS runtime resolves `live` to `live.exe` for stat(), so the shell said
+    # the bare name existed, while native `nm`, handed the same string, looked
+    # for a Win32 path that was not there and printed nothing -- with stderr
+    # suppressed, indistinguishable from "this pattern does not discriminate".
+    # The debug output showed `ls` listing live.exe and the resolver claiming
+    # live, in the same block.
+    #
+    # So the resolution test must BE the use: pick the candidate `nm` can
+    # actually read. Asking one layer a question and handing the answer to a
+    # different layer is the error this whole audit is about (OC-48).
+    bs_readable() { # bs_readable <base> -- echo the candidate nm can read
+        local c
+        for c in "$1" "$1.exe"; do
+            [ -n "$(nm "$c" 2>/dev/null | head -1)" ] && { printf '%s' "$c"; return 0; }
+        done
+        return 1
+    }
     local lb nb
-    for lb in "$d/live" "$d/live.exe"; do [ -f "$lb" ] && break; done
-    for nb in "$d/nd"   "$d/nd.exe";   do [ -f "$nb" ] && break; done
-    if [ ! -f "$lb" ] || [ ! -f "$nb" ]; then
-        BS_CAL_NOTE='the compiler reported success but no calibration artefact could be found (neither bare nor .exe)'
+    if ! lb=$(bs_readable "$d/live") || ! nb=$(bs_readable "$d/nd"); then
+        BS_CAL_NOTE="the compiler reported success but nm could read neither calibration artefact (tried the bare name and .exe); nm said: $(nm "$d/live" 2>&1 | head -1)"
         rm -rf "$d"; return 0
     fi
     if [ -n "${BS_DEBUG:-}" ]; then
@@ -175,8 +187,12 @@ bs_asserts() {
     [ -x "$1" ] || { echo UNKNOWN; return; }
     bs_calibrate
     [ "${BS_CALIBRATED}" = yes ] || { echo UNKNOWN; return; }
-    local u n
-    u=$(bs_syms "${BS_MODE}" "$1")
+    local u n t
+    t=$1
+    for c in "$1" "$1.exe"; do
+        if [ -n "$(nm "$c" 2>/dev/null | head -1)" ]; then t=$c; break; fi
+    done
+    u=$(bs_syms "${BS_MODE}" "$t")
     [ -z "${u}" ] && { echo UNKNOWN; return; }   # stripped, unreadable, or not an object file
     n=$(printf '%s\n' "${u}" | grep -ci "${BS_PATTERN}")
     if [ "${n}" -gt 0 ]; then echo LIVE; else echo NDEBUG; fi
