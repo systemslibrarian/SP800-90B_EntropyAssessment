@@ -1,0 +1,143 @@
+name: Windows platform facts
+
+# WHY THIS EXISTS
+#
+# BUILDING.md's Windows section has never been run anywhere, and everything the
+# project says about Windows is therefore an argument from reading the source.
+# Four of those arguments are worth replacing with measurements, and this job
+# exists to do exactly that and nothing else:
+#
+#   1. the toolchain and dependencies -- does every library the Makefile links
+#      actually have a mingw-w64 package? `libdivsufsort` is the one BUILDING.md
+#      says does not, which would be the finding.
+#   2. whether it compiles at all, per tool.
+#   3. the float environment, PRINTED. MinGW uses x87 80-bit, so the R-1
+#      affected set should be 155 of 255 -- the same as Linux. That is a
+#      prediction this run confirms or breaks.
+#   4. what happens at RUNTIME. The prediction (OC-42) is that `ea_non_iid` runs
+#      while `ea_iid` and `ea_restart` die at the permutation stage, because
+#      `seed()` opens /dev/urandom and calls exit(-1). A prediction about a
+#      failure mode deserves the same scepticism as any other.
+#
+# And one more, which outranks the Windows question itself: Windows is a
+# platform the build-state probe has never met, so this is the test of whether
+# `cpp/selftest/buildstate-lib.sh` REFUSES properly rather than guessing from a
+# symbol it was not looking for. If it concludes anything without recognising
+# the platform, that is a defect in the probe.
+#
+# CHANGES NO SOURCE. Fixing `seed()` means touching an entropy-relevant path and
+# stays gated on the owner decision. The point here is to replace an argument
+# about Windows with a measurement of it -- worth having either way, because if
+# Windows turns out not to be needed the measurement still closes `C18` and the
+# platform bucket permanently rather than leaving them parked on a guess.
+#
+# Manual trigger only, deliberately: this answers questions, it gates nothing.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  MSYS2_ROOT: C:\msys64
+
+jobs:
+  windows-facts:
+    runs-on: windows-latest
+    timeout-minutes: 240
+    defaults:
+      run:
+        shell: cmd
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 0. Is MSYS2 preinstalled on this runner image?
+        run: |
+          mkdir logs
+          echo === runner image === > logs\00-environment.log
+          ver >> logs\00-environment.log
+          echo === looking for a preinstalled MSYS2 === >> logs\00-environment.log
+          if exist "%MSYS2_ROOT%\usr\bin\pacman.exe" (
+            echo FOUND  %MSYS2_ROOT%\usr\bin\pacman.exe >> logs\00-environment.log
+            echo MSYS2_PRESENT=yes>> %GITHUB_ENV%
+          ) else (
+            echo ABSENT -- no pacman at %MSYS2_ROOT%\usr\bin\pacman.exe >> logs\00-environment.log
+            echo ABSENT -- this job then needs msys2/setup-msys2 pinned to an exact >> logs\00-environment.log
+            echo         release, added as a step here. It is deliberately NOT wired >> logs\00-environment.log
+            echo         in blind: an unverifiable action pin would fail the job for >> logs\00-environment.log
+            echo         a reason unrelated to the Windows question. >> logs\00-environment.log
+            echo MSYS2_PRESENT=no>> %GITHUB_ENV%
+          )
+          type logs\00-environment.log
+
+      - name: 1. Toolchain and dependencies, taken from the Makefile
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh deps" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
+      - name: 2. Build each supported tool separately
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh build" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
+      - name: 3. The float environment, printed
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh floats" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
+      - name: "4. R-1 affected set (prediction: 155 of 255 if x87 80-bit)"
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh r1" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
+      - name: "5. Runtime behaviour of all three tools (prediction: seed kills two)"
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh runtime" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
+      - name: 6. The build-state probe on a platform it has never met
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh probe" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
+      - name: 7. Verdict
+        if: always()
+        run: |
+          if exist logs\verdict.log type logs\verdict.log
+          echo. >> %GITHUB_STEP_SUMMARY%
+          echo ## Windows platform facts >> %GITHUB_STEP_SUMMARY%
+          for %%f in (logs\*.log) do (
+            echo ^<details^>^<summary^>%%~nxf^</summary^> >> %GITHUB_STEP_SUMMARY%
+            echo ``` >> %GITHUB_STEP_SUMMARY%
+            type "%%f" >> %GITHUB_STEP_SUMMARY%
+            echo ``` >> %GITHUB_STEP_SUMMARY%
+            echo ^</details^> >> %GITHUB_STEP_SUMMARY%
+          )
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-platform-facts
+          path: logs/
+          retention-days: 90
