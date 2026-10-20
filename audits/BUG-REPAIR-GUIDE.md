@@ -182,3 +182,35 @@ For every row with an upstream issue or PR, re-query GitHub (step 2), apply the 
 ## Deduplication
 
 Deduplicating files (identical copies of upstream sources, logs or reports in the audit archive) is housekeeping. It never removes or resolves a finding. Before removing any audit file, confirm that the tracker's evidence paths for every finding still resolve.
+
+### Rule 6 — a sweep is evidence about the rows it sampled
+
+A sampled table is **sampled rows**, never an interval. Where a claim about
+every point in a range is wanted, the boundaries must be solved for.
+
+**How this was learned.** The project claimed the printed and corrected restart
+cutoffs were "identical at every H_I from 0.50 to 0.989", on the strength of a
+sweep in steps of 0.02 with a fine sweep near one boundary. An outside audit
+produced a counterexample inside the range, at `H_I = 0.9661822653793894`,
+where the printed cutoff is 581 and the exact one 582. It reproduced in the
+production C++ immediately. The window it sits in is **3.2e-06 wide** — no
+sweep in steps of 0.02 could find it, and a finer sweep would only have moved
+the goalposts, because the quantity is an **integer quantile** and integer
+quantiles move at boundaries that sampling steps straight over. Solving for the
+crossings instead showed 36 such intervals, totalling 0.217 % of the range
+(`OC-49`).
+
+The same entry carries the companion error: the cutoff reported for
+`H_I = 0.696` had been computed at **0.70**, a rounded stand-in. A step
+function does not tolerate a rounded input — 0.70 gives 683 and 0.696 gives
+684. **Compute at the value you will actually use, every time.**
+
+| do | instead of |
+|---|---|
+| solve for the boundary and report the interval you proved | sweeping and reporting the gaps between samples |
+| compute at the measured input on every run | computing at a round number near it |
+| state "zero at every point this sweep sampled" | state "zero throughout the range" |
+
+The project's tool already does the right thing at runtime: the cutoff is
+computed from the `H_I` the operator supplies, every run. The failure was in
+the prose about it.

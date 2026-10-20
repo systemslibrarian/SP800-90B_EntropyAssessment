@@ -943,6 +943,14 @@ converges to the dominant cell's count, and so the multinomial-maximum
 correction shrinks toward zero — coinciding, or differing by one count,
 somewhere well above 0.696, and identical at 0.696 itself.
 
+> **SUPERSEDED IN TWO PLACES BY `OC-49`.** (1) The interval claim below is a
+> sampled sweep: the two cutoffs differ on 36 narrow intervals inside
+> 0.50–0.989, totalling 0.217 % of the range. (2) The 683 below is the cutoff
+> at H_I = **0.70**, which is what was computed; at the project's actual 0.696
+> it is **684**. The step function moves a whole count across that rounding.
+> The conclusion that C23 changes no verdict for this device survives and is
+> now proved by boundary analysis rather than sampling.
+
 **That holds, and the convergence is faster than "well above".** The two
 cutoffs are **identical at every H_I from 0.50 to 0.989**. The gap is +1 at
 0.99 and reaches +2 only at 0.999 and above. The mechanism is exactly as
@@ -953,7 +961,8 @@ clear of ½. At H_I = 1 exactly the cells are equal and symmetry doubles the
 tail, which is the whole of the +2.
 
 **At TruePad's quoted operating point the C23 defect has no effect.** At
-H_I = 0.70 the printed-formula cutoff and the corrected cutoff are both **683**,
+H_I = 0.70 the printed-formula cutoff and the corrected cutoff are both **683**
+(and at 0.696, the figure actually quoted, both are **684** — `OC-49`),
 and the measured false-reject rate is 1.10 % against the 1 % the standard
 targets. **The repair matters for the tool's correctness, not for this device.**
 

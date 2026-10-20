@@ -2957,7 +2957,16 @@ read.
 > H_I ≈ 0.989**: the printed and corrected cutoffs are identical from 0.50 to
 > 0.989, and at the 0.696 operating point this project actually uses both are
 > **683** with a measured false-reject rate of **1.10 %** against the 1 %
-> target. So at that point the repair bought **correctness, not a changed
+> target.
+>
+> **BOTH FIGURES IN THAT SENTENCE ARE WRONG — SUPERSEDED BY `OC-49`.** The
+> cutoff at 0.696 is **684**; 683 is the value at 0.70, a rounded stand-in that
+> was then reported as the real operating point, and the cutoff is a step
+> function. And the two cutoffs are NOT identical throughout 0.50–0.989: they
+> differ on 36 narrow intervals totalling 0.217 % of that range, one of which
+> an outside audit found and this session reproduced. The surviving conclusion
+> — that `C23` changes no verdict at 0.696 — is now proved by boundary
+> analysis instead of sampling. So at that point the repair bought **correctness, not a changed
 > figure**. The conformance point stands at every width — a tool that does not
 > implement the printed procedure is a problem whichever test is better — but
 > the permissiveness is real only where the alphabet is wide, and the figures
@@ -3762,6 +3771,12 @@ multinomial maximum by Levin's representation. False-reject rates measured on
 2000 full 1000×1000 matrices per H_I (4000 at the two boundary rows) whose most
 likely symbol has probability exactly `2^-H_I`, rows and columns both counted,
 so every rejection is false and the row/column dependence is included.
+
+> **SUPERSEDED BY `OC-49`.** This result is a SWEEP in steps of 0.02 reported
+> as an interval, and it is false as stated: the two cutoffs differ on 36
+> narrow intervals within 0.50–0.989, totalling 0.217 % of the range, the
+> widest 5.4e-04 near H_I = 0.9862. Read the sentence below as "zero at every
+> H_I this sweep sampled", which is what it measured.
 
 **Result: the correction is exactly zero at every H_I from 0.50 to 0.989.** At
 width 1 and H_I < 1 the worst case is one cell at `p` plus a remainder cell at
@@ -4719,3 +4734,111 @@ arguments were correct. Neither argument was portable, and no amount of
 re-reading either diff would have revealed that — **only running them somewhere
 new did.** `REPAIRED is not REVIEWED` has a companion: *verified on the hosts
 it was verified on.*
+
+---
+
+## OC-49 — the cutoff at 0.696 is 684, not 683; and the zero-gap interval is withdrawn
+
+> **This entry supersedes the scope banner on `OC-30`, the result in `OC-39`,
+> and `XR-13`'s interval claim.** Two separate errors, both mine, both found by
+> an outside read-only audit and both reproduced here before being accepted.
+
+### Error 1: the number was computed at a rounded H_I and reported at the real one
+
+The project reported **683** as the restart cutoff at its operating point
+`H_I = 0.696`. The correct value is **684**. The production C++ has always said
+684, and so has `oracles/restart_cutoff_exact.py`; the error was in the prose.
+
+Its root cause is worth more than the correction. `XR-13` computed at
+**H_I = 0.70** — a rounded stand-in — and got 683, which is right *at 0.70*.
+`OC-30`'s scope banner then transcribed that as the value "at the 0.696
+operating point this project actually uses". **The cutoff is a step function of
+H_I, so rounding the input by 0.004 moved the output by a whole count:**
+
+| H_I | tail at the cutoff | tail one below | cutoff |
+|---|---:|---:|---:|
+| 0.70 | 3.896719e-06 | 5.314981e-06 | **683** |
+| 0.696 | 4.757131e-06 | 6.472471e-06 | **684** |
+
+Both certified: the two-sided tail straddles `alpha = 5e-6` at `m` and `m-1`,
+and the computation is stable when the working precision is raised from 60 to
+120 decimal digits. A rounded input is not an approximation of an integer
+quantile; it is a different question.
+
+### The convention, written down, because the answers differ by one and so do conventions
+
+- `n = 1000` trials per row or column of the 1000×1000 restart matrix.
+- `alpha` is the **per-test** level. §3.1.4.3 step 1 sets `0.000005`, and
+  `1 − (1 − 5e-6)^2000 = 0.00995` — the Sidak correction for 2000 tests at a
+  1 % family-wise rate, which is where that number comes from.
+- The cutoff is the **smallest `m` with `P(X_max ≤ m) ≥ 1 − alpha`**.
+- **Counts at the cutoff are ACCEPTED**: the check fails iff
+  `X_max > cutoff` (`restart_main.cpp:795`). This is the audit's stated
+  convention too, so the disagreement was never about the convention.
+- At width 1, `p = 2^-H_I ∈ (0.5, 1)`, so `floor(1/p) = 1` and the worst case
+  is exactly two cells, `p` and `1 − p`. Then `max(X, n−X) ≤ m` iff
+  `n − m ≤ X ≤ m`, so the exact tail is **two-sided**. The printed §3.1.4.3
+  formula uses the **majority cell's one-sided tail only**, which is why it can
+  be one lower.
+
+New tool: `oracles/restart_cutoff_certified.py`, which derives both cutoffs
+from that definition in exact rational arithmetic and certifies the integer
+boundary rather than reading it off a float. It exists because "two of my own
+tools agree" is not an argument when they share a design.
+
+### Error 2: a sampled table was reported as an interval, and it is false
+
+The claim was: *the printed and corrected cutoffs are **identical at every H_I
+from 0.50 to 0.989***. That was a sweep in steps of 0.02 with a fine sweep near
+the boundary — **sampled rows, read as an interval.** The audit produced a
+counterexample inside the claimed range, and it reproduces exactly:
+
+| | printed | exact |
+|---|---:|---:|
+| `H_I = 0.9661822653793894` | **581** | **582** |
+
+in the production C++ and in the independent certified computation alike. The
+mechanism is exactly as the audit states: the majority tail alone is
+`4.6e-06 < alpha`, while the majority **plus** minority tails sum to
+`5.000833e-06`, which is above `5e-06` by a factor of 1.0002. The audit found a
+point inside a window **3.2e-06 wide**. No sweep in steps of 0.02 could have
+found it, and no sweep ever licenses a statement about every point.
+
+**Replaced with a quantile-boundary analysis, which does license one.** Both
+cutoffs are non-increasing step functions of `H_I`, and the two-sided tail
+strictly exceeds the one-sided tail, so for each integer `m` the exact cutoff
+steps at a higher `H_I` than the printed one and the two disagree exactly on
+the interval between those two crossings. Locating every crossing by bisection
+(not sampling) over `[0.50, 0.989]`:
+
+| | |
+|---|---|
+| intervals where the two cutoffs differ | **36** |
+| total measure | **1.0614e-03**, i.e. **0.217 %** of the range |
+| widest | 5.436e-04, at cutoff 574, near `H_I = 0.9862` |
+| the audit's counterexample | inside the cutoff-581 interval, `(0.9661806581243831, 0.9661838745579914)` |
+| lowest `H_I` with any disagreement | ≈ 0.888; below that the two crossings coincide to better than 1e-18 |
+
+So the corrected statement is: **the two cutoffs agree on about 99.78 % of
+`[0.50, 0.989]` and differ on 36 narrow intervals clustered at the
+high-entropy end.** At the project's operating point, 0.696, they agree at 684,
+and the nearest disagreement is at `H_I ≈ 0.888` — so the practical conclusion
+that `C23` changes no verdict for this device survives, now proved by boundary
+analysis rather than asserted from samples.
+
+**One nuance the analysis exposes, which matters for anyone rerunning it.** The
+counterexample is `alpha`-sensitive. Under the spec's flat `5e-6` the two
+cutoffs are 581 and 582; under the Sidak `5.0251553e-6` both are 581, because
+`5.000833e-06` falls below that threshold. The production code uses the spec's
+`5e-6`. An oracle that silently used the other one would have "failed to
+reproduce" a real finding.
+
+### The rule this changes
+
+A sweep is evidence about the rows it sampled. Where a statement about an
+interval is wanted, the boundaries have to be solved for, because the quantity
+is an integer quantile and integer quantiles move at boundaries that sampling
+steps straight over. Added to `audits/BUG-REPAIR-GUIDE.md` as the sixth
+instrument rule. The project's operating practice is unchanged and already
+correct on the other half of the audit's prescription: the tool computes the
+cutoff from the H_I it is actually given, every run.
