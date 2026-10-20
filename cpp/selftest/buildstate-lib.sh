@@ -33,6 +33,7 @@
 #
 #   glibc / Linux      __assert_fail
 #   Darwin / BSD       __assert_rtn, __assert
+#   MinGW / MSVCRT     _assert, __imp__assert   (MEASURED on windows-latest)
 #   MSVC               _wassert
 #
 # so a probe keyed on a name list can fail exactly the way the message-text
@@ -63,9 +64,36 @@
 # bs_require is for a measurement that deliberately uses a particular build:
 # declare which, and a mismatch refuses rather than proceeding.
 
-BS_PATTERN='assert'          # matched case-insensitively against nm -u output
+BS_PATTERN='assert'          # matched case-insensitively against the symbol listing
 BS_CALIBRATED=''             # yes | no, set by bs_calibrate
+BS_MODE=''                   # undefined | full -- which listing discriminates here
 BS_CAL_NOTE=''
+
+# TWO LISTINGS, TRIED IN ORDER OF STRENGTH (OC-48).
+#
+# `nm -u` is the right question on ELF and Mach-O: an undefined symbol is a
+# structural fact about what the binary must import, and nothing unrelated can
+# masquerade as one. On PE/COFF it is blind -- a linked .exe resolves imports
+# through an import table, so Windows gave an EMPTY /assert/i match for a
+# binary that plainly had a reachable assert, and the probe refused. Refusing
+# was correct. But the Windows run also measured that a FULL listing does
+# discriminate there:
+#
+#   nm cal_live.exe | grep -i assert  ->  __imp__assert, _assert   (2)
+#   nm cal_nd.exe   | grep -i assert  ->                           (0)
+#
+# so the platform can be taught, and that is an improvement rather than a
+# correction. The full listing is WEAKER: any symbol whose name merely contains
+# "assert" would read as LIVE, where an undefined-symbol match could not. So it
+# is only ever the fallback, it must pass the same calibration, and every line
+# produced through it is marked `via=full` so a reader can see which question
+# was answered.
+bs_syms() { # bs_syms <mode> <binary>
+    case "$1" in
+        undefined) nm -u "$2" 2>/dev/null ;;
+        full)      nm    "$2" 2>/dev/null ;;
+    esac
+}
 
 bs_calibrate() {
     [ -n "${BS_CALIBRATED}" ] && return 0
@@ -81,14 +109,19 @@ bs_calibrate() {
        || ! "$cc" -O0 -DNDEBUG -o "$d/nd" "$d/p.c" 2>/dev/null; then
         BS_CAL_NOTE='calibration programs did not build'; rm -rf "$d"; return 0
     fi
-    live=$(nm -u "$d/live" 2>/dev/null | grep -ci "${BS_PATTERN}")
-    ndebug=$(nm -u "$d/nd" 2>/dev/null | grep -ci "${BS_PATTERN}")
-    if [ "${live:-0}" -gt 0 ] && [ "${ndebug:-0}" -eq 0 ]; then
-        BS_CALIBRATED=yes
-        BS_CAL_NOTE="pattern /${BS_PATTERN}/i discriminates; asserts-live symbol here is $(nm -u "$d/live" 2>/dev/null | grep -i "${BS_PATTERN}" | head -1 | tr -s ' ' | sed 's/^ *//')"
-    else
-        BS_CAL_NOTE="pattern /${BS_PATTERN}/i does NOT discriminate on this host (live=${live:-0} ndebug=${ndebug:-0}); the symbol is named something this probe does not know"
-    fi
+    local m
+    for m in undefined full; do
+        live=$(bs_syms "$m" "$d/live"  | grep -ci "${BS_PATTERN}")
+        ndebug=$(bs_syms "$m" "$d/nd"  | grep -ci "${BS_PATTERN}")
+        if [ "${live:-0}" -gt 0 ] && [ "${ndebug:-0}" -eq 0 ]; then
+            BS_CALIBRATED=yes
+            BS_MODE=$m
+            BS_CAL_NOTE="pattern /${BS_PATTERN}/i discriminates in the ${m}-symbol listing; asserts-live symbol here is $(bs_syms "$m" "$d/live" | grep -i "${BS_PATTERN}" | head -1 | tr -s ' ' | sed 's/^ *//')"
+            [ "$m" = full ] && BS_CAL_NOTE="${BS_CAL_NOTE} -- NOTE: the undefined-symbol listing is blind on this platform (PE/COFF), so this is the weaker full-listing test"
+            break
+        fi
+        BS_CAL_NOTE="pattern /${BS_PATTERN}/i does NOT discriminate on this host (${m} listing: live=${live:-0} ndebug=${ndebug:-0}); the symbol is named something this probe does not know"
+    done
     rm -rf "$d"
     return 0
 }
@@ -113,7 +146,7 @@ bs_asserts() {
     bs_calibrate
     [ "${BS_CALIBRATED}" = yes ] || { echo UNKNOWN; return; }
     local u n
-    u=$(nm -u "$1" 2>/dev/null)
+    u=$(bs_syms "${BS_MODE}" "$1")
     [ -z "${u}" ] && { echo UNKNOWN; return; }   # stripped, unreadable, or not an object file
     n=$(printf '%s\n' "${u}" | grep -ci "${BS_PATTERN}")
     if [ "${n}" -gt 0 ]; then echo LIVE; else echo NDEBUG; fi
@@ -126,8 +159,9 @@ bs_print() {
             printf '[build-state] %-34s MISSING -- no measurement against this binary is interpretable\n' "$(basename "$b")"
             continue
         fi
-        printf '[build-state] %-34s asserts=%-7s sha256=%s\n' \
-            "$(basename "$b")" "$(bs_asserts "$b")" "$(bs_sha "$b" | cut -c1-16)"
+        printf '[build-state] %-34s asserts=%-7s sha256=%s%s\n' \
+            "$(basename "$b")" "$(bs_asserts "$b")" "$(bs_sha "$b" | cut -c1-16)" \
+            "$([ "${BS_MODE}" = full ] && echo ' via=full')"
     done
 }
 

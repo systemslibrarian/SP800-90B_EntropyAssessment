@@ -39,6 +39,26 @@ DIVSUF_CANDIDATES="mingw-w64-x86_64-libdivsufsort mingw-w64-x86_64-divsufsort li
 # /dev/urandom; neither is inside a parallel region. Figures from a serial
 # build are not offered as performance facts and every gate that uses one says
 # SERIAL.
+# THE LIBGOMP TEST IS A LINK TEST, NOT A FILE SEARCH.
+#
+# Run 4's deps gate said "the OpenMP runtime ships with the toolchain" because
+# `find /mingw64 -name 'libgomp*'` matched ONE file: /mingw64/lib/libgomp.spec.
+# A spec file is not a library. The link had already failed with "cannot find
+# -lgomp" in run 3 and failed again in run 4's R-1 stage, which consulted the
+# same glob and therefore kept -fopenmp. So the gate concluded from a signal
+# weaker than the question, and the two gates contradicted each other in the
+# same verdict log -- the same defect class this audit keeps repairing (OC-48).
+#
+# The question is whether -lgomp LINKS. Ask that.
+have_libgomp() {
+    local d; d=$(mktemp -d "${TMPDIR:-/tmp}/gomptest.XXXXXX") || return 1
+    printf '#include <omp.h>\nint main(void){int n=0;\n#pragma omp parallel\n{n=omp_get_num_threads();}\nreturn n>0?0:1;}\n' > "$d/t.c"
+    local ok=1
+    gcc -fopenmp -O0 -o "$d/t.exe" "$d/t.c" >/dev/null 2>&1 && ok=0
+    rm -rf "$d"
+    return $ok
+}
+
 SHIM_DIR=/tmp/ompserial
 make_serial_shim() {
   mkdir -p "$SHIM_DIR" || return 1
@@ -99,36 +119,33 @@ deps)
   # instrument rule applies to it as much as to libdivsufsort: do not conclude
   # it is absent from a name this script happens not to know. LOOK for the
   # files, then ask pacman which package owns them (OC-48).
-  gomp_find() { find /mingw64 -name 'libgomp*' 2>/dev/null | head -5; }
-  g=$(gomp_find)
-  if [ -n "$g" ]; then
-    printf '  PRESENT:\n%s\n' "$g" >> "$L"
-    gate PASS "the OpenMP runtime (libgomp) ships with the toolchain"
+  echo "  the test is a LINK test: compile and link a tiny -fopenmp program." >> "$L"
+  echo "  (run 4 used a file glob and matched only /mingw64/lib/libgomp.spec," >> "$L"
+  echo "   a spec file, and so reported an OpenMP runtime that does not link.)" >> "$L"
+  find /mingw64 -name 'libgomp*' 2>/dev/null | sed 's/^/    file: /' >> "$L"
+  if have_libgomp; then
+    gate PASS "the OpenMP runtime LINKS: -fopenmp produces a working executable"
   else
-    echo "  ABSENT from /mingw64; asking pacman which package provides it" >> "$L"
-    for p in mingw-w64-x86_64-openmp mingw-w64-x86_64-gcc-libs mingw-w64-x86_64-libgomp; do
-      if pacman -Si "$p" >/dev/null 2>&1; then
-        printf '  candidate %-36s AVAILABLE -- installing\n' "$p" >> "$L"
-        pacman -S --noconfirm --needed "$p" >> "$L" 2>&1 || true
+    echo "  -lgomp does NOT link; asking pacman which package would provide it" >> "$L"
+    for pk in mingw-w64-x86_64-openmp mingw-w64-x86_64-gcc-libs mingw-w64-x86_64-libgomp; do
+      if pacman -Si "$pk" >/dev/null 2>&1; then
+        printf '  candidate %-36s AVAILABLE -- installing\n' "$pk" >> "$L"
+        pacman -S --noconfirm --needed "$pk" >> "$L" 2>&1 || true
       else
-        printf '  candidate %-36s not in the repository\n' "$p" >> "$L"
+        printf '  candidate %-36s not in the repository\n' "$pk" >> "$L"
       fi
     done
-    echo "  pacman -F (file-owner query):" >> "$L"
     pacman -Fy >> "$L" 2>&1 || true
     for f in libgomp.a libgomp.dll.a libgomp-1.dll; do
-      printf '    %s -> ' "$f" >> "$L"
-      pacman -F "$f" >> "$L" 2>&1 || echo "no owning package" >> "$L"
+      printf '    pacman -F %s -> ' "$f" >> "$L"; pacman -F "$f" >> "$L" 2>&1 || echo "no owning package" >> "$L"
     done
-    g=$(gomp_find)
-    if [ -n "$g" ]; then
-      printf '  NOW PRESENT:\n%s\n' "$g" >> "$L"
-      gate PASS "the OpenMP runtime was packaged after all, under a name the first list missed"
+    if have_libgomp; then
+      gate PASS "the OpenMP runtime LINKS after installing a candidate package"
     else
-      gate FAIL "the OpenMP runtime (libgomp) is ABSENT and no candidate package supplies it -- a SECOND unpackaged dependency, after libdivsufsort"
+      gate FAIL "the OpenMP runtime does NOT LINK and no candidate package supplies it -- a SECOND unpackaged dependency, after libdivsufsort"
       note "A serial link is attempted in the build stage as a labelled DEVIATION."
-      note "R-1 is a long-double comparison and seed() is a file open; neither"
-      note "depends on OpenMP, so both remain measurable without it."
+      note "R-1 is a long double comparison and seed() is a file open; neither"
+      note "sits in a parallel region, so both stay measurable without OpenMP."
     fi
   fi
 
@@ -185,7 +202,7 @@ build)
       # The compiler finished. Whatever this is, it is NOT a source
       # incompatibility, which is what the Windows question asks about.
       gate PASS "ea_${t}: COMPILES on MinGW -- every translation unit was accepted; the failure is at the link"
-      if [ "${lib}" = "-lgomp" ] && make_serial_shim; then
+      if [ "${lib}" = "-lgomp" ] && ! have_libgomp && make_serial_shim; then
         echo "===== DEVIATION: relinking ea_${t} serially (no OpenMP runtime on this host) =====" >> "$L"
         out2=$( ( cd cpp && make -B "$t" $SERIAL_MAKE_ARGS OPENMP_LIB="$(serial_lib)" ) 2>&1 ); rc2=$?
         printf '%s\n' "$out2" >> "$L"
@@ -245,7 +262,7 @@ EOF
 r1)
   L=logs/04-r1-blast-radius.log
   OMPFLAGS=-fopenmp; OMPLIB=
-  if ! find /mingw64 -name 'libgomp*' 2>/dev/null | grep -q .; then
+  if ! have_libgomp; then
     make_serial_shim && { OMPFLAGS=-Wno-unknown-pragmas; OMPLIB="$(serial_lib)"; \
       echo "DEVIATION: no libgomp on this host; sweep built SERIALLY. R-1 is a" > "$L"; \
       echo "long double comparison, not a parallel region, so the affected set is" >> "$L"; \
@@ -305,6 +322,23 @@ EOF
   # is nothing to resolve -- naming a path that does not exist is how the
   # absence-rule error this stage warns about got made (OC-48).
   binof() { if [ -x "$1.exe" ]; then echo "$1.exe"; elif [ -x "$1" ]; then echo "$1"; fi; }
+
+  # RUN 4 MEASURED THE WRONG THING, AND SAID SO HONESTLY.
+  #
+  # All three tools ran. All three failed with ONE message -- "could not put the
+  # report in place" -- which is TestRunUtils.h:79, the rename() branch of the
+  # atomic report write this audit itself added for C08 (OC-47). So run 4 could
+  # not answer the seed() question, because every tool died at a LATER step for
+  # an unrelated reason, and `-q` had suppressed every progress marker the
+  # "how far" classifier looks for.
+  #
+  # Two different questions were tangled together, so ask them separately:
+  #   pass 1  no -o at all, verbose. The report write is not in the path, so
+  #           whatever happens is about seed() and the battery. THIS is the
+  #           pass the OC-42 gate reads.
+  #   pass 2  -o into the working directory, twice. This is about the atomic
+  #           write, and the second run is the interesting one: POSIX rename(2)
+  #           replaces an existing destination, Windows rename() refuses it.
   for t in non_iid iid restart; do
     b=$(binof "./cpp/ea_${t}")
     if [ -z "$b" ]; then
@@ -313,11 +347,67 @@ EOF
       continue
     fi
     case "$t" in
-      non_iid) run "ea_${t}" "$b" -i -a -q -o /tmp/n.json /tmp/w1.bin 1 ;;
-      iid)     run "ea_${t}" "$b" -i -q    -o /tmp/i.json /tmp/w1.bin 1 ;;
-      restart) run "ea_${t}" "$b" -i -q    -o /tmp/r.json /tmp/w1.bin 1 0.9 ;;
+      non_iid) set -- -i -a -v /tmp/w1.bin 1 ;;
+      iid)     set -- -i -v    /tmp/w1.bin 1 ;;
+      restart) set -- -i -v    /tmp/w1.bin 1 0.9 ;;
     esac
+    run "ea_${t} [pass 1: no report]" "$b" "$@"
   done
+
+  echo "===== pass 2: the atomic report write, twice over the same path =====" >> "$L"
+  for t in non_iid iid restart; do
+    b=$(binof "./cpp/ea_${t}"); [ -z "$b" ] && continue
+    case "$t" in
+      non_iid) set -- -i -a -q -o "rep_${t}.json" /tmp/w1.bin 1 ;;
+      iid)     set -- -i -q    -o "rep_${t}.json" /tmp/w1.bin 1 ;;
+      restart) set -- -i -q    -o "rep_${t}.json" /tmp/w1.bin 1 0.9 ;;
+    esac
+    rm -f "rep_${t}.json"
+    run "ea_${t} [pass 2a: fresh path]"    "$b" "$@"
+    run "ea_${t} [pass 2b: path exists]"   "$b" "$@"
+    ls -la "rep_${t}.json" 2>&1 | sed 's/^/    /' >> "$L"
+  done
+
+  # WHY rename() FAILED, with the errno, rather than a story about why it might
+  # have. This mimics TestRunUtils.h:55-80 exactly and changes no source.
+  echo "===== rename(2) semantics on this platform =====" >> "$L"
+  cat > /tmp/ren.c <<'RENEOF'
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+int main(void){
+  FILE *f;
+  for (int destExists = 0; destExists < 2; destExists++) {
+    remove("ren_dst"); remove("ren_src");
+    if (destExists) { f=fopen("ren_dst","wb"); fputs("old",f); fclose(f); }
+    f=fopen("ren_src","wb"); fputs("new",f); fclose(f);
+    errno = 0;
+    int rc = rename("ren_src","ren_dst");
+    printf("destination %-10s rename rc=%d errno=%d (%s)
+",
+           destExists ? "EXISTS" : "absent", rc, errno, rc ? strerror(errno) : "ok");
+    /* and the Windows primitive that is specified to replace, for contrast */
+  }
+  remove("ren_dst"); remove("ren_src");
+  return 0;
+}
+RENEOF
+  if gcc -O0 -o /tmp/ren.exe /tmp/ren.c >>"$L" 2>&1 && /tmp/ren.exe >> "$L" 2>&1; then
+    sed -n '/^destination/p' "$L" | sed 's/^/  /'
+    if sed -n '/^destination EXISTS/p' "$L" | grep -q 'rc=0'; then
+      gate PASS "rename(2) here REPLACES an existing destination, as POSIX specifies"
+    else
+      gate FAIL "rename() here REFUSES an existing destination -- the C08 atomic-write repair (OC-47) is NOT portable to Windows as written; MoveFileEx(MOVEFILE_REPLACE_EXISTING) is the platform primitive"
+    fi
+  else
+    gate FAIL "could not measure rename() semantics; the report-write failure stays undiagnosed"
+  fi
+  if grep -q 'could not put the report in place' "$L"; then
+    gate FAIL "the atomic report write FAILS on Windows -- TestRunUtils.h:79, a defect in a repair this audit authored, found by running it somewhere new"
+  else
+    gate PASS "the atomic report write succeeded on Windows"
+  fi
+
   # ABSENCE RULE (OC-36), which the first version of this gate broke in the very
   # workflow that applies the rule elsewhere: it read "no tool died at seed()"
   # as the prediction being refuted, when in fact NO BINARY EXISTED and
@@ -329,12 +419,12 @@ EOF
   done
   if [ "$built" -eq 0 ]; then
     gate FAIL "no tool was built, so the seed()//dev/urandom prediction is UNTESTED -- not refuted, not confirmed"
-  elif grep -q 'DIED at seed' "$L"; then
+  elif sed -n '/pass 1/,/pass 2/p' "$L" | grep -q 'DIED at seed'; then
     gate PASS "the seed()//dev/urandom prediction is CONFIRMED for at least one tool -- see which, above"
-  elif grep -q 'produced a figure' "$L"; then
-    gate FAIL "a tool produced a figure where seed() was predicted to kill it: the OC-42 prediction is BROKEN and what actually happens is the finding"
+  elif sed -n '/pass 1/,/pass 2/p' "$L" | grep -q 'produced a figure'; then
+    gate FAIL "a tool produced a figure in pass 1 where seed() was predicted to kill it: the OC-42 prediction is BROKEN and what actually happens is the finding"
   else
-    gate FAIL "tools ran but neither died at seed() nor produced a figure; read $L before concluding anything"
+    gate FAIL "pass 1 tools ran but neither died at seed() nor produced a figure; read $L before concluding anything -- how far each got is printed there"
   fi
   ;;
 
