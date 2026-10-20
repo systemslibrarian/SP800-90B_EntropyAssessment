@@ -122,6 +122,11 @@ jobs:
           ( cd /tmp/tagwt/cpp && make -B CXX="g++ -DNDEBUG" iid ) 2>&1 | tee -a logs/03-build-tag.log
           cp /tmp/tagwt/cpp/ea_iid /tmp/bins/ea_iid.tag.ndebug
           sha256sum /tmp/bins/* | tee -a logs/02-binaries.sha256
+          # BUILD STATE AS A PRECONDITION (OC-43): print what each binary
+          # actually is before any measurement reads it. The error this guards
+          # is a worktree holding a binary from earlier work (OC-42).
+          . cpp/selftest/buildstate-lib.sh
+          bs_print /tmp/bins/* | tee logs/02-build-state.log
 
       - name: 4. The canary, all four builds plus a non-tool control
         run: |

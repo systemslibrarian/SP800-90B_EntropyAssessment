@@ -39,7 +39,6 @@ A coding agent can take work from this queue by selecting findings whose **State
 | `FORK-FIXED` | This fork contains the correction and a regression test proving it. |
 | `SUPPORTED-SCOPE-FIXED` | Every instance in the supported build is corrected and regression-tested; an instance remains only in an explicitly excluded executable, and a build-plan guard fails if that executable enters supported scope. |
 | `EXCLUDED-UNSUPPORTED` | The defect remains in an executable deliberately excluded from the supported aggregate build. It is not fixed and becomes active work before that scope can expand. |
-| `REPRODUCIBLE-ON-X86-64` | The defect is live, and fires on x86-64 but not on the arm64 host this fork is developed on. Measured on both, never inferred from one. A platform-specific defect is not a fixed one: it is a defect the development platform cannot see. |
 | `BLOCKED-HARDWARE` | A confirmed platform-specific defect cannot be reproduced or a repair verified on the available architecture. It is retained as blocked evidence, not open repair work on this host. |
 | `VERIFIED` | Resolution confirmed: upstream or fork code corrected and the regression test passes. |
 | `NOT-A-BUG` | Spec-consistent, spec limitation/erratum, deliberate upstream design, or no observable effect. Kept for the record; not in the queue. |
@@ -82,11 +81,10 @@ the upstream position and this fork's position are never conflated.
   - `UPSTREAM-FIX-PENDING`: 0
   - `FIXED-UPSTREAM-VERIFY`: 0
   - `FORK-FIX-REQUIRED`: 0
-  - `FORK-FIXED`: 24
+  - `FORK-FIXED`: 25
   - `SUPPORTED-SCOPE-FIXED`: 2
   - `EXCLUDED-UNSUPPORTED`: 3
   - `BLOCKED-HARDWARE`: 0
-  - `REPRODUCIBLE-ON-X86-64`: 1
   - `VERIFIED`: 0
 
   Fork disposition across all 30: `VERIFIED` 21, `RESOLVED-BY-GLOBAL-GUARD` 2,
@@ -856,16 +854,20 @@ the upstream position and this fork's position are never conflated.
 
 **Residual of #246: len_LRS_test asserts p_col ≥ 1/k and aborts when every symbol count is exactly equal and 1/k rounds down (k = 3, 6, 7, 9, 12, …)**
 
-- **State:** `REPRODUCIBLE-ON-X86-64` (was `BLOCKED-HARDWARE`, then briefly
-  `NOT-REPRODUCIBLE-HERE`; settled 2026-10-19 by measurement on x86-64 CI,
+- **State:** `FORK-FIXED` (was `BLOCKED-HARDWARE`, then briefly
+  `NOT-REPRODUCIBLE-HERE`, then briefly `REPRODUCIBLE-ON-X86-64`; repaired
+  2026-10-19 by clamping to the Cauchy-Schwarz bound in `cpp/shared/lrs_test.h`,
+  and the platform claim corrected in OC-43 — **it reproduces on BOTH
+  platforms**. First measured on x86-64 CI,
   audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md OC-40). **The
   defect is live.** On x86-64 Linux (x87 80-bit `long double`, gcc 13.3) the
   tracker's own reproducer aborts at **all five** symbol counts
   (k = 3, 6, 7, 9, 12):
   `shared/lrs_test.h:652: Assertion 'p_col >= 1.0L / ((long double) k)' failed.`
-  It does **not** fire on Apple arm64, where `long double` is IEEE double —
-  which is why `OC-34`, working only on that platform, could not see it and why
-  the original `BLOCKED-HARDWARE` label hid it for so long. `ea_iid` aborts with
+  It fires on **both** platforms, at different sets of alphabet sizes: 117 of
+  255 sizes on a 53-bit `long double` (arm64) and 155 on x87 80-bit (x86-64).
+  The earlier "not on arm64" reading was taken against a binary with the assert
+  compiled out (OC-42), not a property of the platform. `ea_iid` aborts with
   SIGABRT and writes no report on perfectly balanced, entirely valid data: the
   direction is fail-closed, not permissive, but it denies an assessment to a
   sound dataset. The assert is upstream code at `lrs_test.h:652` and
@@ -874,7 +876,7 @@ the upstream position and this fork's position are never conflated.
   platform this fork is developed on. It is the `REPRO-01` shape with the
   arm64/x86-64 roles reversed.
 - **Upstream disposition:** `NOT-FILED`
-- **Fork disposition:** `REPRODUCIBLE-ON-X86-64`
+- **Fork disposition:** `FORK-FIXED`
 - **Dangerous direction:** no (abort, no JSON)
 - **Affected source:** `cpp/shared/lrs_test.h`:626 len_LRS_test() `assert(p_col >= 1.0L / ((long double) k))`; `cpp/shared/utils.h` calc_proportions() (PR #248 fixed accumulation only) (upstream `87c104d`)
 - **Reproduce:**

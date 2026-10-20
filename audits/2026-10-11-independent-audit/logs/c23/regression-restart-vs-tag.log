@@ -1,3 +1,4 @@
+[build-state] ea_restart                         asserts=LIVE    sha256=d88e9d0e62f9e445
 NOVEL-03 permutation groups are labelled:          rows 0-2, columns 0-2
 N-08 restart refuses width 8x:                     exit 255, parser accepted it
 N-08 restart refuses width +8:                     exit 255, parser accepted it
@@ -5,10 +6,10 @@ N-08 restart refuses width 0x8:                    exit 255, parser accepted it
 N-08 restart refuses -s 5000000x:                  exit 255, parser accepted it
 N-08 restart refuses -s +5000000:                  exit 255, parser accepted it
 N-08 restart refuses -s 0x5000000:                 exit 255, parser accepted it
-./regression-restart.sh: line 103: 73091 Abort trap: 6           "${tool}" -i -q -o "${work}/alternating.json" "${work}/alternating.bin" 1 1 > /dev/null 2>&1
+./regression-restart.sh: line 108: 21098 Abort trap: 6           "${tool}" -i -q -o "${work}/alternating.json" "${work}/alternating.bin" 1 1 > /dev/null 2>&1
 Traceback (most recent call last):
   File "<stdin>", line 2, in <module>
-FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//ea-regrst.FENfFe/alternating.json'
+FileNotFoundError: [Errno 2] No such file or directory: '/var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T//ea-regrst.zAcQVO/alternating.json'
 N-10 restart reports actual named statistics:      missing, zero, or ambiguously named
 N-04 H_I='nan' refused:                            refused (exit 255)
 N-04 H_I='NAN' refused:                            refused (exit 255)
@@ -18,7 +19,7 @@ N-04 H_I='abc' refused:                            refused (exit 255)
 N-04 H_I='1.5x' refused:                           refused (exit 255)
 N-04 H_I='(empty)' refused:                        refused (exit 255)
 N-04 H_I='3.2e' refused:                           refused (exit 255)
-N-04 negative H_I refused with a reason:           exit 255, no reason given
+N-04 negative H_I refused with a reason:           refused (see the getopt note above)
 N-04 valid H_I=3.2/symbol still runs:              refused
 N-04 valid H_I=8/symbol still runs:                refused
 N-04 valid H_I=0.4/bit still runs:                 refused
@@ -44,6 +45,7 @@ C16 0.875/bit resolves to 7/symbol:                X_cutoff ? vs ?
 C16 bare H_I still accepted for 1-bit symbols:     refused, or report lacks the sanity-check fields
 C23 both cutoffs match the exact oracle:           32 H_I values x 2 columns (0.25 .. 8)
 C23 the verdict uses the corrected statistic:      only 0 of 5; the printed formula may be deciding
+C23 a full-entropy 8-bit matrix is accepted:       exit 255, REJECTED -- a correctly-operating source would be disqualified
 C23 X_max 24 at H_I 7 accepted, both cutoffs reported: exit 255; rejected, or fields missing/wrong
 C23 X_max 28 at H_I 7 still rejected:              exit 255, accepted
 C23 X_max 20 at H_I 7 still passes the sanity check: did not pass

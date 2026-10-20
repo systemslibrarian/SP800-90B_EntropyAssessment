@@ -3807,7 +3807,20 @@ the audit's prose: the documents say "emin −16382", meaning `LDBL_MIN = 2^−1
 which `3.3621e-4932` confirms; C's `LDBL_MIN_EXP` is one greater by definition
 (`−16381`). Both numbers describe the same format.
 
-### R-1 is LIVE on x86-64, at all five symbol counts
+### R-1 is live, on both platforms — RESTATED 2026-10-19 (`OC-43`)
+
+> **This section's original claim was wrong and is replaced rather than
+> amended.** It said R-1 was live on x86-64 and invisible on arm64, and that
+> the CI run had disproved two sessions' reasoning. **R-1 reproduces end to
+> end on both platforms.** The arm64 "non-reproduction" was a measurement
+> against the tag worktree's `-DNDEBUG` binary, with the assert compiled out
+> (`OC-42`). What genuinely differs by platform is the *size of the affected
+> set* — 117 of 255 alphabet sizes on a 53-bit `long double`, 155 on x87
+> 80-bit — and that difference is the real precision effect, because a wider
+> `long double` makes the threshold the more accurate side of the comparison.
+> Nothing about the platform hid R-1; a build state did.
+
+### R-1 as first measured here, at five symbol counts on x86-64
 
 `OC-34` re-labelled `R-1` from `BLOCKED-HARDWARE` to not-reproducible-here
 because its reproducer completes on this Mac. On x86-64 it **aborts every
@@ -3818,18 +3831,19 @@ k = 3, 6, 7, 9 and 12, each at a width that fits:
   shared/lrs_test.h:652: Assertion `p_col >= 1.0L / ((long double) k)' failed.
 ```
 
-So the correct state is **`REPRODUCIBLE-ON-X86-64`**, and the item is more
-serious than either previous label suggested: `ea_iid` aborts with SIGABRT and
+So the item is more serious than either previous label suggested (and the
+state is now `FORK-FIXED`, after `OC-41`'s repair; it was briefly
+`REPRODUCIBLE-ON-X86-64`, which `OC-43` corrects — it reproduces on both): `ea_iid` aborts with SIGABRT and
 writes no report on **perfectly balanced, entirely valid data**. The direction
 is fail-closed rather than permissive — it denies an assessment, it does not
 inflate one — but a sound dataset gets no figure. The assert is upstream code
 and `calc_collision_proportion` is unchanged from upstream, so this is an
-**upstream defect reachable on the platform most users run and invisible on the
-platform this fork is developed on**. It is `REPRO-01`'s shape with the roles
-reversed, and it is the clearest vindication available for the rule that a
-platform fact is printed on the platform rather than argued from the source: two
-sessions' worth of reasoning on one host concluded "not reproducible", and one
-CI run disproved it.
+**upstream defect reachable on every platform tested**, at a
+platform-dependent set of alphabet sizes. It is **not** an instance of the rule
+that a platform fact must be printed on the platform — nothing about the
+platform hid it. It is an instance of `OC-43`'s rule, a measurement being about
+the artefact it ran against, because the reading that called it unreachable was
+taken against a binary whose asserts were compiled out.
 
 ### The canary: four of five outcomes as argued, and the fifth was the instrument
 
@@ -4160,3 +4174,107 @@ today. **If the tools only ever run on the owner's own machine for
 qualification, Windows is moot** and the bucket closes as will-not-be-done. This
 session cannot answer it: it is a question about TruePad's deployment, and
 reading TruePad is out of scope.
+
+## OC-43 — build state as a printed precondition, and the rule R-1 actually belongs under
+
+### The rule, restated under its own heading
+
+`R-1` was filed as the worked example of "a platform claim from reading the
+source is provisional until it has been run there". **That filing was wrong.**
+The rule is good and stays — its real worked example is the canary's fourth
+signature (`OC-40`), where the reasoning held and the instrument did not — but
+nothing about the platform hid `R-1`. **A build state did.** Filing a false
+example under a true rule is worse than having no example, because the next
+reader reasons from the example.
+
+The rule `R-1` belongs under, now rule 4 in `BUG-REPAIR-GUIDE.md`:
+**a measurement is about the artefact it ran against, and an artefact whose
+build state was not established is not evidence about the source.** Four
+instances, none of them a wrong idea — the `-DNDEBUG` binary (`OC-42`), the
+missing input files (`OC-30`), the file whose `sed` missed (`OC-23`), and the
+hand re-implementation standing in for the production functions (`OC-41`).
+
+### Mechanised, the way `RULE 12` was
+
+`cpp/selftest/buildstate-lib.sh`. The probe is structural: `assert` leaves an
+undefined symbol (`__assert_fail` on glibc, `___assert_rtn` on Darwin) in any
+binary built without `-DNDEBUG` and none in one built with it — a linker
+symbol, not emitted text, so it works for all three tools and survives the
+source changing. The canary is stronger where it applies, because it also
+separates the repaired tree from the unrepaired one, but it classifies `ea_iid`
+only.
+
+| function | what it does |
+|---|---|
+| `bs_print <binary>…` | one `[build-state] <name> asserts=LIVE\|NDEBUG sha256=…` line per binary, **before** the results, so a result without it is visibly incomplete. A missing binary prints `MISSING — no measurement against this binary is interpretable` |
+| `bs_require <binary> LIVE\|NDEBUG` | for a measurement that deliberately uses a particular build: declares it and **refuses** a mismatch with exit 2 |
+| `bs_canary <ea_iid> REPAIRED\|UNREPAIRED` | adds the canary's tree verdict where it applies |
+
+Wired into every harness that draws a conclusion from running a tool binary:
+`pin-check.sh` (the project's highest-value claim), `regression-restart.sh` and
+`regression-output.sh` (both accept a build override, which is exactly how
+`OC-42` happened), `reproducers/c16-c23-matrix.sh` (five variants, each
+printed beside its digest) and `reproducers/build-differential.sh`.
+
+**`build-differential.sh` gains a real guard from this, not just a line.** Its
+whole claim is that two *different* builds agree, so running it against two
+copies of the same build would "pass" and mean nothing. It now declares `LIVE`
+and `NDEBUG` and refuses: shown refusing when handed the same binary twice.
+
+### The sweep of conclusions already on the record
+
+Of the 71 measurement logs under `logs/`, **10 record a build state** — the
+eight canary logs under `logs/merge/` and two under `logs/x86-64/`. So the
+great majority did not establish it, and the honest reading of that number is
+narrower than it looks:
+
+- **Most were produced by a binary `make` had just built in the repository
+  tree, where no Makefile target sets `-DNDEBUG`**, so asserts-live is the
+  default and the artefact was what it seemed.
+- **The exposure is confined to runs against a shared worktree** — the tag
+  clone — where earlier work can leave a different build. That is
+  `logs/c23/regression-restart-vs-tag.log`,
+  `logs/c14/regression-output-vs-tag.log`, `logs/c08/diagnosability.log` and
+  the `logs/ndebug/` pair.
+- **Of those, only one conclusion could have been wrong, and it was.** The
+  others compare error messages, report fields, cutoffs and parse behaviour —
+  none of which is assert-dependent, so an `-DNDEBUG` binary would have given
+  the same answer. `R-1`'s was the assert-dependent one, and it was wrong and
+  is corrected.
+
+**Count: one invalidated conclusion, found and corrected; the rest
+re-measurable but not in doubt.** The two vs-tag regression logs have been
+re-run so they now carry their build-state lines, which is the cheap half of
+making the record complete.
+
+### Cleaning up after a worktree
+
+The committed scripts that build an `-DNDEBUG` binary already restore the tree
+afterwards — `c16-c23-matrix.sh` ends with `make -B restart`, and the CI job
+rebuilds live after its NDEBUG step. The `-DNDEBUG` binary that caused `OC-42`
+was left by interactive work, not by a script. What now prevents a repeat is
+the precondition itself: the harnesses that can be pointed at a worktree print
+what they found there, and `bs_require` refuses a build that is not the one the
+measurement needs.
+
+## OC-44 — the deliberately-balanced fixtures: who reads them, and a label at the definition
+
+`OC-42`'s corpus scan flagged `generators/c07_lrs_fixtures.py` as building
+exactly-balanced inputs, which is the condition that trips `R-1`. Closing that
+loop.
+
+**Who consumes them: nothing that reads a figure.** The only references to
+`bal<k>.bin` anywhere in the project are the `R-1` and `C07`-site-A
+*reproduction recipes* — `audits/2026-09-30/FINDINGS-TRACKER.md`'s reproduce
+block, the 2026-09-30 novel-findings report, and that dimension's agent report.
+No regression script, no pinned figure and no document reads an estimate
+derived from them. **So the answer is none**, and that is the end of it: there
+is nothing to re-check against the repaired build.
+
+**Labelled at the definition**, because a future reader would otherwise take
+them for ordinary multi-symbol test data: the generator's docstring now says
+that these files trip `R-1` by construction, that the affected alphabet sizes
+differ by platform (k ∈ {25, 100, 125, 200, 250} on arm64, k ∈ {3, 6, 7, 9, 12}
+on x86-64), that moving one sample off balance removes the abort at every k,
+and that any new consumer needs a binary carrying the `OC-41` repair and should
+print its build state first.

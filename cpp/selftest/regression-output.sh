@@ -17,6 +17,11 @@ set -u
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "${here}/../.." && pwd)
 bindir="${REGRESSION_OUTPUT_BINDIR:-${here}/..}"
+# BUILD STATE AS A PRECONDITION (OC-43), printed BEFORE any result:
+# REGRESSION_OUTPUT_BINDIR may point elsewhere, and a binary left behind by
+# earlier work is exactly the error this guards (OC-42).
+. "${here}/buildstate-lib.sh"
+bs_print "${bindir}/ea_non_iid" "${bindir}/ea_iid" "${bindir}/ea_restart"
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-regout.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT
 

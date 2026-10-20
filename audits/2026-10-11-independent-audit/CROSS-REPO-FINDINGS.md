@@ -1045,9 +1045,14 @@ self-authored and **unreviewed**. Nothing is sent upstream.
 inferred from silence. Reported, not acted on.** Evidence: `OC-40`, `OC-41`,
 `logs/r1/`, `logs/x86-64/05-r1.log`.
 
-`R-1` is a live defect: on x86-64 Linux `ea_iid` aborts with SIGABRT and writes
-no report on perfectly valid data whose symbol counts are exactly equal. The
-entropy-tools gate runs on Linux, so the question is immediate.
+`R-1` was a live defect, now repaired in the fork (`OC-41`): `ea_iid` and
+`ea_restart -i` abort with SIGABRT and write no report on perfectly valid data
+whose symbol counts are exactly equal. It reproduces on **both** platforms —
+an earlier version of this finding said x86-64 only, which came from a
+measurement against a binary with the assert compiled out (`OC-42`, `OC-43`).
+What differs by platform is the set of affected alphabet sizes: 117 of 255 on
+arm64, 155 on x86-64. The entropy-tools gate runs on Linux, so the question is
+immediate either way.
 
 ### The answer is no, on three independent grounds
 

@@ -30,6 +30,11 @@ if [ "${1:-}" = "--prove-nonvacuous" ]; then PROVE=1; shift; fi
 BIN=${1:-../ea_non_iid}
 SAMPLE=../../bin/ringOsc-nist.bin
 SAMPLE_SHA256=7d37dc3795e9b2927beb779008d7f4b4630dd7f2c058a2b14cee9d41a658dd68
+# BUILD STATE AS A PRECONDITION (OC-43): a figure is about the binary that
+# produced it, and a binary whose build state was not established is not
+# evidence about the source. Printed with the result, not remembered.
+. "$(cd "$(dirname "$0")" && pwd)/buildstate-lib.sh"
+
 EXPECTED=0.12644573619605429
 RELTOL=1e-9
 
@@ -47,6 +52,8 @@ if [ ! -f "$SAMPLE" ]; then echo "pin-check: sample $SAMPLE missing" >&2; exit 2
 run_tool() {
     "$BIN" -vv "$1" 2>/dev/null
 }
+
+bs_print "$BIN"
 
 check() {  # $1 = output text, $2 = label; prints verdict; returns 0 on pass
     local out=$1 label=$2 sha got

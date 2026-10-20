@@ -41,6 +41,11 @@ fails=0
 cannot_run=0
 note() { printf '%-50s %s\n' "$1" "$2"; }
 [ -x "${tool}" ] || { echo "regression-restart: ${tool} missing (run 'make restart')" >&2; exit 2; }
+# BUILD STATE AS A PRECONDITION (OC-43). REGRESSION_RESTART_TOOL may point at
+# another build, and a binary left behind by earlier work is the error this
+# guards (OC-42). Printed with the results.
+. "${here}/buildstate-lib.sh"
+bs_print "${tool}"
 
 # ---------------------------------------------------------- NOVEL-03
 # This exercises the exact JSON population helper with synthetic counters. It

@@ -17,6 +17,12 @@
 # NO hAssessed in either JSON.  Exit 0 only then.
 set -u
 LIVE=$1; NDEBUG=$2; shift 2
+# BUILD STATE AS A PRECONDITION (OC-43). This measurement's whole point is that
+# two builds agree, so taking it against two copies of the SAME build would
+# "pass" and mean nothing. Declare what each must be and refuse a mismatch.
+. "$(cd "$(dirname "$0")/../../../cpp/selftest" && pwd)/buildstate-lib.sh"
+bs_require "$LIVE"   LIVE
+bs_require "$NDEBUG" NDEBUG
 WS=${*:-"2000 20000"}
 PROG=build-differential
 work=$(mktemp -d "${TMPDIR:-/tmp}/${PROG}.XXXXXX") || exit 2

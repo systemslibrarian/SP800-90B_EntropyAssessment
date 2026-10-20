@@ -90,6 +90,13 @@ run() { # run <variant> <matrix> <H_I>
     elif printf '%s' "$out" | grep -q 'Sanity Check Passed'; then echo "accept (cut $cut)"
     else echo "other rc=$rc"; fi
 }
+# BUILD STATE AS A PRECONDITION (OC-43): every variant is built here, so print
+# what each actually is beside its digest before any row is read.
+. "$repo/cpp/selftest/buildstate-lib.sh"
+for v in sim_oldparse sim_strict printed_strict exact_oldparse exact_strict; do
+    bs_print "$work/ea_restart.$v"
+done
+echo
 printf '%-14s %-10s | %-16s | %-14s | %-11s | %s\n' build C23 "fullent 8-bit H_I 8" "sane X_max 24" "underflow" "wrong scale"
 printf '%s\n' "---------------------------|------------------|----------------|-------------|-------------"
 for v in sim_oldparse sim_strict printed_strict exact_oldparse exact_strict; do
