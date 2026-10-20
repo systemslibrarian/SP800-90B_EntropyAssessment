@@ -124,6 +124,21 @@ bs_calibrate() {
         BS_CAL_NOTE='the compiler reported success but no calibration artefact could be found (neither bare nor .exe)'
         rm -rf "$d"; return 0
     fi
+    if [ -n "${BS_DEBUG:-}" ]; then
+        printf '[build-state:debug] compiler=%s (%s)\n' "$cc" "$(command -v "$cc")" >&2
+        printf '[build-state:debug] dir=%s\n' "$d" >&2
+        ls -la "$d" >&2
+        printf '[build-state:debug] live artefact=%s (exists=%s)  ndebug artefact=%s (exists=%s)\n' \
+            "$lb" "$([ -f "$lb" ] && echo yes || echo no)" \
+            "$nb" "$([ -f "$nb" ] && echo yes || echo no)" >&2
+        printf '[build-state:debug] nm --version: %s\n' "$(nm --version 2>&1 | head -1)" >&2
+        for dm in undefined full; do
+            printf '[build-state:debug] %s listing, live, first 6 lines:\n' "$dm" >&2
+            bs_syms "$dm" "$lb" | head -6 | sed 's/^/[build-state:debug]   /' >&2
+            printf '[build-state:debug] %s listing, live, /assert/i matches: %s\n' \
+                "$dm" "$(bs_syms "$dm" "$lb" | grep -ci assert)" >&2
+        done
+    fi
     local m
     for m in undefined full; do
         live=$(bs_syms "$m" "$lb"  | grep -ci "${BS_PATTERN}")

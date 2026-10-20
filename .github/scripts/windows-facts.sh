@@ -396,6 +396,58 @@ int main(void){
   return 0;
 }
 RENEOF
+  # AND THE SEQUENCE THE TOOLS ACTUALLY PERFORM, which is not a bare rename.
+  # C14 (OC-31) claims the -o path with a PLACEHOLDER the moment -o is parsed,
+  # and C08 (OC-47) then writes every later report through temp + rename. So on
+  # a platform whose rename() refuses an existing destination, the placeholder
+  # GUARANTEES that every subsequent write fails -- which is why pass 2a failed
+  # even with a fresh path. Replicate all three cases with the real C++ calls.
+  cat > /tmp/seq.cpp <<'SEQEOF'
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
+#include <string>
+#include <fstream>
+#include <unistd.h>
+using namespace std;
+/* TestRunUtils.h:55-80, copied so the probe measures the real sequence */
+static bool writeJsonReport(const string &path, const string &json, int *err) {
+    const string tmp = path + ".tmp." + std::to_string((long)getpid());
+    { ofstream o; o.open(tmp.c_str(), ios::out | ios::trunc | ios::binary);
+      if (!o) { *err = errno; return false; }
+      o << json; o.close();
+      if (!o) { *err = errno; remove(tmp.c_str()); return false; } }
+    errno = 0;
+    if (rename(tmp.c_str(), path.c_str()) != 0) { *err = errno; remove(tmp.c_str()); return false; }
+    *err = 0; return true;
+}
+int main(void) {
+    int e = 0;
+    remove("seq.json");
+    printf("1. fresh path, first write (the C14 placeholder): %s errno=%d (%s)\n",
+           writeJsonReport("seq.json", "{\"placeholder\":true}", &e) ? "OK" : "FAILED", e, strerror(e));
+    printf("2. same path, second write (every later report):  %s errno=%d (%s)\n",
+           writeJsonReport("seq.json", "{\"report\":1}", &e) ? "OK" : "FAILED", e, strerror(e));
+    remove("seq.json");
+    printf("3. fresh path again, single write only:           %s errno=%d (%s)\n",
+           writeJsonReport("seq.json", "{\"single\":1}", &e) ? "OK" : "FAILED", e, strerror(e));
+    remove("seq.json");
+    return 0;
+}
+SEQEOF
+  if g++ -O0 -std=c++11 -o /tmp/seq.exe /tmp/seq.cpp >>"$L" 2>&1 && /tmp/seq.exe >> "$L" 2>&1; then
+    sed -n '/^[123]\. /p' "$L" | sed 's/^/  /'
+    if sed -n '/^1\./p' "$L" | grep -q OK && sed -n '/^2\./p' "$L" | grep -q FAILED; then
+      gate FAIL "MEASURED MECHANISM: the C14 placeholder write SUCCEEDS and every later C08 write then FAILS, because rename() will not replace it. The two repairs are individually sound and jointly non-portable."
+    elif sed -n '/^2\./p' "$L" | grep -q OK; then
+      gate PASS "temp+rename replaces an existing report here; the C08 repair is portable to this platform"
+    else
+      gate FAIL "the replication probe did not separate the cases; read $L"
+    fi
+  else
+    gate FAIL "the replication probe did not build; the mechanism stays inferred rather than measured"
+  fi
+
   if gcc -O0 -o /tmp/ren.exe /tmp/ren.c >>"$L" 2>&1 && /tmp/ren.exe >> "$L" 2>&1; then
     sed -n '/^destination/p' "$L" | sed 's/^/  /'
     if sed -n '/^destination EXISTS/p' "$L" | grep -q 'rc=0'; then
@@ -435,6 +487,7 @@ RENEOF
 probe)
   L=logs/06-buildstate-probe.log
   . cpp/selftest/buildstate-lib.sh
+  BS_DEBUG=1   # this is the platform the probe has never met; print its workings
   { bs_calibration
     echo "--- why, in detail: what nm shows for the calibration binaries here ---"
     cat > /tmp/cal.c <<'CEOF'
