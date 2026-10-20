@@ -73,8 +73,25 @@ mkdir -p "${work}/sub"
 for tool in ea_non_iid ea_iid ea_restart; do
     for alias in "capture.bin" "./capture.bin" "${work}/capture.bin" \
                  "sub/../capture.bin" "hardlink.bin" "symlink.bin"; do
-        [ "${alias}" = "hardlink.bin" ] && [ ! -e "${work}/hardlink.bin" ] && continue
-        [ "${alias}" = "symlink.bin"  ] && [ ! -e "${work}/symlink.bin"  ] && continue
+        # VERIFY THE PREMISE BEFORE ASSERTING THE CONCLUSION. A case that is
+        # supposed to be an alias of the capture is only a test of the guard if
+        # it really IS one -- and it may not be: MSYS2 emulates symlinks by
+        # COPYING unless winsymlinks is set, and a copy is a different file
+        # that the guard should correctly allow. Asserting a refusal there
+        # would fail a tool that behaved properly. So each case states whether
+        # its premise holds, and a case whose premise fails is SKIPPED, not
+        # failed and not silently passed.
+        if ! ( cd "${work}" && python3 -c '
+import os, sys
+try:
+    a, b = os.stat(sys.argv[1]), os.stat("capture.bin")
+except OSError:
+    sys.exit(1)
+sys.exit(0 if (a.st_dev, a.st_ino) == (b.st_dev, b.st_ino) and a.st_ino != 0 else 1)
+' "${alias}" ) 2>/dev/null; then
+            printf '  %-52s SKIP  not an alias of the capture on this platform\n' "${tool} -o ${alias}"
+            continue
+        fi
         run_tool "${tool}" "${alias}"; rc=$?
         now=$(sha_of "${work}/capture.bin")
         label="${tool} -o ${alias}"

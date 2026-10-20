@@ -113,6 +113,14 @@ jobs:
           MSYSTEM: MINGW64
           CHERE_INVOKING: 1
 
+      - name: "5b. A05: the Win32 file-identity guard, run on Windows"
+        if: env.MSYS2_PRESENT == 'yes'
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh a05" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
+
       - name: 6. The build-state probe on a platform it has never met
         if: env.MSYS2_PRESENT == 'yes'
         run: |

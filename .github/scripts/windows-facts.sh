@@ -573,6 +573,31 @@ SEQEOF
   fi
   ;;
 
+a05)
+  # A05 ON WINDOWS. The identity guard added for A05 uses
+  # GetFileInformationByHandle under _WIN32, because stat() reports st_ino as 0
+  # for every file there and the POSIX pair would make DIFFERENT files compare
+  # equal and refuse valid runs. That code had never been compiled when it was
+  # written, let alone run. Compiling is not working: this stage runs the
+  # regression on Windows so the Win32 path is exercised on Windows, which is
+  # the whole lesson of OC-48 applied to the fix for A05.
+  L=logs/07-a05-aliasing.log
+  : > "$L"
+  bash cpp/selftest/regression-output-aliasing.sh > "$L" 2>&1; rc=$?
+  grep -E 'PASS|FAIL|SKIP|DESTROYED' "$L" | sed 's/^/  /'
+  if grep -q 'THE CAPTURE WAS DESTROYED' "$L"; then
+    gate FAIL "A05 REPRODUCES ON WINDOWS: a report write destroyed the input capture. The Win32 identity path does not work."
+  elif [ "$rc" -eq 0 ]; then
+    gate PASS "A05 guard holds on Windows: every alias refused, the capture intact, and a distinct -o path still assesses"
+  else
+    gate FAIL "the A05 regression failed on Windows for a reason other than destruction -- read $L; nothing is concluded about the guard"
+  fi
+  # the identity primitive itself, reported rather than inferred
+  printf 'stat() st_ino on this platform: ' >> "$L"
+  python3 -c "import os;print(os.stat('cpp/ea_iid.exe').st_ino if os.path.exists('cpp/ea_iid.exe') else 'no binary')" >> "$L" 2>&1 || true
+  tail -2 "$L"
+  ;;
+
 probe)
   L=logs/06-buildstate-probe.log
   . cpp/selftest/buildstate-lib.sh
