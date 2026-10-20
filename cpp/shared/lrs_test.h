@@ -706,7 +706,11 @@ bool len_LRS_test(const uint8_t data[], const int L, const int k, const int verb
 	//(L - W + 1) is the number of overlapping contiguous substrings of length W in a string of length L.
 	// The number of pairs of such overlapping substrings is N = (L - W + 1) choose 2.
 	// This is the number of ways of choosing 2 substrings of length W from a string of length L.
-	long int N = n_choose_2(L - W + 1);
+	// C18: 64-bit everywhere. On LP64 this is the same type `long int` was and
+	// no value changes; on LLP64 it is a widening that removes a spurious
+	// failure. The argument is formed from ints and promoted, so the product
+	// inside n_choose_2() is evaluated in 64 bits (OC-53).
+	const int64_t N = n_choose_2((int64_t) L - (int64_t) W + 1);
 
 	if(verbose > 1) {
 		if(verbose > 2) {

@@ -26,6 +26,8 @@
 #include <cerrno>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <cstdint>   // int64_t, for n_choose_2 (C18)
+#include <climits>   // INT_MAX, for its sufficiency assert
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 #ifdef EA_TEST_INPUT_IDENTITY_HOOK
@@ -994,8 +996,37 @@ double std_dev(const vector<int> x, const double x_mean) {
 }
 
 // Quick formula for n choose 2 (which can be simplified to [n^2 - n] / 2)
-long int n_choose_2(const long int n) {
-	return ((n*n) - n) / 2;
+//
+// C18, MEASURED ON WINDOWS AND REPAIRED (OC-48, OC-50, OC-53).
+//
+// This was `long int`, in the parameter, the product and the return. `long` is
+// 32 bits on LLP64 -- Windows -- and 64 on LP64, so the same source computed
+// two different things. For an ordinary 1,000,000-sample input whose longest
+// repeated substring is 40, n = 999961 and the PRODUCT ALONE is
+// 999,922,001,521, which does not fit in a 32-bit signed long. The result came
+// out -403,189,204 instead of 499,960,500,780, and the section 5.2.5 decision
+// at lrs_test.h is then taken against logl() of a negative number -- a NaN
+// threshold, which every comparison fails. On Windows the LRS test therefore
+// failed whatever the data.
+//
+// EVERY STEP, not just the return type. `n*n` is evaluated before the
+// subtraction and the division, so widening only the return value would have
+// changed nothing: the overflow is in the product. The parameter is widened
+// too, so the multiplication is performed in 64 bits.
+//
+// WHY int64_t AND NOT long long: `long` is the mistake being corrected, so a
+// fixed-width type is the right spelling, and the value is used only after a
+// cast to long double (never printed), so there is no format-specifier hazard
+// of the kind that makes widening data_t's `long len`/`long blen` a separate
+// and larger change.
+//
+// SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+// INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+// n*n <= 4.61e18, comfortably inside INT64_MAX = 9.22e18. The assert states
+// that bound where it is relied on rather than leaving it to a reader.
+int64_t n_choose_2(const int64_t n) {
+	assert(n >= 0 && n <= (int64_t) INT_MAX);
+	return ((n * n) - n) / 2;
 }
 
 vector<uint8_t> substr(const uint8_t text[], const int pos, const int len, const int sample_size) {
