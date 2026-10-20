@@ -221,6 +221,12 @@ A second repair pass on the same date, working the remaining queue:
             value. THIS WAS WRONG and was corrected the next day; see the
             2026-10-19 entry. Recorded rather than removed because the
             commit (a5005bd) is in the history.
+2026-10-20  cpp/shared/TestRunUtils.h: the JSON report is written to a
+            sibling temporary file and renamed over the target, so an
+            interrupted write can no longer leave truncated JSON at the
+            operator's path. Measured: with the previous code, 4 of 5 writes
+            killed part-way left a truncated document; with this one, 0 of 5.
+            Audit C08/oac-13, OC-47. Self-authored and unreviewed.
 2026-10-19  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
             a -o report target is claimed with a fail-closed placeholder when
             the option is parsed, so a failed run can no longer leave the

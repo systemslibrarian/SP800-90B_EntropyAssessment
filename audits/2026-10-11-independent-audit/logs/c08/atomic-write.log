@@ -1,0 +1,11 @@
+# oac-13: what a reader finds at the -o path when the write is interrupted.
+# A known-good report is pre-placed; a 400 MB report is written over it; the
+# writer is killed after 120 ms. GOOD = the previous complete report survives,
+# or the new complete one is in place. TRUNCATED = a reader finds a prefix.
+(eval):52: no matches found: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/rep.json.tmp.*
+(eval):52: no matches found: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/rep.json.tmp.*
+(eval):52: no matches found: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/rep.json.tmp.*
+(eval):52: no matches found: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/rep.json.tmp.*
+(eval):52: no matches found: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/0cdbc76b-fc95-4dcc-8af6-b9ffefdc8fd0/scratchpad/rep.json.tmp.*
+  old  writeJsonReport: 1 of 5 runs left a COMPLETE document, 4 left a TRUNCATED one
+  new  writeJsonReport: 5 of 5 runs left a COMPLETE document, 0 left a TRUNCATED one

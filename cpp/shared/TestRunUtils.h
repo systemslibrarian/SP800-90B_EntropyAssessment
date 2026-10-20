@@ -5,6 +5,8 @@
 #include <string.h>
 #include <string>
 #include <fstream>
+#include <unistd.h>   // getpid, for the atomic report write below
+#include <cstdio>     // rename, remove
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -30,21 +32,52 @@ using namespace std;
 // Returns true when the report was written. The caller decides the exit
 // status, because several of these writes happen on paths that are already
 // failing for some other reason and that reason should be the one reported.
+// C08 / oac-13: the report write is ATOMIC from a reader's point of view.
+//
+// It used to open the operator's path and stream into it, so a signal, a full
+// device or an I/O error part-way through left TRUNCATED JSON at that path --
+// syntactically invalid, and a consumer that reads the file after checking the
+// exit status could parse-fail on it or, worse, read a prefix. C14's
+// placeholder narrowed the window from "a stale VALID report" to "an invalid
+// one", which a consumer can at least detect, but did not close it.
+//
+// Now the content is written to a sibling temporary file, flushed and checked,
+// and only then renamed over the target. rename(2) within a directory is
+// atomic, so the path a reader opens holds either the previous content or the
+// complete new content and never a prefix. The temporary is removed on every
+// failure path, so a failed write leaves no debris beside the operator's file.
+//
+// The sibling must be in the SAME directory: rename() across filesystems
+// fails, and a temporary in /tmp would silently reintroduce a copy step that
+// is not atomic. That also keeps the existing failure behaviour intact -- an
+// unwritable directory or a path like /dev/full fails at the temporary, which
+// is still a failed run, and the regressions that assert those failures pass
+// unchanged.
 bool writeJsonReport(const string &path, const string &json) {
-    ofstream output;
+    const string tmp = path + ".tmp." + std::to_string((long)getpid());
 
-    output.open(path.c_str());
-    if (!output) {
-        fprintf(stderr, "Error: could not open the output file '%s'.\n", path.c_str());
-        return false;
+    {
+        ofstream output;
+        output.open(tmp.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
+        if (!output) {
+            fprintf(stderr, "Error: could not create the temporary output file '%s'.\n", tmp.c_str());
+            return false;
+        }
+
+        output << json;
+        output.close();
+
+        // close() flushes, so a device-full or I/O error shows up here.
+        if (!output) {
+            fprintf(stderr, "Error: could not write the temporary output file '%s'.\n", tmp.c_str());
+            remove(tmp.c_str());
+            return false;
+        }
     }
 
-    output << json;
-    output.close();
-
-    // close() flushes, so a device-full or I/O error shows up here.
-    if (!output) {
-        fprintf(stderr, "Error: could not write the output file '%s'.\n", path.c_str());
+    if (rename(tmp.c_str(), path.c_str()) != 0) {
+        fprintf(stderr, "Error: could not put the report in place at '%s'.\n", path.c_str());
+        remove(tmp.c_str());
         return false;
     }
 

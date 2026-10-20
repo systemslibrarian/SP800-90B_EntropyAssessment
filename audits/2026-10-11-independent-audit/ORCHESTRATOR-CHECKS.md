@@ -4278,3 +4278,113 @@ differ by platform (k ∈ {25, 100, 125, 200, 250} on arm64, k ∈ {3, 6, 7, 9, 
 on x86-64), that moving one sample off balance removes the abort at every k,
 and that any new consumer needs a binary carrying the `OC-41` repair and should
 print its build state first.
+
+## OC-45 — the build-state probe moved the parochialism one layer down; now it calibrates or refuses
+
+`OC-43`'s probe matched an undefined symbol instead of `assert`'s message text,
+which is a real improvement — structural rather than textual, so it survives the
+source changing and works for all three tools. **But the symbol name is itself
+platform-specific**: `__assert_fail` on glibc, `__assert_rtn` on Darwin and the
+BSDs, `_wassert` on MSVC. A probe keyed on a name list can fail exactly the way
+the message-text canary failed, one layer down — and worse, **silently**, because
+"no symbol I recognise" would have been reported as a confident `NDEBUG`.
+Absence of a symbol it was not looking for is no answer at all.
+
+**The probe now calibrates itself on the host before any verdict is trusted.**
+It compiles two tiny programs, one with a reachable `assert` and one with
+`-DNDEBUG`, and requires its pattern to match the first and not the second.
+`NDEBUG` is returned only when that discrimination has been demonstrated *and*
+`nm` produced undefined symbols to look through; a stripped or unreadable
+binary is `UNKNOWN` too. If calibration fails — no compiler, no `nm`, an
+unfamiliar naming scheme — every verdict is `UNKNOWN` and `bs_require`
+**refuses**. That is the canary's INDETERMINATE rule applied one level down: a
+probe that cannot establish its answer reports that it cannot.
+
+**Both paths shown on this host:**
+
+```
+[build-state] calibration: OK -- pattern /assert/i discriminates;
+              asserts-live symbol here is ___assert_rtn
+[build-state] ea_iid              asserts=LIVE    sha256=2ccff357fd30950c
+[build-state] ea_iid.tag.ndebug   asserts=NDEBUG  sha256=7e6afd4735d60f59
+
+# with the pattern forced to something this host does not use:
+[build-state] calibration: FAILED -- pattern /zzz_nope/i does NOT discriminate
+              (live=0 ndebug=0); the symbol is named something this probe does not know
+[build-state] ea_iid              asserts=UNKNOWN sha256=2ccff357fd30950c
+[build-state] REFUSED: the build state of cpp/ea_iid CANNOT BE ESTABLISHED here.
+```
+
+**The real test is a platform it has never met**, which is why
+`.github/workflows/windows-platform-facts.yml` runs the probe on Windows and
+gates on it: calibrating and giving a verdict passes, failing to calibrate and
+refusing also passes, and **concluding anything without calibrating fails** —
+a defect that would outrank the Windows question itself.
+
+## OC-46 — the sweep's unchecked premise, checked: asserts are the only thing NDEBUG changes here
+
+`OC-43`'s sweep concluded that of the 61 logs without a recorded build state
+only one conclusion could have been wrong, because the rest compare messages,
+report fields, cutoffs and parse behaviour, **none of which is
+assert-dependent**. That is the right kind of argument — about the nature of the
+conclusion rather than about the build — and it rested on one premise nobody had
+verified: *that asserts are the only thing `NDEBUG` changes in this source.*
+
+**Checked, and it holds.** Grepping the whole tree for `#ifdef NDEBUG`,
+`#ifndef NDEBUG` and `#if defined(NDEBUG)`:
+
+| | |
+|---|---:|
+| NDEBUG conditionals in the C++ source | **0** |
+| `assert()` call sites | **98** across 12 files (**84** in the three supported tools; 14 are in `conditioning_main.cpp`, which is not built) |
+| reliance on standard-library debug modes (`_GLIBCXX_DEBUG`, `_LIBCPP_DEBUG`, `_ITERATOR_DEBUG_LEVEL`) | **none** — the project neither sets nor reads them |
+| `static_assert` | 1, in `compression_test.h` — compile-time, unaffected by `NDEBUG` |
+
+Every other mention of `NDEBUG` anywhere in the repository is in a shell
+script, a workflow file, a comment, or the three audit-only build knobs. So
+**`NDEBUG` reaches `assert()` and nothing else here**, the premise is verified
+rather than plausible, and the sweep's conclusion stands as written: one
+invalidated conclusion, `R-1`'s, found and corrected.
+
+## OC-47 — `oac-13`: the report write is atomic, and the truncation window measured before and after
+
+The last item in `C08`, and the last software item on the list.
+
+**The failure mode, concretely.** `writeJsonReport` opened the operator's `-o`
+path and streamed into it, so a signal, a full device or an I/O error part-way
+through left **truncated JSON at that path** — syntactically invalid, and a
+consumer that checks the exit status and then reads the file either parse-fails
+or reads a prefix. `C14`'s placeholder (`OC-31`) narrowed the window from "a
+stale *valid* report" to "an invalid one", which a consumer can at least detect
+by parsing, but did not close it.
+
+**Could anything downstream consume one?** Yes, and that is why it matters:
+`XR-01` establishes that TruePad's harness checks the exit status and then reads
+the `-o` file. A truncated report is detectable by a consumer that parses before
+trusting; one that does not parse first could read a prefix. On the fork's own
+side nothing consumes a report file this way.
+
+**The repair.** The content goes to a sibling temporary file, is flushed and
+checked, and only then `rename()`d over the target. `rename(2)` within a
+directory is atomic, so the path a reader opens holds either the previous
+content or the complete new content and never a prefix. The temporary is removed
+on every failure path, so a failed write leaves no debris beside the operator's
+file. It must be a **sibling**: `rename()` across filesystems fails, and a
+temporary in `/tmp` would silently reintroduce a non-atomic copy. That also
+preserves the existing failure behaviour — an unwritable directory or `/dev/full`
+fails at the temporary, which is still a failed run, and the regressions that
+assert those failures pass unchanged.
+
+**Shown failing, measured both ways** (`reproducers/atomic_report_write.cpp`
+compiles both implementations; a known-good report is pre-placed, a 400 MB
+report written over it, and the writer killed after 120 ms;
+`logs/c08/atomic-write.log`):
+
+| implementation | runs leaving a COMPLETE document | runs leaving a TRUNCATED one |
+|---|---:|---:|
+| old (stream into the target) | 1 of 5 | **4 of 5** |
+| new (temporary + rename) | **5 of 5** | 0 of 5 |
+
+The new implementation also left no temporary behind in any run. **`C08` is now
+closed in full**, and with it the last item in the first bucket of
+`CLOSING-INVENTORY.md`.
