@@ -351,16 +351,70 @@ The non-vacuity proof uses the 64-byte perturbation.
 
 ---
 
-## Windows — route documented, NOT verified
+## Windows — MEASURED on `windows-latest`, 2026-10-20
 
-Nothing below has been run. No Windows machine was available; this
-section is written to be executed and checked on one, and every line is
-to be treated as unverified until then.
+This section was unverified for the life of the fork. It is now measured, by a
+manually-triggered GitHub Actions job — `.github/workflows/windows-platform-facts.yml`
+with `.github/scripts/windows-facts.sh` — which needs no Windows machine.
+Run it with `gh workflow run windows-platform-facts.yml`; it uploads every log
+as an artefact. The full account is `OC-48` in
+`audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md`.
+
+**What is measured** (MSYS2 MINGW64, gcc 16.2.0):
+
+| | |
+|---|---|
+| MSYS2 | **preinstalled** on the runner at `C:\msys64`, with `pacman` |
+| `libdivsufsort` | **no `mingw-w64` package**, under any of four candidate names. The claim below is confirmed. |
+| OpenMP runtime | `libgomp` **is** packaged, in `mingw-w64-x86_64-gcc-libs`, which the preinstalled toolchain does **not** pull in. Install it explicitly or the link fails with `cannot find -lgomp`. |
+| every other `Makefile` dependency | packaged |
+| `ea_non_iid`, `ea_iid`, `ea_restart` | all three **compile and link**, with OpenMP |
+| `long double` | x87 80-bit: `LDBL_MANT_DIG` 64, `LDBL_MIN` 3.3621e-4932, `FLT_EVAL_METHOD` 0 |
+| `sizeof(long)` | **4** — LLP64 confirmed |
+| `R-1` affected set | **155 of 255** alphabet sizes, the x87 prediction confirmed independently of Linux |
+| `ea_non_iid` at runtime | runs the **complete non-IID battery**, exit 0 |
+| `ea_iid`, `ea_restart` at runtime | **fail the §5.2.5 LRS test on valid data** — see `C18` below |
+| any `-o` report | **cannot be written at all** — see `C24` below |
+| build state | establishable; the probe needs the full symbol listing here, since `nm -u` is blind on PE/COFF |
+
+**Two defects make this route unusable as it stands**, and both are
+fail-closed — they deny assessments rather than producing wrong figures:
+
+- **`C18` (LLP64 integer overflow).** `n_choose_2()` at
+  `cpp/shared/utils.h:997` computes `((n*n) - n) / 2` in `long int`. For a
+  1,000,000-sample input with a longest repeated substring of 40, the true
+  N = 499,960,500,780 becomes **−403,189,204** in a 32-bit `long`. The printed
+  `Pr(X >= 1)` goes negative (−0.000367 where macOS prints +0.365370), and the
+  decision at `lrs_test.h:765` compares against `logl()` of a negative number,
+  i.e. **NaN**, so the LRS test fails **unconditionally whatever the data**.
+  Overflow begins around L − W + 1 = 46,342, so every standards-sized
+  assessment is affected. Reproducer:
+  `audits/2026-10-11-independent-audit/reproducers/c18_llp64_overflow.c`.
+- **`C24` (`rename()` is not POSIX here).** Windows `rename()` refuses an
+  existing destination (`errno 17`). `C14` claims the `-o` path with a
+  placeholder as soon as it is parsed, and `C08` then writes every report via
+  temporary + `rename()`, so the placeholder guarantees every later write
+  fails: `Error: could not put the report in place`. The two repairs are each
+  sound and jointly non-portable. `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)`
+  is the platform primitive.
+
+Neither is repaired: both are entropy-adjacent source changes awaiting an owner
+decision. Until then, **do not use this fork on Windows.**
+
+**One prediction remains untested here rather than refuted.** `OC-42` says
+`ea_iid` and `ea_restart` die at `seed()`. They do not reach it: `seed()` is
+called in the permutation stage, and `C18` fails the LRS test first, so the
+permutation stage is unreachable on Windows for any standards-sized input. The
+`ea_non_iid` half of that prediction is confirmed.
 
 ### Route: MSYS2 UCRT64 (MinGW-w64 GCC) — recommended
 
-**Correction (2026-10-19, `OC-42`): this route does NOT work without a source
-change for `ea_iid` and `ea_restart`.** `seed()` at `cpp/shared/utils.h:795`
+**Correction (2026-10-19, `OC-42`), itself narrowed on 2026-10-20 by `OC-48`:
+the reasoning below is sound but UNTESTED on Windows, because `C18` stops both
+tools before the permutation stage that calls `seed()`. Treat it as a reading
+of the source, not a measurement. This route does NOT work without a source
+change for `ea_iid` and `ea_restart`** — though as measured, `C18` and `C24`
+are what stop it first. `seed()` at `cpp/shared/utils.h:795`
 opens `/dev/urandom` and calls `exit(-1)` if it cannot. A native UCRT64 binary
 has no `/dev/urandom` — the MSYS2 POSIX emulation layer does, but binaries built
 for UCRT64 do not use it — and `seed()` is called from

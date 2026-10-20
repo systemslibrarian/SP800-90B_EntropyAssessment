@@ -548,7 +548,10 @@ SEQEOF
       case "$f" in
         *"DIED at seed"*) gate PASS "ea_${t} DIED at seed(): no /dev/urandom -- OC-42 CONFIRMED for this tool" ;;
         *figure*)         gate FAIL "ea_${t} produced a figure where seed() was predicted to kill it -- OC-42 is BROKEN for this tool, and /dev/urandom evidently resolves here" ;;
-        *)                if sed -n "/ea_${t} \[pass 1/,/^$/p" "$L" | grep -q 'Skipped IID permutation'; then
+        *)                # the same blank-line range bug, in the one place it
+                          # survived the first fix: use the tool's own block.
+                          if awk -v m="ea_${t} [pass 1" 'index($0,m){f=1;next} f&&/^===== /{exit} f' "$L" \
+                               | grep -q 'Skipped IID permutation'; then
                             gate FAIL "ea_${t} SKIPPED the permutation tests after an earlier required test failed, so seed() was never reached: OC-42 is UNTESTED for this tool -- the input, not the platform, is what stopped it"
                           else
                             gate FAIL "ea_${t} reached neither seed() nor a figure ($f); read $L -- nothing is concluded"

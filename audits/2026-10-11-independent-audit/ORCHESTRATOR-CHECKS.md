@@ -4388,3 +4388,334 @@ report written over it, and the writer killed after 120 ms;
 The new implementation also left no temporary behind in any run. **`C08` is now
 closed in full**, and with it the last item in the first bucket of
 `CLOSING-INVENTORY.md`.
+
+---
+
+## OC-48 — Windows, measured: `windows-latest`, six runs, and what each run's instrument got wrong
+
+**The question, and why a workflow rather than a machine.** Everything the
+project said about Windows was an argument from reading the source.
+`BUILDING.md`'s Windows section had never been run anywhere. Four claims were
+worth replacing with measurements, and a manually-triggered GitHub Actions job
+on `windows-latest` can take all four without anyone owning a Windows machine:
+
+1. does every library the `Makefile` links have a `mingw-w64` package?
+2. does the source compile, per tool?
+3. what is the float environment — and is the `R-1` affected set 155 of 255, as
+   the x87 80-bit prediction says it must be?
+4. what happens at **runtime**: `OC-42` predicts `ea_non_iid` runs while
+   `ea_iid` and `ea_restart` die at `seed()`, which opens `/dev/urandom`.
+
+And one more that **outranks all four**: Windows is a platform
+`cpp/selftest/buildstate-lib.sh` has never met, so this is the test of whether
+it **refuses** rather than reading "no symbol I recognise" as a confident
+`NDEBUG`. Changing no source was a precondition throughout: fixing `seed()`
+means touching an entropy-relevant path, and that stays gated on the owner.
+
+### The premise, checked against the runner rather than taken on trust
+
+MSYS2 **is** preinstalled, at `C:\msys64`, with `pacman`, and the job detects it
+rather than depending on an action pin it could not verify. If it were absent the
+job says so and stops, because a job that fails on an unverifiable pin fails for
+a reason unrelated to the Windows question.
+
+### What is now measured
+
+| | measured on `windows-latest` |
+|---|---|
+| MSYS2 | preinstalled, `C:\msys64`, gcc 16.2.0 (Rev6, MSYS2) |
+| `libdivsufsort` | **no `mingw-w64` package**, under any of four candidate names. `BUILDING.md` is right. |
+| `libgomp` | packaged, in `mingw-w64-x86_64-gcc-libs`, which the preinstalled toolchain does **not** pull in |
+| every other `Makefile` dependency | packaged |
+| `ea_non_iid`, `ea_iid`, `ea_restart` | all three **compile and link** natively, with OpenMP |
+| `sizeof(long double)` | 16 |
+| `LDBL_MANT_DIG` | **64** — x87 80-bit extended, as predicted for MinGW |
+| `LDBL_MIN` / `LDBL_TRUE_MIN` | 3.3621e-4932 / 3.6452e-4951 |
+| `FLT_EVAL_METHOD` | 0 |
+| `sizeof(long)` | **4** — LLP64. This is `C18`'s precondition, confirmed. |
+| `R-1` affected set | **155 of 255**, the x87 prediction **confirmed** on a third host |
+| `R-1` powers of two | all safe (2 … 256) |
+| `R-1` at width 1 | unaffected: width 1 gives only k=1 (refused earlier) or k=2 |
+| `R-1` fragility | 0 of 155 still abort with one sample moved off exact balance |
+| `ea_non_iid` at runtime | runs the **whole non-IID battery to completion**, exit 0 |
+| the build-state probe | **refused** correctly, then was taught PE/COFF and now **calibrates and gives a real verdict** |
+| §5.2.5 LRS test | **FAILS unconditionally** on standards-sized input: `C18`, measured |
+
+So `R-1` is not an x86-64 defect and not a Linux defect: it is a **long double
+format** defect, and the same 155 alphabet sizes abort on Apple arm64's absence
+of the problem, Linux's x87, and Windows's x87. The restatement in
+`audits/BUG-REPAIR-GUIDE.md` is now carried by three measured hosts.
+
+`C18`'s precondition — `long` is 32 bits on Windows where it is 64 on the
+project's other targets — is measured rather than assumed.
+
+### The finding that is about a repair this audit wrote
+
+All three tools, having run, failed at **`cpp/shared/TestRunUtils.h:79`** — the
+`rename()` branch of the atomic report write added for `C08` (`OC-47`):
+
+```
+Error: could not put the report in place at 'C:/msys64/tmp/n.json'.
+```
+
+The temporary file was created and written; placing it failed. POSIX
+`rename(2)` **replaces** an existing destination atomically, which is the whole
+basis of `OC-47`'s argument; Windows `rename()` is not specified to, and
+`MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)` is the platform primitive. So a
+repair justified by a POSIX guarantee was carried to a platform that does not
+give it, and **running it somewhere new is what found that** — no amount of
+re-reading the diff would have. The job now measures the cause rather than
+arguing it: each tool writes a report twice over the same path, and a
+standalone probe mimicking those exact lines prints `errno` for both an absent
+and an existing destination. On macOS that probe reports `rc=0` for both, which
+is the positive control.
+
+### Six runs, and the instrument defect each one exposed
+
+Every run in this sequence failed for a different reason, and each named the
+next precisely. The point is not that the script was wrong six times; it is that
+**a gate that cannot distinguish two causes will report the one it was written
+for**, and the only way to find that is to run it somewhere it does not already
+agree with you.
+
+| run | what failed | the defect, and the rule it broke |
+|---|---|---|
+| 1 | three gates wrong at once | `"does NOT compile"` conflated **a missing header** with source incompatibility; `"no tool died at seed(): prediction BROKEN"` concluded from absence **with no binary present** — the absence rule (`OC-36`), broken inside the workflow that applies it; `python3` assumed on `PATH` |
+| 2 | nothing new | a `git commit` **silently failed**, so the run used the un-pushed script and repeated run 1's verdicts. A result from an artefact you did not push is not a result. |
+| 3 | `cmake` policy error | `libdivsufsort`'s `CMakeLists.txt` requires a policy version modern CMake refuses; `-DCMAKE_POLICY_VERSION_MINIMUM=3.5` |
+| 4 | `CMAKE_MAKE_PROGRAM is not set` | the `MinGW Makefiles` generator wants `mingw32-make`; the Unix generator with MSYS2's own `make` is the simpler correct choice inside the MINGW64 shell |
+| 5 | **two gates contradicting each other in one verdict log** | `"the OpenMP runtime ships with the toolchain"` was concluded from `find /mingw64 -name 'libgomp*'`, which matched exactly one file: `/mingw64/lib/libgomp.spec`. A spec file is not a library. The same glob then told the `R-1` stage to keep `-fopenmp`, and that link failed with `cannot find -lgomp` **in the same run**. Concluding from a signal weaker than the question. The test is now a **link** test. |
+| 5 | the `seed()` gate measured the wrong thing, and said so | every tool had died at a later step for an unrelated reason, and `-q` had suppressed every progress marker the classifier looks for. The gate reported `"read the log before concluding anything"` — the rule working — but the measurement was still of the wrong thing. The two questions are now **separate passes**: pass 1 runs with no `-o` and verbose, so nothing but `seed()` and the battery is in the path. |
+| 6 | **the probe was defeated by a filename** | calibration compiled `-o $d/live`; MinGW gcc wrote `$d/live.exe` and returned 0. `nm` on a missing file reports no symbols, which is **indistinguishable from "the pattern does not discriminate here"** — so it refused, in the same shell where the diagnostic beside it showed the full listing discriminating 2 to 0. Right outcome, wrong reason. |
+| 6 | the `rename` probe did not compile | its C source lost a `\n` to the generator that wrote it, leaving an unterminated string literal. It measured nothing and reported that it had measured nothing. |
+| 6 | `head -30` | cut every run off before its end, so `ea_iid`'s exit 1 at the chi-square stage was unreadable and the figure markers never matched |
+
+Three of those — run 1's absence-rule break, run 5's contradiction, run 6's
+filename — are the same error at three different depths: **a measurement
+reporting on something other than what it was asked about.** That is the error
+this whole audit exists to catch, and the Windows job caught it in itself three
+times.
+
+### The probe: it earned its keep twice, and is now taught the platform
+
+It **refused** on Windows rather than guessing, which is what it was built to
+do. And the diagnostic printed beside the refusal **measured that an extension
+exists**: on PE/COFF a linked `.exe` resolves imports through an import table,
+so `nm -u` is blind, while a full listing discriminates —
+
+```
+nm cal_live.exe | grep -i assert  ->  __imp__assert, _assert   (2)
+nm cal_nd.exe   | grep -i assert  ->                           (0)
+```
+
+So the platform can be taught, and that is an **improvement, not a
+correction**: refusing was right. It is taught as a **calibrated fallback,
+never a replacement**. The undefined-symbol listing is tried first, because
+nothing unrelated can masquerade as an undefined symbol; the full listing is
+weaker — any symbol whose name merely contains `assert` would read as `LIVE` —
+so it is only ever the fallback, it must pass the same calibration, and every
+line produced through it is marked `via=full` so a reader can see which
+question was answered. Verified three ways:
+
+| control | required | observed |
+|---|---|---|
+| macOS, unchanged | `undefined` mode, byte-identical output | `undefined`, `___assert_rtn`, no `via=` field |
+| undefined listing forced blind, as PE/COFF is | fall back, discriminate, label itself | `full` mode, `LIVE` vs `NDEBUG`, `via=full` on both lines |
+| **both** listings blind | `UNKNOWN`, and `bs_require` refuses | `UNKNOWN`; `bs_require` exits 2 |
+
+Calibration now also resolves the artefact **with the tool that will read
+it**, and that detail took two attempts worth recording. MinGW gcc appends
+`.exe` when `-o` carries no suffix, so the first attempt resolved the name with
+`[ -f ]` — and the MSYS runtime resolves `live` to `live.exe` for `stat()`, so
+the shell said the bare name existed while native `nm`, handed the same string,
+looked for a Win32 path that was not there and printed nothing. With stderr
+suppressed that is **indistinguishable from "this pattern does not
+discriminate"**, which is what it reported. `BS_DEBUG` printed the
+contradiction in a single block: `ls` listing `live.exe`, the resolver claiming
+`live`. The resolution test is now the use — pick the candidate `nm` can read,
+and if it can read neither, say so and quote what `nm` said.
+
+**Result:** the probe now **calibrates on Windows and gives a real verdict.**
+
+```
+calibration: OK -- pattern /assert/i discriminates in the full-symbol listing;
+  asserts-live symbol here is 0000000140007198 I __imp__assert
+  -- NOTE: the undefined-symbol listing is blind on this platform (PE/COFF),
+     so this is the weaker full-listing test
+ea_iid.exe       asserts=LIVE  sha256=924e575672ca38d6  via=full
+```
+
+Build state is therefore establishable on all three platforms the fork has
+measured, and on the one where the weaker test was needed, every line says so.
+
+### `seed()`: what it took to ask the question at all
+
+`OC-42` predicts `ea_non_iid` runs while `ea_iid` and `ea_restart` die at
+`seed()`, which opens `/dev/urandom` and calls `exit(-1)`. Three separate
+instrument faults stood between the job and that question, and each one
+produced a confident wrong gate before it was found:
+
+1. **A gate reading a per-tool prediction out of a whole log.** It declared the
+   prediction BROKEN because "a tool produced a figure" — and the tool that did
+   was `ea_non_iid`, which `OC-42` predicts **runs**. Each tool is gated
+   separately now.
+2. **An input that could not reach the stage under test.** The generator was an
+   LCG mod 2³² emitting bit 16, and bit 16 of such an LCG has period
+   2¹⁷ = 131072. `ea_iid` duly reported a longest repeated substring of
+   **868928 = 1000000 − 131072**, failed the LRS test, and printed `** Skipped
+   IID permutation tests after an earlier required IID test failure`. `seed()`
+   is called **in** the permutation stage. Replaced with splitmix64 bit 0,
+   verified locally first: LRS length 40, chi square passed, permutation tests
+   reached and passed.
+3. **An extraction pattern that ended its range at the first blank line**, and
+   the runs' own output contains blank lines, so every tool's "how far" came
+   back empty and the gates read that as "reached neither".
+
+And then the replacement input **still** did not reach `seed()` — for a reason
+that turned out to be the most important thing in this whole exercise. See
+`C18` below.
+
+So `OC-42`'s first half is confirmed — `ea_non_iid` runs the complete non-IID
+battery and produces a figure — and the second half remains **UNTESTED on
+Windows, not refuted**: the permutation stage is unreachable there for any
+standards-sized input, because `C18` makes the LRS test fail first.
+
+### And the finding that was hiding behind it: `C18`, measured
+
+`ea_iid` and `ea_restart` failed the §5.2.5 LRS test on an input macOS passes,
+with the **same** `P_col` and the **same** LRS length, printing a **negative
+probability**:
+
+| host | `P_col` | LRS | `Pr(X >= 1)` | verdict |
+|---|---|---:|---:|---|
+| macOS arm64 (LP64) | 0.500000 | 40 | **+0.365370** | `** Passed` |
+| Windows MinGW (LLP64) | 0.500000 | 40 | **−0.000367** | `** Failed` |
+
+`C18` has been a source-only candidate since the clustering phase:
+*"`n_choose_2` computes N = C(L−W+1, 2) in `long int`, which overflows for
+large L on LLP64 targets (Windows) and **would** corrupt the §5.2.5
+decision."* It does. `cpp/shared/utils.h:997` computes `((n*n) - n) / 2` in
+`long int`, and for n = 999961 the product alone is 999,922,001,521, so on a
+32-bit `long`:
+
+| | |
+|---|---:|
+| true N | 499,960,500,780 |
+| N as 32-bit `long` | **−403,189,204** |
+
+`reproducers/c18_llp64_overflow.c` reproduces the printed value **exactly**
+from the integer arithmetic alone, with no floating-point platform difference
+involved:
+
+```
+CORRECT    Pr(X>=1) = 0.365369   threshold = -33.8451   decision = PASS
+WINDOWS    Pr(X>=1) = -0.000367   threshold = nan       decision = FAIL
+```
+
+**And the decision is worse than the printed probability suggests.** The
+verdict at `lrs_test.h:765-766` is
+
+```
+logCollisionPower >= logl(-expm1l(logl(0.999L) / (long double)N))
+```
+
+A negative N makes `logl`'s argument negative, so the threshold is **NaN**, and
+every comparison against NaN is false. The LRS test therefore returns **FAIL
+unconditionally, whatever the data**.
+
+**Direction: fail-closed throughout.** A wrapped N is always smaller in
+magnitude than the true one, so `Pr(X >= 1)` is understated and the test errs
+toward rejection. It **denies** an assessment; it never awards one it should
+not, and no published figure is wrong. But the overflow begins around
+L − W + 1 = 46,342, and 1,000,000 is the standard input size, so **every
+standards-sized assessment on Windows is affected**. Not reproducible on Linux
+or macOS — both LP64, `long` is 64 bits — which is exactly why the x86-64 CI
+job never saw it.
+
+A standing gate now reads the **sign** of `Pr(X >= 1)`, which no correct
+probability can have, and reports UNMEASURED rather than PASS when no such line
+was printed.
+
+**Deviations, both labelled.** `libdivsufsort` is built from source, which is
+the route `BUILDING.md` already documents, not a package. A serial link via a
+two-line link-time shim was written for the case where `libgomp` could not be
+found; the link test showed it was packaged, so **the shim was never used**.
+
+**`BUILDING.md`'s Windows section is no longer unverified.** Its central claim —
+`libdivsufsort` is the one unpackaged dependency — is confirmed, and two facts
+it does not mention are now measured: the preinstalled toolchain needs
+`mingw-w64-x86_64-gcc-libs` for OpenMP, and `libdivsufsort`'s `CMakeLists.txt`
+needs both a policy override and a generator that is not `MinGW Makefiles`.
+
+---
+
+## C24 — the atomic report write is not portable: `C14`'s placeholder makes every later `C08` write fail on Windows
+
+**Status: OPEN. Not repaired, because this round forbids source changes. The
+repair is identified below.** This is a defect **in two repairs this audit
+authored**, found by running them on a platform they had never run on.
+
+**Where.** `cpp/shared/TestRunUtils.h:55-80`, `writeJsonReport()`.
+
+**The two repairs, each sound on its own.**
+
+- `C14` (`OC-31`) **claims** the `-o` path the moment it is parsed, writing a
+  placeholder, so that a harness checking the exit status and then reading the
+  file cannot be handed the *previous* run's complete, `errorLevel`-0 figure.
+- `C08` (`OC-47`) writes every report to a **sibling temporary** and `rename()`s
+  it over the target, so a reader never sees a truncated prefix.
+
+`C08`'s whole justification is that **`rename(2)` replaces an existing
+destination atomically**. That is POSIX. It is not Windows.
+
+**Measured, on `windows-latest`, MinGW gcc 16.2.0:**
+
+| case | result |
+|---|---|
+| `rename()`, destination absent | `rc=0` |
+| `rename()`, destination **exists** | **`rc=-1  errno=17 (File exists)`** |
+
+and then the same three cases through a verbatim copy of
+`TestRunUtils.h:55-80`:
+
+| case | Windows | macOS (control) |
+|---|---|---|
+| 1. first write to a fresh path — *the `C14` placeholder* | **OK** | OK |
+| 2. second write over it — *every later report* | **FAILED, `errno=17`** | OK |
+| 3. single write to a fresh path | OK | OK |
+
+**So the interaction is the defect, not either repair.** `C14` guarantees the
+destination exists before any real report is written, and `C08` then guarantees
+that writing it fails. Each is correct under its own assumptions; jointly, on
+Windows, **no tool can ever write a report**:
+
+```
+Error: could not put the report in place at 'rep_iid.json'.
+```
+
+All three tools reproduce it, and they reproduce it even when the operator's
+`-o` path did not exist beforehand — which is what made it look at first like
+something other than `rename()` semantics.
+
+**Severity.** It cannot produce a *wrong figure*: the failure is loud, on
+stderr, and the report is absent rather than stale or truncated. A Windows
+operator simply cannot get a `-o` report at all. The tools' own assessment
+output on stdout is unaffected, as is every figure. So this is availability on
+one platform, not integrity on any — but it would make the fork unusable with
+`-o` on Windows, and `XR-01` establishes that TruePad's harness reads the `-o`
+file.
+
+**The repair, when a source change is authorised.** On Windows the primitive
+that is specified to replace is `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)`,
+which is atomic for the reader. A portable `writeJsonReport` wants that under
+`_WIN32` and `rename()` elsewhere. The tempting one-liner — `remove(path)`
+before `rename()` — must be **refused**: it reopens exactly the window `C08`
+closed, during which the path does not exist at all, and it would be a
+regression justified by convenience.
+
+**What this item is really evidence of.** Two repairs were reviewed, reasoned
+about, given reproducers, and shown failing before and passing after. Both
+arguments were correct. Neither argument was portable, and no amount of
+re-reading either diff would have revealed that — **only running them somewhere
+new did.** `REPAIRED is not REVIEWED` has a companion: *verified on the hosts
+it was verified on.*

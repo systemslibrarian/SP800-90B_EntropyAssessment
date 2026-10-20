@@ -89,7 +89,9 @@ the upstream position and this fork's position are never conflated.
 
   Fork disposition across all 30: `VERIFIED` 21, `RESOLVED-BY-GLOBAL-GUARD` 2,
   `FORK-HARDENING` 1, `DEFERRED-NOT-BUILT` 3,
-  `VERIFIED-SUPPORTED-SCOPE` 2, `BLOCKED-HARDWARE` 1.
+  `VERIFIED-SUPPORTED-SCOPE` 2, `FORK-FIXED` 1 (R-1, repaired 2026-10-19; the
+  one-time `BLOCKED-HARDWARE` count is now 0, and the block itself was a
+  mistake rather than a resolved obstacle -- see R-1).
 
   The membership changed on 2026-10-02 and the total did not: F01 was withdrawn
   (see "Withdrawn findings") and C-01, the carried `ea_restart` allocation
@@ -114,10 +116,15 @@ the upstream position and this fork's position are never conflated.
   same as universal resolution: N-03, N-05 and N-11 remain unfixed in
   `ea_conditioning`; the conditioning instances of N-08 and N-10 also remain.
   Commit `876ba05` excludes that executable from `make all`, and
-  `regression-docs.sh` fails if it enters the supported build. R-1 remains
-  blocked until an x86-64 host with 80-bit `long double` can reproduce and
-  verify a repair. Independent verification of the repair branch is still
-  required before production approval.
+  `regression-docs.sh` fails if it enters the supported build. R-1 is no longer
+  blocked: it was never a hardware-blocked item, because it is a `long double`
+  **format** defect rather than a platform one, and the "not reproducible on
+  arm64" reading that produced the block had been taken against a binary with
+  the assert compiled out (OC-42). It reproduces on all three formats the fork
+  has measured, and the 155-of-255 x87 figure is now confirmed independently on
+  Linux x86-64 and on Windows MinGW (OC-48). The repair is the clamp to the
+  Cauchy-Schwarz bound in `cpp/shared/lrs_test.h`. Independent verification of
+  the repair branch is still required before production approval.
 
   No upstream issue or pull request was modified in either pass.
 - Unconfirmed or not-a-bug items (not in the queue): **18**, one of them withdrawn after being raised (F01); see the end of this file.
@@ -149,7 +156,7 @@ the upstream position and this fork's position are never conflated.
 | [N-09](#n-09) | `FORK-FIXED` | no | — / — | The two programs this fork does not build still carry the defect. |
 | [N-10](#n-10) | `SUPPORTED-SCOPE-FIXED` | no | — / — | IID/restart semantics are fixed; the conditioning half stays excluded by `876ba05`. |
 | [N-11](#n-11) | `EXCLUDED-UNSUPPORTED` | no (low relevance) | — / — | Repair and regression-test before any supported build may include ea_conditioning. |
-| [R-1](#r-1) | `BLOCKED-HARDWARE` | no (abort, no JSON) | #246 (closed) / PR #248 (merged; incomplete) | Requires x86-64 with 80-bit long double; do not attempt or claim a repair from Apple silicon. |
+| [R-1](#r-1) | `FORK-FIXED` | no (abort, no JSON) | #246 (closed) / PR #248 (merged; incomplete) | Independent verification of the clamp in `cpp/shared/lrs_test.h` remains. It is a `long double` FORMAT defect, not a platform one: 117 of 255 alphabet sizes on a 53-bit `long double` (Apple arm64), 155 on x87 80-bit, measured on Linux x86-64 **and** Windows MinGW. |
 | [R-2](#r-2) | `FORK-FIXED` | no (TOO LOW: false failure) | #178 (closed) / — | None. |
 | [R-3](#r-3) | `FORK-FIXED` | no (report integrity) | #183 (closed) / — | None. |
 | [NOVEL-01](#novel-01) | `FORK-FIXED` | no by itself (it masks TOO-HIGH regressions) | #272 / — | None. Note that selftest now exits 1 on macOS arm64 because of the pre-existing platform deltas in upstream #155. |

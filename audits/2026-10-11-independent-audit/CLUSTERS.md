@@ -31,7 +31,7 @@ member, or with a numeric claim that mattered, got the full three lenses.
 | `C15-negative-zero` | 4 | Low | refute |
 | `C16-permissive-parsing` | 6 | Low | refute |
 | `C17-platform-divergence` | 4 | Low | refute |
-| `C18-llp64-overflow` | 3 | Low | refute |
+| `C18-llp64-overflow` | 3 | **High on LLP64** (was Low) | **1 of 3 CONFIRMED by measurement 2026-10-20 (OC-48); the §5.2.5 LRS test fails unconditionally on Windows. The other 2 stay source-only.** |
 | `C19-docs-drift` | 12 | Medium | refute |
 | `C20-openmp-race` | 3 | Low | refute |
 | `C21-cond-misc` | 12 | Low | refute |
@@ -294,6 +294,32 @@ member, or with a numeric claim that mattered, got the full three lenses.
 **Lead candidate.** `predictors-10` — Every estimator counter is `long`, which is 32-bit on LLP64; the bitstring length blen = len*word_size is computed in that type
 
 **What the verification phase was asked to settle.** Windows/LLP64-only integer width claims (long is 32-bit): blen = len*word_size, n_choose_2 in long int, unsigned-int lengths in compression(). Source-only on this host; decide whether each is real on LLP64 and whether the fork claims Windows support.
+
+**SETTLED 2026-10-20 for the `n_choose_2` member — by measurement, not reading
+(`OC-48`).** `estimators-ttuple-lrs-5` is **CONFIRMED**, and its severity was
+understated at "Low". On `windows-latest` (MSYS2 MINGW64, `sizeof(long)` = 4,
+measured) a 1,000,000-sample input with a longest repeated substring of 40
+gives:
+
+| host | `Pr(X >= 1)` | §5.2.5 verdict |
+|---|---:|---|
+| macOS arm64 (LP64) | **+0.365370** | `** Passed` |
+| Windows MinGW (LLP64) | **−0.000367** | `** Failed` |
+
+`utils.h:997` computes `((n*n) - n) / 2` in `long int`; for n = 999961 the
+product alone is 999,922,001,521, so N comes out **−403,189,204** instead of
+499,960,500,780. Worse than the printed probability suggests: the decision at
+`lrs_test.h:765` is `logCollisionPower >= logl(-expm1l(logl(0.999L)/N))`, and a
+negative N makes `logl`'s argument negative, so the threshold is **NaN** and
+every comparison against it is false — the LRS test fails **unconditionally,
+whatever the data**. Overflow begins around L − W + 1 = 46,342, so every
+standards-sized assessment on Windows is affected. Direction is **fail-closed**
+throughout: a wrapped N is always smaller than the true one, so the probability
+is understated and the test errs toward rejection. Exact reproduction from the
+integer arithmetic alone:
+`reproducers/c18_llp64_overflow.c`. The other two members of this cluster
+(`iid-track-5`, `predictors-10`) remain source-only and unmeasured; both concern
+code paths this fork does not build or input sizes it does not assess.
 
 **Members**
 
