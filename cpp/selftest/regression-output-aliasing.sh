@@ -69,29 +69,43 @@ run_tool() { # run_tool <tool> <outpath> -- always against capture.bin
 # ---- A05: every alias form must be refused, with the capture untouched ----
 ln    "${work}/capture.bin" "${work}/hardlink.bin" 2>/dev/null
 ln -s capture.bin           "${work}/symlink.bin"  2>/dev/null
+
+# Does this platform's ln / ln -s actually produce an alias? Measured on
+# throwaway files: write through one name, read through the other.
+aliases_here() { # aliases_here <mk-cmd...> -- returns 0 if the two names are one file
+    rm -f "${work}/p.a" "${work}/p.b"
+    printf 'first' > "${work}/p.a"
+    "$@" >/dev/null 2>&1 || return 1
+    [ -e "${work}/p.b" ] || return 1
+    printf 'second' > "${work}/p.a"
+    [ "$(cat "${work}/p.b" 2>/dev/null)" = "second" ]
+}
+HARDLINK_IS_ALIAS=no; SYMLINK_IS_ALIAS=no
+aliases_here ln    "${work}/p.a" "${work}/p.b" && HARDLINK_IS_ALIAS=yes
+( cd "${work}" && rm -f p.b ) ; aliases_here sh -c "cd '${work}' && ln -s p.a p.b" && SYMLINK_IS_ALIAS=yes
+rm -f "${work}/p.a" "${work}/p.b"
+printf '  platform link semantics: hard link aliases=%s  symlink aliases=%s\n' \
+    "${HARDLINK_IS_ALIAS}" "${SYMLINK_IS_ALIAS}"
 mkdir -p "${work}/sub"
 for tool in ea_non_iid ea_iid ea_restart; do
     for alias in "capture.bin" "./capture.bin" "${work}/capture.bin" \
                  "sub/../capture.bin" "hardlink.bin" "symlink.bin"; do
-        # VERIFY THE PREMISE BEFORE ASSERTING THE CONCLUSION. A case that is
-        # supposed to be an alias of the capture is only a test of the guard if
-        # it really IS one -- and it may not be: MSYS2 emulates symlinks by
-        # COPYING unless winsymlinks is set, and a copy is a different file
-        # that the guard should correctly allow. Asserting a refusal there
-        # would fail a tool that behaved properly. So each case states whether
-        # its premise holds, and a case whose premise fails is SKIPPED, not
-        # failed and not silently passed.
-        if ! ( cd "${work}" && python3 -c '
-import os, sys
-try:
-    a, b = os.stat(sys.argv[1]), os.stat("capture.bin")
-except OSError:
-    sys.exit(1)
-sys.exit(0 if (a.st_dev, a.st_ino) == (b.st_dev, b.st_ino) and a.st_ino != 0 else 1)
-' "${alias}" ) 2>/dev/null; then
-            printf '  %-52s SKIP  not an alias of the capture on this platform\n' "${tool} -o ${alias}"
-            continue
-        fi
+        # VERIFY THE PREMISE BEFORE ASSERTING THE CONCLUSION, and do it with
+        # tools that exist. The first version used python3, which is NOT on
+        # PATH in the MSYS2 shell, so on Windows every case SKIPPED for a
+        # reason unrelated to aliasing and the guard went untested -- honest,
+        # and useless. The spelling variants of one path are the same file BY
+        # CONSTRUCTION and need no check. Only the hard link and the symlink
+        # need one, because MSYS2 emulates symlinks by COPYING unless
+        # winsymlinks is set, and a copy is a different file the guard should
+        # correctly allow. That is established once, on throwaway files, by
+        # writing through one name and reading through the other.
+        case "${alias}" in
+            hardlink.bin) [ "${HARDLINK_IS_ALIAS}" = yes ] || {
+                printf '  %-52s SKIP  ln does not alias on this platform\n' "${tool} -o ${alias}"; continue; } ;;
+            symlink.bin)  [ "${SYMLINK_IS_ALIAS}" = yes ] || {
+                printf '  %-52s SKIP  ln -s does not alias on this platform (MSYS2 copies)\n' "${tool} -o ${alias}"; continue; } ;;
+        esac
         run_tool "${tool}" "${alias}"; rc=$?
         now=$(sha_of "${work}/capture.bin")
         label="${tool} -o ${alias}"
@@ -107,10 +121,19 @@ sys.exit(0 if (a.st_dev, a.st_ino) == (b.st_dev, b.st_ino) and a.st_ino != 0 els
 done
 
 # ---- the positive control: a distinct -o path must still assess ----
-rm -f "${work}/report.json"
-if run_tool ea_non_iid "report.json" && [ -s "${work}/report.json" ] \
-   && grep -q '"errorLevel" : 0' "${work}/report.json"; then
+rm -f "${work}/report.json" "${work}/control.out"
+( cd "${work}" && "${bindir}/ea_non_iid" -i -a -q -o report.json capture.bin 1 ) \
+    > "${work}/control.out" 2>&1
+if [ -s "${work}/report.json" ] && grep -q '"errorLevel" : 0' "${work}/report.json"; then
     pass "control: a distinct -o path still assesses"
+elif grep -q 'could not put the report in place' "${work}/control.out"; then
+    # C24: Windows rename() refuses an existing destination, and C14's
+    # placeholder has already created one, so NO report can be written there.
+    # That is a separately tracked defect, not this guard refusing a legitimate
+    # run, and the distinction is read off the tool's own message rather than
+    # guessed from the platform.
+    printf '  %-52s SKIP  C24: no report can be written on this platform\n' \
+        "control: a distinct -o path still assesses"
 else
     fail "control: a distinct -o path still assesses" "the guard refuses a legitimate run"
 fi

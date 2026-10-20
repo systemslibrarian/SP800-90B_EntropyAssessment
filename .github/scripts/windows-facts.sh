@@ -592,9 +592,10 @@ a05)
   else
     gate FAIL "the A05 regression failed on Windows for a reason other than destruction -- read $L; nothing is concluded about the guard"
   fi
-  # the identity primitive itself, reported rather than inferred
-  printf 'stat() st_ino on this platform: ' >> "$L"
-  python3 -c "import os;print(os.stat('cpp/ea_iid.exe').st_ino if os.path.exists('cpp/ea_iid.exe') else 'no binary')" >> "$L" 2>&1 || true
+  # the identity primitive itself, reported rather than inferred -- and with a
+  # tool that is present here, since python3 is NOT on PATH in this shell
+  printf 'ls -i on a built binary (st_ino as the shell sees it): ' >> "$L"
+  ls -i cpp/ea_iid.exe >> "$L" 2>&1 || echo "no binary" >> "$L"
   tail -2 "$L"
   ;;
 
