@@ -109,14 +109,29 @@ bs_calibrate() {
        || ! "$cc" -O0 -DNDEBUG -o "$d/nd" "$d/p.c" 2>/dev/null; then
         BS_CAL_NOTE='calibration programs did not build'; rm -rf "$d"; return 0
     fi
+    # RESOLVE WHAT THE COMPILER ACTUALLY WROTE. On MinGW, gcc appends .exe when
+    # -o carries no suffix, so `$d/live` does not exist even though gcc returned
+    # 0 -- and nm on a missing file reports no symbols, which looked exactly like
+    # "the pattern does not discriminate here". The Windows run refused for that
+    # reason while the diagnostic printed beside it, in the same shell, showed
+    # the full listing discriminating 2 to 0. A probe must not be defeated by a
+    # filename (OC-48). Never infer the artefact's name; look for it, and if the
+    # compiler claimed success and nothing can be found, say THAT.
+    local lb nb
+    for lb in "$d/live" "$d/live.exe"; do [ -f "$lb" ] && break; done
+    for nb in "$d/nd"   "$d/nd.exe";   do [ -f "$nb" ] && break; done
+    if [ ! -f "$lb" ] || [ ! -f "$nb" ]; then
+        BS_CAL_NOTE='the compiler reported success but no calibration artefact could be found (neither bare nor .exe)'
+        rm -rf "$d"; return 0
+    fi
     local m
     for m in undefined full; do
-        live=$(bs_syms "$m" "$d/live"  | grep -ci "${BS_PATTERN}")
-        ndebug=$(bs_syms "$m" "$d/nd"  | grep -ci "${BS_PATTERN}")
+        live=$(bs_syms "$m" "$lb"  | grep -ci "${BS_PATTERN}")
+        ndebug=$(bs_syms "$m" "$nb" | grep -ci "${BS_PATTERN}")
         if [ "${live:-0}" -gt 0 ] && [ "${ndebug:-0}" -eq 0 ]; then
             BS_CALIBRATED=yes
             BS_MODE=$m
-            BS_CAL_NOTE="pattern /${BS_PATTERN}/i discriminates in the ${m}-symbol listing; asserts-live symbol here is $(bs_syms "$m" "$d/live" | grep -i "${BS_PATTERN}" | head -1 | tr -s ' ' | sed 's/^ *//')"
+            BS_CAL_NOTE="pattern /${BS_PATTERN}/i discriminates in the ${m}-symbol listing; asserts-live symbol here is $(bs_syms "$m" "$lb" | grep -i "${BS_PATTERN}" | head -1 | tr -s ' ' | sed 's/^ *//')"
             [ "$m" = full ] && BS_CAL_NOTE="${BS_CAL_NOTE} -- NOTE: the undefined-symbol listing is blind on this platform (PE/COFF), so this is the weaker full-listing test"
             break
         fi

@@ -306,14 +306,19 @@ EOF
     local out rc
     out=$(timeout 900 "$@" 2>&1); rc=$?
     printf 'exit=%s\n' "$rc" >> "$L"
-    printf '%s\n' "$out" | head -30 >> "$L"
+    printf '%s\n' "$out" | head -45 >> "$L"
+    printf '  ... last 20 lines ...\n' >> "$L"
+    printf '%s\n' "$out" | tail -20 >> "$L"
     # How far did it get? Positive markers only (the absence rule).
     local far="nothing recognisable"
     printf '%s' "$out" | grep -q 'Loaded'            && far="loaded the input"
     printf '%s' "$out" | grep -q 'Calculating base'  && far="reached baseline statistics"
     printf '%s' "$out" | grep -qE '^\*\* (Passed|Failed)' && far="reached the test battery"
-    printf '%s' "$out" | grep -q 'Assessed min entropy' && far="produced a figure"
-    printf '%s' "$out" | grep -qi 'random source'    && far="DIED at seed(): no /dev/urandom"
+    printf '%s' "$out" | grep -qE 'H_original|H_bitstring|H_assessed|Assessed min entropy|min entropy' \
+                                                     && far="produced a figure"
+    # the exact text of the predicted death: utils.h:796
+    #   perror("Can't open random source. Reverting to a deterministic seed.")
+    printf '%s' "$out" | grep -qi "open random source" && far="DIED at seed(): no /dev/urandom"
     printf 'how far: %s\n\n' "${far}" >> "$L"
     printf '  %-34s exit=%-4s %s\n' "${label}" "${rc}" "${far}"
   }
@@ -383,8 +388,7 @@ int main(void){
     f=fopen("ren_src","wb"); fputs("new",f); fclose(f);
     errno = 0;
     int rc = rename("ren_src","ren_dst");
-    printf("destination %-10s rename rc=%d errno=%d (%s)
-",
+    printf("destination %-10s rename rc=%d errno=%d (%s)\n",
            destExists ? "EXISTS" : "absent", rc, errno, rc ? strerror(errno) : "ok");
     /* and the Windows primitive that is specified to replace, for contrast */
   }
