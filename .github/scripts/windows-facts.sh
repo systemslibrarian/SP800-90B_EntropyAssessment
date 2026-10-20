@@ -70,7 +70,7 @@ deps)
   else
     echo >> "$L"
     echo "=== DEVIATION: building libdivsufsort from source (BUILDING.md's route) ===" >> "$L"
-    pacman -S --noconfirm --needed mingw-w64-x86_64-cmake git >> "$L" 2>&1 || true
+    pacman -S --noconfirm --needed mingw-w64-x86_64-cmake mingw-w64-x86_64-make git >> "$L" 2>&1 || true
     ( set -x
       rm -rf /tmp/divsufsort
       git clone --depth 1 https://github.com/y-256/libdivsufsort /tmp/divsufsort
@@ -81,7 +81,11 @@ deps)
       # (cmake_minimum_required)", which is a toolchain-version incompatibility
       # and not "the route is dead": this policy flag is the documented way past
       # it (OC-48).
-      cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
+      # And "MinGW Makefiles" needs mingw32-make, which the mingw-w64-x86_64-make
+      # package provides and plain `make` does not; run 2 failed with
+      # "CMAKE_MAKE_PROGRAM is not set". Inside the MINGW64 shell the Unix
+      # generator with MSYS2's own make is the simpler correct choice (OC-48).
+      cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBUILD_SHARED_LIBS=OFF -DBUILD_DIVSUFSORT64=ON \
             -DCMAKE_INSTALL_PREFIX=/mingw64 .
