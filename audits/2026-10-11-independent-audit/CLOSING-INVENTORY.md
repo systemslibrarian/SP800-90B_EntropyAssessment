@@ -45,7 +45,9 @@ A figure from this fork is only interpretable with its provenance and its floor.
 tools/build-provenance-canary.sh cpp/ea_iid          # expect TREE REPAIRED
 # 2. the assessment
 cpp/ea_non_iid -i -a -q -o report.json <capture.bin> <bits_per_symbol>
-# 3. the floor, with every subtracted term named
+# 3. the floor, with every subtracted term named. At width 1 this prints
+#    CERTIFIED FLOOR; above width 1 it prints EVALUATED MARGIN (NOT A FLOOR),
+#    because the C01/F10 term is a measurement there and not a bound (A02).
 python3 audits/2026-10-11-independent-audit/oracles/entropy_floor.py report.json
 # 4. if a restart dataset exists, the acceptance decision -- NOT a subtraction
 cpp/ea_restart -i -v -o restart.json <restart.bin> <bits_per_symbol> <H_I>/symbol

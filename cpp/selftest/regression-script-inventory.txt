@@ -13,6 +13,7 @@ regression-notrun.sh
 regression-output-aliasing.sh
 regression-output.sh
 regression-outside-battery.sh
+regression-platform-deltas.sh
 regression-restart.sh
 regression-selftest-inventory.sh
 regression-subset.sh

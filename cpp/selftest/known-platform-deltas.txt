@@ -1,0 +1,48 @@
+# Known platform deltas (upstream #155), as an EXPECTED-RESULT MANIFEST.
+#
+# WHY THIS REPLACED A FILENAME LIST (A06 / OC-56).
+#
+# --allow-known-platform-deltas used to excuse any mismatch whose FILENAME was
+# one of two names, without inspecting the estimator, the field, the magnitude,
+# the direction or the platform. An isolated controller fed it a deliberate
+# change from 0.85 to 0.01 in one of those files and it was accepted. A guard
+# that cannot tell a 1e-10 last-digit platform difference from a 0.84 collapse
+# is not guarding.
+#
+# FORMAT
+#   platform <uname-s> <uname-m> <compiler-substring>
+#       ... one or more delta rows, each:
+#   delta <file>|<estimator>|<field>|<max-abs-delta>
+#
+# A failing selftest is excused ONLY when, for the platform actually running:
+#   1. a `platform` block matches this host (uname -s, uname -m, and the
+#      compiler identity substring) -- otherwise the exception does not apply
+#      at all, however familiar the filenames;
+#   2. EVERY reported difference matches a `delta` row exactly on file,
+#      estimator and field, and its |delta| is within that row's tolerance;
+#   3. EVERY `delta` row listed for this platform was actually observed -- a
+#      comparison that silently stopped happening must not pass as an absence
+#      of difference.
+#
+# TOLERANCES ARE MEASURED MAGNITUDES WITH HEADROOM, NOT BOUNDS, and are
+# labelled as such because an observed maximum is not a bound (rule 6). The
+# observed deltas here are 1.25e-10 to 3.66e-10 on quantities of order 0.04 to
+# 0.97; 1e-9 leaves roughly 3x headroom while failing anything larger by orders
+# of magnitude. If a delta ever exceeds its row, that is a finding and the row
+# must not simply be widened to swallow it.
+
+platform Darwin arm64 Apple clang
+delta biased-random-bytes.bin|Bitstring MultiMCW Prediction Estimate|P_local|1e-9
+delta biased-random-bytes.bin|Bitstring MultiMCW Prediction Estimate|min entropy|1e-9
+delta biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|P_local|1e-9
+delta biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|min entropy|1e-9
+delta biased-random-bytes.bin|Bitstring Lag Prediction Estimate|min entropy|1e-9
+delta biased-random-bytes.bin|Literal Lag Prediction Estimate|P_local|1e-9
+delta biased-random-bytes.bin|Literal Lag Prediction Estimate|min entropy|1e-9
+delta ringOsc-nist.bin|Literal MultiMCW Prediction Estimate|min entropy|1e-9
+
+# Linux x86-64 with GCC is the platform NIST's reference data was produced on,
+# so selftest is expected to pass there outright and no block is listed. That
+# is deliberate: with no block, a selftest failure on Linux is NOT excused, and
+# the x86-64 CI job -- which passes --allow-known-platform-deltas -- will fail
+# rather than quietly adopting macOS's exceptions.

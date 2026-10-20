@@ -26,6 +26,18 @@ distinction is not severity but whether a defect *inflates a real figure* or
 *fabricates one*. An inflation can be subtracted. A fabrication cannot, because
 the test detected nothing and there is no quantity for the bound to apply to.
 
+> **THE `C01` HALF OF THIS PARAGRAPH IS WRONG — SUPERSEDED BY `OC-55`.** An
+> outside audit (`A02`) pointed out that `C01` is **not** a last-digit
+> comparison defect: the 3.69e-4 figure comes from **`F10`**, MultiMMC's
+> chained prefix lookup under the `MAX_ENTRIES` cap, whose magnitude is set by
+> how the dictionary fills — a property of the data. So the paragraph applies
+> its own correct rule ("a single measured overestimate is not a bound") to
+> `C03` and then exempts `C01` on a mechanism `C01` does not have. `C01`'s
+> 3.69e-4 is **one instance, not a ceiling**, exactly as is said of `C03`
+> below. At width 1 the term is **excluded by proof** (the cap cannot bind
+> below the top depth for binary data); above width 1 it is an **evaluated
+> margin**, and the floor oracle now says so in those words.
+
 **One correction to the framing, and it matters for two entries below.** A single
 measured overestimate is **not** a bound. `C03`'s **+42.59 %** and `C01`'s
 **+3.69e-4** are both measurements, but only `C01`'s is a bound: `C01` is a

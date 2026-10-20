@@ -20,10 +20,14 @@ cd "${here}" || exit 2
 allow_platform=0
 [ "${1:-}" = "--allow-known-platform-deltas" ] && allow_platform=1
 
-KNOWN_PLATFORM_FILES="biased-random-bytes.bin ringOsc-nist.bin"
+# A06 (OC-56): replaced by an expected-result manifest. The filename list it
+# used to be excused ANY mismatch in these two files -- any estimator, any
+# magnitude, any direction, any platform.
+DELTA_MANIFEST="known-platform-deltas.txt"
+here_cmp="./check-platform-deltas.py"
 REGRESSION_INVENTORY="regression-script-inventory.txt"
-EXPECTED_REGRESSION_SCRIPTS=19
-EXPECTED_TOTAL_CHECKS=21
+EXPECTED_REGRESSION_SCRIPTS=20
+EXPECTED_TOTAL_CHECKS=22
 
 inventory_error() {
     echo "run-all-checks: regression inventory error: $*" >&2
@@ -114,12 +118,8 @@ if [ "${rc}" -eq 0 ]; then
 else
     line=$(printf '%s' "${out}" | grep -E '^selftest: FAIL')
     files=$(printf '%s' "${line}" | sed 's/^.*files)://')
-    only_known=1
     nfiles=0
-    for f in ${files}; do
-        nfiles=$((nfiles + 1))
-        case " ${KNOWN_PLATFORM_FILES} " in *" ${f} "*) ;; *) only_known=0 ;; esac
-    done
+    for f in ${files}; do nfiles=$((nfiles + 1)); done
     # selftest exited non-zero. If it printed no "selftest: FAIL" summary line,
     # or that line names no file, there is nothing to classify and the run must
     # NOT be excused. This used to fail open: an empty classification left
@@ -133,13 +133,31 @@ else
         printf '  %-34s FAIL (exit %s, no "selftest: FAIL" summary line to classify)\n' "selftest" "${rc}"
         printf '%s\n' "${out}" | tail -4 | sed 's/^/        /'
         fail=$((fail + 1)); failed="${failed} selftest"
-    elif [ "${only_known}" -eq 1 ] && [ "${allow_platform}" -eq 1 ]; then
-        printf '  %-34s PASS (only the known upstream #155 platform files)\n' "selftest"
-        pass=$((pass + 1))
+    elif [ "${allow_platform}" -eq 1 ]; then
+        # A06 (OC-56): the exception is no longer a filename list. Every
+        # reported difference must match an EXPECTED-RESULT ROW for THIS
+        # platform on file, estimator and field, and be within that row's
+        # tolerance; every row listed for this platform must have been
+        # observed; and the platform identity itself must match. Anything
+        # else fails, with the flag enabled.
+        verdict=$(printf '%s\n' "${out}" | SELFTEST_DELTA_MANIFEST="${DELTA_MANIFEST}" \
+                  PLAT_S="$(uname -s)" PLAT_M="$(uname -m)" \
+                  PLAT_CC="$(${CXX:-c++} --version 2>&1 | head -1)" \
+                  python3 "${here_cmp}" 2>&1)
+        vrc=$?
+        if [ "${vrc}" -eq 0 ]; then
+            printf '  %-34s PASS (%s)\n' "selftest" "$(printf '%s' "${verdict}" | head -1)"
+            pass=$((pass + 1))
+        else
+            printf '  %-34s FAIL (the platform-delta exception does NOT cover this)\n' "selftest"
+            printf '        %s\n' "${line}"
+            printf '%s\n' "${verdict}" | sed 's/^/        /'
+            fail=$((fail + 1)); failed="${failed} selftest"
+        fi
     else
         printf '  %-34s FAIL\n' "selftest"
         printf '        %s\n' "${line}"
-        [ "${only_known}" -eq 1 ] && printf '        these are the known upstream #155 platform files; --allow-known-platform-deltas accepts exactly these\n'
+        printf '        a known-platform-delta exception exists but was not requested; see known-platform-deltas.txt\n'
         fail=$((fail + 1)); failed="${failed} selftest"
     fi
 fi

@@ -139,7 +139,7 @@ available; do not write an untestable numerical repair on a different ABI.
 6. **Run the tests:** `cd cpp && make non_iid iid restart && cd selftest && ./run-all-checks.sh`
 
    That runs `pin-check.sh`, `selftest` and every regression script, and fails if any fails. Two things to know about its output:
-   - `selftest` exits non-zero on macOS arm64 for the pre-existing platform deltas in upstream #155. `./run-all-checks.sh --allow-known-platform-deltas` treats exactly those two files as a pass and nothing else. Do not widen that.
+   - `selftest` exits non-zero on macOS arm64 for the pre-existing platform deltas in upstream #155. `./run-all-checks.sh --allow-known-platform-deltas` excuses them **only** against `cpp/selftest/known-platform-deltas.txt`, an expected-result manifest keyed by platform: every reported difference must match a row on file, estimator and field and be within its tolerance, every listed row must have been observed, and the host's `uname` and compiler must match a platform block. It used to be a list of two FILENAMES that inspected nothing else, and a deliberate 0.85-to-0.01 change in one of those files was accepted (`A06`, `OC-56`). Do not widen a tolerance to swallow a delta that exceeded it — that is the finding, not the obstacle.
    - For memory or UB findings also build with sanitizers, `make <tool> CXXFLAGS='-std=c++11 -fopenmp -O1 -g -fsanitize=address,undefined -I/usr/include/jsoncpp'`, and run the reproduction inputs. `regression-estimator-guards.sh` builds its own sanitizer binary and is the model for this.
 7. **Check the documentation claims:** `cd cpp/selftest && ./regression-docs.sh`
 

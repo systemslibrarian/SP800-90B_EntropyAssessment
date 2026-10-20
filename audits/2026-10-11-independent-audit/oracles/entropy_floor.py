@@ -47,7 +47,36 @@ Overall.
 import json, sys, os
 
 # ---- the terms, each with the measurement that fixes it -------------------
-C01 = 3.69e-4          # two-sided last-digit comparison error, measured bound (REPAIR-STRATEGY Class 2)
+# C01 / F10 -- A02, AND THE LABEL WAS WRONG TWICE (OC-55).
+#
+# This term was described as a "two-sided last-digit comparison error, measured
+# bound". Both halves were wrong. The 3.69e-4 figure comes from F10:
+# MultiMMC's CHAINED PREFIX LOOKUP under the MAX_ENTRIES cap
+# (multi_mmc_test.h:236/:93). SP 800-90B 6.3.9 step 4.b.i requires an
+# independent lookup of M_d at every depth; the code looks up depth d only if
+# depth d-1 hit, and when the cap refuses a prefix entry at depth d every later
+# recurrence of that context suppresses all depth >= d predictions. The size of
+# that effect is set by HOW THE DICTIONARY FILLS, which is a property of the
+# data. Nothing in a rounding argument constrains it, so 3.69e-4 is ONE
+# MEASUREMENT and not a bound -- exactly as the outside audit said.
+#
+# OF THE THREE OPTIONS (prove a bound, correct the algorithm, exclude the
+# affected path) THIS TAKES THE THIRD, and for width 1 the exclusion is a
+# PROOF rather than a judgement:
+#
+#   D_MMC = 16 and MAX_ENTRIES = 100000 (multi_mmc_test.h:4-5). The loop runs
+#   d = 0..15. For BINARY data, depth d has at most 2^(d+1) distinct prefixes
+#   and at most 2 postfixes each, so entries[d] <= 2^(d+2).
+#     d <= 14:  2^16 = 65536 < 100000  -- the cap CANNOT bind.
+#     d  = 15:  2^17 = 131072 > 100000 -- the cap can bind, but d = 15 is the
+#               TOP depth and the defect needs a depth d+1 to suppress.
+#   So at width 1 no suppression is reachable and F10 cannot move the figure.
+#
+# For width > 1 the cap does bind below the top depth and the term stays, but
+# it is an EVALUATED MARGIN over the inputs measured, not a certified bound,
+# and the output says so. Correcting the algorithm is the second option and is
+# a change to estimator numerics, which is the owner's call, not this script's.
+C01 = 3.69e-4          # F10 margin; EXCLUDED at width 1 by the proof above (A02 / OC-55)
 C22A_PER_N = 8.08e-15  # P_local bisection quantisation: half-ULP of x amplified by (N+1)  (OC-22)
 C22B = 0.0             # P_global' at/near N == 1: conservative at every N, nothing to subtract (OC-22)
 # ZALPHA versus the literal 2.576 (OC-22). Measured at two bitstring lengths;
@@ -187,7 +216,7 @@ def h_prime(report_path):
             notes.append("consistency: hAssessed == word_size * h' to within 1e-12 relative, "
                          "as C02 describes.")
     n = int(d.get('assessedSampleCount') or 0) * w
-    return hp, n, binder, cand, notes, d, tc
+    return hp, n, binder, cand, notes, d, tc, w
 
 def from_log(path):
     """Read h', n and the symbol width from an ea_non_iid -vv text log, by label."""
@@ -231,9 +260,15 @@ def from_log(path):
                          "(%.17g) -- stop and resolve which figure is which before using either."
                          % (a, w * hp))
     notes.append("read from a -vv text log by label: width %d, %d samples." % (w, samples))
-    return hp, samples * w, binder, cand, notes
+    return hp, samples * w, binder, cand, notes, w
 
-def report(hp, n, binder=None, cand=None, notes=(), src=""):
+def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
+    # A02: the width decides whether C01/F10 is reachable at all, so it is a
+    # required input to the report rather than something inferred here. None
+    # means "not established", and then nothing is called a floor.
+    if w is None:
+        raise SystemExit("REFUSED: the bit width was not established, so whether the C01/F10 "
+                         "term is reachable cannot be decided and no floor can be claimed (A02).")
     print("=" * 78)
     print(src)
     print("=" * 78)
@@ -252,15 +287,33 @@ def report(hp, n, binder=None, cand=None, notes=(), src=""):
     print()
     print("  term                                     value        why")
     print("  ---------------------------------------- ------------ " + "-" * 34)
-    print("  C01 comparison error                     %.3e    measured two-sided bound" % C01)
+    if w == 1:
+        print("  C01/F10 MultiMMC chained lookup          %.3e    EXCLUDED: unreachable at width 1" % 0.0)
+        print("    D_MMC=16, MAX_ENTRIES=100000; for binary data entries[d] <= 2^(d+2), so the cap")
+        print("    cannot bind below d=15 and d=15 has no d+1 to suppress. A proof, not a measurement.")
+    else:
+        print("  C01/F10 MultiMMC chained lookup          %.3e    EVALUATED MARGIN, *not* a bound" % C01)
+        print("    One measured overestimate from f10_over_8bit_1M. The mechanism is dictionary")
+        print("    saturation, whose size is set by the data, so nothing here constrains it (A02).")
     print("  C22a P_local quantisation                %.3e    8.08e-15 x (n+1), n = %d" % (a, n))
     print("  C22b P_global' at N == 1                 %.3e    conservative at every N" % C22B)
     print("  C22c ZALPHA vs the literal 2.576         %.3e    measured at n = %d (ceiling falls with n)" % (bz, bz_n))
-    lit = hp - C01 - a - C22B - bz
-    f07 = hp - C01 - a - C22B
+    # A02: C01 is excluded at width 1 by proof, and is a MARGIN above it.
+    c01 = 0.0 if w == 1 else C01
+    certified = (w == 1)
+    lit = hp - c01 - a - C22B - bz
+    f07 = hp - c01 - a - C22B
     print()
-    print("  FLOOR, literal-text reading   %.17g   (h' - %.6g)" % (lit, hp - lit))
-    print("  FLOOR, F07 reading            %.17g   (h' - %.6g)" % (f07, hp - f07))
+    # "CERTIFIED FLOOR" and "EVALUATED MARGIN" are different claims and the
+    # output must not blur them (A02). A floor is claimed only when every
+    # subtracted term is a bound over the supported inputs.
+    label = "CERTIFIED FLOOR" if certified else "EVALUATED MARGIN (not a floor)"
+    print("  %-29s %.17g   (h' - %.6g)" % (label + ", literal", lit, hp - lit))
+    print("  %-29s %.17g   (h' - %.6g)" % (label + ", F07", f07, hp - f07))
+    if not certified:
+        print("    NOT A FLOOR: the C01/F10 term above is an evaluated margin over the inputs")
+        print("    measured, not a bound over all accepted ones. Treat this as a working figure")
+        print("    and do not publish it as a floor until F10 is repaired or bounded (A02).")
     print("    F07 is this audit's own disposition: the tool uses the exact 0.995 quantile and the")
     print("    standard's text prints its rounding, so C22c is a literal-text parity term, not a defect.")
     print()
@@ -284,8 +337,8 @@ if __name__ == '__main__':
         raise SystemExit(__doc__)
     if args[0] == '--from-log':
         for path in args[1:]:
-            hp, n, binder, cand, notes = from_log(path)
-            report(hp, n, binder, cand, notes, src="%s  (-vv text log)" % os.path.basename(path))
+            hp, n, binder, cand, notes, w = from_log(path)
+            report(hp, n, binder, cand, notes, src="%s  (-vv text log)" % os.path.basename(path), w=w)
         sys.exit(0)
     if args[0] == '--manual':
         if len(args) != 3:
@@ -293,6 +346,6 @@ if __name__ == '__main__':
         report(float(args[1]), int(args[2]), src="manual: h' and n supplied on the command line")
     else:
         for path in args:
-            hp, n, binder, cand, notes, d, tc = h_prime(path)
-            report(hp, n, binder, cand, notes, src="%s  (%s, %s)" % (
+            hp, n, binder, cand, notes, d, tc, w = h_prime(path)
+            report(hp, n, binder, cand, notes, w=w, src="%s  (%s, %s)" % (
                 os.path.basename(path), d.get('type', '?'), d.get('toolVersion', '?')))
