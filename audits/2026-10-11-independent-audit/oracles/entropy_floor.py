@@ -64,13 +64,44 @@ def c22c(n):
 def h_prime(report_path):
     """Return (h_prime_per_bit, n_bitstring, notes) read from an ea_non_iid report."""
     notes = []
-    d = json.load(open(report_path))
+    # ========================================================================
+    # VALIDATE THE EVIDENCE BEFORE EMITTING ANYTHING (A08).
+    #
+    # An outside audit handed this script four reports and got a FLOOR and exit
+    # 0 from all four: one with no errorLevel at all, one with
+    # nonCompliantShortDataset true, one claiming 10 bits of entropy per
+    # ONE-BIT sample, and one carrying a nonfinite value that Python's parser
+    # accepts by default. Reproduced exactly. It is the
+    # compared-nothing-and-exited-zero shape, in the tool built to audit the
+    # tool, which is worse than finding it in the tool.
+    #
+    # The errorLevel case is the sharpest, because the old test was
+    #     if d.get('errorLevel') not in (0, None)
+    # which reads a MISSING field as acceptable -- a conclusion from absence,
+    # the thing this project's own constraints forbid. Absence of a field is
+    # not evidence that the field's condition held.
+    # ========================================================================
+    def _nonfinite(tok):
+        raise SystemExit("REFUSED: %s contains the JSON token %r. NaN and Infinity are not "
+                         "numbers a min-entropy report can carry, and Python's parser accepts "
+                         "them silently by default. Nothing is floored from a report with a "
+                         "nonfinite value in it." % (report_path, tok))
+    with open(report_path) as fh:
+        d = json.load(fh, parse_constant=_nonfinite)
+    if not isinstance(d, dict):
+        raise SystemExit("REFUSED: %s is not a JSON object, so it is not a report." % report_path)
+    # the schema this reader depends on, required by NAME and not by position
+    for k in ('type', 'toolVersion', 'errorLevel', 'testCases', 'bitsPerSymbol'):
+        if k not in d:
+            raise SystemExit("REFUSED: %s has no %r. This reader is schema-anchored: a document "
+                             "missing a required field is an unrecognised document, not a report "
+                             "with a default (A08)." % (report_path, k))
     if d.get('reportComplete') is False:
         raise SystemExit("REFUSED: %s carries reportComplete: false -- the run did not finish "
                          "(the C14 placeholder). There is no figure to floor." % report_path)
-    if d.get('errorLevel') not in (0, None):
-        raise SystemExit("REFUSED: %s has errorLevel %r. A figure from a failed run has no floor."
-                         % (report_path, d.get('errorLevel')))
+    if d.get('errorLevel') != 0:
+        raise SystemExit("REFUSED: %s has errorLevel %r, not 0. A figure from a failed run has no "
+                         "floor." % (report_path, d.get('errorLevel')))
     if d.get('IID') is True:
         notes.append("the report is from the IID track; C03's track-selection gap is UNBOUNDABLE "
                      "and is excluded from the floor only because the repair branch closed it. "
@@ -92,6 +123,14 @@ def h_prime(report_path):
     if len(overall) > 1:
         raise SystemExit("REFUSED: %s has %d cases labelled 'Overall'." % (report_path, len(overall)))
     tc = overall[0]
+    # A08: a short dataset is not a compliant assessment, whichever case flags it.
+    flagged = [ (c.get('testCaseDesc') or '?') for c in cases
+                if c.get('nonCompliantShortDataset') is True ]
+    if d.get('nonCompliantShortDataset') is True or flagged:
+        raise SystemExit("REFUSED: %s is flagged nonCompliantShortDataset%s. The assessment does "
+                         "not meet the standard's sample-count requirement, so there is no "
+                         "compliant figure to floor." % (report_path,
+                         (" on: " + ", ".join(flagged)) if flagged else ""))
     notes.append("read the 'Overall' case (the minimum over estimators), not any single "
                  "estimator's; the report carries %d cases." % len(cases))
     w = d.get('bitsPerSymbol')
@@ -108,6 +147,27 @@ def h_prime(report_path):
     h_bits = tc.get('hBitstring')
     if h_orig is None:
         raise SystemExit("REFUSED: %s has no hOriginal." % report_path)
+    # A08, AND THE FIRST THING THAT SHOULD BE REFUSED. Min-entropy per symbol
+    # cannot exceed the symbol's width: 10 bits from a one-bit sample is
+    # impossible on its face, and the old script printed a floor of 9.996 bits
+    # for exactly that report. A figure that violates its own units needs no
+    # further analysis.
+    for name, val, ceiling in (('hOriginal', h_orig, float(w)),
+                               ('hAssessed', tc.get('hAssessed'), float(w)),
+                               ('hBitstring', h_bits, 1.0)):
+        if val is None:
+            continue
+        if not isinstance(val, (int, float)) or val != val or val in (float('inf'), float('-inf')):
+            raise SystemExit("REFUSED: %s has a %s that is not a finite number (%r)."
+                             % (report_path, name, val))
+        if val < 0.0:
+            raise SystemExit("REFUSED: %s has %s = %.17g, which is negative. Min-entropy cannot be."
+                             % (report_path, name, val))
+        if val > ceiling:
+            raise SystemExit("REFUSED: %s has %s = %.17g for a %d-bit symbol, which exceeds the "
+                             "%g-bit ceiling that unit allows. A report that contradicts its own "
+                             "units is not floored, it is rejected (A08)."
+                             % (report_path, name, val, w, ceiling))
     cand = [("H_original / word_size", h_orig / w)]
     if h_bits is not None:
         cand.append(("H_bitstring", h_bits))
