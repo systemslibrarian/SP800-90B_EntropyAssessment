@@ -25,6 +25,33 @@ note() { printf '  %s\n' "$*"; }
 PKGS="mingw-w64-x86_64-gcc make mingw-w64-x86_64-bzip2 mingw-w64-x86_64-jsoncpp mingw-w64-x86_64-openssl"
 DIVSUF_CANDIDATES="mingw-w64-x86_64-libdivsufsort mingw-w64-x86_64-divsufsort libdivsufsort divsufsort"
 
+# THE SERIAL SHIM (a labelled DEVIATION, and no source is touched).
+#
+# Without -fopenmp gcc emits no GOMP_* calls, but the project calls two OpenMP
+# API functions directly (omp_get_thread_num, omp_get_num_threads in
+# shared/utils.h and iid_main.cpp), so a serial link needs those two symbols
+# and nothing else. Supplying them as a two-line object compiled here is
+# exactly what "serial" means, and it is a LINK-TIME shim: no file in this
+# repository changes, and the override is a make command-line variable.
+#
+# What this costs the measurement: nothing for either remaining question.
+# R-1 is a long double comparison inside lrs_test.h and seed() is an open() of
+# /dev/urandom; neither is inside a parallel region. Figures from a serial
+# build are not offered as performance facts and every gate that uses one says
+# SERIAL.
+SHIM_DIR=/tmp/ompserial
+make_serial_shim() {
+  mkdir -p "$SHIM_DIR" || return 1
+  cat > "$SHIM_DIR/shim.c" <<'SHIMEOF'
+/* serial stand-ins for the only two OpenMP API functions this project calls */
+int omp_get_thread_num(void)   { return 0; }
+int omp_get_num_threads(void)  { return 1; }
+SHIMEOF
+  ( cd "$SHIM_DIR" && gcc -O2 -c shim.c -o shim.o && ar rcs libompserial.a shim.o ) >/dev/null 2>&1
+}
+SERIAL_MAKE_ARGS='OPENMP_CXXFLAGS=-Wno-unknown-pragmas'
+serial_lib() { printf -- '-L%s -lompserial' "$SHIM_DIR"; }
+
 case "$STAGE" in
 
 deps)
@@ -65,6 +92,46 @@ deps)
   pacman -S --noconfirm --needed $PKGS >> "$L" 2>&1 \
     && gate PASS "toolchain and packaged libraries installed" \
     || gate FAIL "pacman install failed -- see $L"
+  echo >> "$L"
+  echo "=== the OpenMP runtime: -fopenmp makes gcc link -lgomp by itself ===" >> "$L"
+  # Run 3 got all three tools through the compiler and failed at the link with
+  # "cannot find -lgomp". That is a SECOND unpackaged dependency, and the
+  # instrument rule applies to it as much as to libdivsufsort: do not conclude
+  # it is absent from a name this script happens not to know. LOOK for the
+  # files, then ask pacman which package owns them (OC-48).
+  gomp_find() { find /mingw64 -name 'libgomp*' 2>/dev/null | head -5; }
+  g=$(gomp_find)
+  if [ -n "$g" ]; then
+    printf '  PRESENT:\n%s\n' "$g" >> "$L"
+    gate PASS "the OpenMP runtime (libgomp) ships with the toolchain"
+  else
+    echo "  ABSENT from /mingw64; asking pacman which package provides it" >> "$L"
+    for p in mingw-w64-x86_64-openmp mingw-w64-x86_64-gcc-libs mingw-w64-x86_64-libgomp; do
+      if pacman -Si "$p" >/dev/null 2>&1; then
+        printf '  candidate %-36s AVAILABLE -- installing\n' "$p" >> "$L"
+        pacman -S --noconfirm --needed "$p" >> "$L" 2>&1 || true
+      else
+        printf '  candidate %-36s not in the repository\n' "$p" >> "$L"
+      fi
+    done
+    echo "  pacman -F (file-owner query):" >> "$L"
+    pacman -Fy >> "$L" 2>&1 || true
+    for f in libgomp.a libgomp.dll.a libgomp-1.dll; do
+      printf '    %s -> ' "$f" >> "$L"
+      pacman -F "$f" >> "$L" 2>&1 || echo "no owning package" >> "$L"
+    done
+    g=$(gomp_find)
+    if [ -n "$g" ]; then
+      printf '  NOW PRESENT:\n%s\n' "$g" >> "$L"
+      gate PASS "the OpenMP runtime was packaged after all, under a name the first list missed"
+    else
+      gate FAIL "the OpenMP runtime (libgomp) is ABSENT and no candidate package supplies it -- a SECOND unpackaged dependency, after libdivsufsort"
+      note "A serial link is attempted in the build stage as a labelled DEVIATION."
+      note "R-1 is a long-double comparison and seed() is a file open; neither"
+      note "depends on OpenMP, so both remain measurable without it."
+    fi
+  fi
+
   if [ -n "$divsuf" ]; then
     pacman -S --noconfirm --needed "$divsuf" >> "$L" 2>&1 || gate FAIL "installing ${divsuf} failed"
   else
@@ -114,7 +181,22 @@ build)
     elif printf '%s' "$out" | grep -qE 'fatal error: [a-zA-Z0-9_./]+\.h: No such file'; then
       gate FAIL "ea_${t}: a DEPENDENCY HEADER is absent ($(printf '%s' "$out" | sed -n 's/.*fatal error: \([^:]*\): No such file.*/\1/p' | head -1)) -- the preprocessor stopped before any of this project's source was judged, so MinGW source compatibility is UNTESTED, not refuted"
     elif printf '%s' "$out" | grep -qE 'cannot find -l|undefined reference'; then
-      gate FAIL "ea_${t}: compiles but does NOT LINK -- the source is MinGW-compatible and a library is missing"
+      lib=$(printf '%s' "$out" | sed -n 's/.*cannot find \(-l[a-zA-Z0-9_]*\).*/\1/p' | head -1)
+      # The compiler finished. Whatever this is, it is NOT a source
+      # incompatibility, which is what the Windows question asks about.
+      gate PASS "ea_${t}: COMPILES on MinGW -- every translation unit was accepted; the failure is at the link"
+      if [ "${lib}" = "-lgomp" ] && make_serial_shim; then
+        echo "===== DEVIATION: relinking ea_${t} serially (no OpenMP runtime on this host) =====" >> "$L"
+        out2=$( ( cd cpp && make -B "$t" $SERIAL_MAKE_ARGS OPENMP_LIB="$(serial_lib)" ) 2>&1 ); rc2=$?
+        printf '%s\n' "$out2" >> "$L"
+        if [ "$rc2" -eq 0 ]; then
+          gate PASS "ea_${t}: links and runs SERIALLY (DEVIATION: libgomp absent, OpenMP off, two API symbols shimmed)"
+        else
+          gate FAIL "ea_${t}: does not link even serially -- see $L; the remaining symbols are the finding"
+        fi
+      else
+        gate FAIL "ea_${t}: does NOT LINK; missing library ${lib:-unidentified} -- source compatibility is established, the dependency is not"
+      fi
     else
       gate FAIL "ea_${t}: does NOT compile, and not for a missing header or library -- this is a genuine source incompatibility, see $L"
     fi
@@ -162,15 +244,22 @@ EOF
 
 r1)
   L=logs/04-r1-blast-radius.log
-  if g++ -std=c++11 -fopenmp -O2 -Icpp/shared -Icpp/non_iid \
+  OMPFLAGS=-fopenmp; OMPLIB=
+  if ! find /mingw64 -name 'libgomp*' 2>/dev/null | grep -q .; then
+    make_serial_shim && { OMPFLAGS=-Wno-unknown-pragmas; OMPLIB="$(serial_lib)"; \
+      echo "DEVIATION: no libgomp on this host; sweep built SERIALLY. R-1 is a" > "$L"; \
+      echo "long double comparison, not a parallel region, so the affected set is" >> "$L"; \
+      echo "unaffected by this -- but the gate says SERIAL." >> "$L"; }
+  fi
+  if g++ -std=c++11 $OMPFLAGS -ffloat-store -O2 -Icpp/shared -Icpp/non_iid \
         audits/2026-10-11-independent-audit/reproducers/r1_pcol_sweep.cpp \
-        -o /tmp/r1sweep.exe -lbz2 -lpthread -ldivsufsort -ldivsufsort64 \
-        -ljsoncpp -lcrypto > "$L" 2>&1; then
+        -o /tmp/r1sweep.exe $OMPLIB -lbz2 -lpthread -ldivsufsort -ldivsufsort64 \
+        -ljsoncpp -lcrypto >> "$L" 2>&1; then
     /tmp/r1sweep.exe >> "$L" 2>&1
     grep -E 'sizeof|aborting alphabet|^aborting k|powers of two|width 1|still aborting' "$L"
     n=$(sed -n 's/^aborting alphabet sizes at exact balance: \([0-9]*\) of 255/\1/p' "$L" | head -1)
     if [ "${n:-x}" = "155" ]; then
-      gate PASS "R-1 affected set is 155 of 255 -- the Linux x87 prediction CONFIRMED"
+      gate PASS "R-1 affected set is 155 of 255 -- the Linux x87 prediction CONFIRMED${OMPLIB:+ (SERIAL build)}"
     else
       gate FAIL "R-1 affected set is ${n:-unmeasured} of 255, not the predicted 155 -- the prediction is BROKEN and the shape of the difference is the finding"
     fi
@@ -211,9 +300,24 @@ EOF
     printf 'how far: %s\n\n' "${far}" >> "$L"
     printf '  %-34s exit=%-4s %s\n' "${label}" "${rc}" "${far}"
   }
-  run ea_non_iid ./cpp/ea_non_iid -i -a -q -o /tmp/n.json /tmp/w1.bin 1
-  run ea_iid     ./cpp/ea_iid     -i -q -o /tmp/i.json /tmp/w1.bin 1
-  run ea_restart ./cpp/ea_restart -i -q -o /tmp/r.json /tmp/w1.bin 1 0.9
+  # MinGW gcc appends .exe when -o carries no suffix, so ./cpp/ea_iid may not be
+  # the filename even on a successful build. Resolve it, and say so when there
+  # is nothing to resolve -- naming a path that does not exist is how the
+  # absence-rule error this stage warns about got made (OC-48).
+  binof() { if [ -x "$1.exe" ]; then echo "$1.exe"; elif [ -x "$1" ]; then echo "$1"; fi; }
+  for t in non_iid iid restart; do
+    b=$(binof "./cpp/ea_${t}")
+    if [ -z "$b" ]; then
+      printf '  %-34s NOT BUILT -- nothing ran, nothing concluded\n' "ea_${t}"
+      printf '===== ea_%s: NOT BUILT; no runtime measurement\n\n' "$t" >> "$L"
+      continue
+    fi
+    case "$t" in
+      non_iid) run "ea_${t}" "$b" -i -a -q -o /tmp/n.json /tmp/w1.bin 1 ;;
+      iid)     run "ea_${t}" "$b" -i -q    -o /tmp/i.json /tmp/w1.bin 1 ;;
+      restart) run "ea_${t}" "$b" -i -q    -o /tmp/r.json /tmp/w1.bin 1 0.9 ;;
+    esac
+  done
   # ABSENCE RULE (OC-36), which the first version of this gate broke in the very
   # workflow that applies the rule elsewhere: it read "no tool died at seed()"
   # as the prediction being refuted, when in fact NO BINARY EXISTED and
@@ -221,7 +325,7 @@ EOF
   # prediction is UNTESTED until something ran.
   built=0
   for b in ./cpp/ea_non_iid ./cpp/ea_iid ./cpp/ea_restart; do
-    [ -x "$b" ] || [ -x "$b.exe" ] && built=$((built + 1))
+    if [ -x "$b" ] || [ -x "$b.exe" ]; then built=$((built + 1)); fi
   done
   if [ "$built" -eq 0 ]; then
     gate FAIL "no tool was built, so the seed()//dev/urandom prediction is UNTESTED -- not refuted, not confirmed"
@@ -247,6 +351,15 @@ CEOF
       { echo "nm -u on an asserts-live PE binary:"; nm -u /tmp/cal_live.exe 2>&1 | head -12; }
     echo "(an empty or assert-free listing is why calibration refuses: PE/COFF"
     echo " undefined symbols do not necessarily surface through nm -u)"
+    echo "--- would a FULL listing discriminate? (does an extension exist?) ---"
+    gcc -O0 -DNDEBUG -o /tmp/cal_nd.exe /tmp/cal.c 2>/dev/null
+    for v in live nd; do
+      printf '  nm (all symbols) /tmp/cal_%s.exe matching /assert/i: %s\n' "$v" \
+        "$(nm /tmp/cal_$v.exe 2>/dev/null | grep -ci assert)"
+      nm /tmp/cal_$v.exe 2>/dev/null | grep -i assert | head -4 | sed 's/^/    /'
+    done
+    echo "  (if live>0 and ndebug==0 here, the probe CAN be taught this platform;"
+    echo "   that is an improvement, not a correction -- refusing was right.)"
     for b in cpp/ea_non_iid.exe cpp/ea_iid.exe cpp/ea_restart.exe \
              cpp/ea_non_iid cpp/ea_iid cpp/ea_restart; do
       [ -e "$b" ] && bs_print "$b"
