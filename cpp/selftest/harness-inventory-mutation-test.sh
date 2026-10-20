@@ -29,16 +29,42 @@ make_case() {
 }
 
 # The positive control: the unmutated stub tree must report the exact summary.
+#
+# DERIVED, NOT HARDCODED (OC-54). This used to compare against the literal
+# "20 passed, 0 failed (18 regression scripts discovered)", and registering one
+# new regression script made the control fail for a reason that had nothing to
+# do with the mutations -- a hardcoded count inside a harness is itself a
+# staleness trap, and a failing positive control invalidates every negative
+# result beneath it. The numbers now come from run-all-checks.sh's own
+# authoritative constants.
+EXPECTED_SUMMARY=$(
+    checks=$(sed -n 's/^EXPECTED_TOTAL_CHECKS=\([0-9]*\)$/\1/p' "${here}/run-all-checks.sh" | head -1)
+    scripts=$(sed -n 's/^EXPECTED_REGRESSION_SCRIPTS=\([0-9]*\)$/\1/p' "${here}/run-all-checks.sh" | head -1)
+    if [ -z "${checks}" ] || [ -z "${scripts}" ]; then
+        echo "UNREADABLE"
+    else
+        printf 'run-all-checks: %s passed, 0 failed (%s regression scripts discovered)' "${checks}" "${scripts}"
+    fi
+)
+if [ "${EXPECTED_SUMMARY}" = "UNREADABLE" ]; then
+    echo "harness-inventory-mutation-test: cannot read the expected counts from" >&2
+    echo "  run-all-checks.sh; refusing to run rather than compare against a guess." >&2
+    exit 2
+fi
+
 expect_pass() {
     label=$1; root=$2
     output=$("${root}/cpp/selftest/run-all-checks.sh" 2>&1); rc=$?
-    if [ "${rc}" -ne 0 ] || ! printf '%s\n' "${output}" | grep -q 'run-all-checks: 20 passed, 0 failed (18 regression scripts discovered)'; then
+    if [ "${rc}" -ne 0 ] || ! printf '%s\n' "${output}" | grep -qF "${EXPECTED_SUMMARY}"; then
         echo "harness-inventory-mutation-test: ${label} positive control failed (exit ${rc})" >&2
         printf '%s\n' "${output}" >&2
         exit 1
     fi
     mut_note "${label}" "accepted with the expected summary"
     MUT_PASS=$((MUT_PASS + 1))
+    # This IS the unmutated baseline, so record it as such: mut_summary refuses
+    # to report success for a harness that never showed one accepted (OC-54).
+    MUT_BASELINE_OK=yes
 }
 
 # 2026-10-19: the landing of each mutation is asserted through mutation-lib.sh.

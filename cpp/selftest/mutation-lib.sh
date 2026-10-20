@@ -39,9 +39,27 @@
 #   * for a mutation applied by REBUILDING with different flags, by asserting
 #     the binary differs from the clean build (mut_binary).
 #
+# AND THE BASELINE MUST BE ASSERTED ACCEPTED (OC-54).
+#
+# A fourth way to earn a verdict you did not deserve, found when an outside
+# audit was reproduced: four negative fixtures, each built FROM SCRATCH to
+# trigger a different refusal, were all refused for ONE SHARED ACCIDENTAL
+# REASON -- they used the wrong key for the test-case label, so every one died
+# on "no test case labelled Overall" and not one of the four properties was
+# exercised. Four refusals for the wrong reason is indistinguishable from four
+# working guards, and stopping there would have meant reporting a real finding
+# as already fixed.
+#
+# So: mut_baseline asserts that the UNMUTATED artifact is ACCEPTED, before any
+# negative is tried. A fixture set that refuses everything then fails as broken
+# instead of passing as thorough. Build negatives by MUTATING a genuine
+# artifact one field at a time, so a refusal is attributable to the one thing
+# that changed.
+#
 # USAGE
 #
 #   . "$(dirname "$0")/mutation-lib.sh"
+#   mut_baseline "the pinned corpus" some_command --args   # MUST be accepted
 #   mut_begin "deleted script" "$root/cpp/selftest/regression-docs.sh"
 #   rm "$root/cpp/selftest/regression-docs.sh"
 #   mut_expect_fail "deleted script" some_command --args
@@ -49,6 +67,8 @@
 #   mut_summary "harness-name"   # prints the tally and returns the exit status
 
 MUT_PASS=0
+MUT_BASELINE_OK=""      # yes once an unmutated baseline has been shown accepted
+MUT_NEGATIVE_SEEN=""    # yes once any negative fixture has been evaluated
 MUT_FAIL=0
 MUT_NOAPPLY=0
 MUT_FAIL_LABELS=""
@@ -57,6 +77,28 @@ MUT_TARGET=""
 MUT_BEFORE=""
 
 mut_note() { printf '  %-54s %s\n' "$1" "$2"; }
+
+# mut_baseline <label> <cmd...> -- the UNMUTATED artifact must be ACCEPTED.
+#
+# Call this BEFORE any negative fixture. It is the control that makes every
+# later refusal attributable: if the baseline is refused, the fixtures share a
+# defect that has nothing to do with the properties under test, and the harness
+# says so rather than counting a wall of refusals as thoroughness (OC-54).
+mut_baseline() {
+    local label=$1; shift
+    if "$@" >/dev/null 2>&1; then
+        MUT_BASELINE_OK=yes
+        mut_note "baseline: ${label}" "ACCEPTED -- later refusals are attributable"
+    else
+        MUT_BASELINE_OK=no
+        MUT_FAIL=$((MUT_FAIL + 1))
+        MUT_FAIL_LABELS="${MUT_FAIL_LABELS} baseline:${label}"
+        mut_note "baseline: ${label}" "*** REFUSED -- the FIXTURES are broken, not the guard ***"
+        echo "  mutation-lib: the unmutated baseline was refused. Every negative result below" >&2
+        echo "  is unattributable: a shared accidental refusal reason looks exactly like a" >&2
+        echo "  working guard (OC-54). Fix the fixture construction before reading anything." >&2
+    fi
+}
 
 # Digest of a file, or of a directory's complete contents and layout. A missing
 # target digests as ABSENT, which is itself a change worth detecting.
@@ -102,6 +144,7 @@ mut_landed() {
 # The guard must reject the mutated state: nonzero exit, and optionally a
 # message matching a pattern.
 mut_expect_fail() {
+    MUT_NEGATIVE_SEEN=yes
     local label=$1; shift
     local pattern=""
     case "$1" in --match=*) pattern="${1#--match=}"; shift ;; esac
@@ -126,6 +169,11 @@ mut_expect_fail() {
 # The positive control: the UNmutated state must be accepted. No landing check,
 # because nothing was mutated.
 mut_expect_pass() {
+    # A positive control that passes BEFORE any negative has been tried is
+    # exactly the baseline rule 7 requires, so recognise it rather than making
+    # every harness say the same thing twice. After a negative it is a
+    # "restored" control, which is a different and weaker claim: it shows the
+    # mutations did not leak, not that the construction was ever sound.
     local label=$1; shift
     local out rc
     out=$("$@" 2>&1); rc=$?
@@ -136,6 +184,7 @@ mut_expect_pass() {
     fi
     mut_note "${label}" "accepted"
     MUT_PASS=$((MUT_PASS + 1))
+        [ -z "${MUT_NEGATIVE_SEEN}" ] && MUT_BASELINE_OK=yes
     return 0
 }
 
@@ -153,6 +202,11 @@ mut_value() {
 }
 
 mut_summary() {
+    if [ -z "${MUT_BASELINE_OK}" ]; then
+        MUT_FAIL=$((MUT_FAIL + 1))
+        MUT_FAIL_LABELS="${MUT_FAIL_LABELS} no-baseline-asserted"
+        mut_note "baseline" "*** NEVER ASSERTED -- this harness cannot attribute its refusals ***"
+    fi
     local name=$1
     local total=$((MUT_PASS + MUT_FAIL + MUT_NOAPPLY))
     printf '%s: %d of %d mutations landed and were caught' "${name}" "${MUT_PASS}" "${total}"

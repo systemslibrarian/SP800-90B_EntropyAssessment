@@ -57,6 +57,12 @@ run_with() { # run_with <manifest> [cite-root]
 m="${scratch}/m-removed.txt"
 mut_begin "stream removed from the manifest" "${m}"
 grep -v '^mt mt02 ' "${manifest}" > "${m}"
+# THE BASELINE FIRST (OC-54). Every mutation below is expected to be REFUSED,
+# and a set of negatives that all refuse for one shared accidental reason looks
+# exactly like a set of working guards. Asserting the unmutated manifest is
+# ACCEPTED, before any of them, is what makes each later refusal attributable.
+mut_baseline "the unmutated pinned corpus" run_with "${manifest}"
+
 mut_expect_fail "stream removed from the manifest" "--match=family mt short or long" run_with "${m}"
 
 # ---- 2. a stream added to the manifest

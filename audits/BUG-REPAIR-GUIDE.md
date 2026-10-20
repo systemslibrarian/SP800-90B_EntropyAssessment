@@ -214,3 +214,44 @@ function does not tolerate a rounded input — 0.70 gives 683 and 0.696 gives
 The project's tool already does the right thing at runtime: the cutoff is
 computed from the `H_I` the operator supplies, every run. The failure was in
 the prose about it.
+
+### Rule 7 — a negative fixture is built by mutation, and its baseline is asserted accepted
+
+**Four refusals for the wrong reason are indistinguishable from four working
+guards.**
+
+**How this was learned.** An outside audit reported that the floor oracle
+emitted a figure and exit 0 for four malformed reports. Reproducing it, I built
+four negative fixtures by hand — one missing `errorLevel`, one flagged as a
+short dataset, one claiming 10 bits from a one-bit sample, one carrying a
+nonfinite value. **All four were refused.** It looked like four working guards
+and a finding that was already fixed. They were all refused for **one shared
+accidental reason**: my fixtures used the wrong key for the test-case label, so
+every one died on "no test case labelled Overall" and **not one of the four
+properties was exercised**. Rebuilt by mutating a genuine report one field at a
+time, all four reproduced exactly as reported. Had I stopped at the first
+attempt I would have told an outside audit it was wrong when it was right.
+
+**The method.**
+
+| do | instead of |
+|---|---|
+| copy a genuine artifact and change **one field** | write a fixture from scratch that resembles one |
+| assert the **unmutated** baseline is **accepted** before any negative | assume the construction is sound because the negatives refuse |
+| check each refusal **names the property under test** | count nonzero exits |
+
+**Mechanised**, so it is not a thing to remember: `mutation-lib.sh` provides
+`mut_baseline <label> <cmd...>`, which asserts the unmutated artifact is
+accepted and records that it did. `mut_summary` **fails any harness that never
+asserted a baseline**, so a fixture set that refuses everything fails as broken
+rather than passing as thorough. Verified both ways: with the baseline accepted
+the harnesses pass, and with the baseline deliberately broken the harness
+reports `the FIXTURES are broken, not the guard` and fails.
+
+A corollary found in the same pass: a **hardcoded expected count** inside a
+harness is the same trap wearing different clothes. The inventory harness
+compared against the literal `20 passed, 0 failed (18 regression scripts
+discovered)`, and registering one new regression script made its positive
+control fail for a reason unrelated to any mutation — which invalidates every
+negative result beneath it. It now derives those numbers from
+`run-all-checks.sh`'s own constants, and refuses to run if it cannot read them.

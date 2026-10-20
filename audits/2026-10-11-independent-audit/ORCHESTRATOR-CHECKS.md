@@ -5076,3 +5076,218 @@ two platform jobs.
 
 The IID-track races stay out of scope while the IID battery is excluded from
 TruePad's path. Recorded, not queued.
+
+---
+
+## OC-53 — C18 repaired, and the Windows blocker moved to `seed()` as a measurement
+
+### The change
+
+`cpp/shared/utils.h:997` was `long int` in the **parameter, the product and the
+return**, and `long` is 32 bits on LLP64 and 64 on LP64, so one source computed
+two different things. Now `int64_t` throughout, with the argument cast before
+it is formed at `cpp/shared/lrs_test.h:709`.
+
+**Every step, not just the final type.** `n*n` is evaluated before the
+subtraction and the division, so widening only the return value would have
+changed nothing — the overflow is in the product. For n = 999961 the product
+alone is 999,922,001,521.
+
+**`int64_t` rather than `long long`**, because `long` is the mistake being
+corrected and a fixed-width type is the right spelling. `N` is used only after
+a cast to `long double` and is never printed, so there is no format-specifier
+hazard — which is precisely why `data_t`'s `long len` and `long blen` are **not**
+swept into this change: they are printed with `%ld` in many places, which would
+be wrong for `int64_t` on LLP64, and their overflow threshold is 268,435,455
+samples, far above anything this project assesses. Recorded separately rather
+than bundled into a change that must prove bit-identity across the tree.
+
+**Sufficiency is provable.** Callers already refuse a sample count above
+`INT_MAX`, so n ≤ 2³¹−1 and n·n ≤ 4.61e18, inside `INT64_MAX` = 9.22e18. An
+assert states that bound where it is relied on.
+
+### LP64 bit-identity, and the control that made the comparison mean anything
+
+Nine reports, three fixtures, all three tools, against a pre-fix worktree.
+
+The first comparison said **five of nine differed** — all in
+`permutationTestResults`. Instead of waving that away, I ran the baseline
+**against itself**: the same binary differs from itself across runs in exactly
+that field, because the permutation tests seed from `/dev/urandom`. So the
+field is excluded **by evidence rather than by assumption**, the exclusion is
+shown complete by re-running baseline-against-baseline through the same filter,
+and the comparator is shown **live** — a 1e-15 perturbation of `hAssessed` is
+caught, so it is not vacuous.
+
+| | |
+|---|---|
+| reports identical, before vs after | **9 of 9** |
+| exclusion complete (baseline vs baseline, same filter) | yes |
+| comparator live (1e-15 perturbation caught) | yes |
+
+No LP64 figure or verdict changes. Full suite 21 passed, 0 failed.
+
+### What fails next on Windows — measured, not predicted
+
+| tool | before the fix | after the fix |
+|---|---|---|
+| `ea_non_iid` | completed, figure produced | completed, figure produced, exit 0 |
+| `ea_iid` | **failed the §5.2.5 LRS test** (`Pr(X >= 1) = −0.000367`) | **passes** chi square and LRS, then **dies at `seed()`** |
+| `ea_restart` | failed the LRS tests | **restart sanity check PASSES**, chi square and LRS pass, then **dies at `seed()`** |
+
+```
+** Passed chi square tests
+        Pr(X >= 1): 0.365370
+** Passed length of longest repeated substring test
+Can't open random source. Reverting to a deterministic seed.: No such file or directory
+```
+
+Two things in that are worth more than the gate going green.
+
+1. **Windows now prints exactly macOS's figure.** `Pr(X >= 1) = 0.365370` on
+   both, where Windows previously printed `−0.000367`. Cross-platform
+   agreement on the repaired quantity, not merely a plausible-looking number.
+2. **`ea_restart` gets past the restart sanity check.** `Restart Sanity Check
+   Passed`, with both LRS passes (rows 0.365370, columns 0.973688). That is
+   the check January's acceptance decision depends on, and it now runs on
+   Windows.
+
+So the blocker **moved** rather than disappearing, exactly as expected — and
+`OC-42` is now **CONFIRMED for both tools** instead of untested. The observed
+exit status is 127 for both; the mapping from `exit(-1)` to that value under
+the MSYS2 shell is not established here and nothing is claimed about it.
+
+### Costing the `seed()` fix
+
+`cpp/shared/utils.h:792-798`: `seed()` opens `/dev/urandom` and calls
+`exit(-1)` if it cannot. A native MinGW binary has no `/dev/urandom` — MSYS2's
+emulation serves MSYS-runtime programs, not MINGW64 ones.
+
+**Not implemented here.** It is an entropy-relevant path and stays gated on the
+owner, which is the standing constraint.
+
+**The change.** Keep `/dev/urandom` on POSIX and add `BCryptGenRandom` (or
+`RtlGenRandom`) under `_WIN32`. **`std::random_device` must be refused as the
+portable shortcut**: its quality is implementation-defined, and on MinGW
+libstdc++ it has historically been a deterministic PRNG, which would be the
+worst outcome available — a seed that looks fixed and silently makes the
+permutation tests' p-values mean nothing.
+
+**Where the seed goes, and why that sets the bar.** It feeds the xoshiro256\*\*
+state used to shuffle in the IID permutation tests. A constant or low-entropy
+seed does not crash anything; it makes a statistical test report a
+randomisation it did not perform. So the acceptance criteria are about
+behaviour, not about linking:
+
+| the repair owes | how it is checked, with instruments that already exist |
+|---|---|
+| POSIX behaviour byte-for-byte unchanged | the same before/after comparison used here, with the measured exclusion and the live comparator |
+| the Windows source is not constant | two runs on Windows must differ in `permutationTestResults`, exactly as two runs on macOS do — the baseline-against-itself control, pointed at Windows |
+| the seed is not merely varying but unpredictable | the bytes come from the platform CSPRNG, named in the code, with the failure path still fail-closed rather than falling back to a weak seed |
+| the permutation verdicts remain sound | the IID battery's verdicts on the pinned fixtures must match LP64's on the same inputs |
+
+**Scale.** One function, two branches, one new library on one platform, and a
+nondeterminism control that is already written. The honest summary for the
+owner: smaller than `C18` was feared to be, larger than "small", and the only
+remaining item that touches an entropy path at all.
+
+---
+
+## OC-54 — four refusals for the wrong reason: a new failure shape, mechanised, and swept for
+
+### The shape
+
+Reproducing `A08` (the floor oracle emitting a figure for malformed reports), I
+built four negative fixtures by hand, each targeting a different property.
+**All four were refused.** That looked like four working guards and a finding
+that was already fixed.
+
+They were all refused for **one shared accidental reason**: my fixtures used
+the wrong key for the test-case label, so every one died on *"no test case
+labelled Overall"* and **not one of the four properties was exercised**.
+Rebuilt by mutating a genuine report one field at a time, all four reproduced
+exactly as reported.
+
+**Had I stopped at the first attempt I would have told an outside audit it was
+wrong when it was right.** That is the specific trap inside "reproduce before
+accepting": a negative fixture built from scratch can be refused for a reason
+that has nothing to do with the property under test, and a *set* of such
+fixtures can share that reason silently. A wall of refusals is not evidence of
+thoroughness.
+
+### Mechanised, so it is not a thing to remember
+
+`cpp/selftest/mutation-lib.sh` gains `mut_baseline <label> <cmd...>`: it asserts
+the **unmutated** artifact is **accepted**, and records that it did.
+`mut_summary` now **fails any harness that never asserted a baseline**, so a
+fixture set that refuses everything fails as broken rather than passing as
+thorough. A `mut_expect_pass` that succeeds **before any negative has been
+tried** is recognised as the baseline automatically — after a negative it is a
+*restored* control, which is a weaker and different claim (the mutations did
+not leak, not that the construction was ever sound).
+
+Verified both ways:
+
+| | |
+|---|---|
+| baseline accepted | all three mutation harnesses pass (5/5, 9/9, 9/9) |
+| baseline deliberately broken | `*** REFUSED -- the FIXTURES are broken, not the guard ***`, harness FAILS |
+| baseline never asserted | `*** NEVER ASSERTED -- this harness cannot attribute its refusals ***`, harness FAILS |
+
+**A corollary found in the same pass.** A **hardcoded expected count** inside a
+harness is the same trap in other clothes. `harness-inventory-mutation-test.sh`
+compared against the literal `20 passed, 0 failed (18 regression scripts
+discovered)`; registering one new regression script made its **positive control
+fail for a reason unrelated to any mutation**, which invalidates every negative
+beneath it. It now derives those numbers from `run-all-checks.sh`'s own
+constants and refuses to run if it cannot read them.
+
+### The sweep: how many other from-scratch negative-fixture sets are there?
+
+28 scripts examined — every `cpp/selftest/regression-*.sh`, the three mutation
+harnesses, the fixture-inventory verifier, `pin-check.sh`, the oracle self-test,
+and the audit's reproducers. A script counts only if **all four** conditions
+hold: two or more negatives, each targeting a **different** property, built
+**from scratch** rather than by mutating a genuine artifact, and **no assertion
+anywhere that the unmutated baseline is accepted**.
+
+**One script matched.** `reproducers/c16-c23-matrix.sh`.
+
+Most scripts failed the fourth condition — they already assert an accepted
+baseline (`regression-output.sh`'s "writable `-o` still works",
+`regression-restart.sh`'s "valid H_I still runs",
+`regression-nonregular.sh`'s regular-file case, and so on). Several failed the
+third because their negatives are already mutations of committed artifacts
+(`regression-272.sh` mutates a copied `cpp/` tree, `regression-minsize.sh` uses
+`bin/rand8_short.bin`, `regression-selftest-inventory.sh` mutates a copy of the
+real corpus). Several failed the second because all their negatives test one
+property (`regression-width.sh`'s three malformed widths are all the width
+grammar; `regression-iid-failclosed.sh`'s eight fixtures differ only in repeat
+length).
+
+`build-differential.sh` is the near miss: two from-scratch negatives and **no**
+positive control, but both test the same property — an implanted repeated
+substring differing only in length — so it fails condition 2. Worth noting
+rather than ignoring.
+
+### The one that matched, and what fixing it found
+
+`c16-c23-matrix.sh` **had no assertions at all.** Its `run()` classified and
+printed; the expectations were **echoed as prose and never compared**; and its
+exit status came from a timing print at the end. Nothing in it could fail, so it
+could not detect its own fixtures being broken — and its two negatives
+(an underflowing `H_I` of `1e-400`, and a bare `0.875` with an unstated scale)
+**shared one generic classifier pattern**, `'must be|must state'`, so two
+refusals for one reason would have been indistinguishable in the table.
+
+Repaired: each refusal is classified by the specific message that names its own
+property, every cell has an expected classification, the baseline (a uniform
+matrix accepted by a build whose statistic is correct) is asserted **first**,
+and the exit status is the assertions' verdict.
+
+**And the assertions immediately caught a wrong expectation of mine.** I had
+expected the `oldparse` builds to refuse the underflow. They **accept** it,
+with cutoff 1000 — and that acceptance *is* the `C16` defect the matrix exists
+to demonstrate. The table now asserts the unfixed build's defective behaviour
+as its expected behaviour, which is what a differential matrix is for. A script
+with no assertions could not have told me that in four rounds of reading it.

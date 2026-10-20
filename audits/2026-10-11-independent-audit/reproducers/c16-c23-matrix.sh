@@ -85,7 +85,13 @@ run() { # run <variant> <matrix> <H_I>
     out=$(OMP_NUM_THREADS=4 "$work/ea_restart.$1" -v -n "$work/$2" 8 "$3" 2>&1); rc=$?
     cut=$(printf '%s' "$out" | sed -n 's/.*X_cutoff: \([0-9]*\).*/\1/p' | head -1)
     if printf '%s' "$out" | grep -qE 'Error reading file|could not open|is empty'; then echo "NO INPUT (harness fault)"
-    elif printf '%s' "$out" | grep -qE 'must be|must state'; then echo "REFUSED"
+    # TWO NEGATIVES, TWO DISTINCT REASONS (OC-54). These both used to match the
+    # single pattern 'must be|must state', so two refusals for ONE shared
+    # reason would have been indistinguishable in the table and nothing here
+    # would have failed. Each refusal now names the property it is testing.
+    elif printf '%s' "$out" | grep -q 'must be a finite decimal number'; then echo "REFUSED(underflow)"
+    elif printf '%s' "$out" | grep -q 'must state its scale'; then echo "REFUSED(scale)"
+    elif printf '%s' "$out" | grep -qE 'must be|must state'; then echo "REFUSED(other)"
     elif printf '%s' "$out" | grep -q 'Sanity Check Failed'; then echo "REJECT (cut $cut)"
     elif printf '%s' "$out" | grep -q 'Sanity Check Passed'; then echo "accept (cut $cut)"
     else echo "other rc=$rc"; fi
@@ -97,6 +103,54 @@ for v in sim_oldparse sim_strict printed_strict exact_oldparse exact_strict; do
     bs_print "$work/ea_restart.$v"
 done
 echo
+# ASSERTED, NOT PRINTED (OC-54). Until now this script had NO ASSERTIONS AT
+# ALL: run() classified and printed, the expectations below were echoed as
+# prose and never compared, and the exit status came from a timing print at the
+# end. Nothing in it could fail, so it could not detect its own fixtures being
+# broken. Each cell now has an expected classification, and the BASELINE -- a
+# uniform matrix accepted by every build whose statistic is correct -- is
+# asserted FIRST, so a table that refuses everything fails as broken rather
+# than printing as thorough.
+mx_fails=0
+mx_baseline=""
+expect() { # expect <label> <expected-prefix> <actual>
+    case "$3" in
+        "$2"*) printf '  %-56s %s\n' "$1" "OK ($3)" ;;
+        *)     printf '  %-56s %s\n' "$1" "*** expected $2, got $3 ***"; mx_fails=$((mx_fails + 1)) ;;
+    esac
+}
+
+echo "## Assertions (the baseline first, so later refusals are attributable)"
+base=$(run exact_strict fullent8.bin 8/symbol)
+case "$base" in
+    accept*) mx_baseline=ok; printf '  %-56s %s\n' "BASELINE exact_strict: uniform matrix accepted" "OK ($base)" ;;
+    *) printf '  %-56s %s\n' "BASELINE exact_strict: uniform matrix accepted" "*** $base -- THE FIXTURES ARE BROKEN, NOT THE BUILDS ***"
+       mx_fails=$((mx_fails + 1)) ;;
+esac
+if [ "$mx_baseline" != ok ]; then
+    echo "  c16-c23-matrix: the baseline was not accepted, so nothing below is attributable." >&2
+fi
+
+for v in sim_oldparse sim_strict printed_strict exact_oldparse exact_strict; do
+    case $v in *oldparse) sane=7; hi8=8; c16=old ;; *) sane=7/symbol; hi8=8/symbol; c16=strict ;; esac
+    case $v in printed_*) want_full="REJECT"; want_sane="REJECT" ;; *) want_full="accept"; want_sane="accept" ;; esac
+    # The oldparse builds have the C16 fix DISABLED, so they ACCEPT both bad
+    # H_I arguments -- that acceptance IS the defect this matrix demonstrates,
+    # and it is asserted as the expected behaviour of the unfixed build rather
+    # than hoped for. The first version of this table expected a refusal from
+    # oldparse too, and the new assertions caught that immediately: the
+    # underflow is accepted with cutoff 1000, i.e. no rejection is possible.
+    case $c16 in strict) want_uf="REFUSED(underflow)"; want_ws="REFUSED(scale)" ;;
+                 *)      want_uf="accept"             ; want_ws="accept" ;; esac
+    expect "$v fullent 8-bit"  "$want_full" "$(run $v fullent8.bin $hi8)"
+    expect "$v sane X_max 24"  "$want_sane" "$(run $v x24.bin $sane)"
+    expect "$v underflow"      "$want_uf"   "$(run $v x20.bin 1e-400)"
+    expect "$v wrong scale"    "$want_ws"   "$(run $v x20.bin 0.875)"
+done
+echo
+if [ "$mx_fails" -eq 0 ]; then echo "  c16-c23-matrix assertions: PASS"; else echo "  c16-c23-matrix assertions: FAIL ($mx_fails cell(s))"; fi
+echo
+
 printf '%-14s %-10s | %-16s | %-14s | %-11s | %s\n' build C23 "fullent 8-bit H_I 8" "sane X_max 24" "underflow" "wrong scale"
 printf '%s\n' "---------------------------|------------------|----------------|-------------|-------------"
 for v in sim_oldparse sim_strict printed_strict exact_oldparse exact_strict; do
@@ -126,3 +180,13 @@ for v in sim_strict exact_strict; do
     OMP_NUM_THREADS=4 "$work/ea_restart.$v" -v -n "$work/fullent8.bin" 8 8/symbol >/dev/null 2>&1
     python3 -c "import sys,time; print('  %-14s full run: %.1f s' % ('$v', time.time()-$st))"
 done
+
+# The exit status is the assertions' verdict. It used to be whatever the timing
+# print above returned, which is how a script with no assertions reports
+# success forever (OC-54).
+if [ "${mx_fails:-0}" -ne 0 ] || [ "${mx_baseline}" != ok ]; then
+    echo "c16-c23-matrix: FAIL"
+    exit 1
+fi
+echo "c16-c23-matrix: PASS"
+exit 0
