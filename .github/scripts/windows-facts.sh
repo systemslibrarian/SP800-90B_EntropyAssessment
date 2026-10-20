@@ -75,13 +75,20 @@ deps)
       rm -rf /tmp/divsufsort
       git clone --depth 1 https://github.com/y-256/libdivsufsort /tmp/divsufsort
       cd /tmp/divsufsort
+      # CMake 4 removed compatibility with cmake_minimum_required(VERSION <3.5),
+      # and libdivsufsort's CMakeLists asks for an older one. The first run
+      # failed here with "CMake Error at CMakeLists.txt:2
+      # (cmake_minimum_required)", which is a toolchain-version incompatibility
+      # and not "the route is dead": this policy flag is the documented way past
+      # it (OC-48).
       cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBUILD_SHARED_LIBS=OFF -DBUILD_DIVSUFSORT64=ON \
             -DCMAKE_INSTALL_PREFIX=/mingw64 .
       cmake --build . --target install
     ) >> "$L" 2>&1 \
       && gate PASS "libdivsufsort built and installed from source (DEVIATION, not a package)" \
-      || gate FAIL "libdivsufsort could not be built from source either -- the route is dead here"
+      || gate FAIL "libdivsufsort could not be built from source either -- see $L for the cause before concluding the route is dead"
   fi
   tail -40 "$L"
   ;;
@@ -89,12 +96,23 @@ deps)
 build)
   L=logs/02-build.log
   : > "$L"
+  # A failure here has two very different causes and the first run's gate
+  # conflated them (OC-48): a MISSING DEPENDENCY stops the preprocessor before
+  # any of this project's source is judged, whereas a source incompatibility is
+  # the thing the Windows question is actually about. Separate them, and never
+  # report "does not compile" for a header that was simply absent.
   for t in non_iid iid restart; do
     echo "===== make $t =====" >> "$L"
-    if ( cd cpp && make -B "$t" ) >> "$L" 2>&1; then
-      gate PASS "compiles: ea_${t}"
+    out=$( ( cd cpp && make -B "$t" ) 2>&1 ); rc=$?
+    printf '%s\n' "$out" >> "$L"
+    if [ "$rc" -eq 0 ]; then
+      gate PASS "compiles and links: ea_${t}"
+    elif printf '%s' "$out" | grep -qE 'fatal error: [a-zA-Z0-9_./]+\.h: No such file'; then
+      gate FAIL "ea_${t}: a DEPENDENCY HEADER is absent ($(printf '%s' "$out" | sed -n 's/.*fatal error: \([^:]*\): No such file.*/\1/p' | head -1)) -- the preprocessor stopped before any of this project's source was judged, so MinGW source compatibility is UNTESTED, not refuted"
+    elif printf '%s' "$out" | grep -qE 'cannot find -l|undefined reference'; then
+      gate FAIL "ea_${t}: compiles but does NOT LINK -- the source is MinGW-compatible and a library is missing"
     else
-      gate FAIL "does NOT compile: ea_${t}"
+      gate FAIL "ea_${t}: does NOT compile, and not for a missing header or library -- this is a genuine source incompatibility, see $L"
     fi
   done
   echo "===== what exists =====" >> "$L"
@@ -161,11 +179,17 @@ r1)
 runtime)
   L=logs/05-runtime.log
   : > "$L"
-  python3 -c "
-import random
-r=random.Random(11)
-open('/tmp/w1.bin','wb').write(bytes(r.getrandbits(1) for _ in range(1000000)))
-" 2>>"$L" || printf '%.0s\x00' $(seq 1 1000000) > /tmp/w1.bin
+  # python3 is not on PATH in this shell (first run, OC-48), so generate the
+  # input with the compiler that is certainly here.
+  cat > /tmp/gen.c <<'EOF'
+#include <stdio.h>
+int main(void){ unsigned s=11u; for(long i=0;i<1000000;i++){ s=s*1103515245u+12345u; putchar((int)((s>>16)&1u)); } return 0; }
+EOF
+  gcc -O1 -o /tmp/gen.exe /tmp/gen.c 2>>"$L" && /tmp/gen.exe > /tmp/w1.bin 2>>"$L"
+  if [ ! -s /tmp/w1.bin ]; then
+    gate FAIL "could not generate a test input; the runtime questions are UNTESTED"
+    exit 0
+  fi
   run() { # run <label> <cmd...>
     local label=$1; shift
     echo "===== ${label}: $*" >> "$L"
@@ -186,18 +210,39 @@ open('/tmp/w1.bin','wb').write(bytes(r.getrandbits(1) for _ in range(1000000)))
   run ea_non_iid ./cpp/ea_non_iid -i -a -q -o /tmp/n.json /tmp/w1.bin 1
   run ea_iid     ./cpp/ea_iid     -i -q -o /tmp/i.json /tmp/w1.bin 1
   run ea_restart ./cpp/ea_restart -i -q -o /tmp/r.json /tmp/w1.bin 1 0.9
-  if grep -q 'DIED at seed' "$L"; then
+  # ABSENCE RULE (OC-36), which the first version of this gate broke in the very
+  # workflow that applies the rule elsewhere: it read "no tool died at seed()"
+  # as the prediction being refuted, when in fact NO BINARY EXISTED and
+  # `timeout` had reported "No such file or directory" with exit 127. A
+  # prediction is UNTESTED until something ran.
+  built=0
+  for b in ./cpp/ea_non_iid ./cpp/ea_iid ./cpp/ea_restart; do
+    [ -x "$b" ] || [ -x "$b.exe" ] && built=$((built + 1))
+  done
+  if [ "$built" -eq 0 ]; then
+    gate FAIL "no tool was built, so the seed()//dev/urandom prediction is UNTESTED -- not refuted, not confirmed"
+  elif grep -q 'DIED at seed' "$L"; then
     gate PASS "the seed()//dev/urandom prediction is CONFIRMED for at least one tool -- see which, above"
+  elif grep -q 'produced a figure' "$L"; then
+    gate FAIL "a tool produced a figure where seed() was predicted to kill it: the OC-42 prediction is BROKEN and what actually happens is the finding"
   else
-    gate FAIL "no tool died at seed(): the OC-42 prediction is BROKEN and what actually happens is the finding"
+    gate FAIL "tools ran but neither died at seed() nor produced a figure; read $L before concluding anything"
   fi
-  grep -c '^how far: produced a figure' "$L" >/dev/null 2>&1 || true
   ;;
 
 probe)
   L=logs/06-buildstate-probe.log
   . cpp/selftest/buildstate-lib.sh
   { bs_calibration
+    echo "--- why, in detail: what nm shows for the calibration binaries here ---"
+    cat > /tmp/cal.c <<'CEOF'
+#include <assert.h>
+int main(int c,char**v){assert(c>0);return (int)(long)v;}
+CEOF
+    gcc -O0 -o /tmp/cal_live.exe /tmp/cal.c 2>/dev/null && \
+      { echo "nm -u on an asserts-live PE binary:"; nm -u /tmp/cal_live.exe 2>&1 | head -12; }
+    echo "(an empty or assert-free listing is why calibration refuses: PE/COFF"
+    echo " undefined symbols do not necessarily surface through nm -u)"
     for b in cpp/ea_non_iid.exe cpp/ea_iid.exe cpp/ea_restart.exe \
              cpp/ea_non_iid cpp/ea_iid cpp/ea_restart; do
       [ -e "$b" ] && bs_print "$b"

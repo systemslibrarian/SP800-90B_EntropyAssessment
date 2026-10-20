@@ -1,0 +1,25 @@
+===== make non_iid =====
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  non_iid_main.cpp -o ea_non_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
+In file included from non_iid_main.cpp:5:
+shared/lrs_test.h:5:10: fatal error: divsufsort.h: No such file or directory
+    5 | #include <divsufsort.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Makefile:76: non_iid_main.o] Error 1
+===== make iid =====
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  iid_main.cpp -o ea_iid  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
+In file included from iid_main.cpp:6:
+shared/lrs_test.h:5:10: fatal error: divsufsort.h: No such file or directory
+    5 | #include <divsufsort.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Makefile:72: iid_main.o] Error 1
+===== make restart =====
+g++ -std=c++11 -fopenmp -O2 -ffloat-store -I/usr/include/jsoncpp -march=native  restart_main.cpp -o ea_restart  -lbz2 -lpthread -ldivsufsort -ldivsufsort64  -ljsoncpp -lcrypto
+In file included from restart_main.cpp:5:
+shared/lrs_test.h:5:10: fatal error: divsufsort.h: No such file or directory
+    5 | #include <divsufsort.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Makefile:85: restart_main.o] Error 1
+===== what exists =====

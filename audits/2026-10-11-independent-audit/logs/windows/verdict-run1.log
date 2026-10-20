@@ -1,0 +1,12 @@
+GATE FAIL   libdivsufsort has NO mingw-w64 package -- this is THE dependency finding
+GATE PASS   every other Makefile dependency is packaged
+GATE PASS   toolchain and packaged libraries installed
+GATE FAIL   libdivsufsort could not be built from source either -- the route is dead here
+GATE FAIL   does NOT compile: ea_non_iid
+GATE FAIL   does NOT compile: ea_iid
+GATE FAIL   does NOT compile: ea_restart
+GATE PASS   x87 80-bit long double, as predicted for MinGW
+GATE PASS   LLP64 confirmed (long is 32-bit) -- this is the C18 precondition
+GATE FAIL   the R-1 sweep did not build on Windows; no blast-radius measurement
+GATE FAIL   no tool died at seed(): the OC-42 prediction is BROKEN and what actually happens is the finding
+GATE PASS   probe could NOT calibrate on Windows and refused -- UNKNOWN, never a guess

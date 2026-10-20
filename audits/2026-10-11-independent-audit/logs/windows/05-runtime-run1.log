@@ -1,0 +1,16 @@
+.github/scripts/windows-facts.sh: line 164: python3: command not found
+===== ea_non_iid: ./cpp/ea_non_iid -i -a -q -o /tmp/n.json /tmp/w1.bin 1
+exit=127
+timeout: failed to run command ‘./cpp/ea_non_iid’: No such file or directory
+how far: nothing recognisable
+
+===== ea_iid: ./cpp/ea_iid -i -q -o /tmp/i.json /tmp/w1.bin 1
+exit=127
+timeout: failed to run command ‘./cpp/ea_iid’: No such file or directory
+how far: nothing recognisable
+
+===== ea_restart: ./cpp/ea_restart -i -q -o /tmp/r.json /tmp/w1.bin 1 0.9
+exit=127
+timeout: failed to run command ‘./cpp/ea_restart’: No such file or directory
+how far: nothing recognisable
+

@@ -1,0 +1,5 @@
+=== runner image === 
+
+Microsoft Windows [Version 10.0.26100.33650]
+=== looking for a preinstalled MSYS2 === 
+FOUND  C:\msys64\usr\bin\pacman.exe 
