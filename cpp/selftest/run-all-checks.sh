@@ -22,8 +22,8 @@ allow_platform=0
 
 KNOWN_PLATFORM_FILES="biased-random-bytes.bin ringOsc-nist.bin"
 REGRESSION_INVENTORY="regression-script-inventory.txt"
-EXPECTED_REGRESSION_SCRIPTS=18
-EXPECTED_TOTAL_CHECKS=20
+EXPECTED_REGRESSION_SCRIPTS=19
+EXPECTED_TOTAL_CHECKS=21
 
 inventory_error() {
     echo "run-all-checks: regression inventory error: $*" >&2

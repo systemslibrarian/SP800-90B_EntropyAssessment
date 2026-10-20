@@ -10,6 +10,7 @@ regression-minsize.sh
 regression-multimmc.sh
 regression-nonregular.sh
 regression-notrun.sh
+regression-output-aliasing.sh
 regression-output.sh
 regression-outside-battery.sh
 regression-restart.sh

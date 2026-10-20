@@ -22,6 +22,209 @@
 
 using namespace std;
 
+// ===========================================================================
+// A05 -- THE OUTPUT TARGET MUST NEVER BE THE INPUT CAPTURE
+//
+// C14 claims the -o path with a placeholder as soon as the path is known, so
+// that no run can leave a stale success behind. That repair moved an
+// irreversible truncation EARLIER than the assessment, and with
+// `-o capture.bin capture.bin` the 1,000,000-byte capture became a 602-byte
+// error report before a single sample was read. Measured, all three tools,
+// exit 255. In January the input is a physical capture that cannot be
+// recreated, so this outranks everything else in the audit.
+//
+// The guard is identity, not string equality: "./x" and "x", a hard link, a
+// symlink, and an absolute path all name the same bytes. On POSIX the
+// documented identity pair is (st_dev, st_ino) and stat() follows symlinks, so
+// one comparison covers every alias form. On Windows stat() reports st_ino as
+// 0 for every file, which would make two DIFFERENT files compare equal and
+// refuse valid runs, so there the identity pair is the volume serial number
+// and the 64-bit file index from GetFileInformationByHandle -- opening for
+// read is not destructive, and that is the documented Win32 equivalent.
+//
+// FAIL-CLOSED. If identity cannot be established, the run is refused rather
+// than guessed at: the cost of a wrong refusal is re-running a command, and
+// the cost of a wrong permission is an unrecoverable capture.
+// ===========================================================================
+
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
+#include <cerrno>
+
+enum FileIdentity { FILES_DISTINCT, FILES_SAME, FILES_UNDETERMINED };
+
+static FileIdentity sameFileIdentity(const char *outPath, const char *inPath) {
+    if (outPath == NULL || inPath == NULL) return FILES_UNDETERMINED;
+    if (strcmp(outPath, inPath) == 0) return FILES_SAME;   // the cheap case first
+#ifdef _WIN32
+    HANDLE ho = CreateFileA(outPath, 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                            NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    if (ho == INVALID_HANDLE_VALUE) {
+        const DWORD e = GetLastError();
+        // The output does not exist, so it cannot be the input.
+        if (e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND) return FILES_DISTINCT;
+        return FILES_UNDETERMINED;
+    }
+    HANDLE hi = CreateFileA(inPath, 0, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                            NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    if (hi == INVALID_HANDLE_VALUE) {
+        const DWORD e = GetLastError();
+        CloseHandle(ho);
+        if (e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND) return FILES_DISTINCT;
+        return FILES_UNDETERMINED;
+    }
+    BY_HANDLE_FILE_INFORMATION io, ii;
+    const BOOL okO = GetFileInformationByHandle(ho, &io);
+    const BOOL okI = GetFileInformationByHandle(hi, &ii);
+    CloseHandle(ho); CloseHandle(hi);
+    if (!okO || !okI) return FILES_UNDETERMINED;
+    const bool same = (io.dwVolumeSerialNumber == ii.dwVolumeSerialNumber)
+                   && (io.nFileIndexHigh == ii.nFileIndexHigh)
+                   && (io.nFileIndexLow  == ii.nFileIndexLow);
+    return same ? FILES_SAME : FILES_DISTINCT;
+#else
+    struct stat so, si;
+    if (stat(outPath, &so) != 0) {
+        if (errno == ENOENT) return FILES_DISTINCT;   // nothing there to destroy
+        return FILES_UNDETERMINED;
+    }
+    if (stat(inPath, &si) != 0) {
+        if (errno == ENOENT) return FILES_DISTINCT;   // no capture to destroy
+        return FILES_UNDETERMINED;
+    }
+    // st_ino 0 on both would make every pair compare equal; treat it as no answer.
+    if (so.st_ino == 0 && si.st_ino == 0) return FILES_UNDETERMINED;
+    return (so.st_dev == si.st_dev && so.st_ino == si.st_ino) ? FILES_SAME : FILES_DISTINCT;
+#endif
+}
+
+// THE GUARD BELONGS IN THE WRITER, SO THE CLAIM CAN STAY EARLY.
+//
+// The first version of this fix deferred C14's claim until after argument
+// parsing, so that the input path would be known and could be compared. That
+// cost C14 real coverage, and the existing regression caught it immediately:
+// `ea_iid -o <stale>` with no operand exits on the usage path, which is now
+// ABOVE the claim, so the previous run's complete report survived byte
+// identical -- the exact fail-open C14 closed.
+//
+// So the input path is REGISTERED as protected as soon as a prescan can see
+// it, and writeJsonReport -- the only function that writes a report at all --
+// refuses any target that identifies it. The claim goes back to where C14 put
+// it, at `-o` parse time, and no report write of any kind can reach the
+// capture. A usage error with no operand protects nothing, because there is no
+// input to destroy, and the stale report is replaced as before.
+static string g_protectedInputPath;
+
+static void protectInputPath(const string &path) { g_protectedInputPath = path; }
+
+// Find the -o value and the first operand the way getopt will, so the identity
+// check can run before anything is written. Handles clusters ("-vo out"),
+// attached arguments ("-oout", "-l5,10"), the "--" separator, and options that
+// consume the FOLLOWING element -- which is what A04 showed the old prescan
+// did not understand.
+static void prescanOutputAndOperand(int argc, char *argv[], const char *optstring,
+                                    string *outPath, string *operand) {
+    outPath->clear();
+    operand->clear();
+    int i = 1;
+    for (; i < argc; i++) {
+        const char *a = argv[i];
+        if (a == NULL) return;
+        if (strcmp(a, "--") == 0) { i++; break; }
+        if (a[0] != '-' || a[1] == '\0') break;          // the first operand
+        if (a[1] == '-') continue;                       // a long option (--version)
+        for (size_t k = 1; a[k] != '\0'; k++) {
+            const char *p = strchr(optstring, a[k]);
+            if (p == NULL) break;                        // getopt will reject it
+            if (p[1] == ':') {                           // this option takes an argument
+                if (a[k + 1] != '\0') {                  // attached: "-oout"
+                    if (a[k] == 'o') *outPath = a + k + 1;
+                } else if (i + 1 < argc) {               // separate: "-o out"
+                    if (a[k] == 'o') *outPath = argv[i + 1];
+                    i++;
+                }
+                break;
+            }
+        }
+    }
+    if (i < argc && argv[i] != NULL) *operand = argv[i];
+}
+
+// Refuse before any destructive open. Returns true when it is safe to proceed.
+// Nothing is written on refusal: the whole point is to leave the capture, and
+// any previous report, exactly as they are. Failed-run evidence goes to stderr,
+// which costs the captured bytes nothing.
+static bool outputTargetIsSafe(const string &outPath, const char *inPath) {
+    if (outPath.empty()) return true;            // no -o, nothing to claim
+    // No input path at all -- a usage error with no operand, for instance --
+    // means there is no capture to destroy, so the claim is safe and C14's
+    // stale-report coverage is preserved. The first version of this returned
+    // UNDETERMINED here and refused every `-o <path>` with no operand, which
+    // broke the usage path the existing regression covers.
+    if (inPath == NULL || inPath[0] == '\0') return true;
+    const FileIdentity id = sameFileIdentity(outPath.c_str(), inPath);
+    if (id == FILES_SAME) {
+        fprintf(stderr,
+            "Error: the output path '%s' is the same file as the input '%s'.\n"
+            "       Refusing to run: claiming the output truncates it, and that would\n"
+            "       destroy the input capture before any sample was read. Nothing has\n"
+            "       been written; the input is untouched. Choose a different -o path.\n",
+            outPath.c_str(), inPath ? inPath : "(none)");
+        return false;
+    }
+    if (id == FILES_UNDETERMINED) {
+        fprintf(stderr,
+            "Error: cannot establish whether the output path '%s' and the input '%s'\n"
+            "       are the same file. Refusing to run rather than risk truncating the\n"
+            "       input capture. Nothing has been written; the input is untouched.\n",
+            outPath.c_str(), inPath ? inPath : "(none)");
+        return false;
+    }
+    return true;
+}
+
+// ===========================================================================
+// A04 -- THE --version PRESCAN MUST UNDERSTAND OPTIONS THAT CONSUME AN ARGUMENT
+//
+// The prescan stopped at the first operand and skipped argv[0], which closed
+// C14 route 2. It still did not know that `-o` takes an argument, so
+// `ea_non_iid -o --version absent-data 1` treated `--version` as an OPTION,
+// printed the version, and exited 0 -- nothing assessed, no report written,
+// any previous report left in place. Exit status 0 with a stale report is the
+// fail-open C14 exists to prevent, reached through the option parser instead
+// of through an error path.
+//
+// Walk argv the way getopt will: stop at "--" or the first operand, and when a
+// short-option cluster ends in a letter the optstring marks with ':' and no
+// argument is attached, skip the next element, because that element is the
+// option's ARGUMENT and not an option at all.
+// ===========================================================================
+static bool versionOptionRequested(int argc, char *argv[], const char *optstring) {
+    for (int i = 1; i < argc; i++) {
+        const char *a = argv[i];
+        if (a == NULL) return false;
+        if (strcmp(a, "--") == 0) return false;            // end of options
+        if (a[0] != '-' || a[1] == '\0') return false;     // first operand, or "-"
+        if (strcmp(a, "--version") == 0) return true;      // a real option
+        const size_t n = strlen(a);
+        const char last = a[n - 1];
+        const char *p = strchr(optstring, last);
+        // ':' after the letter means it takes an argument; n == 2 means the
+        // cluster is exactly "-x", so the argument is the NEXT element. For
+        // "-oout" or "-l5,10" the argument is attached and nothing is skipped.
+        if (p != NULL && p[1] == ':' && n == 2) i++;
+    }
+    return false;
+}
+
 // Write a JSON report, reporting a failure instead of silently losing it.
 //
 // Every report write was an unchecked ofstream, so "-o /dev/full" or a path in
@@ -54,6 +257,19 @@ using namespace std;
 // is still a failed run, and the regressions that assert those failures pass
 // unchanged.
 bool writeJsonReport(const string &path, const string &json) {
+    // A05: no report write may target the input capture, whatever path it
+    // reached here by. This is the single choke point: the C14 placeholder,
+    // every error report and every successful report all come through here.
+    if (!g_protectedInputPath.empty()
+        && sameFileIdentity(path.c_str(), g_protectedInputPath.c_str()) != FILES_DISTINCT) {
+        fprintf(stderr,
+            "Error: refusing to write the report to '%s': it is the same file as the\n"
+            "       input '%s' (or that cannot be ruled out). Writing it would destroy\n"
+            "       the input capture. Nothing has been written.\n",
+            path.c_str(), g_protectedInputPath.c_str());
+        return false;
+    }
+
     const string tmp = path + ".tmp." + std::to_string((long)getpid());
 
     {

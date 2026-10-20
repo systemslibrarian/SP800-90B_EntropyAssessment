@@ -390,13 +390,25 @@ int main(int argc, char* argv[]) {
     // channel that is a fail-open: a harness reads success where no assessment
     // happened. Treat it as the option it is documented as: only before the
     // first non-option argument, and never after the "--" separator.
-    for (int i = 1; i < argc; i++) {
-        const std::string Str = std::string(argv[i]);
-        if ("--" == Str) break;                 // end of options
-        if (Str.empty() || Str[0] != '-') break; // first operand: stop scanning
-        if ("--version" == Str) {
-            printVersion("restart");
-            exit(0);
+    // A04: the prescan now understands that `-o` and `-s` consume a following
+    // argument, so `-o --version data 1 0.9` no longer prints the version and
+    // exits 0 with nothing assessed (TestRunUtils.h).
+    if (versionOptionRequested(argc, argv, "invqo:s:")) {
+        printVersion("restart");
+        exit(0);
+    }
+
+    // A05: register the input as protected and refuse an aliasing -o BEFORE
+    // anything is written. The prescan reads -o and the operand the way getopt
+    // will; writeJsonReport then refuses that target whatever path reaches it,
+    // so C14's claim can stay where it was without being able to destroy the
+    // capture (TestRunUtils.h).
+    {
+        string preOut, preOperand;
+        prescanOutputAndOperand(argc, argv, "invqo:s:", &preOut, &preOperand);
+        if (!preOperand.empty()) protectInputPath(preOperand);
+        if (!preOut.empty() && !outputTargetIsSafe(preOut, preOperand.empty() ? NULL : preOperand.c_str())) {
+            exit(-1);
         }
     }
 
@@ -446,6 +458,17 @@ int main(int argc, char* argv[]) {
 
     // get filename
     file_path = argv[0];
+
+    // A05, authoritatively. The prescan above is a reader of argv; this is the
+    // value getopt actually produced. Registering it here means every report
+    // write from this point on -- error reports and the final report alike --
+    // is checked against the real input, and a prescan that somehow disagreed
+    // with getopt cannot open a hole. The claim above has already been vetted
+    // against the prescan's operand.
+    protectInputPath(file_path);
+    if (jsonOutput && !outputTargetIsSafe(outputfilename, file_path)) exit(-1);
+
+
     argv++;
     argc--;
 
