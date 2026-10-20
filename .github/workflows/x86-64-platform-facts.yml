@@ -223,7 +223,18 @@ jobs:
             if grep -q "$3" "$2"; then echo "GATE PASS  $1"
             else echo "GATE FAIL  $1 (wanted '$3' in $2)"; fail=1; fi
           }
-          gate "full suite (platform flag)" logs/06-run-all-checks-platform.log "20 passed, 0 failed"
+          # DERIVED, NOT HARDCODED. This gate read the literal "20 passed, 0
+          # failed", so registering two new regression scripts failed the job
+          # for a reason that had nothing to do with the platform it exists to
+          # measure. That is rule 7's corollary -- a hardcoded expected count
+          # inside a harness is a staleness trap -- found one layer up from
+          # where it was first fixed, by the CI run that fixed it elsewhere.
+          SUITE_EXPECT="$(sed -n 's/^EXPECTED_TOTAL_CHECKS=\([0-9]*\)$/\1/p' \
+                          cpp/selftest/run-all-checks.sh | head -1) passed, 0 failed"
+          case "$SUITE_EXPECT" in
+            " passed, 0 failed") echo "GATE FAIL  cannot read EXPECTED_TOTAL_CHECKS from run-all-checks.sh"; fail=1 ;;
+            *) gate "full suite (platform flag)" logs/06-run-all-checks-platform.log "$SUITE_EXPECT" ;;
+          esac
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"

@@ -5291,3 +5291,141 @@ with cutoff 1000 — and that acceptance *is* the `C16` defect the matrix exists
 to demonstrate. The table now asserts the unfixed build's defective behaviour
 as its expected behaviour, which is what a differential matrix is for. A script
 with no assertions could not have told me that in four rounds of reading it.
+
+---
+
+## OC-55 — A02: the `C01` floor term, and which of the three options this took
+
+> **Supersedes the `C01` half of `REPAIR-STRATEGY.md`'s "one correction to the
+> framing" paragraph.**
+
+### The label was wrong twice
+
+The term read: `C01 = 3.69e-4  # two-sided last-digit comparison error, measured
+bound`.
+
+It is **not a last-digit comparison error**. The 3.69e-4 figure comes from
+**`F10`** — MultiMMC's **chained prefix lookup** under the `MAX_ENTRIES` cap
+(`multi_mmc_test.h:236/:93`). §6.3.9 step 4.b.i requires an independent lookup
+of M_d at every depth; the code looks up depth d only if depth d−1 hit, and
+when the cap refuses a prefix entry at depth d, every later recurrence of that
+context suppresses all depth ≥ d predictions. The figure's own provenance says
+so: `COVERAGE.md` records it as `f10_over_8bit_1M`, "tool 0.00037 bit HIGH".
+
+And it is **not a bound**. The size of the effect is set by **how the dictionary
+fills**, which is a property of the data. The superseded paragraph applied its
+own correct rule — *"a single measured overestimate is not a bound"* — to `C03`
+and then exempted `C01` on a mechanism `C01` does not have.
+
+### Which of the three options: the third, and at width 1 it is a proof
+
+The audit offered three: prove a bound over the supported inputs, correct the
+algorithm, or exclude the affected path.
+
+**Proving a bound is not available.** The suppressed-prediction count is
+data-dependent, and the direction is not fixed either — the same cluster
+measured 0.082 bit **low** on one fixture and 0.00037 bit **high** on another.
+Claiming a bound here would be the same error a second time.
+
+**Correcting the algorithm is the owner's call.** It is a change to estimator
+numerics, which this project's hard rule reserves for a deliberate decision.
+Recorded, not taken.
+
+**So: exclude the affected path** — and at **width 1** the exclusion is not a
+judgement but a counting proof, from the two shipped constants:
+
+> `D_MMC = 16`, `MAX_ENTRIES = 100000` (`multi_mmc_test.h:4-5`); the loop runs
+> `d = 0..15`. For **binary** data, depth `d` has at most `2^(d+1)` distinct
+> prefixes and at most 2 postfixes each, so `entries[d] ≤ 2^(d+2)`.
+>
+> | depth | `entries[d]` ceiling | cap binds? |
+> |---|---:|---|
+> | `d ≤ 14` | `2^16` = 65,536 | **no** — below 100,000 |
+> | `d = 15` | `2^17` = 131,072 | yes, but `d = 15` is the **top** depth and the defect needs a `d+1` to suppress |
+>
+> So at width 1 **no suppression is reachable** and `F10` cannot move the
+> figure.
+
+That is this project's path and this device's: a 1-bit source at `H_I` 0.696.
+It is also consistent with what was already measured independently — binary
+data was observed immune in a 10-fixture binary-versus-generic differential,
+which at the time was recorded as a curiosity rather than as the reason.
+
+### "Certified floor" and "evaluated margin" are now different outputs
+
+`oracles/entropy_floor.py`:
+
+| width | `C01`/`F10` term | headline |
+|---|---|---|
+| 1 | `0.000e+00`, **EXCLUDED: unreachable at width 1**, with the proof printed | **CERTIFIED FLOOR** |
+| > 1 | `3.690e-04`, **EVALUATED MARGIN, *not* a bound** | **EVALUATED MARGIN (not a floor)**, with an explicit do-not-publish-as-a-floor line |
+
+The bit width is a **required input** to the report rather than something
+inferred inside it: if it cannot be established, nothing is called a floor at
+all. Measured both ways — width 1 prints a certified floor of
+0.84129042387787445, width 8 prints an evaluated margin and says it is not a
+floor.
+
+---
+
+## OC-56 — A06: the platform exception is an expected-result manifest, not a filename list
+
+### What it was
+
+`--allow-known-platform-deltas` excused a failing `selftest` whenever every
+named file was one of two **filenames**. It inspected neither the estimator, the
+field, the magnitude, the direction, nor the platform. An isolated controller
+fed it a deliberate change from **0.85 to 0.01** in one of those files and it
+was **accepted**. A guard that cannot tell a 1e-10 last-digit platform
+difference from a 0.84 collapse is not guarding.
+
+### What it is
+
+`cpp/selftest/known-platform-deltas.txt` — an expected-result manifest keyed by
+**platform identity** — checked by `cpp/selftest/check-platform-deltas.py`,
+which parses `selftest`'s own printed numbers. A run is excused only when **all
+three** hold:
+
+1. a `platform` block matches this host: `uname -s`, `uname -m`, and a
+   substring of the compiler identity;
+2. **every** reported difference matches a row on **file, estimator and field**
+   and its `|delta|` is within that row's tolerance;
+3. **every** row listed for this platform was actually **observed** — a
+   comparison that silently stopped happening must not pass as an absence of
+   difference.
+
+Eight rows for this host, one per observed difference. **Tolerances are
+labelled as measured magnitudes with headroom, not bounds** (rule 6): observed
+1.25e-10 to 3.66e-10, row tolerance 1e-9. The manifest's own text forbids
+widening a row to swallow a delta that exceeded it — *that is the finding, not
+the obstacle.*
+
+Linux x86-64 deliberately has **no block**, because it is the platform NIST's
+reference data was produced on and `selftest` is expected to pass there
+outright. With no block, a `selftest` failure on Linux is **not excused**, even
+though the x86-64 CI job passes the flag.
+
+### The four failures the audit required, each with the flag enabled
+
+`cpp/selftest/regression-platform-deltas.sh`, registered in the authoritative
+inventory. Its negatives are **mutations of a genuine `selftest` transcript**,
+one field at a time, and the unmutated transcript is asserted **accepted
+first** (rule 7), so each refusal is attributable.
+
+| case | result |
+|---|---|
+| a **large** delta in a named file (0.85 → 0.01) | `delta TOO LARGE: ... 0.84 > tolerance 1e-09` |
+| an **unexpected estimator** in a named file | `UNEXPECTED difference, no manifest row` |
+| a listed comparison that **stops being reported** | `MISSING comparison, a listed row was never reported` |
+| the **wrong platform** | `the exception does NOT apply on this platform: no manifest block matches` |
+| an **unreadable manifest** | refuses, exit 2 |
+| **control**: unmodified transcript, right platform | `8 expected platform delta(s), all within tolerance` |
+
+**One instrument error found and fixed while building it.** The difference
+parser was anchored at the line start, and `selftest` prints the first
+difference for a file on the same line as the filename
+(`ringOsc-nist.bin: ringOsc-nist.res: Significant difference for ...`). Those
+lines were silently skipped and then reported as **MISSING comparisons** — the
+right verdict for the wrong reason, and one that would have read as "the
+comparison stopped happening". Unanchored, and the baseline control is what
+surfaced it.
