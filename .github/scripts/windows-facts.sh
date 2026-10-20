@@ -393,6 +393,21 @@ EOF
     ls -la "rep_${t}.json" 2>&1 | sed 's/^/    /' >> "$L"
   done
 
+  # C18, WHICH THIS RUN TURNED FROM A SOURCE CLAIM INTO A MEASUREMENT.
+  # `long int N = n_choose_2(L - W + 1)` overflows 32-bit long on LLP64, so
+  # Pr(X >= 1) prints NEGATIVE and the 5.2.5 decision is taken against a NaN
+  # threshold -- a FAIL whatever the data. Gate on the sign, which no correct
+  # probability can have.
+  echo "===== C18: the sign of Pr(X >= 1) =====" >> "$L"
+  grep -hE 'Pr\(X >= 1\)' "$L" | sort -u | sed 's/^/  /' | tee -a "$L"
+  if grep -qE 'Pr\(X >= 1\): *-' "$L"; then
+    gate FAIL "C18 CONFIRMED BY MEASUREMENT: Pr(X >= 1) is NEGATIVE, so n_choose_2()'s N overflowed 32-bit long; the 5.2.5 threshold is then logl() of a negative number, i.e. NaN, and the LRS test FAILS whatever the data. See reproducers/c18_llp64_overflow.c"
+  elif grep -qE 'Pr\(X >= 1\)' "$L"; then
+    gate PASS "Pr(X >= 1) is non-negative in every run here -- no C18 overflow at this input size"
+  else
+    gate FAIL "no Pr(X >= 1) line was printed, so C18 is UNMEASURED in this run -- not refuted"
+  fi
+
   # WHY rename() FAILED, with the errno, rather than a story about why it might
   # have. This mimics TestRunUtils.h:55-80 exactly and changes no source.
   echo "===== rename(2) semantics on this platform =====" >> "$L"
@@ -507,7 +522,13 @@ SEQEOF
   # half it greps for first. And the absence rule applies to each tool
   # separately: a tool that never reached the permutation stage has not
   # refuted anything.
-  far_of() { sed -n "/ea_$1 \[pass 1/,/^$/p" "$L" | sed -n 's/^how far: //p' | head -1; }
+  # Take the FIRST "how far" line after the tool's own marker. The first
+  # attempt ended the range at /^$/ and the runs' own output contains blank
+  # lines, so the range closed before reaching the line it was looking for and
+  # every tool came back empty -- which the gates then read as "reached
+  # neither seed() nor a figure". An extraction pattern that takes the wrong
+  # text is the fourth of these in this job (OC-48).
+  far_of() { awk -v t="ea_$1 [pass 1" 'index($0,t){f=1} f && /^how far: /{sub(/^how far: /,""); print; exit}' "$L"; }
   built=0
   for b in ./cpp/ea_non_iid ./cpp/ea_iid ./cpp/ea_restart; do
     if [ -x "$b" ] || [ -x "$b.exe" ]; then built=$((built + 1)); fi
