@@ -5655,3 +5655,44 @@ this project assesses, and it was deliberately left out of the `C18` repair
 because those fields are printed with `%ld` in many places, which would be
 wrong for `int64_t` on LLP64. **It is a live limit, not an absent one**, and a
 Windows run on an input that large would be wrong rather than refused.
+
+---
+
+## OC-61 — C18 had upstream prior art, filed as "platform / library" at LOW severity
+
+Sweeping for stale "Windows is unsupported" wording turned up a row this audit
+has carried since the first pass, in
+`audits/2026-09-30/novel-findings/agent-reports/exclusion-map.md`:
+
+> | 219 | I | open | **Windows MinGW: `ea_iid` LRS test `Pr(X≥1)` negative → Failed** | `ea_iid` (Windows) | `lrs_test.h len_LRS_test` (+ user `seed()` change) | **platform / library** | wrong IID verdict | IID verdict | verdict (**LOW**) | open; Windows not supported |
+
+That is `C18`, exactly: the symptom, the tool, and the function. **Upstream
+issue #219 is prior art, it is still open, and it has been there for about a
+year.** Three things about that are worth keeping.
+
+**It was mis-attributed, which is why it sat at LOW.** The cause was recorded
+as "platform / library" — the same category as a differently-built
+`libdivsufsort` — when the actual mechanism is a **32-bit `long`** in
+`n_choose_2`'s product. A negative probability from an integer overflow and a
+negative probability from a mismatched library look identical from the outside;
+only the arithmetic distinguishes them, and `reproducers/c18_llp64_overflow.c`
+reproduces the printed value from the integer arithmetic alone with no
+floating-point platform difference involved.
+
+**The reporter's sequence is this session's in reverse.** They patched `seed()`
+to get a Windows run at all — the row says "+ user `seed()` change" — and
+*then* hit the LRS failure. This session repaired `C18` first and *then* reached
+`seed()`. Both orders land on the same two items, which is some corroboration
+that the Windows path has exactly these two obstacles and not more.
+
+**And it had been sitting in this audit's own records.** The exclusion map knew
+the symptom before any of the Windows work began; what it did not have was the
+mechanism, and no amount of re-reading the row would have supplied one. The
+measurement did. That is the same lesson as `OC-48` and it is slightly worse
+here, because the evidence was already in the tree.
+
+**Nothing is reported upstream** — the standing decision of 2026-10-15 holds,
+and `UPSTREAM-REPORT-INVENTORY.md` records what is wrong with the tool being
+run without sending it. The prior art is recorded for severity and for the
+register: `C18` was never a speculative LLP64 concern, it was an **observed
+upstream defect** whose cause had been misfiled.

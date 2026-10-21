@@ -116,6 +116,12 @@ the upstream position and this fork's position are never conflated.
   same as universal resolution: N-03, N-05 and N-11 remain unfixed in
   `ea_conditioning`; the conditioning instances of N-08 and N-10 also remain.
   Commit `876ba05` excludes that executable from `make all`, and
+  **`C18` is repaired (2026-10-20) and had upstream prior art**: issue **#219**,
+  "Windows MinGW: `ea_iid` LRS test `Pr(X>=1)` negative -> Failed", still open
+  and filed as "platform / library" at LOW severity when the mechanism is a
+  32-bit `long` in `n_choose_2`'s product (`OC-61`). Nothing reported upstream;
+  recorded for severity.
+
   `regression-docs.sh` fails if it enters the supported build. R-1 is no longer
   blocked: it was never a hardware-blocked item, because it is a `long double`
   **format** defect rather than a platform one, and the "not reproducible on

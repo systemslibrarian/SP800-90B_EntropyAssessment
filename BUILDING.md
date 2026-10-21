@@ -398,8 +398,35 @@ fail-closed — they deny assessments rather than producing wrong figures:
   sound and jointly non-portable. `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)`
   is the platform primitive.
 
-Neither is repaired: both are entropy-adjacent source changes awaiting an owner
-decision. Until then, **do not use this fork on Windows.**
+**Both are now repaired (2026-10-20).** `C18` widened `n_choose_2` to `int64_t`
+in the parameter, the product and the return, with LP64 bit-identity measured
+(nine reports, three fixtures, all three tools; `OC-53`). `C24` writes the
+report with `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)` under `_WIN32`
+(`OC-57`). After both, on Windows: `Pr(X >= 1) = 0.365370`, **exactly macOS's
+figure**, and every tool puts its report in place.
+
+**What Windows can and cannot do today.** All three tools build and link, with
+OpenMP. `ea_non_iid` runs the complete non-IID battery and produces a figure,
+exit 0. `ea_iid` and `ea_restart` run through chi square, the §5.2.5 LRS test
+and — for `ea_restart` — the restart sanity check, **all passing**, and then
+exit at `seed()`, which opens `/dev/urandom`. **That is not "Windows is
+unsupported" and should not be summarised as such.**
+
+`seed()` is **deferred, not blocking** (`OC-60`): the owner's vendor reference
+qualification means no NIST binary runs on a user's machine, so `seed()` sits
+only on the expert-opt-in self-assertion path, for which macOS and Linux are
+sufficient. If revisited, the fix is a **platform entropy source**
+(`BCryptGenRandom` or `RtlGenRandom`) — and **`std::random_device` must be
+refused**, because on MinGW libstdc++ it has historically been a deterministic
+PRNG, which would make the IID permutation tests' p-values meaningless while
+every surface indication said the tool worked.
+
+**One live limit.** `data_t` holds `long len` and `long blen` with
+`blen = len * word_size`, which overflows on LLP64 above **268,435,455** 8-bit
+samples. Deliberately outside the `C18` repair, because those fields are
+printed with `%ld` in many places and `int64_t` would make that wrong on LLP64.
+Far above anything this project assesses, but a **live** limit rather than an
+absent one: an input that large would be wrong on Windows rather than refused.
 
 **One prediction remains untested here rather than refuted.** `OC-42` says
 `ea_iid` and `ea_restart` die at `seed()`. They do not reach it: `seed()` is
