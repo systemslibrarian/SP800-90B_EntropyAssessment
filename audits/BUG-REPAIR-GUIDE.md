@@ -372,3 +372,42 @@ The companion observation is that **external corroboration of a symptom is not
 validation of a fix**: #219 confirms the symptom exists in the wild, and
 confirms nothing about whether widening the type is correct. That rests on its
 own evidence.
+
+### Rule 11 — a record whose truth depends on repository state names that state, and something re-reads it when the state changes
+
+A finding filed as *"on branch X"*, *"in file Y"*, *"at tag Z"* is true only
+while that state holds. The record must **name the state it depends on**, and
+something must **re-read it when that state changes**.
+
+The changes that invalidate such a record:
+
+| change | what it can do to a record |
+|---|---|
+| **a branch merges** | "not live, repair branch only" becomes false, possibly into the enforced suite |
+| **a branch closes unmerged** | "pending on the repair branch" becomes permanently false |
+| **a file is deleted or renamed** | a finding's location, and any citation of it, dangles |
+| **a tag is re-pointed** | "measured at tag T" now describes different bytes |
+| **a repository is re-cloned or a submodule updated** | a path-based claim may resolve elsewhere |
+
+**How this was learned.** `DEAD-GUARD-SWEEP.md` recorded two false-pass guards
+accurately and filed them *"both on the repair branch"*, therefore not live. The
+2026-10-15 merge put both on `master` and **one into the enforced suite**, where
+it was counted toward "22 passed" for six days. Nothing re-read the sweep when
+the branch merged. Both were still producing false passes when an outside
+session found them (`OC-64`).
+
+The companion case is the **denominator**: `OC-64`'s sweep reported "53
+instruments" against an inventory that existed only in that one command line, so
+nothing could re-read it either. The inventory is now a file
+(`audits/INSTRUMENT-INVENTORY.md`) with the rule and a reproduction command, and
+a sweep cites it (`OC-65`).
+
+| do | instead of |
+|---|---|
+| name the state: "on `repair/...` as of `<sha>`" | "on the repair branch" |
+| re-read every state-dependent record at a merge | assume the record ages gracefully |
+| put the inventory a count rests on in a file | derive it inline and report the number |
+
+This generalises the earlier merge rule about files that enumerate other files:
+**that** was about a file whose content lists other files, **this** is about a
+record whose truth references repository state of any kind.

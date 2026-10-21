@@ -6043,10 +6043,20 @@ Two mechanical patterns, swept across every shell instrument in
   in a script without `set -e`.
 - **B** — an unconditional top-level `PASS` with no counter or status guard.
 
+> **THE DENOMINATOR IN THIS TABLE IS WRONG — CORRECTED IN `OC-65`.** "53" both
+> omitted whole directories (`.github/workflows`, the generators, the
+> 2026-10-09 audit, `repairs/`) and inflated the remainder with four
+> `__pycache__` files. The live instrument set is **70**, and the three
+> extensionless shell instruments — `selftest`, `generate-refdata`,
+> `compareresults.pl` — were never swept. They have since been swept and the
+> conclusion below held, but it held by luck of the denominator rather than by
+> the sweep's design. The inclusion rule is now written down once in
+> `audits/INSTRUMENT-INVENTORY.md`.
+
 | | |
 |---|---|
-| instruments in the repository | **53** (shell, Python, C/C++) |
-| shell instruments swept for A and B | **33** |
+| instruments in the repository | ~~53~~ **70 live / 79 frozen** (`OC-65`) |
+| shell instruments swept for A and B | **33** of the live set, then the 4 missed runnable artefacts swept separately |
 | Python instruments checked for the analogous unconditional success print | all; **none found** |
 | **pattern A remaining after the repairs** | **0** |
 | **pattern B remaining after the repairs** | **0** |
@@ -6077,3 +6087,58 @@ the sweep when the branch merged. Corrected with a supersession banner and the
 **A sweep that records a finding's location as a branch has to be re-read when
 that branch merges.** That is a new obligation and it belongs with the merge
 rule that already covers files enumerating other files.
+
+---
+
+## OC-65 — the denominator: two readers disagreed by seventeen, and the rule was never written down
+
+An outside session counted **70 live instruments and 79 frozen**. `OC-64`
+reported **53**. A disagreement about the denominator is a disagreement about
+what every *"count examined alongside count found"* figure in this repository
+means, so it is settled here before any further sweep.
+
+### Mine was wrong twice over
+
+| | |
+|---|---|
+| **omitted** | `.github/workflows` (CI workflow definitions, which emit verdicts the record cites), `audits/2026-10-11-independent-audit/generators`, the whole `audits/2026-10-09-independent-audit`, and `repairs/*/rerun.sh` |
+| **inflated** | by four `__pycache__/*.pyc` files, which a `grep -v __pycache__` on the wrong path component failed to drop |
+| **missed, and this is the substantive one** | four **runnable artefacts an extension-matched glob cannot see**: `cpp/selftest/selftest` and `cpp/selftest/generate-refdata` (Bourne-Again shell, no extension), `cpp/selftest/compareresults.pl` (Perl), and `truepad-unattested-tools.mjs` (node). **`selftest` is the instrument the entire suite calls.** |
+
+**The frozen counts matched exactly at 79 on the first attempt.** That is what
+localised the disagreement: it was confined to the live set, so it was about the
+**rule**, not about the tree.
+
+### The rule, now written down once
+
+`audits/INSTRUMENT-INVENTORY.md`:
+
+> An instrument is a **runnable** artefact that produces a number or a verdict
+> which a document or a claim then cites.
+
+with the three consequences that were each got wrong once — membership decided
+by `file -b` and the executable bit rather than by extension; **sources** counted
+and their compiled artefacts not (`outside-battery-check` and
+`restart-report-label-test` are Mach-O outputs of counted `.cpp` sources, and
+counting them double-counts); and **producers** counted, not the manifests and
+reference data they cite.
+
+Applying it gives **70 live**, their number exactly, with the one apparent
+residual explained by the artefact rule. Frozen stays **79**, counted apart
+because it is **dated evidence**: re-running it would not re-date it, and
+changing it would destroy it.
+
+### What it cost, and what it did not
+
+`OC-64` swept 33 shell files against an unstated denominator. **33 of 70 is
+under half.** The four missed runnable artefacts have since been swept for both
+patterns: none has an interpreter heredoc at all, and `selftest`'s `PASS` is
+guarded by `fail_count -eq 0`. So `OC-64`'s conclusion — zero remaining
+instances of either pattern — **survives the correct denominator**. It held by
+luck of which files happened to carry the pattern, not by the sweep's design,
+and that distinction is the finding.
+
+**Two careful readers disagreeing by seventeen is itself the finding**, and the
+reason is that neither inventory was written down. One of the two had been the
+basis of a reported sweep. Now a sweep cites the inventory file and the rule it
+applied, and a reader can reproduce the count with the command in it.
