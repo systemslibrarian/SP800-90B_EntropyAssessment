@@ -6236,3 +6236,101 @@ a corrupted reference, which the fixture manifest's digests also guard, but **a
 comparison tool must not report agreement when it compared nothing.** It now
 counts comparisons, refuses zero, and prints the count it made (59 on a genuine
 pair).
+
+---
+
+## OC-67 — every reported denominator, re-derived; and SHAPE-07's third instance fixed
+
+`OC-65` corrected one sweep's denominator. The deeper point is that **every
+sweep this project has reported had a denominator, and every one was derived by
+hand in the command line that produced it.** None was reproducible. So each is
+re-derived here against `audits/INSTRUMENT-INVENTORY.md`.
+
+This is a counting exercise. Where a denominator was understated, the sweep's
+conclusion is not automatically wrong — but it held **by luck of which files
+carried the pattern**, not by design, and each is marked accordingly rather
+than silently re-run.
+
+### The pairs
+
+| sweep | its enumeration rule, as actually used | reported | canonical rule, same scope | understated? |
+|---|---|---:|---:|---|
+| **`DEAD-GUARD-SWEEP.md`**, fork at `f069898` | "every tracked shell script" = `git ls-files '*.sh'` | **32** | 36 shell-family instruments | **yes, by 4** |
+| **`OC-64`** shape sweep | `*.sh` under five named directories | **33** | 70 live instruments | **yes** (corrected in `OC-65`) |
+| **`OC-63`** parameter sweeps | nine files named by hand | **9 files / 29 sweeps** | 36 live instruments contain a sweep construct | **yes, as a candidate set** |
+| **rule-7 negative-fixture sweep** | `regression-*.sh` plus named extras | **28 scripts** | 36 shell-family instruments | **yes, by ~8** |
+| **`OC-66`** SHAPE-07/03 aggregates | nine aggregates named by hand | **9** | — | hand-picked, but exhaustive for "reports one number over components" |
+| **instrument inventory** | extension-matched glob | **53** | **70 live / 79 frozen** | **yes** (`OC-65`) |
+| "792 status-bearing commands" | *the outside session's figure, not mine* | — | — | **cannot re-derive**: I do not have its enumeration rule |
+
+### The sharpest one, because the sweep could not see its own example
+
+`DEAD-GUARD-SWEEP.md`'s method lists, in its own words, *"a check driven by an
+extraction that can return the empty set, with no assertion on the size of that
+set"*. That is **exactly** `compareresults.pl`'s defect — and
+`compareresults.pl` is `SHAPE-03`'s named worked example. Its rule was
+`git ls-files '*.sh'`, so **the file that exemplified the pattern was invisible
+to the sweep that defined the pattern**, and it was still broken when `OC-66`
+finally looked at it yesterday.
+
+All four files that rule could not see existed at `f069898`, the sweep's own
+commit: `cpp/selftest/selftest`, `cpp/selftest/generate-refdata`,
+`cpp/selftest/compareresults.pl`, `truepad-unattested-tools.mjs`. One of the
+four was genuinely broken. **A hit rate of one in four among the invisible set,
+against seven real dead guards found in the thirty-two visible ones**, is not a
+reason to assume the rest are clean.
+
+### Which are worth re-running on the corrected set, and which are not
+
+| sweep | re-run? | why |
+|---|---|---|
+| **`DEAD-GUARD-SWEEP.md`** | **YES, highest value** | a demonstrated hit among the four it could not see, and its detectors (`deadguard.py`, `vacuous2.py`) cover only `.sh` by construction — which is the Group 4 item about wiring or retiring them |
+| **`OC-63`** parameter sweeps | **YES** | the generators sweep parameters and were excluded entirely by a hand-picked file list |
+| **`OC-64`** shape sweep | **already done** | the four missed artefacts were swept in `OC-65`; conclusion held |
+| **rule-7 negative fixtures** | **low value** | the missed artefacts hold no negative fixtures: `selftest` and `generate-refdata` build and compare, they do not construct inputs expected to be refused |
+| **`OC-66`** aggregates | **no** | enumerated by behaviour ("reports one number over components") rather than by file type, so the extension blind spot does not apply |
+
+**The general defect is not an extension pattern and is not fixed by adding
+`.pl` to one.** It is that a sweep's scope was expressed as a glob in a shell
+history rather than as a rule in a file. `audits/INSTRUMENT-INVENTORY.md` is the
+fix; citing it is the obligation.
+
+### SHAPE-07's third instance, fixed
+
+`C22c` was stored as the maximum over estimator families, with the components
+discarded — and that is how `OC-59` happened. The same remedy as the other two:
+**emit the components, name the binding one, keep the margin.**
+
+```
+  C22c ZALPHA vs the literal 2.576         3.360e-03    derived ceiling, at n = 1000000
+      compression  3.360e-03   <- BINDS
+      collision    7.840e-04
+      proportion   6.887e-05
+      binding family: compression; margin to collision: 2.576e-03 bit (4.3x)
+```
+
+A figure whose binding family cannot be identified cannot be audited by anyone,
+including by me next month. `C22C_BY_N` is now **derived** from the family
+table rather than stored beside it, so the maximum cannot drift from its
+components.
+
+### The diagnostic method, recorded because it is reusable
+
+> **When two inventories disagree, find the subset where they agree.**
+
+The outside session counted 70 live and 79 frozen; I had 53. The **frozen
+counts matched exactly at 79 on the first attempt**, and that single fact did
+all the work: it localised the disagreement to the live set, which meant the
+disagreement was about the **rule** and not about the tree — because an
+inventory that mis-enumerated the tree would have missed in both halves.
+
+That is faster than arguing about totals, and it points at the definition
+instead of the count. Recorded as its own entry in
+`audits/BUG-REPAIR-GUIDE.md`, deliberately not attached to any numbered rule
+while the numbering is being repaired (Group 3).
+
+**Why it works, stated generally:** an inventory that mis-enumerates the *tree*
+misses in every subset. An inventory that applies the wrong *rule* misses only
+where the rule bites. So agreement on one subset and disagreement on another
+localises the fault to the definition — and names the subset where the
+definitions differ.

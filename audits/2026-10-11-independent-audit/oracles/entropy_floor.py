@@ -99,7 +99,30 @@ C22B = 0.0             # P_global' at/near N == 1: conservative at every N, noth
 # ZALPHA versus the literal 2.576 (OC-22). Measured at two bitstring lengths;
 # the ceiling DECREASES with n (dX' ~ sigma_max/sqrt(v), v ~ n/6), so the value
 # measured at the largest n not exceeding the actual n is an upper bound.
-C22C_BY_N = ((8_000_000, 2.16e-3), (1_000_000, 3.36e-3))
+# SHAPE-07 APPLIED HERE (OC-67). C22c is a MAX OVER ESTIMATOR FAMILIES, and it
+# used to be stored as that maximum alone. The components were discarded, and
+# that is exactly how OC-59 happened: I derived the Collision family, compared
+# it against this number, found a consistent 4.5x gap and reported the RECORD as
+# unreproduced -- when the number is the COMPRESSION ceiling and Collision is
+# 4.3-4.6x smaller. The aggregate had hidden which family bound.
+#
+# So the components are carried, the binding one is named, and the margin to
+# the runner-up is kept. A figure whose binding family cannot be identified
+# cannot be audited by anyone, including me next month.
+#
+# Values from OC-22 Part 3; reproduced independently where checkable by
+# oracles/zalpha_ceiling_by_n.py (OC-62).
+C22C_FAMILIES_BY_N = (
+    (8_000_000, {'compression': 2.16e-3, 'collision': 4.66e-4, 'proportion': 6.887e-5}),
+    (1_000_000, {'compression': 3.36e-3, 'collision': 7.84e-4, 'proportion': 6.887e-5}),
+)
+C22C_BY_N = tuple((n0, max(f.values())) for n0, f in C22C_FAMILIES_BY_N)
+
+def c22c_families(n):
+    for n0, f in C22C_FAMILIES_BY_N:
+        if n >= n0:
+            return f, n0
+    return None, None
 
 def c22c(n):
     for n0, b in C22C_BY_N:
@@ -316,12 +339,22 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     print("    the constant's argmax is interior in every swept axis, and extending the one")
     print("    arbitrary axis nine orders left it bit-identical, so it is a supremum (OC-63).")
     print("  C22b P_global' at N == 1                 %.3e    conservative at every N" % C22B)
+    fam, fam_n = c22c_families(n)
     print("  C22c ZALPHA vs the literal 2.576         %.3e    derived ceiling, at n = %d" % (bz, bz_n))
-    print("    The binding estimator is COMPRESSION (bitstring), whose com_exp is stationary at")
-    print("    p = 1/64 so the sensitivity is quadratic on the approach to its cap. Reproduced")
-    print("    independently where it can be: num_blocks and dX' to three significant figures,")
-    print("    and the collision family's whole ceiling to 0.07% (OC-62). Its fall with n is")
-    print("    measured, not asserted: oracles/zalpha_ceiling_by_n.py.")
+    if fam:
+        # SHAPE-07: emit the components, name the binding one, keep the margin.
+        ranked = sorted(fam.items(), key=lambda kv: -kv[1])
+        binding, bval = ranked[0]
+        runner, rval = ranked[1]
+        for name, val in ranked:
+            print("      %-12s %.3e%s" % (name, val, "   <- BINDS" if name == binding else ""))
+        print("      binding family: %s; margin to %s: %.3e bit (%.1fx)"
+              % (binding, runner, bval - rval, bval / rval if rval else float('inf')))
+    print("    COMPRESSION binds because com_exp is stationary at p = 1/64, so the sensitivity is")
+    print("    quadratic on the approach to its cap and sigma_max carries a log2(num_blocks).")
+    print("    Reproduced independently where checkable: num_blocks and dX' to three significant")
+    print("    figures, and the collision family's whole ceiling to 0.07% (OC-62). Its fall with")
+    print("    n is measured, not asserted: oracles/zalpha_ceiling_by_n.py.")
     # A02: C01 is excluded at width 1 by proof, and is a MARGIN above it.
     c01 = 0.0 if w == 1 else C01
     certified = (w == 1)

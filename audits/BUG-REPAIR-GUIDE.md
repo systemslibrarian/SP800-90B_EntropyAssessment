@@ -411,3 +411,32 @@ a sweep cites it (`OC-65`).
 This generalises the earlier merge rule about files that enumerate other files:
 **that** was about a file whose content lists other files, **this** is about a
 record whose truth references repository state of any kind.
+
+### Diagnostic — when two inventories disagree, find the subset where they agree
+
+Not a rule about instruments; a method for resolving a disagreement about
+counts, which is what every *"N examined"* figure rests on.
+
+**The method.** Two readers report different totals for the same thing. Do not
+argue about the totals, and do not recount from scratch. **Partition both
+inventories and find a subset where they agree exactly.**
+
+**Why it works.** An inventory that mis-enumerates the *tree* misses in every
+subset. An inventory that applies the wrong *rule* misses only where the rule
+bites. So agreement on one subset and disagreement on another **localises the
+fault to the definition**, and names the subset where the two definitions
+differ.
+
+**How this was learned.** An outside session counted 70 live instruments and 79
+frozen; this session had reported 53. The **frozen counts matched exactly at 79
+on the first attempt**, and that single fact did all the work: the disagreement
+was confined to the live set, so it was about the rule rather than the tree.
+Comparing the two live enumerations then produced the answer in one step — an
+extension-matched glob cannot see `cpp/selftest/selftest`,
+`cpp/selftest/generate-refdata` or `compareresults.pl` (`OC-65`).
+
+**The corollary.** Write the inventory down, in a file, with the rule and a
+reproduction command — `audits/INSTRUMENT-INVENTORY.md`. A denominator that
+exists only in the shell history that produced it cannot be re-derived, cannot
+be cited, and cannot be found wrong. Every sweep this project had reported was
+in that state (`OC-67`).
