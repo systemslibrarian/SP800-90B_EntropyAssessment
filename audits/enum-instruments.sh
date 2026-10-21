@@ -88,4 +88,14 @@ fi
 mech=$(enumerate "$LIVE" | wc -l | tr -d ' ')
 lc=$(limb_c_count)
 printf 'live:   %s  (%s mechanical + %s reviewed)\n' "$((mech + lc))" "$mech" "$lc"
-printf 'frozen: %s  (dated evidence, N/A to a live sweep)\n' "$(enumerate "$FROZEN" | wc -l | tr -d ' ')"
+# A BEHAVIOUR RULE IS PRESENT-TENSE, SO IT DOES NOT GOVERN FROZEN EVIDENCE.
+# Nothing invokes a frozen artefact now, and nothing should: what qualified it
+# was being invoked THEN. This rule gives 32 where the historical count is 79,
+# and reporting 32 as the frozen set would silently retire 47 artefacts that
+# were instruments when they produced evidence the record still cites. So this
+# script ASSERTS the live number and STATES the frozen one as historical,
+# naming what its own rule would have said so the gap is visible.
+frozen_by_this_rule=$(enumerate "$FROZEN" | wc -l | tr -d ' ')
+printf 'frozen: 79  (historical; this present-tense rule would say %s -- see\n' "$frozen_by_this_rule"
+printf '             audits/INSTRUMENT-INVENTORY.md for why it does not govern\n'
+printf '             dated evidence)\n'
