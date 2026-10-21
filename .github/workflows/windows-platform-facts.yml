@@ -31,7 +31,26 @@ name: Windows platform facts
 # Windows turns out not to be needed the measurement still closes `C18` and the
 # platform bucket permanently rather than leaving them parked on a guess.
 #
-# Manual trigger only, deliberately: this answers questions, it gates nothing.
+# Manual trigger only -- but IT NOW GATES (OC-70).
+#
+# The contract used to read "this answers questions, it gates nothing", and the
+# job was green with GATE FAIL lines in its log, because nothing derived an exit
+# status from the verdict file. A job that prints the word GATE and gates
+# nothing is the defect class this whole project exists to remove, so the word
+# was doing the damage: either it gates, or the lines stop being called GATE.
+# Gating is the better of the two.
+#
+# WHAT IT GATES ON IS A CHANGE, IN EITHER DIRECTION. Gating on "any FAIL" would
+# make the job permanently red on a true and stable fact about MSYS2's package
+# repositories, which is equally uninformative. So
+# .github/windows-expected-gates.txt lists the gates that are legitimately not
+# PASS today with the reason, and the tally fails the job on an UNEXPECTED
+# failure, or on an expected failure that has become a PASS -- because a changed
+# platform fact is exactly what this job exists to notice.
+#
+# SKIP never gates: a question that could not be put supports no claim either
+# way. And the tally REFUSES rather than reporting "0 failed" over an empty
+# verdict file, which is instrument rule 2 applied to this job's own summary.
 
 on:
   workflow_dispatch:
@@ -142,6 +161,14 @@ jobs:
             echo ``` >> %GITHUB_STEP_SUMMARY%
             echo ^</details^> >> %GITHUB_STEP_SUMMARY%
           )
+
+      - name: 8. Tally -- THIS GATES
+        if: always()
+        run: |
+          "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh tally" 2>&1
+        env:
+          MSYSTEM: MINGW64
+          CHERE_INVOKING: 1
 
       - uses: actions/upload-artifact@v4
         if: always()

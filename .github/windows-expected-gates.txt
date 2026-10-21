@@ -1,0 +1,22 @@
+# Gates that are legitimately NOT PASS on windows-latest today, with the reason.
+#
+# WHY THIS EXISTS (OC-70). The Windows job printed GATE FAIL lines and finished
+# GREEN, because nothing derived an exit status from the verdict file. A job
+# that prints the word GATE and gates nothing is the defect class this project
+# exists to remove. The decision taken was: make the tally gate.
+#
+# But gating on "any FAIL" would make the job permanently red on a true and
+# stable fact about MSYS2's package repositories, which is just as
+# uninformative. So the tally gates on a CHANGE: an unexpected FAIL fails the
+# job, AND an expected FAIL that has become PASS also fails it -- because a
+# changed platform fact is exactly what this job exists to notice, in either
+# direction.
+#
+# Format: one substring per line, matched against the gate's message. Keep the
+# reason with it. Adding a line is a deliberate statement that a platform fact
+# is known and stable; removing one is a statement that it changed.
+
+libdivsufsort has NO mingw-w64 package
+# Measured across four candidate package names. BUILDING.md's central Windows
+# claim, confirmed. If this ever PASSES, libdivsufsort has been packaged and the
+# from-source build step can be retired -- a change worth a red build.

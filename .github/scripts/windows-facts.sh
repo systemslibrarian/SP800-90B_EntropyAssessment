@@ -7,10 +7,13 @@
 # than reporting a verdict it did not earn.
 set -u
 mkdir -p logs
-STAGE=${1:?usage: windows-facts.sh deps|build|floats|r1|runtime|probe}
+STAGE=${1:?usage: windows-facts.sh deps|build|floats|r1|runtime|probe|tally}
 V=logs/verdict.log
 
 gate() { printf 'GATE %-6s %s\n' "$1" "$2" | tee -a "$V"; }
+# SKIP is a third outcome and NEVER gates: a question that could not be put
+# supports no claim either way. It is counted and named, not scored.
+skip() { printf 'GATE %-6s %s\n' SKIP "$1" | tee -a "$V"; }
 note() { printf '  %s\n' "$*"; }
 
 # The packages below are taken from cpp/Makefile, not guessed:
@@ -688,6 +691,56 @@ CEOF
   else
     gate FAIL "PROBE DEFECT: it concluded without calibrating on an unrecognised platform"
   fi
+  ;;
+
+tally)
+  # THE TALLY GATES (OC-70). It exits non-zero on a CHANGE in either direction:
+  # an unexpected FAIL, or an expected FAIL that has become PASS. SKIP never
+  # gates. And it REFUSES rather than reporting "0 failed" over nothing, which
+  # is instrument rule 2 applied to this job's own summary: a verdict file that
+  # is missing or empty means the stages did not run, and that is not a pass.
+  EXPECT=.github/windows-expected-gates.txt
+  if [ ! -s "$V" ]; then
+    echo "TALLY REFUSED: $V is missing or empty, so no stage recorded a verdict." >&2
+    echo "  A tally over nothing is not '0 failed'; it is 'nothing ran'." >&2
+    exit 2
+  fi
+  if [ ! -s "$EXPECT" ]; then
+    echo "TALLY REFUSED: $EXPECT is missing, so an unexpected failure cannot be" >&2
+    echo "  distinguished from a known platform fact." >&2
+    exit 2
+  fi
+  npass=$(grep -c '^GATE PASS' "$V" || true)
+  nfail=$(grep -c '^GATE FAIL' "$V" || true)
+  nskip=$(grep -c '^GATE SKIP' "$V" || true)
+  printf 'tally: %s pass, %s fail, %s skip (skip never gates)\n' "$npass" "$nfail" "$nskip"
+  rc=0
+  # (1) any FAIL not covered by the expected list
+  grep '^GATE FAIL' "$V" | while IFS= read -r line; do
+      msg=${line#GATE FAIL   }
+      if ! grep -v '^#' "$EXPECT" | grep -v '^[[:space:]]*$' \
+           | while IFS= read -r pat; do case "$msg" in *"$pat"*) echo hit; break;; esac; done \
+           | grep -q hit; then
+          printf 'UNEXPECTED FAILURE: %s\n' "$msg"
+      fi
+  done > logs/tally-unexpected.txt
+  if [ -s logs/tally-unexpected.txt ]; then
+      cat logs/tally-unexpected.txt >&2
+      rc=1
+  fi
+  # (2) an expected FAIL that now PASSES -- a changed platform fact
+  grep -v '^#' "$EXPECT" | grep -v '^[[:space:]]*$' | while IFS= read -r pat; do
+      if grep -q "^GATE PASS.*${pat}" "$V" 2>/dev/null; then
+          printf 'PLATFORM FACT CHANGED (now PASSES, was expected to fail): %s\n' "$pat"
+      fi
+  done > logs/tally-changed.txt
+  if [ -s logs/tally-changed.txt ]; then
+      cat logs/tally-changed.txt >&2
+      echo "  Update .github/windows-expected-gates.txt deliberately, saying what changed." >&2
+      rc=1
+  fi
+  [ "$rc" -eq 0 ] && echo "tally: every failure is a documented platform fact; nothing changed."
+  exit "$rc"
   ;;
 
 *) echo "unknown stage: $STAGE" >&2; exit 2 ;;
