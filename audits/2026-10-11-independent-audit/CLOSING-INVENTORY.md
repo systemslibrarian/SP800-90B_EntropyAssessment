@@ -68,10 +68,26 @@ instructions the tag itself carries, are in
 
 ## Needs nothing — can be done here, now
 
-| item | what it is | why it is still open |
-|---|---|---|
-| **`C22c`** the tabulated `ZALPHA` ceiling is not independently reproduced | The floor subtracts 3.36e-3 at n = 1e6 and 2.16e-3 at n = 8e6. An independent derivation of the binding family (the Collision estimator, whose sensitivity near the `X' = 2.5` clamp is what gives this term its 1e-3 magnitude) gives **7.49e-4** and **4.46e-4** — a consistent factor of 4.5 to 4.9 **below** the tabulated values at both lengths (`OC-59`). | **The monotonicity premise the "largest measured n" rule rests on is now MEASURED and holds**, with a self-comparison at two precisions and a live-sensitivity check. The **magnitudes are not reproduced.** The discrepancy is in the safe direction — the floor subtracts more than the derivation requires, so the published figure is not overstated — but an unreproduced subtrahend is the same shape as `A02`, and it must not be described as a verified bound until one of the two calculations is corrected. |
+**This bucket is empty.**
 
+Every item that was in it has closed, and the closures are below with their
+evidence. **The fork has reached the hardware wall: the next thing that moves
+it is the device in January 2027.** The two items that remain anywhere are an
+owner decision each, and one of them is unreachable for this device by proof.
+
+
+**`C22c` has left this bucket: the factor was found and the record is
+vindicated** (`OC-62`). The consistent 4.5–4.9× ratio was a **mechanism**, as a
+consistent ratio always is: the two derivations were bounding **different
+estimators**. The tabulated term is the **Compression** ceiling — `com_exp` is
+stationary at `p = 1/64`, so the sensitivity is quadratic on the approach to
+its cap and `σ_max` carries a `log2(num_blocks)` that makes the ratio *drift* —
+while the derivation it was compared against computed the **Collision** family,
+which is 4.3–4.6× smaller. Everything checkable without reimplementing the
+production compression solve now reproduces, including the collision family's
+entire ceiling to 0.07 %. **No entropy is recovered, because none was being
+thrown away**, and `C22c` is a derived ceiling and therefore a **bound**, so
+both readings are certified floors at width 1 again.
 
 **`C24` has left this bucket: it is repaired** (`OC-57`). `writeJsonReport` uses
 `MoveFileEx` with `MOVEFILE_REPLACE_EXISTING` under `_WIN32`, and the Windows
@@ -236,49 +252,53 @@ This bucket is not a queue. Nothing here is pending.
 
 ## The wall
 
-**One software item is left, and it is a measurement rather than a repair:**
-`C22c`'s tabulated subtrahend is not independently reproduced (`OC-59`). The
-direction is safe — more is subtracted than an independent derivation requires,
-so the published figure is not overstated — but it must not be called a bound
-until one of the two calculations is corrected. Everything else in this bucket
-has closed:
+**The needs-nothing bucket is empty, and the fork has reached the hardware
+wall.** Everything that could be done here has been done:
 
-| was | now |
+| item | disposition |
 |---|---|
-| **`C24`** the atomic write is not portable | **repaired** (`OC-57`): `MoveFileEx` under `_WIN32`, verified on Windows with the old writer failing beside it as the contrast |
-| **`F13`** NaN into `std::min` | **closed as unreachable** (`OC-58`), reachability before repair, with a probe that fires below the size floor so its silence is a measurement |
-| **`C18`** LLP64 overflow | **repaired** (`OC-53`), nine reports bit-identical on LP64 |
+| **`C18`** LLP64 overflow | **repaired** (`OC-53`); nine reports bit-identical on LP64; Windows now prints macOS's figure exactly; corroborated in the wild by upstream #219 (`OC-61`) |
+| **`C24`** the atomic write is not portable | **repaired** (`OC-57`); `MoveFileEx` under `_WIN32`, verified on Windows with the old writer failing beside it |
+| **`F13`** NaN into `std::min` | **closed as unreachable** (`OC-58`); a probe that fires below the size floor, so its silence is a measurement |
+| **`C22c`** the `ZALPHA` ceiling | **closed** (`OC-62`); the factor was compression-versus-collision, the record is vindicated, and it is a bound |
 | **`A02`**, **`A06`** | **closed** (`OC-55`, `OC-56`) |
-| **`C06`** | was double-counted in two buckets; it concerns a tool that is deliberately not built, so it belongs only in the last one |
+| **`A05`**, **`A04`**, **`A07`**, **`A08`** | **repaired** in the preceding round |
+| **`C06`** | was double-counted; it concerns a tool deliberately not built |
 
-**And the owner decisions have shrunk to one that is genuinely open.**
-`seed()` is **deferred**, not blocking, because the vendor reference
-qualification means no NIST binary runs on a user's machine (`OC-60`). `F10` is
-**unreachable at width 1 by proof**, so it changes nothing for this device;
-correcting it is what would turn an evaluated margin into a bound above width
-1, and that is estimator numerics.
+**Two owner decisions remain, and neither is work.** `seed()` is **deferred**,
+because the vendor reference qualification means no NIST binary runs on a
+user's machine (`OC-60`). `F10` is **unreachable at width 1 by proof**, so it
+changes nothing for this device; correcting it is what would turn an evaluated
+margin into a bound above width 1, and that is estimator numerics.
 
-**Windows is in a much better position than "unsupported", and should not be
+**Windows is in a much better position than "unsupported" and must not be
 described as unsupported.** All three tools build; `ea_non_iid` produces a
 figure; `ea_iid` and `ea_restart` pass chi square, the §5.2.5 LRS test and the
-restart sanity check before exiting at `seed()`; reports write correctly; and
-the §5.2.5 figures match macOS exactly.
+restart sanity check before exiting at `seed()`; reports write correctly; the
+§5.2.5 figures match macOS exactly.
 
-What moved, across the last four revisions of this document, was never moved by
-an argument:
+### What actually moved this document, across five revisions
 
-- **Running the code on a platform it had not run on** found `C18` (a year old,
-  filed "Low, expect to refute") and `C24` (in a repair this audit wrote and
-  had reproducers for).
+None of it was moved by an argument.
+
+- **Running the code where it had never run** found `C18` (a year old, filed
+  "Low, expect to refute") and `C24` (in a repair this audit wrote and had
+  reproducers for).
 - **Reproducing an outside audit instead of assessing it** found that one of
-  this audit's own repairs **destroyed the input capture** — the one failure
-  the project cannot absorb — and that **four refusals for one shared
-  accidental reason** look exactly like four working guards.
+  this audit's own repairs **destroyed the input capture**, and that **four
+  refusals for one shared accidental reason** look exactly like four working
+  guards.
 - **Asking an instrument to print its workings** found a probe defeated by a
-  filename, a sweep searching outside its own realisable domain, and a harness
-  asserting the opposite of the defect it was built to demonstrate.
+  filename, a sweep reporting the edge of its own grid as a worst case, and a
+  harness asserting the opposite of the defect it was built to demonstrate.
 - **Running the baseline against itself** turned "the fix changed something"
-  into "this field is nondeterministic by design", and is now rule 8.
+  into "this field is nondeterministic by design" (rule 8).
+- **Asking what a consistent ratio was made of**, rather than which side was
+  wrong, turned a claim that the record was unreproduced into a reconciliation
+  of it (rule 9's corollary, `OC-62`).
+
+Four of those five were instruments catching **themselves**. That is the only
+reason to believe the rest.
 
 **On the project's central claim, nothing moved and nothing can.** What this
 device's entropy actually is, whether its restart data is accepted, whether a

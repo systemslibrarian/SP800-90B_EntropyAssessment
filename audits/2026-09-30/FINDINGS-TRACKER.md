@@ -116,11 +116,17 @@ the upstream position and this fork's position are never conflated.
   same as universal resolution: N-03, N-05 and N-11 remain unfixed in
   `ea_conditioning`; the conditioning instances of N-08 and N-10 also remain.
   Commit `876ba05` excludes that executable from `make all`, and
-  **`C18` is repaired (2026-10-20) and had upstream prior art**: issue **#219**,
-  "Windows MinGW: `ea_iid` LRS test `Pr(X>=1)` negative -> Failed", still open
-  and filed as "platform / library" at LOW severity when the mechanism is a
-  32-bit `long` in `n_choose_2`'s product (`OC-61`). Nothing reported upstream;
-  recorded for severity.
+  **`C18` is repaired (2026-10-20) and is corroborated externally**: upstream
+  issue **#219**, open about a year, records exactly its symptom — "Windows
+  MinGW: `ea_iid` LRS test `Pr(X>=1)` negative -> Failed" at
+  `lrs_test.h len_LRS_test` — filed as "platform / library" at **LOW** severity
+  when the mechanism is a 32-bit `long` in `n_choose_2`'s product (`OC-61`).
+  That **corroborates the symptom in the wild**, hit independently on the same
+  platform in the same function, so `C18` is real and reachable rather than an
+  artifact of this tree. It **does not validate the repair** — #219 carries no
+  mechanism, which is what it lacked — and nothing is reported upstream. The
+  pair is also the worked example behind instrument rule 10: severity inherited
+  from an unknown mechanism is a guess.
 
   `regression-docs.sh` fails if it enters the supported build. R-1 is no longer
   blocked: it was never a hardware-blocked item, because it is a `long double`

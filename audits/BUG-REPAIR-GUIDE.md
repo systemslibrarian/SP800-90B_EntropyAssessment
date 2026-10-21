@@ -302,3 +302,73 @@ finding because the measurement was trustworthy enough to believe.
 | run the unchanged thing against itself first | assume which fields are stable |
 | exclude a field because it was *measured* to vary | exclude it because it looks like it might |
 | perturb and confirm the comparator fires | report "identical" from a comparator you never tested |
+
+### Rule 9 — a sweep's extremum at a boundary is a lower bound, not an extremum
+
+A sweep that reports its maximum at the first or last point of its own range
+has not found a maximum. It has found **the edge of where it looked**, and the
+true extremum is outside that range or at least unbounded by the search.
+
+**The obligation.** Any sweep reporting an extremum at a domain boundary must
+either
+
+- **extend the domain until the extremum moves inside**, or
+- **state that the result is a boundary value**, and therefore a *lower bound
+  on* the extremum rather than the extremum itself.
+
+**The exception, and it is the common case here.** A boundary that is a
+**physical or mathematical limit** is not an arbitrary edge: a proportion from
+a non-zero count cannot go below `1/n`; a count is an integer in `[0, N]`; an
+alphabet size is `2..256`. An extremum sitting on *that* kind of edge is
+legitimate, and the right thing is to say which limit it is. What is not
+legitimate is an extremum sitting on a window the author chose.
+
+**How this was learned.** Deriving the `C22c` ceiling, a sweep over `p` ran
+down to `1e-6` and then refined to `p0/4`, reporting its worst case at
+**`p = 2.5e-07`** — below `1/n`, a proportion no count can produce. The gap
+grows without limit as `p → 0`, so the sweep reported the edge of its own grid
+and called it a worst case (`OC-59`, corrected in `OC-62`). Constraining the
+domain to `p ≥ 1/n` moved the maximum onto that physical edge, where it
+belongs, and it then matched the closed form exactly.
+
+| do | instead of |
+|---|---|
+| bound the domain by the physical limit and say which limit | pick a search window and sweep it |
+| check the extremum is interior, or name the limit it sits on | report `max(...)` over a grid |
+| extend until the extremum moves inside | refine around a boundary value |
+
+A corollary from the same correction: **a bound computed from a typical value
+is not a bound.** The collision ceiling came out 4.6% low because the sweep
+used `v = n/2.5`, a typical collision count, where the record bounds
+`v ≥ n/3`. The arithmetic was right and the quantity was not a ceiling.
+
+### Rule 10 — severity inherited from an unknown mechanism is a guess
+
+A finding whose **mechanism is unknown** carries its severity as
+**unestablished**, not as a number inferred from the category it was filed
+under. "Platform", "library", "environment" are **hypotheses about a cause**,
+not observations, and a severity derived from one inherits its uncertainty.
+
+**How this was learned.** Upstream issue #219 recorded exactly the `C18`
+symptom — `ea_iid`'s §5.2.5 test printing a negative `Pr(X≥1)` on Windows
+MinGW — and filed it as **platform / library, severity LOW**. It sat open for
+about a year. The actual mechanism is a **32-bit `long`** overflowing inside
+`n_choose_2`'s product, which makes a required test fail **unconditionally
+whatever the data**. This audit's own clustering had it as "`C18`, Low, expect
+to refute" for the same reason.
+
+The misclassification was reasonable on the evidence available: a negative
+probability from an integer overflow and one from a mismatched library look
+identical from outside. That is exactly why the severity could not be inferred
+from it.
+
+| do | instead of |
+|---|---|
+| record severity as unestablished until the mechanism is | assign severity from the suspected category |
+| treat "platform" as a hypothesis to test | treat it as a classification that caps impact |
+| re-rank when the mechanism lands | leave the original rank in place |
+
+The companion observation is that **external corroboration of a symptom is not
+validation of a fix**: #219 confirms the symptom exists in the wild, and
+confirms nothing about whether widening the type is correct. That rests on its
+own evidence.

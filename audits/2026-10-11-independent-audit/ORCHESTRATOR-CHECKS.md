@@ -5693,6 +5693,138 @@ here, because the evidence was already in the tree.
 
 **Nothing is reported upstream** — the standing decision of 2026-10-15 holds,
 and `UPSTREAM-REPORT-INVENTORY.md` records what is wrong with the tool being
-run without sending it. The prior art is recorded for severity and for the
-register: `C18` was never a speculative LLP64 concern, it was an **observed
-upstream defect** whose cause had been misfiled.
+run without sending it.
+
+### Cited as corroboration: what it does and does not establish
+
+| | |
+|---|---|
+| **issue** | upstream **#219** |
+| **age** | open for approximately one year at the time of this entry (2026-10-20) |
+| **symptom recorded** | "Windows MinGW: `ea_iid` LRS test `Pr(X≥1)` negative → Failed" |
+| **site recorded** | `lrs_test.h len_LRS_test` (+ a user `seed()` change) |
+| **classification recorded** | **platform / library**, severity **LOW**, "Windows not supported" |
+
+**What it establishes.** That the symptom exists **in the wild**, hit
+independently by someone who is not this project, on the same platform, in the
+same function. `C18` is therefore **real and reachable**, not an artifact of
+this tree, this toolchain, or this session's instruments. That is independent
+external corroboration and it is worth more than a second run of my own
+reproducer.
+
+**What it does not establish.** It does **not** validate the repair. #219
+contains no mechanism — that is precisely what it lacked — so it cannot confirm
+that widening `n_choose_2` is the right fix, only that something on that path
+was wrong. The repair rests on its own evidence: the exact reproduction of the
+printed value from the integer arithmetic alone, the LP64 bit-identity
+measurement, and the Windows run now printing macOS's figure. **And nothing is
+being sent anywhere.**
+
+### What the pair demonstrates about severity triage
+
+A symptom classified as a **low-severity platform/library issue** was in fact
+an **integer overflow producing a negative probability**, which made a required
+§5.2.5 test fail unconditionally whatever the data. The misclassification was
+reasonable on the evidence available — a negative probability from an integer
+overflow and one from a mismatched library look identical from outside — and
+that is the point: **the category a symptom falls into is a guess until the
+mechanism is known, and severity inherited from that guess is a guess too.**
+
+The practical rule, recorded in `audits/BUG-REPAIR-GUIDE.md`: a finding whose
+**mechanism is unknown** should carry its severity as *unestablished* rather
+than as a number inferred from the category it was filed under. "Platform"
+is a hypothesis about a cause, not an observation.
+
+---
+
+## OC-62 — the C22c factor found: it is compression versus collision, and OC-59's conclusion was wrong
+
+> **This entry supersedes `OC-59`'s conclusion.** `OC-59` reported that
+> `C22c`'s tabulated values "are not independently reproduced", on the strength
+> of a derivation that came out a consistent 4.5–4.9× below them. The ratio was
+> a mechanism, as a consistent ratio always is, and the mechanism is that **the
+> two derivations were bounding different estimators.** The tabulated values
+> are correct.
+
+### The factor
+
+`OC-22` Part 3 derives the `ZALPHA` ceiling **per estimator** and takes
+`C22c` as the **maximum over estimators**. There are three families, and they
+differ by more than an order of magnitude:
+
+| family | mechanism | ceiling at n = 1e6 | at n = 8e6 |
+|---|---|---:|---:|
+| proportion (MCV, t-Tuple, LRS, `P_global'`) | `p_u = p̂ + z·sqrt(p̂(1−p̂)/(n−1))`; closed form `Δz/((1+z)ln2)` | 6.887e-05 | 6.887e-05 |
+| **Collision** | `dH/dX'` diverges at the `X' = 2.5` cap but `H` is capped, so `max ΔH = (2/ln2)·sqrt(ΔX'/2)` | 7.84e-04 | 4.66e-04 |
+| **Compression — THIS IS THE ONE THAT BINDS** | `com_exp` is **stationary at p = 1/64**, so the sensitivity is quadratic on the approach to its cap, and `σ_max` carries a `log2(num_blocks)` | **3.36e-03** | **2.16e-03** |
+
+`OC-59` computed the **Collision** family and compared it against the
+**Compression** tabulation. The "unexplained" ratio was simply
+compression/collision, 4.29 and 4.64 from the record's own rows — and it
+*drifted* precisely because `σ_max = 0.5907·log2(num_blocks)/2` grows with `n`
+while the collision bound has no such factor. A clean constant would have meant
+a single misplaced multiplier; the drift said the expressions differ in form,
+which they do.
+
+### Reproduced, where it can be checked independently
+
+`oracles/zalpha_ceiling_by_n.py` now computes all three families, bounding each
+quantity the way the record bounds it:
+
+| quantity | n | recorded | derived here | |
+|---|---:|---:|---:|---|
+| collision ΔX' | 1e6 | 1.480e-07 | 1.478e-07 | ✓ |
+| collision ceiling | 1e6 | 7.840e-04 | 7.845e-04 | ✓ |
+| collision ceiling | 8e6 | 4.660e-04 | 4.664e-04 | ✓ |
+| compression `num_blocks` | 1e6 | 166 666 | 166 667 | ✓ |
+| compression ΔX' | 1e6 | 2.15e-06 | 2.142e-06 | ✓ |
+| compression ΔX' | 8e6 | 8.89e-07 | 8.884e-07 | ✓ |
+| compression ceiling | both | 3.36e-03 / 2.16e-03 | **not reimplemented, deliberately** | — |
+
+The final compression ceiling comes from scanning `X'` down from the cap
+`G(1/64)` **through the production solve**. This script does not reimplement
+that solve, and that is a choice rather than a gap: a harness that
+re-implemented production functions instead of calling them, and disagreed with
+the tool, is `OC-41`. What can be checked without reimplementing production —
+`num_blocks`, `σ_max`, `ΔX'`, and the collision family's *entire* ceiling to
+0.07 % — reproduces.
+
+**And the second error in `OC-59`'s derivation, which rule 9 now covers:** its
+collision figure used `v = n/2.5`, a *typical* collision count, where the record
+bounds `v ≥ n/3`. That alone accounts for the residual 4.6 %. **A bound
+computed from a typical value is not a bound**, even when the arithmetic is
+right.
+
+### What this changes
+
+**No entropy is recovered, because nothing was being thrown away.** `OC-59`
+said the term was "conservative by a factor of roughly 4.7" and invited the
+question of how much entropy the correction would recover at the operating
+point. The answer is **none**: the tabulated value is the correct ceiling for
+the binding estimator, and the factor was my own misidentification. At the
+width-1 operating point the term stands at **3.36e-03 bit** under the literal
+reading and **0** under `F07`'s, exactly as before.
+
+**`C22c` is a bound, so the floor labels revert.** It is a *derived ceiling* —
+from `Δz`, the estimator's cap, `n`, Popoviciu's `σ_max` and `v ≥ n/3` — not an
+observed maximum. So at width 1, where `C01`/`F10` is excluded by proof, **both
+readings are certified floors** again:
+
+| | literal reading | F07 reading |
+|---|---|---|
+| width 1 | **CERTIFIED FLOOR**, 0.84129042387787445 | **CERTIFIED FLOOR**, 0.84465042387787448 |
+| width > 1 | EVALUATED MARGIN (`C01`/`F10`) | EVALUATED MARGIN (`C01`/`F10`) |
+
+The propagation machinery built for `OC-59` was right and is kept: labels
+follow the **terms**, not the report, and `regression-docs.sh` still refuses any
+document that writes "certified floor" without saying which width or reading.
+What changed is one input to it.
+
+### The lesson, which is not the one OC-59 drew
+
+`OC-59` treated a disagreement between my derivation and the record as evidence
+against **the record**. A consistent ratio between two derivations is evidence
+that they are computing **different things**, and the first question is which —
+not which one is wrong. Had I asked that, the answer was one line away in
+`OC-22` Part 3's own table, which lists the collision and compression ceilings
+side by side with compression 4.3× larger.
