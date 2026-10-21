@@ -58,6 +58,8 @@ using namespace std;
 #endif
 
 #include <cerrno>
+#include <fcntl.h>   // O_CREAT|O_EXCL|O_NOFOLLOW for the temp write (F03)
+#include <ctime>
 
 enum FileIdentity { FILES_DISTINCT, FILES_SAME, FILES_UNDETERMINED };
 
@@ -270,21 +272,108 @@ bool writeJsonReport(const string &path, const string &json) {
         return false;
     }
 
-    const string tmp = path + ".tmp." + std::to_string((long)getpid());
+    // F03 (OC-77): THE GUARD MUST COVER EVERY WRITE PATH, NOT THE ENTRY POINT.
+    //
+    // The identity check above protects the FINAL report path. The temporary
+    // was `path + ".tmp." + getpid()` -- predictable -- and was opened with
+    // std::ios::trunc, which FOLLOWS A SYMLINK. Measured: an open of that
+    // shape through a symlink pointing at a 1,000,000-byte capture left the
+    // capture 15 bytes long. So the alias guard was at the front door while
+    // the temporary was an unguarded second one, and in January the input is a
+    // capture that cannot be recreated.
+    //
+    // Four changes, each closing a separate part of it:
+    //   1. O_CREAT|O_EXCL -- the open FAILS if anything exists at that path,
+    //      including a symlink. This alone defeats the planted-symlink case,
+    //      because O_EXCL does not follow one.
+    //   2. O_NOFOLLOW as well where it exists, so the refusal is explicit
+    //      rather than incidental.
+    //   3. a RANDOM suffix instead of the pid, so the path cannot be guessed
+    //      and pre-created in the first place.
+    //   4. the temporary is checked against the protected input like any other
+    //      write target, and fstat'd after opening to confirm it is the
+    //      regular file we just created and that we own it -- an open that
+    //      succeeded is not proof of what it opened.
+    string tmp;
+    int fd = -1;
+    for (int attempt = 0; attempt < 8 && fd < 0; attempt++) {
+        char suffix[24];
+        unsigned long r1 = (unsigned long) time(NULL) ^ ((unsigned long) getpid() << 16);
+        // a second, independent draw so two processes in the same second differ
+        unsigned long r2 = 0;
+        {
+            FILE *rf = fopen("/dev/urandom", "rb");
+            if (rf) { if (fread(&r2, sizeof(r2), 1, rf) != 1) r2 = 0; fclose(rf); }
+        }
+        if (r2 == 0) r2 = (unsigned long) (attempt * 2654435761UL) ^ r1;
+        snprintf(suffix, sizeof(suffix), ".tmp.%08lx%08lx",
+                 (unsigned long)(r1 & 0xffffffffUL), (unsigned long)(r2 & 0xffffffffUL));
+        tmp = path + suffix;
 
-    {
-        ofstream output;
-        output.open(tmp.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
-        if (!output) {
-            fprintf(stderr, "Error: could not create the temporary output file '%s'.\n", tmp.c_str());
+        // (4) the temporary is a write target, so it gets the same check
+        if (!g_protectedInputPath.empty()
+            && sameFileIdentity(tmp.c_str(), g_protectedInputPath.c_str()) != FILES_DISTINCT) {
+            fprintf(stderr,
+                "Error: the temporary output path '%s' is the same file as the input\n"
+                "       '%s' (or that cannot be ruled out). Nothing has been written.\n",
+                tmp.c_str(), g_protectedInputPath.c_str());
             return false;
         }
 
-        output << json;
-        output.close();
+        int flags = O_WRONLY | O_CREAT | O_EXCL;
+#ifdef O_NOFOLLOW
+        flags |= O_NOFOLLOW;
+#endif
+#ifdef O_BINARY
+        flags |= O_BINARY;
+#endif
+        // 0666, not 0600, so the PROCESS UMASK decides exactly as the
+        // ofstream this replaced did. Measured: creating at 0600 delivered
+        // reports mode 0600 where the pre-repair writer delivered 0644 -- a
+        // silent behavioural divergence this repair has no business making. A
+        // narrower temporary buys nothing here: another user who could read it
+        // can read the finished report at the same mode a moment later, and at
+        // 0644 cannot write to it at all.
+        fd = open(tmp.c_str(), flags, 0666);
+        if (fd < 0 && errno != EEXIST) {
+            fprintf(stderr, "Error: could not create the temporary output file '%s' (%s).\n",
+                    tmp.c_str(), strerror(errno));
+            return false;
+        }
+    }
+    if (fd < 0) {
+        fprintf(stderr, "Error: could not create a temporary output file beside '%s' "
+                        "after 8 attempts.\n", path.c_str());
+        return false;
+    }
 
-        // close() flushes, so a device-full or I/O error shows up here.
-        if (!output) {
+    // (4) an open that succeeded is not proof of what it opened
+    {
+        struct stat st;
+        if (fstat(fd, &st) != 0 || !S_ISREG(st.st_mode)
+#ifndef _WIN32
+            || st.st_uid != getuid() || st.st_nlink != 1
+#endif
+           ) {
+            fprintf(stderr, "Error: the temporary output file '%s' is not the regular, "
+                            "single-linked file just created; refusing to write.\n", tmp.c_str());
+            close(fd);
+            remove(tmp.c_str());
+            return false;
+        }
+    }
+
+    {
+        const char *p = json.c_str();
+        size_t left = json.size();
+        bool wrote_ok = true;
+        while (left > 0) {
+            ssize_t n = write(fd, p, left);
+            if (n <= 0) { wrote_ok = false; break; }
+            p += n; left -= (size_t) n;
+        }
+        if (close(fd) != 0) wrote_ok = false;
+        if (!wrote_ok) {
             fprintf(stderr, "Error: could not write the temporary output file '%s'.\n", tmp.c_str());
             remove(tmp.c_str());
             return false;

@@ -6779,3 +6779,128 @@ called by six instruments as a **record**, and turning it into a gate would
 change what each of them asserts. The honest fix is per-caller — `bs_require`
 where the check genuinely depends on a build — and that is six decisions, not
 one edit.
+
+## OC-77 — F03: the temporary was the second front door, and the guard's reassurance was false
+
+**Second independent AI audit, 2026-10-21, fork pin 32920f49, finding F03.**
+**Status: REPRODUCED end to end against a real binary, REPAIRED, and the
+repair's test shown failing against the pre-repair build. REPAIRED IS NOT
+REVIEWED.**
+
+### What the audit said, and what was actually worse
+
+F03 said the temporary output path still destroys the input. It does. What the
+reproduction added is the shape of the failure, which is worse than the finding
+states in three ways.
+
+The pre-repair writer (`HEAD:cpp/shared/TestRunUtils.h:273`) named its
+temporary `path + ".tmp." + std::to_string((long)getpid())` and opened it with
+`std::ios::out | std::ios::trunc | std::ios::binary`. `trunc` **follows a
+symlink**. So:
+
+1. **The capture is destroyed.** Measured on all three tools: a 1,000,000-byte
+   capture came back **798–802 bytes** of report JSON, written through a symlink
+   planted at the temporary's name.
+2. **`rename()` renames the symlink, not its target.** After the run, the `-o`
+   path was itself a symlink to the capture:
+   `lrwxr-xr-x report.json -> .../capture.bin`. The attack therefore **persists
+   without the attacker**: every later run with the same `-o` path destroys the
+   capture again, with nothing left in the directory to notice.
+3. **The A05 guard fired, and lied.** `writeJsonReport` is called **twice** in a
+   normal run — the C14 early claim and the final report; this was observed, not
+   inferred, by polling the directory and catching both temporary names
+   (`rep1.json.tmp.7795446bd40f4c55`, `rep1.json.tmp.7795446b1db21902`: same
+   `r1`, different `r2`). The first write destroyed the capture through the
+   planted link. The second write found the `-o` path now aliased to the input,
+   refused, and printed:
+
+   > `Nothing has been written; the input is untouched.`
+
+   Both halves of that sentence were false when it was printed. Exit 255. **A
+   guard that reports the state of the world must check the world, not its own
+   entry conditions.**
+
+This is the constraint stated as a rule and then violated inside my own repair:
+**a guard checks every write path, not the entry point.** `writeJsonReport` has
+**54 call sites** across the three mains, which is exactly why the A05 guard was
+correctly placed inside it — and the temporary was a 55th write that the guard
+inside it did not cover.
+
+### The repair, and what each part closes
+
+`cpp/shared/TestRunUtils.h`. Four changes, none of them sufficient alone:
+
+| change | what it closes |
+|---|---|
+| `O_CREAT\|O_EXCL` instead of `ofstream(trunc)` | `O_EXCL` **fails** if anything exists at the path, a symlink included. This alone defeats the planted link. |
+| `O_NOFOLLOW` where defined | makes the refusal explicit rather than incidental to `O_EXCL`. |
+| a random suffix from `/dev/urandom`, not the pid | the path cannot be guessed and pre-created at all. Eight attempts, then refuse. |
+| the temporary is identity-checked against the protected input, and `fstat`ed after opening for `S_ISREG`, `st_uid == getuid()`, `st_nlink == 1` | **an open that succeeded is not proof of what it opened.** |
+
+**A divergence the repair introduced and then removed.** Creating the temporary
+at `0600` delivered reports at mode **0600** where the pre-repair writer
+delivered **0644** — measured, at umask 022. That is a silent behavioural change
+this repair has no business making. The temporary is now created `0666` so the
+**process umask decides**, exactly as the `ofstream` did: measured 644 at umask
+022 and 600 at umask 077. The narrow mode bought nothing — another user who
+could read the temporary can read the finished report a moment later at the same
+mode, and at 0644 cannot write to it.
+
+### The test, and why it is deterministic
+
+`cpp/selftest/regression-output-aliasing.sh`, three new cases (one per tool).
+
+The pid is **not guessed**. A planter is compiled, plants a symlink at
+`<report>.tmp.<its own pid>`, and then `execv`s the tool, which **inherits that
+pid** — so the planted name is exactly the name the pre-repair writer computes.
+
+Two earlier attempts covered a pid **range** instead and both missed, for the
+same reason: the 2500 `ln` processes doing the planting **consumed the very pid
+range being planted into**. A range test that misses is indistinguishable from
+the repair working, which is rule 7's failure shape exactly. The case also fails
+if the planted link has **vanished** — because a test that cannot show its
+mechanism fired supports no claim.
+
+### Sensitivity, per rule 8
+
+The identical script against a build of `HEAD` (`REGRESSION_OUTPUT_BINDIR`):
+
+```
+  ea_non_iid symlink planted at the temp path   FAIL  THE CAPTURE WAS DESTROYED THROUGH THE TEMPORARY
+  ea_iid     symlink planted at the temp path   FAIL  THE CAPTURE WAS DESTROYED THROUGH THE TEMPORARY
+  ea_restart symlink planted at the temp path   FAIL  THE CAPTURE WAS DESTROYED THROUGH THE TEMPORARY
+  regression-output-aliasing: FAIL (3 case(s))
+```
+
+Three for three, and **only** those three: every A05 alias case still passed on
+that build, which isolates F03 from the finding A05 already closed.
+
+### Both cases the task required, with their arms
+
+| case | pre-repair | repaired |
+|---|---|---|
+| **direct-alias control** `-o <input> <input>` | exit 255, capture intact | exit 255, capture intact |
+| **temporary-symlink** planted at `<report>.tmp.<pid>` | exit 255, **capture 1,000,000 → 798 bytes**, `-o` path left a symlink to it | exit 0, capture intact, planted link untouched, a valid 2,372-byte report written |
+
+The control passes on **both** arms, which is what makes it a control: A05 was
+already closed, and it confirms this repair did not reopen it.
+
+### What this does NOT establish
+
+- **Executed on Darwin arm64 only.** `O_NOFOLLOW` is conditional on the macro
+  and the `fstat` limbs are **source-confirmed, not executed** — a wrong `st_uid`
+  or `st_nlink` cannot be arranged at a path whose name is unpredictable by
+  design, and that is the repair working against its own test. Windows takes the
+  `MoveFileExA` branch and has no `symlink()`; the case **SKIPs** there on the
+  behaviour test the script already performs (`SYMLINK_IS_ALIAS`), not on a
+  platform name. **Windows is NOT RUN for F03.**
+- The random suffix's two draws are **not** a cryptographic claim. `r1` is
+  `time ^ (pid << 16)` and collides across runs in the same second — observed.
+  Unpredictability is a second line of defence here; `O_EXCL|O_NOFOLLOW` is the
+  one that does the work, and it holds against an attacker who guesses the name.
+- Nothing here was reported upstream.
+
+### Suite
+
+`run-all-checks.sh --allow-known-platform-deltas`: **23 passed, 0 failed**,
+21 regression scripts, build-state declared by 4 of 23.

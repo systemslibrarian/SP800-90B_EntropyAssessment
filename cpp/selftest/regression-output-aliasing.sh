@@ -141,6 +141,86 @@ fi
     && pass "control: the capture is untouched by a successful run" \
     || fail "control: the capture is untouched by a successful run" "input changed"
 
+# ---- F03: THE TEMPORARY IS A WRITE PATH TOO ----
+#
+# A05's guard checks the FINAL report path. The temporary beside it was
+# `<report>.tmp.<pid>` and was opened with std::ios::trunc, which FOLLOWS A
+# SYMLINK -- so an attacker who can write in the report's directory plants a
+# symlink there aimed at the capture and the tool truncates its own input,
+# while the guard at the front door reports nothing wrong.
+#
+# Measured against the pre-repair build (HEAD before this repair), all three
+# tools: the 1,000,000-byte capture came back 798 bytes of report JSON, rename()
+# then renamed THE SYMLINK so the -o path became a permanent alias of the
+# capture, and the A05 guard fired on the SECOND write and printed "Nothing has
+# been written; the input is untouched" -- a sentence both halves of which were
+# false by then.
+#
+# The pid is not guessed. The planter below is `exec`ed into the tool, so the
+# symlink is planted at the planter's OWN pid and the tool inherits it: the
+# planted name is EXACTLY the name the pre-repair writer computes. A test that
+# covered a pid RANGE instead could miss, and a miss would be indistinguishable
+# from the repair working (and did miss, twice: the 2500 `ln` processes doing
+# the planting consumed the very pid range being planted into).
+if [ "${SYMLINK_IS_ALIAS}" = yes ]; then
+    cat > "${work}/plantexec.c" <<'PLANTEOF'
+/* plantexec <report-path> <capture-path> <tool> [args...]
+   Plant a symlink at <report-path>.tmp.<my pid> aimed at <capture-path>, then
+   become the tool, which inherits that pid. */
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+int main(int argc, char **argv) {
+    char link[8192];
+    if (argc < 4) return 3;
+    snprintf(link, sizeof link, "%s.tmp.%ld", argv[1], (long) getpid());
+    if (symlink(argv[2], link) != 0) { perror("plantexec: symlink"); return 3; }
+    fprintf(stderr, "plantexec: planted %s\n", link);
+    execv(argv[3], &argv[3]);
+    perror("plantexec: execv");
+    return 4;
+}
+PLANTEOF
+    if cc -O1 -o "${work}/plantexec" "${work}/plantexec.c" 2>/dev/null; then
+        for tool in ea_non_iid ea_iid ea_restart; do
+            rm -f "${work}/f03.json" "${work}"/f03.json.tmp.*
+            "${work}/gen" > "${work}/capture.bin"
+            case "${tool}" in
+                ea_restart) set -- -i -q -o f03.json capture.bin 1 0.9 ;;
+                ea_iid)     set -- -i -q -o f03.json capture.bin 1 ;;
+                *)          set -- -i -a -q -o f03.json capture.bin 1 ;;
+            esac
+            # execv(argv[3], &argv[3]): the tool path is given ONCE and
+            # becomes the tool's own argv[0].
+            ( cd "${work}" && "${work}/plantexec" f03.json capture.bin \
+                             "${bindir}/${tool}" "$@" ) >/dev/null 2>&1
+            # the planted link's name is <report>.tmp.<pid>; find it by shape
+            link=$(ls "${work}"/f03.json.tmp.* 2>/dev/null | head -1)
+            now=$(sha_of "${work}/capture.bin")
+            label="${tool} symlink planted at the temp path"
+            if [ "${now}" != "${baseline}" ]; then
+                fail "${label}" "THE CAPTURE WAS DESTROYED THROUGH THE TEMPORARY"
+            elif [ -z "${link}" ]; then
+                # The planted link is gone. Either the tool renamed it onto the
+                # report path (the pre-repair failure) or it was never planted
+                # (the test did not run). Both are refusals to pass: a test that
+                # cannot show its mechanism fired supports no claim (rule 7).
+                fail "${label}" "the planted symlink is gone; this test proved nothing"
+            elif [ -L "${work}/f03.json" ]; then
+                fail "${label}" "the -o path is now a symlink to the capture"
+            else
+                pass "${label}  refused, capture intact, link untouched"
+            fi
+        done
+        rm -f "${work}/f03.json" "${work}"/f03.json.tmp.*
+        "${work}/gen" > "${work}/capture.bin"
+    else
+        printf '  %-52s SKIP  no symlink() on this platform\n' "F03 temp-path symlink"
+    fi
+else
+    printf '  %-52s SKIP  ln -s does not alias here (MSYS2 copies)\n' "F03 temp-path symlink"
+fi
+
 # ---- A04: -o --version must not print a version and exit 0 ----
 for tool in ea_non_iid ea_iid ea_restart; do
     case "${tool}" in
