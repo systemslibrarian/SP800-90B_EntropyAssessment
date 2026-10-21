@@ -6142,3 +6142,97 @@ and that distinction is the finding.
 reason is that neither inventory was written down. One of the two had been the
 basis of a reported sweep. Now a sweep cites the inventory file and the rule it
 applied, and a reader can reproduce the count with the command in it.
+
+---
+
+## OC-66 — the aggregator discarded its components' evidence, an abstention counted as a pass, and SHAPE-07/03 swept over the tooling itself
+
+### The aggregator, and the consequence measured
+
+`run-all-checks.sh` captured each script's output and, on success, printed only
+the label. So every `[build-state]` line the five declaring scripts emit was
+**thrown away one layer up**. Rule 4's stated point is that a result *without*
+that line is visibly incomplete; the aggregator made every result look the same.
+
+**Measured, not argued.** Binaries built `-DNDEBUG` — all three digests
+differing, the probe reporting `asserts=NDEBUG` against `asserts=LIVE` — then
+the full suite run on both arms:
+
+| | arm A (asserts live) | arm B (`-DNDEBUG`) |
+|---|---|---|
+| summary | 22 passed, 0 failed | 22 passed, 0 failed |
+| per-check verdicts | **identical, check for check** | |
+| occurrences of `build-state` in the output | **0** | **0** |
+
+The suite could not distinguish a build with **every assert in `lrs_test.h`
+compiled out**, and said nothing about which it had measured. No verdict
+flipped, so this was **not a live false pass** — it is `OC-42`'s exact error
+made undetectable again, which is worse, because `OC-42` was caught by looking
+and this could not be.
+
+**Fixed, and verified by re-running both arms.** Declarations are surfaced under
+each check, the summary reports `build-state: N of M checks declared the
+artefact they measured`, and a run where **none** did says so on stderr. The two
+arms now **differ** — `asserts=LIVE` against `asserts=NDEBUG`, with the digests
+— where before they were byte-identical. The summary line itself is unchanged
+because the coverage count prints above it: the inventory mutation harness
+matches that line exactly and depends on it.
+
+Today's coverage is **4 of 22**. That is now a visible number rather than an
+invisible one, and raising it is a separate piece of work.
+
+### An abstention counted as a pass
+
+`regression-platform-deltas.sh` printed `SKIPPED (not a pass)` and **returned
+0**. On Linux — the platform the x86-64 gate runs on, and where `selftest`
+reports no differences at all — that abstention contributed one of the 22
+without exercising anything. **Saying "not a pass" in prose while returning the
+pass code is the defect, not the prose.**
+
+It now exits **2**, which `run-all-checks.sh` already reports as `COULD NOT
+RUN`, apart from both pass and fail, with its own comment that a check which did
+not execute supports no claim. The right channel existed and was not used.
+
+**Consequence for the record, stated plainly:** `A06`'s *"four failures the
+audit required"* were established **on macOS and not on Linux**, where that
+check has never exercised the manifest at all.
+
+The x86-64 gate expects the abstention rather than breaking on it: `N-1` passed
+with exactly one could-not-run, a gate naming **which** check abstained, and a
+gate that build state reached the summary. **An abstention is allowed; an
+unexplained one is not.**
+
+### SHAPE-07 and SHAPE-03, swept over the audit tooling
+
+The observation that drove this: the shapes are right and **the sweep's
+denominator was the wrong set.** `SHAPE-07` was written from the ten-estimator
+battery and applied to production, never to the instruments. Nine aggregates in
+the tooling were examined.
+
+**`SHAPE-07` — an aggregate reported as one number, computed as an extremum over
+components, discards every component's evidence except the extremum's.**
+
+| instrument | verdict |
+|---|---|
+| `run-all-checks.sh` | **INSTANCE, fixed above.** The clearest case: a per-check pass/fail tally that discarded the build-state evidence entirely. |
+| `zalpha_ceiling_by_n.py` / the `C22c` term | **INSTANCE, and it already cost something.** `C22c` is a **max over estimator families**, and the non-binding families' values were not carried — which is exactly how `OC-62` happened: I derived the Collision family, compared it against the Compression tabulation, and reported the record as unreproduced. The aggregate had discarded the evidence that would have told me which family bound. Now all three families print with their own rows, so the binding one is identifiable. |
+| `entropy_floor.py`'s `h'` | **not an instance.** It is a `min` over candidates, but both are printed with `<- binds` marking the extremum, so the component evidence is carried. |
+| `mutation-lib.sh`, `oracle-selftest.sh`, `check-platform-deltas.py`, `c16-c23-matrix.sh`, `windows-facts.sh` | **not instances.** Each names its failing components (`MUT_FAIL_LABELS`, per-case lines, per-row problems, per-cell expectations, per-gate verdicts) rather than reporting only a count. |
+
+**`SHAPE-03` — an empty accumulator reads as success.** Its own worked example
+is `compareresults.pl`, which **my `OC-64` sweep never covered**, because it has
+a `.pl` extension and the sweep was extension-matched on `.sh` (`OC-65`).
+Measured today:
+
+| case | before | after |
+|---|---|---|
+| reference non-empty, output empty | exit 1 | exit 1 |
+| output non-empty, reference empty | exit 1 | exit 1 |
+| **both empty** | **exit 0, `Maximum delta: 0`** | **exit 2, "NO COMPARISONS WERE MADE"** |
+
+The two single-sided holes were already closed by the second loop. Both-empty
+was still reachable: zero comparisons, zero status, agreement reported. It needs
+a corrupted reference, which the fixture manifest's digests also guard, but **a
+comparison tool must not report agreement when it compared nothing.** It now
+counts comparisons, refuses zero, and prints the count it made (59 on a genuine
+pair).

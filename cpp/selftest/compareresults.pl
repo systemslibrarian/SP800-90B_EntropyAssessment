@@ -5,6 +5,19 @@
 use strict;
 
 my $retstatus = 0;
+# SHAPE-03: AN EMPTY ACCUMULATOR MUST NOT READ AS SUCCESS (OC-66).
+#
+# This script is SHAPE-03's own worked example: it iterated the REFERENCE hash,
+# so a 0-byte reference produced zero comparisons, an untouched $retstatus and
+# "selftest: PASS" (OC-4). The second loop below -- flagging new keys with no
+# reference -- closed that, and the reference-key loop flags the mirror case, so
+# a single empty side is now caught (measured: exit 1 either way).
+#
+# What remained was BOTH sides empty: zero comparisons, exit 0, "Maximum delta:
+# 0" -- measured reachable today. It needs a corrupted reference, which the
+# fixture manifest's digests also guard, but a comparison tool must not report
+# agreement when it compared nothing. Count the comparisons and refuse zero.
+my $compared = 0;
 
 my $epsilon = 1.0E-10;
 my $maxdelta = 0;
@@ -19,6 +32,7 @@ close $local_reffh;
 
 foreach my $refKey (keys %$refResults) {
    if(exists($newResults->{$refKey})) {
+      $compared++;
       my $maxval = (abs($refResults->{$refKey})>=abs($newResults->{$refKey})?abs($refResults->{$refKey}):abs($newResults->{$refKey}));
 
       my $absdelta = abs($refResults->{$refKey} - $newResults->{$refKey});
@@ -80,6 +94,12 @@ foreach my $newKey (keys %$newResults) {
 }
 
 print "Maximum delta: $maxdelta\n";
+if($compared == 0) {
+   print "$ARGV[0]: NO COMPARISONS WERE MADE. Both the output and the reference\n";
+   print "  yielded zero keys, so agreement here is vacuous (SHAPE-03, OC-66).\n";
+   exit 2;
+}
+print "$ARGV[0]: $compared value(s) compared\n";
 exit $retstatus;
 
 sub resultsHash {
