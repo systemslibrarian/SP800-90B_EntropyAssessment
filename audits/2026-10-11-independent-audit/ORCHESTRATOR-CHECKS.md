@@ -5353,18 +5353,22 @@ which at the time was recorded as a curiosity rather than as the reason.
 
 ### "Certified floor" and "evaluated margin" are now different outputs
 
-`oracles/entropy_floor.py`:
+A reading is a certified floor only where **every subtracted term is a bound**;
+anything else is an evaluated margin. That turned out to depend on the reading
+as well as the width — `OC-59` found `C22c`'s tabulated value is not
+independently reproduced, so the **literal** reading is a margin at every
+width. `oracles/entropy_floor.py`:
 
-| width | `C01`/`F10` term | headline |
-|---|---|---|
-| 1 | `0.000e+00`, **EXCLUDED: unreachable at width 1**, with the proof printed | **CERTIFIED FLOOR** |
+| width | `C01`/`F10` term | literal reading | F07 reading |
+|---|---|---|---|
+| 1 | `0.000e+00`, **EXCLUDED: unreachable at width 1**, with the proof printed | EVALUATED MARGIN (it subtracts `C22c`) | **CERTIFIED FLOOR** |
 | > 1 | `3.690e-04`, **EVALUATED MARGIN, *not* a bound** | **EVALUATED MARGIN (not a floor)**, with an explicit do-not-publish-as-a-floor line |
 
 The bit width is a **required input** to the report rather than something
 inferred inside it: if it cannot be established, nothing is called a floor at
-all. Measured both ways — width 1 prints a certified floor of
-0.84129042387787445, width 8 prints an evaluated margin and says it is not a
-floor.
+all. Measured: at width 1 the F07 reading prints a certified floor of
+0.84465042387787448 while the literal reading prints an evaluated margin of
+0.84129042387787445; at width 8 both are margins and both say so.
 
 ---
 
@@ -5429,3 +5433,225 @@ lines were silently skipped and then reported as **MISSING comparisons** — the
 right verdict for the wrong reason, and one that would have read as "the
 comparison stopped happening". Unanchored, and the baseline control is what
 surfaced it.
+
+---
+
+## OC-57 — C24 repaired: the report is put in place with the primitive specified to replace
+
+`cpp/shared/TestRunUtils.h`, `writeJsonReport`. `C08`'s argument is that
+`rename(2)` replaces an existing destination atomically. That is POSIX.
+Windows `rename()` refuses one — measured, `errno 17` — and `C14` has already
+placed a placeholder at the `-o` path before any real report is written, so on
+Windows the placeholder **guaranteed** that every later write failed and no
+tool could produce a `-o` report at all.
+
+Now `MoveFileEx` with `MOVEFILE_REPLACE_EXISTING` under `_WIN32`, plus
+`MOVEFILE_WRITE_THROUGH` so the placement is durable before returning. The
+POSIX path is untouched; macOS builds and the suite are unchanged.
+
+**Verified on Windows, with the contrast kept beside it** rather than asserted.
+The replication probe copies the *current* writer and keeps a bare-rename arm:
+
+| case | Windows | macOS (control) |
+|---|---|---|
+| 1. current writer, fresh path (the `C14` placeholder) | OK | OK |
+| 2. current writer, second write over it | **OK** | OK |
+| 3. current writer, single write to a fresh path | OK | OK |
+| 4. **old** bare-rename writer, fresh path | OK | OK |
+| 5. **old** bare-rename writer, second write over it | **FAILED, `errno 17`** | OK |
+
+and every tool now puts its report in place there. The gates were re-pointed
+from expecting the defect to measuring the repair, and `rename()`'s semantics
+are reported as a **platform fact** either way — depending on POSIX semantics
+there was the defect, and that is what changed.
+
+**The one-liner refused, recorded at the site.** `remove(path)` before
+`rename()` would "work" on both platforms and reopens exactly the window `C08`
+closed: an interval in which the path does not exist at all, so a reader finds
+nothing where it should find the previous report.
+
+The Windows job is now **20 gates passing and one failing**, and the one that
+fails is the ecosystem fact that `libdivsufsort` has no `mingw-w64` package.
+
+---
+
+## OC-58 — F13 closed as UNREACHABLE: reachability came before repair
+
+`shared/utils.h` `predictionEstimate` and `shared/most_common.h` both compute
+an upper confidence bound as `min(1.0, p + ZALPHA*sqrt(p(1-p)/(n-1)))`. The
+concern was that `std::min` suppresses a NaN **only by argument order** —
+`min(1.0, NaN)` returns 1.0, `min(NaN, 1.0)` returns NaN — so a reviewer could
+swap them and read the change as cosmetic.
+
+**The first question is reachability, and it settles it.**
+
+1. `p_global > 0` already excludes a NaN `p_global`, because `NaN > 0` is
+   false. The guard that matters is already there, for a different reason.
+2. The only other NaN source is `0/0` in the variance term, which needs
+   **`N == 1` exactly**.
+3. `MIN_SIZE` is 1,000,000 on every supported path, and a one-symbol alphabet
+   is refused earlier, so `N == 1` is not reachable.
+
+Measured, not just argued: `reproducers/f13_nan_reachability.c` evaluates the
+expression **73,745** times over the supported domain — exact boundaries
+`p = 1/N` and `p = 1`, `N` from 999,999 up to 2³¹−1 — and finds **no NaN**. And
+**the same probe fires at `N == 1`, `p == 1`**, so its silence on the supported
+domain is a measurement rather than blindness. A probe that never produces the
+thing it is looking for has established nothing.
+
+**And the direction, if one ever did arrive:** `min(1.0, NaN)` gives `p' = 1`
+and an entropy of 0 — maximally conservative. The ordering is incidentally
+**fail-closed**, not incidentally permissive.
+
+**Closed as unreachable, not repaired.** Both sites now carry a comment saying
+the argument order is load-bearing and must not be swapped, with the
+reachability argument beside it, because that is where the next person looks.
+Fixing something that cannot happen would have been a change to estimator
+arithmetic bought for nothing.
+
+---
+
+## OC-59 — C22c: the monotonicity premise holds; the tabulated magnitudes do not reproduce
+
+`entropy_floor.py` subtracts the `C22c` term **at the largest tabulated `n` not
+exceeding the actual `n`**, and justified that as an upper bound by asserting
+the ceiling falls with `n`. That premise was an analytic sketch. It is now
+measured — and the measurement found something else.
+
+**New tool:** `oracles/zalpha_ceiling_by_n.py`, with both controls the method
+requires: every value recomputed at two working precisions (self-comparison),
+and `z_spec` perturbed to prove the computation responds to its own input
+(live sensitivity).
+
+### The premise holds
+
+| family | behaviour in `n` | |
+|---|---|---|
+| proportion estimators (MCV, t-Tuple, LRS, the `P_global'` terms) | **level** — the gap is the closed form `dz/((1+z)ln2)` = 6.887e-05, attained at `p = 1/n` and independent of `n` | |
+| **Collision** estimator — the family that **binds** | **falls**: 7.49e-04 at n=1e6 → 2.65e-04 at n=64e6 | its sensitivity near the `X' = 2.5` clamp is what gives this term its 1e-3 magnitude |
+
+So the largest-tabulated-`n` rule is sound as a rule.
+
+### The magnitudes do not
+
+| n | tabulated | independent derivation | ratio |
+|---:|---:|---:|---:|
+| 1,000,000 | 3.360e-03 | **7.493e-04** | 4.48 |
+| 8,000,000 | 2.160e-03 | **4.456e-04** | 4.85 |
+
+A **consistent** factor at both lengths, which says the two calculations differ
+systematically rather than one being noisy. **The direction is safe:** the
+tabulated values are *larger*, so the floor subtracts more than this derivation
+requires and the published figure is not overstated. But an unreproduced
+subtrahend is not a bound, and this is the same shape as `A02` — a term carried
+on a justification that does not reconstruct.
+
+### Two instrument errors found getting there, both of the usual family
+
+1. **The first sweep searched outside the realisable domain.** It swept `p` down
+   to 1e-6 and then refined to `p0/4`, reporting its maximum at
+   **`p = 2.5e-07` — below `1/n`**, a proportion no count can produce. The gap
+   grows without limit as `p → 0`, so an unconstrained sweep reports the edge
+   of its own grid and calls it a worst case. Found by comparing against the
+   recorded number instead of accepting my own output.
+2. **A strict comparison on a theoretically constant quantity** reported
+   `*** RISES ***` for the proportion family, whose gap is the closed form and
+   therefore level. Spurious non-monotonicity from which candidate `p` happened
+   to hit the maximum.
+
+### What this changes in the output
+
+A reading is a **certified floor** only where **every** subtracted term is a
+bound. The **literal** reading subtracts `C22c`, so it is an **evaluated
+margin at every width**; the **F07** reading does not subtract it, so at width
+1 — where `C01`/`F10` is excluded by proof — it is a certified floor. Labelling
+the whole report with one word would have blurred exactly the distinction the
+oracle exists to keep.
+
+| | literal reading | F07 reading |
+|---|---|---|
+| width 1 | EVALUATED MARGIN, 0.84129042387787445 | **CERTIFIED FLOOR**, 0.84465042387787448 |
+| width > 1 | EVALUATED MARGIN | EVALUATED MARGIN |
+
+**And the distinction is now enforced rather than remembered.**
+`regression-docs.sh` fails if any document writes "certified floor" without a
+width or reading qualifier in the same paragraph — 178 mentions of the word
+across the tree is too many to police by hand. It found one on its first run (a
+section heading) and that is fixed. Its own pattern then needed fixing twice:
+silencing a `SyntaxWarning` by replacing `\s` with `[ \t]` broke matching
+across a wrapped line, which is a behaviour change bought for a cosmetic
+warning.
+
+---
+
+## OC-60 — `seed()` is DEFERRED, not a blocker; and what Windows can and cannot do today
+
+### Why it is deferred
+
+The owner adopted a **vendor reference qualification** as the default path
+(2026-10-19). Under it **no NIST binary runs on a user's machine**: the owner
+measures on his own hardware and ships a signed record, and Windows users reach
+the hardware tier through that record. So `seed()` is **not on the product's
+path**.
+
+It matters only for the **self-assertion path** — a user running their own
+assessment — and that path is an expert opt-in for which macOS and Linux are
+sufficient.
+
+**So this is not "Windows is blocked".** It is a small, well-understood fix
+gated on a decision that has gone the other way. Recorded as deferred so that
+nobody re-derives it, and so that nobody re-prices Windows on the strength of
+it.
+
+### What it would be, if revisited
+
+A **platform entropy source**: `BCryptGenRandom`, or `RtlGenRandom`
+(`SystemFunction036`), under `_WIN32`, keeping `/dev/urandom` elsewhere.
+`cpp/shared/utils.h:792-798` is the site.
+
+> **`std::random_device` MUST BE REFUSED. It is the obvious wrong answer and it
+> looks right.** It is portable, it is standard, and on MinGW libstdc++ it has
+> historically been a **deterministic PRNG**. A deterministic seed there does
+> not crash anything and produces no error: it makes the IID permutation tests
+> report a randomisation they did not perform, so their p-values mean nothing
+> while every surface indication says the tool worked. That failure is silent,
+> and it is worse than the current loud `exit(-1)`.
+
+The seed feeds the xoshiro256\*\* state used to shuffle in the permutation
+tests, so the acceptance bar is **behavioural**, not "it links":
+
+| the repair owes | checked with |
+|---|---|
+| POSIX behaviour byte-for-byte unchanged | the before/after comparison of `OC-53`, with its measured exclusion and live comparator |
+| the Windows source is **not constant** | two Windows runs must differ in `permutationTestResults`, exactly as two macOS runs do — the baseline-against-itself control, pointed at Windows |
+| unpredictable, not merely varying | the bytes come from the platform CSPRNG, named in the code, with the failure path still **fail-closed** rather than falling back to a weak seed |
+| the verdicts remain sound | the IID battery's verdicts on the pinned fixtures must match LP64's on the same inputs |
+
+### What Windows can and cannot do today, stated plainly
+
+This is the sentence someone sizing the work will read, and it must not be
+summarised as "Windows is unsupported":
+
+> **All three tools build and link** on `windows-latest` (MSYS2 MINGW64, gcc
+> 16.2.0), with OpenMP. **`ea_non_iid` runs the complete non-IID battery and
+> produces a figure**, exit 0. **`ea_iid` and `ea_restart` run through chi
+> square, the §5.2.5 LRS test and — for `ea_restart` — the restart sanity
+> check, all passing, and then exit at `seed()`.** Reports are written
+> correctly (`C24` repaired). The §5.2.5 figures match macOS exactly
+> (`Pr(X >= 1) = 0.365370`).
+
+Two caveats belong with it. `libdivsufsort` has **no `mingw-w64` package** and
+must be built from source — with `-DCMAKE_POLICY_VERSION_MINIMUM=3.5` and a
+generator that is *not* `MinGW Makefiles` — and `libgomp` comes from
+`mingw-w64-x86_64-gcc-libs`, which the preinstalled toolchain does not pull in.
+Both are documented in `BUILDING.md` and both are automated in the job.
+
+### One live limit worth naming, since it is not absent
+
+`data_t` holds `long len` and `long blen` with `blen = len * word_size`
+(`utils.h:518,705`). On LLP64 that overflows once `len * word_size` exceeds
+2³¹ — i.e. beyond **268,435,455 8-bit samples**. That is far above anything
+this project assesses, and it was deliberately left out of the `C18` repair
+because those fields are printed with `%ld` in many places, which would be
+wrong for `int64_t` on LLP64. **It is a live limit, not an absent one**, and a
+Windows run on an input that large would be wrong rather than refused.

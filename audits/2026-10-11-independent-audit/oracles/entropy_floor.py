@@ -297,7 +297,12 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
         print("    saturation, whose size is set by the data, so nothing here constrains it (A02).")
     print("  C22a P_local quantisation                %.3e    8.08e-15 x (n+1), n = %d" % (a, n))
     print("  C22b P_global' at N == 1                 %.3e    conservative at every N" % C22B)
-    print("  C22c ZALPHA vs the literal 2.576         %.3e    measured at n = %d (ceiling falls with n)" % (bz, bz_n))
+    print("  C22c ZALPHA vs the literal 2.576         %.3e    NOT INDEPENDENTLY REPRODUCED" % bz)
+    print("    tabulated at n = %d. An independent derivation of the binding family (the" % bz_n)
+    print("    Collision estimator) gives 7.49e-4 at n=1e6 and 4.46e-4 at n=8e6 -- a factor of")
+    print("    4.5-4.9 BELOW these values, consistently at both lengths (OC-59). The direction")
+    print("    is safe (more is subtracted than derived) but this is not a bound. The ceiling's")
+    print("    fall with n IS measured and holds: oracles/zalpha_ceiling_by_n.py.")
     # A02: C01 is excluded at width 1 by proof, and is a MARGIN above it.
     c01 = 0.0 if w == 1 else C01
     certified = (w == 1)
@@ -307,9 +312,29 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     # "CERTIFIED FLOOR" and "EVALUATED MARGIN" are different claims and the
     # output must not blur them (A02). A floor is claimed only when every
     # subtracted term is a bound over the supported inputs.
-    label = "CERTIFIED FLOOR" if certified else "EVALUATED MARGIN (not a floor)"
-    print("  %-29s %.17g   (h' - %.6g)" % (label + ", literal", lit, hp - lit))
-    print("  %-29s %.17g   (h' - %.6g)" % (label + ", F07", f07, hp - f07))
+    # EACH READING IS LABELLED ON ITS OWN TERMS (OC-59). A reading is a
+    # CERTIFIED FLOOR only when EVERY term it subtracts is a bound over the
+    # supported inputs. Two things disqualify a term:
+    #   * C01/F10 above width 1 -- an evaluated margin, mechanism data-dependent
+    #     (A02 / OC-55);
+    #   * C22c at ANY width -- the tabulated 3.36e-3 / 2.16e-3 are NOT
+    #     reproduced by an independent derivation of the binding family, which
+    #     gives 7.49e-4 / 4.46e-4 (OC-59). The discrepancy is in the safe
+    #     direction, so the figure is not overstated, but an unreproduced
+    #     subtrahend is not a bound and must not be called one.
+    # The LITERAL reading subtracts C22c; the F07 reading does not. So at width
+    # 1 the F07 reading is a certified floor and the literal reading is not --
+    # labelling the whole report with one word would have blurred exactly the
+    # distinction this oracle exists to keep.
+    lit_terms_all_bounds = certified and False      # literal always includes C22c
+    f07_terms_all_bounds = certified
+    lab_lit = "CERTIFIED FLOOR" if lit_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
+    lab_f07 = "CERTIFIED FLOOR" if f07_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
+    print("  %-31s %.17g   (h' - %.6g)" % (lab_lit + ", literal", lit, hp - lit))
+    print("  %-31s %.17g   (h' - %.6g)" % (lab_f07 + ", F07", f07, hp - f07))
+    if not lit_terms_all_bounds:
+        print("    the LITERAL reading subtracts C22c, whose tabulated value is not")
+        print("    independently reproduced (OC-59), so that reading is a margin, not a floor.")
     if not certified:
         print("    NOT A FLOOR: the C01/F10 term above is an evaluated margin over the inputs")
         print("    measured, not a bound over all accepted ones. Treat this as a working figure")

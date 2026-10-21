@@ -325,6 +325,47 @@ PY
 if [ -z "${nistsrc}" ]; then note "no NIST attribution in cpp/ comments:" "none"
 else bad "NIST attributions in cpp/ (the sweep is incomplete):" "${nistsrc}"; fi
 
+# ---------------------------------------------------------------- the floor
+# A02 / OC-55 / OC-59: "CERTIFIED FLOOR" and "EVALUATED MARGIN" are different
+# claims, and a claim distinction holds at every mention or it holds nowhere.
+# Any document that writes "certified floor" must say which width or reading it
+# holds for, because it holds only where every subtracted term is a bound: at
+# width 1 (C01/F10 unreachable by proof) AND for the F07 reading (the literal
+# reading subtracts C22c, whose tabulated value is not independently
+# reproduced). A guard is cheaper than remembering across 178 mentions.
+echo
+floorbad=$(
+python3 - "${repo}" <<'PY'
+import os, re, sys
+root = sys.argv[1]
+pat = re.compile(r'certified\\s+floor', re.I)
+qual = re.compile(r'width\\s*1|F07|every\\s+subtracted\\s+term|not\\s+a\\s+floor|unreachable', re.I)
+hits = []
+for base, dirs, files in os.walk(root):
+    dirs[:] = [d for d in dirs if d not in ('.git', '__pycache__')]
+    for f in files:
+        if not f.endswith(('.md', '.py', '.sh', '.txt')):
+            continue
+        p = os.path.join(base, f)
+        try:
+            raw = open(p, encoding='utf-8', errors='replace').read()
+        except OSError:
+            continue
+        for m in pat.finditer(raw):
+            lo = raw.rfind('\n\n', 0, m.start()) + 1
+            hi = raw.find('\n\n', m.end())
+            ctx = raw[lo: hi if hi > 0 else len(raw)]
+            if not qual.search(ctx):
+                hits.append('%s:%d' % (os.path.relpath(p, root), raw.count('\n', 0, m.start()) + 1))
+print(' '.join(sorted(set(hits))))
+PY
+)
+if [ -z "${floorbad}" ]; then
+    note "every \"certified floor\" mention carries its qualifier:" "yes"
+else
+    bad "\"certified floor\" asserted with no width/reading qualifier:" "${floorbad}"
+fi
+
 echo
 if [ "${fails}" -eq 0 ]; then echo "regression-docs: PASS"; exit 0; fi
 echo "regression-docs: FAIL (${fails} checks)"

@@ -1208,6 +1208,24 @@ double predictionEstimate(long C, long N, long max_run_len, long k, const char *
 
 	p_global = (double)C/(double)N;
 
+	// F13, CLOSED AS UNREACHABLE (OC-58). The argument ORDER here is
+	// load-bearing and would read as cosmetic: std::min(a,b) returns
+	// `b < a ? b : a`, so min(1.0, NaN) yields 1.0 while min(NaN, 1.0) yields
+	// NaN. Do not swap them.
+	//
+	// It is unreachable rather than merely unexercised, and the reason is
+	// worth keeping next to the code. `p_global > 0` already excludes a NaN
+	// p_global, since NaN > 0 is false. The only other NaN source is 0/0 in
+	// the variance term, which needs N == 1 exactly; MIN_SIZE is 1,000,000 on
+	// every supported path, and a 1-symbol alphabet is refused earlier.
+	// 73,745 evaluations over the supported domain -- exact boundaries
+	// p = 1/N and p = 1, N up to 2^31-1 -- produce no NaN, and the same probe
+	// DOES fire at N == 1, so its silence is a measurement and not blindness:
+	// reproducers/f13_nan_reachability.c.
+	//
+	// And if one ever did arrive, min(1.0, NaN) gives p' = 1 and an entropy of
+	// 0, which is maximally conservative. The ordering is incidentally
+	// fail-closed, not incidentally permissive.
 	if(p_global > 0) p_globalPrime = min(1.0, p_global + ZALPHA*sqrt((p_global*(1.0-p_global))/((double)N-1.0)));
 	else p_globalPrime = 1.0 - pow(0.01, 1.0/(double)N);
 

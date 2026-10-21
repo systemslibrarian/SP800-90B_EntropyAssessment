@@ -248,6 +248,22 @@ rather than passing as thorough. Verified both ways: with the baseline accepted
 the harnesses pass, and with the baseline deliberately broken the harness
 reports `the FIXTURES are broken, not the guard` and fails.
 
+**THIS RULE EARNED ITS KEEP ON ITS FIRST APPLICATION — three findings, which
+is why it is load-bearing rather than ceremonial.**
+
+1. The sweep found a script with **no assertions at all**
+   (`reproducers/c16-c23-matrix.sh`): it classified and printed, its
+   expectations were echoed as prose and never compared, and its exit status
+   came from a timing print. Nothing in it could fail.
+2. Adding assertions to it **immediately caught a wrong expectation of mine**.
+   I expected the pre-`C16` builds to refuse an underflowing `H_I`. They
+   **accept** it, with cutoff 1000 — and that acceptance *is* the defect the
+   matrix exists to demonstrate. **The harness had been asserting the opposite
+   of the thing it was built to show**, and four rounds of reading it had not
+   told me. That is precisely the failure mode this rule exists for, and it was
+   sitting in the tree.
+3. The corollary below then bit twice more, in a harness and in a CI gate.
+
 A corollary found in the same pass: a **hardcoded expected count** inside a
 harness is the same trap wearing different clothes. The inventory harness
 compared against the literal `20 passed, 0 failed (18 regression scripts
@@ -255,3 +271,34 @@ discovered)`, and registering one new regression script made its positive
 control fail for a reason unrelated to any mutation — which invalidates every
 negative result beneath it. It now derives those numbers from
 `run-all-checks.sh`'s own constants, and refuses to run if it cannot read them.
+
+### Rule 8 — a bit-identity claim carries a self-comparison and a live-sensitivity check
+
+Two checks, neither optional, and the pair is the standing method:
+
+1. **Self-comparison.** Run the *unchanged* artefact against itself and see
+   what differs. Anything that differs there is nondeterministic by design and
+   is excluded **by evidence**; anything else is attributable to the change.
+2. **Live sensitivity.** Perturb the quantity under test by the smallest amount
+   that should register and confirm the comparator catches it. A comparator
+   that cannot fail has proved nothing.
+
+**How this was learned.** Checking that widening `n_choose_2` changed nothing
+on LP64, the first comparison said **five of nine reports differed**. Running
+the baseline against itself showed the same binary differs from itself in
+exactly that field, because the permutation tests seed from `/dev/urandom`.
+That converted "the fix changed something" into "this field is
+nondeterministic by design" — and a 1e-15 perturbation of `hAssessed` then
+proved the comparator was not simply blind to everything. With both checks,
+nine of nine identical (`OC-53`).
+
+Applied again the same day to the `C22c` ceiling (`OC-59`): both controls
+passed, the monotonicity premise held, and the comparison against the recorded
+values then showed the **magnitudes do not reproduce** — which only became a
+finding because the measurement was trustworthy enough to believe.
+
+| do | instead of |
+|---|---|
+| run the unchanged thing against itself first | assume which fields are stable |
+| exclude a field because it was *measured* to vary | exclude it because it looks like it might |
+| perturb and confirm the comparator fires | report "identical" from a comparator you never tested |

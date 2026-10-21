@@ -70,11 +70,30 @@ instructions the tag itself carries, are in
 
 | item | what it is | why it is still open |
 |---|---|---|
-| **`C24`** the atomic report write is not portable | Windows `rename()` refuses an existing destination (`errno 17`), and `C14` has already placed a placeholder at the `-o` path by the time any report is written, so **every** report write fails there: `Error: could not put the report in place`. Two repairs, each sound under POSIX, jointly non-portable. Measured on `windows-latest`, with a verbatim copy of `TestRunUtils.h:55-80` separating the three cases, and macOS passing all three as the control. | The repair is small, non-numeric and verifiable by the existing Windows job: `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)` under `_WIN32`, `rename()` elsewhere. **Not done today only because the round that found it forbade source changes.** The tempting `remove()`-then-`rename()` must be refused: it reopens exactly the window `C08` closed. |
-| **`F13`** NaN into `std::min` | `shared/utils.h:1153` suppresses a NaN only because `1.0` is written as the **first** argument of `min`. Swap them — a change a reviewer would read as cosmetic — and the NaN reaches the returned estimate. | Carried `UNCONFIRMED` since the batch phase. The property is incidental and still unmarked at the site. A comment, or explicit `fmax`-style handling, plus a regression that fails against the swapped form. |
-| **`C22c`** at other sample counts | `entropy_floor.py` refuses any `n` below 1,000,000 bits, and uses the value measured at the largest measured `n` not exceeding the actual one, because the `ZALPHA` ceiling was measured at 1e6 and 8e6 only. | One oracle run per additional `n`. Needed only if the project ever assesses a different length. |
-| **`C06`** `h_out` exceeds the output's bit ceiling | `ea_conditioning` reports `h_out` 7.1552 for a 7-bit output. | The *measurement* needs nothing, which is why it is here; the tool it concerns is deliberately not built (see the last bucket). |
+| **`C22c`** the tabulated `ZALPHA` ceiling is not independently reproduced | The floor subtracts 3.36e-3 at n = 1e6 and 2.16e-3 at n = 8e6. An independent derivation of the binding family (the Collision estimator, whose sensitivity near the `X' = 2.5` clamp is what gives this term its 1e-3 magnitude) gives **7.49e-4** and **4.46e-4** — a consistent factor of 4.5 to 4.9 **below** the tabulated values at both lengths (`OC-59`). | **The monotonicity premise the "largest measured n" rule rests on is now MEASURED and holds**, with a self-comparison at two precisions and a live-sensitivity check. The **magnitudes are not reproduced.** The discrepancy is in the safe direction — the floor subtracts more than the derivation requires, so the published figure is not overstated — but an unreproduced subtrahend is the same shape as `A02`, and it must not be described as a verified bound until one of the two calculations is corrected. |
 
+
+**`C24` has left this bucket: it is repaired** (`OC-57`). `writeJsonReport` uses
+`MoveFileEx` with `MOVEFILE_REPLACE_EXISTING` under `_WIN32`, and the Windows
+job now gates on the repair rather than on the defect: the current writer
+replaces an existing report there, the old bare-rename writer still fails
+beside it with `errno 17` as the contrast, and every tool puts its report in
+place. The POSIX path is untouched.
+
+**`F13` has left it: closed as UNREACHABLE, not repaired** (`OC-58`).
+Reachability came before repair and settled it. `p_global > 0` already excludes
+a NaN `p_global`, since `NaN > 0` is false; the only other NaN source is `0/0`
+in the variance term, which needs `N == 1` exactly, and `MIN_SIZE` is
+1,000,000 on every supported path. 73,745 evaluations over the supported
+domain produce no NaN, and **the same probe fires at `N == 1`**, so its silence
+is a measurement rather than blindness. Both sites now carry a comment saying
+the argument order is load-bearing and must not be swapped, because that is
+where the next person will look.
+
+**`C06` was listed in two buckets at once** — here and under "will not be
+done". That was double-counting: it concerns `ea_conditioning`, which is
+deliberately not built, so it belongs only in the last bucket. Removed from
+this one.
 
 `oac-13` has left this bucket: the atomic write was implemented and measured
 (`OC-47`), five runs of five leaving a complete document against one of five
@@ -126,7 +145,17 @@ Everything that was in this bucket has left it:
 | **Windows** — "assessed and not started, pending the owner" | **measured** (`OC-48`). It needed no machine and no owner decision to *measure*; only to *repair*. |
 | build state on an unmet platform | the probe **refused** on Windows as designed, and has since been taught PE/COFF as a calibrated fallback; it now gives a real verdict there, labelled `via=full` because that test is the weaker one |
 
-**Windows: the blocker is now `seed()`, and that is measured.** With `C18`
+**Windows, stated plainly, because this is the sentence someone sizing the work
+will read:** all three tools build and link, with OpenMP; `ea_non_iid` runs the
+complete non-IID battery and produces a figure; `ea_iid` and `ea_restart` run
+through chi square, the §5.2.5 LRS test and (for `ea_restart`) the restart
+sanity check, all passing, then exit at `seed()`; reports are written correctly
+(`C24` repaired); and the §5.2.5 figures match macOS exactly. **That is not
+"Windows is unsupported" and must not be summarised as such.** `seed()` is
+**DEFERRED** rather than blocking, because the owner's vendor reference
+qualification means no NIST binary runs on a user's machine (`OC-60`).
+
+**The remaining Windows facts.** With `C18`
 repaired, `ea_iid` and `ea_restart` pass chi square **and** the §5.2.5 LRS test
 on Windows — printing `Pr(X >= 1) = 0.365370`, **exactly macOS's figure**,
 where they previously printed `−0.000367` — and `ea_restart` gets past the
@@ -187,7 +216,7 @@ claims about instruments, never about sources.
 | **Upstream issue #253 is still open.** | `F01` was withdrawn and the PR closed, but closing the issue was never authorised. With "nothing upstream" standing, it stays open indefinitely unless the owner says otherwise. |
 | **Force POSIX argument order (`+` on each `getopt` optstring).** | GNU getopt permutes and BSD does not, so an argument beginning with `-` is consumed differently on Linux and macOS (`OC-40`). Both platforms refuse bad input, so this is reproducibility rather than safety. A one-character change per tool, but a behaviour change on Linux: options after the filename would stop being recognised there, which is already the macOS behaviour and already what `C21` documents. |
 | **Does TruePad's harness ever invoke these tools on a user's Windows machine?** | The question has **changed shape** now that Windows is measured (`OC-48`). It no longer decides whether to *measure* Windows; it decides whether to *repair* what the measurement found. If yes: **`C18` must be repaired** — the §5.2.5 LRS test fails unconditionally there on any standards-sized input — and `C24` with it. If no: both close as will-not-be-done, and the measurement is still worth having, because it is what turned `C18` from a reading into a fact. Not answerable from this repository — it is a question about TruePad's deployment. |
-| **`seed()`: a Windows entropy source.** | **This is now the measured blocker, and the only remaining item that touches an entropy path.** With `C18` repaired, `ea_iid` and `ea_restart` pass chi square and the §5.2.5 LRS test on Windows and then die at `seed()`, which opens `/dev/urandom` and calls `exit(-1)`; `OC-42` is **CONFIRMED for both tools** rather than predicted (`OC-53`). The change is `BCryptGenRandom` (or `RtlGenRandom`) under `_WIN32`, keeping `/dev/urandom` elsewhere. **`std::random_device` must be refused** as the portable shortcut: on MinGW libstdc++ it has historically been a deterministic PRNG, which would silently make the permutation tests' p-values mean nothing. The seed feeds the xoshiro256** state used to shuffle, so the bar is behavioural: POSIX byte-identical, two Windows runs must differ in `permutationTestResults` as two macOS runs do, the failure path stays fail-closed, and the IID verdicts on the pinned fixtures must match LP64's. One function, two branches, one library on one platform, and a nondeterminism control that is already written. |
+| **`seed()`: a Windows entropy source — DEFERRED, not a blocker.** | **The owner adopted a vendor reference qualification as the default path, under which no NIST binary runs on a user's machine**, so `seed()` is not on the product's path; it matters only for the expert-opt-in self-assertion path, for which macOS and Linux suffice (`OC-60`). The fix is small and well understood: a **platform entropy source** (`BCryptGenRandom` or `RtlGenRandom`) under `_WIN32`. **`std::random_device` must be refused** — on MinGW libstdc++ it has historically been deterministic, which would make the permutation tests' p-values meaningless while every surface indication said the tool worked. Previously described here as the measured blocker; With `C18` repaired, `ea_iid` and `ea_restart` pass chi square and the §5.2.5 LRS test on Windows and then die at `seed()`, which opens `/dev/urandom` and calls `exit(-1)`; `OC-42` is **CONFIRMED for both tools** rather than predicted (`OC-53`). The change is `BCryptGenRandom` (or `RtlGenRandom`) under `_WIN32`, keeping `/dev/urandom` elsewhere. **`std::random_device` must be refused** as the portable shortcut: on MinGW libstdc++ it has historically been a deterministic PRNG, which would silently make the permutation tests' p-values mean nothing. The seed feeds the xoshiro256** state used to shuffle, so the bar is behavioural: POSIX byte-identical, two Windows runs must differ in `permutationTestResults` as two macOS runs do, the failure path stays fail-closed, and the IID verdicts on the pinned fixtures must match LP64's. One function, two branches, one library on one platform, and a nondeterminism control that is already written. |
 | **`F10`/`C01`: correct MultiMMC's chained prefix lookup.** | §6.3.9 step 4.b.i requires an independent lookup of M_d at every depth; the code looks up depth d only if depth d−1 hit, and the `MAX_ENTRIES` cap then suppresses all depth ≥ d predictions for a recurring context (`OC-55`). **Unreachable at width 1 by proof**, so it changes nothing for this device, and the floor oracle excludes it there. Above width 1 it is an evaluated margin rather than a bound, and the only way to make it a bound is to correct the algorithm — which is estimator numerics, and therefore the owner's call, not a task. |
 | **Hill's third proposal.** | `OC-30` implements the exact multinomial maximum. Hill also proposes a *corrected binomial* restart check — count one fixed symbol, chosen from the whole dataset — which is easier to model but has less statistical power. Adopting it, or offering it, is a design choice. |
 | **Whether the fork's figure is ever reported alone.** | The standing rule is two figures, always. Relaxing it would be an owner decision, and nothing in the audit supports relaxing it. |
@@ -207,41 +236,54 @@ This bucket is not a queue. Nothing here is pending.
 
 ## The wall
 
-**The needs-nothing bucket is not empty.** `C24` sits in it — Windows
-`rename()` refuses an existing destination, and `C14`'s placeholder means no
-report can be written there — repairable here and verifiable by the job that
-found it. `F13` and two measurement-only items sit beside it.
+**One software item is left, and it is a measurement rather than a repair:**
+`C22c`'s tabulated subtrahend is not independently reproduced (`OC-59`). The
+direction is safe — more is subtracted than an independent derivation requires,
+so the published figure is not overstated — but it must not be called a bound
+until one of the two calculations is corrected. Everything else in this bucket
+has closed:
 
-Beyond that the software wall is made of **two owner decisions and nothing
-else**:
-
-| | |
+| was | now |
 |---|---|
-| **`seed()`** | the only remaining item touching an entropy path, and now the **measured** Windows blocker rather than a predicted one |
-| **`F10`** | unreachable at width 1 **by proof**, so it changes nothing for this device; correcting it is what would turn an evaluated margin into a bound above width 1 |
+| **`C24`** the atomic write is not portable | **repaired** (`OC-57`): `MoveFileEx` under `_WIN32`, verified on Windows with the old writer failing beside it as the contrast |
+| **`F13`** NaN into `std::min` | **closed as unreachable** (`OC-58`), reachability before repair, with a probe that fires below the size floor so its silence is a measurement |
+| **`C18`** LLP64 overflow | **repaired** (`OC-53`), nine reports bit-identical on LP64 |
+| **`A02`**, **`A06`** | **closed** (`OC-55`, `OC-56`) |
+| **`C06`** | was double-counted in two buckets; it concerns a tool that is deliberately not built, so it belongs only in the last one |
 
-What moved, over the last three revisions of this document, was never moved by
-an argument. It was moved by running the code on a platform it had not run on,
-by reproducing an outside audit's findings instead of assessing them, and by
-asking an instrument to print its workings. Each of those produced something no
-amount of re-reading had:
+**And the owner decisions have shrunk to one that is genuinely open.**
+`seed()` is **deferred**, not blocking, because the vendor reference
+qualification means no NIST binary runs on a user's machine (`OC-60`). `F10` is
+**unreachable at width 1 by proof**, so it changes nothing for this device;
+correcting it is what would turn an evaluated margin into a bound above width
+1, and that is estimator numerics.
 
-- Windows found `C18` (a year old, filed "Low, expect to refute") and `C24` (in
-  a repair this audit wrote and had reproducers for).
-- Reproducing `A05` found that one of this audit's own repairs **destroyed the
-  input capture** — the one failure the project cannot absorb, since January's
-  input cannot be recreated.
-- Reproducing `A08` found that **four refusals for one shared accidental
-  reason** look exactly like four working guards, which would have had me tell
-  an outside audit it was wrong when it was right.
-- Settling 683 against 684 found that the figure had been computed at a
-  **rounded** `H_I` against a **step function**, and that a sampled sweep had
-  been reported as an interval.
+**Windows is in a much better position than "unsupported", and should not be
+described as unsupported.** All three tools build; `ea_non_iid` produces a
+figure; `ea_iid` and `ea_restart` pass chi square, the §5.2.5 LRS test and the
+restart sanity check before exiting at `seed()`; reports write correctly; and
+the §5.2.5 figures match macOS exactly.
+
+What moved, across the last four revisions of this document, was never moved by
+an argument:
+
+- **Running the code on a platform it had not run on** found `C18` (a year old,
+  filed "Low, expect to refute") and `C24` (in a repair this audit wrote and
+  had reproducers for).
+- **Reproducing an outside audit instead of assessing it** found that one of
+  this audit's own repairs **destroyed the input capture** — the one failure
+  the project cannot absorb — and that **four refusals for one shared
+  accidental reason** look exactly like four working guards.
+- **Asking an instrument to print its workings** found a probe defeated by a
+  filename, a sweep searching outside its own realisable domain, and a harness
+  asserting the opposite of the defect it was built to demonstrate.
+- **Running the baseline against itself** turned "the fix changed something"
+  into "this field is nondeterministic by design", and is now rule 8.
 
 **On the project's central claim, nothing moved and nothing can.** What this
 device's entropy actually is, whether its restart data is accepted, whether a
 per-device baseline exists — all wait on hardware arriving **January 2027**.
-The physical bucket is still entirely **NOT RUN** and stays that way.
+The physical bucket is entirely **NOT RUN** and stays that way.
 
 ## How to tell whether this document has gone stale
 

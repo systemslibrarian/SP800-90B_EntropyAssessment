@@ -23,6 +23,10 @@ double most_common(uint8_t* data, const long len, const int alph_size, const int
 
 	pmax = mode/(double)len;
 
+	// F13 (OC-58): the same load-bearing argument order as utils.h's
+	// predictionEstimate. min(1.0, NaN) is 1.0; min(NaN, 1.0) is NaN. Do not
+	// swap. Unreachable here for the same reason -- a NaN needs len == 1 and
+	// MIN_SIZE is 1,000,000 on every supported path.
 	ubound = min(1.0,pmax + ZALPHA*sqrt(pmax*(1.0-pmax)/(len-1.0)));
 	entEst = -log2(ubound);
 	if(verbose == 2) printf("%s MCV Estimate: mode = %ld, p-hat = %.17g, p_u = %.17g\n", label, mode, pmax, ubound);

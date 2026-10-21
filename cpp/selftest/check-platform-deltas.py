@@ -15,6 +15,12 @@ Rule 3 is there because a comparison that silently stopped happening must not
 pass as an absence of difference -- the same shape as the empty-classification
 failure this harness already guards against.
 
+THE TOLERANCES ARE MEASURED MAGNITUDES WITH HEADROOM, NOT BOUNDS. Nothing here
+proves a platform delta cannot exceed its row; the rows record what was
+observed, with room above it. That is why a delta over its row is reported as a
+FINDING rather than as a reason to widen the row (rule 6: an observed maximum
+is not a bound).
+
 The old exception was a list of two FILENAMES and inspected nothing else, so a
 deliberate change from 0.85 to 0.01 in one of those files was accepted.
 """
@@ -107,7 +113,8 @@ def main():
         for p in problems:
             print("  - %s" % p)
         sys.exit(1)
-    print("%d expected platform delta(s), all within tolerance, on %s %s" % (len(seen), s, m))
+    print("%d expected platform delta(s), all within tolerance, on %s %s "
+          "(tolerances are measured magnitudes with headroom, not bounds)" % (len(seen), s, m))
     sys.exit(0)
 
 if __name__ == '__main__':
