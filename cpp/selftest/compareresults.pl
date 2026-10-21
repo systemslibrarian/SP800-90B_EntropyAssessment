@@ -22,6 +22,65 @@ my $compared = 0;
 my $epsilon = 1.0E-10;
 my $maxdelta = 0;
 
+# IDENTITY IS COMPARED, NOT DISCARDED (OC-74).
+#
+# The line filter below selects only lines matching
+# /(Estimate:|Assessed|^H_original|^H_bitstring)/i, so the first two lines of
+# every report -- "Opening file: '<path>'" and "Loaded N samples of K distinct
+# W-bit-wide symbols" -- were never compared. This comparator therefore could
+# not tell that the output it read came from the same input, at the same sample
+# count, at the same symbol width, as the reference it was checking against.
+#
+# MEASURED: a copy of refdata/normal.res with its identity lines rewritten to
+# claim "SOME-OTHER-FILE.bin" and "42 samples of 3 distinct 2-bit-wide symbols"
+# compared EQUAL to normal.bin's real output (1,000,000 samples, 179 distinct
+# 8-bit symbols): "Maximum delta: 6.93e-15", 98 values compared, exit 0.
+#
+# That is the flagship self-test's comparator, and `selftest` pairs each output
+# with a reference by a FILENAME TRANSFORM alone, so a mispaired reference is
+# precisely the case it could not see. An exclusion that touches the input's
+# identity does not weaken a comparison, it voids it: agreement becomes
+# indistinguishable from a category error (instrument rule 8).
+sub identity_of {
+    my ($path) = @_;
+    open my $fh, '<', $path or die "Can't open $path: $!";
+    my %id;
+    while (my $l = <$fh>) {
+        # BOTH WORDINGS. The tool now prints "Loaded file: '<path>' (SHA-256
+        # hash ...)"; the committed references, which predate that change, say
+        # "Opening file: '<path>'". Same field, two spellings -- so this is
+        # matched on the field, not on one side's wording, which is instrument
+        # rule 3's corollary applied to a comparator's own input.
+        if ($l =~ m{^(?:Opening|Loaded) file:\s*'([^']+)'}) {
+            my $p = $1; $p =~ s{.*/}{};          # basename: the directory may
+            $id{file} = $p;                      # legitimately differ
+        } elsif ($l =~ /^Loaded\s+(\d+)\s+samples\s+of\s+(\d+)\s+distinct\s+(\d+)-bit/) {
+            @id{qw(samples distinct width)} = ($1, $2, $3);
+        }
+        last if exists $id{file} && exists $id{samples};
+    }
+    close $fh;
+    return \%id;
+}
+
+my $id_new = identity_of($ARGV[0]);
+my $id_ref = identity_of($ARGV[1]);
+for my $k (qw(file samples distinct width)) {
+    if (!defined $id_new->{$k} || !defined $id_ref->{$k}) {
+        print "$ARGV[0]: REFUSING: identity field '$k' is absent from one side\n";
+        print "  (output: ", ($id_new->{$k} // 'MISSING'), "; reference: ",
+              ($id_ref->{$k} // 'MISSING'), ")\n";
+        print "  A comparison that cannot establish it read the same input cannot\n";
+        print "  distinguish agreement from a category error (OC-74).\n";
+        exit 2;
+    }
+    if ($id_new->{$k} ne $id_ref->{$k}) {
+        print "$ARGV[0]: IDENTITY MISMATCH on '$k': output '$id_new->{$k}' vs reference '$id_ref->{$k}'\n";
+        print "  The numbers below, agreeing or not, are about different things.\n";
+        $retstatus = 1;
+    }
+}
+
 open my $local_fh, '<', $ARGV[0] or die "Can't open $ARGV[0]: $!";
 my $newResults = resultsHash($local_fh);
 close $local_fh;
@@ -99,7 +158,8 @@ if($compared == 0) {
    print "  yielded zero keys, so agreement here is vacuous (SHAPE-03, OC-66).\n";
    exit 2;
 }
-print "$ARGV[0]: $compared value(s) compared\n";
+printf "%s: %d value(s) compared; identity %s / %s samples / %s-bit matched\n",
+    $ARGV[0], $compared, $id_new->{file}, $id_new->{samples}, $id_new->{width};
 exit $retstatus;
 
 sub resultsHash {

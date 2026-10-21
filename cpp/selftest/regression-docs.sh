@@ -17,6 +17,8 @@
 set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
+# instrument rule 5, mechanised (OC-73)
+. "${here}/labelread-lib.sh"
 repo=$(cd "${here}/../.." && pwd)
 cd "${repo}" || exit 2
 
@@ -129,7 +131,7 @@ else
     observed=""
     # This script runs from the repository root, so the paths are repo-relative.
     [ -x cpp/ea_non_iid ] && observed=$(cpp/ea_non_iid -vv bin/ringOsc-nist.bin 2>/dev/null \
-        | sed -n 's/^Assessed min entropy: //p' | head -1)
+        | sed -n 's/^Assessed min entropy: //p' | lr_one 'Assessed min entropy') || fails=$((fails + 1))
     wrong=""
     # Total across all the documents, not per document: most of them legitimately
     # quote no pinned figure, but if NONE of them does any more then the pattern

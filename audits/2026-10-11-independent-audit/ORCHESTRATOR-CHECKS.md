@@ -6567,3 +6567,105 @@ build-differential: FAIL (the comparator cannot fire; agreement from it means no
 So the vacuous path is guarded twice, and the outer guard is the one that
 catches a globally broken comparator. The inner sentinels catch the case the
 outer one cannot: **one** arm producing no report while the other does.
+
+---
+
+## OC-74 — the comparator sweep: 20 comparators, 15 with assumed exclusions, 10 blind to identity
+
+`build-differential.sh`'s result generalises: **every comparator has an
+exclusion list, and every exclusion is an unstated claim that the field
+legitimately differs.** Those claims are checkable, and when its five were
+checked, three were false (`OC-71`). So all 21 candidate comparators were
+inventoried.
+
+| | |
+|---|---:|
+| files examined | **21** |
+| comparators | **20** (`generate-refdata` writes, it does not compare) |
+| with at least one **assumed** exclusion | **15** |
+| **exclusions touching input, instrument or build identity** | **10** |
+
+Fully justified — every exclusion measured or proved:
+`outside-battery-mutation-test.sh`, `outside-battery-check.cpp`,
+`build-provenance-canary.sh`, `entropy_floor.py`, `build-differential.sh`.
+
+### The serious category, reported first
+
+An exclusion touching identity does not weaken a comparison, it **voids** it.
+Ten comparators, in two tiers.
+
+**Tier 1 — identity excluded from the comparison outright:**
+
+1. **`compareresults.pl`** — its line filter selects only
+   `/(Estimate:|Assessed|^H_original|^H_bitstring)/i`, so *"Opening file"* and
+   *"Loaded N samples of K distinct W-bit-wide symbols"* were never compared.
+2. **`selftest`** — delegates to it, and pairs output with reference by a
+   **filename transform alone**. Its only instrument check is `[ ! -x ../ea_non_iid ]`.
+3. `check-platform-deltas.py` — `b['cc'] in cc`, a **substring** of a compiler
+   identity read from the host's current `$CXX` rather than from the build under test.
+4. `verify-fixture-inventory.sh` — input↔reference bound by filename only; the
+   manifest's own digest **printed, never verified**.
+5. `p_local_exact.py` — `HARNESS = sys.argv[1]`; the binary supplying every
+   tool-side number is never identified.
+6. `restart_decision_exact.py` — reads `restartCutoffMethod` and **drops it**,
+   so agreement with an exact build and with a printed-binomial build report identically.
+7. `regression-outside-battery.sh` — tool taken from the environment or built
+   in-line with unrecorded flags, while pinning FFT output to four significant figures.
+
+**Tier 2 — identity reported but not compared**, because `bs_print` has no
+failure path: `regression-output.sh`, `regression-restart.sh`,
+`regression-subset.sh`, `regression-iid-json.sh`.
+
+### Two were live and are repaired, both reproduced first
+
+**1. The flagship self-test could not tell which file it read.** Measured: a
+copy of `refdata/normal.res` with its identity lines rewritten to claim
+`SOME-OTHER-FILE.bin` and *"42 samples of 3 distinct 2-bit-wide symbols"*
+compared **equal** to `normal.bin`'s real output — 1,000,000 samples, 179
+distinct 8-bit symbols:
+
+```
+Maximum delta: 6.93196230865696e-15
+normal.out: 98 value(s) compared
+exit=0
+```
+
+`compareresults.pl` now extracts and compares the basename, sample count,
+distinct-symbol count and symbol width, **refusing (exit 2)** when either side
+lacks them and failing on a mismatch. Verified three ways: the genuine pair
+passes reporting `identity normal.bin / 1000000 samples / 8-bit matched`, the
+identity lie fails, and a wrong fixture fails **on identity** rather than
+incidentally on its numbers.
+
+One detail worth keeping: the tool now prints `Loaded file: '<path>' (SHA-256
+hash …)` where the committed references, which predate that change, say
+`Opening file: '<path>'`. The same field in two spellings — so the match is on
+the **field**, not on one side's wording, which is instrument rule 3's
+corollary applied to a comparator's own input.
+
+**2. `regression-restart.sh` claimed 64 comparisons from zero.** `for triple in
+; do` iterated nothing, `cbad` was never touched, and the check printed *"C23
+both cutoffs match the exact oracle: 32 H_I values × 2 columns"* — in the
+enforced suite, with the claim text hard-coded, while its own header said the
+pins came from `restart_multinomial_max.py`. They were absent.
+
+Populated from that oracle's own `--pins` output, 32 values, five seconds to
+regenerate. **All 64 comparisons now happen and agree.** And an empty list now
+refuses: emptied deliberately, it reports `HARNESS FAULT -- 0 pins, expected
+32; nothing was compared` and the claim line reads `0 comparisons made` instead
+of 64.
+
+### What a wrong agreement would have looked like
+
+| comparator | the wrong agreement |
+|---|---|
+| `compareresults.pl` + `selftest` | a mispaired reference, or one correct for a different fixture, reported as a clean self-test — **demonstrated above** |
+| `regression-restart.sh` | "both cutoffs match the exact oracle" with the oracle never consulted — **demonstrated above** |
+| `check-platform-deltas.py` | a platform exception honoured under a different Apple clang than the one that built the binary |
+| `verify-fixture-inventory.sh` | a `.res` edited together with its manifest digest |
+| `p_local_exact.py` | "the exact formula agrees with the tool" where the tool is an unidentified binary |
+| `restart_decision_exact.py` | agreement with a build using the printed binomial, reported as agreement with the exact statistic |
+
+The remaining eight are recorded here with their quoted exclusions rather than
+repaired in this round, and `restart_decision_exact.py`'s dropped
+`restartCutoffMethod` is the cheapest of them to close next.

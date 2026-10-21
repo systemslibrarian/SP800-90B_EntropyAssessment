@@ -355,8 +355,33 @@ fi
 # 1-8 bit range, against oracles/restart_multinomial_max.py -- which is
 # validated against brute-force enumeration and anchored on Hill's published
 # Table 3. Format: H_I:deciding:printed-binomial.
+# THE PIN LIST WAS EMPTY AND THE CHECK CLAIMED 64 COMPARISONS (OC-74).
+#
+# This read `for triple in ; do` -- iterating nothing -- so cbad was never
+# touched and the script printed "C23 both cutoffs match the exact oracle:
+# 32 H_I values x 2 columns (0.25 .. 8)" having made ZERO comparisons. The
+# header above says the pins come from oracles/restart_multinomial_max.py; they
+# were absent. That is SHAPE-03, an empty accumulator reading as success, in
+# the enforced suite, with the claim text hard-coded.
+#
+# Pins below are the oracle's own output: `restart_multinomial_max.py --pins`,
+# 32 values, five seconds to regenerate. Format H_I:deciding:printed-binomial.
+C23_PINS="0.25:890:890 0.5:769:769 0.75:662:662 1:572:570 1.25:492:490
+  1.5:423:421 1.75:366:362 2:316:312 2.25:273:269 2.5:236:232 2.75:205:200
+  3:178:173 3.25:155:150 3.5:135:130 3.75:118:113 4:104:99 4.25:91:86
+  4.5:80:76 4.75:71:66 5:63:58 5.25:56:51 5.5:50:45 5.75:45:40 6:40:36
+  6.25:36:32 6.5:33:28 6.75:29:25 7:27:23 7.25:24:21 7.5:22:19 7.75:20:17
+  8:19:15"
+
 cbad=0
-for triple in ; do
+# AND AN EMPTY LIST NOW REFUSES. Populating it is not enough on its own: the
+# next person to empty it must get a failure, not a pass.
+c23_n=$(printf '%s\n' ${C23_PINS} | grep -c .)
+if [ "${c23_n}" -lt 32 ]; then
+	note "C23 pin list:" "HARNESS FAULT -- ${c23_n} pins, expected 32; nothing was compared"
+	fails=$((fails + 1))
+fi
+for triple in ${C23_PINS}; do
 	h=${triple%%:*}; rest=${triple#*:}; wdec=${rest%%:*}; wprn=${rest#*:}
 	out=$("${tool}" -v -n "${work}/x1000.bin" 8 "${h}/symbol" 2>&1)
 	gdec=$(printf '%s' "${out}" | sed -n 's/.*X_cutoff: \([0-9]*\).*/\1/p')
@@ -365,7 +390,7 @@ for triple in ; do
 	[ "${gprn}" = "${wprn}" ] || { cbad=$((cbad + 1)); note "C23 printed-formula cutoff at H_I=${h}:" "got ${gprn:-?}, exact ${wprn}"; }
 done
 if [ "${cbad}" -eq 0 ]; then
-	note "C23 both cutoffs match the exact oracle:" "32 H_I values x 2 columns (0.25 .. 8)"
+	note "C23 both cutoffs match the exact oracle:" "${c23_n} H_I values x 2 columns, $((c23_n * 2)) comparisons made"
 else
 	note "C23 both cutoffs match the exact oracle:" "${cbad} of 64 differ"; fails=$((fails + 1))
 fi

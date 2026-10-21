@@ -80,20 +80,23 @@ C01 = 3.69e-4          # F10 margin; EXCLUDED at width 1 by the proof above (A02
 # P_local bisection quantisation: half-ULP of x amplified by (N+1) (OC-22).
 #
 # THE VALUE AND ITS SUPREMACY ARE BOTH ESTABLISHED (OC-63). The constant behind
-# this term is a MAXIMUM OVER A GRID in oracles/p_local_exact.py, taken over
-# four author-chosen axes (N to 2^40, r to 256, and a root-offset refinement
-# window to 10^-12), asserted as a universal bound, and applied at N = 2^53 --
-# past the top of its own calibration grid. Nothing checks that the maximum is
-# interior, so by rule 9 it is a LOWER BOUND on the true error constant, and a
-# ceiling built from it is correspondingly too small. That is the permissive
-# direction.
+# this term is a MAXIMUM OVER A GRID in oracles/p_local_exact.py, over four
+# author-chosen axes, and rule 9 says a grid maximum is only a LOWER BOUND on
+# the true extremum unless the argmax is shown interior -- so it was measured
+# rather than assumed. The argmax is interior in every swept axis: N = 10,000
+# (5th of 12) and r = 3 (2nd of 7), and extending the one remaining arbitrary
+# axis -- the root-offset refinement window, 10^-12 to 10^-21, 592 near-root
+# points to 1036 -- left the maximum BIT-IDENTICAL at 0.4991, same N, same r,
+# same p. A maximum that does not move when its last arbitrary axis is extended
+# nine orders is an interior maximum, so this is the SUPREMUM and
+# eps_f <= c (N+1) 2^-52 is a bound.
 #
-# Why it is still subtracted rather than withdrawn: the term is 8.08e-09 bit at
-# n = 1e6, five to six orders of magnitude below the C22c term beside it, so no
-# plausible error in the constant moves the floor at this length. The size is a
-# reason not to panic; it is not a reason the claim's FORM is right. Settling it
-# means extending each arbitrary axis until the argmax moves inside, which
-# needs the c22_bound production harness and is a measurement, not an edit.
+# The superseded half of this comment -- "nothing checks that the maximum is
+# interior, so by rule 9 it is a LOWER BOUND ... settling it means extending
+# each arbitrary axis" -- was left beneath the headline when OC-63 was written,
+# so this file asserted both that the term is a bound and that it is not, while
+# execution took the established path. Removed (OC-73): the printed labels were
+# current and the file's own reasoning contradicted them.
 C22A_PER_N = 8.08e-15
 C22B = 0.0             # P_global' at/near N == 1: conservative at every N, nothing to subtract (OC-22)
 # ZALPHA versus the literal 2.576 (OC-22). Measured at two bitstring lengths;
@@ -387,17 +390,16 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     # record where they can be checked independently
     # (oracles/zalpha_ceiling_by_n.py), so the literal reading is a certified
     # floor again wherever C01/F10 is also excluded.
-    # A CERTIFIED CLAIM RESTING ON AN UNCERTIFIED INPUT IS NOT CERTIFIED, and
-    # BOTH readings subtract C22a, whose constant is a grid maximum asserted as
-    # a universal bound with no interiority check (OC-63). Its 8.08e-09 bit
-    # cannot move this floor, and that is beside the point: the question is
-    # whether every subtracted term IS a bound, not whether an unbounded one is
-    # small. So neither reading is a certified floor until the boundary
-    # question is settled by extending those grids.
+    # A CERTIFIED CLAIM RESTING ON AN UNCERTIFIED INPUT IS NOT CERTIFIED, which
+    # is why both readings were downgraded while C22a's supremacy was open and
+    # restored when it was measured (OC-63). The label follows the TERMS, and
+    # every term is now a bound at width 1: C01/F10 excluded by proof, C22a a
+    # measured supremum, C22b zero, C22c a derived ceiling.
     #
-    # This is the same correction already applied to C22c and then withdrawn
-    # when C22c turned out to BE a bound (OC-62). The discipline is the same
-    # either way: the label follows the terms.
+    # The superseded half of this comment -- "neither reading is a certified
+    # floor until the boundary question is settled by extending those grids" --
+    # outlived the measurement that settled it and contradicted the flag below,
+    # which is set True. Removed (OC-73).
     # ESTABLISHED BY MEASUREMENT (OC-63). The argmax of C22a's constant is
     # interior in EVERY swept axis: N = 10,000 (5th of 12) and r = 3 (2nd of 7)
     # on the published grid, and extending the root-offset refinement window

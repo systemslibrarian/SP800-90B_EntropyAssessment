@@ -33,6 +33,8 @@
 set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
+# instrument rule 5, mechanised (OC-73)
+. "${here}/labelread-lib.sh"
 repo=$(cd "${here}/../.." && pwd)
 tool="${here}/../ea_non_iid"
 gen="${repo}/audits/2026-09-30/novel-findings/generators/noniid"
@@ -55,7 +57,8 @@ cp "${gen}/f09gen.py" "${gen}/fillsteps.py" "${work}/"
 [ -s "${work}/f09b.bin" ] || { echo "regression-multimmc: could not generate the dataset" >&2; exit 2; }
 
 out=$("${tool}" -vv "${work}/f09b.bin" 8 2>/dev/null)
-field() { printf '%s\n' "${out}" | sed -n "s/^Literal MultiMMC Prediction Estimate: $1 = //p" | head -1; }
+field() { printf '%s\n' "${out}" | sed -n "s/^Literal MultiMMC Prediction Estimate: $1 = //p" \
+                   | lr_one "Literal MultiMMC Prediction Estimate: $1"; }
 
 # The audit's literal implementation of 6.3.9 gives r = 24 for this dataset.
 got=$(field r)

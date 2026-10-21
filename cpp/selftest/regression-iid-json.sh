@@ -22,6 +22,8 @@
 set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
+# instrument rule 5, mechanised (OC-73)
+. "${here}/labelread-lib.sh"
 repo=$(cd "${here}/../.." && pwd)
 tool="${here}/../ea_iid"
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-regij.XXXXXX") || exit 2
@@ -88,7 +90,7 @@ fi
 # The assessed figure in the report must be the real one at any verbosity,
 # and must equal what -vvv prints.
 text=$("${tool}" -vvv "${repo}/bin/truerand_1bit.bin" 1 2>/dev/null \
-	| tee "${work}/bin-vvv.txt" | sed -n 's/^Assessed min entropy: //p' | head -1)
+	| tee "${work}/bin-vvv.txt" | sed -n 's/^Assessed min entropy: //p' | lr_one 'Assessed min entropy') || exit 1
 json=$(field "${work}/bin.json" hAssessed)
 if [ -n "${text}" ] && python3 -c "
 import sys
