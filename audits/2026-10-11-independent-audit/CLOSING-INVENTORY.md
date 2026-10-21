@@ -81,6 +81,16 @@ instructions the tag itself carries, are in
 before. `C24` is what that repair turned out to cost on a platform it had not
 been run on — not a reason to undo it.
 
+**`C18` has left the owner-decision bucket entirely: it is repaired** (`OC-53`).
+It was never the large change it was feared to be — `int64_t` in the parameter,
+the product and the return — and the evidence is what took the work: nine
+reports across three fixtures and all three tools are **bit-identical** on
+LP64, with the one differing field excluded **by measurement** (the baseline
+differs from itself there, because the permutation tests seed from
+`/dev/urandom`) and the comparator shown live against a 1e-15 perturbation. On
+Windows it turned a §5.2.5 test that failed whatever the data into one that
+prints **exactly macOS's figure**.
+
 `A02` and `A06` have left it, **closed** this round (`OC-55`, `OC-56`). `A02`
 took the third of its three options — exclude the affected path — and at width
 1 the exclusion is a counting **proof** from the two shipped constants, so the
@@ -249,10 +259,28 @@ And the two platform jobs, which are the cheap way to find the class of claim
 that is true only on the host you wrote it on:
 
 ```sh
+./regression-platform-deltas.sh                      # 6 cases; the platform exception
+cd ../../audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh  # 12 cases
+```
+
+And the two platform jobs, which are the cheap way to find the class of claim
+that is true only on the host you wrote it on:
+
+```sh
 gh workflow run x86-64-platform-facts.yml     # also runs on every push to master
 gh workflow run windows-platform-facts.yml    # manual only; ~8 minutes
 gh run download <id>                          # every log is an artefact
 ```
+
+Three instruments now refuse rather than guess, and a reader should know what
+each refusal means:
+
+| instrument | refuses when |
+|---|---|
+| `mutation-lib.sh` | no unmutated **baseline** was asserted accepted, so refusals are unattributable (rule 7) |
+| `entropy_floor.py` | the bit width is not established, or the report fails validation; and it says **EVALUATED MARGIN** rather than **CERTIFIED FLOOR** above width 1 |
+| `restart_decision_exact.py` | the restart fields are absent, or a six-decimal `H_I` does not determine the integer cutoff (exit 2, never a guess) |
+| `check-platform-deltas.py` | no platform block matches, a delta exceeds its row, a row was never observed, or the manifest is unreadable |
 
 Read the Windows job's `verdict.log` first. A `GATE FAIL` there is a measured
 finding, not a broken job: as of 2026-10-20 the expected failures are
