@@ -54,10 +54,26 @@ else
     ( cd "${here}" && ./selftest > "${genuine}" 2>&1; rm -f ./*.res )
 fi
 if ! grep -q 'Significant difference for' "${genuine}"; then
+    # EXIT 2, NOT 0 (OC-66). This printed "SKIPPED (not a pass)" and then
+    # returned 0, so the abstention was counted as a pass -- and on Linux,
+    # which is the platform the x86-64 CI job runs on and where selftest
+    # reports no differences at all, that is exactly what happened: the gate
+    # greps for "22 passed, 0 failed" and this check contributed one of the 22
+    # without exercising anything.
+    #
+    # run-all-checks.sh already has the right channel: exit 2 is COULD NOT RUN,
+    # reported apart from both pass and fail, with its own comment saying a
+    # check that did not execute supports no claim. Use it. Saying "not a pass"
+    # in prose while returning the pass code is the defect, not the prose.
+    #
+    # CONSEQUENCE FOR THE RECORD: A06's "four failures the audit required" were
+    # established on macOS and NOT on Linux, where this check has never
+    # exercised the manifest at all.
     echo "regression-platform-deltas: this platform reports no differences at all, so the"
-    echo "  exception is never exercised here. SKIPPED (not a pass): the manifest cannot be"
-    echo "  checked against a transcript that has nothing in it."
-    exit 0
+    echo "  exception is never exercised here. COULD NOT RUN (exit 2), which is neither a"
+    echo "  pass nor a failure: the manifest cannot be checked against a transcript that"
+    echo "  has nothing in it."
+    exit 2
 fi
 
 # THE BASELINE FIRST (rule 7): the unmutated transcript must be ACCEPTED.

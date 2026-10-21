@@ -81,12 +81,37 @@ pass=0; fail=0; failed=""
 # but they are reported apart so the operator knows whether to fix the
 # environment or the code.
 cannot=0; couldnot=""
+# BUILD STATE MUST SURVIVE THE AGGREGATOR (rule 4, OC-66).
+#
+# This captured each script's output and, on success, printed only the label --
+# so every `[build-state]` line the declaring scripts emit was thrown away one
+# layer up. Rule 4's stated point is that a result WITHOUT that line is visibly
+# incomplete, and the aggregator made every result look the same.
+#
+# Measured: binaries built -DNDEBUG, all three digests differing and the probe
+# reporting asserts=NDEBUG against asserts=LIVE, then the full suite run on both
+# arms. The verdicts were IDENTICAL CHECK FOR CHECK, 22 passed 0 failed on each,
+# and neither output contained the string "build-state". The suite could not
+# distinguish a build with every assert in lrs_test.h compiled out, and said
+# nothing about which it had measured. No verdict flipped, so it was not a live
+# false pass -- it is OC-42's exact error made undetectable again.
+bs_seen=0; bs_silent=""
 run() { # run <label> <command...>
     local label=$1; shift
     local out rc
     out=$("$@" 2>&1); rc=$?
+    # Surface the declarations rather than discarding them, and record which
+    # scripts made none so silence is visible instead of equivalent.
+    local decl
+    decl=$(printf '%s\n' "${out}" | grep -E '^\[build-state\]' || true)
+    if [ -n "${decl}" ]; then
+        bs_seen=$((bs_seen + 1))
+    else
+        bs_silent="${bs_silent} ${label}"
+    fi
     if [ "${rc}" -eq 0 ]; then
         printf '  %-34s PASS\n' "${label}"
+        [ -n "${decl}" ] && printf '%s\n' "${decl}" | sed 's/^/      /'
         pass=$((pass + 1))
         return
     fi
@@ -183,6 +208,20 @@ if [ "${total}" -ne "${EXPECTED_TOTAL_CHECKS}" ]; then
 fi
 
 echo
+# BUILD-STATE COVERAGE IN THE SUMMARY (rule 4, OC-66). A reader must be able to
+# tell, from the summary alone, whether this run said anything about the
+# artefacts it measured. The count is printed on its own line, ABOVE the
+# summary, so the summary line itself stays byte-identical -- the inventory
+# mutation harness matches that line exactly and the comment below depends on
+# it.
+printf 'build-state: %d of %d checks declared the artefact they measured\n' \
+    "${bs_seen}" "$((pass + fail + cannot))"
+if [ "${bs_seen}" -eq 0 ]; then
+    echo "build-state: NO CHECK DECLARED ONE. This run is silent about whether it" >&2
+    echo "             measured an asserts-live build or a -DNDEBUG one, and the two" >&2
+    echo "             are indistinguishable from its verdicts (OC-66)." >&2
+fi
+
 # The summary line stays byte-identical when nothing was skipped: the repair
 # branch's harness-inventory-mutation-test.sh matches it exactly.
 if [ "${cannot}" -eq 0 ]; then

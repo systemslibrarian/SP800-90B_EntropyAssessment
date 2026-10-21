@@ -229,12 +229,28 @@ jobs:
           # measure. That is rule 7's corollary -- a hardcoded expected count
           # inside a harness is a staleness trap -- found one layer up from
           # where it was first fixed, by the CI run that fixed it elsewhere.
-          SUITE_EXPECT="$(sed -n 's/^EXPECTED_TOTAL_CHECKS=\([0-9]*\)$/\1/p' \
-                          cpp/selftest/run-all-checks.sh | head -1) passed, 0 failed"
-          case "$SUITE_EXPECT" in
-            " passed, 0 failed") echo "GATE FAIL  cannot read EXPECTED_TOTAL_CHECKS from run-all-checks.sh"; fail=1 ;;
-            *) gate "full suite (platform flag)" logs/06-run-all-checks-platform.log "$SUITE_EXPECT" ;;
-          esac
+          # ON LINUX ONE CHECK LEGITIMATELY CANNOT RUN (OC-66).
+          # regression-platform-deltas.sh exercises the known-platform-delta
+          # manifest, and Linux is the platform NIST's reference data came from,
+          # so selftest reports no differences and there is nothing to check
+          # against. It used to print "SKIPPED (not a pass)" and return 0, so
+          # the abstention was counted among the 22 here. It now exits 2, which
+          # run-all-checks reports as COULD NOT RUN -- apart from both pass and
+          # fail -- so the expected shape on THIS platform is N-1 passed with
+          # exactly one could-not-run, and the gate names which one. An
+          # abstention is allowed; an unexplained one is not.
+          TOTAL="$(sed -n 's/^EXPECTED_TOTAL_CHECKS=\([0-9]*\)$/\1/p' \
+                   cpp/selftest/run-all-checks.sh | head -1)"
+          if [ -z "$TOTAL" ]; then
+            echo "GATE FAIL  cannot read EXPECTED_TOTAL_CHECKS from run-all-checks.sh"; fail=1
+          else
+            gate "full suite (platform flag)" logs/06-run-all-checks-platform.log \
+                 "$((TOTAL - 1)) passed, 0 failed, 1 could not run"
+            gate "the one abstention is the expected one" logs/06-run-all-checks-platform.log \
+                 "could-not-run: regression-platform-deltas"
+            gate "build state reached the summary" logs/06-run-all-checks-platform.log \
+                 "checks declared the artefact they measured"
+          fi
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"
