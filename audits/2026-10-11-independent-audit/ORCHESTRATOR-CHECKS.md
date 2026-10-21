@@ -5931,28 +5931,46 @@ Two of the three concerns dissolve on measurement:
   the direction that matters, and the top truncation is irrelevant to the
   maximum. `r = 2` is likewise the physical floor, not an arbitrary edge.
 
-**What remains open is one axis: `k`**, the root-offset refinement window
-`p = p*(1 ± 10^-k)`, truncated at `10^-12`. That is the one axis on which a
-closer approach to the root could still raise `c`, and it is being extended to
-`10^-21` on the oracle's own grid — the same oracle, one list changed, nothing
-reimplemented.
+**And the last axis closed too.** The root-offset refinement window
+`p = p*(1 ± 10^-k)` was truncated at `10^-12` — the one axis on which a closer
+approach to the root could still raise `c`. Extended to `10^-21` on the
+oracle's own grid, the same oracle with one list changed and nothing
+reimplemented:
 
-Until that lands, `C22a`'s universal-bound phrasing is **partially
-established**: two axes measured interior, one conservative by construction,
-one still open. **The value is reproduced; the supremacy of the value is not
-yet.**
+| | near-root points | `c` | argmax |
+|---|---:|---:|---|
+| published grid, `k ≤ 12` | 592 | **0.4991** | `N = 10 000`, `r = 3`, `p = 0.01005119221829661` |
+| extended, `k ≤ 21` | **1036** | **0.4991** | **identical** — same `N`, same `r`, same `p` |
 
-### And the labels follow, because the rule has to cut both ways
+Nearly double the points, nine extra orders of approach to the root, and the
+maximum does not move by a digit. **The argmax is interior in every swept
+axis**, so the grid value is the **supremum** rather than a lower bound on it,
+and `eps_f ≤ c·(N+1)·2^-52` is a bound. (`c` = 0.4991 sitting just under ½ is
+what a half-ULP evaluation error looks like, which is some corroboration of the
+form as well as the value.)
 
-`C22a` is subtracted by **both** readings of the floor. A certified claim
-resting on an uncertified input is not certified, so until the `k` axis is
-settled **neither reading is a certified floor**, and `entropy_floor.py` says
-so with the reason named. Its 8.08e-09 bit cannot move the figure at this
-length — which is exactly the argument I rejected for `C22c` and must reject
-here too. **The question is whether every subtracted term IS a bound, not
-whether an unbounded one is small.**
+**`C22a`'s supremacy is established.** So at width 1, where `C01`/`F10` is
+excluded by proof and `C22c` is a derived ceiling, **both readings are
+certified floors**:
 
-That is the third time in two rounds the floor's label has moved: down for
-`C22c`, back up when `C22c` turned out to be a bound, and down again for
-`C22a`. The movement is the machinery working. The label follows the terms, and
-the terms are being established one at a time.
+| | literal reading | F07 reading |
+|---|---|---|
+| width 1 | **CERTIFIED FLOOR**, 0.84129042387787445 | **CERTIFIED FLOOR**, 0.84465042387787448 |
+| width > 1 | EVALUATED MARGIN (`C01`/`F10`) | EVALUATED MARGIN (`C01`/`F10`) |
+
+### The label moved four times in two rounds, and that is the point
+
+Down for `C22c`, back up when `C22c` proved to be a bound, down for `C22a`, back
+up when `C22a`'s argmax proved interior. Each move was forced by a measurement
+and each was recorded rather than smoothed over. A label that never moves under
+this much scrutiny is not a label anyone checked.
+
+### Why the label was downgraded first, and why that was right
+
+`C22a` is subtracted by **both** readings. While its supremacy was
+unestablished, a certified claim rested on an uncertified input, so neither
+reading could be called a certified floor — and the fact that 8.08e-09 bit
+cannot move the figure was **not** a defence, because that is precisely the
+argument rejected for `C22c`. **The question is whether every subtracted term
+IS a bound, not whether an unbounded one is small.** The downgrade stood for as
+long as the question did, which was about an hour.

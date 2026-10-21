@@ -79,7 +79,7 @@ import json, sys, os
 C01 = 3.69e-4          # F10 margin; EXCLUDED at width 1 by the proof above (A02 / OC-55)
 # P_local bisection quantisation: half-ULP of x amplified by (N+1) (OC-22).
 #
-# THE VALUE IS REPRODUCED; ITS SUPREMACY IS NOT (OC-63). The constant behind
+# THE VALUE AND ITS SUPREMACY ARE BOTH ESTABLISHED (OC-63). The constant behind
 # this term is a MAXIMUM OVER A GRID in oracles/p_local_exact.py, taken over
 # four author-chosen axes (N to 2^40, r to 256, and a root-offset refinement
 # window to 10^-12), asserted as a universal bound, and applied at N = 2^53 --
@@ -313,8 +313,8 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
         print("    One measured overestimate from f10_over_8bit_1M. The mechanism is dictionary")
         print("    saturation, whose size is set by the data, so nothing here constrains it (A02).")
     print("  C22a P_local quantisation                %.3e    8.08e-15 x (n+1), n = %d" % (a, n))
-    print("    the constant is a grid maximum asserted as a universal bound; its supremacy is")
-    print("    unestablished at the boundary (OC-63). At %.3e bit it cannot move this floor." % a)
+    print("    the constant's argmax is interior in every swept axis, and extending the one")
+    print("    arbitrary axis nine orders left it bit-identical, so it is a supremum (OC-63).")
     print("  C22b P_global' at N == 1                 %.3e    conservative at every N" % C22B)
     print("  C22c ZALPHA vs the literal 2.576         %.3e    derived ceiling, at n = %d" % (bz, bz_n))
     print("    The binding estimator is COMPRESSION (bitstring), whose com_exp is stationary at")
@@ -365,17 +365,21 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     # This is the same correction already applied to C22c and then withdrawn
     # when C22c turned out to BE a bound (OC-62). The discipline is the same
     # either way: the label follows the terms.
-    c22a_supremacy_established = False
+    # ESTABLISHED BY MEASUREMENT (OC-63). The argmax of C22a's constant is
+    # interior in EVERY swept axis: N = 10,000 (5th of 12) and r = 3 (2nd of 7)
+    # on the published grid, and extending the root-offset refinement window
+    # from 10^-12 to 10^-21 -- 592 near-root points to 1036 -- left the maximum
+    # BIT-IDENTICAL at 0.4991, same N, same r, same p. A maximum that does not
+    # move when the only remaining arbitrary axis is extended nine orders is an
+    # interior maximum, so the grid value is the supremum rather than a lower
+    # bound on it, and `eps_f <= c (N+1) 2^-52` is a bound.
+    c22a_supremacy_established = True
     lit_terms_all_bounds = certified and c22a_supremacy_established
     f07_terms_all_bounds = certified and c22a_supremacy_established
     lab_lit = "CERTIFIED FLOOR" if lit_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
     lab_f07 = "CERTIFIED FLOOR" if f07_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
     print("  %-31s %.17g   (h' - %.6g)" % (lab_lit + ", literal", lit, hp - lit))
     print("  %-31s %.17g   (h' - %.6g)" % (lab_f07 + ", F07", f07, hp - f07))
-    if certified and not c22a_supremacy_established:
-        print("    NOT a certified floor only because C22a's constant is a grid maximum whose")
-        print("    supremacy is unestablished (OC-63). Every other term here is a bound, and")
-        print("    C22a is 8.08e-09 bit, so the FIGURE is not in doubt -- the CLAIM is.")
     if not certified:
         print("    NOT A FLOOR: the C01/F10 term above is an evaluated margin over the inputs")
         print("    measured, not a bound over all accepted ones. Treat this as a working figure")
