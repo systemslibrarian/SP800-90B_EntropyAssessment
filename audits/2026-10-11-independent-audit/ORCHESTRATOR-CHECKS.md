@@ -6392,7 +6392,7 @@ reconcile: **no V-series rule exists in this repository.** The obligation said
 to have been lost in restatement cannot be restored here, because neither
 version is here. Stated rather than guessed at.
 
-### Rule 10 is not an instrument rule
+### Rule 10 (vacated) is not an instrument rule
 
 It is about how a **finding is ranked in the record**, and it applies to **0 of
 the 70 instruments** — the test being whether a harness could break it, and
@@ -6429,7 +6429,7 @@ citations are checked in their own namespace.
 
 It found two on its first run:
 
-- `FINDINGS-TRACKER.md:128` cited "instrument rule 10" — **a citation I
+- `FINDINGS-TRACKER.md:128` cited "instrument rule 10 (vacated)" — **a citation I
   orphaned myself**, minutes earlier, by vacating that number. Repointed to
   Record discipline R1.
 - `EXCLUSION-MAP.md:497` — a **false positive**: the prose *"raw 2.0 vs rule

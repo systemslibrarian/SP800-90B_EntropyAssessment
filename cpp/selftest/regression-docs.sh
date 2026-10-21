@@ -374,6 +374,13 @@ fi
 # three times, defined nowhere here, with a different principle ascribed at
 # each site. Numbering is cheap to get wrong and expensive to follow, so it is
 # checked rather than remembered.
+#
+# THE CONVENTION: prose that DISCUSSES a retired number writes it as
+# "rule N (vacated)". The check exempts a citation whose surrounding paragraph
+# says the number has no definition, is vacated, or is not reused -- so writing
+# the marker is how you discuss a dead number without asserting it. This was
+# not invented for convenience: the check caught OC-68's own prose about rule
+# 10 on its first full-suite run, which is the check working on its author.
 echo
 rulebad=$(
 python3 - "${repo}" <<'PY'
