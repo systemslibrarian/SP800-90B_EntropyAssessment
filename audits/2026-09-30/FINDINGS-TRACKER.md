@@ -1306,6 +1306,34 @@ code it checks inherits the author's belief that the code is right, so it is
 written to agree rather than to discriminate, and agreement is indistinguishable
 from PASS.
 
+## Scope note, 2026-10-21 — what the reference self-test established (`OC-74`)
+
+`AUDIT.md` records *"selftest vs refdata -> max deltas 3.6e-15 .. 3.7e-10"*.
+**That file is historical evidence and is not edited** (guide rule 2), so the
+scope is recorded here, where it is allowed to be.
+
+The comparator that produced those deltas, `compareresults.pl`, filtered the
+report to the estimate labels and **never compared** *"Opening file"* or
+*"Loaded N samples of K distinct W-bit-wide symbols"*. Measured: a reference
+rewritten to claim a different file and *"42 samples of 3 distinct 2-bit-wide
+symbols"* compared **equal** to a real 1,000,000-sample 179-symbol 8-bit run,
+exit 0.
+
+So every reference self-test run up to that date established that **some 98-ish
+estimate values agreed with some reference within epsilon**, and not that **the
+reference described the input**. `selftest` pairs output to reference by a
+filename transform alone, so a mispaired reference is exactly the case it could
+not see. **No figure is wrong because of this, and none was established by it
+either.**
+
+| | |
+|---|---|
+| **did not rest on it** | the pinned figure. `pin-check.sh` binds its input by **SHA-256**, asserts exactly one `Assessed min entropy` line, and compares a literal expected value with a relative tolerance. The project's main cited number is independent of the blind comparator. |
+| **rested on it** | `BUILDING.md`'s agreement claim and precision-audit table, and `AUDIT.md`'s delta line above |
+| **re-run, 2026-10-21** | identity now compared: **11 of 11** fixtures verify identity, zero mismatches, zero refusals, and the only failures are the same two known platform files. The deltas stand — and are now established rather than merely unrefuted. |
+
+---
+
 **The rule — stated canonically in
 [`audits/BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md), step 5, not restated
 here.**

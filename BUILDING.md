@@ -173,6 +173,38 @@ sections, the pinned figure quoted in these documents matches both
 `pin-check.sh` and the current build, no built program links MPFR or GMP, and
 none of the claims that were previously corrected has reappeared.
 
+> **WHAT THE REFERENCE SELF-TEST ESTABLISHED, AND WHAT IT DID NOT, BEFORE
+> 2026-10-21 (`OC-74`).** Its comparator, `compareresults.pl`, filtered the
+> report to lines matching the estimate labels, so *"Opening file"* and
+> *"Loaded N samples of K distinct W-bit-wide symbols"* were **never
+> compared**. Measured: a reference rewritten to claim a different file and
+> *"42 samples of 3 distinct 2-bit-wide symbols"* compared **equal** to a real
+> 1,000,000-sample 179-symbol 8-bit run.
+>
+> So every run of the reference self-test up to that date established **that
+> some 98-ish estimate values agreed with some reference to within the stated
+> epsilon** — and did **not** establish **that the reference described the
+> input**. `selftest` pairs each output with a reference by a filename
+> transform alone, so a mispaired or wrong-fixture reference is exactly the
+> case it could not see. **No figure is thereby wrong, and none is thereby
+> established either.**
+>
+> **The pinned figure did not rest on it.** `pin-check.sh` is independent: it
+> binds its input by **SHA-256** (`SAMPLE_SHA256`, compared), asserts exactly
+> one `Assessed min entropy` line, and compares against a literal expected
+> value with a relative tolerance. The project's main cited number is unaffected.
+>
+> **What rested on it** is the agreement claim in this section and the
+> precision-audit table below — the 1.3e-10 to 3.7e-10 deltas against NIST's
+> reference data — and `audits/2026-09-30/AUDIT.md`'s *"selftest vs refdata ->
+> max deltas 3.6e-15 .. 3.7e-10"*.
+>
+> **Re-run, and they stand.** With identity now compared, all **11 of 11**
+> fixtures verify identity (`identity <file> / <samples> samples / <width>-bit
+> matched`), zero mismatches and zero refusals, and the only failures are the
+> same two known platform files. So the figures below are now established
+> rather than merely unrefuted — but they were the latter until this run.
+
 **`selftest` exits 1 on macOS arm64, and that is expected here.** Three
 predictor values on `biased-random-bytes.bin` and `ringOsc-nist.bin`
 differ from NIST's Linux reference data by 1.3e-10 to 3.7e-10 against an

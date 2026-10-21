@@ -6669,3 +6669,113 @@ of 64.
 The remaining eight are recorded here with their quoted exclusions rather than
 repaired in this round, and `restart_decision_exact.py`'s dropped
 `restartCutoffMethod` is the cheapest of them to close next.
+
+---
+
+## OC-75 — C23's verification is WITHDRAWN; and the fifth vacuous member of the enforced suite
+
+### The withdrawal, recorded beside the claim it carried
+
+`regression-restart.sh` printed:
+
+```
+C23 both cutoffs match the exact oracle:  32 H_I values x 2 columns (0.25 .. 8)
+```
+
+with the string hard-coded and `for triple in ; do` iterating **nothing**. Its
+own header said the pins came from `oracles/restart_multinomial_max.py`. They
+were absent. `cbad` was never touched, so the branch printing that sentence was
+the only reachable one.
+
+**So `C23`'s "verified against the exact oracle across the 1–8 bit range" was
+not a weak verification or a narrow one. It was a string.** That is a
+**withdrawn verification**, and it is recorded as withdrawn rather than quietly
+replaced by the working version:
+
+| | |
+|---|---|
+| **claimed** | 32 H_I values × 2 columns, 64 comparisons against the exact multinomial-maximum oracle |
+| **actually performed, until 2026-10-21** | **zero comparisons** |
+| **status of the claim in the interim** | **WITHDRAWN.** Not disproved — unevidenced. |
+| **now** | the pins are the oracle's own `--pins` output, 32 values; **all 64 comparisons run and agree**; an emptied list reports `HARNESS FAULT -- 0 pins, expected 32` and the claim line reads `0 comparisons made` |
+
+**The `C23` repair itself is probably sound and is now evidenced** — 64
+comparisons agree, and `OC-62` reproduced the record's figures independently by
+a separate route. But for the period between the repair and today, the stated
+evidence for it did not exist. A reader of the record in that window would have
+been told a verification had happened that had not.
+
+### Five vacuous members of the enforced suite in two days
+
+This is the count that matters, and it is why a scope statement for the suite
+is now necessary rather than optional:
+
+| # | member | how it passed while testing nothing | found by |
+|---|---|---|---|
+| 1 | `regression-input-identity.sh` | assertions in a heredoc in statement position, status discarded, unconditional `PASS`, no `set -e` | the fresh outside audit |
+| 2 | `sanitizer-restart-c01.sh` | the same shape; a stand-in writing `errorLevel = 1` — the first thing it asserts against — produced `PASS`, exit 0 | the fresh outside audit |
+| 3 | `regression-estimator-guards.sh` | `check_no_abort` asked only *"did it abort?"*, so a run that never happened answered *"no"*; **seven** checks reported non-failures with the inputs removed | the fresh outside audit |
+| 4 | `compareresults.pl` / `selftest` | identity excluded from the comparison: a reference claiming a different file and 42 samples compared equal to a 1,000,000-sample run | the comparator sweep (`OC-74`) |
+| 5 | `regression-restart.sh` | an empty pin list reporting 64 agreements, claim text hard-coded | the comparator sweep (`OC-74`) |
+
+Plus one in the audit's own tooling, outside the enforced suite:
+`build-differential.sh` returning a vacuous agreement because both arms'
+fallbacks were the same literal (`OC-71`).
+
+**Three of the five were found by an outside session reading the instruments in
+a clone, and two by sweeping a shape this project had already written down.**
+None was found by the suite itself, which is the definition of the problem:
+**a suite cannot detect its own vacuous members, because a vacuous member
+passes.** That is what `OC-76` is for.
+
+---
+
+## OC-76 — the remaining comparators, ranked by whether a wrong agreement can reach a published figure
+
+`restartCutoffMethod` closed first, as the worst of the four shapes: the field
+naming **which statistic the tool used** was read into the result and dropped,
+so agreement with an `exact-multinomial-maximum` build and with a
+`printed-binomial` build were reported **identically** — across exactly the
+distinction `C23` exists to draw. It now refuses with exit 2 on any other
+method, and notes an absent one as an unidentified cutoff. Verified both ways:
+the genuine report decides and exits 0; a report relabelled `printed-binomial`
+reports `INSTRUMENT MISMATCH` and refuses.
+
+### The ranking, and its reason per item
+
+Ranked by **reach to a published figure**, not by effort. Three tiers.
+
+**TIER A — a wrong agreement CAN reach a published figure.**
+
+| comparator | the path to a figure |
+|---|---|
+| **`check-platform-deltas.py`** | `b['cc'] in cc` is a substring of a compiler identity read from the host's **current** `$CXX`, not from the build under test. It gates whether a `selftest` failure is **excused**, so a wrongly-excused delta becomes "the suite is green", and the agreement claim in `BUILDING.md`'s precision-audit table rests on exactly that. **Fix: compare the full identity string, and read it from the build, not the host.** |
+| **`verify-fixture-inventory.sh`** | input↔reference bound by filename transform, and the manifest's own digest **printed, never verified**. A `.res` edited together with its manifest digest passes, and `refdata/` **is** the platform-independent source every figure comparison reads. A corrupted reference propagates to every delta in the table. **Fix: verify the manifest digest against a committed expectation, and bind each pair by the identity lines now that `compareresults.pl` has them.** |
+| **`regression-outside-battery.sh`** | the tool is taken from `$OUTSIDE_BATTERY_TOOL` or **built in-line with unrecorded flags**, while pinning FFT magnitude and frequency to four significant figures (`8538.7`, `59.938`) which are cited in the record. A differently-built checker changing those figures would read as the corpus changing. **Fix: `bs_print` plus a digest of the checker, and record the build line it was compiled with.** |
+
+**TIER B — a wrong agreement reaches a verdict, not a figure.**
+
+| comparator | why it stops short of a figure |
+|---|---|
+| `p_local_exact.py` | `HARNESS = sys.argv[1]` is never identified, so "the exact formula agrees with the tool" is agreement with *some* binary. It feeds `C22a`'s constant — which **is** in the floor — but that constant's own supremacy is separately measured (`OC-63`), and the floor prints the canary instruction beside it. **Fix: digest the harness and print it with the result.** |
+| `regression-output.sh`, `regression-restart.sh`, `regression-subset.sh`, `regression-iid-json.sh` | identity is **reported** by `bs_print` and not compared, because `bs_print` has no failure path. These decide pass/fail on behaviour, and none of their numbers is published. **Fix: `bs_require` where the check depends on a particular build; otherwise state that the print is a record, not a gate.** |
+
+**TIER C — recorded, no reach.** `oracle-selftest.sh`'s two empty-fragment
+cases compare exit status only, and `c16-c23-matrix.sh` matches expectations by
+prefix so a cutoff value is excluded from every assertion. Both are
+self-checking harnesses whose output is read by a person, not cited.
+
+### The standard each fix must meet
+
+The one that corrected `build-differential.sh`: **an exclusion is justified by
+self-comparison showing the field actually differs — never by the field's name
+sounding like metadata — and where self-comparison shows a field stable, it
+comes back into the comparison.** Three of that script's five "obviously
+metadata" fields were stable, and two of the three identified the input.
+
+`bs_print`'s lack of a failure path is the single change that would move four
+Tier B entries at once, and it is deliberately not made here: `bs_print` is
+called by six instruments as a **record**, and turning it into a gate would
+change what each of them asserts. The honest fix is per-caller — `bs_require`
+where the check genuinely depends on a build — and that is six decisions, not
+one edit.

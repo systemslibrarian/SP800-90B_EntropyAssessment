@@ -444,6 +444,35 @@ else
     bad "cited rule numbers with no definition:" "${rulebad}"
 fi
 
+# ------------------------------------------------- the suite's scope statement
+# OC-76: WHAT-A-GREEN-SUITE-ESTABLISHES.md states counts with the command to
+# recompute each. Its truth depends on repository state (rule 11), so the
+# counts are checked rather than trusted -- a scope statement that has gone
+# stale is worse than none, because it is cited.
+echo
+SCOPE="${here}/WHAT-A-GREEN-SUITE-ESTABLISHES.md"
+if [ ! -f "${SCOPE}" ]; then
+    bad "the suite's scope statement is missing:" "${SCOPE}"
+else
+    sbad=""
+    n_mut=$(ls "${here}"/*mutation-test.sh "${here}"/regression-deadguard.sh 2>/dev/null | grep -c .)
+    n_pres=$(grep -lE 'HARNESS FAULT|is absent or empty|INPUT-DID-NOT-REACH' "${here}"/*.sh 2>/dev/null | grep -c .)
+    n_hard=$(grep -lE 'echo .*[0-9]+ (of|values|comparisons|files|checks)' "${here}"/*.sh 2>/dev/null | grep -c .)
+    n_scripts=$(grep -c '' "${here}/regression-script-inventory.txt")
+    # The counts sit inside markdown table cells, so no end-of-line anchor:
+    # match the arrow and the number as a token. The first version anchored on
+    # "$" and reported every count stale, which is a detector that cannot pass.
+    grep -qE "→ ${n_mut}( \||$)"   "${SCOPE}" || sbad="${sbad} mutation-harness-count(${n_mut})"
+    grep -qE "→ ${n_pres}( \||$)"  "${SCOPE}" || sbad="${sbad} input-presence-count(${n_pres})"
+    grep -qE "→ ${n_hard}( \||$)"  "${SCOPE}" || sbad="${sbad} hardcoded-claim-count(${n_hard})"
+    grep -q "| ${n_scripts} |" "${SCOPE}" || sbad="${sbad} regression-script-count(${n_scripts})"
+    if [ -z "${sbad}" ]; then
+        note "the suite's scope statement matches the tree:" "yes"
+    else
+        bad "the scope statement's counts are stale:" "${sbad}"
+    fi
+fi
+
 echo
 if [ "${fails}" -eq 0 ]; then echo "regression-docs: PASS"; exit 0; fi
 echo "regression-docs: FAIL (${fails} checks)"

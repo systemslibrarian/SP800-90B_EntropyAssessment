@@ -18,7 +18,9 @@ Usage:  restart_decision_exact.py <ea_restart JSON report> [...]
 EXIT STATUS, so that "it exited 0" means something:
   0  decided, and the decision AGREES with the tool's
   1  decided, and the decision DISAGREES with the tool's
-  2  COULD NOT DECIDE -- missing, unreadable or unrecognised input
+  2  COULD NOT DECIDE -- missing, unreadable or unrecognised input, OR a report
+     produced with a different restartCutoffMethod, because agreement across
+     methods is not evidence about either (OC-76)
 
 The JSON report is the preferred input and the only one that carries H_I at
 full precision. The verbose log prints H_I to six decimal places, and the
@@ -177,6 +179,27 @@ if __name__ == '__main__':
             print("NOTE: %s records restartAlpha = %.17g; this oracle decides at 0.000005 "
                   "(3.1.4.3 step 1). The two are not interchangeable at a quantile boundary."
                   % (path, float(got['alpha'])), file=sys.stderr)
+        # THE INSTRUMENT'S OWN STATEMENT OF WHICH STATISTIC IT USED (OC-76).
+        # restartCutoffMethod was read into the result and then dropped, so
+        # agreement with an exact-multinomial-maximum build and agreement with
+        # a printed-binomial build were reported IDENTICALLY -- across exactly
+        # the distinction C23 exists to draw. An exclusion that touches the
+        # instrument's identity voids a comparison rather than weakening it
+        # (instrument rule 8), and this one voided it along the one axis that
+        # matters here.
+        meth = got.get('method')
+        if meth is None:
+            print("NOTE: %s records no restartCutoffMethod, so WHICH statistic the tool "
+                  "used is unestablished. The agreement below is with an unidentified "
+                  "cutoff method." % path, file=sys.stderr)
+        elif meth != 'exact-multinomial-maximum':
+            print("INSTRUMENT MISMATCH: %s was produced with restartCutoffMethod=%r, not "
+                  "'exact-multinomial-maximum'. This oracle decides on the exact "
+                  "multinomial maximum, so agreement or disagreement below is ACROSS "
+                  "METHODS and is not evidence about either (OC-76)."
+                  % (path, meth), file=sys.stderr)
+            status = 2
+            continue
         decided += 1
         mine = decide(got['H_I'], got['X_max'], got['tool_cutoff'], got['tool_said'], label=path)
         if got['tool_cutoff'] is not None:
