@@ -6507,3 +6507,63 @@ directly and failed in the suite**, because I ran it **before writing the text
 it would judge**. A check run before the writing it judges is the same shape as
 reading a figure in the command that writes it. **The suite run is the one that
 counts**, and it runs after the text exists.
+
+---
+
+## OC-71 — build-differential.sh: a vacuous agreement, and rule 8 met rather than assumed
+
+It declared build state exemplarily — `bs_require LIVE` and `bs_require NDEBUG`,
+refusing a mismatch — and still returned an agreement that could mean nothing.
+
+### Two empty measurements compared equal
+
+Both fallbacks were the **same literal**: `norm_json … || echo '{}'` on a failed
+normalisation, and `"(no json)"` on a missing report. If **both** arms failed,
+`diff` was silent and the script printed `AGREE`. The verdict-line comparison
+had the same hole: if neither output contained a `** Passed/Failed` line, the
+two `grep`s were both empty and `diff` was silent again.
+
+Closed two ways, because either alone is defeatable:
+
+- the sentinels are now **distinct per arm** (`NO-JSON-live` against
+  `NO-JSON-ndebug`), so two failures **cannot** compare equal — a construction,
+  not a test;
+- each comparison **asserts it had something to compare** and reports the count
+  (`compared 2 verdict line(s) per arm`, `compared 33 normalised JSON line(s)
+  per arm`) before agreement is read from it.
+
+### Rule 8's obligation, met — and it changed the instrument
+
+Five fields were normalised away as "legitimately differing between
+runs/builds". That was an assumption. Rule 8 requires a **self-comparison** and
+a **live-sensitivity check**, so both now run before any arm-to-arm comparison.
+
+**The self-comparison found three of the five were STABLE:**
+
+| field | two runs of one build | disposition |
+|---|---|---|
+| `dateTimeStamp` | varies | dropped |
+| `commandline` | varies | **normalised, not dropped** — only the `-o` path and `argv[0]` differ, and `argv[0]` differs *by design* because the two arms are different binaries; the flags and the input path stay compared |
+| `filename` | **stable** | **kept** |
+| `sha256` | **stable** | **kept** |
+| `toolVersion` | **stable** | **kept** |
+
+**Two of those identify the input.** Dropped as they were, this differential
+**could not have noticed the two arms assessing different files** — which is
+the one thing a build-differential must never miss. It now compares 33
+normalised JSON lines where it compared 29, and the self-comparison reports
+`STABLE, so dropping them HIDES difference: none`.
+
+**The live-sensitivity check is not decorative, and a control proved it.**
+Breaking `norm_json` so that both arms' normalisations fail makes their outputs
+identical and `diff` silent — the exact vacuous condition — and the sensitivity
+check **fires first**, reporting that the comparator cannot see a perturbed
+kept field and failing the run before any agreement is read:
+
+```
+build-differential: FAIL (the comparator cannot fire; agreement from it means nothing)
+```
+
+So the vacuous path is guarded twice, and the outer guard is the one that
+catches a globally broken comparator. The inner sentinels catch the case the
+outer one cannot: **one** arm producing no report while the other does.
