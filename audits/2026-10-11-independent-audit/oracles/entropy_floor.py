@@ -77,7 +77,24 @@ import json, sys, os
 # and the output says so. Correcting the algorithm is the second option and is
 # a change to estimator numerics, which is the owner's call, not this script's.
 C01 = 3.69e-4          # F10 margin; EXCLUDED at width 1 by the proof above (A02 / OC-55)
-C22A_PER_N = 8.08e-15  # P_local bisection quantisation: half-ULP of x amplified by (N+1)  (OC-22)
+# P_local bisection quantisation: half-ULP of x amplified by (N+1) (OC-22).
+#
+# THE VALUE IS REPRODUCED; ITS SUPREMACY IS NOT (OC-63). The constant behind
+# this term is a MAXIMUM OVER A GRID in oracles/p_local_exact.py, taken over
+# four author-chosen axes (N to 2^40, r to 256, and a root-offset refinement
+# window to 10^-12), asserted as a universal bound, and applied at N = 2^53 --
+# past the top of its own calibration grid. Nothing checks that the maximum is
+# interior, so by rule 9 it is a LOWER BOUND on the true error constant, and a
+# ceiling built from it is correspondingly too small. That is the permissive
+# direction.
+#
+# Why it is still subtracted rather than withdrawn: the term is 8.08e-09 bit at
+# n = 1e6, five to six orders of magnitude below the C22c term beside it, so no
+# plausible error in the constant moves the floor at this length. The size is a
+# reason not to panic; it is not a reason the claim's FORM is right. Settling it
+# means extending each arbitrary axis until the argmax moves inside, which
+# needs the c22_bound production harness and is a measurement, not an edit.
+C22A_PER_N = 8.08e-15
 C22B = 0.0             # P_global' at/near N == 1: conservative at every N, nothing to subtract (OC-22)
 # ZALPHA versus the literal 2.576 (OC-22). Measured at two bitstring lengths;
 # the ceiling DECREASES with n (dX' ~ sigma_max/sqrt(v), v ~ n/6), so the value
@@ -296,6 +313,8 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
         print("    One measured overestimate from f10_over_8bit_1M. The mechanism is dictionary")
         print("    saturation, whose size is set by the data, so nothing here constrains it (A02).")
     print("  C22a P_local quantisation                %.3e    8.08e-15 x (n+1), n = %d" % (a, n))
+    print("    the constant is a grid maximum asserted as a universal bound; its supremacy is")
+    print("    unestablished at the boundary (OC-63). At %.3e bit it cannot move this floor." % a)
     print("  C22b P_global' at N == 1                 %.3e    conservative at every N" % C22B)
     print("  C22c ZALPHA vs the literal 2.576         %.3e    derived ceiling, at n = %d" % (bz, bz_n))
     print("    The binding estimator is COMPRESSION (bitstring), whose com_exp is stationary at")
@@ -335,12 +354,28 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     # record where they can be checked independently
     # (oracles/zalpha_ceiling_by_n.py), so the literal reading is a certified
     # floor again wherever C01/F10 is also excluded.
-    lit_terms_all_bounds = certified
-    f07_terms_all_bounds = certified
+    # A CERTIFIED CLAIM RESTING ON AN UNCERTIFIED INPUT IS NOT CERTIFIED, and
+    # BOTH readings subtract C22a, whose constant is a grid maximum asserted as
+    # a universal bound with no interiority check (OC-63). Its 8.08e-09 bit
+    # cannot move this floor, and that is beside the point: the question is
+    # whether every subtracted term IS a bound, not whether an unbounded one is
+    # small. So neither reading is a certified floor until the boundary
+    # question is settled by extending those grids.
+    #
+    # This is the same correction already applied to C22c and then withdrawn
+    # when C22c turned out to BE a bound (OC-62). The discipline is the same
+    # either way: the label follows the terms.
+    c22a_supremacy_established = False
+    lit_terms_all_bounds = certified and c22a_supremacy_established
+    f07_terms_all_bounds = certified and c22a_supremacy_established
     lab_lit = "CERTIFIED FLOOR" if lit_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
     lab_f07 = "CERTIFIED FLOOR" if f07_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
     print("  %-31s %.17g   (h' - %.6g)" % (lab_lit + ", literal", lit, hp - lit))
     print("  %-31s %.17g   (h' - %.6g)" % (lab_f07 + ", F07", f07, hp - f07))
+    if certified and not c22a_supremacy_established:
+        print("    NOT a certified floor only because C22a's constant is a grid maximum whose")
+        print("    supremacy is unestablished (OC-63). Every other term here is a bound, and")
+        print("    C22a is 8.08e-09 bit, so the FIGURE is not in doubt -- the CLAIM is.")
     if not certified:
         print("    NOT A FLOOR: the C01/F10 term above is an evaluated margin over the inputs")
         print("    measured, not a bound over all accepted ones. Treat this as a working figure")

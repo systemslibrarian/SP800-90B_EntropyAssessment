@@ -5828,3 +5828,131 @@ that they are computing **different things**, and the first question is which �
 not which one is wrong. Had I asked that, the answer was one line away in
 `OC-22` Part 3's own table, which lists the collision and compression ceilings
 side by side with compression 4.3× larger.
+
+---
+
+## OC-63 — the grid-edge sweep across the audit's tooling: 29 examined, 2 at risk, both feeding `C22a`
+
+Rule 9 says a sweep reporting its extremum at a boundary of its own domain has
+found the edge of where it looked, not an extremum. `OC-59` made that error
+once. This is the sweep for others.
+
+**Every parameter sweep in the audit's tooling was examined** — nine files: the
+six oracles, `c22_bound.cpp`, `r1_corpus_scan.py`, and
+`f13_nan_reachability.c`. 29 sweeps.
+
+| verdict | count | meaning |
+|---|---:|---|
+| **AT-EDGE-RISK** | **2** | an arbitrary domain whose extremum could sit at the edge, with no interiority check |
+| SAFE-BOUNDED | 10 | the domain edge **is** the physical or mathematical limit, so an extremum there is legitimate |
+| NO-EXTREMUM | 17 | sweeps that tabulate every row, or solve for a root, and report no extremum |
+
+**Most are safe for a reason worth stating**, because it is the distinction rule
+9 turns on. A probability from a non-zero count cannot go below `1/n`; a count
+is an integer in `[0, N]`; an alphabet size is `2..256`; `H_I ≤ 8` because the
+tool supports 1–8 bit symbols; `h_col` is *exactly* 1 above `X' = 2.5`, so
+there is zero sensitivity beyond that cap. An extremum on one of those edges is
+the answer, not an artefact — and several of them are independently confirmed
+by a closed form evaluated **at** the edge, which is the strongest version of
+the check.
+
+Two more earn a mention. `restart_cutoff_anchor.py`'s `tool_model_cutoff()` has
+**no fixed upper window at all**: it steps `m` upward until the predicate
+holds, which is rule 9's first remedy implemented rather than argued.
+`zalpha_ceiling_by_n.py`'s `worst_proportion()` is the fixed version of the
+very sweep that produced the rule, and its docstring carries the error it was
+fixed from.
+
+### The two that are at risk, both in `oracles/p_local_exact.py`
+
+Both feed **`C22a`** — the `P_local` quantisation term — which
+`entropy_floor.py` **does** subtract.
+
+**1. The constant `c` (lines 107-113, reported at 132 and 140-141).**
+`c := max near-root ratio` is a maximum over **four** axes, every one an
+author-chosen list: `N` ending at `2^40`, `r` ending at `256`, and the
+root-offset exponent `k` ending at `12` — `k` being a pure refinement window,
+`p = p*(1 ± 10^-k)`. It is then asserted as a universal bound,
+`eps_f ≤ c·(N+1)·2^-52`, multiplied into the `P_local` ceiling, **and applied
+at `N = 2^53`, beyond the top of its own calibration grid.** No interiority
+check, no extension, and the argmax's `r` and `k` are never printed.
+
+**2. The inflation and `K` maxima (lines 150-152, reported six times at
+176-185).** `rs` is truncated at `1024`; `lds` is truncated **at the top** at
+`1/2`, while production's `ldomain = curMax` ranges over `[1/k, 1)` with
+`k ≤ 256` (`utils.h:1207,1232,1234`) — so the largest swept `ldomain` is short
+of the physical maximum. The sharp edge is circular: line 164 builds the
+ceiling from finding 1's grid maximum, and line 178 then validates *"worst
+ratio inflation/ceiling … must be ≤ 1 for the ceiling to hold"* as a maximum
+over **this** grid. **A bound calibrated from one grid maximum and validated
+against another is a bound only if both maxima are interior, and neither is
+checked.**
+
+Partial credit where it is due: line 181 anchors `min |f'(p*)|·p*` to an
+analytic model which independently predicts that `K`'s maximum belongs at
+`r = 2`, the smallest physically meaningful run length. That covers `K`'s
+`r`-direction and nothing else.
+
+### Direction, and what it costs
+
+If either maximum sits at an edge, `c` is a **lower bound** on the true error
+constant, every ceiling built from it is **too small**, and the `C22a` term the
+floor subtracts is **too small** — which is permissive, the direction that
+matters. The magnitude is reassuring and does not settle it: `C22a` is
+`8.08e-15·(N+1)`, i.e. **8.08e-09 bit** at `n = 1e6`, five to six orders below
+the `C22c` term beside it. Even a large multiplicative error in `c` would not
+move the floor at this length. **That is a reason not to panic, not a reason
+not to check**, and the asserted form of the claim — a universal bound — is
+wrong independent of its size.
+
+### Measured, not left as a warning
+
+`OC-59`'s lesson is that the answer here is to extend the grid and look, so the
+`c22_bound` production harness was rebuilt and the oracle run.
+
+**Where each maximum actually sits:**
+
+| maximum | argmax | at an edge? |
+|---|---|---|
+| `c` = **0.4991** | `N = 10 000` (5th of 12), `r = 3` (2nd of 7) | **interior in both axes** |
+| worst inflation, **+3.0097e-06 bit** | `N = 1e9` (15th of 18), `r = 2`, `ldomain = 2^-30` | `N` interior; `r = 2` is the **physical minimum** run length; `ldomain` is at the **smallest** swept value |
+| `K` = 1.6189e-14 | `N = 5`, `r = 2` | `N` interior; `r = 2` physical minimum |
+| inflation/ceiling ratio | — | **0.928**, so the ceiling holds with 7 % margin |
+
+Two of the three concerns dissolve on measurement:
+
+- **`c`'s argmax is interior in `N` and `r`.** The two axes whose truncation
+  looked most suspect — `N` ending at `2^40`, `r` ending at `256` — are not
+  where the maximum lives, and nothing about extending them can raise it.
+- **The `ldomain` truncation does not bind.** The worry was that `lds` stops at
+  `1/2` while production's `ldomain = curMax` reaches toward 1. But the maximum
+  sits at the **other end**, `2^-30`, which is *below* production's physical
+  range of `[1/256, 1)` — so the sweep is **wider than production needs** in
+  the direction that matters, and the top truncation is irrelevant to the
+  maximum. `r = 2` is likewise the physical floor, not an arbitrary edge.
+
+**What remains open is one axis: `k`**, the root-offset refinement window
+`p = p*(1 ± 10^-k)`, truncated at `10^-12`. That is the one axis on which a
+closer approach to the root could still raise `c`, and it is being extended to
+`10^-21` on the oracle's own grid — the same oracle, one list changed, nothing
+reimplemented.
+
+Until that lands, `C22a`'s universal-bound phrasing is **partially
+established**: two axes measured interior, one conservative by construction,
+one still open. **The value is reproduced; the supremacy of the value is not
+yet.**
+
+### And the labels follow, because the rule has to cut both ways
+
+`C22a` is subtracted by **both** readings of the floor. A certified claim
+resting on an uncertified input is not certified, so until the `k` axis is
+settled **neither reading is a certified floor**, and `entropy_floor.py` says
+so with the reason named. Its 8.08e-09 bit cannot move the figure at this
+length — which is exactly the argument I rejected for `C22c` and must reject
+here too. **The question is whether every subtracted term IS a bound, not
+whether an unbounded one is small.**
+
+That is the third time in two rounds the floor's label has moved: down for
+`C22c`, back up when `C22c` turned out to be a bound, and down again for
+`C22a`. The movement is the machinery working. The label follows the terms, and
+the terms are being established one at a time.

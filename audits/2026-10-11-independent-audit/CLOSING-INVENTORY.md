@@ -68,12 +68,17 @@ instructions the tag itself carries, are in
 
 ## Needs nothing — can be done here, now
 
-**This bucket is empty.**
+**One item, and it is a measurement in flight rather than a repair.**
 
-Every item that was in it has closed, and the closures are below with their
-evidence. **The fork has reached the hardware wall: the next thing that moves
-it is the device in January 2027.** The two items that remain anywhere are an
-owner decision each, and one of them is unreachable for this device by proof.
+| item | what it is | why it is still open |
+|---|---|---|
+| **`C22a`'s supremacy at the `k` boundary** | The `P_local` quantisation constant `c` = 0.4991 is a **maximum over a grid** in `oracles/p_local_exact.py`, asserted as the universal bound `eps_f ≤ c·(N+1)·2^-52`. Rule 9: a grid maximum is a lower bound unless the argmax is interior. **Measured: interior in `N` and `r`**, and the inflation maximum sits at the physical `r = 2` and at an `ldomain` *below* production's range, so those axes are settled (`OC-63`). | One axis left: the root-offset refinement window, truncated at `10^-12`. Being re-run on the oracle's own grid extended to `10^-21`. Until it lands, **neither floor reading is labelled a certified floor**, because both subtract `C22a` and a certified claim resting on an uncertified input is not certified. The term is 8.08e-09 bit, so the **figure** is not in doubt — the **claim** is. |
+
+An earlier draft of this document said this bucket was empty and that the fork
+had reached the hardware wall. That was premature by one item, and the item was
+found by applying rule 9 — written an hour earlier — to the audit's own
+tooling. Recorded rather than quietly fixed, because "the bucket is empty" is
+exactly the kind of claim that should cost something to make.
 
 
 **`C22c` has left this bucket: the factor was found and the record is
@@ -252,8 +257,9 @@ This bucket is not a queue. Nothing here is pending.
 
 ## The wall
 
-**The needs-nothing bucket is empty, and the fork has reached the hardware
-wall.** Everything that could be done here has been done:
+**One software item is left — `C22a`'s boundary question, a measurement already
+running — and after it the fork is at the hardware wall.** Everything else that
+could be done here has been done:
 
 | item | disposition |
 |---|---|
