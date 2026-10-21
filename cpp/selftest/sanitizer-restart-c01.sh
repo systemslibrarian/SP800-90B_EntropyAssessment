@@ -8,6 +8,12 @@ set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
 tool=${EA_RESTART_SANITIZER_BIN:-"$here/../ea_restart"}
+# BUILD STATE AS A PRECONDITION (rule 4, OC-43). EA_RESTART_SANITIZER_BIN may
+# point anywhere -- a sanitizer build, a stale binary, or a stand-in -- and this
+# script drew a conclusion about the tool without ever saying which artefact it
+# measured.
+. "$here/buildstate-lib.sh"
+bs_print "$tool"
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-c01.XXXXXX") || exit 2
 trap 'rm -rf "$work"' EXIT HUP INT TERM
 
@@ -29,7 +35,12 @@ if [ "$rc" -ne 0 ]; then
     exit "$rc"
 fi
 
-python3 - "$work/result.json" <<'PY'
+# THE ASSERTIONS' EXIT STATUS IS READ (OC-64). This block sat in STATEMENT
+# POSITION with its status discarded, followed by an unconditional PASS, under
+# `set -u` only. Measured with a stand-in tool writing errorLevel = 1 -- the
+# first thing this asserts against -- which printed a traceback and then PASS,
+# exit 0.
+if ! python3 - "$work/result.json" <<'PY'
 import json, math, sys
 doc = json.load(open(sys.argv[1]))
 assert doc["errorLevel"] == 0
@@ -38,5 +49,9 @@ for key in ("h_r", "h_c", "h_i"):
     assert isinstance(overall[key], (int, float)) and math.isfinite(overall[key])
 assert abs(overall["h_i"] - 0.8) <= 1e-12
 PY
+then
+    echo "sanitizer-restart-c01: FAIL (the report assertions above did not hold)" >&2
+    exit 1
+fi
 
 echo "sanitizer-restart-c01: PASS"

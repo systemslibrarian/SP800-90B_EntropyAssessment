@@ -55,7 +55,12 @@ rc=$?
 pid=
 [ "$rc" -eq 0 ] || { echo "regression-input-identity: assessment exited $rc" >&2; cat "$work/tool.log" >&2; exit 1; }
 
-python3 - "$work/result.json" "$a_hash" "$b_hash" "$(hash_file "$work/input.bin")" <<'PY'
+# THE ASSERTIONS' EXIT STATUS IS READ (OC-64). This block used to sit in
+# STATEMENT POSITION with its status discarded, followed by an unconditional
+# PASS, and the script sets only `set -u`. An AssertionError therefore printed
+# a traceback and the script printed PASS and exited 0 -- measured, by mutating
+# the sha256Scope the block asserts. N-07's regression established nothing.
+if ! python3 - "$work/result.json" "$a_hash" "$b_hash" "$(hash_file "$work/input.bin")" <<'PY'
 import json, sys
 doc = json.load(open(sys.argv[1]))
 assert sys.argv[2] != sys.argv[3]
@@ -66,5 +71,9 @@ assert doc["assessedSampleCount"] == 1_000_000
 overall = next(case for case in doc["testCases"] if case.get("testCaseDesc") == "Overall")
 assert overall["hAssessed"] == 0
 PY
+then
+    echo "regression-input-identity: FAIL (the identity assertions above did not hold)" >&2
+    exit 1
+fi
 
 echo "regression-input-identity: PASS (replacement rejected as result identity; assessed snapshot retained)"

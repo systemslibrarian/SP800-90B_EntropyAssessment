@@ -44,6 +44,22 @@ described in class 2 below.
 
 ## Class 1 — assertions in a heredoc whose status is discarded, under an unconditional PASS
 
+> **STALE AND CORRECTED, 2026-10-21 (`OC-64`).** This section says both
+> instances are "on the repair branch" and therefore not live. **The
+> 2026-10-15 merge (`d226f18`) put both on `master`, and
+> `regression-input-identity.sh` is in the ENFORCED suite**, counted toward
+> "22 passed" every run. Both were still live today and both were measured
+> producing a false pass: `regression-input-identity.sh` printed an
+> `AssertionError` traceback and then `PASS` with exit 0 when its
+> `sha256Scope` assertion was mutated, and `sanitizer-restart-c01.sh` did the
+> same when driven with a stand-in writing `errorLevel = 1` — the first thing
+> it claims to catch. Repaired in `OC-64`.
+>
+> **The stale record is what let them sit there.** A sweep that records a
+> finding's location as a branch has to be re-read when that branch merges,
+> and nothing re-read this one. The "repair only" column below is wrong for
+> rows 1 and 2.
+
 The originally reported pattern. **Two instances, both on the repair branch,
 and no others in either repository.**
 
@@ -234,8 +250,8 @@ before their silence is trusted." Listed for completeness, not as a defect.
 
 | # | Script | Branch / repo | Class | Guards |
 |---|---|---|---|---|
-| 1 | `cpp/selftest/sanitizer-restart-c01.sh` | repair only | 1 | C-01 |
-| 2 | `cpp/selftest/regression-input-identity.sh` | repair only | 1 | N-07 |
+| 1 | `cpp/selftest/sanitizer-restart-c01.sh` | ~~repair only~~ **ON MASTER since `d226f18`; REPAIRED `OC-64`** | 1 | C-01 |
+| 2 | `cpp/selftest/regression-input-identity.sh` | ~~repair only~~ **ON MASTER since `d226f18`, in the ENFORCED SUITE; REPAIRED `OC-64`** | 1 | N-07 |
 | 3 | `cpp/selftest/regression-notrun.sh` | master + repair | 2 | F05 (1M case) |
 | 4 | `cpp/selftest/regression-restart.sh` | master + repair | 2 | R-2 (1M case) |
 | 5 | `cpp/selftest/regression-docs.sh:39` | master + repair | 3 | commit SHAs in NOTICE/tracker |

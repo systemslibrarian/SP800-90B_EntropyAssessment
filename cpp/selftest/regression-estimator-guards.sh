@@ -180,6 +180,16 @@ done
 
 check_no_abort() { # check_no_abort <file> <bits> <label>
 	local out rc
+	# A CHECK FOR AN ABSENCE NEEDS A PRESENCE FIRST (rule 2 / OC-36, OC-64).
+	# This asked only "did it abort?", so a run that never happened answered
+	# "no" and counted as a pass. Measured: with the generator suppressed so no
+	# input file exists at all, seven checks here reported non-failures. An
+	# absent input is a BROKEN HARNESS, not a guard holding.
+	if [ ! -s "${work}/$1" ]; then
+		note "#261 $3:" "HARNESS FAULT -- input ${work}/$1 is absent or empty; nothing was assessed"
+		fails=$((fails + 1))
+		return
+	fi
 	out=$("${asan}" -q "${work}/$1" "$2" 2>&1); rc=$?
 	# TEXT-COUPLING RULE (OC-41). "Assertion failed" is macOS/clang's wording;
 	# glibc writes "Assertion `expr' failed." The canary matched only the first
@@ -192,9 +202,19 @@ check_no_abort() { # check_no_abort <file> <bits> <label>
 	                            && printf '%s' "${out}" | grep -qi 'failed'; }; then
 		note "#261 $3:" "ABORTED (exit ${rc})"
 		fails=$((fails + 1))
+	elif [ "${rc}" -ne 0 ]; then
+		# Not an abort, but not a completed assessment either. "Did not abort"
+		# is not the claim; "ran the estimators and did not abort" is.
+		note "#261 $3:" "DID NOT ASSESS (exit ${rc}) -- no abort, but no assessment either"
+		fails=$((fails + 1))
 	else
-		note "#261 $3:" "no abort (exit ${rc})"
+		note "#261 $3:" "no abort, on an input shown present (exit ${rc})"
 	fi
+	# A positive output marker was tried here and removed: these runs use -q,
+	# quiet mode, so a legitimate assessment prints nothing to match and every
+	# check failed. The discriminator that works is the INPUT PRESENCE test
+	# above -- "did it abort?" cannot distinguish a run from a non-run, and
+	# neither can the exit status, because both are 0 here.
 }
 check_no_abort two.bin  1 "two distinct bytes, nothing repeats"
 check_no_abort d256.bin 8 "256 distinct bytes, nothing repeats"

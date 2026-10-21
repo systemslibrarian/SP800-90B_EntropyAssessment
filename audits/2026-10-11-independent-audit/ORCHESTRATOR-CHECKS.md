@@ -5974,3 +5974,106 @@ cannot move the figure was **not** a defence, because that is precisely the
 argument rejected for `C22c`. **The question is whether every subtracted term
 IS a bound, not whether an unbounded one is small.** The downgrade stood for as
 long as the question did, which was about an hour.
+
+---
+
+## OC-64 — three live false passes, two inside the enforced suite; and the shape swept
+
+An outside session audited the instruments against the standing rules, in a
+clone, unprimed. Nine of its findings were observed under deliberate mutation
+rather than inferred. Each is reproduced here before being accepted.
+
+### The three, all reproduced
+
+**1. `regression-input-identity.sh` — in the enforced suite.** Its assertions
+sit in a `python3 - … <<'PY'` block in **statement position** with the status
+discarded, the script sets only `set -u`, and line 70 is an unconditional
+`PASS`. Mutating the `sha256Scope` the block asserts:
+
+```
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+AssertionError
+regression-input-identity: PASS (replacement rejected as result identity; …)
+exit=0
+```
+
+`N-07`'s regression test established nothing.
+
+**2. `sanitizer-restart-c01.sh` — the same shape.** Driven with a stand-in
+binary writing `errorLevel = 1`, which is the **first thing it asserts
+against**: traceback, then `PASS`, exit 0. It also violated rule 4 —
+`EA_RESTART_SANITIZER_BIN` defaults to `../ea_restart` and nothing declared
+which artefact was measured.
+
+**3. `regression-estimator-guards.sh` — a different mechanism, same family.**
+`check_no_abort` asked only *"did it abort?"*, so a run that never happened
+answered *"no"* and counted as a pass. With the six inputs removed immediately
+before the checks, **seven checks reported non-failures**. An absent input is a
+broken harness, not a guard holding.
+
+### Repaired, and shown failing
+
+| | mutated | unmutated |
+|---|---|---|
+| `regression-input-identity.sh` | **FAIL**, exit 1 | PASS |
+| `sanitizer-restart-c01.sh` | **FAIL**, exit 1 | — |
+| `regression-estimator-guards.sh` | **6 × HARNESS FAULT**, exit 1 | PASS |
+
+The assertions now gate the verdict (`if ! python3 … then … exit 1; fi`),
+`sanitizer-restart-c01.sh` declares the build state of the binary it actually
+uses, and `check_no_abort` requires the input to be present before it will
+interpret an absence.
+
+**One repair of mine overshot and was caught by its own control.** I first
+added a positive output marker to `check_no_abort` — requiring assessment text
+in the output — and every legitimate check failed, because those runs use `-q`
+and print nothing to match. Removed, with the reason recorded at the site: the
+discriminator that works is the input-presence test, because *neither* the
+abort test *nor* the exit status can tell a run from a non-run here — both are
+0 either way.
+
+### The sweep: the shape, not the instances
+
+Two mechanical patterns, swept across every shell instrument in
+`cpp/selftest`, `tools`, `.github/scripts`, the oracles and the reproducers:
+
+- **A** — an interpreter heredoc containing assertions, in statement position,
+  status not read (not in `if`/`while`, not negated, not captured, not chained)
+  in a script without `set -e`.
+- **B** — an unconditional top-level `PASS` with no counter or status guard.
+
+| | |
+|---|---|
+| instruments in the repository | **53** (shell, Python, C/C++) |
+| shell instruments swept for A and B | **33** |
+| Python instruments checked for the analogous unconditional success print | all; **none found** |
+| **pattern A remaining after the repairs** | **0** |
+| **pattern B remaining after the repairs** | **0** |
+
+Four hits were adjudicated by hand and all four are **false positives of my
+detector**, which is worth recording because the raw count would have been
+misleading:
+
+- `tools/build-provenance-canary.sh:175` — the heredoc is the **last statement
+  of a function**, so its status *is* the return value and the caller reads it.
+- `verify-fixture-inventory.sh:107` — every prior check `exit 1`s on failure,
+  so reaching the `PASS` means they all passed.
+- the two repaired files — their `PASS` is now after a `fi`, which the detector
+  does not model.
+
+So the sweep's value is the **denominator plus the adjudication**, not the
+count. The honest statement: **two instances existed, both are repaired, and no
+third exists among the 33 shell instruments under either pattern.**
+
+### And the record that let them sit there
+
+`DEAD-GUARD-SWEEP.md` had both of the first two, correctly described, filed as
+*"both on the repair branch"* and therefore not live. **The 2026-10-15 merge
+put them on `master`**, and one went into the enforced suite. Nothing re-read
+the sweep when the branch merged. Corrected with a supersession banner and the
+"repair only" column struck through on both rows.
+
+**A sweep that records a finding's location as a branch has to be re-read when
+that branch merges.** That is a new obligation and it belongs with the merge
+rule that already covers files enumerating other files.
