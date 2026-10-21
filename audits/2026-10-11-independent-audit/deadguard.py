@@ -101,11 +101,53 @@ def analyse(path, rel, repo):
                             snippet=s[:100], detail='verification command in statement position, status never read, no set -e'))
     return out
 
-roots = [('fork-master', 'fork @ master f069898'), ('fork-repair', 'fork @ repair 2d4b135'), ('truepad', 'TruePad @ HEAD')]
+
+def tree_label(base, name):
+    """DERIVE the provenance label from the tree under test (OC-72).
+
+    Both detectors hardcoded 'fork @ master f069898' as the label for whatever
+    was placed under them, and HEAD is now 108 commits past that commit. A
+    measurement asserting an artefact identity it never established is the
+    class these detectors were WRITTEN to find, so they carried it themselves.
+
+    If the directory is a git work tree, report its actual branch and short
+    SHA, and say when it is dirty -- a dirty tree is not the commit it names.
+    If it is not a git tree (the sweep copies files into a scratch dir), say
+    UNESTABLISHED with the digest of what was actually read, rather than
+    inventing a commit.
+    """
+    import subprocess, hashlib, os as _os
+    def _git(*a):
+        try:
+            r = subprocess.run(('git', '-C', base) + a, capture_output=True, text=True, timeout=10)
+            return r.stdout.strip() if r.returncode == 0 else None
+        except Exception:
+            return None
+    sha = _git('rev-parse', '--short', 'HEAD')
+    if sha:
+        br = _git('rev-parse', '--abbrev-ref', 'HEAD') or '?'
+        dirty = _git('status', '--porcelain')
+        return '%s @ %s %s%s' % (name, br, sha, ' (DIRTY)' if dirty else '')
+    # not a git tree: identify by content, and say the commit is unestablished
+    h = hashlib.sha256()
+    for dp, _, fs in _os.walk(base):
+        for fn in sorted(fs):
+            fp = _os.path.join(dp, fn)
+            h.update(_os.path.relpath(fp, base).encode())
+            try:
+                with open(fp, 'rb') as fh:
+                    h.update(fh.read())
+            except OSError:
+                pass
+    return '%s @ COMMIT-UNESTABLISHED (tree sha256 %s)' % (name, h.hexdigest()[:16])
+
+roots = [('fork-master', 'fork'), ('fork-repair', 'fork-repair'), ('truepad', 'TruePad')]
 SP = os.environ['SP']
 all_f = []
-for d, label in roots:
+for d, name in roots:
     base = f'{SP}/sweep/{d}'
+    label = tree_label(base, name)
+    print('provenance:', label)
     for dirpath, _, files in os.walk(base):
         for fn in sorted(files):
             if not fn.endswith('.sh'): continue

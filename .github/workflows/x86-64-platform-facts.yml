@@ -251,6 +251,14 @@ jobs:
             gate "build state reached the summary" logs/06-run-all-checks-platform.log \
                  "checks declared the artefact they measured"
           fi
+          # OC-72: oracle-selftest.sh is rule 7's best exemplar and was run by
+          # nothing. Run it here, on the other long double format, because the
+          # oracles it checks produce the figures the record cites.
+          ( cd audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh ) \
+              > logs/07-oracle-selftest.log 2>&1 || true
+          gate "oracle self-test" logs/07-oracle-selftest.log "oracle-selftest: PASS"
+          if true; then
+          fi
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"

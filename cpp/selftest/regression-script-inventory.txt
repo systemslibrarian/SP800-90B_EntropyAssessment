@@ -1,6 +1,7 @@
 regression-271.sh
 regression-272.sh
 regression-chisquare.sh
+regression-deadguard.sh
 regression-docs.sh
 regression-estimator-guards.sh
 regression-iid-failclosed.sh

@@ -333,11 +333,37 @@ passed, the monotonicity premise held, and the comparison against the recorded
 values then showed the **magnitudes do not reproduce** — which only became a
 finding because the measurement was trustworthy enough to believe.
 
+**THE ORDERING IS PART OF THE RULE: a comparator verifies it can detect a
+difference BEFORE it reports that it found none.** Not afterwards, and not
+alongside. The case that makes this concrete: break a normaliser so that *both*
+arms fail, and their outputs become identical and the diff goes silent — the
+exact shape of a vacuous agreement. An agreement read before the sensitivity
+check is meaningless, and in `build-differential.sh` that check now fires first
+and fails the run before any agreement is read (`OC-71`).
+
+**AND EVERY EXCLUSION IS AN UNSTATED CLAIM.** A comparator's exclusion list —
+dropped fields, tolerances, line filters, loosely matched values — asserts of
+each item that it *legitimately differs*. Those claims are checkable by
+self-comparison, and when `build-differential.sh`'s five were checked, **three
+were false**: `filename`, `sha256` and `toolVersion` were stable across two runs
+of one build (`OC-71`).
+
+> **The serious sub-case, which is a different kind of error.** An exclusion
+> that touches **the input's identity, the instrument's identity, or the build
+> state** does not weaken a comparison — **it voids it.** A comparator blind to
+> which file it read cannot distinguish agreement from a category error. Two of
+> those three stable fields were `filename` and `sha256`, so that differential
+> could not have noticed the two arms assessing **different files**, which is
+> the one thing a build-differential exists to rule out. Check this category
+> first and separately.
+
 | do | instead of |
 |---|---|
 | run the unchanged thing against itself first | assume which fields are stable |
 | exclude a field because it was *measured* to vary | exclude it because it looks like it might |
-| perturb and confirm the comparator fires | report "identical" from a comparator you never tested |
+| perturb and confirm the comparator fires, then read agreement | report "identical" from a comparator you never tested |
+| list every exclusion and justify each one | leave the exclusion list as the only statement of what is not compared |
+| treat an identity exclusion as voiding, not weakening | count it among ordinary tolerances |
 
 ### Rule 9 — a sweep's extremum at a boundary is a lower bound, not an extremum
 
