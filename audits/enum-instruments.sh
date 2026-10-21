@@ -21,7 +21,9 @@
 #           "compilable source" test.
 #
 #           So limb (c) is a REVIEWED LIST with a reason per member, printed by
-#           this script, not a pattern. Nine members, below. A judgement that
+#           this script, not a pattern. Ten members, below -- the count is
+#           derived from the list by limb_c_count, never written twice. A
+#           judgement that
 #           cannot be mechanised without false positives is better stated than
 #           approximated -- the approximation here was wrong by 51.
 #   3. not a compiled build artefact (file(1) says Mach-O/ELF), because those
@@ -58,7 +60,7 @@ enumerate() {
 }
 # LIMB (2c): the reviewed list, with the behaviour that qualifies each.
 # Two sourced libraries, which produce no verdict alone and every verdict
-# through their callers; and seven compilable sources whose built form produces
+# through their callers; and eight compilable sources whose built form produces
 # a figure the record cites. Their COMPILED artefacts are excluded by rule (3).
 LIMB_C="cpp/selftest/buildstate-lib.sh:sourced-by-6-instruments
 cpp/selftest/mutation-lib.sh:sourced-by-3-mutation-harnesses
