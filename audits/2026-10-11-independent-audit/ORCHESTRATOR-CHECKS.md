@@ -5,6 +5,20 @@ agents, on datasets the coordinator generated itself. They are recorded
 separately so that the report's headline claims do not rest solely on a
 subordinate agent's output.
 
+This file is an **append-only dated record**. An entry is corrected by a later
+entry, never by editing it: the earlier text is evidence of what was believed
+when it produced a figure, and rewriting it would destroy the only account of
+how a wrong figure got published.
+
+> **RETIRED TERM — "certified floor".** Entries up to `OC-77` use the phrase
+> *certified floor*. **It is retired as of `OC-78` (2026-10-21, F02).** No
+> reading of the entropy floor is certified: `C22a` is a **product of two grid
+> maxima** and `C22c`'s ceiling is a **scan maximum**, so the aggregate takes
+> the weakest status of its terms and the label is now **MEASURED FLOOR**. The
+> per-term status vocabulary — PROVED / DERIVED / MEASURED — is defined in
+> `oracles/entropy_floor.py` beside the constants. Where an entry below says
+> "certified floor", read "measured floor", and read `OC-78` for why.
+
 ---
 
 ## OC-1 — `ea_conditioning` width inference: `h_out` exceeds the output's bit ceiling
@@ -6904,3 +6918,253 @@ already closed, and it confirms this repair did not reopen it.
 
 `run-all-checks.sh --allow-known-platform-deltas`: **23 passed, 0 failed**,
 21 regression scripts, build-state declared by 4 of 23.
+
+## OC-78 — F02: the floor was never certified, and the helper that said so was the wrong one
+
+**Second independent AI audit, 2026-10-21, finding F02. REPRODUCED, and the
+reproduction is worse than the finding. The term "certified floor" is
+RETIRED.** The task text is paraphrased from my own notes; the original message
+is not recoverable from this session's transcript, so this entry does not quote
+it.
+
+### The contradiction, in one sentence of my own file
+
+`oracles/entropy_floor.py` printed `CERTIFIED FLOOR` — the phrase this entry
+retires — on the strength of this:
+
+> every term is now a bound at width 1: `C01`/`F10` excluded by proof, **`C22a`
+> a measured supremum**, `C22b` zero, `C22c` a derived ceiling.
+
+A measured supremum is not a proved bound. The list **named its own exception
+and then called the aggregate certified anyway** — against the standing
+constraint that *a certified claim resting on an uncertified input is not
+certified*, which the same file quotes four lines further down.
+
+### What the reproduction added
+
+Reproduced with `oracles/p_local_exact.py` against a `c22_bound` built from
+production headers, `sha256 9619117ec68ee3fe`.
+
+**`8.08e-15` is a PRODUCT OF TWO GRID MAXIMA, and `OC-63` examined one of them.**
+
+| factor | value | where its maximum sits | status |
+|---|---|---|---|
+| `c` | 0.4991 | `N` = 10⁴ (5th of 12), `r` = 3 (2nd of 7) — **interior**, and bit-identical when the refinement window is extended nine orders | as good as a measurement gets |
+| `K` | 1.6189e-14 | **`N` = 5, `r` = 2** — and `r` = 2 is the **first value in the swept list** `[2, 3, 4, 5, 6, 8, …]` | **rule 9 never applied to it** |
+
+`K = sup 2^-52/(|f'(p*)|·p*·ln 2)` is largest where `|f'(p*)|·p*` is smallest;
+the script's own printed model puts that minimum at `r` = 2; and whether the
+true infimum is at `r` = 2 or at `r` = 1 — which the standard admits when the
+longest run of correct predictions is zero — **was never examined**. Declaring
+the product a bound from an interiority argument for one factor is the gap.
+
+**And the margin is thin.** The sweep's own worst realised inflation reaches
+**92.8 %** of the ceiling it is supposed to bound (realised multiplier 0.463
+against `c` = 0.499). A grid maximum that its own grid approaches to within
+7.2 % is not a comfortable bound.
+
+**`C22c` is split, not simply derived.** `dX' ≤ dz·σ_max/√v` **is** DERIVED:
+Popoviciu bounds `σ_max`, and `v` is exact. The **ceiling** on top of it is a
+maximum over an **801-point scan** of step `dX'/8` — MEASURED. Its argmax is at
+`cap − 1.0 dX'`, where the upper evaluation point lands on `G(1/64)` exactly;
+that is *structurally explained*, which is the best case for a scan maximum,
+and is still not a proof.
+
+### The helper that "independently reproduced" C22c was wrong
+
+| | `v` | `num_blocks` |
+|---|---|---|
+| production, `cpp/non_iid/compression_test.h` | `num_blocks − d`, `d = 1000` | `len/b`, integer, `b` = 6 |
+| `oracles/p_local_exact.py` — **the source of the tabulated values** | `nb_ − 1000` ✓ | `n // 6` ✓ |
+| `oracles/zalpha_ceiling_by_n.py` — **the independent check** | `num_blocks` ✗ | `mpf(n)/6` ✗ |
+
+**Production is right**, and so is the record: SP 800-90B 6.3.4 makes the first
+`d` = 1000 blocks the dictionary and averages the statistic over the remaining
+`v = num_blocks − d` test blocks. The only one of the three that was wrong was
+**the helper whose entire job is to check the other two**.
+
+The direction matters. Too large a `v` makes `dX'` too **small**, the
+subtracted term too small, and the floor too **high** — the unsafe direction.
+
+| n | `dX'` correct | `dX'` as the helper had it | error |
+|---|---|---|---|
+| 10⁶ | 2.1486e-06 | 2.1422e-06 | **0.300 % low** |
+| 8×10⁶ | 8.8868e-07 | 8.8835e-07 | 0.038 % low |
+
+**And its comparator agreed anyway, because the tolerance was wider than the
+figure.** `ok = abs(rv - mv) <= 0.01 * rv` — a flat **1 %** against values the
+record states to **three significant figures**. The helper's 2.1422e-06 rounds
+to **2.14e-06** where the record says **2.15e-06**: wrong in exactly the digit
+the record claims, and inside 1 %, so it printed *"THE RECORD'S C22c IS
+REPRODUCED."*
+
+This is the comparator lesson of `OC-74`/`OC-76` one step over: **a comparator
+whose resolution is coarser than the precision it checks cannot establish
+agreement — it can only fail to find disagreement.**
+
+### The repairs
+
+**1. The label is composite, and takes the weakest status of its terms.**
+`CERTIFIED FLOOR` is retired and no longer printed anywhere. A three-word
+vocabulary is defined once, beside the constants:
+
+- **PROVED** — holds for every input in the supported domain by an argument.
+- **DERIVED** — follows from a PROVED inequality evaluated at numerical inputs.
+- **MEASURED** — a maximum over an author-chosen grid or scan; rule 9 governs.
+
+At width 1: `C01`/`F10` PROVED EXCLUSION, `C22a` **MEASURED**, `C22b` PROVED,
+`C22c` DERIVED + MEASURED. Weakest is MEASURED, so the oracle now prints
+
+```
+  MEASURED FLOOR (C22a), literal  0.84129042387787445   (h' - 0.00336001)
+  MEASURED FLOOR (C22a), F07      0.84465042387787448   (h' - 8.08001e-09)
+```
+
+The label **names the term holding it there**, so a reader learns what would
+have to change to strengthen it. Above width 1 the `EVALUATED MARGIN (not a
+floor)` verdict is unchanged — verified on a real 8-bit report, not asserted.
+
+**2. The helper is fixed and its tolerance is derived, not chosen.**
+`v = nb − COMPRESSION_D`, `nb = n // 6`, and the tolerance is now **half a unit
+in the last significant digit of the recorded value** — the width within which
+two numbers round to the same recorded figure. Significant figures are counted
+from `repr()`, the shortest round-tripping decimal, because `%.17e` of a
+recorded `2.15e-06` prints `2.14999999999999996e-06` and counting *its* digits
+gave 18 significant figures and a tolerance of zero. **A check that can never
+pass is as useless as one that can never fail**, and that draft was in the file
+for one run before this was caught.
+
+Sensitivity, per rule 8 — the tightened tolerance against both defects and both
+corrections:
+
+| value compared with the recorded 2.15e-06 / 166666 | verdict |
+|---|---|
+| old `v = num_blocks` → 2.1422e-06 | **DISAGREES (caught)** |
+| new `v = num_blocks − 1000` → 2.1486e-06 | agrees |
+| old `mpf(n)/6` → 166666.667 | **DISAGREES (caught)** |
+| new `n // 6` → 166666 | agrees |
+
+Every row of the helper's record comparison still agrees at the tightened
+tolerance (0.056 %–0.338 % per row, printed per row so the resolution is
+visible beside the verdict).
+
+**3. The phrase is retired, with a convention and a check.** `"certified
+floor"` now behaves like `rule N (vacated)`: an occurrence must sit in a
+paragraph that marks it retired, superseded or false, and `regression-docs.sh`
+fails otherwise. `ORCHESTRATOR-CHECKS.md` carries a **file-level retirement
+notice** at its head instead, because it is an append-only dated record and
+entries `OC-1`–`OC-77` must not be edited to say something their authors did
+not know.
+
+### What this does NOT establish
+
+- **No number changed.** The floor's arithmetic is identical; only its status
+  label is. A measured floor remains the most defensible figure available and
+  is still worth computing.
+- **`C22a` is not shown wrong** — it is shown *unproved*. Settling it means
+  either extending the `r` axis to `r` = 1 and below the `N` = 5 point, or
+  replacing `K`'s grid maximum with an analytic infimum for `|f'(p*)|·p*`. The
+  script already prints a model (`0.01005·(r − p/q)`) that is the natural
+  starting point. **Not attempted here**, and it is the single change that
+  would move the floor from MEASURED to DERIVED.
+- The stored `C22c` values are **unchanged and confirmed** — the helper was the
+  wrong one, not the record. No floor figure anywhere in this repository moves.
+- Executed on Darwin arm64 only. Nothing reported upstream.
+
+## OC-79 — five of nineteen checks in the enforced suite reported success without running
+
+**Found by this repository's own dead-guard detector while `regression-docs.sh`
+was being edited for `OC-78`. A LIVE FALSE PASS, measured, not a pattern
+report.**
+
+`regression-deadguard.sh` failed with a moved flag set. One flag had
+disappeared and one was new, and reading both by hand — which is what the
+baseline exists to force — turned up a defect that had nothing to do with F02.
+
+### The mechanism
+
+Every scan in `regression-docs.sh` has this shape:
+
+```sh
+floorbad=$(python3 - "${repo}" <<'PY' ... PY
+)
+if [ -z "${floorbad}" ]; then note "...:" "yes"; else bad "...:" "${floorbad}"; fi
+```
+
+**An empty accumulator is reported as success.** It is therefore
+indistinguishable from a scanner that crashed, was killed, or never started —
+a missing `python3`, a syntax error inside the heredoc, an unreadable
+repository. The scan's exit status is the only thing that separates *found
+nothing* from *did not look*, and it was never read. SHAPE-03, in the enforced
+suite.
+
+### Measured
+
+`python3` replaced on `PATH` by `#!/bin/sh` / `exit 127`, against the committed
+`regression-docs.sh` at `de61365`. Quoted verbatim, so the third line carries
+the label this round retires -- read `OC-78` for why it is no longer printed:
+```
+  no previously-corrected claim has reappeared:        none
+  no NIST attribution in cpp/ comments:                none
+  every "certified floor" mention carries its qualifier: yes
+  every cited rule number has a definition:            yes
+  the suite's scope statement matches the tree:        yes
+regression-docs: PASS
+```
+
+**Five scans, all green, none of them run.** The file invokes `python3` exactly
+five times and all five are accumulator scans, so the count is exact rather
+than estimated: the other fourteen check lines are shell-driven and were
+genuinely unaffected.
+
+Two of those five are checks written in the last two days *to stop a claim from
+rotting* — the rule-citation check and the scope-statement check. Both would
+have gone on printing "yes" indefinitely on a host without `python3`.
+
+### The repair
+
+A `scanned()` helper, and every one of the five scans now reads its status:
+
+```sh
+floorbad=$( ... )
+floorrc=$?
+if ! scanned "${floorrc}" "\"certified floor\" retirement scan"; then :
+elif [ -z "${floorbad}" ]; then ...
+```
+
+Verified by the same mutation — the broken `python3` on `PATH`:
+
+```
+  stale-claim scan -- THE SCAN DID NOT RUN (exit 127), so its silence means nothing
+  NIST-attribution scan -- THE SCAN DID NOT RUN (exit 127), so its silence means nothing
+  "certified floor" retirement scan -- THE SCAN DID NOT RUN (exit 127), so its silence means nothing
+  entropy_floor.py literal scan -- THE SCAN DID NOT RUN (exit 127), so its silence means nothing
+  rule-citation scan -- THE SCAN DID NOT RUN (exit 127), so its silence means nothing
+regression-docs: FAIL (5 checks)
+```
+
+### The baseline moved by exactly one line, and why
+
+- **GONE:** `cpp/selftest/regression-docs.sh|B|no set -e, status never read` —
+  at `de61365` this was line 340, the old "certified floor" qualifier scan. It
+  is gone because the construct was **repaired**, not because a guard was
+  deleted; the detector cannot tell those apart, which is the stated reason the
+  baseline requires a human sentence.
+- **NEW, and withdrawn rather than baselined:** a pattern-C flag on
+  `grep -q ... || vocabbad=...`, whose status *is* read via `||`. That is a
+  **false positive** of the detector's pattern. Rather than pin it, the code was
+  rewritten as an explicit `if !`, which the detector does not flag. **A
+  baseline carrying a false positive is worse than one carrying none**, because
+  the next reader has to re-derive that it is harmless.
+
+Baseline 42 → 41 flags, one deletion, no additions.
+
+### What this does NOT establish
+
+- The other **36 flags** in the baseline are still **unresolved patterns**, not
+  cleared guards. This entry resolved one of them and withdrew one new one.
+- The four `regression-docs.sh` scans that remain flagged (`B`/`D`) are flagged
+  for the heredoc and pipe patterns, which are **not** repaired here; only the
+  unread exit status is.
+- Executed on Darwin arm64. The defect is platform-independent by construction —
+  it needs only a `python3` that fails — but it was demonstrated on one host.

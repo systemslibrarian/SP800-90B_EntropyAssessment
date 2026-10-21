@@ -29,6 +29,10 @@ from mpmath import mp, mpf, log, sqrt
 
 Z_TOOL = mpf("2.5758293035489008")
 Z_SPEC = mpf("2.576")
+# SP 800-90B 6.3.4 step 2: the first d blocks are the dictionary, the remaining
+# v = num_blocks - d are the test blocks the statistic averages over.
+# cpp/non_iid/compression_test.h: `d = 1000;`.
+COMPRESSION_D = 1000
 
 def ub(p, n, z):
     v = p + z * sqrt(p * (1 - p) / (n - 1))
@@ -97,7 +101,32 @@ def worst_compression_dx(n, dps, ztool=Z_TOOL, zspec=Z_SPEC):
 
         dX' <= dz * sigma_max / sqrt(v),
         sigma_max = 0.5907 * log2(num_blocks) / 2   (Popoviciu),
-        num_blocks = n / 6,  v = num_blocks
+        num_blocks = n // 6,  v = num_blocks - d,  d = 1000
+
+    v IS num_blocks MINUS d, AND THIS SCRIPT HAD v = num_blocks (F02).
+    SP 800-90B 6.3.4 sets d = 1000 dictionary blocks and averages over the
+    remaining v = num_blocks - d TEST blocks, which is what production does
+    (cpp/non_iid/compression_test.h: `d = 1000; num_blocks = len/b; ...
+    v = num_blocks - d`). PRODUCTION IS RIGHT. So is the record: the tabulated
+    C22c values came from p_local_exact.py, which has `v_ = nb_ - 1000`. This
+    HELPER -- the thing whose whole job is to reproduce the record
+    independently -- was the only one of the three that was wrong.
+
+    The direction matters. Too large a v makes dX' too SMALL, which makes the
+    subtracted term too small and the floor too HIGH: the unsafe direction.
+    Measured: 2.1422e-06 against the correct 2.1486e-06 at n = 1e6, 0.300% low,
+    and 0.038% low at n = 8e6.
+
+    AND THE COMPARATOR BELOW AGREED ANYWAY, because its tolerance was a flat
+    1% while the record states these to three significant figures. 0.300% is
+    inside 1% and outside the third significant figure -- the helper's value
+    rounds to 2.14e-06 where the record says 2.15e-06. A comparator whose
+    resolution is coarser than the precision it is checking reports agreement
+    it has not established, so the tolerance is now DERIVED from the number of
+    significant figures in the recorded value.
+
+    num_blocks is also an integer COUNT, floor-divided in production; this used
+    mpf(n)/6 and returned 166666.667 against the recorded 166666.
 
     This returns dX' only. The final ceiling in the record comes from SCANNING
     X' down from the cap G(1/64) through the PRODUCTION compression solve, and
@@ -107,9 +136,57 @@ def worst_compression_dx(n, dps, ztool=Z_TOOL, zspec=Z_SPEC):
     is checked below.
     """
     mp.dps = dps
-    nb = mpf(n) / 6
+    nb = n // 6                    # an integer count of blocks, as production floor-divides
+    v = nb - COMPRESSION_D         # the TEST blocks, not all of them
+    if v < 2:
+        raise ValueError("n = %d leaves v = %d test blocks; 6.3.4's 1/(v-1) needs v >= 2" % (n, v))
     sigma_max = mpf("0.5907") * (log(nb) / log(2)) / 2
-    return (zspec - ztool) * sigma_max / sqrt(nb), nb, sigma_max
+    return (zspec - ztool) * sigma_max / sqrt(v), nb, sigma_max
+
+def sigfigs(x):
+    """How many significant figures the RECORDED value is written to.
+
+    A recorded 3.36e-03 claims three; 166666 claims six. The mantissa's digits
+    with trailing zeros stripped is the honest count -- a trailing zero in a
+    recorded figure is ambiguous, and treating it as insignificant makes the
+    tolerance wider, never narrower, so the ambiguity cannot make this check
+    pass something it should fail.
+    """
+    # repr() of a float is the SHORTEST decimal that round-trips, which is the
+    # literal the record was written with. "%.17e" is not: it prints
+    # 2.14999999999999996e-06 for a recorded 2.15e-06, so counting its digits
+    # gave 18 significant figures and a tolerance of zero -- a check that can
+    # never pass is as useless as one that can never fail.
+    m = repr(abs(float(x))).split("e")[0].replace(".", "").lstrip("0").rstrip("0")
+    return max(1, len(m))
+
+
+def agrees(recorded, here):
+    """Agreement AT THE PRECISION THE RECORD CLAIMS (F02).
+
+    The tolerance was a flat 1% on values recorded to three significant
+    figures. 1% is four times wider than the third figure, so a 0.300% error in
+    this script's own compression v -- which changed the recorded 2.15e-06 to
+    2.14e-06 -- was reported as agreement. A comparator with coarser resolution
+    than the figure it checks cannot establish agreement; it can only fail to
+    find disagreement.
+
+    Half a unit in the last significant place is exactly the width within which
+    two numbers round to the same recorded figure, so that is the tolerance.
+    """
+    import math
+    recorded = float(recorded)
+    if recorded == 0:
+        return (float(here) == 0, 0.0)
+    # HALF A UNIT IN THE LAST RECORDED DIGIT, ABSOLUTELY. Expressing it as a
+    # relative tolerance invites the mistake made in the first draft of this
+    # function: 0.5 * 10^-(sf-1) is half a unit in the LEADING digit, 0.5% for
+    # three figures, which is twice too wide at a mantissa of 2.15 and was the
+    # same shape of error as the 1% it replaced.
+    e = math.floor(math.log10(abs(recorded)))
+    tol_abs = 0.5 * 10.0 ** (e - (sigfigs(recorded) - 1))
+    return (abs(recorded - float(here)) <= tol_abs, tol_abs / abs(recorded))
+
 
 def main():
     NS = [1_000_000, 2_000_000, 4_000_000, 8_000_000, 16_000_000, 64_000_000]
@@ -193,15 +270,17 @@ def main():
     for n, (rdx, rc) in sorted(REC_COLL.items()):
         g, dx = worst_collision(n, 50)
         for lab, rv, mv in (("collision dX'", rdx, float(dx)), ("collision ceiling", rc, float(g))):
-            ok = abs(rv - mv) <= 0.01 * rv
+            ok, tol = agrees(rv, mv)
             ok_rec = ok_rec and ok
-            print("| %s | %d | %.3e | %.3e | %s |" % (lab, n, rv, mv, "yes" if ok else "*** NO ***"))
+            print("| %s | %d | %.3e | %.3e | %s (tol %.3f%%) |"
+                  % (lab, n, rv, mv, "yes" if ok else "*** NO ***", 100 * tol))
     for n, (rnb, rdx, rc) in sorted(REC_COMP.items()):
         dx, nb, sm = worst_compression_dx(n, 50)
         for lab, rv, mv in (("compression num_blocks", rnb, float(nb)), ("compression dX'", rdx, float(dx))):
-            ok = abs(rv - mv) <= 0.01 * rv
+            ok, tol = agrees(rv, mv)
             ok_rec = ok_rec and ok
-            print("| %s | %d | %.6g | %.6g | %s |" % (lab, n, rv, mv, "yes" if ok else "*** NO ***"))
+            print("| %s | %d | %.6g | %.6g | %s (tol %.3f%%) |"
+                  % (lab, n, rv, mv, "yes" if ok else "*** NO ***", 100 * tol))
         print("| compression ceiling | %d | %.3e | (production solve, not reimplemented here) | n/a |" % (n, rc))
     print()
     if ok_rec:

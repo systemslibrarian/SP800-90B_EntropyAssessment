@@ -51,9 +51,11 @@ A figure from this fork is only interpretable with its provenance and its floor.
 tools/build-provenance-canary.sh cpp/ea_iid          # expect TREE REPAIRED
 # 2. the assessment
 cpp/ea_non_iid -i -a -q -o report.json <capture.bin> <bits_per_symbol>
-# 3. the floor, with every subtracted term named. At width 1 this prints
-#    CERTIFIED FLOOR; above width 1 it prints EVALUATED MARGIN (NOT A FLOOR),
-#    because the C01/F10 term is a measurement there and not a bound (A02).
+# 3. the floor, with every subtracted term named and ITS STATUS. At width 1
+#    this prints MEASURED FLOOR (C22a) -- the aggregate takes the weakest
+#    status of its terms, and C22a is a product of two grid maxima (OC-78);
+#    above width 1 it prints EVALUATED MARGIN (NOT A FLOOR), because the
+#    C01/F10 term is a measurement there and not even a ceiling (A02).
 python3 audits/2026-10-11-independent-audit/oracles/entropy_floor.py report.json
 # 4. if a restart dataset exists, the acceptance decision -- NOT a subtraction
 cpp/ea_restart -i -v -o restart.json <restart.bin> <bits_per_symbol> <H_I>/symbol
@@ -82,10 +84,19 @@ in every swept axis, and extending the one arbitrary axis nine orders left it
 bit-identical (`OC-63`). The withdrawal is left in the record. *"The bucket is
 empty"* should cost something to say, and this time it did.
 
-**`C22a`'s boundary question has left this bucket: measured and closed**
-(`OC-63`). The constant `c` = 0.4991 is a supremum, not a lower bound on one,
-so `C22a` is a bound and both floor readings are certified floors at width 1
-again.
+**`C22a`'s boundary question is PARTLY closed, and the claim made here was
+wrong** (`OC-63`, corrected by `OC-78`). What was measured is that the factor
+`c` = 0.4991's argmax is interior in every swept axis. What this entry went on
+to say — *"so `C22a` is a bound and both floor readings are certified floors at
+width 1 again"* — **is false, and false as written, not merely out of date.**
+
+`8.08e-15` is `c × K`, a **product of two grid maxima**, and `OC-63` examined
+only `c`. The second factor, `K` = 1.6189e-14, is attained at `N` = 5, `r` = 2,
+where `r` = 2 is the **first value in the swept list** — and rule 9 was never
+applied to it. The sweep's own worst realised inflation reaches **92.8 %** of
+the ceiling it is supposed to bound. `C22a` is **MEASURED**, and the word
+*certified* has been retired from the floor (`OC-78`). The readings are
+**MEASURED FLOORS**.
 
 **`C22c` has left this bucket: the factor was found and the record is
 vindicated** (`OC-62`). The consistent 4.5–4.9× ratio was a **mechanism**, as a
@@ -97,8 +108,26 @@ while the derivation it was compared against computed the **Collision** family,
 which is 4.3–4.6× smaller. Everything checkable without reimplementing the
 production compression solve now reproduces, including the collision family's
 entire ceiling to 0.07 %. **No entropy is recovered, because none was being
-thrown away**, and `C22c` is a derived ceiling and therefore a **bound**, so
-both readings are certified floors at width 1 again.
+thrown away.**
+
+`C22c`'s status is **split**, and calling it simply a bound here was wrong
+(`OC-78`). Its `dX' ≤ dz·σ_max/√v` **is** derived — Popoviciu bounds `σ_max`
+and `v = num_blocks − 1000` is exact — but the **ceiling** built on top of it
+is a maximum over an **801-point scan** of step `dX'/8`, which is MEASURED. Its
+argmax is at `cap − 1.0 dX'`, where the upper evaluation point lands on
+`G(1/64)` exactly; that is structurally explained, which is the best a scan
+maximum gets, and is still not a proof. The readings are **MEASURED FLOORS**,
+not certified ones.
+
+**And the helper that certified this was itself wrong** (`F02`, `OC-78`).
+`oracles/zalpha_ceiling_by_n.py` used `v = num_blocks`, omitting the `d = 1000`
+dictionary blocks that production subtracts, and `mpf(n)/6` where production
+floor-divides. Its `dX'` at n = 10⁶ was 2.1422e-06 against the correct
+2.1486e-06 — 0.300 % low, in the **unsafe** direction — and it **reported
+agreement** because its tolerance was a flat 1 % on values the record states to
+three significant figures. The record was right; the independent reproduction
+was the wrong one. Fixed, with the tolerance now derived from the recorded
+precision.
 
 **`C24` has left this bucket: it is repaired** (`OC-57`). `writeJsonReport` uses
 `MoveFileEx` with `MOVEFILE_REPLACE_EXISTING` under `_WIN32`, and the Windows
@@ -140,8 +169,10 @@ prints **exactly macOS's figure**.
 `A02` and `A06` have left it, **closed** this round (`OC-55`, `OC-56`). `A02`
 took the third of its three options — exclude the affected path — and at width
 1 the exclusion is a counting **proof** from the two shipped constants, so the
-floor oracle now prints `CERTIFIED FLOOR` there and `EVALUATED MARGIN (not a
-floor)` above it. `A06`'s filename exception is replaced by a platform-keyed
+floor oracle prints `PROVED EXCLUSION` for that term there and `EVALUATED
+MARGIN (not a floor)` above it. The **aggregate** label at width 1 is
+`MEASURED FLOOR (C22a)`, not a certified one: that claim was retired at
+`OC-78`. `A06`'s filename exception is replaced by a platform-keyed
 expected-result manifest, with all four required failures demonstrated.
 
 `A05` and `A04` have left it, repaired in the previous round, with
@@ -351,7 +382,7 @@ each refusal means:
 | instrument | refuses when |
 |---|---|
 | `mutation-lib.sh` | no unmutated **baseline** was asserted accepted, so refusals are unattributable (rule 7) |
-| `entropy_floor.py` | the bit width is not established, or the report fails validation; and it says **EVALUATED MARGIN** rather than **CERTIFIED FLOOR** above width 1 |
+| `entropy_floor.py` | the bit width is not established, or the report fails validation; and it says **EVALUATED MARGIN** rather than any kind of floor above width 1. At width 1 it says **MEASURED FLOOR**, naming the term that holds the status there — the certified label was retired at `OC-78` |
 | `restart_decision_exact.py` | the restart fields are absent, or a six-decimal `H_I` does not determine the integer cutoff (exit 2, never a guess) |
 | `check-platform-deltas.py` | no platform block matches, a delta exceeds its row, a row was never observed, or the manifest is unreadable |
 

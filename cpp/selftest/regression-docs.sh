@@ -51,6 +51,28 @@ floor() { # floor <label> <observed> <minimum>
     return 0
 }
 
+# A SCANNER THAT DID NOT RUN SUPPORTS NO CLAIM (SHAPE-03, flagged on this file
+# by regression-deadguard.sh).
+#
+# Every check below collects offending locations into a variable and reports
+# "yes" when it comes back EMPTY. An empty accumulator is therefore
+# indistinguishable from a scanner that crashed, was killed, or never started --
+# a missing python3, a syntax error in the heredoc, an unreadable repo. The
+# scan's EXIT STATUS is the only thing that separates "found nothing" from "did
+# not look", so it is now read, and a non-zero status fails the check instead of
+# passing it.
+#
+# This was caught by this repository's own dead-guard detector, which flagged
+# "verification command in statement position, status never read, no set -e" on
+# this file while the file was being edited to tighten a different check.
+scanned() { # scanned <rc> <label>  -- 0 if the scan actually ran
+    if [ "$1" -ne 0 ]; then
+        bad "${2} -- THE SCAN DID NOT RUN (exit $1), so its silence means nothing:" "no result"
+        return 1
+    fi
+    return 0
+}
+
 # ---------------------------------------------------------------- 1. SHAs
 missing=""
 # Taken from the fields that actually assert a commit. Scanning for bare hex
@@ -277,7 +299,9 @@ for d in docs:
 print(' '.join(hits))
 PY
 )
-if [ -z "${hit}" ]; then note "no previously-corrected claim has reappeared:" "none"
+hitrc=$?
+if ! scanned "${hitrc}" "stale-claim scan"; then :
+elif [ -z "${hit}" ]; then note "no previously-corrected claim has reappeared:" "none"
 else bad "stale claims present again:" "${hit}"; fi
 
 # ------------------------------- 11. NIST attributions in cpp/ comments
@@ -324,24 +348,52 @@ for f in files:
 print(' '.join(sorted(set(hits))))
 PY
 )
-if [ -z "${nistsrc}" ]; then note "no NIST attribution in cpp/ comments:" "none"
+nistrc=$?
+if ! scanned "${nistrc}" "NIST-attribution scan"; then :
+elif [ -z "${nistsrc}" ]; then note "no NIST attribution in cpp/ comments:" "none"
 else bad "NIST attributions in cpp/ (the sweep is incomplete):" "${nistsrc}"; fi
 
 # ---------------------------------------------------------------- the floor
-# A02 / OC-55 / OC-59: "CERTIFIED FLOOR" and "EVALUATED MARGIN" are different
-# claims, and a claim distinction holds at every mention or it holds nowhere.
-# Any document that writes "certified floor" must say which width or reading it
-# holds for, because it holds only where every subtracted term is a bound: at
-# width 1 (C01/F10 unreachable by proof) AND for the F07 reading (the literal
-# reading subtracts C22c, whose tabulated value is not independently
-# reproduced). A guard is cheaper than remembering across 178 mentions.
+# "CERTIFIED FLOOR" IS A RETIRED TERM (F02 / OC-78).
+#
+# This check used to require a width/reading qualifier beside the phrase, on the
+# grounds that the claim held at width 1 for the F07 reading. That was the wrong
+# guard for the wrong claim: NO reading is certified. C22a's 8.08e-15 is a
+# PRODUCT OF TWO GRID MAXIMA and only one factor's argmax was ever examined --
+# the other is attained at r = 2, the first value in its swept list -- and
+# C22c's ceiling is a maximum over an 801-point scan. The aggregate takes the
+# WEAKEST status of its terms, so the label is MEASURED FLOOR.
+#
+# So the phrase is retired, and it is retired THE SAME WAY a vacated rule
+# number is: prose may still DISCUSS it, and must mark it as retired where it
+# does. That convention already exists in this tree for "rule N (vacated)" and
+# it was chosen there over widening an exemption list, for the same reason.
+#
+# ONE FILE IS EXEMPT, AND BY A STATED MECHANISM RATHER THAN BY NAME.
+# ORCHESTRATOR-CHECKS.md is an append-only dated record: entries OC-1..OC-77
+# were written before the retirement and must not be edited to say something
+# their authors did not know, because an entry is the only account of what was
+# believed when it produced a figure. Such a file is exempt for occurrences
+# under an entry heading BELOW the retirement point, and only while it carries
+# a file-level retirement notice near its head. A file with no notice gets no
+# exemption, and an occurrence under OC-78 or later is judged like any other.
 echo
+RETIRED_AT_OC=78
 floorbad=$(
-python3 - "${repo}" <<'PY'
+RETIRED_AT_OC="${RETIRED_AT_OC}" python3 - "${repo}" <<'FLOORPY'
 import os, re, sys
 root = sys.argv[1]
-pat = re.compile(r'certified\\s+floor', re.I)
-qual = re.compile(r'width\\s*1|F07|every\\s+subtracted\\s+term|not\\s+a\\s+floor|unreachable', re.I)
+retired_at = int(os.environ['RETIRED_AT_OC'])
+pat = re.compile(r'certified\s+floor', re.I)
+# A paragraph that marks the phrase retired, superseded or false. "not a floor"
+# is NOT in this list any more: it described a different distinction (margin vs
+# floor) and would have exempted most of the old sites unchanged.
+# STEMS, not exact words: the first draft required "retired" and failed on a
+# paragraph of this very entry that said "the phrase this entry retires".
+retired = re.compile(r'retire|supersede|withdraw|is false|was wrong|no longer|'
+                     r'read "measured floor"|OC-78|MEASURED FLOOR', re.I)
+notice = re.compile(r'RETIRED TERM\s*--|RETIRED TERM\s*—', re.I)
+heading = re.compile(r'^##\s*OC-(\d+)\b', re.M)
 hits = []
 for base, dirs, files in os.walk(root):
     dirs[:] = [d for d in dirs if d not in ('.git', '__pycache__')]
@@ -353,19 +405,88 @@ for base, dirs, files in os.walk(root):
             raw = open(p, encoding='utf-8', errors='replace').read()
         except OSError:
             continue
+        # the file-level notice must appear in the first 4000 characters: a
+        # notice buried at the end is not a notice.
+        has_notice = bool(notice.search(raw[:4000]))
+        # entry boundaries, for the append-only-record exemption
+        bounds = [(m.start(), int(m.group(1))) for m in heading.finditer(raw)]
         for m in pat.finditer(raw):
+            if has_notice and bounds:
+                prior = [n for off, n in bounds if off < m.start()]
+                if prior and prior[-1] < retired_at:
+                    continue        # a dated entry written before the retirement
             lo = raw.rfind('\n\n', 0, m.start()) + 1
             hi = raw.find('\n\n', m.end())
             ctx = raw[lo: hi if hi > 0 else len(raw)]
-            if not qual.search(ctx):
+            if not retired.search(ctx):
                 hits.append('%s:%d' % (os.path.relpath(p, root), raw.count('\n', 0, m.start()) + 1))
 print(' '.join(sorted(set(hits))))
-PY
+FLOORPY
 )
-if [ -z "${floorbad}" ]; then
-    note "every \"certified floor\" mention carries its qualifier:" "yes"
+floorrc=$?
+if ! scanned "${floorrc}" "\"certified floor\" retirement scan"; then
+    :
+elif [ -z "${floorbad}" ]; then
+    note "\"certified floor\" is retired and every use says so:" "yes"
 else
-    bad "\"certified floor\" asserted with no width/reading qualifier:" "${floorbad}"
+    bad "\"certified floor\" used without marking it retired:" "${floorbad}"
+fi
+
+# AND THE ORACLE MUST NOT PRINT IT. The prose check above cannot see what a
+# program emits at run time, and the label the oracle PRINTS is the one a reader
+# acts on.
+#
+# THE CHECK LOOKS AT CODE, NOT AT COMMENTS. Its first draft grepped the file for
+# the quoted string and failed on the two COMMENTS that explain the retirement
+# -- so writing down why the label was removed would have kept the check red
+# forever, and the only way to make it green would have been to stop explaining.
+# A check that punishes the explanation of a repair is worse than no check.
+echo
+oraclebad=$(
+python3 - "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" <<'ORACLEPY'
+import io, sys, tokenize
+path = sys.argv[1]
+hits = []
+try:
+    with io.open(path, 'rb') as fh:
+        for tok in tokenize.tokenize(fh.readline):
+            # STRING tokens only: a comment is tokenize.COMMENT and is skipped,
+            # which is the whole point. A docstring is a STRING and IS judged --
+            # a docstring is output a reader can see via --help.
+            if tok.type == tokenize.STRING and 'CERTIFIED FLOOR' in tok.string:
+                hits.append('%s:%d' % (path.split('/')[-1], tok.start[0]))
+except (OSError, tokenize.TokenError, IndentationError, SyntaxError) as e:
+    print('UNREADABLE: %s' % e)
+    raise SystemExit(0)
+print(' '.join(hits))
+ORACLEPY
+)
+oraclerc=$?
+if ! scanned "${oraclerc}" "entropy_floor.py literal scan"; then
+    :
+elif [ -z "${oraclebad}" ]; then
+    note "entropy_floor.py has no \"CERTIFIED FLOOR\" string literal:" "yes"
+else
+    bad "entropy_floor.py still carries the retired label in code:" "${oraclebad}"
+fi
+
+# AND THE STATUS VOCABULARY MUST BE DEFINED WHERE IT IS USED. A composite label
+# is worth nothing if the reader cannot find out what MEASURED means.
+echo
+vocabbad=""
+# Written as an explicit `if` rather than `grep -q ... || var=...`: the second
+# form reads the status perfectly well, but regression-deadguard.sh's pattern C
+# flags it as "status never read" and a baseline carrying a false positive is
+# worse than one carrying none.
+for w in PROVED DERIVED MEASURED; do
+    if ! grep -q "^#   ${w}" "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" 2>/dev/null; then
+        vocabbad="${vocabbad} ${w}"
+    fi
+done
+if [ -z "${vocabbad}" ]; then
+    note "the floor's PROVED/DERIVED/MEASURED vocabulary is defined:" "yes"
+else
+    bad "the floor prints a status with no definition for:" "${vocabbad}"
 fi
 
 # ---------------------------------------------------------------- rule numbers
@@ -438,7 +559,10 @@ for base, dirs, files in os.walk(root):
 print(' '.join(sorted(set(hits))))
 PY
 )
-if [ -z "${rulebad}" ]; then
+rulerc=$?
+if ! scanned "${rulerc}" "rule-citation scan"; then
+    :
+elif [ -z "${rulebad}" ]; then
     note "every cited rule number has a definition:" "yes"
 else
     bad "cited rule numbers with no definition:" "${rulebad}"

@@ -17,7 +17,6 @@ cpp/selftest/regression-chisquare.sh|B|no set -e, status never read
 cpp/selftest/regression-deadguard.sh|B|no set -e, status never read
 cpp/selftest/regression-deadguard.sh|D|verification command upstream of a pipe, no pipefail, no set -e
 cpp/selftest/regression-docs.sh|B|heredoc carries assertions; no set -e, status never read
-cpp/selftest/regression-docs.sh|B|no set -e, status never read
 cpp/selftest/regression-docs.sh|D|verification command upstream of a pipe, no pipefail, no set -e
 cpp/selftest/regression-estimator-guards.sh|B|no set -e, status never read
 cpp/selftest/regression-estimator-guards.sh|C|verification command in statement position, status never read, no set -e

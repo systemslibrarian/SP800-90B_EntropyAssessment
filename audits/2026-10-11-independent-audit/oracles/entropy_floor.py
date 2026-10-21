@@ -98,6 +98,50 @@ C01 = 3.69e-4          # F10 margin; EXCLUDED at width 1 by the proof above (A02
 # execution took the established path. Removed (OC-73): the printed labels were
 # current and the file's own reasoning contradicted them.
 C22A_PER_N = 8.08e-15
+#
+# THE PER-TERM STATUS VOCABULARY (F02). Three statuses, and the floor takes the
+# WEAKEST of its terms, because a certified claim resting on an uncertified
+# input is not certified:
+#
+#   PROVED    holds for every input in the supported domain by an argument.
+#   DERIVED   follows from a PROVED inequality evaluated at numerical inputs.
+#   MEASURED  a maximum over an author-chosen grid or scan. Rule 9 governs it:
+#             such a maximum is a LOWER BOUND on the true extremum unless the
+#             argmax is shown interior, and "shown interior" is evidence about
+#             the rows sampled, not a proof.
+#
+# C22a IS MEASURED, AND THIS FILE USED TO LIST IT AMONG THE BOUNDS. The exact
+# sentence was "every term is now a bound at width 1: C01/F10 excluded by
+# proof, C22a a measured supremum, C22b zero, C22c a derived ceiling" -- a
+# measured supremum named as such inside a list of bounds. F02 is right.
+#
+# And the reproduction is worse than the finding. The subtracted constant is a
+# PRODUCT OF TWO GRID MAXIMA, and OC-63's interiority argument covers only the
+# first:
+#   c    = 0.4991      max |f_tool - f_exact| / ((N+1) 2^-52) over 592 near-root
+#                      points; argmax at N = 10,000, r = 3, INTERIOR, and
+#                      bit-identical when the refinement window is extended nine
+#                      orders (OC-63). This factor's status is as good as a
+#                      measurement gets.
+#   K    = 1.6189e-14  sup over the (N, r, ldomain) sweep of
+#                      2^-52/(|f'(p*)| p* ln 2), attained at N = 5, r = 2 --
+#                      and r = 2 IS THE FIRST VALUE IN THE SWEPT LIST
+#                      [2, 3, 4, 5, 6, 8, ...]. K is largest where |f'(p*)| p*
+#                      is smallest, the script's own model puts that minimum at
+#                      r = 2, and whether the true infimum lies at r = 2 or at
+#                      r = 1 (which the standard admits when the longest run of
+#                      correct predictions is 0) WAS NEVER EXAMINED. Rule 9
+#                      applies to this factor and was never applied to it.
+# 8.08e-15 = c * K. Declaring the PRODUCT a bound on the strength of an
+# interiority argument for ONE factor is the gap.
+#
+# And the margin is thin: the sweep's own worst realised inflation reaches
+# 92.8% of the ceiling it is supposed to bound (0.463 realised against
+# c = 0.499). A grid maximum that its own grid approaches to within 7.2% is not
+# a comfortable bound.
+#
+# Reproduced 2026-10-21 by oracles/p_local_exact.py against a c22_bound built
+# from production headers at sha256 9619117ec68ee3fe.
 C22B = 0.0             # P_global' at/near N == 1: conservative at every N, nothing to subtract (OC-22)
 # ZALPHA versus the literal 2.576 (OC-22). Measured at two bitstring lengths;
 # the ceiling DECREASES with n (dX' ~ sigma_max/sqrt(v), v ~ n/6), so the value
@@ -331,19 +375,22 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     print("  term                                     value        why")
     print("  ---------------------------------------- ------------ " + "-" * 34)
     if w == 1:
-        print("  C01/F10 MultiMMC chained lookup          %.3e    EXCLUDED: unreachable at width 1" % 0.0)
+        print("  C01/F10 MultiMMC chained lookup          %.3e    PROVED EXCLUSION: unreachable at width 1" % 0.0)
         print("    D_MMC=16, MAX_ENTRIES=100000; for binary data entries[d] <= 2^(d+2), so the cap")
         print("    cannot bind below d=15 and d=15 has no d+1 to suppress. A proof, not a measurement.")
     else:
         print("  C01/F10 MultiMMC chained lookup          %.3e    EVALUATED MARGIN, *not* a bound" % C01)
         print("    One measured overestimate from f10_over_8bit_1M. The mechanism is dictionary")
         print("    saturation, whose size is set by the data, so nothing here constrains it (A02).")
-    print("  C22a P_local quantisation                %.3e    8.08e-15 x (n+1), n = %d" % (a, n))
-    print("    the constant's argmax is interior in every swept axis, and extending the one")
-    print("    arbitrary axis nine orders left it bit-identical, so it is a supremum (OC-63).")
-    print("  C22b P_global' at N == 1                 %.3e    conservative at every N" % C22B)
+    print("  C22a P_local quantisation                %.3e    MEASURED, 8.08e-15 x (n+1), n = %d" % (a, n))
+    print("    8.08e-15 = c * K, a PRODUCT OF TWO GRID MAXIMA. c = 0.4991's argmax is interior in")
+    print("    every swept axis and bit-identical when the last arbitrary axis is extended nine")
+    print("    orders (OC-63). K = 1.6189e-14 is attained at N = 5, r = 2 -- the FIRST r in the")
+    print("    swept list -- and its interiority was never examined (F02, OC-78). The sweep's own")
+    print("    worst realised inflation reaches 92.8% of this ceiling. MEASURED, not PROVED.")
+    print("  C22b P_global' at N == 1                 %.3e    PROVED, conservative at every N" % C22B)
     fam, fam_n = c22c_families(n)
-    print("  C22c ZALPHA vs the literal 2.576         %.3e    derived ceiling, at n = %d" % (bz, bz_n))
+    print("  C22c ZALPHA vs the literal 2.576         %.3e    DERIVED + MEASURED, at n = %d" % (bz, bz_n))
     if fam:
         # SHAPE-07: emit the components, name the binding one, keep the margin.
         ranked = sorted(fam.items(), key=lambda kv: -kv[1])
@@ -358,6 +405,11 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     print("    Reproduced independently where checkable: num_blocks and dX' to three significant")
     print("    figures, and the collision family's whole ceiling to 0.07% (OC-62). Its fall with")
     print("    n is measured, not asserted: oracles/zalpha_ceiling_by_n.py.")
+    print("    STATUS IS SPLIT (F02, OC-78). dX' <= dz sigma_max / sqrt(v) is DERIVED: Popoviciu")
+    print("    bounds sigma_max and v = num_blocks - 1000 is exact. The CEILING on top of it is a")
+    print("    maximum over an 801-point scan of step dX'/8, so it is MEASURED. Its argmax is")
+    print("    structurally explained -- cap - 1.0 dX', where the upper evaluation point lands on")
+    print("    G(1/64) exactly -- which is the best case for a scan maximum but is not a proof.")
     # A02: C01 is excluded at width 1 by proof, and is a MARGIN above it.
     c01 = 0.0 if w == 1 else C01
     certified = (w == 1)
@@ -390,29 +442,64 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     # record where they can be checked independently
     # (oracles/zalpha_ceiling_by_n.py), so the literal reading is a certified
     # floor again wherever C01/F10 is also excluded.
-    # A CERTIFIED CLAIM RESTING ON AN UNCERTIFIED INPUT IS NOT CERTIFIED, which
-    # is why both readings were downgraded while C22a's supremacy was open and
-    # restored when it was measured (OC-63). The label follows the TERMS, and
-    # every term is now a bound at width 1: C01/F10 excluded by proof, C22a a
-    # measured supremum, C22b zero, C22c a derived ceiling.
+    # A CERTIFIED CLAIM RESTING ON AN UNCERTIFIED INPUT IS NOT CERTIFIED, and
+    # that is now applied to this file's own label instead of being quoted in
+    # it (F02, OC-78).
     #
-    # The superseded half of this comment -- "neither reading is a certified
-    # floor until the boundary question is settled by extending those grids" --
-    # outlived the measurement that settled it and contradicted the flag below,
-    # which is set True. Removed (OC-73).
-    # ESTABLISHED BY MEASUREMENT (OC-63). The argmax of C22a's constant is
-    # interior in EVERY swept axis: N = 10,000 (5th of 12) and r = 3 (2nd of 7)
-    # on the published grid, and extending the root-offset refinement window
-    # from 10^-12 to 10^-21 -- 592 near-root points to 1036 -- left the maximum
-    # BIT-IDENTICAL at 0.4991, same N, same r, same p. A maximum that does not
-    # move when the only remaining arbitrary axis is extended nine orders is an
-    # interior maximum, so the grid value is the supremum rather than a lower
-    # bound on it, and `eps_f <= c (N+1) 2^-52` is a bound.
-    c22a_supremacy_established = True
-    lit_terms_all_bounds = certified and c22a_supremacy_established
-    f07_terms_all_bounds = certified and c22a_supremacy_established
-    lab_lit = "CERTIFIED FLOOR" if lit_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
-    lab_f07 = "CERTIFIED FLOOR" if f07_terms_all_bounds else "EVALUATED MARGIN (not a floor)"
+    # "CERTIFIED FLOOR" IS RETIRED. It was printed whenever width == 1 and
+    # C22a's supremacy was marked established, and the sentence that justified
+    # it read: "every term is now a bound at width 1: C01/F10 excluded by
+    # proof, C22a a MEASURED SUPREMUM, C22b zero, C22c a derived ceiling."
+    # A measured supremum is not a proved bound. The list named its own
+    # exception and then called the aggregate certified anyway.
+    #
+    # The label is now COMPOSITE: the floor takes the WEAKEST status among the
+    # terms it actually subtracts, and the printed line NAMES the term holding
+    # it there, so a reader learns what would have to change to strengthen it.
+    #
+    # At width 1 the statuses are:
+    #   C01/F10   PROVED EXCLUSION   unreachable, a proof not a measurement
+    #   C22a      MEASURED           a product of two grid maxima (above)
+    #   C22b      PROVED             zero, conservative at every N
+    #   C22c      DERIVED + MEASURED dX' derived, the ceiling a scan maximum
+    # so the weakest is MEASURED and both readings are MEASURED FLOORS. The
+    # F07 reading does not subtract C22c, but C22a alone already fixes the
+    # weakest status, so the two readings share it -- which is why this is not
+    # a per-reading distinction the way C01/F10 is.
+    #
+    # Nothing about the NUMBERS changed. A measured floor is still the most
+    # defensible figure available and is still worth computing; what changed is
+    # that it no longer claims a status its weakest input does not have.
+    TERM_STATUS = {
+        'C01/F10': 'PROVED EXCLUSION' if w == 1 else 'EVALUATED MARGIN',
+        'C22a': 'MEASURED',
+        'C22b': 'PROVED',
+        'C22c': 'DERIVED + MEASURED',
+    }
+    # rank: the later in this tuple, the weaker
+    RANK = ('PROVED', 'PROVED EXCLUSION', 'DERIVED', 'DERIVED + MEASURED',
+            'MEASURED', 'EVALUATED MARGIN')
+
+    def weakest(terms):
+        """The weakest status among `terms`, and every term holding it there."""
+        st = [(TERM_STATUS[t], t) for t in terms]
+        worst = max(RANK.index(x[0]) for x in st)
+        return RANK[worst], [t for sts, t in st if RANK.index(sts) == worst]
+
+    # The LITERAL reading subtracts C22c; the F07 reading does not. C01/F10 is
+    # subtracted only above width 1 -- at width 1 it is excluded by proof, so
+    # it is listed either way and its status carries the difference.
+    lit_status, lit_why = weakest(['C01/F10', 'C22a', 'C22b', 'C22c'])
+    f07_status, f07_why = weakest(['C01/F10', 'C22a', 'C22b'])
+
+    def label(status, why):
+        if status == 'EVALUATED MARGIN':
+            return "EVALUATED MARGIN (not a floor)"
+        return "%s FLOOR (%s)" % (status, ", ".join(why))
+
+    certified = (w == 1)          # retained: the C01/F10 exclusion still turns on it
+    lab_lit = label(lit_status, lit_why)
+    lab_f07 = label(f07_status, f07_why)
     print("  %-31s %.17g   (h' - %.6g)" % (lab_lit + ", literal", lit, hp - lit))
     print("  %-31s %.17g   (h' - %.6g)" % (lab_f07 + ", F07", f07, hp - f07))
     if not certified:
