@@ -112,13 +112,25 @@ available; do not write an untestable numerical repair on a different ABI.
    | `audits/2026-10-11-independent-audit/EXCLUSION-MAP.md` and the tracker's `EXCLUDED-UNSUPPORTED` rows | yes — prose lists of excluded items; a row added on one side is lost | `regression-docs.sh` checks the tracker's per-state counts against its sections; the exclusion map has no check |
    | `bin/` + `refdata/` as a directory pair | the pair is the thing `fixture-manifest.txt` enumerates; a file added to one directory without a manifest entry | `verify-fixture-inventory.sh` rejects extra and missing files both ways |
 
-   **Three rules about instruments, not about code. The landing rule below is one of them, and it does not cover the other two** — recorded together so nobody later assumes one mechanisation closed all three. Each exists because this project made the mistake, and each has a negative control.
+   **FIVE rules about instruments, not about code.** No one of them covers any
+   other, and they are recorded together so nobody later assumes one
+   mechanisation closed the rest. Each exists because this project made the
+   mistake, and each has a negative control.
+
+   > **NUMBERING, REPAIRED 2026-10-21 (`OC-68`).** This list was headed "Three
+   > rules" while containing five, and its entries were numbered 1, 2, 3, 4,
+   > **5, 4** — the labelled-read rule appearing twice, once as a bare stub
+   > numbered 5 and again in full numbered 4, which also numbered the
+   > build-state rule. So **build-state and labelled-read were both "rule 4"**,
+   > rule 3's own text cited "rule 4" with two referents, and the same rule
+   > carried three different numbers across the repository. Canonical numbers
+   > are below and every citation in the tree now points at them.
 
    1. **A mutation that did not land reports neither a pass nor a fail.** Mechanised in `cpp/selftest/mutation-lib.sh` (`OC-33`): file mutations prove landing by digest, value mutations by the value the code under test *received*, build-flag mutations by the binaries differing. The third outcome is `MUTATION-DID-NOT-APPLY`, which fails the harness and says the harness is broken rather than the guard. Negative control: a copy of a harness with one `mv` replaced by a no-op must report it. **Does not cover rules 2 or 3.**
 
-   2. **A conclusion from ABSENCE requires the output to be a well-formed report of the expected kind first.** A usage message, an empty file, a crash, a timeout, and a completed run that lacks a given line are five distinguishable outcomes, and **only the last may be read as evidence about the data**. Assert a positive structural marker before reading any missing line as a fact. This is `RULE 12`'s principle moved from corpora to invocations: a corpus that is short and a tool that never ran are the same error. The instance: an `R-1` recheck declared the wrong symbol width, the tool printed its usage text, and the log recorded "no LRS line seen" as though it were a fact about the data (`OC-34`, `OC-36`).
+   2. **A conclusion from ABSENCE requires the output to be a well-formed report of the expected kind first.** A usage message, an empty file, a crash, a timeout, and a completed run that lacks a given line are five distinguishable outcomes, and **only the last may be read as evidence about the data**. Assert a positive structural marker before reading any missing line as a fact. The principle this relies on, stated in full so the text stands without the reference: **an absent or malformed result is not a result about the subject, and the two are indistinguishable from the shape of the output alone — so the kind of the output must be established before any of its content is read.** A corpus that is too short and a tool that never ran are the same error. (This was cited as `RULE 12`, a rule number with **no definition in this repository**; see `OC-68`.) The instance: an `R-1` recheck declared the wrong symbol width, the tool printed its usage text, and the log recorded "no LRS line seen" as though it were a fact about the data (`OC-34`, `OC-36`).
 
-   3. **A platform claim from reading the source is provisional until the source has been run on that platform.** The worked example is the provenance canary: `OC-24` argued from the arithmetic that all four of its signatures hold on the wide `long double` formats, and three did — while the fourth matched macOS's own wording of an assertion failure and returned a false INDETERMINATE on glibc for a legitimately unrepaired binary (`OC-40`). The *reasoning* survived contact with the platform; the *instrument* did not. A corollary: **a guard matches the thing, not the host's wording of it** — prefer a structural signal (exit status plus the predicted side effect) and treat matched text as secondary confirmation. `.github/workflows/x86-64-platform-facts.yml` runs the suite on the other format on every push, because this class is invisible from the development host by construction. **(`R-1` is NOT an instance of this rule — see rule 4. Nothing about the platform hid it; a build state did. It was filed here and the filing was wrong.)**
+   3. **A platform claim from reading the source is provisional until the source has been run on that platform.** The worked example is the provenance canary: `OC-24` argued from the arithmetic that all four of its signatures hold on the wide `long double` formats, and three did — while the fourth matched macOS's own wording of an assertion failure and returned a false INDETERMINATE on glibc for a legitimately unrepaired binary (`OC-40`). The *reasoning* survived contact with the platform; the *instrument* did not. A corollary: **a guard matches the thing, not the host's wording of it** — prefer a structural signal (exit status plus the predicted side effect) and treat matched text as secondary confirmation. `.github/workflows/x86-64-platform-facts.yml` runs the suite on the other format on every push, because this class is invisible from the development host by construction. **(`R-1` is NOT an instance of this rule — see instrument rule 4, build state. Nothing about the platform hid it; a build state did. It was filed here and the filing was wrong.)**
 
    4. **A measurement is about the artefact it ran against, and an artefact whose build state was not established is not evidence about the source.** Four of this project's instrument errors are this one shape, and none is a wrong idea:
 
@@ -131,9 +143,7 @@ available; do not write an untestable numerical repair on a different ABI.
 
       Mechanised in `cpp/selftest/buildstate-lib.sh`: any harness that concludes from running a tool binary prints `[build-state] <name> asserts=LIVE|NDEBUG sha256=…` **before** its results, so a result without that line is visibly incomplete; `bs_require` declares the build a measurement needs and refuses a mismatch; `bs_canary` adds the canary's tree verdict where it applies. A measurement that deliberately uses a particular build declares which. **Covered by none of the rules above**, and rule 1's landing detector does not reach it either.
 
-   5. **A labelled read is never a positional read.**
-
-   4. **A labelled read is never a positional read.** Where the output carries a label, anchor to the label and make a missing label an error — never a fallback to position. Where no label exists (an `ea_iid` report's single test case), assert the count rather than taking the first of however many there are. `head -1`, `tail -1`, `[0]`, a line number, and an `awk` field position standing in for a named column are all the same defect waiting for a layout change. The instance: `entropy_floor.py` read `testCases[0]` and computed a floor from the Most Common Value estimator instead of the case labelled `Overall` — 0.983 where the answer is 0.904 — inside the script written to stop people making `C02`'s reading error (`OC-35`).
+   5. **A labelled read is never a positional read.** Where the output carries a label, anchor to the label and make a missing label an error — never a fallback to position. Where no label exists (an `ea_iid` report's single test case), assert the count rather than taking the first of however many there are. `head -1`, `tail -1`, `[0]`, a line number, and an `awk` field position standing in for a named column are all the same defect waiting for a layout change. The instance: `entropy_floor.py` read `testCases[0]` and computed a floor from the Most Common Value estimator instead of the case labelled `Overall` — 0.983 where the answer is 0.904 — inside the script written to stop people making `C02`'s reading error (`OC-35`).
 
       The TruePad `verify-vectors` exclusion list that existed in two copies is the same family seen from another angle: two copies of an enumerating list cannot disagree textually and will disagree in meaning the first time one is edited.
 6. **Run the tests:** `cd cpp && make non_iid iid restart && cd selftest && ./run-all-checks.sh`
@@ -248,21 +258,35 @@ rather than passing as thorough. Verified both ways: with the baseline accepted
 the harnesses pass, and with the baseline deliberately broken the harness
 reports `the FIXTURES are broken, not the guard` and fails.
 
-**THIS RULE EARNED ITS KEEP ON ITS FIRST APPLICATION — three findings, which
-is why it is load-bearing rather than ceremonial.**
+> **THE WORKED EXAMPLE PREVIOUSLY HERE WAS FILED IN ERROR — withdrawn
+> 2026-10-21 (`OC-68`).** Three findings were filed under this rule as evidence
+> it is load-bearing. They are not instances of it. Two were instances of
+> **instrument rule 1** (a mutation that did not land), and the third was this
+> rule's **staleness corollary** about hardcoded counts. **None was an instance
+> of building a negative fixture by mutation with its baseline asserted
+> accepted**, which is what this rule says. `OC-43`'s own warning applies to
+> the filing: *a measurement is about the artefact it ran against* — and a
+> worked example is a measurement about a rule. Filing a near-miss under a rule
+> makes the rule look tested when it is not, which is the same error one level
+> up.
 
-1. The sweep found a script with **no assertions at all**
-   (`reproducers/c16-c23-matrix.sh`): it classified and printed, its
-   expectations were echoed as prose and never compared, and its exit status
-   came from a timing print. Nothing in it could fail.
-2. Adding assertions to it **immediately caught a wrong expectation of mine**.
-   I expected the pre-`C16` builds to refuse an underflowing `H_I`. They
-   **accept** it, with cutoff 1000 — and that acceptance *is* the defect the
-   matrix exists to demonstrate. **The harness had been asserting the opposite
-   of the thing it was built to show**, and four rounds of reading it had not
-   told me. That is precisely the failure mode this rule exists for, and it was
-   sitting in the tree.
-3. The corollary below then bit twice more, in a harness and in a CI gate.
+**THE REAL WORKED EXAMPLE** is
+`cpp/selftest/regression-platform-deltas.sh`, which is an instance because it
+does exactly what the rule prescribes and nothing else:
+
+- its negatives are **mutations of a genuine `selftest` transcript**, one field
+  at a time — a delta made large, an estimator name changed, a reported
+  comparison removed — so each refusal is attributable to the one thing that
+  changed;
+- it **asserts the unmutated transcript is accepted first**, and if that
+  baseline is refused it says so and **refuses to read its own negatives**,
+  because they would be unattributable;
+- it carries a third outcome for a platform where the premise does not hold
+  (`COULD NOT RUN`, exit 2) rather than scoring an abstention either way.
+
+That is the rule, mechanised, with its own baseline control — and it was
+written before the rule was, which is why it is the example rather than the
+exhibit.
 
 A corollary found in the same pass: a **hardcoded expected count** inside a
 harness is the same trap wearing different clothes. The inventory harness
@@ -342,36 +366,14 @@ is not a bound.** The collision ceiling came out 4.6% low because the sweep
 used `v = n/2.5`, a typical collision count, where the record bounds
 `v ≥ n/3`. The arithmetic was right and the quantity was not a ceiling.
 
-### Rule 10 — severity inherited from an unknown mechanism is a guess
+### Rule 10 — VACATED
 
-A finding whose **mechanism is unknown** carries its severity as
-**unestablished**, not as a number inferred from the category it was filed
-under. "Platform", "library", "environment" are **hypotheses about a cause**,
-not observations, and a severity derived from one inherits its uncertainty.
+Not an instrument rule. It was about how a **finding is ranked in the record**,
+and it applies to **0 of the 70 instruments** — the test being whether a
+harness could break it, and none can. Moved to **Record discipline R1** below.
 
-**How this was learned.** Upstream issue #219 recorded exactly the `C18`
-symptom — `ea_iid`'s §5.2.5 test printing a negative `Pr(X≥1)` on Windows
-MinGW — and filed it as **platform / library, severity LOW**. It sat open for
-about a year. The actual mechanism is a **32-bit `long`** overflowing inside
-`n_choose_2`'s product, which makes a required test fail **unconditionally
-whatever the data**. This audit's own clustering had it as "`C18`, Low, expect
-to refute" for the same reason.
-
-The misclassification was reasonable on the evidence available: a negative
-probability from an integer overflow and one from a mismatched library look
-identical from outside. That is exactly why the severity could not be inferred
-from it.
-
-| do | instead of |
-|---|---|
-| record severity as unestablished until the mechanism is | assign severity from the suspected category |
-| treat "platform" as a hypothesis to test | treat it as a classification that caps impact |
-| re-rank when the mechanism lands | leave the original rank in place |
-
-The companion observation is that **external corroboration of a symptom is not
-validation of a fix**: #219 confirms the symptom exists in the wild, and
-confirms nothing about whether widening the type is correct. That rests on its
-own evidence.
+**The number is not reused.** A citation of "rule 10" is now a citation of
+nothing, and `regression-docs.sh` fails on it (`OC-68`).
 
 ### Rule 11 — a record whose truth depends on repository state names that state, and something re-reads it when the state changes
 
@@ -440,3 +442,41 @@ reproduction command — `audits/INSTRUMENT-INVENTORY.md`. A denominator that
 exists only in the shell history that produced it cannot be re-derived, cannot
 be cited, and cannot be found wrong. Every sweep this project had reported was
 in that state (`OC-67`).
+
+## Record discipline
+
+Rules about how findings are stated and ranked, not about how instruments
+behave. Numbered separately (`R1`, `R2`, …) so that a citation can never be
+mistaken for an instrument rule, which is how "rule 4" came to have two
+referents (`OC-68`).
+
+### Record discipline R1 — severity inherited from an unknown mechanism is a guess
+
+A finding whose **mechanism is unknown** carries its severity as
+**unestablished**, not as a number inferred from the category it was filed
+under. "Platform", "library", "environment" are **hypotheses about a cause**,
+not observations, and a severity derived from one inherits its uncertainty.
+
+**How this was learned.** Upstream issue #219 recorded exactly the `C18`
+symptom — `ea_iid`'s §5.2.5 test printing a negative `Pr(X≥1)` on Windows
+MinGW — and filed it as **platform / library, severity LOW**. It sat open for
+about a year. The actual mechanism is a **32-bit `long`** overflowing inside
+`n_choose_2`'s product, which makes a required test fail **unconditionally
+whatever the data**. This audit's own clustering had it as "`C18`, Low, expect
+to refute" for the same reason.
+
+The misclassification was reasonable on the evidence available: a negative
+probability from an integer overflow and one from a mismatched library look
+identical from outside. That is exactly why the severity could not be inferred
+from it.
+
+| do | instead of |
+|---|---|
+| record severity as unestablished until the mechanism is | assign severity from the suspected category |
+| treat "platform" as a hypothesis to test | treat it as a classification that caps impact |
+| re-rank when the mechanism lands | leave the original rank in place |
+
+The companion observation is that **external corroboration of a symptom is not
+validation of a fix**: #219 confirms the symptom exists in the wild, and
+confirms nothing about whether widening the type is correct. That rests on its
+own evidence.

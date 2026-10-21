@@ -125,8 +125,11 @@ the upstream position and this fork's position are never conflated.
   platform in the same function, so `C18` is real and reachable rather than an
   artifact of this tree. It **does not validate the repair** — #219 carries no
   mechanism, which is what it lacked — and nothing is reported upstream. The
-  pair is also the worked example behind instrument rule 10: severity inherited
-  from an unknown mechanism is a guess.
+  pair is also the worked example behind **Record discipline R1**: severity
+  inherited from an unknown mechanism is a guess. (It was cited as "instrument
+  rule 10"; that number is vacated, because the principle is about how a
+  finding is ranked in the record and applies to 0 of the 70 instruments --
+  `OC-68`.)
 
   `regression-docs.sh` fails if it enters the supported build. R-1 is no longer
   blocked: it was never a hardware-blocked item, because it is a `long double`

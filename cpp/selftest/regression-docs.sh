@@ -366,6 +366,69 @@ else
     bad "\"certified floor\" asserted with no width/reading qualifier:" "${floorbad}"
 fi
 
+# ---------------------------------------------------------------- rule numbers
+# OC-68: a cited rule number with no definition fails this check. The guide's
+# instrument list was headed "Three rules" while containing five, numbered
+# 1,2,3,4,5,4, so build-state and labelled-read were BOTH "rule 4" and rule 3's
+# own text cited "rule 4" with two referents. Separately, "RULE 12" was cited
+# three times, defined nowhere here, with a different principle ascribed at
+# each site. Numbering is cheap to get wrong and expensive to follow, so it is
+# checked rather than remembered.
+echo
+rulebad=$(
+python3 - "${repo}" <<'PY'
+import os, re, sys
+root = sys.argv[1]
+guide = os.path.join(root, 'audits', 'BUG-REPAIR-GUIDE.md')
+try:
+    g = open(guide, encoding='utf-8', errors='replace').read()
+except OSError:
+    print('BUG-REPAIR-GUIDE.md unreadable'); raise SystemExit
+
+# DEFINED: numbered entries in the instrument list, and "### Rule N" headings.
+defined = set(int(m) for m in re.findall(r'^\s{2,}(\d+)\.\s+\*\*', g, re.M))
+defined |= set(int(m) for m in re.findall(r'^###\s+Rule\s+(\d+)\s+—', g, re.M))
+# VACATED: a heading that says so is not a definition.
+vacated = set(int(m) for m in re.findall(r'^###\s+Rule\s+(\d+)\s+—\s*VACATED', g, re.M))
+defined -= vacated
+rdefined = set(re.findall(r'^###\s+Record discipline\s+(R\d+)\s+—', g, re.M))
+
+hits = []
+for base, dirs, files in os.walk(root):
+    dirs[:] = [d for d in dirs if d not in ('.git', '__pycache__')]
+    for f in files:
+        if not f.endswith(('.md', '.sh', '.py')):
+            continue
+        path = os.path.join(base, f)
+        try:
+            raw = open(path, encoding='utf-8', errors='replace').read()
+        except OSError:
+            continue
+        # [1-9] because there is no rule 0, and the lookahead because
+        # "rule 0.5" in prose ("raw 2.0 vs rule 0.5") matched as rule 0.
+        for m in re.finditer(r'\b[Rr]ule\s+([1-9]\d*)\b(?!\.\d)', raw):
+            n = int(m.group(1))
+            if n in defined:
+                continue
+            line = raw.count('\n', 0, m.start()) + 1
+            ctx = raw[max(0, m.start()-90): m.end()+90]
+            # a citation that itself says the number is undefined or vacated is fine
+            if re.search(r'no definition|undefined|VACATED|not reused|vacated', ctx, re.I):
+                continue
+            hits.append('%s:%d(rule %d)' % (os.path.relpath(path, root), line, n))
+        for m in re.finditer(r'\bRecord discipline\s+(R\d+)\b', raw):
+            if m.group(1) not in rdefined:
+                line = raw.count('\n', 0, m.start()) + 1
+                hits.append('%s:%d(%s)' % (os.path.relpath(path, root), line, m.group(1)))
+print(' '.join(sorted(set(hits))))
+PY
+)
+if [ -z "${rulebad}" ]; then
+    note "every cited rule number has a definition:" "yes"
+else
+    bad "cited rule numbers with no definition:" "${rulebad}"
+fi
+
 echo
 if [ "${fails}" -eq 0 ]; then echo "regression-docs: PASS"; exit 0; fi
 echo "regression-docs: FAIL (${fails} checks)"

@@ -2084,8 +2084,12 @@ build:**
 
 And `git log -- cpp/selftest/refdata/` shows these files were last written by
 **upstream** commits (`6950b6d`, `951f854`, `7f51b1c`), not by this fork. So the
-expectation is pinned independently of the build it checks, which is what RULE 12
-requires.
+expectation is pinned independently of the build it checks. The principle, in
+full: **a reference must be fixed by something other than the artefact it is
+used to judge, or agreement between them is circular and carries no
+information.** (Cited as `RULE 12`, a rule number with **no definition in this
+repository**, and ascribed a different principle at each of its three citation
+sites; see `OC-68`.)
 
 **Derived values, all six, computed from reference data only:**
 
@@ -4209,7 +4213,12 @@ instances, none of them a wrong idea — the `-DNDEBUG` binary (`OC-42`), the
 missing input files (`OC-30`), the file whose `sed` missed (`OC-23`), and the
 hand re-implementation standing in for the production functions (`OC-41`).
 
-### Mechanised, the way `RULE 12` was
+### Mechanised rather than remembered
+
+The principle, in full: **a rule that depends on a person remembering it will
+be forgotten at the rate this project forgets things, so it is built into an
+instrument that fails when the rule is broken.** (Cited as `RULE 12`, a rule
+number with **no definition in this repository**; see `OC-68`.)
 
 `cpp/selftest/buildstate-lib.sh`. The probe is structural: `assert` leaves an
 undefined symbol (`__assert_fail` on glibc, `___assert_rtn` on Darwin) in any
@@ -6334,3 +6343,98 @@ misses in every subset. An inventory that applies the wrong *rule* misses only
 where the rule bites. So agreement on one subset and disagreement on another
 localises the fault to the definition — and names the subset where the
 definitions differ.
+
+---
+
+## OC-68 — the rule inventory repaired: numbering, a rule that does not exist, a false worked example
+
+Fixed before anything cites a rule number again.
+
+### The numbering
+
+The guide's instrument list was headed **"Three rules about instruments"** and
+contained **five**, with its entries numbered **1, 2, 3, 4, 5, 4** — six list
+items, because the labelled-read rule appeared **twice**: once as a bare stub
+numbered 5, then again in full numbered 4, which also numbered the build-state
+rule.
+
+Consequences, all live until today:
+
+- **build-state and labelled-read were both "rule 4"**;
+- **rule 3's own text cited "rule 4"**, which had two referents, and meant the
+  one that is *not* numbered 4 in both places;
+- the same rule carried **three different numbers** across the repository, so
+  following "rule 3" from `ORCHESTRATOR-CHECKS` landed a reader on the platform
+  rule.
+
+Repaired canonically: **five rules, numbered 1–5**, the duplicate stub removed,
+the heading corrected, and rule 3's citation now naming its referent
+("instrument rule 4, build state").
+
+### A cited rule that does not exist
+
+**`RULE 12` was cited three times and is defined nowhere in this repository**,
+with **a different principle ascribed at each site**:
+
+| site | the principle actually relied on |
+|---|---|
+| `BUG-REPAIR-GUIDE.md` instrument rule 2 | an absent or malformed result is not a result *about the subject* |
+| `OC-?` (the refdata pinning argument) | a reference must be fixed by something **other than** the artefact it judges, or agreement is circular |
+| `OC-?` (the build-state mechanisation) | a rule that depends on being remembered will be forgotten, so it is built into an instrument |
+
+Its canonical text lives in TruePad. Until it arrives, **each citation is
+replaced by the principle that citation relies on, stated in full, so the text
+stands without the reference.** A rule cited with three meanings is worse than
+one uncited.
+
+**The same is true of `V1`/`V2`**, which the round's instructions asked me to
+reconcile: **no V-series rule exists in this repository.** The obligation said
+to have been lost in restatement cannot be restored here, because neither
+version is here. Stated rather than guessed at.
+
+### Rule 10 is not an instrument rule
+
+It is about how a **finding is ranked in the record**, and it applies to **0 of
+the 70 instruments** — the test being whether a harness could break it, and
+none can. Moved to a new **Record discipline** section as **R1**, numbered in
+its own namespace so a citation can never again be mistaken for an instrument
+rule. **Rule 10's number is vacated and is not reused.**
+
+### Rule 7's worked example was filed in error
+
+Three findings were filed under rule 7 as evidence it is load-bearing. **None
+is an instance of it.** Two were instances of **instrument rule 1** (a mutation
+that did not land) and the third was rule 7's own **staleness corollary** about
+hardcoded counts. Rule 7 says: *build a negative fixture by mutating a genuine
+artefact and assert its baseline is accepted.* No filed finding did that.
+
+`OC-43`'s warning applies to the filing itself — *a measurement is about the
+artefact it ran against* — and **a worked example is a measurement about a
+rule**. Filing a near-miss under a rule makes the rule look tested when it is
+not.
+
+**Replaced with a real instance:** `cpp/selftest/regression-platform-deltas.sh`.
+Its negatives are mutations of a genuine `selftest` transcript, one field at a
+time; it asserts the unmutated transcript is accepted **first** and refuses to
+read its own negatives if that baseline fails; and it carries a third outcome
+for a platform where the premise does not hold. It was written **before** the
+rule was, which is why it is the example rather than the exhibit.
+
+### And the check, so the next one is caught
+
+`regression-docs.sh` now **fails on a cited rule number with no definition**.
+Definitions are the numbered entries of the instrument list and the `### Rule N`
+headings; a heading reading `VACATED` is **not** a definition. Record-discipline
+citations are checked in their own namespace.
+
+It found two on its first run:
+
+- `FINDINGS-TRACKER.md:128` cited "instrument rule 10" — **a citation I
+  orphaned myself**, minutes earlier, by vacating that number. Repointed to
+  Record discipline R1.
+- `EXCLUSION-MAP.md:497` — a **false positive**: the prose *"raw 2.0 vs rule
+  0.5"* matched as a citation of rule 0. The pattern now requires `[1-9]` and
+  rejects a following decimal.
+
+Both controls verified: a citation of a nonexistent rule 47 fails the check,
+and a citation of the **vacated** rule 10 fails it too.
