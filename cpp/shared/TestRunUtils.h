@@ -291,11 +291,47 @@ bool writeJsonReport(const string &path, const string &json) {
         }
     }
 
+    // C24 (OC-57): PUT IT IN PLACE WITH THE PRIMITIVE THAT IS SPECIFIED TO
+    // REPLACE, WHICH IS NOT THE SAME CALL ON EVERY PLATFORM.
+    //
+    // C08's whole argument is that rename(2) replaces an existing destination
+    // atomically, so a reader finds either the previous complete report or the
+    // new complete one and never a prefix. That is POSIX. Windows rename()
+    // REFUSES an existing destination -- measured on windows-latest:
+    //
+    //     destination absent   rename rc=0   errno=0
+    //     destination EXISTS   rename rc=-1  errno=17 (File exists)
+    //
+    // and C14 has already placed a placeholder at this path before any real
+    // report is written, so on Windows the placeholder GUARANTEED that every
+    // subsequent write failed and no tool could produce a -o report at all.
+    // Two repairs, each sound under its own assumptions, jointly non-portable.
+    //
+    // MoveFileEx with MOVEFILE_REPLACE_EXISTING is the documented Win32
+    // equivalent and is atomic from a reader's point of view;
+    // MOVEFILE_WRITE_THROUGH makes it durable before returning, which is what
+    // a report write wants. The POSIX path is untouched.
+    //
+    // THE ONE-LINER THAT MUST BE REFUSED: remove(path) before rename(). It
+    // would "work" on both platforms and it reopens exactly the window C08
+    // closed -- an interval in which the path does not exist at all, so a
+    // reader finds nothing where it should find the previous report. A
+    // regression justified by convenience is still a regression.
+#ifdef _WIN32
+    if (!MoveFileExA(tmp.c_str(), path.c_str(),
+                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+        fprintf(stderr, "Error: could not put the report in place at '%s' (Win32 error %lu).\n",
+                path.c_str(), (unsigned long) GetLastError());
+        remove(tmp.c_str());
+        return false;
+    }
+#else
     if (rename(tmp.c_str(), path.c_str()) != 0) {
         fprintf(stderr, "Error: could not put the report in place at '%s'.\n", path.c_str());
         remove(tmp.c_str());
         return false;
     }
+#endif
 
     return true;
 }

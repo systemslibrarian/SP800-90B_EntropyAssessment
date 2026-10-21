@@ -444,8 +444,26 @@ RENEOF
 #include <string>
 #include <fstream>
 #include <unistd.h>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#endif
 using namespace std;
-/* TestRunUtils.h:55-80, copied so the probe measures the real sequence */
+/* TestRunUtils.h's writer, copied so the probe measures the real sequence */
+/* Two arms: the OLD writer (bare rename) and the CURRENT one (MoveFileEx under
+ * _WIN32, C24 / OC-57). The old arm stays so the table shows WHY the change was
+ * needed on this platform rather than asserting it. */
+static bool writeOld(const string &path, const string &json, int *err) {
+    const string tmp = path + ".old.tmp." + std::to_string((long)getpid());
+    { ofstream o; o.open(tmp.c_str(), ios::out | ios::trunc | ios::binary);
+      if (!o) { *err = errno; return false; }
+      o << json; o.close();
+      if (!o) { *err = errno; remove(tmp.c_str()); return false; } }
+    errno = 0;
+    if (rename(tmp.c_str(), path.c_str()) != 0) { *err = errno; remove(tmp.c_str()); return false; }
+    *err = 0; return true;
+}
 static bool writeJsonReport(const string &path, const string &json, int *err) {
     const string tmp = path + ".tmp." + std::to_string((long)getpid());
     { ofstream o; o.open(tmp.c_str(), ios::out | ios::trunc | ios::binary);
@@ -453,7 +471,14 @@ static bool writeJsonReport(const string &path, const string &json, int *err) {
       o << json; o.close();
       if (!o) { *err = errno; remove(tmp.c_str()); return false; } }
     errno = 0;
+#ifdef _WIN32
+    if (!MoveFileExA(tmp.c_str(), path.c_str(),
+                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) {
+        *err = (int) GetLastError(); remove(tmp.c_str()); return false;
+    }
+#else
     if (rename(tmp.c_str(), path.c_str()) != 0) { *err = errno; remove(tmp.c_str()); return false; }
+#endif
     *err = 0; return true;
 }
 int main(void) {
@@ -475,18 +500,34 @@ int main(void) {
     ok = writeJsonReport("seq.json", "{\"single\":1}", &e);
     printf("3. fresh path again, single write only:           %s errno=%d (%s)\n",
            ok ? "OK" : "FAILED", e, strerror(e));
+    /* the OLD writer, for contrast: this is what C24 was */
+    remove("seq.json");
+    ok = writeOld("seq.json", "{\"placeholder\":true}", &e);
+    printf("4. OLD writer, fresh path (the C14 placeholder):  %s errno=%d (%s)\n",
+           ok ? "OK" : "FAILED", e, strerror(e));
+    ok = writeOld("seq.json", "{\"report\":1}", &e);
+    printf("5. OLD writer, second write over it:              %s errno=%d (%s)\n",
+           ok ? "OK" : "FAILED", e, strerror(e));
     remove("seq.json");
     return 0;
 }
 SEQEOF
   if g++ -O0 -std=c++11 -o /tmp/seq.exe /tmp/seq.cpp >>"$L" 2>&1 && /tmp/seq.exe >> "$L" 2>&1; then
     sed -n '/^[123]\. /p' "$L" | sed 's/^/  /'
-    if sed -n '/^1\./p' "$L" | grep -q OK && sed -n '/^2\./p' "$L" | grep -q FAILED; then
-      gate FAIL "MEASURED MECHANISM: the C14 placeholder write SUCCEEDS and every later C08 write then FAILS, because rename() will not replace it. The two repairs are individually sound and jointly non-portable."
-    elif sed -n '/^2\./p' "$L" | grep -q OK; then
-      gate PASS "temp+rename replaces an existing report here; the C08 repair is portable to this platform"
+    # C24 REPAIRED (OC-57): the CURRENT writer must replace an existing report
+    # here. The old-writer arms are kept so the log shows why the change was
+    # needed rather than asserting it.
+    if sed -n '/^2\./p' "$L" | grep -q OK; then
+      gate PASS "C24 REPAIRED: the current writer replaces an existing report on this platform (case 2 OK)"
     else
-      gate FAIL "the replication probe did not separate the cases; read $L"
+      gate FAIL "C24 NOT REPAIRED: the current writer still cannot replace an existing report -- see case 2 in $L"
+    fi
+    if sed -n '/^5\./p' "$L" | grep -q FAILED; then
+      gate PASS "and the OLD bare-rename writer still FAILS here, which is why C24 needed a platform primitive"
+    elif sed -n '/^5\./p' "$L" | grep -q OK; then
+      gate FAIL "the OLD writer now succeeds too: this platform's rename() replaces after all, so the C24 premise needs re-reading"
+    else
+      gate FAIL "the old-writer contrast arm did not run; read $L"
     fi
   else
     gate FAIL "the replication probe did not build; the mechanism stays inferred rather than measured"
@@ -494,18 +535,21 @@ SEQEOF
 
   if gcc -O0 -o /tmp/ren.exe /tmp/ren.c >>"$L" 2>&1 && /tmp/ren.exe >> "$L" 2>&1; then
     sed -n '/^destination/p' "$L" | sed 's/^/  /'
+    # A PLATFORM FACT, not a defect. It is why writeJsonReport uses MoveFileEx
+    # under _WIN32 (C24 / OC-57); the defect was depending on POSIX semantics
+    # here, and that is repaired. Reported either way.
     if sed -n '/^destination EXISTS/p' "$L" | grep -q 'rc=0'; then
-      gate PASS "rename(2) here REPLACES an existing destination, as POSIX specifies"
+      gate PASS "platform fact: rename(2) here REPLACES an existing destination, as POSIX specifies"
     else
-      gate FAIL "rename() here REFUSES an existing destination -- the C08 atomic-write repair (OC-47) is NOT portable to Windows as written; MoveFileEx(MOVEFILE_REPLACE_EXISTING) is the platform primitive"
+      gate PASS "platform fact: rename(2) here REFUSES an existing destination (errno 17), which is why the writer uses MoveFileEx under _WIN32"
     fi
   else
     gate FAIL "could not measure rename() semantics; the report-write failure stays undiagnosed"
   fi
   if grep -q 'could not put the report in place' "$L"; then
-    gate FAIL "the atomic report write FAILS on Windows -- TestRunUtils.h:79, a defect in a repair this audit authored, found by running it somewhere new"
+    gate FAIL "a tool still could not put its report in place -- C24 is NOT repaired on this platform; read $L"
   else
-    gate PASS "the atomic report write succeeded on Windows"
+    gate PASS "every tool put its report in place: C24's symptom is gone (no 'could not put the report in place')"
   fi
 
   # ABSENCE RULE (OC-36), which the first version of this gate broke in the very
