@@ -5,10 +5,63 @@ Written once, so a sweep does not have to re-derive it. Every
 without this, and two careful readers once disagreed by seventeen because it
 was not written down (`OC-65`).
 
-## The rule
+## The rule — behaviour, not extension
 
 > **An instrument is a RUNNABLE artefact that produces a number or a verdict
 > which a document or a claim then cites.**
+
+**Enumerate by what a thing DOES, never by what it is named.** The one sweep in
+this project that needed no denominator correction was the one enumerated by
+behaviour (`OC-66`'s aggregates); every sweep enumerated by extension was
+understated (`OC-67`). `audits/enum-instruments.sh` implements it:
+
+| limb | test | mechanical? |
+|---|---|---|
+| **a** | the executable bit is set, or the first two bytes are `#!` | yes |
+| **b** | a CI workflow definition — emits verdicts, never run locally | yes |
+| **c** | something in the tree **invokes** it: sourced, or compiled then run | **no — a reviewed list of 10, each with its reason** |
+| — | **excluded:** compiled outputs (`Mach-O`/`ELF`), pure data, untracked files | yes |
+
+`sh audits/enum-instruments.sh . ` prints `live: 70 (60 mechanical + 10
+reviewed)`. Limbs (a) and (b) find
+`cpp/selftest/selftest`, `generate-refdata`, `compareresults.pl` and a `.mjs`
+reproducer **without naming them**, which is the whole point: those four were
+invisible to every extension-matched sweep this project ran.
+
+### Why limb (c) is a reviewed list and not a pattern
+
+Two mechanisations were tried and both failed, recorded so neither is tried
+again:
+
+- **`git grep` for the basename near an invocation verb** took the live count
+  from 61 to **112** — admitting every prose mention of a filename in a `.md`
+  file — while *still* missing the C++ reproducers, whose only build line lives
+  in a comment inside themselves. Wrong by 51.
+- **`file -b`** cannot stand in for it either: asked about these it answers
+  `c program text, ASCII text` for **both** a C++ reproducer **and** a POSIX
+  shell library, so a "compilable source" test would admit
+  `buildstate-lib.sh`.
+
+So limb (c) is ten named members with the behaviour that qualifies each — two
+sourced libraries, which produce no verdict alone and every verdict through
+their callers, and eight compilable sources whose built form produces a cited
+figure. **A judgement that cannot be mechanised without false positives is
+better stated than approximated.**
+
+### A behaviour rule is present-tense, so it is wrong for frozen evidence
+
+The same enumerator gives **frozen: 32**, against 79 by extension. That gap is
+not an error in either count — it is the rule not applying. Frozen artefacts are
+**dated evidence**: nothing invokes them now, and nothing should. What qualified
+them was being invoked **then**. So:
+
+| set | rule that applies | count |
+|---|---|---:|
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **70** |
+| **FROZEN** | historical: was it an instrument when the evidence was dated | **79** |
+
+Counting frozen by the live rule would silently retire 47 artefacts that were
+instruments when they produced the evidence the record still cites.
 
 Three consequences the rule settles, each of which was got wrong once:
 
@@ -39,19 +92,8 @@ thing an extension-matched glob missed.
 | **LIVE** | **70** | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
 | **FROZEN** | **79** | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
-Reproduce the live count with:
-
-```sh
-find cpp/selftest tools .github audits/2026-10-11-independent-audit \
-     audits/2026-10-09-independent-audit repairs -type f \
-  \( -name "*.sh" -o -name "*.py" -o -name "*.yml" -o -name "*.c" -o -name "*.cpp" \) \
-  | grep -vE '__pycache__|\.pyc$' | wc -l          # 66 extension-matched
-# plus the four runnable artefacts an extension glob misses:
-#   cpp/selftest/selftest, cpp/selftest/generate-refdata,
-#   cpp/selftest/compareresults.pl,
-#   audits/2026-10-09-independent-audit/reproducers/truepad-unattested-tools.mjs
-# = 70.  The two compiled Mach-O files are build artefacts, excluded per (2).
-```
+Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
+the members and `--why` for limb (c)'s reasons.
 
 ## Eight families
 
