@@ -381,6 +381,12 @@ fi
 # the marker is how you discuss a dead number without asserting it. This was
 # not invented for convenience: the check caught OC-68's own prose about rule
 # 10 on its first full-suite run, which is the check working on its author.
+#
+# AND THE TIMING IS PART OF THE RULE. This check passed when run directly and
+# failed in the suite, because I ran it BEFORE writing the text it would judge.
+# A check run before the writing it judges is the same shape as reading a
+# figure in the command that writes it. The suite run is the one that counts,
+# and it runs after the text exists.
 echo
 rulebad=$(
 python3 - "${repo}" <<'PY'

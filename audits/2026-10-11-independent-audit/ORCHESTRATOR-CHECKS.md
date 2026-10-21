@@ -6438,3 +6438,72 @@ It found two on its first run:
 
 Both controls verified: a citation of a nonexistent rule 47 fails the check,
 and a citation of the **vacated** rule 10 fails it too.
+
+---
+
+## OC-69 — the two unnumbered regression rules: the lost obligation restored, and how I failed to find them
+
+### I searched for the label instead of the location
+
+I reported that **no V-series rule exists in this repository**. That was wrong,
+and the way it was wrong is the same shape as several findings in this round.
+`V1` and `V2` are labels an outside session **coined** for two rules it found
+**stated without numbers**, so a search for the identifiers came back empty and
+I concluded the rules were absent. The citation gave me a location —
+`FINDINGS-TRACKER.md:1308` and `:1313` — and I searched for the name instead of
+reading the line.
+
+**That is the extension-glob error in another medium.** An enumeration keyed on
+how a thing is *named* cannot see a thing that is *unnamed*, whether the naming
+is a file suffix or a rule label. `cpp/selftest/selftest` was invisible to a
+`*.sh` sweep for the same reason these two were invisible to a `grep V2`.
+
+**The quotation was accurate on both sides**, which is worth recording because
+the instruction allowed that it might not be: the tracker's text reads exactly
+as quoted, and the guide's step 5 keeps the platform claim and the
+platform-independent-source instruction and **drops "Say so when reporting
+it."** No finding against the audit.
+
+### The rules, and the sentence that went missing
+
+| | |
+|---|---|
+| **tracker** (`FINDINGS-TRACKER.md`, "a regression is assumed vacuous until it has failed") | *"A regression that has only been run on one platform is evidence about that platform. **Say so when reporting it.** Where a figure is compared, read the expected value from a platform-independent source (`refdata/`) with a stated tolerance…"* |
+| **guide** (step 5, third bullet) | *"compare figures against a platform-independent source … A check carrying one platform's value is evidence about that platform: REV-005 passed on macOS…"* |
+
+The reporting obligation existed in **one** statement of the rule and nowhere
+else, for an unknown length of time. **Paraphrase is how it went missing**, so
+the repair is not to paraphrase more carefully.
+
+### Canonical: the guide. Pointer: the tracker.
+
+The guide's step 5 is now the **only copy of the rule's text**, with the
+obligation restored in capitals, because step 5 is the document consulted
+*while doing the work* and "say so when reporting" is an instruction to the
+person doing it. The tracker keeps all of its **evidence** — the seven guards,
+`REV-005`, the shared-sitting diagnosis — and its statement of the rule becomes
+a pointer. A rule stated twice with different content is the condition that
+produced this finding, and it is the condition just repaired for the numbered
+rules (`OC-68`).
+
+**And the rule now applies to itself.** `A06`'s four required failures were
+established on macOS and **not** on Linux, and that is said at the site
+(`OC-66`) because of this obligation — which had been missing from the
+statement a reader follows.
+
+### They do not join the numbered series, deliberately
+
+They are about **regressions** specifically rather than instruments generally,
+they predate the numbering, and the next free number is **12** — already cited
+three times here as a rule whose canonical text lives in TruePad (`OC-68`).
+Manufacturing that collision to tidy a list would reintroduce exactly the
+ambiguity the numbering repair removed. The citation check keys on numbers, so a
+named lesson is outside its scope by construction and nothing dangles.
+
+### The timing of a check is part of the check
+
+Recorded at the check itself. `regression-docs.sh` **passed when I ran it
+directly and failed in the suite**, because I ran it **before writing the text
+it would judge**. A check run before the writing it judges is the same shape as
+reading a figure in the command that writes it. **The suite run is the one that
+counts**, and it runs after the text exists.

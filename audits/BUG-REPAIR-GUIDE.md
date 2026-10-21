@@ -89,8 +89,20 @@ available; do not write an untestable numerical repair on a different ABI.
 4. **Fix** in the fork with the smallest correct change. If a fix branch already exists (see **Current fork status**), start from it and re-check it against current `master`.
 5. **Add a permanent regression test** in `cpp/selftest/`, named `regression-<topic>.sh`, using small generated inputs rather than committed binaries where possible. A test must:
    - exit 0 when the behaviour is correct and non-zero when the defect is present;
-   - **be observed to fail against a known-wrong build, not reasoned to fail.** Build the mutant or check out the pre-fix commit, run the check, read the failure, and put the two numbers in the commit message. A check that has only ever been seen passing is an untested assertion that it can fail at all. Seven guards across this project and TruePad have read green while proving nothing; the tracker's "a regression is assumed vacuous until it has failed" section records them and why;
-   - **compare figures against a platform-independent source**, `cpp/selftest/refdata/` with a stated tolerance, never against a literal pasted from this machine. A check carrying one platform's value is evidence about that platform: REV-005 passed on macOS and would have failed a correct Linux build;
+   - **be observed to fail against a known-wrong build, not reasoned to fail.** Build the mutant or check out the pre-fix commit, run the check, read the failure, and put the two numbers in the commit message. A check that has only ever been seen passing is an untested assertion that it can fail at all. Seven guards across this project and TruePad have read green while proving nothing; the tracker's "a regression is assumed vacuous until it has failed" section records them and why — that section's evidence is canonical, and its statement of the rule now points here (`OC-69`);
+   - **a regression that has only been run on one platform is evidence about that platform. SAY SO WHEN REPORTING IT.** Then **compare figures against a platform-independent source**, `cpp/selftest/refdata/` with a stated tolerance, never against a literal pasted from this machine. REV-005 passed on macOS and would have failed a correct Linux build.
+
+     > **The reporting obligation was missing from this bullet until 2026-10-21
+     > (`OC-69`).** This statement kept *"is evidence about that platform"* and
+     > the platform-independent-source instruction, and dropped **"Say so when
+     > reporting it"** — which exists in the tracker's statement of the same
+     > rule and nowhere else. **This bullet is now the canonical statement**;
+     > the tracker points here rather than restating. Paraphrase is how the
+     > sentence went missing, so there is only one copy of the text.
+     >
+     > It also now applies to itself: `A06`'s four required failures were
+     > established on macOS and **not** on Linux, and that is said at the site
+     > (`OC-66`) because of this rule.
    - use the finding's expected values with a stated tolerance where a figure is compared (see `BUILDING.md`, "Precision audit");
    - assert its own precondition where one exists, so that it cannot pass vacuously if the input stops exercising the defect.
 

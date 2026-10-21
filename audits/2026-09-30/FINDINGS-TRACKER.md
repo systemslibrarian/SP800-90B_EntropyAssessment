@@ -1306,17 +1306,33 @@ code it checks inherits the author's belief that the code is right, so it is
 written to agree rather than to discriminate, and agreement is indistinguishable
 from PASS.
 
-**The rule.**
+**The rule — stated canonically in
+[`audits/BUG-REPAIR-GUIDE.md`](../BUG-REPAIR-GUIDE.md), step 5, not restated
+here.**
 
-1. **A regression is assumed vacuous until it has been observed to fail against
-   a known-wrong build.** Not reasoned to fail: observed. Build the mutant, run
-   the check, read the failure, record the numbers in the commit. A check that
-   has only ever been seen passing is an untested assertion that it is possible
-   to fail at all.
-2. **A regression that has only been run on one platform is evidence about that
-   platform.** Say so when reporting it. Where a figure is compared, read the
-   expected value from a platform-independent source (`refdata/`) with a stated
-   tolerance, rather than pasting what this machine printed.
+Two rules came out of the evidence above: a regression is **assumed vacuous
+until it has been observed to fail** against a known-wrong build, and a
+regression run on one platform is **evidence about that platform — say so when
+reporting it**.
+
+> **Why this is a pointer and not a copy (`OC-69`).** Both rules were stated
+> here *and* paraphrased into the guide's step 5, and the paraphrase **lost
+> "Say so when reporting it"** — it kept the platform claim and the
+> platform-independent-source instruction and dropped the reporting
+> obligation. The sentence survived in exactly one of the two copies for an
+> unknown length of time. **A rule stated twice in two places with different
+> content is the condition that produced it**, which is the same condition
+> just repaired for the numbered instrument rules, so the duplicate text is
+> gone and the guide holds the only copy. The **evidence** below and above —
+> the seven guards, `REV-005`, the shared-sitting diagnosis — stays here and
+> is canonical here.
+>
+> These two deliberately **do not join the numbered series.** They are about
+> regressions specifically rather than instruments generally, they predate the
+> numbering, and the next free number is 12 — which is already cited three
+> times in this repository as a rule whose canonical text lives in TruePad
+> (`OC-68`). Manufacturing that collision to tidy a list would be the error
+> the numbering repair just removed.
 
 **How often this has happened.** It is not a one-off; it is the failure mode.
 
