@@ -22,8 +22,36 @@ here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "${here}/../.." && pwd)
 cd "${repo}" || exit 2
 
-DOCS="README.md NOTICE BUILDING.md audits/README.md audits/BUG-REPAIR-GUIDE.md audits/2026-09-30/README.md audits/2026-09-30/FINDINGS-TRACKER.md"
+# DOCS_CORE -- the documents whose own text the specific checks below read.
+DOCS_CORE="README.md NOTICE BUILDING.md audits/README.md audits/BUG-REPAIR-GUIDE.md audits/2026-09-30/README.md audits/2026-09-30/FINDINGS-TRACKER.md"
 TRACKER=audits/2026-09-30/FINDINGS-TRACKER.md
+
+# THE SCOPE WAS THE HOLE (F12 / OC-85).
+#
+# The stale-claim check ran over DOCS_CORE -- seven files named by hand -- and
+# the file F12 found the withdrawn interval claim in,
+# audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md, was not one of them.
+# A rule that says "a withdrawn claim is withdrawn everywhere or nowhere" cannot
+# be enforced over a hand-picked subset of everywhere. The pattern list was
+# fine; the scope was the defect.
+#
+# Scope is now EVERY TRACKED MARKDOWN FILE plus NOTICE, minus the dated audit
+# REPORTS, which guide rule 2 forbids editing because they are evidence of what
+# was believed when they produced a figure. Excluding them is an exclusion and
+# therefore stated: the one unexempted hit a repository-wide sweep finds is
+# audits/2026-10-01-re-audit/REPORT.md:16, a corrected "0.94 ms per thousand
+# bits" inside such a report -- and correcting it there would destroy the record
+# of the error.
+#
+# THE EXCLUSION IS PER FILE, NOT PER DIRECTORY. audits/2026-09-30 is in the
+# canonical frozen set (audits/enum-instruments.sh), but its README.md and
+# FINDINGS-TRACKER.md are living documents that happen to sit in a dated
+# directory -- the tracker has been edited this campaign -- so they stay in
+# scope. Both counts are printed, so the scope is visible rather than implied.
+DOCS_FROZEN_RE='^audits/(2026-09-30/(AUDIT\.md|novel-findings/|phase2-focused/)|2026-10-01-re-audit/|2026-10-02-doc-review/)'
+DOCS_ALL=$(git ls-files '*.md' NOTICE 2>/dev/null | grep -Ev "${DOCS_FROZEN_RE}")
+DOCS_N=$(printf '%s\n' "${DOCS_ALL}" | grep -c .)
+DOCS_SKIPPED=$(git ls-files '*.md' NOTICE 2>/dev/null | grep -Ec "${DOCS_FROZEN_RE}")
 
 fails=0
 note() { printf '  %-52s %s\n' "$1" "$2"; }
@@ -91,14 +119,14 @@ else bad "commit SHAs that do not resolve:" "${missing}"; fi
 
 # -------------------------------------------------------- 2. referenced paths
 missing=""
-refpaths=$(grep -ohE '`[A-Za-z0-9_][A-Za-z0-9_./-]*/[A-Za-z0-9_./-]+\.(sh|py|cpp|h|md|pl|txt|pdf)`' ${DOCS} | tr -d '`' | sort -u)
+refpaths=$(grep -ohE '`[A-Za-z0-9_][A-Za-z0-9_./-]*/[A-Za-z0-9_./-]+\.(sh|py|cpp|h|md|pl|txt|pdf)`' ${DOCS_CORE} | tr -d '`' | sort -u)
 floor "repo-path extraction from the docs" "$(nwords ${refpaths})" 20   # 64 at f069898
 for f in ${refpaths}; do
     [ -e "${f}" ] && continue
     find . -path ./.git -prune -o -path "*/${f}" -print 2>/dev/null | grep -q . && continue
     # A path the documentation explicitly describes as a former or original
     # location is supposed to be absent; that is the point of saying it moved.
-    if grep -h -- "${f}" ${DOCS} 2>/dev/null \
+    if grep -h -- "${f}" ${DOCS_CORE} 2>/dev/null \
          | grep -qiE "original path|exists only on|was moved|moved from|former|renamed"; then
         continue
     fi
@@ -109,7 +137,7 @@ else bad "referenced paths that do not exist:" "${missing}"; fi
 
 # ------------------------------------------------- 3. markdown link targets
 missing=""
-mdlinks=$(grep -ohE '\]\([A-Za-z0-9_][A-Za-z0-9_./-]*\.(md|sh|pdf|txt)\)' ${DOCS} | sed 's/^](//; s/)$//' | sort -u)
+mdlinks=$(grep -ohE '\]\([A-Za-z0-9_][A-Za-z0-9_./-]*\.(md|sh|pdf|txt)\)' ${DOCS_CORE} | sed 's/^](//; s/)$//' | sort -u)
 floor "markdown link extraction from the docs" "$(nwords ${mdlinks})" 5   # 11 at f069898
 for l in ${mdlinks}; do
     found=0
@@ -158,9 +186,9 @@ else
     # Total across all the documents, not per document: most of them legitimately
     # quote no pinned figure, but if NONE of them does any more then the pattern
     # has stopped matching and the comparison below is vacuous.
-    allpinned=$(grep -ohE '0\.12644573619[0-9]+' ${DOCS} | sort -u)
+    allpinned=$(grep -ohE '0\.12644573619[0-9]+' ${DOCS_CORE} | sort -u)
     floor "pinned-figure extraction across the docs" "$(nwords ${allpinned})" 1   # 2 at f069898
-    for d in ${DOCS}; do
+    for d in ${DOCS_CORE}; do
         for v in $(grep -ohE '0\.12644573619[0-9]+' "${d}" | sort -u); do
             [ "${v}" = "${pinned}" ] && continue
             [ -n "${observed}" ] && [ "${v}" = "${observed}" ] && continue
@@ -249,11 +277,23 @@ STALE_CLAIMS=(
  "put to NIST"
  "awaiting an answer"
  "agreed with several of them"
+ # WITHDRAWN BY OC-49, and F12 found two of these still asserted. The interval
+ # claim was a sweep in steps of 0.02 read as a statement about every point;
+ # the 683 was computed at a rounded H_I = 0.70 and reported at the real 0.696,
+ # where it is 684. The third entry is the same sweep's boundary conclusion,
+ # which the superseding note did not even list as a site (OC-85).
+ "identical at every H_I from 0.50 to 0.989"
+ "identical from 0.50 to 0.989"
+ "identical below H_I"
+ "cutoff is 683"
+ "cutoff of 683"
+ "683 as the restart cutoff"
+ "gap first becomes non-zero"
 )
 # A block that quotes the wrong wording while describing its correction is a
 # record, not a reassertion. Exemption is judged over the whole paragraph the
 # phrase sits in, not its line, for the same wrapping reason.
-hit=$(python3 - "${DOCS}" "${STALE_CLAIMS[@]}" <<'PY'
+hit=$(python3 - "${DOCS_ALL}" "${STALE_CLAIMS[@]}" <<'PY'
 import re, sys
 
 docs   = sys.argv[1].split()
@@ -263,9 +303,25 @@ claims = sys.argv[2:]
 # paragraph opens "Until 2026-09-30 nothing outside the build files was
 # touched", which would have exempted the very sentence this check exists to
 # catch. The markers below all require a saying-verb or the word Correction.
+# F12 (OC-85) added the framings that legitimate quotations here actually use.
+# Three of the four surviving sites were correct quotation-with-correction --
+# "The claim was ...", "The project claimed ...", "It read: ..." -- and were
+# reported as defects because the marker list did not know those phrasings.
+# A check that cannot tell a quotation from an assertion fails the honest
+# writer and nobody else.
+#
+# The window stays ONE PARAGRAPH rather than widening to include the paragraph
+# before. Widening it was the other option and is a real loosening: a
+# superseding note two paragraphs up would then exempt anything below it. The
+# narrower fix is to require the marker in the same paragraph as the dead
+# claim, which is also what makes the correction visible to a reader who lands
+# mid-document.
 EXEMPT = re.compile(r'Correction \(2026-|said "|still said|had been corrected'
                     r'|was headed|headed "|which those two contradict'
                     r'|factor of 1000|a prior session'
+                    r'|the claim was|project claimed|it read:|this section said'
+                    r'|this cell read|WITHDRAWN|withdrawn|SUPERSEDED|superseded'
+                    r'|supersedes|is false|does NOT hold|NOT identical|retire'
                     r'|until 2026-\d\d-\d\d[^.]{0,80}?(said|stated|read|headed|asserted|claimed)',
                     re.I)
 hits = []
@@ -301,8 +357,16 @@ PY
 )
 hitrc=$?
 if ! scanned "${hitrc}" "stale-claim scan"; then :
-elif [ -z "${hit}" ]; then note "no previously-corrected claim has reappeared:" "none"
+elif [ -z "${hit}" ]; then
+    note "no previously-corrected claim has reappeared:" \
+         "none, over ${DOCS_N} file(s); ${DOCS_SKIPPED} dated report(s) excluded"
 else bad "stale claims present again:" "${hit}"; fi
+# A SCOPE OF ZERO FINDS NOTHING. The widened list comes from `git ls-files`, so
+# a failure there -- not a git work tree, no index -- would make this check
+# silently examine no files and report "none".
+if [ "${DOCS_N}" -lt 10 ]; then
+    bad "the stale-claim scan's document list is implausibly small:" "${DOCS_N} file(s)"
+fi
 
 # ------------------------------- 11. NIST attributions in cpp/ comments
 # Every reply on this fork's upstream issues and pull requests came from

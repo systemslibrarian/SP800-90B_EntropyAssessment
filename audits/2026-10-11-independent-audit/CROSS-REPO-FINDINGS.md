@@ -943,18 +943,39 @@ converges to the dominant cell's count, and so the multinomial-maximum
 correction shrinks toward zero — coinciding, or differing by one count,
 somewhere well above 0.696, and identical at 0.696 itself.
 
-> **SUPERSEDED IN TWO PLACES BY `OC-49`.** (1) The interval claim below is a
-> sampled sweep: the two cutoffs differ on 36 narrow intervals inside
-> 0.50–0.989, totalling 0.217 % of the range. (2) The 683 below is the cutoff
-> at H_I = **0.70**, which is what was computed; at the project's actual 0.696
-> it is **684**. The step function moves a whole count across that rounding.
+> **SUPERSEDED IN THREE PLACES BY `OC-49`.** The note here said *two*, and
+> missed one; found by `F12`'s sweep and corrected (`OC-85`). **A withdrawn
+> claim is withdrawn everywhere or nowhere, and a superseding note that
+> enumerates its sites is itself a claim about how many there are.**
+>
+> (1) The interval claim below is a sampled sweep: the two cutoffs differ on
+> **36 narrow intervals** inside 0.50–0.989, totalling **0.217 %** of the
+> range.
+>
+> (2) The 683 below is the cutoff at H_I = **0.70**, which is what was
+> computed; at the project's actual 0.696 it is **684**. The step function
+> moves a whole count across that rounding.
+>
+> (3) **"Where the gap first becomes non-zero" is wrong, and wrong by about
+> 0.1 bit.** That section puts the first non-zero gap between H_I 0.989 and
+> 0.990 and advises that a one-bit device is affected only above ≈ 0.989. The
+> lowest H_I with any disagreement is **≈ 0.888** (`OC-49`, by bisection on the
+> crossings). No new computation is needed to see that the old statement is
+> false: `OC-49`'s own counterexample sits at H_I = **0.9661822653793894**,
+> which is **below 0.989**, so the section was already contradicted by the
+> entry that superseded it.
+>
 > The conclusion that C23 changes no verdict for this device survives and is
-> now proved by boundary analysis rather than sampling.
+> now proved by boundary analysis rather than sampling: at 0.696 both cutoffs
+> are 684, and the nearest disagreement is at ≈ 0.888.
 
-**That holds, and the convergence is faster than "well above".** The two
-cutoffs are **identical at every H_I from 0.50 to 0.989**. The gap is +1 at
-0.99 and reaches +2 only at 0.999 and above. The mechanism is exactly as
-described: at width 1 and H_I < 1 the worst case is **one** cell at
+**That does NOT hold as written, and the sentence is kept so the correction has
+something to attach to.** It read: *"That holds, and the convergence is faster
+than 'well above'. The two cutoffs are identical at every H_I from 0.50 to
+0.989. The gap is +1 at 0.99 and reaches +2 only at 0.999 and above."* The
+first two sentences are **false** — see the note above, item (1) — and the
+third describes a sampled grid, not the behaviour between its rows. What
+survives is the **mechanism**, which was right: at width 1 and H_I < 1 the worst case is **one** cell at
 `p = 2^-H_I` plus a remainder cell at `1 − p`, and `P(max > m)` is
 `P(n₁ > m) + P(n₁ < 1000 − m)`, whose second term is negligible once `p` is
 clear of ½. At H_I = 1 exactly the cells are equal and symmetry doubles the
@@ -966,14 +987,30 @@ H_I = 0.70 the printed-formula cutoff and the corrected cutoff are both **683**
 and the measured false-reject rate is 1.10 % against the 1 % the standard
 targets. **The repair matters for the tool's correctness, not for this device.**
 
-### Where the gap first becomes non-zero
+### Where the gap first becomes non-zero — WITHDRAWN, and it was off by 0.1 bit
 
-**Between H_I = 0.989 and H_I = 0.990.** Computed: gap 0 at 0.982, 0.984,
-0.985, 0.986, 0.988 and 0.989; gap +1 at 0.990 and 0.995; gap +2 at 0.999,
-0.9999, 0.99999 and 1.000. So a future one-bit device is affected only if its
-assessed entropy exceeds about 0.989 bits per bit — within roughly 1 % of full
-entropy. **That boundary is the thing to re-check if a different device is
-characterised**, and it is specific to width 1: at 8-bit the gap is 4 counts
+**This section said: *"Between H_I = 0.989 and H_I = 0.990. Computed: gap 0 at
+0.982, 0.984, 0.985, 0.986, 0.988 and 0.989; gap +1 at 0.990 and 0.995; gap +2
+at 0.999, 0.9999, 0.99999 and 1.000. So a future one-bit device is affected
+only if its assessed entropy exceeds about 0.989 bits per bit."*** That is a
+**sampled grid reported as a boundary**, and it is **false**: the lowest H_I
+with any disagreement is **≈ 0.888** (`OC-49`). The twelve computed rows are
+each correct *at the point computed*; what does not follow is the boundary
+between them.
+
+**It mattered.** The sentence was forward-looking advice about which future
+devices are affected, and it was wrong by about **0.1 bit** in the permissive
+direction — it would have told the owner a 0.95-bit device was unaffected when
+0.95 sits above 0.888.
+
+**The corrected statement**, from `OC-49`'s bisection on the crossings rather
+than from a grid: the two cutoffs **agree on about 99.78 % of [0.50, 0.989]**
+and differ on **36 narrow intervals** clustered at the high-entropy end, the
+widest 5.4e-04 at cutoff 574 near 0.9862; the lowest H_I with any disagreement
+is **≈ 0.888**, and below that the two crossings coincide to better than 1e-18.
+**That boundary is the thing to re-check if a different device is
+characterised** — and it must be re-checked by solving for the crossings, not
+by sampling, which is the whole lesson. It is specific to width 1: at 8-bit the gap is 4 counts
 and the printed formula rejects 83 % of full-entropy matrices (`OC-30`), so the
 defect is a wide-alphabet phenomenon driven by the number of effective cells,
 `2^H_I`.

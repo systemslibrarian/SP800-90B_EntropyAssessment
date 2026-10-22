@@ -7671,3 +7671,152 @@ and passes now that the two lines are gone.
   they pass is **NOT RUN**, and nothing in this entry should be read as
   evidence that they do.
 - Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-85 — F12: the withdrawn interval claim survived in three places, and the check's scope was the hole
+
+**Second independent AI audit, 2026-10-21, finding F12. REPRODUCED at the site
+the audit named and at TWO MORE it did not. The enforcement was scoped to seven
+hand-listed files.**
+
+### The site the audit named
+
+`CLOSING-INVENTORY.md:233` at the audit's pin `32920f49` — in the
+**forward-looking planning table**, under *"Needs the physical device"*:
+
+> **At the width-1 operating point the two cutoffs are identical below
+> H_I ≈ 0.989, so for this device the `C23` repair changes no verdict** — the
+> table to read a cutoff out of is `XR-13`
+
+Every clause of that is a problem. The premise is the interval claim `OC-49`
+withdrew — a sweep in steps of 0.02 read as a statement about every point, with
+a counterexample inside the range at `H_I = 0.9661822653793894` (printed 581,
+exact 582). The conclusion is drawn **from** that premise. And the pointer sends
+a reader to `XR-13`'s table, whose interval claim the same entry supersedes.
+
+Corrected in place, keeping the superseded wording beside its correction, and
+the conclusion re-grounded on evidence that licenses it: at the operating point
+`H_I = 0.696` both cutoffs are **684**, the lowest `H_I` with any disagreement
+is **≈ 0.888**, and a cutoff is read from
+`oracles/restart_cutoff_certified.py`.
+
+### Two more sites, in a file the audit did not name
+
+A repository-wide sweep for the withdrawn claim found four occurrences. One was
+the site above; two were correct quotation-with-correction in `OC-49` itself and
+in `BUG-REPAIR-GUIDE.md`'s lesson. The fourth was live, in
+`CROSS-REPO-FINDINGS.md`, and it was two defects, not one.
+
+**(a) An endorsement of the withdrawn claim.** The text read *"**That holds**,
+and the convergence is faster than 'well above'. The two cutoffs are
+**identical at every H_I from 0.50 to 0.989**."* — four lines below a blockquote
+saying the claim was superseded. A reader meeting the note and then the
+assertion gets a contradiction inside one screen.
+
+**(b) A third false statement the superseding note did not list.** That note was
+headed **"SUPERSEDED IN TWO PLACES"** and enumerated the interval claim and the
+683. It missed a whole section:
+
+> *[withdrawn text, quoted]* ### Where the gap first becomes non-zero
+> **Between H_I = 0.989 and H_I = 0.990.** … So a future one-bit device is
+> affected only if its assessed entropy exceeds about 0.989 bits per bit.
+
+The lowest `H_I` with any disagreement is **≈ 0.888**. **No new computation is
+needed to see it is false:** `OC-49`'s own counterexample sits at
+`H_I = 0.9661822653793894`, which is **below 0.989** — the section was already
+contradicted by the entry that superseded it, in the same file, a few hundred
+lines apart.
+
+And it was **forward-looking advice about which devices are affected**, wrong by
+about **0.1 bit in the permissive direction**: it would have told the owner a
+0.95-bit device was unaffected, when 0.95 sits above 0.888.
+
+**A superseding note that enumerates its sites is itself a claim about how many
+there are.** The note now says three, and the section is withdrawn in place with
+the corrected boundary analysis beside it.
+
+### The enforcement, and why it did not fire
+
+`regression-docs.sh` has carried a stale-claim registry since the 2026-10-02
+sweep: a list of withdrawn phrases, searched with `\s+` between words so a line
+wrap cannot hide one, exempting paragraphs that frame the phrase as a
+correction. It works. It ran over
+
+```sh
+DOCS="README.md NOTICE BUILDING.md audits/README.md audits/BUG-REPAIR-GUIDE.md
+      audits/2026-09-30/README.md audits/2026-09-30/FINDINGS-TRACKER.md"
+```
+
+**seven files named by hand — and none of the three surviving sites was in
+one of them.** The pattern list was not the defect; **the scope was.** A rule
+that says *a withdrawn claim is withdrawn everywhere or nowhere* cannot be
+enforced over a hand-picked subset of everywhere.
+
+Scope is now **every tracked markdown file plus `NOTICE`**, from `git ls-files`
+rather than a list — **45 files**, with **28 dated reports excluded**, both
+counts printed beside the verdict so the scope is visible rather than implied.
+
+**The exclusion is stated and is per file, not per directory.** Guide rule 2
+forbids editing the dated audit reports, because they are evidence of what was
+believed when they produced a figure. A repository-wide sweep finds exactly one
+unexempted hit inside them — `audits/2026-10-01-re-audit/REPORT.md:16`, where
+a figure that had been corrected elsewhere, *"0.94 ms per thousand bits"*, still
+stands as that report wrote it — and correcting it there would destroy the
+record of the error. But `audits/2026-09-30` is in the canonical frozen set
+while its `README.md` and `FINDINGS-TRACKER.md` are living documents that happen
+to sit in a dated directory, so they stay in scope; the tracker has been edited
+this campaign.
+
+Three further changes, each from something the sweep exposed:
+
+- **Seven registry entries added** — the interval claim in three phrasings, the
+  683 in three, and `gap first becomes non-zero`.
+- **The marker list learned the framings honest quotations use.** Three of the
+  four sites were correct quotation-with-correction and were reported as
+  defects because `EXEMPT` did not know *"The claim was …"*, *"The project
+  claimed …"*, *"It read: …"*. **A check that cannot tell a quotation from an
+  assertion fails the honest writer and nobody else.** The window deliberately
+  stays **one paragraph**: widening it to include the paragraph above was the
+  other option and is a real loosening, since a superseding note two paragraphs
+  up would then exempt everything below it.
+- **A scope of zero finds nothing.** `git ls-files` failing — not a work tree,
+  no index — would make the check examine no files and report "none". It now
+  fails if the list comes back implausibly small.
+
+### Sensitivity
+
+The withdrawn claim replanted in `CLOSING-INVENTORY.md`, both checks run against
+the identical tree. The quoted output names the withdrawn phrase, so this block
+is itself a quotation and not an assertion:
+```
+widened:        stale claims present again: ...CLOSING-INVENTORY.md:402:"identical below H_I"
+HEAD's version: no previously-corrected claim has reappeared: none
+```
+
+### The check caught its own author, three times, writing this entry
+
+The widened check failed on `OC-85` itself, in three places: the blockquote
+quoting the withdrawn section heading, the sentence justifying the frozen-report
+exclusion (which wrote *"a corrected '0.94 ms per thousand bits'"*, and
+`corrected` as an adjective is not one of the marker phrasings), and the
+sensitivity output block quoting the phrase the check had just caught.
+
+All three were quotations, all three needed the marker **in the same
+paragraph**, and all three are now written that way. This is the third time a
+check written this round has first fired on the text that introduced it — the
+rule-citation check did it twice, and the certified-floor check did it on
+`OC-79`'s quoted output. **A check whose first catch is its author is working;
+the alternative is a check whose author exempted themselves.**
+
+### What this does NOT establish
+
+- The registry catches **the phrasings it lists**. A withdrawn claim restated in
+  new words is not caught, and nothing here changes that — it is a registry, not
+  a semantic check.
+- **`XR-13`'s own table is untouched.** Its interval claim is superseded and the
+  pointers to it are redirected, but the table still sits in the record with its
+  sampled rows; each row is correct at the point computed, and what does not
+  follow is the behaviour between them.
+- **The ≈ 0.888 boundary is `OC-49`'s, not re-derived here.** This entry
+  establishes only that the old 0.989 statement is false, which needs no new
+  computation because the counterexample already on file is below it.
+- Executed on Darwin arm64. Nothing reported upstream.
