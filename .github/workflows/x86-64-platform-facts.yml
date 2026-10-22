@@ -56,7 +56,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libbz2-dev libdivsufsort-dev \
                                   libjsoncpp-dev libssl-dev python3 python3-pip \
-                                  clang libomp-dev
+                                  python3-yaml clang libomp-dev
+          # python3-yaml is NAMED rather than assumed: regression-workflows.sh
+          # parses the workflow YAML and, without PyYAML, reports COULD NOT RUN
+          # (exit 2) -- correct behaviour, and it would add a SECOND abstention
+          # where the gate below expects exactly one, so the job would go red
+          # for a missing package rather than for a defect. The runner image
+          # happens to carry it; a dependency that happens to be present is not
+          # a dependency that was declared.
           # regression-estimator-guards builds its own clang sanitizer binary and
           # needs omp.h; without libomp-dev it reports COULD NOT RUN, which is
           # neither a pass nor a failure and also not a measurement.
