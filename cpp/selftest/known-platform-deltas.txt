@@ -12,7 +12,28 @@
 # FORMAT
 #   platform <uname-s> <uname-m> <compiler-substring>
 #       ... one or more delta rows, each:
-#   delta <file>|<estimator>|<field>|<max-abs-delta>
+#   delta <file>|<estimator>|<field>|<max-abs-delta>|<observed-magnitude>
+#
+# THE OBSERVED MAGNITUDE IS THE FIFTH FIELD, AND IT IS NOT DECORATION (OC-87).
+# Every row carried the same uniform tolerance, 1e-9, which concealed that the
+# headroom is 2.7x on one row and 8.0x on another: the observed deltas run from
+# 1.25e-10 to 3.66e-10. A tolerance whose headroom is not printed is a tolerance
+# nobody checks, and this is the third time this round that slack has defeated
+# detection -- after a floor of 9 against a count of 10, and a flat 1% against
+# values recorded to three significant figures.
+#
+# So each row now carries what was MEASURED beside what is ALLOWED, and
+# check-platform-deltas.py prints the ratio. The tolerance is unchanged: this
+# round makes the slack auditable, it does not retune it, because the smallest
+# REAL defect in these cells has never been measured and retuning without that
+# number would be swapping one unjustified figure for another.
+#
+# WHAT THE UNESTABLISHED LIMB ACTUALLY IS. The tolerated 1e-9 is the same order
+# of magnitude as C22a (8.08e-9 bit at n = 1e6), the floor's own quantisation
+# term. So a difference this manifest excuses cannot be dismissed as negligible
+# by comparison with the corrections the floor already makes -- the two are the
+# same size. Whether it can reach a published figure depends on whether a
+# prediction estimator ever binds for these files, which is NOT ESTABLISHED.
 #
 # A failing selftest is excused ONLY when, for the platform actually running:
 #   1. a `platform` block matches this host (uname -s, uname -m, and the
@@ -32,14 +53,14 @@
 # must not simply be widened to swallow it.
 
 platform Darwin arm64 Apple clang
-delta biased-random-bytes.bin|Bitstring MultiMCW Prediction Estimate|P_local|1e-9
-delta biased-random-bytes.bin|Bitstring MultiMCW Prediction Estimate|min entropy|1e-9
-delta biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|P_local|1e-9
-delta biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|min entropy|1e-9
-delta biased-random-bytes.bin|Bitstring Lag Prediction Estimate|min entropy|1e-9
-delta biased-random-bytes.bin|Literal Lag Prediction Estimate|P_local|1e-9
-delta biased-random-bytes.bin|Literal Lag Prediction Estimate|min entropy|1e-9
-delta ringOsc-nist.bin|Literal MultiMCW Prediction Estimate|min entropy|1e-9
+delta biased-random-bytes.bin|Bitstring MultiMCW Prediction Estimate|P_local|1e-9|1.25069510303888e-10
+delta biased-random-bytes.bin|Bitstring MultiMCW Prediction Estimate|min entropy|1e-9|1.85757652315655e-10
+delta biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|P_local|1e-9|2.46381248736327e-10
+delta biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|min entropy|1e-9|3.65934130219792e-10
+delta biased-random-bytes.bin|Bitstring Lag Prediction Estimate|min entropy|1e-9|1.33402060231713e-10
+delta biased-random-bytes.bin|Literal Lag Prediction Estimate|P_local|1e-9|1.57978075066012e-10
+delta biased-random-bytes.bin|Literal Lag Prediction Estimate|min entropy|1e-9|3.14868464634799e-10
+delta ringOsc-nist.bin|Literal MultiMCW Prediction Estimate|min entropy|1e-9|1.5468587521994e-10
 
 # Linux x86-64 with GCC is the platform NIST's reference data was produced on,
 # so selftest is expected to pass there outright and no block is listed. That

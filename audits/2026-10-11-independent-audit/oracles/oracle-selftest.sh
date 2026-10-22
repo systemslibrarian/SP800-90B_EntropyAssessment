@@ -62,6 +62,34 @@ else
 fi
 [ -s "${report}" ] || { echo "oracle-selftest: no genuine report to mutate" >&2; exit 2; }
 
+# A FIXTURE THAT WAS NEVER BUILT IS NOT A NEGATIVE CONTROL (OC-87).
+#
+# The three python3 heredocs below build the mutated reports every case feeds
+# to an oracle, and their exit status was never read. If one failed -- no
+# python3, a KeyError on a report shaped differently, a full disk -- the
+# fixtures would be ABSENT, and an oracle handed a path that does not exist
+# REFUSES and exits 1. Exit 1 is the expected status for most of these cases.
+# So a fixture builder that died would have turned every case it fed into a
+# PASS for a reason that has nothing to do with the defect under test: A08's
+# own lesson, in the file A08 produced.
+#
+# So: the builder's status is read, and every fixture it was supposed to write
+# is asserted to exist before any case runs.
+built() { # built <rc> <fixture>...
+    local rc=$1; shift
+    if [ "${rc}" -ne 0 ]; then
+        echo "oracle-selftest: a fixture builder exited ${rc}; the cases below would" >&2
+        echo "                 refuse for the absence of their input, not for the defect." >&2
+        exit 2
+    fi
+    local f
+    for f in "$@"; do
+        [ -s "${work}/${f}" ] || {
+            echo "oracle-selftest: fixture ${f} was not written; refusing to run cases on it" >&2
+            exit 2; }
+    done
+}
+
 python3 - "${report}" "${work}" <<'PYEOF'
 import json, sys, os
 src, W = sys.argv[1], sys.argv[2]
@@ -84,6 +112,7 @@ open(os.path.join(W, 'nonfinite.json'), 'w').write(s[:i] + '"hAssessed": NaN' + 
 open(os.path.join(W, 'unrelated.json'), 'w').write('{"hello":"world"}')
 open(os.path.join(W, 'notjson.txt'), 'w').write('this is not json at all\n')
 PYEOF
+built $? no_errorlevel.json short.json entropy10.json nonfinite.json unrelated.json notjson.txt
 
 echo "entropy_floor.py -- validate the evidence before emitting anything (A08)"
 F="python3 ${here}/entropy_floor.py"
@@ -128,6 +157,7 @@ def m3(e):
     if 'hAssessed' in c: c['hAssessed'] = 6.75
 put('f08_samples.json', m3)
 PYEOF
+built $? f08_c02.json f08_width.json f08_samples.json
 chk "hAssessed inconsistent with h' is REFUSED"    1 "C02 relation does not hold"   $F "${work}/f08_c02.json"
 chk "a fractional symbol width is refused"        1 "integer width of 1-8"         $F "${work}/f08_width.json"
 chk "a bit count is not a sample count"           1 "is not a sample count"        $F "${work}/f08_samples.json"
@@ -168,6 +198,7 @@ put('no_verdict.json', passedRestartSanityCheck=None)
 # (4) the verdict is present but not a boolean: not guessed.
 put('verdict_string.json', passedRestartSanityCheck='yes')
 PYEOF
+built $? verdict_flipped.json cutoff_wrong.json no_verdict.json verdict_string.json
     chk "agreement follows the tool's VERDICT not its cutoff" 1 "DISAGREE"        $D "${work}/verdict_flipped.json"
     chk "a verdict not implied by the tool's own figures"     1 "CONTRADICTS ITSELF" $D "${work}/cutoff_wrong.json"
     chk "no reported verdict is INCOMPLETE, not agreement"    2 "INCOMPLETE"      $D "${work}/no_verdict.json"
@@ -183,6 +214,27 @@ chk "an unrelated JSON document cannot decide"       2 "CANNOT DECIDE"          
 chk "a non-JSON file cannot decide"                  2 "CANNOT DECIDE"             $D "${work}/notjson.txt"
 chk "a path that does not exist cannot decide"        2 "CANNOT DECIDE"             $D "${work}/absent.json"
 chk "no arguments at all cannot decide"              2 ""                          $D
+
+echo
+echo "compression_ceiling_exact.py -- C22c's binding term, against the STANDARD (OC-86)"
+# This is the only oracle here validated against something outside the project:
+# SP 800-90B 6.3.4's own worked example, for which NIST publishes p = 0.5715.
+# It is also the only independent computation of the value entropy_floor.py
+# subtracts -- zalpha_ceiling_by_n.py prints "(production solve, not
+# reimplemented here)" for exactly those two cells.
+#
+# ~55 s, which is why it is last. EA_SKIP_SLOW_ORACLES=1 skips it, and then says
+# so as a SKIP rather than passing: a check that did not run supports no claim.
+if [ "${EA_SKIP_SLOW_ORACLES:-0}" = "1" ]; then
+    printf '  %-44s SKIP  EA_SKIP_SLOW_ORACLES=1\n' "C22c compression ceiling vs the standard"
+else
+    # On ONE line deliberately: split across a backslash continuation, the
+    # python3 invocation sits alone in statement position and
+    # regression-deadguard.sh flags it as "status never read". It is read, by
+    # chk -- but a baseline carrying a false positive is worse than one
+    # carrying none, so the line is written the way the detector can read.
+    chk "worked example, then both recorded ceilings" 0 "AGREES" python3 "${here}/compression_ceiling_exact.py"
+fi
 
 if [ "${fails}" -eq 0 ]; then echo; echo "oracle-selftest: PASS"; exit 0; fi
 echo; echo "oracle-selftest: FAIL (${fails} case(s))"; exit 1

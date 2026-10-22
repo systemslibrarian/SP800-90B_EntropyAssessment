@@ -7820,3 +7820,211 @@ the alternative is a check whose author exempted themselves.**
   establishes only that the old 0.989 statement is false, which needs no new
   computation because the counterexample already on file is below it.
 - Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-86 — C22c re-established: the value the floor subtracts had never been computed by anything but production
+
+**Owner's item 1 of 2026-10-21. The vindication is RE-ESTABLISHED, on better
+evidence than it previously rested on, and the gap found on the way was larger
+than the one that prompted the re-check.**
+
+### Why it needed redoing, and what the re-check found instead
+
+`F02` showed that `zalpha_ceiling_by_n.py` — the independent check on `C22c` —
+used `v = num_blocks` instead of `num_blocks − 1000`, was **0.300 % low in the
+unsafe direction**, and that its comparator agreed anyway on a flat 1 %
+tolerance. So `OC-62`'s conclusion rested on a comparator that could not detect
+the error it needed to detect.
+
+Redoing it exposed something the helper's arithmetic had nothing to do with.
+The helper's own output, for the two cells that matter:
+
+> `| compression ceiling | 1000000 | 3.360e-03 | (production solve, not reimplemented here) | n/a |`
+
+**The compression ceiling is the value `entropy_floor.py` subtracts, and nothing
+outside production had ever computed it.** What `OC-62` reproduced was `dX'` and
+`num_blocks` — the *inputs* to the ceiling. `OC-62`'s sentence
+("reproduced where it can be checked independently") was true; the conclusion
+drawn from it was broader than the check.
+
+### The independent computation
+
+New: `oracles/compression_ceiling_exact.py`, which implements `G(z)` from
+**SP 800-90B 6.3.4 step 7 as written**:
+
+```
+G(z) = (1/v) sum_{t=d+1}^{N} sum_{u=1}^{t} log2(u) F(z,t,u)
+F(z,t,u) = z^2 (1-z)^(u-1)  if u < t ;   z (1-z)^(t-1)  if u = t
+X' = G(p) + (2^b - 1) G(q),  q = (1-p)/(2^b - 1),  b = 6
+```
+
+and is **validated against the standard's own worked example**, which is the
+point: `OC-41` is the record of a harness that re-implemented a production
+function, disagreed with it, and had no third party to adjudicate. 6.3.4's
+example *is* that third party.
+
+| | NIST publishes | this file |
+|---|---|---|
+| `p` for `d=4, N=8, v=4, X'=1.4617` | **0.5715** | **0.57148426** |
+| min-entropy | **0.1345** | **0.134536** |
+
+The double sum is reordered once (swapping the order of summation gives a count
+of `N−d` for `u ≤ d` and `N−u` above, so one pass with running sums); the
+truncation is bounded rather than guessed, since `(1−z)^(u−1)` at `z ≈ 1/64` is
+below `1e-45` by `u ≈ 7500`.
+
+### The three things the owner asked for
+
+**Agreement:** yes, and at four separate precisions.
+
+| quantity | production | independent | residual | tolerance | used |
+|---|---|---|---|---:|---:|
+| cap `com_exp(2^-6)`, n=1e6 | 5.2177052498567909 | 5.2177052498567894 | 1.5e-15 | — | 16 figures agree |
+| cap, n=8e6 | 5.2177052498607601 | 5.2177052498607593 | 8e-16 | — | 16 figures agree |
+| ceiling vs **production's scan**, n=1e6 | 3.3599e-3 | 3.3599300e-3 | **3.0e-8** | 5.0e-8 | 60.1 % |
+| ceiling vs **production's scan**, n=8e6 | 2.1644e-3 | 2.1644012e-3 | **1.25e-9** | 5.0e-8 | 2.5 % |
+| ceiling vs the **tabulated** figure, n=1e6 | 3.36e-3 | 3.3599300e-3 | −7.0e-8 | 5.0e-6 | 1.4 % |
+| ceiling vs the **tabulated** figure, n=8e6 | 2.16e-3 | 2.1644012e-3 | **4.4e-6** | 5.0e-6 | **88.0 %** |
+
+**Tolerance:** half a unit in the last significant digit of the recorded value,
+taken from the recorded value **as text** — 5.0e-8 against a 5-figure figure,
+5.0e-6 against a 3-figure one. In relative terms **0.0015 %** and **0.231 %**,
+both narrower than the **0.300 %** error that had been hidden, which is the
+condition a tolerance has to meet.
+
+*The first draft of that tolerance was wrong in the same way `F02` was.* It
+counted significant figures by rendering `mpf("3.36e-3")` to twenty places, read
+six figures out of the binary noise, derived a tolerance of `5e-9`, and declared
+both rows DISAGREE. Keeping the recorded values as **strings** removes the
+class of error entirely: a string cannot carry binary noise.
+
+### And the ceiling is no longer a scan maximum
+
+`OC-78` recorded `C22c` as `DERIVED + MEASURED`, the measured part being
+production's 801-point scan — a grid maximum, which rule 9 says can only
+under-estimate a continuous supremum, the unsafe direction. **The argmax is now
+derived rather than searched for:**
+
+- `com_exp` is **stationary** at `p = 2^-b` by exact cancellation:
+  `d/dp com_exp = G'(p) − G'(q)` because `dq/dp = −1/(2^b − 1)`, and at
+  `p = 2^-b` we have `q = 2^-b`, so the two terms are identical. Proof, not
+  observation.
+- therefore `|dH/dX'| = 1/(6 ln2 · p · |com_exp'(p)|)` diverges at the cap.
+  `p·|com_exp'(p)|` was measured monotone increasing away from it
+  (1.40e-6 → 8.95e-5 over `p − 2^-6` of 1e-6 → 6.4e-5), so `H` is convex in
+  `X'` there and **the fixed-width interval with the largest rise is the one
+  ending at the cap.**
+- measured with this implementation, not production's: the cap-ending interval
+  gives **0.00335993** and the next three give **41 %, 31 %, 26 %** of it.
+
+So the value is **one exact solve**, not a maximum over a grid, and `C22c` is
+**DERIVED** throughout. The floor's weakest term is now `C22a` alone — which the
+label already said, so the printed label does not change.
+
+### What changed in the numbers
+
+`C22c`'s compression entries are now carried to **five** figures —
+`3.3599e-3` and `2.1644e-3` — because the three-figure rounding discarded
+**4.4e-6 bit at n = 8e6, 88 % of what three figures permits, in the direction of
+subtracting too little.** The floor at width 1, n = 1e6, moves from
+`0.84129042387787445` to `0.84129052387787451`: **up by 1.0e-7 bit**, because
+the rounded `3.36e-3` was over-subtracting.
+
+The oracle is wired into `oracle-selftest.sh` (~55 s, last, skippable by
+`EA_SKIP_SLOW_ORACLES=1` — which reports **SKIP**, not pass).
+
+### What this does NOT establish
+
+- `C22c` is confirmed **at two bitstring lengths**, 1e6 and 8e6, which are the
+  two the record tabulates. Its fall with `n` is still measured rather than
+  proved, and the value used at an intermediate `n` is the one tabulated at the
+  largest `n` not exceeding it.
+- The `dX'` bound itself is unchanged and still rests on Popoviciu's inequality
+  plus `v`; this entry re-derives what sits **on top** of it.
+- Nothing here touches `C22a`, which remains **MEASURED** and remains the term
+  holding the floor's label. Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-87 — the tolerance sweep: 12 comparators, 2 where the slack is not established to be narrower than the error
+
+**Owner's item 1, second half. Third instance this round of slack defeating
+detection — after a floor of 9 against a count of 10, and a flat 1 % against
+three significant figures.**
+
+A comparator is in scope if **a numeric slack decides its verdict**. Production
+estimator code is excluded, and the exclusion is stated: it is the thing under
+test, not a comparator, and this project never touches its numerics.
+
+For each: the tolerance, the smallest difference it must distinguish, and
+whether the first is below the second.
+
+| comparator | tolerance | must pass (noise) | must catch | narrower? |
+|---|---|---|---|---|
+| `compareresults.pl` | **1e-10** (min of abs, rel) | largest benign delta **8.22e-12**, measured | smallest delta it does flag **1.25e-10**, measured | **yes** — it sits between them |
+| `pin-check.sh` | **1e-9** rel | cross-platform spread **4.4e-14**, measured | **7e-5**, by its own `--prove-nonvacuous` perturbation | **yes**, by 5 orders — the gap between is unprobed |
+| `regression-estimator-guards.sh` | **1e-9** rel | **7.8e-15** (Linux vs macOS), measured | **1.9e-2**, by an observed 1 % `G()` mutation | **yes** — the model entry: all three numbers established |
+| `known-platform-deltas.txt` (8 rows) | **1e-9**, uniform | observed deltas **1.25e-10 – 3.66e-10** | **NOT ESTABLISHED** | **NO** |
+| `entropy_floor.py` (C02) | **1e-12** rel | double rounding, ~1e-16 | 0.8 against 0.1 → **0.875** rel | **yes** |
+| `restart_decision_exact.py` (alpha) | **1e-12** abs | — | spec 5e-6 vs Sidak 5.0251553e-6 → **2.5e-8** | **yes** |
+| `restart_multinomial_max.py` | **1e-12** rel | Levin vs brute force, **5.3e-16 – 1.0e-14**, measured | a structurally wrong Levin term, **O(1)** rel | **yes** |
+| `zalpha_ceiling_by_n.py` | **derived**, 0.056 – 0.338 % | — | the **0.300 %** `v` error; binding row's tolerance is 0.233 % | **yes** |
+| `compression_ceiling_exact.py` | **derived**, 0.0015 – 0.231 % | — | the same 0.300 % | **yes** |
+| `regression-outside-battery.sh` | **±0.05** on 8538.7 (5.9e-6 rel) | — | bit-reversal break → **0.2**; 1e-3 twiddle → **4.6** | **yes** |
+| `p_local_exact.py` (ratio ≤ 1) | **1.0** | — | the grid's own worst realised ratio is **0.928** | **NO** — 7.2 % margin (`OC-78`) |
+| `restart_cutoff_certified.py` | **none** — exact rational arithmetic | — | — | n/a, and the right answer |
+
+**12 examined, 2 found.**
+
+### The two, and what was done
+
+**`known-platform-deltas.txt`.** A uniform `1e-9` across eight rows whose
+observed magnitudes run 1.25e-10 to 3.66e-10 — so the headroom is **2.7× on one
+row and 8.0× on another**, and the uniform figure concealed that. Worse, "the
+excused differences are negligible" cannot be asserted: **1e-9 is the same order
+as `C22a` (8.08e-9 bit at n = 1e6), the floor's own quantisation term.**
+
+Each row now carries the **measured magnitude beside the allowed one** as a
+fifth field, four fields is malformed, a row whose observed magnitude exceeds
+its own tolerance is refused, and the checker **prints the headroom**:
+
+```
+8 expected platform delta(s), all within tolerance, on Darwin arm64 (... headroom
+used: 2.7x-8.0x, widest at biased-random-bytes.bin | Bitstring MultiMCW
+Prediction Estimate | P_local where 1.25e-10 is allowed 1e-09)
+```
+
+**The tolerance is deliberately NOT retuned.** The smallest real defect in those
+cells has never been measured, and retuning without that number would swap one
+unjustified figure for another. What changed is that the slack is now auditable;
+the unestablished limb is recorded as unestablished.
+
+**`p_local_exact.py`.** Already `OC-78`: the ceiling's own sweep reaches 92.8 %
+of it. Not a tolerance to retune — the 7.2 % is the margin itself, and closing
+it means replacing `K`'s grid maximum with an analytic infimum.
+
+### One more thing the sweep turned up, in a file it was reading
+
+`oracle-selftest.sh` built its mutated fixtures in three `python3` heredocs
+**whose exit status was never read**. A builder that died would leave the
+fixtures absent — and an oracle handed a path that does not exist **refuses and
+exits 1**, which is the *expected* status for most of those cases. Measured
+against `HEAD` with `python3` replaced by `exit 127`: **exit 1, "FAIL (19
+case(s))"** — not a false pass, but 19 case failures reported where the actual
+fault is a missing interpreter. The builders' status is now read and every
+fixture asserted present, giving **exit 2, could not run**. `A08`'s own lesson,
+in the file `A08` produced.
+
+Dead-guard baseline **41 → 40**: the `B` flag on `oracle-selftest.sh` is gone
+because that construct was **repaired**. A pattern-C false positive on the new
+`chk` call was avoided rather than baselined, by writing the call on one line.
+
+### What this does NOT establish
+
+- "Must catch" is **established by measurement for 7 of 12** and by construction
+  for 2 more (the derived tolerances, which equal the precision the record
+  claims and so cannot reject a correctly-rounded value). For `pin-check.sh` the
+  catch is demonstrated 5 orders above the tolerance and **nothing probes the
+  gap between**.
+- The sweep covers **numeric** slack. Non-numeric slack is out of scope here and
+  already recorded: `check-platform-deltas.py`'s `b['cc'] in cc` substring match
+  (`OC-76`, Tier A) and `c16-c23-matrix.sh`'s prefix matching (Tier C).
+- Executed on Darwin arm64; every "noise" figure is this host's. Nothing
+  reported upstream.

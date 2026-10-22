@@ -59,13 +59,28 @@ def load(path, s, m, cc):
                 print("REFUSED: a delta row appears before any platform line"); sys.exit(2)
             body = ln[len('delta '):]
             f = body.split('|')
-            if len(f) != 4:
-                print("REFUSED: malformed delta row: %s" % ln); sys.exit(2)
+            # FIVE FIELDS: the fifth is the magnitude actually OBSERVED, so the
+            # headroom between measured and allowed is printed rather than
+            # hidden inside a uniform tolerance (OC-87). Four fields is now
+            # malformed: a row with no observed magnitude is a tolerance with
+            # no justification, and that is the thing this change exists to
+            # make impossible to add silently.
+            if len(f) != 5:
+                print("REFUSED: malformed delta row (expected 5 fields, "
+                      "<file>|<estimator>|<field>|<tolerance>|<observed>): %s" % ln); sys.exit(2)
             try:
                 tol = float(f[3])
+                obs = float(f[4])
             except ValueError:
-                print("REFUSED: malformed tolerance in: %s" % ln); sys.exit(2)
-            cur['rows'][(f[0].strip(), f[1].strip(), f[2].strip())] = tol
+                print("REFUSED: malformed tolerance or observed magnitude in: %s" % ln); sys.exit(2)
+            if not (tol > 0) or not (obs >= 0):
+                print("REFUSED: non-positive tolerance or negative observed magnitude in: %s"
+                      % ln); sys.exit(2)
+            if obs > tol:
+                # The row would reject the very difference it was written for.
+                print("REFUSED: row records an observed magnitude %g ABOVE its own tolerance %g, "
+                      "so the exception could never apply to it: %s" % (obs, tol, ln)); sys.exit(2)
+            cur['rows'][(f[0].strip(), f[1].strip(), f[2].strip())] = (tol, obs)
         else:
             print("REFUSED: unrecognised manifest line: %s" % ln); sys.exit(2)
     for b in blocks:
@@ -204,13 +219,18 @@ def main():
         print("  unlisted platform; add a block with measured rows, or fix the difference.")
         sys.exit(1)
 
+    headroom = []
     for key, d in sorted(seen.items()):
-        tol = blk['rows'].get(key)
-        if tol is None:
+        row = blk['rows'].get(key)
+        if row is None:
             problems.append("UNEXPECTED difference, no manifest row: %s | %s | %s  (delta %.6g)" % (key + (d,)))
-        elif d > tol:
+            continue
+        tol, obs = row
+        if d > tol:
             problems.append("delta TOO LARGE: %s | %s | %s  delta %.6g > tolerance %.6g"
                             % (key + (d, tol)))
+        else:
+            headroom.append((tol / d if d else float('inf'), d, tol, obs, key))
     for key in sorted(blk['rows']):
         if key not in seen:
             problems.append("MISSING comparison, a listed row was never reported: %s | %s | %s" % key)
@@ -220,8 +240,22 @@ def main():
         for p in problems:
             print("  - %s" % p)
         sys.exit(1)
-    print("%d expected platform delta(s), all within tolerance, on %s %s "
-          "(tolerances are measured magnitudes with headroom, not bounds)" % (len(seen), s, m))
+    # THE HEADROOM IS PRINTED (OC-87). "All within tolerance" says nothing about
+    # how much slack was used; a comparator whose slack is invisible is a
+    # comparator whose slack nobody audits. The widest ratio is named, because
+    # that is the row where an error would most easily hide.
+    if headroom:
+        headroom.sort(reverse=True)
+        worst = headroom[0]
+        print("%d expected platform delta(s), all within tolerance, on %s %s "
+              "(tolerances are measured magnitudes with headroom, not bounds; "
+              "headroom used: %.1fx-%.1fx, widest at %s | %s | %s where %.3g is "
+              "allowed %.3g)"
+              % (len(seen), s, m, headroom[-1][0], worst[0],
+                 worst[4][0], worst[4][1], worst[4][2], worst[1], worst[2]))
+    else:
+        print("%d expected platform delta(s), all within tolerance, on %s %s "
+              "(tolerances are measured magnitudes with headroom, not bounds)" % (len(seen), s, m))
     sys.exit(0)
 
 if __name__ == '__main__':

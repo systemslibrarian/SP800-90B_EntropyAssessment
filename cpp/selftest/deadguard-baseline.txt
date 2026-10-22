@@ -3,7 +3,6 @@
 audits/2026-09-30/novel-findings/repro/noniid/widths.sh|C|verification command in statement position, status never read, no set -e
 audits/2026-09-30/phase2-focused/repro/issue272/repro.sh|C|verification command in statement position, status never read, no set -e
 audits/2026-10-09-independent-audit/rerun.sh|C|verification command in statement position, status never read, no set -e
-audits/2026-10-11-independent-audit/oracles/oracle-selftest.sh|B|no set -e, status never read
 audits/2026-10-11-independent-audit/reproducers/build-differential.sh|B|heredoc carries assertions; no set -e, status never read
 audits/2026-10-11-independent-audit/reproducers/build-differential.sh|B|no set -e, status never read
 audits/2026-10-11-independent-audit/reproducers/build-differential.sh|D|verification command upstream of a pipe, no pipefail, no set -e

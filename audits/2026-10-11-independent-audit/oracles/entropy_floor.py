@@ -159,9 +159,27 @@ C22B = 0.0             # P_global' at/near N == 1: conservative at every N, noth
 #
 # Values from OC-22 Part 3; reproduced independently where checkable by
 # oracles/zalpha_ceiling_by_n.py (OC-62).
+#
+# THE COMPRESSION CEILING IS NOW INDEPENDENTLY DERIVED, AND CARRIED TO FIVE
+# FIGURES (OC-86). It used to be stored as 3.36e-3 / 2.16e-3, the three-figure
+# values the record tabulated from production's 801-point scan -- and it was the
+# one quantity in C22c that NOTHING outside production had ever computed:
+# zalpha_ceiling_by_n.py printed "(production solve, not reimplemented here)"
+# for exactly these two cells, which are the cells this file subtracts.
+#
+# oracles/compression_ceiling_exact.py now computes it from SP 800-90B 6.3.4
+# step 7 as written, validated against the standard's OWN worked example
+# (d=4, N=8, v=4, X'=1.4617 -> NIST publishes p = 0.5715; the file gets
+# 0.57148426). It agrees with production's scan to six and seven significant
+# figures respectively, and the cap com_exp(2^-6) agrees to sixteen.
+#
+# Five figures, not three, because at n = 8e6 the three-figure rounding
+# discarded 4.4e-6 bit -- 88% of what three figures permits -- in the direction
+# of subtracting too LITTLE. The extra digits cost nothing and drop the
+# comparison tolerance from 0.231% to 0.0023%.
 C22C_FAMILIES_BY_N = (
-    (8_000_000, {'compression': 2.16e-3, 'collision': 4.66e-4, 'proportion': 6.887e-5}),
-    (1_000_000, {'compression': 3.36e-3, 'collision': 7.84e-4, 'proportion': 6.887e-5}),
+    (8_000_000, {'compression': 2.1644e-3, 'collision': 4.66e-4, 'proportion': 6.887e-5}),
+    (1_000_000, {'compression': 3.3599e-3, 'collision': 7.84e-4, 'proportion': 6.887e-5}),
 )
 C22C_BY_N = tuple((n0, max(f.values())) for n0, f in C22C_FAMILIES_BY_N)
 
@@ -441,7 +459,7 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None, samples=None
     print("    worst realised inflation reaches 92.8% of this ceiling. MEASURED, not PROVED.")
     print("  C22b P_global' at N == 1                 %.3e    PROVED, conservative at every N" % C22B)
     fam, fam_n = c22c_families(n)
-    print("  C22c ZALPHA vs the literal 2.576         %.3e    DERIVED + MEASURED, at n = %d" % (bz, bz_n))
+    print("  C22c ZALPHA vs the literal 2.576         %.3e    DERIVED, at n = %d" % (bz, bz_n))
     if fam:
         # SHAPE-07: emit the components, name the binding one, keep the margin.
         ranked = sorted(fam.items(), key=lambda kv: -kv[1])
@@ -456,11 +474,14 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None, samples=None
     print("    Reproduced independently where checkable: num_blocks and dX' to three significant")
     print("    figures, and the collision family's whole ceiling to 0.07% (OC-62). Its fall with")
     print("    n is measured, not asserted: oracles/zalpha_ceiling_by_n.py.")
-    print("    STATUS IS SPLIT (F02, OC-78). dX' <= dz sigma_max / sqrt(v) is DERIVED: Popoviciu")
-    print("    bounds sigma_max and v = num_blocks - 1000 is exact. The CEILING on top of it is a")
-    print("    maximum over an 801-point scan of step dX'/8, so it is MEASURED. Its argmax is")
-    print("    structurally explained -- cap - 1.0 dX', where the upper evaluation point lands on")
-    print("    G(1/64) exactly -- which is the best case for a scan maximum but is not a proof.")
+    print("    DERIVED THROUGHOUT as of OC-86, where it was DERIVED + MEASURED (F02, OC-78).")
+    print("    dX' <= dz sigma_max / sqrt(v): Popoviciu bounds sigma_max, v = num_blocks - 1000 is")
+    print("    exact. The ARGMAX is no longer searched for: com_exp is stationary at p = 2^-b by")
+    print("    exact cancellation (d/dp com_exp = G'(p) - G'(q), and q = p there), p*|com_exp'(p)|")
+    print("    was measured monotone away from the cap, so H is convex in X' and the widest rise")
+    print("    of fixed width is the interval ENDING at the cap. The value is then one exact")
+    print("    solve, not a maximum over a grid. oracles/compression_ceiling_exact.py, validated")
+    print("    against SP 800-90B 6.3.4's own published worked example.")
     # A02: C01 is excluded at width 1 by proof, and is a MARGIN above it.
     c01 = 0.0 if w == 1 else C01
     certified = (w == 1)
