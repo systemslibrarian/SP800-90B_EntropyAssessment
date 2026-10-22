@@ -7542,3 +7542,132 @@ produces a floor at exit 0.
   not a statement about the standard, which admits wider symbols that this
   implementation does not.
 - Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-84 — F11: a tally that disagreed with itself, and a syntax error that silenced five gates
+
+**Second independent AI audit, 2026-10-21, finding F11. Both halves
+REPRODUCED and REPAIRED. The finding named the wrong file for the second half
+and is corrected here.**
+
+### Part 1 — the tally omitted a category, and three numbers went wrong
+
+`run-all-checks.sh` had `total=$((pass + fail))` while the build-state line
+thirteen lines below counted `pass + fail + cannot`. **The same script
+disagreed with itself about how many checks it had run.**
+
+Measured, with one regression made to exit 2:
+
+```
+run-all-checks: executed 22 total checks; expected 23
+build-state: 4 of 24 checks declared the artefact they measured
+run-all-checks: 22 passed, 1 failed, 1 could not run (21 regression scripts discovered)
+failed: total-check-count
+```
+
+Three wrong numbers from one missing term:
+
+1. **The total is false.** 23 checks did execute; one of them could not run.
+2. **The failure is manufactured.** `total-check-count` is not a defect in
+   anything — the guard invented it by comparing a two-category total against a
+   three-category expectation. The condition it claimed to detect was already
+   reported on its own `could-not-run:` line.
+3. **The build-state denominator became 24** — the correctly-counting line was
+   corrupted by having the failure the broken guard had just invented added to
+   it.
+
+A check that could not run **was** executed and supports no claim; it belonged
+in the total all along, and already counted against the exit status. The total
+is now computed **once** and both sites read it, so they cannot drift again.
+
+After: `22 passed, 0 failed, 1 could not run`, total 23, build-state
+denominator 23, **suite exit 1** — measured, not assumed, and measured through a
+file rather than a pipe after a `tail` once made `$?` the status of `tail`.
+
+### Part 2 — an empty `if` aborted the gating step
+
+The finding said the **Windows** workflow. It is
+`.github/workflows/x86-64-platform-facts.yml`, in the step that gates the job:
+
+```sh
+gate "oracle self-test" logs/07-oracle-selftest.log "oracle-selftest: PASS"
+if true; then
+fi
+gate "outside-battery regression" ...
+```
+
+An empty `if … then … fi` is a bash **syntax error**. Measured on a two-line
+reproduction: bash executes the lines *before* it, then aborts at that point
+with **exit 2**.
+
+So in that step:
+
+- the five gates **after** the empty block never ran — outside-battery,
+  script-inventory mutations, corpus mutations, restart regression, estimator
+  guards;
+- `exit "${fail}"` never ran, so the step's status was **bash's 2** rather than
+  the accumulated verdict.
+
+The job therefore goes **red**, so this was not a silent false pass — but it
+goes red for a reason that has nothing to do with what any gate found, and
+"it failed, so a gate caught something" would be wrong twice over.
+
+`git log -S` places it exactly: commit **`1502012`**, dated **2026-10-21** —
+the commit that *wired the oracle self-test because nothing ran it*. Both lines
+were added together: a leftover wrapper from that edit. **The commit that
+fixed "a detector nothing runs" introduced a syntax error that stopped five
+gates running.**
+
+### The check: `cpp/selftest/regression-workflows.sh`
+
+`bash -n` over every workflow shell block, plus every `.sh` under `.github/`.
+Registered in the authoritative inventory; the suite's expected counts move
+21 → 22 scripts and 23 → 24 checks, and it is also gated by the x86-64 workflow
+itself, because that is the file it was written for.
+
+**The shell is resolved, not assumed.** `windows-platform-facts.yml` declares
+`defaults: run: shell: cmd` for its whole job, so all ten of its blocks are
+`cmd` and `bash -n` on them would be checking the wrong language. Each block's
+shell is resolved as GitHub resolves it — the step's own `shell:`, else the
+job's `defaults.run.shell`, else the workflow's, else the runner default (pwsh
+on a windows runner, bash elsewhere) — and **every block is printed with the
+shell it resolved to**, so a block excluded from the bash check is excluded
+*visibly*, and because of what the workflow declares rather than by a filename
+or a guess. That is `F05`'s lesson applied one directory over.
+
+Current reading: **10 blocks checked with `bash -n`, 10 not bash-checked by
+declaration, 0 expressions substituted**, across 19 run-blocks in 2 workflow
+files and 1 script.
+
+Three ways it refuses rather than passing quietly:
+
+- **PyYAML absent → exit 2**, not 0. A check that did not run supports no
+  claim, and the suite now counts "could not run" as its own category — which
+  is Part 1 of this same finding.
+- **a workflow file with no `run:` blocks → FAIL.** A workflow this check
+  cannot see is not a workflow it has checked.
+- **zero blocks checked → exit 2.** SHAPE-03: an empty accumulator reads as
+  success.
+
+Sensitivity needed no mutation: run against the tree as it stood, it printed
+
+```
+  x86-64-platform-facts.yml   6. The full suite and the  bash  SYNTAX ERROR
+        x86-64-platform-facts.yml / 6. The full suite ... line 65: syntax error near unexpected token `fi'
+```
+
+and passes now that the two lines are gone.
+
+### What this does NOT establish
+
+- It establishes only that **bash can parse** these blocks. It says nothing
+  about whether the gates are correct, whether their log files exist, or
+  whether the workflows do what they claim. A `gate` line pointed at a log that
+  is never written parses perfectly.
+- **The ten `cmd` blocks are unchecked by any syntax tool.** `cmd` has no
+  `-n`-equivalent available here, and the Windows job is the one this project
+  cannot run locally at all. Recorded as a gap, not closed.
+- **The five gates that never ran have still never run.** Fixing the syntax
+  error makes the next run of that workflow the first to reach them. Whether
+  they pass is **NOT RUN**, and nothing in this entry should be read as
+  evidence that they do.
+- Executed on Darwin arm64. Nothing reported upstream.

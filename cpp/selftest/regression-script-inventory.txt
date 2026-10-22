@@ -19,3 +19,4 @@ regression-restart.sh
 regression-selftest-inventory.sh
 regression-subset.sh
 regression-width.sh
+regression-workflows.sh

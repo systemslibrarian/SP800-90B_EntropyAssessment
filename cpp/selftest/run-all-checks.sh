@@ -26,8 +26,8 @@ allow_platform=0
 DELTA_MANIFEST="known-platform-deltas.txt"
 here_cmp="./check-platform-deltas.py"
 REGRESSION_INVENTORY="regression-script-inventory.txt"
-EXPECTED_REGRESSION_SCRIPTS=21
-EXPECTED_TOTAL_CHECKS=23
+EXPECTED_REGRESSION_SCRIPTS=22
+EXPECTED_TOTAL_CHECKS=24
 
 inventory_error() {
     echo "run-all-checks: regression inventory error: $*" >&2
@@ -201,10 +201,33 @@ if [ "${found}" -ne "${EXPECTED_REGRESSION_SCRIPTS}" ]; then
     fail=$((fail + 1)); failed="${failed} regression-inventory"
 fi
 
-total=$((pass + fail))
+# F11 (OC-84): THE TOTAL IS THREE CATEGORIES, NOT TWO.
+#
+# This was `total=$((pass + fail))`, omitting `cannot` -- while the build-state
+# line thirteen lines below counted `pass + fail + cannot`. The same script
+# disagreed with itself about how many checks it had run, and the consequences
+# compounded. Measured, with one regression made to exit 2:
+#
+#   run-all-checks: executed 22 total checks; expected 23        <- false
+#   build-state: 4 of 24 checks declared the artefact they measured   <- 24
+#   run-all-checks: 22 passed, 1 failed, 1 could not run
+#   failed: total-check-count
+#
+# Three wrong numbers from one missing term. 23 checks DID execute, one of them
+# could not run; the "1 failed" was entirely manufactured by this guard; and it
+# inflated the build-state denominator to 24 by adding the failure it had just
+# invented to a line that was counting correctly. The condition it claimed to
+# detect -- a check that did not run -- was already reported on its own line.
+#
+# A check that could not run WAS executed and supports no claim. It belongs in
+# the total and against the exit status, which it already was; it was only
+# missing from the arithmetic. The total is now computed ONCE and both sites
+# read it, so they cannot drift apart again.
+total=$((pass + fail + cannot))
 if [ "${total}" -ne "${EXPECTED_TOTAL_CHECKS}" ]; then
     echo "run-all-checks: executed ${total} total checks; expected ${EXPECTED_TOTAL_CHECKS}" >&2
     fail=$((fail + 1)); failed="${failed} total-check-count"
+    total=$((pass + fail + cannot))
 fi
 
 echo
@@ -215,7 +238,7 @@ echo
 # mutation harness matches that line exactly and the comment below depends on
 # it.
 printf 'build-state: %d of %d checks declared the artefact they measured\n' \
-    "${bs_seen}" "$((pass + fail + cannot))"
+    "${bs_seen}" "${total}"
 if [ "${bs_seen}" -eq 0 ]; then
     echo "build-state: NO CHECK DECLARED ONE. This run is silent about whether it" >&2
     echo "             measured an asserts-live build or a -DNDEBUG one, and the two" >&2
