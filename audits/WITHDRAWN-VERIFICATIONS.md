@@ -67,8 +67,8 @@ to omit and the only reason the others matter.
   (`OC-78`): no reading of the entropy floor is certified, and
   `regression-docs.sh` fails both on the phrase without a retirement marker and
   on any **assertive** use of it that is not inside quotation marks. Also
-  `CLOSING-INVENTORY.md`'s claim that both readings were certified floors at
-  width 1, corrected there as false rather than as out of date.
+  `CLOSING-INVENTORY.md`, which said *"both floor readings are certified
+  floors at width 1"* — corrected there as false rather than as out of date.
 
 ---
 

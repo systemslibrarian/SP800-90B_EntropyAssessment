@@ -49,9 +49,17 @@ TRACKER=audits/2026-09-30/FINDINGS-TRACKER.md
 # directory -- the tracker has been edited this campaign -- so they stay in
 # scope. Both counts are printed, so the scope is visible rather than implied.
 DOCS_FROZEN_RE='^audits/(2026-09-30/(AUDIT\.md|novel-findings/|phase2-focused/)|2026-10-01-re-audit/|2026-10-02-doc-review/)'
-DOCS_ALL=$(git ls-files '*.md' NOTICE 2>/dev/null | grep -Ev "${DOCS_FROZEN_RE}")
+# --cached AND --others, SO A DOCUMENT IS IN SCOPE WHILE IT IS BEING WRITTEN
+# (OC-89). `git ls-files` alone lists TRACKED files, so a new document escaped
+# every check here until the commit that added it -- which is exactly the window
+# in which it is being drafted. Observed: audits/WITHDRAWN-VERIFICATIONS.md
+# passed this script while untracked and failed the assertive-form check the
+# moment it was committed. --exclude-standard keeps .gitignore honoured, so
+# build output does not enter scope.
+DOCS_LS="git ls-files --cached --others --exclude-standard"
+DOCS_ALL=$(${DOCS_LS} '*.md' NOTICE 2>/dev/null | sort -u | grep -Ev "${DOCS_FROZEN_RE}")
 DOCS_N=$(printf '%s\n' "${DOCS_ALL}" | grep -c .)
-DOCS_SKIPPED=$(git ls-files '*.md' NOTICE 2>/dev/null | grep -Ec "${DOCS_FROZEN_RE}")
+DOCS_SKIPPED=$(${DOCS_LS} '*.md' NOTICE 2>/dev/null | sort -u | grep -Ec "${DOCS_FROZEN_RE}")
 
 fails=0
 note() { printf '  %-52s %s\n' "$1" "$2"; }
@@ -93,9 +101,23 @@ floor() { # floor <label> <observed> <minimum>
 # This was caught by this repository's own dead-guard detector, which flagged
 # "verification command in statement position, status never read, no set -e" on
 # this file while the file was being edited to tighten a different check.
+# A SCAN THAT DID NOT RUN IS A THIRD OUTCOME, NOT A FAILURE (OC-89).
+#
+# OC-79 made these scans stop reporting a PASS when their interpreter was
+# absent. They then reported a FAIL -- which is not a false pass, but is still
+# the wrong answer: a defect was not found, an environment was not present, and
+# the operator needs to fix a different thing in each case. Now that
+# run-all-checks.sh counts "could not run" as its own category (F11/OC-84),
+# the distinction has somewhere to go.
+#
+# So an unrunnable scan increments `cannot`, not `fails`, and this script exits
+# 2. Exit 2 is the suite's established "could not run"; it still counts against
+# the suite's exit status, so nothing is excused by it.
+cannot=0
 scanned() { # scanned <rc> <label>  -- 0 if the scan actually ran
     if [ "$1" -ne 0 ]; then
-        bad "${2} -- THE SCAN DID NOT RUN (exit $1), so its silence means nothing:" "no result"
+        note "${2} -- THE SCAN DID NOT RUN (exit $1), so its silence means nothing:" "no result"
+        cannot=$((cannot + 1))
         return 1
     fi
     return 0
@@ -773,6 +795,12 @@ else
 fi
 
 echo
+# COULD NOT RUN is reported BEFORE pass/fail, because an incomplete run's
+# verdict on the checks it did reach is not the verdict on the file.
+if [ "${cannot}" -ne 0 ]; then
+    echo "regression-docs: COULD NOT RUN (${cannot} scan(s) did not execute; ${fails} of the rest failed)"
+    exit 2
+fi
 if [ "${fails}" -eq 0 ]; then echo "regression-docs: PASS"; exit 0; fi
 echo "regression-docs: FAIL (${fails} checks)"
 exit 1

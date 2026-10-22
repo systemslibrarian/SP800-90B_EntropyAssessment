@@ -126,6 +126,57 @@ run() { # run <label> <command...>
     fail=$((fail + 1)); failed="${failed} ${label}"
 }
 
+# THE TOOLS THE SUITE NEEDS ARE CHECKED ONCE, HERE, AND BY RUNNING THEM
+# (OC-89).
+#
+# F11/OC-84 gave this script a third outcome; OC-79 stopped one member
+# reporting a PASS when its interpreter was absent. The sweep that followed
+# measured what the other members do, with `python3` replaced on PATH by a stub
+# that exits 127: four report COULD NOT RUN (exit 2) and THIRTEEN report FAIL
+# (exit 1). None reports a pass -- but a FAIL says "this code is broken" when
+# the truth is "this host is missing a tool", and those need different actions
+# from the operator.
+#
+# The aggregator is the right place for it: a missing python3 is a property of
+# the host, not of any one member, and refusing the whole run once is more
+# honest than thirteen members each discovering it separately.
+#
+# AND EACH TOOL IS RUN, NOT MERELY FOUND. `command -v` answers a different
+# question: the sweep's own stub is a file on PATH with the execute bit set, so
+# `command -v python3` succeeds and `python3 -c pass` exits 127. "Present" and
+# "works" are different claims and only the second one matters here.
+missing=""
+req_run() {  # req_run <label> <command...>  -- the command must succeed
+    # SHIFT the label off before running. The first draft did not, so it ran
+    # `python3 python3 -c pass` -- python3 trying to execute a FILE named
+    # python3 -- which fails on a perfectly healthy host. It would have refused
+    # every run. Caught because the test printed "python3 perl" as missing on a
+    # machine where both plainly work.
+    local label=$1; shift
+    if ! "$@" >/dev/null 2>&1; then
+        missing="${missing} ${label}"
+    fi
+}
+req_any() {  # req_any <label> -- any one of the remaining args, run as a word
+    local label=$1; shift
+    local c
+    for c in "$@"; do
+        if ${c} >/dev/null 2>&1; then return 0; fi
+    done
+    missing="${missing} ${label}"
+}
+req_run python3 python3 -c pass
+req_run perl perl -e 1
+req_any "shasum-or-sha256sum" "shasum --version" "sha256sum --version"
+# cc is used by the members that compile a fixture generator or a probe.
+req_run cc cc --version
+if [ -n "${missing}" ]; then
+    echo "run-all-checks: COULD NOT RUN -- these tools are absent or do not work:${missing}" >&2
+    echo "                No check below is reported, because a suite that cannot run its" >&2
+    echo "                members has no verdict on them. Install them and re-run." >&2
+    exit 2
+fi
+
 for b in ../ea_non_iid ../ea_iid ../ea_restart; do
     [ -x "${b}" ] || { echo "run-all-checks: $(basename "${b}") is missing; run 'make non_iid iid restart' first" >&2; exit 2; }
 done

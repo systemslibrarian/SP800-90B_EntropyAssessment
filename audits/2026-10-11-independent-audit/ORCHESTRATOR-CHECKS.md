@@ -8138,3 +8138,123 @@ check trivially (SHAPE-03).
   written next to a `MEASURED FLOOR` label.
 - `C22a` is still **MEASURED** and nothing here attempts to settle it. Suite:
   24 passed, 0 failed. Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-89 — the interpreter sweep: nothing else reports a false pass, and thirteen report the wrong kind of failure
+
+**Owner's item 4 of 2026-10-21. `OC-79` found one script reporting PASS when
+`python3` could not run; the question was whether the pattern was confined to
+it.**
+
+### The answer, measured rather than grepped
+
+Two sweeps, because a grep for `command -v` is a proxy for the question and not
+the question.
+
+**Behaviour.** Every regression script, mutation harness and `pin-check.sh` run
+with `python3` replaced on `PATH` by a stub that exits 127:
+
+| outcome | count | scripts |
+|---|---:|---|
+| **COULD NOT RUN (exit 2)** — correct | 4 | `regression-271`, `-deadguard`, `-multimmc`, `-notrun`, `-restart`, `-workflows`, `outside-battery-mutation-test` |
+| **FAIL (exit 1)** — never a false pass, but the wrong kind of answer | 13 | `-chisquare`, `-docs`, `-estimator-guards`, `-iid-failclosed`, `-iid-json`, `-input-identity`, `-minsize`, `-nonregular`, `-output`, `-outside-battery`, `-platform-deltas`, `-subset`, `-width` |
+| **PASS, and correctly** — does not use `python3` at all | 4 | `-272` (perl), `-selftest-inventory`, `-output-aliasing`, `pin-check` |
+
+**No script reports a false pass.** `OC-79`'s was the only one, and it is fixed.
+`regression-output-aliasing.sh` is worth naming: it passes without `python3`
+because it deliberately does not use it — its own comment says *"The first
+version used python3, which is NOT on"* every supported platform. The `uses=yes`
+flag beside it in the first run of the sweep was **my grep matching that
+comment**, not a dependency.
+
+**Static.** The `OC-79` shape specifically — an accumulator filled from a
+command substitution whose **emptiness is read as success**: **21
+interpreter-backed accumulators examined, 0 fail-open.** Seven are
+`regression-docs.sh`'s, now reading their status; the rest test emptiness and
+fail closed.
+
+*The static detector was wrong twice before it was right,* and both are the same
+class as the defects it hunts:
+
+1. It scanned up to 120 lines past a substitution that **closed on its own
+   line**, found an unrelated `python3` below, and reported two false positives
+   in `regression-multimmc.sh`.
+2. It then reported a third — the real multi-line one — without asking **which
+   way the empty branch goes**. `regression-multimmc.sh` treats an empty value
+   as `fails=$((fails + 1))`. A detector that cannot tell a fail-closed branch
+   from a fail-open one is measuring the wrong thing.
+
+### The repair: a third outcome, at the two levels where it belongs
+
+**`regression-docs.sh`** now distinguishes them itself. An unrunnable scan
+increments `cannot`, not `fails`, and the script exits **2**:
+
+```
+regression-docs: COULD NOT RUN (7 scan(s) did not execute; 0 of the rest failed)
+```
+
+reported **above** pass/fail, because an incomplete run's verdict on the checks
+it did reach is not the verdict on the file.
+
+**`run-all-checks.sh`** gains a **preflight**, which is where the thirteen are
+answered without thirteen edits: a missing `python3` is a property of the host,
+not of any one member, and refusing the whole run once is more honest than
+thirteen members each discovering it separately.
+
+```
+run-all-checks: COULD NOT RUN -- these tools are absent or do not work: python3
+                No check below is reported, because a suite that cannot run its
+                members has no verdict on them. Install them and re-run.
+```
+
+Exit **2**, which `F11`/`OC-84` made a counted category — so this repair had to
+wait for that one.
+
+**AND EACH TOOL IS RUN, NOT MERELY FOUND.** `command -v` answers a different
+question, and the sweep's own stub proves it: a file on `PATH` with the execute
+bit set, so `command -v python3` **succeeds** and `python3 -c pass` exits 127.
+Demonstrated side by side. "Present" and "works" are different claims and only
+the second one matters.
+
+*And the preflight was broken in its first draft, in a way that would have
+refused every run:* `req_run python3 python3 -c pass` did not shift the label
+off, so it executed `python3 python3 -c pass` — python3 trying to run a **file**
+named `python3`. Caught because the test printed `python3 perl` as missing on a
+host where both plainly work. **A precondition that fails closed on a healthy
+host is worse than no precondition**, because the first thing it teaches an
+operator is to bypass it.
+
+Verified both ways: healthy host → silent, `24 passed, 0 failed`; broken
+`python3` → exit 2 and the message above.
+
+### One more thing the sweep found, in a check written this round
+
+`regression-docs.sh`'s document scope came from `git ls-files`, which lists
+**tracked** files. So a new document was outside every check in that file **until
+the commit that added it** — which is exactly the window in which it is being
+drafted. Observed: `audits/WITHDRAWN-VERIFICATIONS.md` passed this script while
+untracked and failed the assertive-form check the moment it was committed.
+
+Scope is now `git ls-files --cached --others --exclude-standard`: tracked **and**
+untracked-but-not-ignored, 45 → **46** files. `--exclude-standard` keeps
+`.gitignore` honoured so build output does not enter scope.
+
+And the thing it caught was the register's own wording — the retired phrase
+*"both readings were certified floors at width 1"* in `WV-2`'s
+WHAT-LEANED-ON-IT field, written as an assertive form rather than inside
+quotation marks. Now quoted. **That is the fourth check this round whose first
+catch was its author.**
+
+### What this does NOT establish
+
+- The sweep broke **`python3`**. A missing **compiler** was not swept, and
+  `regression-output-aliasing.sh` and `regression-estimator-guards.sh` compile;
+  the preflight runs `cc --version`, which covers the suite path but the
+  per-script behaviour under a broken `cc` is **NOT MEASURED**.
+- The preflight's required set — `python3`, `perl`, `shasum`-or-`sha256sum`,
+  `cc` — is a **reviewed list**, derived from the sweep and then read by hand. A
+  pattern-derived list was tried and was wrong: it missed three scripts that do
+  use `python3` and demanded both `shasum` **and** `sha256sum` where either will
+  do.
+- The thirteen scripts still exit 1 when run **standalone** without `python3`.
+  The suite path is fixed; the standalone path is recorded, not repaired.
+- Executed on Darwin arm64. Nothing reported upstream.
