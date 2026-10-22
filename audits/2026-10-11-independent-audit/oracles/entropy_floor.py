@@ -142,6 +142,13 @@ C22A_PER_N = 8.08e-15
 #
 # Reproduced 2026-10-21 by oracles/p_local_exact.py against a c22_bound built
 # from production headers at sha256 9619117ec68ee3fe.
+#
+# THIS IS A WITHDRAWN VERIFICATION, NOT ONLY A RELABEL. OC-63 claimed the
+# constant had been VERIFIED to be a supremum; that claim is withdrawn, with
+# its date and reason, as WV-2 in audits/WITHDRAWN-VERIFICATIONS.md. The
+# register exists because a withdrawal recorded only in the entry that
+# performed it is a withdrawal nobody finds -- and because two were withdrawn
+# in the same week (WV-1 is C23's cutoff check, printed from an empty loop).
 C22B = 0.0             # P_global' at/near N == 1: conservative at every N, nothing to subtract (OC-22)
 # ZALPHA versus the literal 2.576 (OC-22). Measured at two bitstring lengths;
 # the ceiling DECREASES with n (dX' ~ sigma_max/sqrt(v), v ~ n/6), so the value
@@ -484,36 +491,58 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None, samples=None
     print("    against SP 800-90B 6.3.4's own published worked example.")
     # A02: C01 is excluded at width 1 by proof, and is a MARGIN above it.
     c01 = 0.0 if w == 1 else C01
-    certified = (w == 1)
+    c01_excluded = (w == 1)
     lit = hp - c01 - a - C22B - bz
     f07 = hp - c01 - a - C22B
     print()
-    # "CERTIFIED FLOOR" and "EVALUATED MARGIN" are different claims and the
-    # output must not blur them (A02). A floor is claimed only when every
-    # subtracted term is a bound over the supported inputs.
-    # EACH READING IS LABELLED ON ITS OWN TERMS (OC-59). A reading is a
-    # CERTIFIED FLOOR only when EVERY term it subtracts is a bound over the
-    # supported inputs. Two things disqualify a term:
-    #   * C01/F10 above width 1 -- an evaluated margin, mechanism data-dependent
-    #     (A02 / OC-55);
-    #   * C22c at ANY width -- the tabulated 3.36e-3 / 2.16e-3 are NOT
-    #     reproduced by an independent derivation of the binding family, which
-    #     gives 7.49e-4 / 4.46e-4 (OC-59). The discrepancy is in the safe
-    #     direction, so the figure is not overstated, but an unreproduced
-    #     subtrahend is not a bound and must not be called one.
-    # The LITERAL reading subtracts C22c; the F07 reading does not. So at width
-    # 1 the F07 reading is a certified floor and the literal reading is not --
-    # labelling the whole report with one word would have blurred exactly the
-    # distinction this oracle exists to keep.
-    # OC-62 CORRECTS OC-59. C22c IS a bound: a ceiling derived from dz, the
-    # estimator's cap, n, Popoviciu's sigma_max and v >= n/3 -- not an observed
-    # maximum. OC-59 reported it as unreproduced because the derivation it
-    # compared against computed the COLLISION family, while the tabulated term
-    # is the COMPRESSION ceiling, which is 4.3-4.6x larger. The "unexplained"
-    # ratio was simply compression/collision. Both families now reproduce the
-    # record where they can be checked independently
-    # (oracles/zalpha_ceiling_by_n.py), so the literal reading is a certified
-    # floor again wherever C01/F10 is also excluded.
+    # THE LABEL, AND THE HISTORY OF THE LABEL, KEPT APART (OC-88).
+    #
+    # CURRENT, and the only thing this file asserts: the floor takes the
+    # WEAKEST status among the terms it subtracts, and the printed label NAMES
+    # the term holding it there. At width 1 that is
+    #
+    #     C01/F10  PROVED EXCLUSION    unreachable; a counting proof
+    #     C22a     MEASURED            a product of two grid maxima (above)
+    #     C22b     PROVED              zero, conservative at every N
+    #     C22c     DERIVED             dX' from Popoviciu and an exact v; the
+    #                                  ceiling an exact solve at a DERIVED
+    #                                  argmax (OC-86)
+    #
+    # so the weakest is MEASURED and both readings are MEASURED FLOORS. Above
+    # width 1, C01/F10 is an evaluated margin and neither reading is a floor at
+    # all.
+    #
+    # SUPERSEDED, in order, and NOT re-asserted anywhere above -- this list is
+    # the record of what this file used to say, not a statement of what holds:
+    #
+    #   A02/OC-55  "a certified floor is one where every subtracted term is a
+    #              bound" -- the definition of a term retired at OC-78.
+    #   OC-59      "C22c at ANY width is not reproduced by an independent
+    #              derivation, which gives 7.49e-4 / 4.46e-4" -- WRONG. OC-62
+    #              found the cause: that derivation computed the COLLISION
+    #              family, and the tabulated term is COMPRESSION, 4.3-4.6x
+    #              larger. OC-86 then computed the compression ceiling
+    #              independently from SP 800-90B 6.3.4 and it agrees with
+    #              production to six and seven significant figures.
+    #   OC-59      "at width 1 the F07 reading is a certified floor and the
+    #              literal reading is not" -- superseded twice over: by OC-62,
+    #              which restored the literal reading, and by OC-78, which
+    #              retired the label for both.
+    #   OC-62      "the literal reading is a certified floor again" -- the
+    #              correction was right about C22c and wrong about the label.
+    #   OC-63      "C22a's constant is a supremum, so the term is a bound" --
+    #              examined one of the two grid maxima the constant is a
+    #              product of. F02/OC-78.
+    #
+    # WHY THE LIST AND NOT THE PROSE. These five statements stood here as flat
+    # assertions, in sequence, above the current reasoning -- so this file
+    # asserted FOUR TIMES that a reading is a certified floor while printing
+    # MEASURED FLOOR, and restated OC-59's "not reproduced" after OC-86 had
+    # settled it. That is exactly the shape OC-73 removed from this file once
+    # before, reintroduced by the edit that retired the label. A live
+    # instrument's comments must not contradict its behaviour; a dated record
+    # of what they used to say is a different thing and belongs in a list that
+    # cannot be mistaken for the present tense.
     # A CERTIFIED CLAIM RESTING ON AN UNCERTIFIED INPUT IS NOT CERTIFIED, and
     # that is now applied to this file's own label instead of being quoted in
     # it (F02, OC-78).
@@ -569,12 +598,11 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None, samples=None
             return "EVALUATED MARGIN (not a floor)"
         return "%s FLOOR (%s)" % (status, ", ".join(why))
 
-    certified = (w == 1)          # retained: the C01/F10 exclusion still turns on it
     lab_lit = label(lit_status, lit_why)
     lab_f07 = label(f07_status, f07_why)
     print("  %-31s %.17g   (h' - %.6g)" % (lab_lit + ", literal", lit, hp - lit))
     print("  %-31s %.17g   (h' - %.6g)" % (lab_f07 + ", F07", f07, hp - f07))
-    if not certified:
+    if not c01_excluded:
         print("    NOT A FLOOR: the C01/F10 term above is an evaluated margin over the inputs")
         print("    measured, not a bound over all accepted ones. Treat this as a working figure")
         print("    and do not publish it as a floor until F10 is repaired or bounded (A02).")

@@ -98,6 +98,14 @@ the ceiling it is supposed to bound. `C22a` is **MEASURED**, and the word
 *certified* has been retired from the floor (`OC-78`). The readings are
 **MEASURED FLOORS**.
 
+**And what was withdrawn was a VERIFICATION, not just a label.** `OC-63`
+claimed the constant had been *checked* to be a supremum. That claim is
+withdrawn with its date and its reason as **`WV-2`** in
+[`audits/WITHDRAWN-VERIFICATIONS.md`](../WITHDRAWN-VERIFICATIONS.md), beside
+**`WV-1`** — `C23`'s cutoff check, printed from an empty loop (`OC-75`) — the
+two withdrawn in the same week. Each entry names what leaned on it, which is
+the field that is easy to omit and the only reason the others matter.
+
 **`C22c` has left this bucket: the factor was found and the record is
 vindicated** (`OC-62`). The consistent 4.5–4.9× ratio was a **mechanism**, as a
 consistent ratio always is: the two derivations were bounding **different

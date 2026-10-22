@@ -496,6 +496,117 @@ else
     bad "\"certified floor\" used without marking it retired:" "${floorbad}"
 fi
 
+# AND THE ASSERTIVE FORMS CANNOT BE WRITTEN AT ALL, ONLY QUOTED (OC-88).
+#
+# The paragraph-marker rule above governs the PHRASE. It does not stop a
+# sentence that ASSERTS the retired claim while a retirement marker sits
+# elsewhere in the same paragraph -- and that is precisely how
+# oracles/entropy_floor.py came to assert, four times in one comment block,
+# that a reading is a certified floor while printing MEASURED FLOOR.
+#
+# So the assertive constructions -- "is a certified floor", "are certified
+# floors", "prints a certified floor" and their kin -- must additionally be
+# INSIDE QUOTATION MARKS at the site: a double quote, a single quote, a
+# backtick or a markdown emphasis marker within a short window on both sides.
+# Reported speech is allowed; assertion is not. This is stricter than the
+# paragraph rule rather than a different version of it, and it is the half that
+# answers "no reading is certified".
+echo
+assertbad=$(
+RETIRED_AT_OC="${RETIRED_AT_OC}" python3 - "${DOCS_ALL}" <<'ASSERTPY'
+import os, re, sys
+docs = sys.argv[1].split()
+retired_at = int(os.environ['RETIRED_AT_OC'])
+# the assertive forms, not the bare noun phrase
+ASSERT = re.compile(r'\b(?:is|are|was|were|be|becomes?|prints?|printed|yields?|gives?|'
+                    r'remains?|stays?|counts? as)\s+(?:a|an|both|the|two)?\s*'
+                    r'(?:\w+\s+){0,3}?certified\s+floors?\b', re.I)
+heading = re.compile(r'^##\s*OC-(\d+)\b', re.M)
+notice = re.compile(r'RETIRED TERM\s*(?:--|—)', re.I)
+# Built from code points, not written as a literal: a literal mixing a single
+# quote and a backtick inside a $( ... ) heredoc is parsed by bash at RUN
+# time -- bash -n does not reach it -- and died with "unexpected EOF while
+# looking for matching" the quote character itself.
+QUOTE = ''.join(chr(c) for c in (0x22, 0x27, 0x60, 0x2a, 0x201c, 0x201d, 0x2018, 0x2019))
+hits = []
+for d in docs:
+    try:
+        raw = open(d, encoding='utf-8', errors='replace').read()
+    except OSError:
+        continue
+    has_notice = bool(notice.search(raw[:4000]))
+    bounds = [(m.start(), int(m.group(1))) for m in heading.finditer(raw)]
+    for m in ASSERT.finditer(raw):
+        if has_notice and bounds:
+            prior = [n for off, n in bounds if off < m.start()]
+            if prior and prior[-1] < retired_at:
+                continue
+        # a quotation mark within 90 characters on BOTH sides of the match
+        before = raw[max(0, m.start() - 90):m.start()]
+        after = raw[m.end():m.end() + 90]
+        if any(c in before for c in QUOTE) and any(c in after for c in QUOTE):
+            continue
+        hits.append('%s:%d' % (os.path.relpath(d), raw.count('\n', 0, m.start()) + 1))
+print(' '.join(sorted(set(hits))))
+ASSERTPY
+)
+assertrc=$?
+if ! scanned "${assertrc}" "assertive certified-floor scan"; then
+    :
+elif [ -z "${assertbad}" ]; then
+    note "no document ASSERTS a certified floor (only quotes one):" "yes"
+else
+    bad "a certified floor is ASSERTED, not quoted, at:" "${assertbad}"
+fi
+
+# THE WITHDRAWN-VERIFICATION REGISTER MUST BE COMPLETE (OC-88).
+#
+# A withdrawal recorded only in the chronological entry that performed it is a
+# withdrawal nobody finds, so audits/WITHDRAWN-VERIFICATIONS.md carries one
+# entry per withdrawn verification with five fields. The fifth -- WHAT LEANED
+# ON IT -- is the one that is easy to omit and the only reason the others
+# matter, so its absence is a failure like any other.
+#
+# This checks the register's SHAPE, not its truth: that every WV- entry has all
+# five fields, and that there is at least one entry, because an empty register
+# would pass a field check trivially (SHAPE-03).
+echo
+WVREG="${repo}/audits/WITHDRAWN-VERIFICATIONS.md"
+if [ ! -f "${WVREG}" ]; then
+    bad "the withdrawn-verification register is missing:" "${WVREG}"
+else
+    wvbad=$(python3 - "${WVREG}" <<'WVPY'
+import re, sys
+raw = open(sys.argv[1], encoding='utf-8').read()
+FIELDS = ('CLAIM', 'WITHDRAWN', 'REASON', 'WHAT NOW STANDS', 'WHAT LEANED ON IT')
+parts = re.split(r'^## (WV-\d+)[^\n]*$', raw, flags=re.M)
+# parts = [preamble, id, body, id, body, ...]
+bad = []
+n = 0
+for i in range(1, len(parts) - 1, 2):
+    wid, body = parts[i], parts[i + 1]
+    n += 1
+    for f in FIELDS:
+        if not re.search(r'\*\*%s\b' % re.escape(f), body):
+            bad.append('%s:missing-%s' % (wid, f.replace(' ', '-')))
+    if not re.search(r'\b20\d\d-\d\d-\d\d\b', body):
+        bad.append('%s:no-date' % wid)
+if n == 0:
+    bad.append('the-register-has-no-entries')
+print(' '.join(bad))
+WVPY
+)
+    wvrc=$?
+    if ! scanned "${wvrc}" "withdrawn-verification register scan"; then
+        :
+    elif [ -z "${wvbad}" ]; then
+        note "every withdrawn verification carries its five fields:" \
+             "yes, over $(grep -c '^## WV-' "${WVREG}") entries"
+    else
+        bad "withdrawn-verification entries are incomplete:" "${wvbad}"
+    fi
+fi
+
 # AND THE ORACLE MUST NOT PRINT IT. The prose check above cannot see what a
 # program emits at run time, and the label the oracle PRINTS is the one a reader
 # acts on.

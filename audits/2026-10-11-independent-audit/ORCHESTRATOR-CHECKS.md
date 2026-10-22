@@ -8028,3 +8028,113 @@ because that construct was **repaired**. A pattern-C false positive on the new
   (`OC-76`, Tier A) and `c16-c23-matrix.sh`'s prefix matching (Tier C).
 - Executed on Darwin arm64; every "noise" figure is this host's. Nothing
   reported upstream.
+
+## OC-88 — F02's relabel had not reached the oracle's own comments, and a withdrawn verification had no register
+
+**Owner's item 2 of 2026-10-21. Three parts: carry the label everywhere, invert
+the guard, and record the withdrawal as a withdrawal.**
+
+### Part 1 — the first place the relabel had not propagated was inside the oracle
+
+373 mentions of "floor" live in non-frozen files. Of those, the ones that
+**assert or imply certification** are all in two places, and the live one was
+`oracles/entropy_floor.py` itself.
+
+Its label block carried, in sequence, as **flat present-tense assertions** above
+the new F02 reasoning:
+
+1. *"A reading is a CERTIFIED FLOOR only when EVERY term it subtracts is a
+   bound"* — the definition of a term `OC-78` retired;
+2. *"C22c at ANY width — the tabulated 3.36e-3 / 2.16e-3 are NOT reproduced by
+   an independent derivation, which gives 7.49e-4 / 4.46e-4"* — `OC-59`'s claim,
+   corrected by `OC-62` and **settled by `OC-86`**;
+3. *"at width 1 the F07 reading is a certified floor and the literal reading is
+   not"*;
+4. *"the literal reading is a certified floor again"*.
+
+**So the file asserted four times that a reading is a certified floor while
+printing `MEASURED FLOOR`** — and restated a "not reproduced" claim after
+`OC-86` had computed the thing independently. That is exactly the shape `OC-73`
+removed from this same file once before, **reintroduced by the edit that retired
+the label.**
+
+The block is now split in two: one **CURRENT** statement, which is the only
+thing the file asserts, and a **SUPERSEDED** list of five dated entries with
+what each said and what replaced it. A live instrument's comments must not
+contradict its behaviour; a record of what they used to say is a different thing
+and belongs where it cannot be read as the present tense. The flag
+`certified = (w == 1)` is renamed `c01_excluded`, because it never meant
+certification and now cannot be read as meaning it.
+
+### Part 2 — the guard, inverted, and then made stricter than the inversion
+
+The old guard permitted `"certified floor"` **if qualified by a width or
+reading**. It now fails on the phrase unless the paragraph marks it retired —
+the `rule N (vacated)` convention, chosen over an absolute ban because an
+absolute ban makes the history unrecordable.
+
+**And a second, tighter check answers "no reading is certified" properly.** The
+paragraph rule governs the *phrase*; it does not stop a sentence that **asserts**
+the retired claim while a marker sits elsewhere in the paragraph — which is
+precisely how the oracle's comment block passed while asserting it four times.
+So the **assertive forms** — `is a certified floor`, `are certified floors`,
+`prints a certified floor` and their kin — must additionally be **inside
+quotation marks at the site**: a quote, backtick or emphasis marker within 90
+characters on *both* sides. **Reported speech is allowed; assertion is not.**
+
+Measured: `At width 1 the F07 reading is a certified floor, retired or not.`
+**FAILS** — the retirement word in the same sentence does not save it. `The
+entry said "the F07 reading is a certified floor", which is retired.` **passes.**
+
+*A bash fault worth recording:* the check's `QUOTE` literal mixed a single quote
+and a backtick inside a `$( … )` heredoc. **`bash -n` passed and the script died
+at run time** — bash defers parsing inside command substitution — with
+`unexpected EOF while looking for matching` the quote character itself. Built
+from code points instead. `bash -n` is not a complete syntax check for a script
+containing `$( )`, which is worth knowing given that `regression-workflows.sh`
+is built on `bash -n`.
+
+### Part 3 — a withdrawn verification now has a register
+
+The owner's point: this is the **second withdrawn verification this week**, and
+a withdrawal recorded only in the chronological entry that performed it is a
+withdrawal nobody finds.
+
+New: **`audits/WITHDRAWN-VERIFICATIONS.md`**, with five required fields per
+entry — **CLAIM**, **WITHDRAWN** (date and entry), **REASON**, **WHAT NOW
+STANDS**, **WHAT LEANED ON IT**. The last is the one easy to omit and the only
+reason the others matter, so `regression-docs.sh` fails on its absence like any
+other.
+
+| | claim | withdrawn | reason |
+|---|---|---|---|
+| **WV-1** | `C23`'s cutoffs checked against the exact oracle at 32 `H_I` values | 2026-10-21, `OC-75` | the claim line was printed from an **empty loop** |
+| **WV-2** | `C22a`'s constant is a **supremum**, so the term is a bound and the floor's terms are all bounds at width 1 | 2026-10-21, `OC-78` | the constant is a **product of two grid maxima** and only `c` was examined; `K` is attained at `r = 2`, the **first value in its swept list**, and rule 9 was never applied to it. The sweep reaches **92.8 %** of its own ceiling |
+
+Both are linked from where `C22a` is described — in the oracle beside the
+constant, and in `CLOSING-INVENTORY.md` beside the correction — so the
+withdrawal is found by someone reading about the term, not only by someone
+reading the chronology.
+
+The register states what it is **not** for: `OC-49`'s 683→684 and
+`OC-59`→`OC-62` are corrections of **values**, not withdrawals of
+**verifications**, and `OC-86` turned the second into a verification that now
+holds. The distinction is whether the thing withdrawn was a claim to have
+*checked*.
+
+Sensitivity: dropping `WHAT LEANED ON IT` from `WV-2` gives
+`WV-2:missing-WHAT-LEANED-ON-IT`; removing every entry gives
+`the-register-has-no-entries`, because an empty register would pass a field
+check trivially (SHAPE-03).
+
+### What this does NOT establish
+
+- The register has **two** entries because two withdrawals are known. It is not
+  a claim that no verification before this week was withdrawn — earlier ones, if
+  any, were not recorded as such and are not reconstructed here.
+- The assertive-form check is **syntactic**. A sentence that conveys
+  certification without the phrase — "all the subtracted terms are bounds" —
+  passes it, and only the status vocabulary in the oracle stops that being
+  written next to a `MEASURED FLOOR` label.
+- `C22a` is still **MEASURED** and nothing here attempts to settle it. Suite:
+  24 passed, 0 failed. Executed on Darwin arm64. Nothing reported upstream.
