@@ -48,7 +48,47 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from restart_cutoff_exact import exact_cutoff, alpha_tool, tail, power, mpf
 from restart_multinomial_max import maxcell_cutoff, binomial_cutoff
 
-def decide(H_I, X_max, tool_cutoff=None, tool_said=None, label=''):
+def decide(H_I, X_max, tool_cutoff=None, tool_said=None, tool_passed=None, label=''):
+    """Three SEPARATE statements, never collapsed into one (F07 / OC-82).
+
+    THE OLD VERSION DERIVED "THE TOOL SAID" FROM THE TOOL'S CUTOFF:
+
+        tool = 'ACCEPT' if X_max <= tool_cutoff else 'REJECT'
+
+    so "the tool said" was this script RE-DOING the tool's comparison with the
+    tool's numbers, not the tool's verdict. The tool's actual verdict --
+    passedRestartSanityCheck in the report, "Restart Sanity Check Passed/Failed"
+    in the log -- was read, passed in, and printed as a decorative parenthetical
+    that nothing compared against.
+
+    So a tool whose own comparison was wrong -- an off-by-one, an inverted
+    operator, a NaN path, a verdict written from a different variable --
+    produced AGREE. Demonstrated by flipping one field of a genuine report:
+
+        the tool said: ACCEPT  (its X_cutoff 605; printed "Restart Sanity Check Failed")
+        => AGREE with the corrected decision                        [exit 0]
+
+    One line asserting the tool said ACCEPT and that it printed Failed, and
+    agreement declared anyway.
+
+    The three statements, which answer three different questions:
+
+      A  THE INDEPENDENT DECISION -- from the exact multinomial maximum, using
+         only H_I and X_max. Needs nothing from the tool but its inputs.
+      B  THE TOOL'S REPORTED VERDICT -- read from the field the tool wrote.
+         This is the only thing that is "what the tool said". Absent => the
+         comparison cannot be made and the evidence is INCOMPLETE, not
+         agreeable.
+      C  WHAT THE TOOL'S OWN NUMBERS IMPLY -- X_max against the tool's X_cutoff.
+         Worth printing, because if it disagrees with B then the tool's verdict
+         does not follow from the figures it reported, which is a finding about
+         the tool and not a reason to prefer C.
+
+    AGREEMENT is A against B. It is never A against C, because A and C share
+    X_max and differ only in the cutoff, so they agree whenever the two cutoffs
+    fall on the same side of X_max -- which is most of the time and has nothing
+    to say about whether the tool decided correctly.
+    """
     ALPHA = 0.000005                      # 3.1.4.3 step 1, and the alpha Hill's cutoffs target
     printed = binomial_cutoff(H_I, ALPHA)         # conformance figure only
     cut = maxcell_cutoff(H_I, ALPHA, start=printed)  # the deciding cutoff
@@ -56,23 +96,62 @@ def decide(H_I, X_max, tool_cutoff=None, tool_said=None, label=''):
     print('%s' % label)
     print('  inputs: H_I=%s  X_max=%d  alpha=%g  N=1000' % (H_I, X_max, ALPHA))
     print('  DECIDING cutoff (exact multinomial maximum, the statistic 3.1.4.3 forms): %d' % cut)
-    print('  DECISION: %s  (X_max %s %d)' % (exact, '<=' if exact == 'ACCEPT' else '>', cut))
+    print('  A. INDEPENDENT DECISION: %s  (X_max %s %d)'
+          % (exact, '<=' if exact == 'ACCEPT' else '>', cut))
     print('  conformance only -- 3.1.4.3 step 5 as printed would give cutoff %d (%s);' % (
         printed, 'ACCEPT' if X_max <= printed else 'REJECT'))
     print('    the printed formula tests a single binomial and rejects correctly-operating')
     print('    sources, so it is recorded for traceability and is NOT the verdict (OC-30).')
+
+    # B -- what the tool ITSELF reported.
+    if tool_passed is None:
+        reported = None
+        print('  B. THE TOOL\'S REPORTED VERDICT: NOT REPORTED%s'
+              % ('' if tool_said is None else ' (it printed "%s", which this reader could not '
+                 'resolve to a verdict)' % tool_said))
+    else:
+        reported = 'ACCEPT' if tool_passed else 'REJECT'
+        print('  B. THE TOOL\'S REPORTED VERDICT: %s%s'
+              % (reported, '' if tool_said is None else '  (it printed "%s")' % tool_said))
+
+    # C -- what the tool's own figures imply, which is NOT what it said.
+    implied = None
     if tool_cutoff is not None:
-        tool = 'ACCEPT' if X_max <= tool_cutoff else 'REJECT'
-        print('  the tool said: %s  (its X_cutoff %d%s)' % (tool, tool_cutoff,
-              ('; printed "%s"' % tool_said) if tool_said else ''))
-        if tool == exact:
-            print('  => AGREE with the corrected decision')
-        else:
-            print('  => DISAGREE: the tool %ss where the corrected statistic %ss' % (tool.lower(), exact.lower()))
+        implied = 'ACCEPT' if X_max <= tool_cutoff else 'REJECT'
+        print('  C. implied by the tool\'s OWN figures: %s  (X_max %d vs its X_cutoff %d)'
+              % (implied, X_max, tool_cutoff))
         if abs(tool_cutoff - cut) <= 2:
             print('     (its cutoff is within 2 of the exact one, consistent with upstream\'s simulation')
             print('      of the same statistic -- see XR-11 item 4)')
-    return exact
+    else:
+        print('  C. implied by the tool\'s OWN figures: NO X_cutoff REPORTED')
+
+    # The tool contradicting itself is a finding, and is reported before any
+    # agreement claim, because an agreement with an internally inconsistent
+    # instrument is not an agreement about anything.
+    inconsistent = (reported is not None and implied is not None and reported != implied)
+    if inconsistent:
+        print('  !! THE TOOL CONTRADICTS ITSELF: it reported %s, and its own X_max %d against its'
+              % (reported, X_max))
+        print('     own X_cutoff %d implies %s. Its verdict does not follow from the figures it'
+              % (tool_cutoff, implied))
+        print('     wrote. Nothing below is evidence about the statistic; this is a defect in the')
+        print('     tool or in the report it produced, and must be resolved before either.')
+
+    # AGREEMENT: A against B, and only A against B.
+    if reported is None:
+        print('  => INCOMPLETE: the tool reported no verdict, so there is nothing to agree with.')
+        print('     The independent decision above stands on its own; it is NOT corroboration.')
+        verdict = 'INCOMPLETE'
+    elif reported == exact:
+        print('  => AGREE: the tool\'s reported verdict matches the independent decision')
+        verdict = 'AGREE'
+    else:
+        print('  => DISAGREE: the tool reported %s where the corrected statistic says %s'
+              % (reported.lower(), exact.lower()))
+        verdict = 'DISAGREE'
+    return dict(independent=exact, reported=reported, implied=implied,
+                inconsistent=inconsistent, verdict=verdict)
 
 REQUIRED = ('restartHI', 'restartXmax', 'restartXcutoff')
 
@@ -110,7 +189,16 @@ def from_report(path):
         return None, "CANNOT DECIDE: %s has restartHI = %r, outside (0, 8]." % (path, hi)
     if not isinstance(xm, int) or not (0 <= xm <= 1000):
         return None, "CANNOT DECIDE: %s has restartXmax = %r, outside [0, 1000]." % (path, xm)
+    # THE FLAG ITSELF, as a tri-state, not only rendered into a string (F07).
+    # It used to be read only to build `tool_said`, a parenthetical nothing
+    # compared against, while the verdict was recomputed from the cutoff.
+    passed = d.get('passedRestartSanityCheck')
+    if passed is not None and not isinstance(passed, bool):
+        return None, ("CANNOT DECIDE: %s carries passedRestartSanityCheck=%r, which is not a "
+                      "boolean. The tool's verdict is the thing this oracle compares against, so "
+                      "it is not guessed from a non-boolean (F07)." % (path, passed))
     return dict(H_I=repr(float(hi)), X_max=xm, tool_cutoff=d['restartXcutoff'],
+                tool_passed=passed,
                 tool_said=('Restart Sanity Check Passed'
                            if d.get('passedRestartSanityCheck') is True else
                            'Restart Sanity Check Failed'
@@ -151,15 +239,30 @@ def from_log(path):
                       "that many digits -- it is %d at the bottom of the printed interval and %d "
                       "at the top. Pass the JSON report, which carries H_I at full precision "
                       "(A07, OC-49)." % (path, h_text, c_hi, c_lo))
-    said = ('Restart Sanity Check Failed' if 'Restart Sanity Check Failed' in t
-            else 'Restart Sanity Check Passed' if 'Restart Sanity Check Passed' in t else None)
+    # BOTH phrases present means the log is not a single run's verdict, and
+    # picking the first match would silently choose one. Refuse (F07).
+    nfail = t.count('Restart Sanity Check Failed')
+    npass = t.count('Restart Sanity Check Passed')
+    if nfail and npass:
+        return None, ("CANNOT DECIDE: %s contains both 'Restart Sanity Check Passed' and "
+                      "'...Failed'. That is not one run's verdict, and this reader will not "
+                      "choose between them (F07)." % path)
+    if nfail > 1 or npass > 1:
+        return None, ("CANNOT DECIDE: %s states the restart verdict %d times; a single run states "
+                      "it once, so this is not one run's log (F07)."
+                      % (path, max(nfail, npass)))
+    said = ('Restart Sanity Check Failed' if nfail else
+            'Restart Sanity Check Passed' if npass else None)
+    passed = True if npass else False if nfail else None
     return dict(H_I=h_text.rstrip('0').rstrip('.'), X_max=int(xm.group(1)),
                 tool_cutoff=int(xc.group(1)) if xc else None, tool_said=said,
-                alpha=None, method=None), None
+                tool_passed=passed, alpha=None, method=None), None
 
 if __name__ == '__main__':
     import json
     if len(sys.argv) >= 4 and sys.argv[1] == '--manual':
+        # --manual has no tool verdict by construction, so it is INCOMPLETE by
+        # construction: it exercises limb A alone and says so.
         decide(sys.argv[2], int(sys.argv[3]), label='manual')
         sys.exit(0)
     use_log = len(sys.argv) > 1 and sys.argv[1] == '--from-log'
@@ -201,11 +304,26 @@ if __name__ == '__main__':
             status = 2
             continue
         decided += 1
-        mine = decide(got['H_I'], got['X_max'], got['tool_cutoff'], got['tool_said'], label=path)
-        if got['tool_cutoff'] is not None:
-            theirs = 'ACCEPT' if got['X_max'] <= got['tool_cutoff'] else 'REJECT'
-            if theirs != mine and status == 0:
-                status = 1
+        # THE EXIT STATUS FOLLOWS A-AGAINST-B (F07). It used to redo the
+        # comparison here as well -- `theirs = 'ACCEPT' if X_max <= tool_cutoff`
+        # -- so the status agreed with the printed verdict in being about a
+        # recomputation rather than about what the tool decided.
+        r = decide(got['H_I'], got['X_max'], got['tool_cutoff'], got['tool_said'],
+                   got.get('tool_passed'), label=path)
+        if r['verdict'] == 'INCOMPLETE':
+            # Exit 2 is this oracle's "could not decide", and a missing verdict
+            # is exactly that: the independent decision stands, but no
+            # comparison was made. It must not read as agreement.
+            print("CANNOT COMPARE: %s reports no restart verdict, so this run is evidence about "
+                  "the statistic and not about the tool (F07)." % path, file=sys.stderr)
+            if status == 0:
+                status = 2
+        elif r['verdict'] == 'DISAGREE' and status == 0:
+            status = 1
+        # An internally inconsistent tool is a disagreement found, reported
+        # separately above and counted here.
+        if r['inconsistent'] and status == 0:
+            status = 1
     if decided == 0 and status == 0:
         status = 2
     sys.exit(status)

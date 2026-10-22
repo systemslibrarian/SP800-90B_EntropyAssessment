@@ -7358,3 +7358,187 @@ on.**
   measured magnitudes with headroom, not bounds (rule 6), and the script still
   says so in its own output.
 - Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-82 — F07: "the tool said" was this oracle redoing the tool's comparison
+
+**Second independent AI audit, 2026-10-21, finding F07. REPRODUCED, REPAIRED,
+and the repair's key case shown failing against the pre-repair oracle.**
+
+### The defect
+
+`restart_decision_exact.py` decided whether the tool's restart verdict agreed
+with the exact multinomial-maximum decision. It established "what the tool said"
+like this:
+
+```python
+tool = 'ACCEPT' if X_max <= tool_cutoff else 'REJECT'
+```
+
+That is **this oracle re-doing the tool's comparison with the tool's numbers**,
+not the tool's verdict. The tool's actual verdict —
+`passedRestartSanityCheck` in the report, `Restart Sanity Check Passed/Failed`
+in the log — *was* read, *was* passed in, and was printed as a **decorative
+parenthetical that nothing compared against**. The exit status at the bottom of
+the file performed the same recomputation a second time.
+
+So a tool whose own comparison was wrong — an off-by-one, an inverted operator,
+a NaN path, a verdict written from the wrong variable — produced AGREE.
+
+### Measured, by flipping one field of a genuine report
+
+`passedRestartSanityCheck: true → false`, nothing else touched:
+
+```
+  the tool said: ACCEPT  (its X_cutoff 605; printed "Restart Sanity Check Failed")
+  => AGREE with the corrected decision                                   [exit 0]
+```
+
+**One line asserts that the tool said ACCEPT and that it printed Failed, and
+agreement is declared anyway.** The contradiction is inside the oracle's own
+output.
+
+### The repair: three statements that answer three different questions
+
+| | statement | source |
+|---|---|---|
+| **A** | **INDEPENDENT DECISION** | the exact multinomial maximum, from `H_I` and `X_max` alone — needs nothing from the tool but its inputs |
+| **B** | **THE TOOL'S REPORTED VERDICT** | the field the tool wrote. The only thing that is "what the tool said" |
+| **C** | **what the tool's OWN figures imply** | `X_max` against the tool's `X_cutoff` |
+
+**Agreement is A against B, and never A against C** — A and C share `X_max` and
+differ only in the cutoff, so they agree whenever the two cutoffs fall on the
+same side of `X_max`, which is most of the time and says nothing about whether
+the tool decided correctly.
+
+C is still printed, because **if C disagrees with B the tool's verdict does not
+follow from the figures it reported** — a finding about the tool, not a reason
+to prefer C. That is now reported before any agreement claim:
+
+```
+  !! THE TOOL CONTRADICTS ITSELF: it reported REJECT, and its own X_max 17 against its
+     own X_cutoff 605 implies ACCEPT. Its verdict does not follow from the figures it
+     wrote. Nothing below is evidence about the statistic.
+```
+
+**Incomplete evidence is its own outcome.** A report with no verdict field now
+gives `INCOMPLETE: the tool reported no verdict, so there is nothing to agree
+with. The independent decision above stands on its own; it is NOT
+corroboration.` — exit 2, this oracle's established "could not decide". It used
+to exit **0**.
+
+Two further refusals, both exit 2: a `passedRestartSanityCheck` that is present
+but **not a boolean** (`'yes'` used to produce a confident AGREE), and a log
+containing **both** verdict phrases or either of them more than once — not one
+run's verdict, and this reader will not choose between them.
+
+### The fixtures are one-change-each
+
+The single old fixture changed the cutoff **and** the verdict flag together and
+was labelled *"a wrong tool cutoff exits 1"*. Under the three-statement
+structure it still exits 1 — but because the **flag** disagrees, not the cutoff,
+so the label named the wrong cause. There are now two fixtures, one per cause,
+which is the discipline `A08` produced after four fixtures once refused for one
+shared accidental reason.
+
+### Sensitivity
+
+`oracle-selftest.sh` against `HEAD`'s oracles: **nine cases fail**, including
+every F07 case. The flipped-verdict fixture exits **0** with `=> AGREE` there
+and exits **1** with `=> DISAGREE` here.
+
+### What this does NOT establish
+
+- Nothing about any **real** disagreement. Every fixture here is an edited
+  report; the genuine report still agrees, exit 0, and `C23`'s own verification
+  remains withdrawn (`OC-75`).
+- The `restartCutoffMethod` gate from `OC-76` is untouched and still refuses a
+  report produced by a different statistic before any of this runs.
+- Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-83 — F08: three ways the floor oracle emitted figures from evidence it had rejected
+
+**Second independent AI audit, 2026-10-21, finding F08. All three REPRODUCED on
+fixtures built from a genuine report, all three REPAIRED, each refusing for its
+own stated reason.**
+
+`A08`'s rule for this file is **validate the evidence before emitting
+anything**. Three things got through.
+
+### 1. A note that said "stop" above a floor that did not
+
+The `C02` consistency check compares `hAssessed` against `word_size × h'` — two
+readings of the same measurement. When they disagreed it did this:
+
+```python
+notes.append("hAssessed ... is NOT word_size * h' ... stop and resolve it before using either.")
+```
+
+and then printed the floor. On a genuine report edited to `hOriginal` 0.8 and
+`hAssessed` 0.1:
+
+```
+  NOTE: hAssessed 0.1 is NOT word_size * h' (0.8). ... stop and resolve it before using either.
+  MEASURED FLOOR (C22a), literal  0.79663999191999191
+  MEASURED FLOOR (C22a), F07      0.79999999191999194                    [exit 0]
+```
+
+**The script told the reader to stop and did not stop itself.** If the two
+readings disagree then at least one is wrong and the report does not say which,
+so `h'` is unestablished and nothing may be derived from it. Now a refusal.
+
+### 2. A width that cannot exist
+
+```python
+w = d.get('bitsPerSymbol')
+if not w: raise SystemExit(...)
+```
+
+Only **truthiness** was tested. `bitsPerSymbol: 1.5` was accepted and used three
+times — in `h_orig / w`, in `w × h'`, and in `n = samples × w`, which printed
+`n (bitstring length) 1500000 bits` for a width no run can produce. The tool's
+own usage text says *"Must be between 1-8, inclusive"*, so that is now the test:
+an integer in that range, with `bool` rejected explicitly because `True == 1` in
+Python and `bitsPerSymbol: true` must not read as a 1-bit symbol.
+
+### 3. A bit count standing in for a sample count
+
+Two different requirements were being satisfied by one check:
+
+- **SP 800-90B 3.1.1 item 1** requires at least 1,000,000 **samples** — whether
+  there is a compliant assessment at all;
+- the **C22c/ZALPHA** term was measured at bitstring lengths from 1,000,000
+  **bits** up — whether this script may avoid extrapolating.
+
+Only the second was checked, as `n < 1_000_000` on the bit count. So **125,000
+eight-bit samples** — one eighth of the standard's minimum — gave exactly
+1,000,000 bits and passed. The refusal now names both facts in one breath:
+
+```
+REFUSED: 125000 samples is below the 1,000,000 SP 800-90B 3.1.1 item 1 requires, so
+there is no compliant assessment to floor. Note that 125000 samples at 8 bits is
+1000000 bits, which satisfies the separate ZALPHA length requirement -- a bit count
+is not a sample count (F08).
+```
+
+The sample minimum is checked **first**, and **independently of
+`nonCompliantShortDataset`**, which this oracle already refuses. The same fact
+checked twice by different means is the point: a figure must not rest on one
+field having been set correctly.
+
+### Sensitivity, and the distinctness that makes it mean something
+
+Three new `oracle-selftest.sh` cases, each with a **distinct** expected fragment
+— `C02 relation does not hold`, `integer width of 1-8`, `is not a sample count`
+— because four refusals for one shared accidental reason is exactly how the
+first version of those fixtures looked while testing nothing (`A08`). All three
+exit **0** against `HEAD`'s oracle and **1** here, and the genuine report still
+produces a floor at exit 0.
+
+### What this does NOT establish
+
+- These are **validation** repairs. They change no figure: the genuine report's
+  floor is byte-identical before and after.
+- The width gate accepts 1–8 because that is what **this tool** accepts. It is
+  not a statement about the standard, which admits wider symbols that this
+  implementation does not.
+- Executed on Darwin arm64. Nothing reported upstream.

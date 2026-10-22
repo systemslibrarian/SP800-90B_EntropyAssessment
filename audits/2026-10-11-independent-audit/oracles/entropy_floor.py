@@ -253,6 +253,20 @@ def h_prime(report_path):
     if not w:
         raise SystemExit("REFUSED: %s records no bitsPerSymbol, so a per-bit figure cannot be derived."
                          % report_path)
+    # F08 (OC-83): `if not w` tested TRUTHINESS, so every non-zero value passed.
+    # bitsPerSymbol = 1.5 was accepted and used three times -- in h_orig / w, in
+    # w * h', and in n = samples * w, which gave "n (bitstring length) 1500000
+    # bits" for a width that cannot exist. The tool's own usage text says "Must
+    # be between 1-8, inclusive", so that is the test: an integer in that range
+    # and nothing else. A bool is rejected explicitly because True == 1 in
+    # Python and `bitsPerSymbol: true` must not read as a 1-bit symbol.
+    if isinstance(w, bool) or not isinstance(w, (int, float)) or float(w) != int(w) \
+            or not (1 <= int(w) <= 8):
+        raise SystemExit("REFUSED: %s records bitsPerSymbol=%r. The tool accepts an integer width "
+                         "of 1-8 inclusive, so this is not a width any run of it produced, and a "
+                         "per-bit figure derived from it would be arithmetic on a value that "
+                         "cannot exist (F08)." % (report_path, w))
+    w = int(w)
     if d.get('bitsPerSymbolInferred'):
         notes.append("bitsPerSymbol was INFERRED from the data, not given on the command line; "
                      "an inferred width can change which estimators ran.")
@@ -296,13 +310,26 @@ def h_prime(report_path):
     if ha is not None:
         want = w * hp
         if abs(ha - want) > 1e-12 * max(1.0, abs(want)):
-            notes.append("hAssessed %.17g is NOT word_size * h' (%.17g). The C02 relation does not "
-                         "hold on this report, so one of the two readings is wrong -- stop and "
-                         "resolve it before using either." % (ha, want))
+            # F08 (OC-83): THIS USED TO BE A NOTE, AND THE SCRIPT WENT ON TO
+            # PRINT A FLOOR. The note's own words were "stop and resolve it
+            # before using either", so the script told the reader to stop and
+            # then did not stop itself. Demonstrated on a genuine report with
+            # hOriginal 0.8 and hAssessed 0.1: the note was printed and two
+            # floor figures followed it, exit 0.
+            #
+            # The two fields are different readings of the same measurement. If
+            # they disagree, at least one is wrong, and which one is unknown --
+            # so h' itself is unknown and nothing may be derived from it.
+            raise SystemExit(
+                "REFUSED: %s carries hAssessed %.17g where word_size * h' is %.17g. The C02 "
+                "relation does not hold on this report, so one of the two readings is wrong and "
+                "which one is not determinable from the report. h' is therefore unestablished "
+                "and no figure is derived from it (F08)." % (report_path, ha, want))
         else:
             notes.append("consistency: hAssessed == word_size * h' to within 1e-12 relative, "
                          "as C02 describes.")
-    n = int(d.get('assessedSampleCount') or 0) * w
+    samples = int(d.get('assessedSampleCount') or 0)
+    n = samples * w
     return hp, n, binder, cand, notes, d, tc, w
 
 def from_log(path):
@@ -349,7 +376,7 @@ def from_log(path):
     notes.append("read from a -vv text log by label: width %d, %d samples." % (w, samples))
     return hp, samples * w, binder, cand, notes, w
 
-def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
+def report(hp, n, binder=None, cand=None, notes=(), src="", w=None, samples=None):
     # A02: the width decides whether C01/F10 is reachable at all, so it is a
     # required input to the report rather than something inferred here. None
     # means "not established", and then nothing is called a floor.
@@ -366,6 +393,30 @@ def report(hp, n, binder=None, cand=None, notes=(), src="", w=None):
     print("  n (bitstring length)       %d bits" % n)
     for t in notes:
         print("  NOTE: %s" % t)
+    # TWO DIFFERENT REQUIREMENTS, AND A BIT COUNT SATISFIES ONLY ONE (F08,
+    # OC-83).
+    #
+    #   (a) SP 800-90B 3.1.1 item 1 requires at least 1,000,000 SAMPLES. That is
+    #       a property of the dataset the standard will accept at all.
+    #   (b) the C22c/ZALPHA term was MEASURED at bitstring lengths from
+    #       1,000,000 BITS up, and this script will not extrapolate below that.
+    #
+    # Only (b) was checked, as `n < 1_000_000` on the BIT count. So 125,000
+    # eight-bit samples -- one eighth of the standard's minimum -- gave
+    # n = 1,000,000 bits and passed. Demonstrated on a report edited to exactly
+    # that: "n (bitstring length) 1000000 bits", figures printed, exit 0.
+    #
+    # The sample minimum is checked FIRST because it decides whether there is a
+    # compliant assessment to floor at all. A short run normally also carries
+    # nonCompliantShortDataset, which this script already refuses -- this is the
+    # same fact checked independently of that flag, because a figure must not
+    # rest on a single field being set correctly.
+    if samples is not None and samples < 1_000_000:
+        raise SystemExit("REFUSED: %d samples is below the 1,000,000 SP 800-90B 3.1.1 item 1 "
+                         "requires, so there is no compliant assessment to floor. Note that %d "
+                         "samples at %d bits is %d bits, which satisfies the separate ZALPHA "
+                         "length requirement -- a bit count is not a sample count (F08)."
+                         % (samples, samples, w, n))
     if n < 1_000_000:
         raise SystemExit("REFUSED: n = %d is below the 1,000,000 bits the ZALPHA term was measured "
                          "at; this script will not extrapolate. Run OC-22's harness at this n." % n)
@@ -539,5 +590,10 @@ if __name__ == '__main__':
     else:
         for path in args:
             hp, n, binder, cand, notes, d, tc, w = h_prime(path)
-            report(hp, n, binder, cand, notes, w=w, src="%s  (%s, %s)" % (
+            # The SAMPLE count is passed separately from the bit length: the
+            # two satisfy different requirements and only one of them was ever
+            # checked (F08).
+            report(hp, n, binder, cand, notes, w=w,
+                   samples=int(d.get('assessedSampleCount') or 0),
+                   src="%s  (%s, %s)" % (
                 os.path.basename(path), d.get('type', '?'), d.get('toolVersion', '?')))
