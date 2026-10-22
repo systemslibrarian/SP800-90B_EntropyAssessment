@@ -73,21 +73,128 @@ def load(path, s, m, cc):
             return b
     return None
 
+# ===========================================================================
+# F05 (OC-81) -- A FILTER REFUSES WHAT IT DOES NOT RECOGNISE.
+#
+# The loop below used to be:
+#
+#     mt = DIFF.search(ln.strip())
+#     if not mt:
+#         continue
+#
+# so every line selftest printed that was not a "Significant difference"
+# matching this exact shape was SILENTLY DISCARDED. A difference reported in
+# any other form -- a new diagnostic, a harness error, a comparison that
+# announced it could not run -- left no trace, the recognised rows were all
+# within tolerance, and this script printed "N expected platform delta(s), all
+# within tolerance" and exited 0. --allow-known-platform-deltas is the
+# documented macOS invocation, so that is the path normally run.
+#
+# The taxonomy below is MEASURED, not imagined. `./selftest` on this host emits
+# 33 lines in exactly six shapes, and they are enumerated here; anything else
+# is a diagnostic this script has never seen and must not judge.
+BENIGN = [
+    re.compile(r'^$'),
+    # the fixture inventory, which also carries the reference COUNT used below
+    re.compile(r'^fixture-inventory:\s'),
+    # per-file comparison summary, including the identity limb compareresults.pl
+    # asserts. If that limb ever said anything but "matched", the line stops
+    # matching here and is refused as unrecognised, which is the correct
+    # outcome: this script must not excuse a run whose inputs were not identified.
+    re.compile(r'^(?P<res>[^\s:]+\.res):\s+\d+\s+value\(s\) compared;\s+identity\s+'
+               r'\S+\s+/\s+\d+\s+samples\s+/\s+\d+-bit matched\s*$'),
+    # the per-file and overall maximum-delta lines. BOTH EXTENSIONS ARE NAMED
+    # because the per-file form carries the .bin name while the comparison
+    # summary above carries the .res name -- and the taxonomy pass that built
+    # this list normalised every filename to one token, which hid exactly that
+    # distinction. The first draft accepted only .res and refused nine
+    # legitimate lines. When measuring the shapes a filter must accept, do not
+    # normalise away the part the filter keys on.
+    re.compile(r'^([^\s:]+\.(?:bin|res):\s+)?Maximum delta:\s+[-0-9.eE+]+\s*$'),
+    # the summary verdict
+    re.compile(r'^selftest:\s+(PASS|FAIL)\b'),
+]
+COMPARED = BENIGN[2]
+INVENTORY = re.compile(r'^fixture-inventory:\s+(?P<verdict>\S+)\s+\((?P<inputs>\d+)\s+inputs,\s+'
+                       r'(?P<refs>\d+)\s+references;')
+SUMMARY = re.compile(r'^selftest:\s+FAIL\s+\((?P<k>\d+)\s+of\s+(?P<n>\d+)\s+files\):\s*(?P<files>.*)$')
+
+
 def main():
     path = os.environ.get('SELFTEST_DELTA_MANIFEST', 'known-platform-deltas.txt')
     s, m, cc = os.environ.get('PLAT_S',''), os.environ.get('PLAT_M',''), os.environ.get('PLAT_CC','')
     blk = load(path, s, m, cc)
     seen, problems = {}, []
+    compared, inventory, summary = set(), None, None
     for ln in sys.stdin.read().splitlines():
-        mt = DIFF.search(ln.strip())
-        if not mt:
+        t = ln.strip()
+        mt = DIFF.search(t)
+        if mt:
+            key = (mt.group('file').replace('.res', '.bin'), mt.group('est').strip(),
+                   mt.group('field').strip())
+            try:
+                d = abs(float(mt.group('delta')))
+            except ValueError:
+                problems.append("unparseable delta in: %s" % t); continue
+            seen[key] = max(d, seen.get(key, 0.0))
             continue
-        key = (mt.group('file').replace('.res', '.bin'), mt.group('est').strip(), mt.group('field').strip())
-        try:
-            d = abs(float(mt.group('delta')))
-        except ValueError:
-            problems.append("unparseable delta in: %s" % ln.strip()); continue
-        seen[key] = max(d, seen.get(key, 0.0))
+        cm = COMPARED.match(t)
+        if cm:
+            compared.add(cm.group('res').replace('.res', '.bin'))
+            continue
+        im = INVENTORY.match(t)
+        if im:
+            inventory = im
+            continue
+        sm = SUMMARY.match(t)
+        if sm:
+            summary = sm
+            continue
+        if any(b.match(t) for b in BENIGN):
+            continue
+        # NOT RECOGNISED. Refuse rather than discard: this script's whole
+        # purpose is to decide whether a failing selftest is the KNOWN platform
+        # difference, and it cannot decide that about output it cannot read.
+        problems.append("UNRECOGNISED selftest output, refusing to judge this run: %s"
+                        % (t if len(t) <= 160 else t[:157] + '...'))
+
+    # ---- COMPLETENESS: the comparison set must be whole ----
+    #
+    # The old check required every manifest ROW to have been observed, which
+    # catches a delta that stopped being reported. It did NOT catch a selftest
+    # that compared fewer FILES than exist, because a file with no listed delta
+    # row contributes no row to miss. selftest prints the reference count
+    # itself, so completeness is checked against its own number rather than
+    # against anything written here twice.
+    if inventory is None:
+        problems.append("no 'fixture-inventory:' line: the reference set was never declared, "
+                        "so the comparison cannot be shown complete")
+    else:
+        if inventory.group('verdict') != 'PASS':
+            problems.append("fixture-inventory did not PASS (%s): the references themselves are "
+                            "in question, so no difference can be excused" % inventory.group('verdict'))
+        nrefs = int(inventory.group('refs'))
+        if len(compared) != nrefs:
+            problems.append("INCOMPLETE comparison: %d reference(s) declared, %d file(s) actually "
+                            "compared (%s)" % (nrefs, len(compared), ", ".join(sorted(compared)) or "none"))
+        if summary is not None and int(summary.group('n')) != nrefs:
+            problems.append("selftest's own summary counts %s files where the inventory declares %d"
+                            % (summary.group('n'), nrefs))
+
+    # ---- and the summary's file list must agree with the differences parsed ----
+    #
+    # This is the cross-check that makes the two readings verify each other: if
+    # a difference were reported in a form the DIFF regex does not match, the
+    # summary would name a file for which nothing was parsed. The unrecognised
+    # -line refusal above should already have fired; this catches the case where
+    # the line is benign-shaped but carries a verdict.
+    if summary is not None:
+        named = set(summary.group('files').split())
+        parsed = {k[0] for k in seen}
+        for f in sorted(named - parsed):
+            problems.append("selftest names %s as differing, but no difference for it was parsed" % f)
+        for f in sorted(parsed - named):
+            problems.append("a difference was parsed for %s, which selftest's summary does not name" % f)
 
     if blk is None:
         print("the exception does NOT apply on this platform: no manifest block matches")

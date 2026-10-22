@@ -208,6 +208,29 @@ static bool outputTargetIsSafe(const string &outPath, const char *inPath) {
 // short-option cluster ends in a letter the optstring marks with ':' and no
 // argument is attached, skip the next element, because that element is the
 // option's ARGUMENT and not an option at all.
+//
+// F04 (OC-80) -- AND THE REPAIR ONLY COVERED THE TWO-CHARACTER SPELLING.
+//
+// The first version tested `a[n - 1]` -- the LAST character of the cluster --
+// and then required `n == 2`, so it fired for `-o` and for nothing else.
+// `-vo --version` and `-qo --version` are the same request written as a
+// cluster, `n == 3`, so the argument was never skipped, `--version` was read as
+// an option, and the bypass was fully open. Measured on all three tools:
+//
+//   -o  --version data.bin 1   exit 0, no banner, ASSESSED, report written
+//   -vo --version data.bin 1   exit 0, BANNER, nothing assessed, NO report
+//   -qo --version data.bin 1   exit 0, BANNER, nothing assessed, NO report
+//
+// Exit status 0 with nothing assessed, and any previous report left in place:
+// A04 verbatim, through a different spelling of the same options.
+//
+// Testing the last character was the wrong idea rather than an incomplete one,
+// and `n == 2` was there to stop it misfiring on `-oout` (whose last character
+// is 't'). So it is replaced by the actual cluster walk getopt performs:
+// LEFT TO RIGHT from the first character, and the FIRST letter that takes an
+// argument ends the cluster -- with the argument attached if any characters
+// follow it, and in the next element if none do. That is correct for every
+// cluster length, which is why no length test remains.
 // ===========================================================================
 static bool versionOptionRequested(int argc, char *argv[], const char *optstring) {
     for (int i = 1; i < argc; i++) {
@@ -216,13 +239,37 @@ static bool versionOptionRequested(int argc, char *argv[], const char *optstring
         if (strcmp(a, "--") == 0) return false;            // end of options
         if (a[0] != '-' || a[1] == '\0') return false;     // first operand, or "-"
         if (strcmp(a, "--version") == 0) return true;      // a real option
-        const size_t n = strlen(a);
-        const char last = a[n - 1];
-        const char *p = strchr(optstring, last);
-        // ':' after the letter means it takes an argument; n == 2 means the
-        // cluster is exactly "-x", so the argument is the NEXT element. For
-        // "-oout" or "-l5,10" the argument is attached and nothing is skipped.
-        if (p != NULL && p[1] == ':' && n == 2) i++;
+        // The cluster, exactly as getopt reads it.
+        for (size_t j = 1; a[j] != '\0'; j++) {
+            const char *p = strchr(optstring, a[j]);
+            if (p == NULL || a[j] == ':') {
+                // AN UNRECOGNISED OPTION MAKES THIS NOT A VERSION REQUEST.
+                //
+                // Found by this repair's own control set, and OPEN BEFORE IT
+                // TOO: `-Z --version data.bin 1` printed the banner and exited
+                // 0 on the pre-repair build as well. The operator supplied an
+                // operand and an invalid option, so they asked for an
+                // assessment and got exit 0 with nothing assessed -- the same
+                // class as F04 itself, through a third spelling.
+                //
+                // Returning false hands the element to getopt, which reports
+                // the invalid option and makes the run fail. A legitimate
+                // --version request contains no invalid options, so this costs
+                // nothing: whichever comes first, a `--version` or an
+                // unrecognised option, decides.
+                //
+                // ('a[j] == \':\'' guards strchr finding the separator itself
+                // rather than an option letter.)
+                return false;
+            }
+            if (p[1] == ':') {
+                // This letter takes an argument. If anything follows it in
+                // this element, THAT is the argument; otherwise the argument
+                // is the next element and must not be read as an option.
+                if (a[j + 1] == '\0') i++;
+                break;
+            }
+        }
     }
     return false;
 }

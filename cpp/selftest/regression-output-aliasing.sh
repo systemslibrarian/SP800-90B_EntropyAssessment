@@ -221,13 +221,35 @@ else
     printf '  %-52s SKIP  ln -s does not alias here (MSYS2 copies)\n' "F03 temp-path symlink"
 fi
 
-# ---- A04: -o --version must not print a version and exit 0 ----
+# ---- A04 / F04: a --version that is really -o's ARGUMENT, in every spelling ----
+#
+# F04 (OC-80): A04's repair tested the LAST character of the cluster and then
+# required the cluster to be exactly two characters, so it fired for "-o" and
+# for nothing else. "-vo --version" and "-qo --version" are the same request
+# written as a cluster and the bypass stayed fully open. Measured on all three
+# tools against the pre-repair build: exit 0, version banner printed, nothing
+# assessed, no report written -- A04 verbatim through a different spelling.
+#
+# THE SPELLINGS ARE A LOOP, NOT A CASE. Three spellings here; the repair is a
+# left-to-right cluster walk that is correct for every length, so a fourth
+# spelling needs no new code, only a new row.
+#
+# "-Z --version" is in the list for a reason: it was open on the pre-repair
+# build too, found by this repair's own control set rather than by the audit. An
+# unrecognised option now makes the prescan return false so getopt reports it.
+#
+# It is "-Z" and not "-Z -o", which was the first draft and tested nothing: the
+# "-o" that followed consumed "--version" as its argument on the pre-repair
+# build as well, so the row passed on both arms and looked like a control that
+# had found nothing rather than a case that was never exercised.
 for tool in ea_non_iid ea_iid ea_restart; do
+  for spell in "-o" "-vo" "-qo" "-Z"; do
+    # shellcheck disable=SC2086
     case "${tool}" in
-        ea_restart) out=$( ( cd "${work}" && "${bindir}/${tool}" -i -o --version absent-data 1 0.9 ) 2>&1 ); rc=$? ;;
-        *)          out=$( ( cd "${work}" && "${bindir}/${tool}" -i -o --version absent-data 1 ) 2>&1 ); rc=$? ;;
+        ea_restart) out=$( ( cd "${work}" && "${bindir}/${tool}" -i ${spell} --version absent-data 1 0.9 ) 2>&1 ); rc=$? ;;
+        *)          out=$( ( cd "${work}" && "${bindir}/${tool}" -i ${spell} --version absent-data 1 ) 2>&1 ); rc=$? ;;
     esac
-    label="${tool} -o --version absent-data"
+    label="${tool} ${spell} --version absent-data"
     # Assert on the VERSION BANNER, not on the word "version": the usage text
     # documents a --version option, so grepping for the word matched the usage
     # output and failed a tool that had behaved correctly. An assertion must
@@ -239,7 +261,46 @@ for tool in ea_non_iid ea_iid ea_restart; do
     else
         pass "${label}  refused (exit ${rc}), no version banner"
     fi
+  done
 done
+
+# ---- and the controls for the F04 repair: it must not break the opposite case
+#
+# Every row below behaves IDENTICALLY on the pre-repair build, which is what
+# makes them controls: they establish that the cluster walk narrowed nothing.
+# The one that matters most is the attached-argument form, because the condition
+# the repair removed ("the cluster is exactly two characters") was there to stop
+# the old last-character test misfiring on "-oNAME".
+#
+# THE SIGNAL IS errorLevel 0, NOT THE PRESENCE OF A FIELD. A first draft keyed
+# "assessed" on assessedSampleCount, which an ERROR report also carries -- a run
+# that printed "*** No assessment was performed. ***" and exited 255 was scored
+# as having assessed 1000 samples. An assertion must key on a signal only the
+# thing it is testing can produce.
+ctl_assess() { # ctl_assess <label> <args...>
+    local label=$1; shift
+    rm -f "${work}/f04ctl.json"
+    local out rc
+    out=$( ( cd "${work}" && "${bindir}/ea_non_iid" "$@" ) 2>&1 ); rc=$?
+    if printf '%s' "${out}" | grep -q 'Disclaimer: NIST-developed software'; then
+        fail "control: ${label}" "printed the version banner"
+    elif [ "${rc}" -ne 0 ]; then
+        if printf '%s' "${out}" | grep -q 'could not put the report in place'; then
+            printf '  %-52s SKIP  C24: no report can be written on this platform\n' "control: ${label}"
+        else
+            fail "control: ${label}" "exit ${rc}"
+        fi
+    elif [ -s "${work}/f04ctl.json" ] && grep -q '"errorLevel" : 0' "${work}/f04ctl.json"; then
+        pass "control: ${label}  assessed, no banner"
+    else
+        fail "control: ${label}" "exit 0 but no completed report"
+    fi
+}
+ctl_assess "-o NAME still assesses"        -i -a -q -o f04ctl.json capture.bin 1
+ctl_assess "-oNAME (attached) still assesses" -i -a -q -of04ctl.json capture.bin 1
+ctl_assess "-vo NAME (cluster) still assesses" -i -a -q -vo f04ctl.json capture.bin 1
+ctl_assess "-qo NAME (cluster) still assesses" -i -a -q -qo f04ctl.json capture.bin 1
+rm -f "${work}/f04ctl.json"
 
 # and the control for THAT assertion: a real --version must still print it
 if "${bindir}/ea_non_iid" --version 2>&1 | grep -q 'Disclaimer: NIST-developed software'; then

@@ -7168,3 +7168,193 @@ Baseline 42 → 41 flags, one deletion, no additions.
   unread exit status is.
 - Executed on Darwin arm64. The defect is platform-independent by construction —
   it needs only a `python3` that fails — but it was demonstrated on one host.
+
+## OC-80 — F04: the `--version` prescan only ever covered the two-character spelling
+
+**Second independent AI audit, 2026-10-21, finding F04. REPRODUCED on all three
+tools, REPAIRED, and a third open spelling found by the repair's own controls.**
+
+### The defect
+
+`versionOptionRequested()` inspected `a[n - 1]` — the **last** character of the
+cluster — and then required `n == 2`:
+
+```c
+const char last = a[n - 1];
+const char *p = strchr(optstring, last);
+if (p != NULL && p[1] == ':' && n == 2) i++;
+```
+
+The `n == 2` was there to stop the last-character test misfiring on `-oout`,
+whose last character is `t`. It also meant the skip fired for `-o` **and for
+nothing else**. `-vo --version` and `-qo --version` are the same request written
+as a cluster, `n == 3`, so `--version` was read as an option rather than as
+`-o`'s argument.
+
+### Measured, all three tools
+
+| spelling | exit | version banner | assessed | report at the `-o` path |
+|---|---|---|---|---|
+| `-o --version data.bin 1` | 0 | no | **yes** | written |
+| `-vo --version data.bin 1` | **0** | **YES** | **no** | **absent** |
+| `-qo --version data.bin 1` | **0** | **YES** | **no** | **absent** |
+
+Exit status 0, nothing assessed, no report written — and any previous report at
+that path left in place. **A04 verbatim, through a different spelling of the
+same options.**
+
+### The repair
+
+Testing the last character was the wrong idea rather than an incomplete one, so
+it is replaced by the cluster walk getopt actually performs: **left to right
+from the first character, and the first letter that takes an argument ends the
+cluster** — argument attached if characters follow it, in the next element if
+none do. That is correct for every cluster length, which is why no length test
+remains.
+
+### A third spelling, found by the controls rather than by the audit
+
+`-Z --version data.bin 1` printed the banner and **exited 0 on the pre-repair
+build too**. The operator supplied operands, so they asked for an assessment and
+got success with nothing done — the same class, through an invalid option.
+
+`--version` is implemented **only** by this prescan: plain `getopt()` would read
+`--version` as the cluster `-` + `-version` and reject it, so the prescan
+defines the whole semantics. An unrecognised option therefore now makes the
+prescan **return false**, handing the element to getopt, which reports it and
+fails the run. A legitimate `--version` request contains no invalid options, so
+this costs nothing: whichever comes first — a `--version` or an unrecognised
+option — decides.
+
+### Controls, and what they establish
+
+Nine rows run on both arms. The six defective cases flip; **every control is
+byte-identical on both builds**, which is what makes them controls — the cluster
+walk narrowed nothing:
+
+| control | both arms |
+|---|---|
+| `--version` alone | banner, exit 0 |
+| `-i --version data 1` | banner, exit 0 (a real request with a flag before it) |
+| `-o NAME` separate argument | assesses, `errorLevel 0` |
+| `-oNAME` **attached** argument | assesses — the case `n == 2` existed to protect |
+| `-vo NAME`, `-qo NAME` clusters | assess |
+| `-l0,1000`, `-vl0,1000` attached comma arguments | identical non-zero exit on both |
+
+Sensitivity, per rule 8: against a build of `de61365`,
+`regression-output-aliasing.sh` fails exactly the nine new cases and no
+controls.
+
+### Two instrument faults in my own testing, both recorded because they mattered
+
+1. **A `head -8` on the tool's output.** It closed the pipe, killed the tool with
+   SIGPIPE, and made `$?` the status of `head`. Every number in that run was
+   about the wrong process, and it briefly looked as though the defect did not
+   reproduce.
+2. **A zsh loop with an unquoted `$a`.** zsh does **not** word-split unquoted
+   expansions, so `-i --version` arrived as a **single argv element**. Every row
+   of that run was meaningless, and two of them read as *the defect is not
+   present*. The probe was rewritten in bash with an argument **array**.
+
+Both are the same shape as the faults this audit keeps finding in the tree: the
+instrument answered a different question from the one asked, and the answer
+looked plausible.
+
+### What this does NOT establish
+
+- Executed on Darwin arm64. The prescan is pure C with no platform branch, but
+  **Windows is NOT RUN**.
+- `getopt` **permutation** is untouched and unexamined: glibc permutes
+  non-options by default, so on Linux a `--version` placed *after* the first
+  operand may still reach getopt where this prescan stops. Not reproduced, not
+  repaired, and recorded here as the next thing to measure.
+- The `-l0,1000` rows exit non-zero on both arms **with an error report
+  written** (`errorLevel -1`, "No assessment was performed"). That is the tool
+  behaving correctly; an earlier draft of the probe scored it as *assessed*
+  because it keyed on `assessedSampleCount`, a field an error report also
+  carries. The regression now keys on `errorLevel 0`.
+
+## OC-81 — F05: the platform-delta filter discarded every diagnostic it did not recognise
+
+**Second independent AI audit, 2026-10-21, finding F05. REPRODUCED in the
+source, REPAIRED, five refusals each shown firing on its own defect.**
+
+### The defect
+
+`check-platform-deltas.py` decides whether a failing `selftest` is the known
+upstream #155 platform difference, and `--allow-known-platform-deltas` is the
+**documented macOS invocation**, so it is the path normally run. Its parse loop
+was:
+
+```python
+mt = DIFF.search(ln.strip())
+if not mt:
+    continue
+```
+
+Every line that was not a `Significant difference` in exactly that shape was
+**silently discarded**. A difference reported in any other form — a new
+diagnostic, a harness error, a comparison announcing it could not run — left no
+trace; the recognised rows were all within tolerance; and the script printed
+*"N expected platform delta(s), all within tolerance"* and exited 0, excusing
+the run.
+
+**A filter refuses what it does not recognise rather than discarding it.**
+
+### The repair, built from measured output
+
+`./selftest` on this host emits **33 lines in six shapes**, so the benign set is
+enumerable rather than guessable. Every line is now classified, and anything
+matching none of the six is reported as `UNRECOGNISED ... refusing to judge
+this run`.
+
+Two of the six shapes do double duty as **completeness** evidence, which closes
+the second half of the finding:
+
+- `fixture-inventory: PASS (11 inputs, 11 references; manifest SHA-256 …)`
+  declares the reference count, and must say `PASS` — if the references
+  themselves are in question, no difference can be excused.
+- eleven `<file>.res: N value(s) compared; identity <file>.bin / N samples /
+  N-bit matched` lines must number exactly that count.
+
+The old check required every manifest **row** to have been observed. That caught
+a delta that stopped being reported, but **not** a selftest that compared fewer
+**files**, because a file with no listed delta row contributes no row to miss.
+The count now comes from selftest's own output rather than from a number
+written here a second time.
+
+And the two readings cross-check each other: the file list in
+`selftest: FAIL (k of n files): …` must equal the set of files for which a
+difference was actually parsed, in both directions.
+
+### Sensitivity — five mutations, five refusals
+
+| mutation | refusal |
+|---|---|
+| an `ESTIMATOR ABSENT: … could not be compared` line appended | `UNRECOGNISED selftest output, refusing to judge this run` |
+| one `value(s) compared` line removed | `INCOMPLETE comparison: 11 reference(s) declared, 10 file(s) actually compared` |
+| the identity limb changed from `… matched` to `identity NOT ESTABLISHED` | `UNRECOGNISED` **and** `INCOMPLETE` — correct, it is both |
+| `fixture-inventory: PASS` → `FAIL` | `fixture-inventory did not PASS (FAIL): the references themselves are in question` |
+| the summary made to name a third file | `selftest names normal.bin as differing, but no difference for it was parsed` |
+
+Unmodified output: **8 expected platform delta(s), all within tolerance**,
+exit 0. The exception still applies exactly where it did.
+
+### An instrument fault worth stating
+
+The taxonomy pass that produced the benign list normalised every filename to a
+single `FILE` token — and the `Maximum delta` lines carry the **`.bin`** name
+while the comparison summaries carry the **`.res`** name. The first draft
+accepted only `.res` and refused nine legitimate lines. **When measuring the
+shapes a filter must accept, do not normalise away the part the filter keys
+on.**
+
+### What this does NOT establish
+
+- The benign taxonomy is **measured on one host, one selftest build**. A
+  selftest change that adds a legitimate line shape will make this refuse —
+  which is the intended direction, and the refusal names the line.
+- Nothing here validates the **tolerances** in the manifest; they remain
+  measured magnitudes with headroom, not bounds (rule 6), and the script still
+  says so in its own output.
+- Executed on Darwin arm64. Nothing reported upstream.
