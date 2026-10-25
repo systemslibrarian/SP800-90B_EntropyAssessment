@@ -23,7 +23,12 @@ repo=$(cd "${here}/../.." && pwd)
 cd "${repo}" || exit 2
 
 # DOCS_CORE -- the documents whose own text the specific checks below read.
-DOCS_CORE="README.md NOTICE BUILDING.md audits/README.md audits/BUG-REPAIR-GUIDE.md audits/2026-09-30/README.md audits/2026-09-30/FINDINGS-TRACKER.md"
+# FORK-DIVERGENCE-AND-TRUST.md is in the core set (OC-91): it cites
+# tools/measure-divergence.sh, audits/WITHDRAWN-VERIFICATIONS.md,
+# WHAT-A-GREEN-SUITE-ESTABLISHES.md and INDEPENDENT-REVIEW-BOUNDARY.md, and a
+# document whose referenced paths are not checked rots silently when one of
+# them moves.
+DOCS_CORE="README.md NOTICE BUILDING.md FORK-DIVERGENCE-AND-TRUST.md audits/README.md audits/BUG-REPAIR-GUIDE.md audits/2026-09-30/README.md audits/2026-09-30/FINDINGS-TRACKER.md"
 TRACKER=audits/2026-09-30/FINDINGS-TRACKER.md
 
 # THE SCOPE WAS THE HOLE (F12 / OC-85).
@@ -678,7 +683,26 @@ DIVTOOL="${repo}/tools/measure-divergence.sh"
 if [ ! -f "${DIVDOC}" ] || [ ! -x "${DIVTOOL}" ]; then
     bad "the divergence document or its measurement script is missing:" "${DIVDOC}"
 else
-    divout=$(sh "${DIVTOOL}" 2>&1)
+    # MEASURE AT THE COMMIT THE DOCUMENT NAMES, NOT AT HEAD.
+    #
+    # Measuring at HEAD made this fail on the very commit that wrote the
+    # figures -- committing the rewrite added files and insertions, so the
+    # document was "stale" before anyone read it. A check that fails on every
+    # commit is a check that gets bypassed.
+    #
+    # So two questions, asked separately:
+    #   1. is the document internally consistent -- do its figures match a
+    #      re-measurement AT THE COMMIT IT NAMES? That is a hard failure, and
+    #      it stays true however far HEAD moves.
+    #   2. is it STALE -- how far behind HEAD is that commit? Also a hard
+    #      failure, but at a threshold, so ordinary work does not trip it.
+    div_at=$(sed -n 's/^\*\*Measured at commit `\([0-9a-f]\{7,40\}\)`.*/\1/p' "${DIVDOC}" | head -1)
+    if [ -z "${div_at}" ]; then
+        bad "the divergence document does not name the commit it was measured at:" \
+            "expected a line starting '**Measured at commit \`<sha>\`'"
+        div_at=HEAD
+    fi
+    divout=$(sh "${DIVTOOL}" "${div_at}" 2>&1)
     divrc=$?
     if ! scanned "${divrc}" "divergence measurement"; then
         :
@@ -709,6 +733,23 @@ else
                  "at ${want_sha}"
         else
             bad "the divergence document's figures have drifted:" "${divbad}"
+        fi
+        # STALENESS, as its own question. 40 commits: this document is rewritten
+        # when the state it describes moves materially, not on every commit --
+        # OC-77..OC-91 is fifteen record entries over about twenty-five commits
+        # -- so 40 is roughly "a round of work has happened since". The commit
+        # must also be an ANCESTOR of HEAD: a document naming a commit that is
+        # not in this history was measured somewhere else.
+        DIV_STALE_AFTER=40
+        behind=$(printf '%s\n' "${divout}" | sed -n 's/^behind-head:[[:space:]]*//p')
+        if ! git merge-base --is-ancestor "${div_at}" HEAD 2>/dev/null; then
+            bad "the divergence document names a commit that is not an ancestor of HEAD:" "${div_at}"
+        elif [ -n "${behind}" ] && [ "${behind}" -gt "${DIV_STALE_AFTER}" ]; then
+            bad "the divergence document is stale:" \
+                "measured ${behind} commits behind HEAD (threshold ${DIV_STALE_AFTER}); re-measure and rewrite what moved"
+        else
+            note "the divergence document's measurement is current:" \
+                 "${behind:-?} commit(s) behind HEAD, threshold ${DIV_STALE_AFTER}"
         fi
     fi
 fi

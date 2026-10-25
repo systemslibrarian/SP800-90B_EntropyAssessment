@@ -8442,3 +8442,98 @@ of the record is deliberate and this is its useful consequence.
   from upstream, so they are deliberately not filed there — §5 item 6 and
   section C exist so a reader cannot miss that they exist.
 - Nothing reported upstream. No change made to the consuming project.
+
+## OC-92 — the five gates ran: all five pass, and the tally defect was what had been failing CI
+
+**Owner's item 3 of 2026-10-21: "five unknown gates is a worse state than five
+failing ones". They are no longer unknown.**
+
+Triggered by pushing to the fork — `origin`, `systemslibrarian`, never
+`upstream`. **A near-miss worth recording first:** `gh` resolved the repository
+to **`usnistgov`** by default, because both remotes are configured and it
+picked upstream. The first `gh run list` returned
+`HTTP 404: … not found on the default branch` for *NIST's* repository. Every
+call is now explicit with `-R`, and the default is pinned. **Nothing was sent
+upstream, and the default would have aimed every query there.**
+
+### What the five did
+
+| gate | before | now |
+|---|---|---|
+| outside-battery regression | **never ran** | **PASS** |
+| script-inventory mutations | **never ran** | **PASS** |
+| corpus mutations | **never ran** | **PASS** |
+| restart regression | **never ran** | **PASS** |
+| estimator guards | **never ran** | **PASS** |
+
+Plus the two added since: **workflow shell syntax** PASS (`OC-84`) and **docs
+checks, logged in full** PASS (`OC-90`).
+
+**Run `40228895652`, conclusion `success` — green for the first time in this
+campaign, after seven consecutive failures.**
+
+### And the tally defect was not hypothetical: it was what had been failing CI
+
+`OC-84` reproduced `F11`'s tally locally by making one regression exit 2. The
+artifacts show it was doing that on **every push**, and that it was the reason
+the job was red. At `39690146243`:
+
+```
+run-all-checks: 22 passed, 1 failed, 1 could not run (21 regression scripts discovered)
+could-not-run: regression-platform-deltas
+failed: total-check-count
+```
+
+`failed: total-check-count` is the **manufactured** failure — the guard
+comparing a two-category total against a three-category expectation — and it
+also inflated the build-state denominator to 24. The gate wanted
+`22 passed, 0 failed, 1 could not run` and got `1 failed`, so it failed.
+
+At `40228895652`, with the fix:
+
+```
+run-all-checks: 23 passed, 0 failed, 1 could not run (22 regression scripts discovered)
+could-not-run: regression-platform-deltas
+```
+
+**Linux is where a check legitimately abstains** — `regression-platform-deltas`
+has no manifest block for that platform and exits 2 — so the defect fired there
+and never on macOS, where nothing abstains. That is exactly the class this
+workflow exists to detect: **a claim that is true only on the development host
+is invisible from that host by construction.** It was detected, and then it sat
+in a red job for five pushes while the redness was attributed elsewhere.
+
+### The Linux-only `regression-docs` failure: GONE, and NOT DIAGNOSED
+
+`regression-docs.sh` failed on Linux at `1fa9c82` and **passes at
+`11207ca`**. **I did not identify the cause and this entry does not claim to.**
+
+The two candidate changes between those commits are the stale-claim scan's
+scope (`git ls-files` → `--cached --others --exclude-standard`) and the
+`scanned` outcome (`bad` → `cannot`, exit 1 → exit 2). **Neither is confirmed,
+and the second is argued against by the evidence:** at `11207ca` the Linux run
+reports **PASS**, not COULD NOT RUN, so no scan failed there — which is what the
+`scanned` change would have produced if a failing scan had been the cause.
+
+Four hypotheses were tried analytically before the instrument was changed
+instead — the pinned-figure check against another platform's build figure,
+`otool` versus `ldd`, the `make -Bn` plan, an `lr_one` refusal — and none
+survived. **A defect that stops reproducing without being understood is not a
+defect that was fixed**, and if it returns the workflow now logs that script in
+full and gates it, so it will name itself.
+
+### What this does NOT establish
+
+- **That the five gates passing means what they check is sound.** They assert
+  that the mutation harnesses land their mutations, that the corpus matches its
+  manifest, that the restart regressions hold and that the estimator guards
+  reject their mutants — on x86-64 Linux, at one commit. Each one's own scope
+  is in `WHAT-A-GREEN-SUITE-ESTABLISHES.md`.
+- **That the workflow being green means the fork is correct.** Six of the seven
+  earlier failures were a tally bug and a syntax error in the gating step
+  itself — the job was red for reasons that had nothing to do with the
+  estimators, and it is now green for reasons that say nothing about them
+  either.
+- The Windows job is unchanged by any of this, and its ten `cmd` blocks are
+  still checked by no syntax tool.
+- Nothing reported upstream.

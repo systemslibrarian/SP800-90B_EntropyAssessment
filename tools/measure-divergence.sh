@@ -13,10 +13,26 @@
 #
 # The upstream base is the common ancestor and is FIXED: this fork is zero
 # commits behind, so base..HEAD is the whole divergence.
+#
+# IT MEASURES AT A NAMED COMMIT, DEFAULTING TO HEAD.
+#
+# The first version always measured at HEAD, so the document's figures went
+# stale on the very commit that wrote them -- the enforcement check failed
+# immediately after the rewrite was committed, because committing the rewrite
+# added files and insertions. A check that fails on every commit is a check
+# that gets bypassed. So the document names the commit it was measured at, and
+# the check re-measures AT THAT COMMIT: the figures then stay true forever and
+# what is being enforced is the document's internal consistency. Staleness is a
+# separate question, asked separately, by distance from HEAD.
 set -u
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "${root}" || exit 2
 BASE=${EA_UPSTREAM_BASE:-87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289}
+AT=${1:-HEAD}
+git rev-parse --verify --quiet "${AT}^{commit}" >/dev/null || {
+    echo "measure-divergence: ${AT} is not a commit in this repository." >&2
+    exit 2
+}
 
 git rev-parse --verify --quiet "${BASE}^{commit}" >/dev/null || {
     echo "measure-divergence: upstream base ${BASE} is not in this repository." >&2
@@ -26,18 +42,19 @@ git rev-parse --verify --quiet "${BASE}^{commit}" >/dev/null || {
     exit 2
 }
 
-head_sha=$(git rev-parse --short=7 HEAD)
-head_date=$(git log -1 --format=%ad --date=short HEAD)
-behind=$(git rev-list --count "HEAD..${BASE}")
-ahead=$(git rev-list --count "${BASE}..HEAD")
+head_sha=$(git rev-parse --short=7 "${AT}")
+head_date=$(git log -1 --format=%ad --date=short "${AT}")
+behind=$(git rev-list --count "${AT}..${BASE}")
+ahead=$(git rev-list --count "${BASE}..${AT}")
 
 printf 'measured-at-commit: %s\n' "${head_sha}"
 printf 'measured-at-date:   %s\n' "${head_date}"
 printf 'upstream-base:      %s\n' "$(git rev-parse --short=7 "${BASE}")"
 printf 'commits-ahead:      %s\n' "${ahead}"
 printf 'commits-behind:     %s\n' "${behind}"
+printf 'behind-head:        %s\n' "$(git rev-list --count "${AT}..HEAD")"
 
-git diff --numstat "${BASE}..HEAD" | python3 -c '
+git diff --numstat "${BASE}..${AT}" | python3 -c '
 import sys
 # The categories are by PATH, and the boundaries are stated rather than
 # inferred: production code is what ships, the harness is what tests it, CI is
