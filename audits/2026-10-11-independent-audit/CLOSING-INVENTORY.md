@@ -378,10 +378,16 @@ cd ../../audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh  # 
 And the two platform jobs, which are the cheap way to find the class of claim
 that is true only on the host you wrote it on:
 
+**Every `gh` command here names the repository, and that is load-bearing**
+(`OC-93`): this checkout has an `upstream` remote, `gh` with no `-R` resolves to
+it, and the name, visibility and default branch of the two repositories are
+identical — so a bare call returns a plausible answer about the wrong tree.
+
 ```sh
-gh workflow run x86-64-platform-facts.yml     # also runs on every push to master
-gh workflow run windows-platform-facts.yml    # manual only; ~8 minutes
-gh run download <id>                          # every log is an artefact
+FORK=systemslibrarian/SP800-90B_EntropyAssessment
+gh workflow run x86-64-platform-facts.yml  -R "$FORK"   # also runs on every push to master
+gh workflow run windows-platform-facts.yml -R "$FORK"   # manual only; ~8 minutes
+gh run download <id>                       -R "$FORK"   # every log is an artefact
 ```
 
 Three instruments now refuse rather than guess, and a reader should know what

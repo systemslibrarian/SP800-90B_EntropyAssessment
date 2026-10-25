@@ -586,6 +586,94 @@ else
     bad "a certified floor is ASSERTED, not quoted, at:" "${assertbad}"
 fi
 
+# EVERY RECORDED gh COMMAND THAT USES A DEFAULT REPOSITORY MUST NAME ONE
+# (OC-93).
+#
+# This checkout has two remotes -- `origin` (the fork) and `upstream`
+# (`usnistgov`) -- and `gh` with no `-R` resolves to UPSTREAM. The two
+# repositories share their name, visibility and default branch, so an
+# unqualified read returns a PLAUSIBLE ANSWER ABOUT THE WRONG TREE rather than
+# failing. Measured: an unqualified `gh repo view --json ...hasIssuesEnabled`
+# returned `true`, which is upstream's value -- the fork's is `false` -- and
+# every other field it printed was identical between the two.
+#
+# So a command recorded in the documentation is a command someone will run, and
+# it names its target or it is a defect. Subcommands that do NOT use a default
+# repository are exempt by name, with the reason: `gh api` takes an explicit
+# path (unless it interpolates {owner}/{repo}), `gh auth` is account-scoped,
+# and `gh repo set-default` takes the repository as a positional argument --
+# that one is the fix, not the hazard.
+echo
+ghbad=$(python3 - "${DOCS_ALL}" <<'GHPY'
+import os, re, sys
+docs = sys.argv[1].split()
+# subcommands that resolve a DEFAULT repository when none is named
+DEFAULTED = r'run|workflow|pr|issue|release|cache|secret|variable|label|ruleset'
+CALL = re.compile(r'\bgh\s+(' + DEFAULTED + r')\s+[a-z-]+([^\n`]*)')
+hits = []
+for d in docs:
+    try:
+        raw = open(d, encoding='utf-8', errors='replace').read()
+    except OSError:
+        continue
+    for m in CALL.finditer(raw):
+        tail = m.group(2)
+        # named either with -R/--repo, or by a shell variable that obviously
+        # carries one ("$FORK"), or the line is prose ABOUT the hazard
+        if re.search(r'-R[ =]|--repo[ =]', tail):
+            continue
+        # IS THIS A COMMAND, OR A MENTION OF ONE? A command someone will run
+        # lives in a fenced block; prose discussing the hazard quotes the bare
+        # form mid-sentence and must be able to. The first draft used a
+        # single-line marker window and flagged two passages that exist to
+        # explain this very defect -- one of them because the word "bare" sat
+        # at the end of the previous line.
+        #
+        # So: inside a fence, -R is required with NO exemption, because a fence
+        # is an instruction. Outside one, the surrounding PARAGRAPH must mark
+        # the hazard -- the same window every other check in this file uses.
+        fences = [mm.start() for mm in re.finditer(r'^```', raw, re.M)]
+        in_fence = sum(1 for f in fences if f < m.start()) % 2 == 1
+        if in_fence:
+            # A RECORD MUST BE ABLE TO QUOTE A BAD COMMAND VERBATIM, INCLUDING
+            # IN A FENCE -- that is what the evidence IS. "No exemption inside
+            # a fence" was too absolute and flagged OC-93's own quotation of
+            # the unqualified call it was reporting.
+            #
+            # The convention is a label ON THE COMMAND: a trailing
+            # `# no -R` / `# unqualified` / `# NOT A COMMAND` comment. It
+            # cannot be used to smuggle a runnable instruction through, because
+            # the label is the statement that it is not one.
+            line_start = raw.rfind('\n', 0, m.start()) + 1
+            line_end = raw.find('\n', m.end())
+            cmdline = raw[line_start: line_end if line_end > 0 else len(raw)]
+            if re.search(r'#\s*(no\s+-R|unqualified|NOT A COMMAND)', cmdline, re.I):
+                continue
+        else:
+            lo = raw.rfind('\n\n', 0, m.start()) + 1
+            hi = raw.find('\n\n', m.end())
+            para = raw[lo: hi if hi > 0 else len(raw)]
+            # STEMS, not exact words. "resolves to" missed a paragraph saying
+            # "resolved the repository to" -- the same slip the certified-floor
+            # check made with "retire"/"retires". Second instance; stem by
+            # default.
+            if re.search(r'not optional|OC-93|resolv|attempted dispatch|wrong tree'
+                         r'|bare\s|named either|unqualified|default repositor', para, re.I):
+                continue
+        hits.append('%s:%d%s' % (os.path.relpath(d), raw.count('\n', 0, m.start()) + 1,
+                                 ' (in a code fence)' if in_fence else ''))
+print(' '.join(sorted(set(hits))))
+GHPY
+)
+ghrc=$?
+if ! scanned "${ghrc}" "recorded-gh-command scan"; then
+    :
+elif [ -z "${ghbad}" ]; then
+    note "every recorded gh command names its repository:" "yes"
+else
+    bad "a recorded gh command would resolve to the default repository:" "${ghbad}"
+fi
+
 # THE WITHDRAWN-VERIFICATION REGISTER MUST BE COMPLETE (OC-88).
 #
 # A withdrawal recorded only in the chronological entry that performed it is a

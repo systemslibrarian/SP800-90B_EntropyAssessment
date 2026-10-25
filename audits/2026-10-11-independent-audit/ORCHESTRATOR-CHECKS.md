@@ -8537,3 +8537,136 @@ full and gates it, so it will name itself.
 - The Windows job is unchanged by any of this, and its ten `cmd` blocks are
   still checked by no syntax tool.
 - Nothing reported upstream.
+
+## OC-93 — the gh default: one call did answer about NIST's repository, and one was a request sent there
+
+**Owner's item 1 of 2026-10-25: "a gh call without an explicit repository does
+not fail loudly when the wrong repository happens to answer." It did not fail
+loudly. It answered.**
+
+### The sweep
+
+| | count |
+|---|---:|
+| `gh` subcommand invocations matched across every session transcript | **336** |
+| of those, real invocations of a **default-resolving** subcommand with no `-R` | **6** |
+| recorded `gh` commands in tracked documentation with no repository named | **4** |
+| CI run identities cited on the record | **2** |
+| of those, read with an explicit `-R` naming the fork | **2** |
+| figures on the record whose provenance cannot now be established | **0** |
+
+`gh api` with an explicit path, `gh auth`, and `gh repo set-default` (which takes
+the repository positionally — that one is the fix, not the hazard) do not
+resolve a default and are excluded by name, with the reason.
+
+### The one that answered
+
+An unqualified
+`gh repo view --json name,visibility,defaultBranchRef,hasIssuesEnabled`
+returned:
+
+```
+{"defaultBranchRef":{"name":"master"},"hasIssuesEnabled":true,
+ "name":"SP800-90B_EntropyAssessment","visibility":"PUBLIC"}
+```
+
+**That is upstream's answer, not the fork's**, and it is provable from one
+field. Queried explicitly, just now:
+
+| | `hasIssuesEnabled` | `isFork` | name | visibility | default branch |
+|---|---|---|---|---|---|
+| `systemslibrarian/…` | **false** | true | SP800-90B_EntropyAssessment | PUBLIC | master |
+| `usnistgov/…` | **true** | false | SP800-90B_EntropyAssessment | PUBLIC | master |
+
+**Every field anyone looked at was identical between the two.** The only
+discriminator was `hasIssuesEnabled`, which was not the field being read — the
+call was establishing whether Actions could run. The accompanying
+Actions/billing answer, `{"enabled":true,"allowed_actions":"all",…}`, was
+upstream's too.
+
+**Nothing was recorded from it.** A sweep for claims about Actions being
+enabled, allowed actions, billing or runner availability finds **none** in any
+tracked document. The answer was used transiently to decide whether to continue
+building the workflow, and the decision happened to be the same either way. So
+**no published figure rests on it** — and that is luck, not design: had upstream
+differed from the fork on the field being read, the conclusion would have been
+wrong, recorded, and unrecoverable.
+
+### And one was a request sent to NIST's repository
+
+```
+gh workflow run x86-64-platform-facts.yml        # no -R
+HTTP 404: workflow x86-64-platform-facts.yml not found on the default branch
+          (https://api.github.com/repos/usnistgov/SP800-90B_EntropyAssessment/
+           actions/workflows/x86-64-platform-facts.yml)
+```
+
+**That is an attempted workflow dispatch at `usnistgov`.** It was refused,
+because the workflow does not exist there and the account has no write access.
+**Nothing ran, nothing was created, nothing was posted** — but a request was
+made at a third party's repository, unintentionally, and the owner should know
+that rather than read "nothing reported upstream" as meaning no request ever
+left this machine. The standing decision is intact; the near-miss is recorded.
+
+Three further unqualified calls — `gh workflow list` twice and
+`gh run list --limit 2/3` — produced output that is no longer visible: they sat
+in compound commands whose `head` truncation was consumed by the 404 above.
+**I cannot prove what they returned.** No document cites a workflow list or a
+run list, so no figure depends on them; that is an absence of dependency, not a
+recovered provenance, and it is stated as the weaker claim.
+
+### The run identities, which were the real worry
+
+Both run identities cited on the record — `39690146243` and `40228895652` in
+`OC-92` — were read with `-R` naming the fork, on every one of the eleven calls
+that touched them. The two apparent "without `-R`" hits in the transcript sweep
+are **the heredoc that writes `OC-92` itself**, whose prose contains the run
+numbers and the phrase `gh run list` — written unqualified there because the
+entry is quoting the hazard, not issuing a command. **No run identity on the
+record was read from upstream's repository.**
+
+### The repairs
+
+**Four recorded commands now name their target.** Named unqualified here only
+to say which they were — `BUILDING.md`'s
+`gh workflow run windows-platform-facts.yml`, and `CLOSING-INVENTORY.md`'s three
+(`x86-64`, `windows`, `gh run download`) — each of which now carries `-R`.
+A command recorded in documentation is a command someone will run.
+
+**And `regression-docs.sh` enforces it.** A `gh` invocation of a
+default-resolving subcommand must name a repository. The check distinguishes **a
+command from a mention**: inside a fenced block `-R` is required with no
+exemption, because a fence is an instruction; outside one, the surrounding
+paragraph must mark the hazard. Both forms shown failing —
+`BUILDING.md:853 (in a code fence)` and `BUILDING.md:852` in prose.
+
+**And a third draft was wrong by being too absolute.** "Inside a fence, `-R` is
+required with no exemption" flagged `OC-93`'s own verbatim quotation of the
+unqualified call it was reporting — **a record must be able to quote a bad
+command, in a fence, because that is what the evidence is.** The convention is
+now a label **on the command**: a trailing `# no -R`, `# unqualified` or
+`# NOT A COMMAND`. It cannot smuggle a runnable instruction through, because the
+label is the statement that it is not one. Verified three ways: unlabelled in a
+fence → flagged; labelled in a fence → exempt; unlabelled in prose → flagged.
+**Fifth check this campaign whose first catch was its author.**
+
+*Two earlier drafts were wrong by being too literal:* a single-line
+marker window flagged two passages that exist to explain this very defect, one
+of them because the word "bare" sat at the end of the previous line; and the
+marker `resolves to` missed a paragraph saying `resolved the repository to`.
+**That is the second stemming slip in this file** — the certified-floor check
+made the same one with `retire`/`retires` — so stems are now the default there.
+
+### What this does NOT establish
+
+- **Only the transcripts of this project's sessions were swept.** A `gh` call
+  made outside them, or in a session whose transcript is not on this machine, is
+  not covered.
+- The check governs **tracked documentation**. It cannot see a command someone
+  types, and `gh repo set-default` having been pinned is a property of this
+  machine's `gh` config, not of the repository.
+- **`hasIssuesEnabled` being the discriminator is a happy accident.** If the two
+  repositories had agreed on every field, the sweep could not have determined
+  which answered, and the honest verdict would have been "provenance not
+  establishable" rather than "answered about upstream".
+- Nothing reported upstream.

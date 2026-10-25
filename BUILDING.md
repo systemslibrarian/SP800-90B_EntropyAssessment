@@ -388,8 +388,15 @@ The non-vacuity proof uses the 64-byte perturbation.
 This section was unverified for the life of the fork. It is now measured, by a
 manually-triggered GitHub Actions job — `.github/workflows/windows-platform-facts.yml`
 with `.github/scripts/windows-facts.sh` — which needs no Windows machine.
-Run it with `gh workflow run windows-platform-facts.yml`; it uploads every log
-as an artefact. The full account is `OC-48` in
+Run it with
+`gh workflow run windows-platform-facts.yml -R systemslibrarian/SP800-90B_EntropyAssessment`;
+it uploads every log as an artefact. **The `-R` is not optional.** This
+checkout has two remotes, `origin` (the fork) and `upstream` (`usnistgov`),
+and `gh` with no `-R` resolves to **upstream** — measured: a bare
+`gh workflow run` here returned
+`HTTP 404: … not found on the default branch` for
+`api.github.com/repos/usnistgov/…`, which is an attempted dispatch at NIST's
+repository (`OC-93`). The full account is `OC-48` in
 `audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md`.
 
 **What is measured** (MSYS2 MINGW64, gcc 16.2.0):
