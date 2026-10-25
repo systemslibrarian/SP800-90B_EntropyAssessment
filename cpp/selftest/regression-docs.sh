@@ -629,6 +629,37 @@ WVPY
     fi
 fi
 
+# THE INSTRUMENT INVENTORY'S STATED COUNT MUST MATCH THE ENUMERATOR (OC-90).
+#
+# audits/INSTRUMENT-INVENTORY.md stated "70 live" in six places, none of them
+# naming when it was measured, while the enumerator printed 73. A count written
+# in prose drifts from the thing that computes it; the enumerator is the
+# authority and this check is what makes that true rather than asserted.
+#
+# It compares the LIVE figure only. The frozen figure is fixed by construction
+# -- dated evidence does not grow -- and the inventory says so.
+echo
+INVDOC="${repo}/audits/INSTRUMENT-INVENTORY.md"
+if [ ! -f "${INVDOC}" ] || [ ! -x "${repo}/audits/enum-instruments.sh" ]; then
+    bad "the instrument inventory or its enumerator is missing:" "${INVDOC}"
+else
+    inv_live=$(sh "${repo}/audits/enum-instruments.sh" "${repo}" 2>/dev/null \
+               | sed -n 's/^live:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -1)
+    # [0-9][0-9]* and [[:space:]], not \+ and a literal space: \+ is a GNU
+    # extension that BSD sed (macOS) treats as a literal plus, and the
+    # enumerator pads its label with several spaces. The first draft matched
+    # nothing and reported "cannot compare" -- which failed closed, correctly,
+    # and was still the wrong answer.
+    if [ -z "${inv_live}" ]; then
+        bad "the enumerator printed no live count:" "cannot compare"
+    elif grep -q "\*\*${inv_live}\*\* at \`" "${INVDOC}"; then
+        note "the instrument inventory's live count matches the enumerator:" "${inv_live}"
+    else
+        bad "the inventory's stated live count disagrees with the enumerator:" \
+            "enumerator says ${inv_live}; no '**${inv_live}** at <commit>' in the inventory"
+    fi
+fi
+
 # AND THE ORACLE MUST NOT PRINT IT. The prose check above cannot see what a
 # program emits at run time, and the label the oracle PRINTS is the one a reader
 # acts on.

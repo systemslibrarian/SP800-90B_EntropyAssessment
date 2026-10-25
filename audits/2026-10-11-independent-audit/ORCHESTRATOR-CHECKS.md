@@ -8258,3 +8258,86 @@ catch was its author.**
 - The thirteen scripts still exit 1 when run **standalone** without `python3`.
   The suite path is fixed; the standalone path is recorded, not repaired.
 - Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-90 — the instrument count had drifted, and a Linux-only failure was illegible
+
+Two small things found while gathering figures for the fork-divergence rewrite,
+both instances of the same discipline the owner asked that document to follow:
+**every count names the commit and date it was measured at.**
+
+### The instrument inventory stated a count the enumerator contradicted
+
+`audits/INSTRUMENT-INVENTORY.md` stated **70 live** in six places. The
+enumerator printed **73**. None of the six named when it had been measured, so
+nothing in the tree could tell which was current.
+
+The count is now stated **once**, with its commit and date, and the enumerator
+is made the authority rather than described as one — `regression-docs.sh` fails
+if the stated figure and the enumerator's disagree:
+
+```
+  the instrument inventory's live count matches the enumerator: 73
+```
+
+Measured **`live: 73` (63 mechanical + 10 reviewed) at `ae023b0`, 2026-10-22**,
+against `live: 70` (60 + 10) at `32920f49`, 2026-10-21. The frozen figure keeps
+no date because it cannot change: dated evidence does not grow.
+
+**The three added instruments were listed by diffing the enumerator's own
+`--list` output across the two commits, in a throwaway worktree.** The first
+draft of that sentence named them from recollection and got one wrong — it
+credited a sibling of `zalpha_ceiling_by_n.py` that does not exist. The real
+three are `cpp/selftest/regression-deadguard.sh`,
+`cpp/selftest/regression-workflows.sh` and
+`oracles/compression_ceiling_exact.py`. **A list of what changed is a
+measurement, not a memory.**
+
+The historical section that reconciles 53 against 70 is now explicitly dated to
+`32920f49`, 2026-10-21, and reads in the past tense, so its figures cannot be
+mistaken for current ones. That is the same separation `OC-88` made inside
+`entropy_floor.py`.
+
+Sensitivity: changing the stated **73** back to **70** gives
+`the inventory's stated live count disagrees with the enumerator: enumerator
+says 73; no '**73** at <commit>' in the inventory`.
+
+*And the check itself was wrong once:* its `sed` used `\+`, a GNU extension
+that BSD `sed` treats as a literal plus, so on macOS it matched nothing and
+reported `the enumerator printed no live count: cannot compare`. That failed
+closed, correctly, and was still the wrong answer. `[0-9][0-9]*` and
+`[[:space:]]` instead — the enumerator pads its label with several spaces.
+
+### A failure that reproduced only on Linux was illegible
+
+`regression-docs.sh` **passed** on Linux at `32920f49` and **failed** at
+`1fa9c82`, and the artifact could not say which of its twenty-odd checks had
+failed, because `run-all-checks.sh` prints a failing member's **last four
+lines** — which showed the last check, and that one had passed.
+
+Two changes, both so the next one is legible rather than guessed at:
+
+- `run-all-checks.sh` prints **20** lines of a FAILing member, not 4. A member
+  that fails is the one place where more output is worth the noise. The COULD
+  NOT RUN branch keeps its short tail: its reason is in its last line by
+  construction.
+- the x86-64 workflow runs `regression-docs.sh` **separately, logged in full,
+  and gates it**. The suite still runs it too, and the two must agree.
+
+**This is item 3's own lesson one level down.** Five gates that had never run
+were worse than five failing ones; a failure whose reason is not recorded is
+worse than one that is. Four hypotheses were tried analytically — the
+pinned-figure check against a different platform's build figure, `otool` versus
+`ldd`, the `make -Bn` plan, a `lr_one` refusal — and **none of them was
+confirmed**, which is exactly why the instrument was changed instead of the
+guess being committed.
+
+### What this does NOT establish
+
+- **The Linux `regression-docs` failure is NOT diagnosed.** This entry makes it
+  legible on the next run; it does not say what it is. Nothing here should be
+  read as having identified it.
+- The instrument count is enforced to **match the enumerator**, which is not the
+  same as enforced to be **right**: if the enumerator's rule is wrong, both
+  agree and both are wrong. The rule's own justification is
+  `INSTRUMENT-INVENTORY.md`'s subject and is unchanged.
+- Executed on Darwin arm64. Nothing reported upstream.

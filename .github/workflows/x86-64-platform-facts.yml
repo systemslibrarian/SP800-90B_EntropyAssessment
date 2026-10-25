@@ -269,8 +269,15 @@ jobs:
           # catches that is run here as well as in the suite, because this is
           # the file it was written for.
           ./cpp/selftest/regression-workflows.sh > logs/07-workflows.log 2>&1 || true
+          # regression-docs.sh IN FULL (OC-90). The suite prints only a failing
+          # member's tail, and this member emits about twenty check lines -- so
+          # a failure that reproduces only here was visible as "FAIL" with no
+          # indication of which check. Logged separately and gated separately;
+          # the suite still runs it too, and the two must agree.
+          ./cpp/selftest/regression-docs.sh > logs/07-regression-docs.log 2>&1 || true
           gate "oracle self-test" logs/07-oracle-selftest.log "oracle-selftest: PASS"
           gate "workflow shell syntax" logs/07-workflows.log "regression-workflows: PASS"
+          gate "docs checks (logged in full)" logs/07-regression-docs.log "regression-docs: PASS"
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"

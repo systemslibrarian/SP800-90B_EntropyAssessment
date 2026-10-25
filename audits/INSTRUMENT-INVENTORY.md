@@ -22,8 +22,17 @@ understated (`OC-67`). `audits/enum-instruments.sh` implements it:
 | **c** | something in the tree **invokes** it: sourced, or compiled then run | **no — a reviewed list of 10, each with its reason** |
 | — | **excluded:** compiled outputs (`Mach-O`/`ELF`), pure data, untracked files | yes |
 
-`sh audits/enum-instruments.sh . ` prints `live: 70 (60 mechanical + 10
-reviewed)`. Limbs (a) and (b) find
+`sh audits/enum-instruments.sh . ` prints the live count. **THE ENUMERATOR IS
+THE AUTHORITY AND THIS FILE IS NOT**: every figure below names the commit and
+date it was measured at, and `regression-docs.sh` fails if the stated figure and
+the enumerator's disagree. **Measured `live: 73 (63 mechanical + 10 reviewed)`
+at `ae023b0`, 2026-10-22.** It read 70 (60 + 10) at `32920f49`, 2026-10-21; the
+three added since are `cpp/selftest/regression-deadguard.sh`,
+`cpp/selftest/regression-workflows.sh` and
+`audits/2026-10-11-independent-audit/oracles/compression_ceiling_exact.py` —
+**listed by diffing the enumerator's own `--list` output across the two
+commits, not by recollection**: the first draft of this sentence named one of
+them wrongly. Limbs (a) and (b) find
 `cpp/selftest/selftest`, `generate-refdata`, `compareresults.pl` and a `.mjs`
 reproducer **without naming them**, which is the whole point: those four were
 invisible to every extension-matched sweep this project ran.
@@ -57,8 +66,8 @@ them was being invoked **then**. So:
 
 | set | rule that applies | count |
 |---|---|---:|
-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **70** |
-| **FROZEN** | historical: was it an instrument when the evidence was dated | **79** |
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **73** at `ae023b0`, 2026-10-22 |
+| **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
 
 Counting frozen by the live rule would silently retire 47 artefacts that were
 instruments when they produced the evidence the record still cites.
@@ -89,8 +98,8 @@ thing an extension-matched glob missed.
 
 | set | count | what it is |
 |---|---:|---|
-| **LIVE** | **70** | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
-| **FROZEN** | **79** | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
+| **LIVE** | **73** at `ae023b0`, 2026-10-22 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+| **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
 Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
 the members and `--why` for limb (c)'s reasons.
@@ -104,17 +113,19 @@ their callers, so they are in).
 
 ## How the disagreement was found and settled
 
-An outside session counted **70 live / 79 frozen**. I had reported **53**, and
+**This section is dated: the figures in it are those of 2026-10-21, at
+`32920f49`, and are not the current count.** An outside session counted
+**70 live / 79 frozen**. I had reported **53**, and
 mine was wrong twice over: it omitted `.github/workflows`, the generators, the
 2026-10-09 audit and `repairs/`, **and** it inflated the remainder with four
 `__pycache__` files. The frozen counts matched exactly at 79 on the first
 attempt, which is what showed the disagreement was confined to the live set and
-was about the rule rather than the tree. Applying the rule above gives **70**,
+was about the rule rather than the tree. Applying the rule above gave **70**,
 their number exactly, with the one apparent residual explained by consequence
-(2).
+(2). The live set has since grown to 73; the rule is unchanged.
 
 **The cost, stated plainly:** `OC-64`'s shape sweep reported "33 shell
-instruments swept" against an unstated denominator. 33 of **70** is under half,
+instruments swept" against an unstated denominator. 33 of **70**, the count at the time, is under half,
 and the three extensionless shell instruments were never swept. They have since
 been swept and the conclusion held — but it held by luck of the denominator,
 not by the sweep's design.

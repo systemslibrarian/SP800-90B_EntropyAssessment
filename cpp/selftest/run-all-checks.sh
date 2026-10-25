@@ -122,7 +122,13 @@ run() { # run <label> <command...>
         return
     fi
     printf '  %-34s FAIL (exit %s)\n' "${label}" "${rc}"
-    printf '%s\n' "${out}" | tail -4 | sed 's/^/        /'
+    # 20 LINES, NOT 4 (OC-90). A member that fails is the one place where more
+    # output is worth the noise, and four lines was not enough to diagnose a
+    # regression-docs failure that reproduced only on Linux: the tail showed
+    # the last check, which had passed, and said nothing about which of the
+    # twenty above it had not. The COULD NOT RUN branch keeps its short tail --
+    # its reason is in its last line by construction.
+    printf '%s\n' "${out}" | tail -20 | sed 's/^/        /'
     fail=$((fail + 1)); failed="${failed} ${label}"
 }
 
