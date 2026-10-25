@@ -264,6 +264,60 @@ jobs:
           cat logs/05c-getopt-permutation.log
           exit 0
 
+      - name: "5d. A LATE --version: does permutation reach the prescan's blind spot?"
+        run: |
+          # MEASURE ONLY (OC-103). OC-80 noted that glibc permutation might let a
+          # --version placed AFTER the operand reach getopt, where the prescan --
+          # which stops at the first operand -- never sees it. 5c measured that
+          # glibc does permute, which promoted that note from speculation to a
+          # testable case. This step takes the measurement; it does not gate on
+          # the outcome, because a gate on an unfixed defect is a red job that
+          # tells you nothing new each run. The FIX PASS adds the gate.
+          #
+          # 5c's three lessons are applied here: set +e (the subject is exit
+          # statuses), a 0/1 fixture (urandom at width 1 is refused), and
+          # errorLevel 0 as the "assessed" signal (C14's placeholder means a
+          # report FILE exists even on a failed run).
+          set +e
+          mkdir -p logs
+          python3 -c "import os,sys; sys.stdout.buffer.write(bytes(b & 1 for b in os.urandom(1000000)))" > logs/lv.bin
+          assessed() { grep -q '"errorLevel" : 0' "$1" 2>/dev/null && echo YES || echo no; }
+          {
+            echo "## a late --version on this platform"
+            for t in ea_non_iid ea_iid ea_restart; do
+              case $t in ea_restart) TAIL="1 0.8" ;; *) TAIL="1" ;; esac
+              for form in control late late_with_o lateV; do
+                rm -f logs/lv.json
+                case $form in
+                  control)     ./cpp/$t -i -q -o logs/lv.json logs/lv.bin $TAIL >logs/lv.out 2>&1 ;;
+                  late)        ./cpp/$t -i -q logs/lv.bin $TAIL --version        >logs/lv.out 2>&1 ;;
+                  late_with_o) ./cpp/$t -i -q -o logs/lv.json logs/lv.bin $TAIL --version >logs/lv.out 2>&1 ;;
+                  lateV)       ./cpp/$t -i -q logs/lv.bin $TAIL -V               >logs/lv.out 2>&1 ;;
+                esac
+                rc=$?
+                ban=no; grep -q 'Disclaimer: NIST-developed' logs/lv.out && ban=YES
+                a=$(assessed logs/lv.json)
+                vac=no
+                if [ "$rc" = 0 ] && [ "$a" = no ]; then vac=YES; fi
+                echo "LATEVERSION $t $form: exit=$rc banner=$ban assessed=$a vacuous=$vac"
+              done
+            done
+            # a cluster fragment taken as -o's attached argument would leave a
+            # stray file; name any that appear.
+            for f in logs/*; do
+              case "$f" in logs/lv.bin|logs/lv.json|logs/lv.out|logs/0*|logs/??-*) ;;
+                *) echo "LATEVERSION stray-file: $f" ;;
+              esac
+            done
+          } > logs/05d-late-version.log 2>&1
+          if grep -q 'vacuous=YES' logs/05d-late-version.log; then
+            echo "LATEVERSION VERDICT: at least one form exits 0 having assessed nothing -- a LIVE vacuous-run path" >> logs/05d-late-version.log
+          else
+            echo "LATEVERSION VERDICT: no vacuous run observed on this platform" >> logs/05d-late-version.log
+          fi
+          cat logs/05d-late-version.log
+          exit 0
+
       - name: 6. The full suite and the outside-battery regression
         run: |
           set +e
@@ -347,6 +401,9 @@ jobs:
           # and that the capture survived whatever the platform did (OC-96).
           gate "getopt permutation measured" logs/05c-getopt-permutation.log "PERMUTATION options-after:"
           gate "the capture survived the alias-after-operand form" logs/05c-getopt-permutation.log "PERMUTATION capture-intact: YES"
+          # 5d MEASURES; the gate asserts only that it measured and reached a
+          # verdict. Gating on the verdict waits for the fix pass (OC-103).
+          gate "late --version measured" logs/05d-late-version.log "LATEVERSION VERDICT:"
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"
