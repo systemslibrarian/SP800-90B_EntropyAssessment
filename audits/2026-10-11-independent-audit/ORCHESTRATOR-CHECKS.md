@@ -8976,3 +8976,425 @@ form either way.
 - The `+` probe tested **macOS only**. That `+` means "stop permuting" on glibc
   is from its documentation, not from a run here.
 - Nothing reported upstream.
+
+## OC-97 — the probe I added to measure permutation aborted the job and skipped the full suite
+
+**`OC-96` added step 5c to measure getopt permutation on glibc. Its first run
+failed, and step 6 — the full suite and the outside-battery regression — was
+SKIPPED.**
+
+```
+  ✓ 5b. R-1's blast radius through the production functions
+  X 5c. getopt PERMUTATION: is an option after the first operand honoured?
+  - 6. The full suite and the outside-battery regression
+```
+
+**That is `OC-84`'s failure mode exactly** — a step dying and taking the gates
+after it — **caused by me, four commits after writing that entry.** The cause
+differs: `OC-84` was an empty `if … then … fi`; this was a non-zero exit status.
+
+### Why it died: a probe that cannot survive what it measures
+
+GitHub runs `run:` blocks as **`bash -e`**. Step 5c measures **exit statuses**,
+and the first non-zero one — **255, the tool's usage status, the very thing
+being measured** — aborted the step before `rc=$?` could read it.
+
+**A probe whose subject is failure must not run under `set -e`.** Step 5c now
+sets `set +e` and ends with `exit 0`. Its own status is the wrong instrument
+here, because every interesting outcome is a non-zero one; what judges it is the
+**gate on its log** — a probe that did not measure leaves no
+`PERMUTATION options-after:` line and the gate fails.
+
+### Two more faults in the same probe, both of them mistakes already on this record
+
+Found by running the probe **locally** before pushing again, which is the part
+that should have happened first.
+
+**The fixture did not satisfy its declared width.** It wrote `os.urandom` and
+declared width 1, so the tool refused the file for carrying 8-bit symbols —
+**exit 255 on the CONTROL arm**. A probe whose control fails measures nothing,
+and every row would have been meaningless in the same direction. Now `b & 1`
+bytes.
+
+**The signal was file presence, not `errorLevel 0`.** `[ -s logs/perm.json ]`
+was **true on a run that exited 255**, because `C14` claims the `-o` path with a
+placeholder as soon as it is known — a failed run still leaves a report there.
+**`OC-80` records this exact mistake being made in `F04`'s controls**, with the
+sentence *"an assertion must key on a signal only the thing it is testing can
+produce"*. It was made again here, in a probe written four days later.
+
+### What the probe now measures, verified on Darwin arm64
+
+```
+PERMUTATION options-before: exit=0   assessed=YES      <- the control works
+PERMUTATION options-after:  exit=255 assessed=no
+PERMUTATION verdict: no permutation observed -- same as Darwin arm64
+PERMUTATION alias-after-operand: exit=255
+PERMUTATION capture-intact: YES
+```
+
+Run locally by extracting the step's `run:` body from the YAML and executing it,
+so only the platform-specific answer needs the runner. **The glibc half is still
+NOT RUN.**
+
+### What this does NOT establish
+
+- **The Linux suite did not run for `8c480ce`.** Step 6 was skipped, so that
+  commit has no Linux suite result; the next run covers it.
+- The glibc permutation answer is **NOT RUN**, and `OC-96`'s decision row
+  still carries a prediction rather than a measurement.
+- **Three faults in one 50-line probe**, two of them repeats of mistakes on this
+  record. The lesson is not a new rule — it is that `bash -e` is the default in
+  a `run:` block and the checklist for a new probe is already written in
+  `OC-80`: run it where you can, make the control pass first, and key the signal
+  on something only the subject can produce.
+- Nothing reported upstream.
+
+## OC-98 — the triage redone by mutation: group 1 is ONE, not nine, and the detector has a measured false negative
+
+**Owner's items 1–3 of the return. `OC-95`'s group assignment was made by
+inspection and is corrected here by measurement. It was wrong in the alarming
+direction, which is the better direction to be wrong in and is still wrong.**
+
+### Item 2 — the three class-A flags, broken rather than inspected
+
+Each was given the treatment the group-1 flag got: break the thing the guard is
+supposed to catch, run the guard, report whether it fails. **Three confirmed, none
+confirmed-broken, none unmutable.**
+
+| flag | mutation | control | mutant |
+|---|---|---|---|
+| `regression-input-identity.sh` | `test_run_base.h`: `if(!sha256.empty())` → `if(false)` — the **pre-`N-07` defect**, a report with no byte-binding | exit **0**, PASS | exit **1**, `KeyError: 'sha256'` |
+| `sanitizer-restart-c01.sh` | `restart_main.cpp`: `h_i = H_I` → `2.0 * H_I` at both sites, rebuilt, pointed at via `EA_RESTART_SANITIZER_BIN` | exit **0**, PASS | exit **1**, `FAIL (the report assertions above did not hold)` |
+| `verify-fixture-inventory.sh` | three separate mutations: a manifest line removed; an unlisted `sneaked.bin` added to `bin/`; one fixture's first byte changed | exit **0**, `PASS (11 inputs, 11 references; …)` | exit **1** each, and **each with its own distinct reason**: `found 10 and 11` / `unexpected input 'sneaked.bin'` / `SHA-256 mismatch` |
+
+The third is the one that matters most, because its `PASS` line **states counts**
+and the detail that flagged it reads *"exit status is the message, not the
+verification"*. Three mutations, three distinct refusals — the message is reached
+only when all of it holds.
+
+### Item 1 — the six "frozen and unresolvable" flags: NONE is group 1
+
+The owner's objection was right and the answer is better than the objection
+expected: *"freezing the script does not retire the figures it produced"* — so
+each of the six was read in its surroundings instead of classified by its role.
+**All six are group 2 or 3, and no verification needs withdrawing.**
+
+| flag | what the surroundings say |
+|---|---|
+| `repairs/2026-10-09-ind-02/rerun.sh:45` | **`set -e` is active at that line** — `set -eu` at :3, `set +e` at :40, `set -e` restored at :43 — so a failing assertion aborts. **The detector's own `has_set_e` field said `True` and its detail said `set -e present`. I did not read the field that was answering the question.** → group 2 |
+| `issue272/repro.sh:11`, `:15`, `:18` | the flagged commands **print the figures into the transcript that IS the evidence**. A silent failure yields visibly absent output, not a wrong number — the recorded transcript is its own witness. → group 2 |
+| `widths.sh:6`, `:13`, `:14` | same shape: `python3 cmpc.py …` prints into the recorded transcript. → group 2 |
+| `audits/2026-10-09-independent-audit/rerun.sh:71` | the **next line is `echo "$?" >"$out/truepad-unattested-tools.status"`** — the status is captured to a file the audit reads. The matcher's `STATUSREAD` does not recognise that form. → **group 3**, a seventh instance of the one blind spot |
+
+**And the two "reachable only from Windows CI" were not.** `windows-facts.sh`'s
+tally is pure `bash` reading two files, so it runs here. Tested, three paths:
+
+```
+empty verdict log      -> exit 2  "TALLY REFUSED: ... no stage recorded a verdict."
+an unexpected GATE FAIL -> exit 1  "UNEXPECTED FAILURE: a brand new failure nobody expected"
+an expected failure only-> exit 0  "every failure is a documented platform fact"
+```
+
+The pipes at `:719` and `:732` can only fail silently if `$V` is unreadable, and
+`$V`'s existence and non-emptiness are **preconditions checked at `:703`** with
+the comment *"A tally over nothing is not '0 failed'; it is 'nothing ran'."* →
+group 2. **"Needs Windows" was my assumption, not a property of the script.**
+
+### The corrected triage
+
+On the 67 lines the detector now reports:
+
+| group | `OC-95` said | measured |
+|---|---:|---:|
+| 1 — reaches a figure or a claim | 9 | **1** |
+| 2 — does not | 48 | **54** |
+| 3 — false positive | 11 | **12** |
+
+**Group 1 is the one line already tested and repaired** —
+`regression-deadguard.sh`'s provenance declaration. Every other line I had put
+in group 1 was there because I reasoned from what the construct *does* rather
+than reading what surrounds it.
+
+### Item 3 — the re-run, and a measured FALSE NEGATIVE
+
+**The re-run after repairing `regression-deadguard.sh`:** 68 → **67** flagged
+lines, 40 → **39** signatures. The change is exactly the repaired flag plus a
+line shift (`B:48` → `B:66`). **No group assignment changed**, and the mis-wiring
+was in the *wrapper* that runs the detector, not in the scanning, so it could not
+have affected other files.
+
+**But a positive control found a real false negative.** One planted dead guard of
+each class, scanned:
+
+```
+   detected: ABC   MISSED: D
+```
+
+The planted class-D pipe was reported as **C**. Cause:
+`has_pipefail = 'pipefail' in src` — **a substring search over the whole file,
+comments included**. My control's comment said *"no pipefail"*, which the
+detector read as having it. And where a file also has `set -e`, the `D` branch is
+skipped and `elif not has_e` is false, so such a pipe is flagged as **nothing** —
+a silent miss, not a misclassification. `set -o errexit` was unanchored the same
+way.
+
+Fixed to require an actual setting. **Its reach in this tree today is zero
+files** — one file mentions `pipefail` and does set it — so the flag set is
+**unchanged by the fix**, which is how the fix is verified as safe. The control
+now reports `detected: ABCD   MISSED: none`.
+
+**So the floor framing is no longer theoretical.** `1` is a **floor on the live
+surface**, not a count: the detector has a measured 16 % false-positive rate, a
+*demonstrated* false negative, and four patterns that between them do not claim
+to cover every dead-guard shape. **Every appearance of a group-1 count in this
+record is a floor**, and `OC-95`'s text is corrected to say so.
+
+### What this does NOT establish
+
+- **One class of false negative was measured, not the rate.** The control tested
+  the four shapes the detector claims; it says nothing about shapes it does not
+  claim.
+- The three class-A confirmations rest on **one mutation each** for two of them
+  and three for the third. A guard can catch one break and miss another.
+- The `issue272` and `widths` flags are group 2 because **the transcript is the
+  witness** — which holds for evidence already recorded and would not hold for a
+  future re-run whose output nobody reads.
+- Nothing reported upstream.
+
+## OC-99 — the gh conclusion restated as what is establishable, and the discriminator recorded as a standing hazard
+
+**Owner's item 4 of the return: `"0 figures whose provenance cannot be
+established"` is one claim too strong when three calls' output is gone.**
+
+### The claim, withdrawn and replaced
+
+`OC-93` reported:
+
+> | figures on the record whose provenance cannot now be established | **0** |
+
+**That is not establishable and is withdrawn.** Three unqualified calls —
+`gh workflow list` twice and `gh run list --limit 2/3` — produced output that no
+longer exists; it sat in compound commands whose `head` truncation was consumed
+by a 404. **If the output is unrecoverable, it cannot be compared against any
+document figure**, so a claim about what it did or did not support is not
+available in either direction.
+
+**The establishable statement, which is narrower:**
+
+> **Every figure, run identity and CI conclusion in any document is accounted
+> for by an `-R`-qualified call.** Separately, **three calls' output is
+> unrecoverable**, and whether they returned anything a document relies on
+> cannot be determined — only that no document's content requires them.
+
+The difference matters: the first version claimed a property of the *three
+calls*. The replacement claims a property of the *documents*, which is what the
+evidence supports. The three remain visible as unrecoverable rather than
+absorbed into a zero.
+
+### The discriminator is a standing hazard, not a detail of one sweep
+
+| | `systemslibrarian/…` (the fork) | `usnistgov/…` (upstream) |
+|---|---|---|
+| name | `SP800-90B_EntropyAssessment` | `SP800-90B_EntropyAssessment` |
+| visibility | `PUBLIC` | `PUBLIC` |
+| default branch | `master` | `master` |
+| `hasIssuesEnabled` | **false** | **true** |
+| `isFork` | **true** | **false** |
+
+**Three of the five fields are identical, and the two that differ are not the
+ones anyone reads.** `OC-93` identified which repository had answered *only*
+because `hasIssuesEnabled` happened to be in the field list — it was not the
+field being queried for, and nothing in the method would have caught it
+otherwise. Had the query asked for name, visibility and branch alone, the sweep's
+honest verdict would have been **"provenance not establishable"**.
+
+So this is a property of the pair of repositories, permanent for as long as both
+remotes are configured, and it applies to **every future call**:
+
+- a wrong-target answer is **well-formed and plausible**, never an error;
+- `isFork` and `hasIssuesEnabled` are the **only** cheap discriminators, and a
+  query that omits them cannot tell the two apart;
+- **so the target is named, never inferred from the answer.** `-R` on every
+  call, `gh repo set-default` pinned, and recorded commands carrying the
+  repository — all three enforced by `regression-docs.sh` for the third.
+
+### What this does NOT establish
+
+- **The three unrecoverable calls stay unrecoverable.** Nothing here recovers
+  them; the claim about them is withdrawn rather than resolved.
+- The discriminator table is **today's**. If upstream disabled issues, or the
+  fork enabled them, the cheap discriminators would narrow to `isFork` alone.
+- Nothing reported upstream.
+
+## OC-100 — the undeclared-pair backlog, banded: 27 reach a figure, over 15 mechanisms, 14 of them already tested
+
+**Owner's item 5. Band sizes first, as asked, then the top band only.**
+
+### The two facts, and the bands
+
+**Fact (a) — did the later repair delete or rewrite a non-comment line the
+earlier one added?** **True for all of them by construction**: that is how the
+set was selected, and a rewrite appears as a deletion in a unified diff.
+
+**Fact (b) — does either repair sit on a path that reaches a figure?** Defined by
+path, and the definition is stated rather than assumed: **FIGURE** = production
+code (`cpp/` outside `selftest`), the oracles, and the figure-producing tools —
+these compute or certify numbers the record cites. **CLAIM** = the harness and
+CI, where a wrong result reaches *"the suite is green"* rather than a number.
+
+| band | both facts | count |
+|---|---|---:|
+| **1** | (a) and (b) — **reaches a figure** | **27** |
+| **2** | (a) only — reaches a claim | **39** |
+| | total undeclared | **66** |
+
+(66, not 65: four more commits have landed since `OC-94` measured it.)
+
+### Band 1 collapses to 15 mechanisms, and that is the real unit
+
+27 pairs, but only **15 distinct earlier mechanisms** — seven pairs all touch
+the same one. **Testing a mechanism once discharges every pair that touched it**,
+so the work is 15, not 27.
+
+| earlier mechanism | pairs | the case that exercises it | status |
+|---|---:|---|---|
+| `65b00d8` mutation landing + the labelled read | **7** | `mutation-lib.sh`'s `MUTATION-DID-NOT-APPLY` third outcome; `oracle-selftest`'s labelled-read refusals | tested — suite green, 3 mutation harnesses pass |
+| `c2f2b94` `A02`/`A06`: the width-1 exclusion, the platform manifest | 3 | `entropy_floor.py` at width 1 **and** width 8; `regression-platform-deltas.sh`'s 6 cases | tested (`OC-78`, and again here) |
+| `acedae5` `F13` unreachable, `C22c` values | 3 | `compression_ceiling_exact.py`, `zalpha_ceiling_by_n.py` | tested (`OC-86`) |
+| `b12247c` canary re-signatured 3-way | 2 | `build-provenance-canary.sh` | **tested here** |
+| `5074fff` `C23` as a recomputed decision | 2 | `oracle-selftest`'s restart cases; `restart_multinomial_max.validate()` | tested (`OC-82`, `OC-87`) |
+| `b072bf7` the oracles' exit contract | 1 | `oracle-selftest`, 18 cases | tested (`OC-82`/`OC-83`) |
+| `7a0be01` `fix(C23)`'s cutoff method | 1 | the `restartCutoffMethod` gate | tested (`OC-94`) |
+| `6b4717e` `OC-67`'s per-family denominators | 1 | `entropy_floor.py`'s family table | tested (`OC-78`) |
+| `ada37a1` `OC-62`'s compression-vs-collision | 1 | `zalpha`, `compression_ceiling_exact` | tested (`OC-86`) |
+| `feef1a1` the outside battery's figures | 1 | `regression-outside-battery.sh` | tested — in the suite |
+| `210aed6` `oac-13`'s atomic report write | 1 | `regression-output-aliasing.sh`'s `F03` cases | tested (`OC-77`), shown failing pre-repair |
+| `8ff739d` the canary itself | 1 | `build-provenance-canary.sh` | **tested here** |
+| `9aa991d` the canary widened to both `long double` formats | 1 | same | **tested here** |
+| `4ad3095` the divergence-figure enforcement | 1 | three drift mutations | tested (`OC-91`) |
+| `5c3353f` two instrument rules published | 1 | **none — it is rule text, not a mechanism** | **no runnable case; declared as such** |
+
+**14 of the 15 have a runnable case, and all 14 were exercised this campaign.
+One has no runnable case at all.** So the backlog was a **declaration** gap, not
+a coverage gap — which is what rule 12 says the obligation is, and the reason it
+is about declaring rather than about testing more.
+
+### What the canary run established, and a gap it exposed
+
+```
+canary: TREE    REPAIRED
+canary: BUILD   NOT-DISTINGUISHED
+canary: NOTE    REPAIRED is not REVIEWED: the repairs are self-authored and unreviewed.
+```
+
+Exit 0, digest matched. Three of the fifteen mechanisms discharged at once.
+
+**And the canary is not in the enforced suite** — not in
+`regression-script-inventory.txt`, not run by `run-all-checks.sh`. It is run by
+hand and by **step 4 of the x86-64 job**. So a mechanism that three band-1 pairs
+touched is exercised by CI and not locally, which means a local green suite says
+nothing about it. **Recorded, not changed:** it is slow, CI runs it on every
+push, and adding a 25th check for something already gated is a worse trade than
+saying where it runs.
+
+### What this does NOT establish
+
+- **Band 2's 39 pairs are not examined.** They reach a claim rather than a
+  figure, and nothing here says they are sound.
+- "Tested this campaign" means **the mechanism's own case was run and passed**,
+  not that the pair was tested as a pair in the rule-12 sense for all 27. The
+  seven pairs on `65b00d8` share one case; if that case is too weak for one of
+  the seven, this entry would not have found it.
+- The FIGURE/CLAIM split is **by path**. A harness whose output is cited as a
+  figure would be misfiled by it, and `regression-outside-battery.sh` pins
+  four-significant-figure values that **are** cited — it is in band 1 only
+  because `tools/outside-battery-check.cpp` is.
+- Nothing reported upstream.
+
+## OC-101 — two standing decisions recorded, and the route list contradicted one of them twice
+
+**Owner's constraints of 2026-10-25: no independent cryptographer or security
+review, ever — `C8` stays WILL NOT BE DONE; and the verdict stays partially
+established, permanently.**
+
+### The first decision was already in the record, and I contradicted it anyway
+
+`CLOSING-INVENTORY.md`'s will-not-be-done bucket has said since 2026-10-15:
+*"Independent review of any repair. The owner has decided there will be none."*
+
+**`FORK-DIVERGENCE-AND-TRUST.md` §5, as I rewrote it in `OC-91`, led with
+"Independent review of the production delta" and listed three more items asking
+for independent review.** §0 item 7 of that same document exists to correct the
+previous version for recommending a declined route — and the rewrite made the
+identical error with a different route, in the section written to fix it.
+
+That is worth stating plainly rather than softening: **the correction of a
+contradiction reproduced the contradiction.** The check that catches the
+upstream version of this (`regression-docs.sh`'s stale-claim registry) has no
+entry for "independent review", because the declined-route class was treated as
+a one-off rather than as a class.
+
+### What §5 says now
+
+No route list. Two decisions and what they settle:
+
+**Decision 1 — nothing is reported upstream** (2026-10-15). Extended with a
+clause `OC-93` made necessary: **no request of any kind is sent there** — not an
+issue, pull request, comment, workflow dispatch, or unqualified `gh` call,
+because one such call did reach `usnistgov` and was refused only by a 404.
+
+**Decision 2 — no independent review of any kind, ever** (`C8`, restated
+2026-10-25). Its consequences are larger than Decision 1's and are now stated
+rather than implied:
+
+- **`REPAIRED` never becomes `REVIEWED`.** The third status in the entry
+  vocabulary is named only to say what is permanently absent.
+- every *"independent verification remains"* note in the tracker, `C-01`'s
+  included, **resolves here and nowhere else**;
+- the four defects in section A.2 were introduced by this fork's own repairs,
+  three of them by one repair interacting with another, and **that mechanism is
+  reviewed by nobody but its author** — rule 12 is the whole of the mitigation;
+- the instruments are in the same position: two withdrawn verifications, a
+  five-of-nineteen false pass inside the enforced documentation check, and a
+  detector with a measured 16 % false-positive rate **and a demonstrated false
+  negative**, all written by the same author.
+
+**And the verdict is therefore PERMANENTLY PARTIALLY ESTABLISHED** — not
+"pending independent review", because there is no pending:
+
+| | |
+|---|---|
+| established | that specific defects reproduce, that specific repairs change the reproduced behaviour, and that specific figures re-derive — each on the platforms its entry names, by instruments this project wrote |
+| permanently not established | that the repairs are correct, the instruments sound, the figures right, or that any of it would survive a reviewer |
+
+The readiness statement no longer says the code is "a suitable candidate for
+independent review". It says it **is not, and will not become, independently
+reviewed software**, and that only reversing Decision 2 would change that.
+
+### What this does NOT establish
+
+- **`C8` has no prior definition in this repository.** The label is the owner's;
+  the decision it names is recorded in the will-not-be-done bucket and in §5,
+  and the two are now cross-referenced. If `C8` means more elsewhere, this
+  entry records only the part stated.
+- **The declined-route class is now checked, which it was not when this entry
+  was first written.** Seven phrases joined the stale-claim registry —
+  `Independent review of the production delta`,
+  `suitable candidate for independent review`, `route to external trust`,
+  `Submit generally applicable repairs upstream` and three siblings — so a
+  document that *recommends* a closed route fails the suite unless its paragraph
+  says the route is closed. Verified: appending
+  *"The next step is an Independent review of the production delta."* to the
+  divergence document gives
+  `stale claims present again: FORK-DIVERGENCE-AND-TRUST.md:559`.
+
+  *Two drafts of that were wrong.* The markers went into the certified-floor
+  check's regex instead of the stale-claim check's `EXEMPT` — two checks, two
+  exemption lists, and I edited the one I had most recently been reading. Then
+  the surviving hit was `OC-91`'s own correction table, whose cell says
+  *"contradicts the owner's standing decision"* — a phrasing the marker list did
+  not know. **Third stemming-or-phrasing miss in this file**, and the lesson is
+  the same each time: the exemption list must learn the words the corrections
+  actually use, not the words the check's author expects.
+- Nothing reported upstream.

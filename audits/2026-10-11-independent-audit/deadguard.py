@@ -24,8 +24,26 @@ def analyse(path, rel, repo):
     try: src = open(path, encoding='utf-8', errors='replace').read()
     except Exception: return []
     lines = src.split('\n')
-    has_e = bool(re.search(r'^\s*set\s+-[a-z]*e|set\s+-o\s+errexit', src, re.M))
-    has_pipefail = 'pipefail' in src
+    # BOTH OF THESE WERE SUBSTRING TESTS, AND ONE OF THEM MATTERED (OC-98).
+    #
+    # `has_pipefail = 'pipefail' in src` is true of any file that MENTIONS
+    # pipefail -- including a comment saying the file lacks it, which is exactly
+    # what documenting the D pattern looks like. Measured by a positive control
+    # that planted one dead guard of each class: the planted D was reported as
+    # C, because the comment above it read "no pipefail". And where a file also
+    # has `set -e`, the D branch is skipped and the `elif not has_e` is false,
+    # so the pipe is flagged as NOTHING -- a silent false negative, not a
+    # misclassification.
+    #
+    # Its reach in this tree today is ZERO files: one file mentions pipefail and
+    # it does set it. The fix is therefore a change to what the detector would
+    # do, not to what it has done, and the flag set is unchanged by it -- which
+    # is how the fix is verified.
+    #
+    # `set -o errexit` was likewise unanchored; anchored now for the same reason.
+    has_e = bool(re.search(r'^\s*set\s+-[a-z]*e\b|^\s*set\s+-o\s+errexit\b', src, re.M))
+    has_pipefail = bool(re.search(r'^\s*set\s+-[a-zA-Z]*o\s+pipefail\b'
+                                  r'|^\s*set\s+-o\s+pipefail\b', src, re.M))
     out = []
 
     # map heredoc bodies so we don't analyse their contents as shell

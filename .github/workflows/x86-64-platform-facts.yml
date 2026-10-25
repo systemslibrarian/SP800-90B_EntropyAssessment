@@ -201,43 +201,68 @@ jobs:
 
       - name: "5c. getopt PERMUTATION: is an option after the first operand honoured?"
         run: |
+          # A PROBE THAT MEASURES EXIT STATUSES MUST NOT RUN UNDER set -e
+          # (OC-97). GitHub runs `run:` blocks as `bash -e`, so the FIRST
+          # measured non-zero status aborted this step -- exit 255, the tool's
+          # usage status, which is the very thing being measured. Step 6 was
+          # then skipped, so this probe hid the full suite: OC-84's failure
+          # mode exactly, from a different cause, four commits after that entry
+          # was written.
+          #
+          # So: set +e, and the step always exits 0. What judges it is the GATE
+          # on its log -- a probe that did not measure leaves no
+          # "PERMUTATION options-after:" line and the gate fails. The step's own
+          # status would be the wrong instrument here, because every
+          # interesting outcome is a non-zero one.
+          set +e
           mkdir -p logs
-          # THE OTHER HALF OF A MEASUREMENT THAT CANNOT BE TAKEN ON macOS
-          # (OC-96). BSD getopt stops at the first non-option; glibc PERMUTES,
-          # moving options after operands to the front. Measured on Darwin
-          # arm64: `-i -a data.bin 1 -q -o out.json` exits 255 and writes no
-          # report, because the five trailing words are read as operands.
-          # Whether glibc accepts the same line is the open half, and it is a
-          # COMPATIBILITY DECISION rather than a defect -- so this MEASURES and
-          # PRINTS rather than gating on an expected answer.
-          python3 -c "
-          import os,sys
-          sys.stdout.buffer.write(os.urandom(1000000))" > logs/perm.bin
+          # THE SIGNAL IS errorLevel 0, NOT THE PRESENCE OF A FILE. C14 claims
+          # the -o path with a placeholder as soon as it is known, so a FAILED
+          # run still leaves a report there -- `[ -s report.json ]` was true on
+          # a run that exited 255. OC-80 records this exact mistake being made
+          # in F04's controls; it is made here again and corrected here again.
+          assessed() { grep -q '"errorLevel" : 0' "$1" 2>/dev/null && echo YES || echo no; }
+          # 0/1 BYTES, NOT urandom. The first draft wrote urandom and declared
+          # width 1, so the tool refused the file for having 8-bit symbols --
+          # exit 255 on the CONTROL arm, which would have made every row of
+          # this probe meaningless. A fixture must satisfy the width it is
+          # declared with.
+          python3 -c "import os,sys; sys.stdout.buffer.write(bytes(b & 1 for b in os.urandom(1000000)))" > logs/perm.bin
           {
-            echo '## getopt permutation on this platform'
-            for form in before after; do
-              rm -f logs/perm.json
-              if [ "$form" = before ]; then
-                ./cpp/ea_non_iid -i -a -q -o logs/perm.json logs/perm.bin 1 >/dev/null 2>&1
-              else
-                ./cpp/ea_non_iid -i -a logs/perm.bin 1 -q -o logs/perm.json >/dev/null 2>&1
-              fi
-              rc=$?
-              if [ -s logs/perm.json ]; then wrote=YES; else wrote=no; fi
-              echo "PERMUTATION options-$form: exit=$rc report=$wrote"
-            done
-            # and the A05-relevant question: with -o AFTER the operand, did the
-            # pre-getopt prescan see it? The prescan stops at the first operand,
-            # so on a permuting platform -o can be honoured by getopt while the
-            # early identity guard was never armed. writeJsonReport's own guard
-            # is the authoritative one; this records whether the EARLY one fired.
+            echo "## getopt permutation on this platform"
+            echo "fixture: $(wc -c < logs/perm.bin) bytes"
             rm -f logs/perm.json
+            ./cpp/ea_non_iid -i -a -q -o logs/perm.json logs/perm.bin 1 >/dev/null 2>&1
+            rc=$?
+            wrote=$(assessed logs/perm.json)
+            echo "PERMUTATION options-before: exit=$rc assessed=$wrote"
+            rm -f logs/perm.json
+            ./cpp/ea_non_iid -i -a logs/perm.bin 1 -q -o logs/perm.json >/dev/null 2>&1
+            rc=$?
+            wrote=$(assessed logs/perm.json)
+            echo "PERMUTATION options-after: exit=$rc assessed=$wrote"
+            if [ "$wrote" = YES ]; then
+              echo "PERMUTATION verdict: glibc PERMUTES -- an option after the operand is honoured here and refused on Darwin"
+            else
+              echo "PERMUTATION verdict: no permutation observed -- same as Darwin arm64"
+            fi
+            # The A05-relevant half: with -o AFTER the operand, did the
+            # pre-getopt prescan see it? The prescan stops at the first operand
+            # while getopt does not, so on a permuting platform -o can be
+            # honoured with the EARLY identity guard never armed.
+            # writeJsonReport's own guard is the authoritative one; this records
+            # whether the capture survived regardless.
             cp logs/perm.bin logs/permalias.bin
+            before=$(sha256sum logs/permalias.bin | cut -d" " -f1)
             ./cpp/ea_non_iid -i -a logs/permalias.bin 1 -q -o logs/permalias.bin > logs/perm-alias.txt 2>&1
             echo "PERMUTATION alias-after-operand: exit=$?"
-            echo "PERMUTATION capture-intact: $( [ "$(wc -c < logs/permalias.bin)" = 1000000 ] && echo YES || echo '*** DESTROYED ***' )"
+            after=$(sha256sum logs/permalias.bin | cut -d" " -f1)
+            [ "$before" = "$after" ] && echo "PERMUTATION capture-intact: YES" \
+                                     || echo "PERMUTATION capture-intact: *** DESTROYED ***"
+            sed -n "1,4p" logs/perm-alias.txt | sed "s/^/  alias stderr: /"
           } > logs/05c-getopt-permutation.log 2>&1
           cat logs/05c-getopt-permutation.log
+          exit 0
 
       - name: 6. The full suite and the outside-battery regression
         run: |

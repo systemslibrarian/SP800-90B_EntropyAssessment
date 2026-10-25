@@ -316,6 +316,19 @@ STALE_CLAIMS=(
  "cutoff of 683"
  "683 as the restart cutoff"
  "gap first becomes non-zero"
+ # DECLINED ROUTES (OC-101). Decision 1 (nothing upstream, 2026-10-15) and
+ # Decision 2 (no independent review of any kind, ever -- C8) are standing
+ # decisions, and a document that RECOMMENDS either route reads as describing
+ # neglect rather than policy. The upstream half was corrected once and the
+ # correction then made the identical error with the review half, in the very
+ # section written to fix it. So the class is checked rather than remembered.
+ "Independent review of the production delta"
+ "Independently review the production-code delta"
+ "Independently verify the later"
+ "suitable candidate for independent review"
+ "route to external trust"
+ "Submit generally applicable repairs upstream"
+ "Upstream acceptance would improve"
 )
 # A block that quotes the wrong wording while describing its correction is a
 # record, not a reassertion. Exemption is judged over the whole paragraph the
@@ -346,6 +359,10 @@ claims = sys.argv[2:]
 EXEMPT = re.compile(r'Correction \(2026-|said "|still said|had been corrected'
                     r'|was headed|headed "|which those two contradict'
                     r'|factor of 1000|a prior session'
+                    # the DECLINED-ROUTE class (OC-101): prose may quote a
+                    # closed route, and must say it is closed.
+                    r'|declin|will not be done|permanently|no pending|standing decision'
+                    r'|Decision 1|Decision 2|OC-101|routes are closed'
                     r'|the claim was|project claimed|it read:|this section said'
                     r'|this cell read|WITHDRAWN|withdrawn|SUPERSEDED|superseded'
                     r'|supersedes|is false|does NOT hold|NOT identical|retire'

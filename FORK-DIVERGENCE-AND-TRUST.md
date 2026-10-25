@@ -45,7 +45,7 @@ Section C carries **prose, not entries** — there is nothing to repair in it.
 | **DEFECT** | the behaviour, stated as behaviour rather than as a code location |
 | **ORIGIN** | **INHERITED** from upstream, or **INTRODUCED BY THIS FORK** — and if introduced, by which repair. A fork that only inherited defects would be a fork that never broke anything, and this one did. |
 | **EVIDENCE** | **EXECUTED** (naming the platforms it ran on), **DERIVED** (follows from a proved argument), or **SOURCE-CONFIRMED** (read in the code, never run). These are three different strengths and are never collapsed. |
-| **STATUS** | **NOT REPAIRED**, **REPAIRED** (with the record entry), or **REPAIRED AND INDEPENDENTLY REVIEWED**. **REPAIRED IS NOT REVIEWED.** Nothing in this fork is in the third state. |
+| **STATUS** | **NOT REPAIRED**, **REPAIRED** (with the record entry), or **REPAIRED AND INDEPENDENTLY REVIEWED**. **REPAIRED IS NOT REVIEWED.** Nothing in this fork is in the third state **and nothing ever will be** — §5 Decision 2 records that there will be no independent review of any kind, ever. The third state is named only to say what is permanently absent. |
 | **DOES NOT ESTABLISH** | what a reader must not conclude from the repair. Every entry has one; an entry without one is incomplete. |
 
 ---
@@ -63,8 +63,8 @@ about the state of the tree.
 | **3** | *"`N-10`: ambiguous report semantics remain"* | **False.** `SUPPORTED-SCOPE-FIXED`, with the conditioning half excluded by the same commit. |
 | **4** | *"`NOVEL-03`: IID restart row and column results retain ambiguous labels"* | **False.** `FORK-FIXED`. Independent verification of `25fbb54` remains outstanding — which is a different statement, and is the one this document should have made. |
 | **5** | the whole **quantified divergence** block: *"Fork repair branch: `repair/2026-10-09-verified-defects`… commit `9556649`… 66 commits ahead… 658 changed paths, 62,252 added text lines"* | **False as a description of this fork.** That branch was merged into `master` at `d226f18` on 2026-10-15 and no longer exists as a separate head. Measured at `11207ca`, 2026-10-25: **179 commits ahead, 0 behind, 1,033 text files, 108,859 insertions, 461 deletions.** Every figure in that block was off by more than a factor of 1.5, and none of them said when it had been taken. |
-| **6** | route item 7: *"Validate Linux and Windows before claiming support for those platforms"* | **False as a pending action.** Both are measured, by CI rather than by acquiring machines: x86-64 Linux on every push since 2026-10-19, Windows MinGW on 2026-10-20. What remains is not validation but **independent** validation, which is item 3 of the rewritten list in §5. |
-| **7** | route item 8: *"Submit generally applicable repairs upstream where practical"*, and *"Upstream acceptance would improve maintainability and external confidence"* | **Contradicts a standing decision, and was never a mere omission.** The owner decided on 2026-10-15 that **nothing is reported upstream**. The route list described a route the project has declined to take, which is worse than not listing it: a reader would have treated the absence of upstream reports as neglect rather than as policy. §5 states the decision and its consequence instead. |
+| **6** | route item 7: *"Validate Linux and Windows before claiming support for those platforms"* | **False as a pending action.** Both are measured, by CI rather than by acquiring machines: x86-64 Linux on every push since 2026-10-19, Windows MinGW on 2026-10-20. What remains is not validation but **independent** validation — which §5 Decision 2 records as permanently declined, so nothing remains as a pending action at all. |
+| **7** | route item 8: *"Submit generally applicable repairs upstream where practical"*, and *"Upstream acceptance would improve maintainability and external confidence"* | **Contradicts a standing decision, and was never a mere omission.** The owner decided on 2026-10-15 that **nothing is reported upstream**. The route list described a route the project has declined to take, which is worse than not listing it: a reader would have treated the absence of upstream reports as neglect rather than as policy. §5 states that decision and its consequences instead — and the first rewrite of §5 then made the same mistake with a different route, which §5 now records. |
 
 **On item 7's framing.** Replies on this fork's upstream issues and pull
 requests came from `@joshuaehill`, who is not a NIST account and who deferred
@@ -382,16 +382,24 @@ Those are physical, operational, supply-chain and governance claims.
 **Three further limits belong here, because they are about this fork rather than
 about estimators in general.**
 
-**Every repair in sections A and B is self-authored and UNREVIEWED.** Not one
-entry is in the `REPAIRED AND INDEPENDENTLY REVIEWED` state. The external
-audits this project has run were **read-only**: they found defects, and the
-repairs answering them were written by the same author as the code.
+**Every repair in sections A and B is self-authored and PERMANENTLY
+UNREVIEWED.** Not one entry is in the `REPAIRED AND INDEPENDENTLY REVIEWED`
+state, and **§5 Decision 2 records that none ever will be**. The external audits
+this project has run were **read-only**: they found defects, and the repairs
+answering them were written by the same author as the code. **The verdict is
+partially established, permanently** — not pending.
 
 **The evidence has itself been defective, repeatedly, and the record says so.**
 Two verifications have been withdrawn (`WV-1`, `WV-2`). A five-of-nineteen
 false-pass was found inside the enforced documentation check. A dead-guard
-baseline of **40 flags** is pinned, of which **36 remain unresolved patterns**
-rather than cleared guards. Confidence in the repairs cannot exceed confidence
+baseline of **39 flags** is pinned, covering **67 flagged lines**, and **all 39
+are unresolved** — a resolved flag leaves the baseline, so the earlier
+"36 of 40" described nothing (`OC-95`). Triaged by mutation (`OC-98`): **1**
+line could reach a figure or a claim and is repaired, **54** could not, **12**
+are false positives of the detector. **The 1 is a FLOOR, not a count**: the
+detector has a measured 16 % false-positive rate and a *demonstrated* false
+negative — a class-D pipe was silently missed because the word `pipefail`
+appeared in a comment. Confidence in the repairs cannot exceed confidence
 in the instruments that checked them, and that is lower than a green suite
 looks.
 
@@ -402,65 +410,82 @@ do not.
 
 ---
 
-## §5 — The route to external trust
+## §5 — Two standing decisions, and what they settle permanently
 
-The previous list had nine items, two of which described a route this project
-has **declined** to take (§0, items 6 and 7). Replaced, and the standing
-decisions are stated as decisions rather than left as apparent gaps.
+The 2026-10-09 version listed nine "routes to external trust", two of which
+described routes this project has **declined** (§0, items 6 and 7). **The first
+rewrite of this section removed the upstream route and then led with four items
+asking for independent review — which the owner had already declined, in
+`CLOSING-INVENTORY.md`'s will-not-be-done bucket, on 2026-10-15.** That is the
+same error as §0 item 7, made again in the correction of it. Corrected here, and
+the shape of the section changes with it: there is no route list, because the
+routes are closed.
 
-**Nothing is reported upstream.** That is the owner's decision of 2026-10-15,
-and it is a constraint on the route, not an oversight in it. Its consequences
-are owned rather than regretted:
+### Decision 1 — nothing is reported upstream
+
+Decided **2026-10-15**, on the basis that an earlier upstream PR went
+unacknowledged. Its consequences are owned rather than regretted:
 
 - the private patch surface is **permanent**, and every rebase onto a future
   upstream release is this project's work;
 - the standard defects in section B stay **this fork's documented divergences**
   and will never be resolved by upstream adopting them;
 - no reviewer will find corroboration of these findings in an upstream issue
-  tracker, so the evidence in `audits/` has to carry the whole weight;
-- and **no statement here may imply NIST involvement.** Replies on this fork's
-  upstream issues came from `@joshuaehill`, not a NIST account.
+  tracker, so the evidence in `audits/` carries the whole weight;
+- **no statement anywhere may imply NIST involvement.** Replies on this fork's
+  upstream issues came from `@joshuaehill`, not a NIST account;
+- and **no request of any kind is sent there.** Not an issue, a pull request, a
+  comment, a workflow dispatch, or an unqualified `gh` call — the last because
+  one such call did reach `usnistgov` and was refused only by a 404 (`OC-93`).
 
-### What would actually move this fork toward external trust
+### Decision 2 — there will be no independent review, of any kind, ever
 
-1. **Independent review of the production delta** — 2,638 lines of churn across
-   21 files at `11207ca` — against the normative clauses and against
-   independently derived oracles. This is first because every other item is
-   weaker without it, and because **REPAIRED IS NOT REVIEWED** and nothing here
-   is in the reviewed state.
-2. **Independent review of the repairs the fork made to its own defects**, as a
-   distinct task. Section A.2 lists four defects this fork introduced, three of
-   them by one repair interacting with another. The mechanism that produces
-   those is not addressed by reviewing the original repairs.
-3. **Independent verification on each supported platform**, not reproduction of
-   this project's CI. The CI answers what the development host cannot, which is
-   a different claim from an independent party having built and run it.
-4. **Bind approval to the exact artefact** — repository, commit, tree,
-   compiler, dependencies, flags and executable digests — and keep that binding
-   outside this repository.
-5. **Release governance that prevents the producer approving their own
-   artefact.** Unchanged from the previous list and still the item least
-   affected by any amount of further software work.
-6. **Independent review of the instruments, not only the code.** This is the
-   item the previous list did not have and the one this round argues for
-   hardest: two withdrawn verifications, a false pass inside the enforced
-   suite, and 36 unresolved dead-guard patterns. A reviewer who checks the
-   repairs and not the harness is trusting the harness.
-7. **Publish the enforced scope, or close it.** `ea_conditioning` is excluded by
-   `876ba05`; `N-03`, `N-05` and `N-11` are deferred behind that exclusion. An
-   explicit enforced scope is an acceptable answer; a quiet one is not.
-8. **Keep physical-source qualification and OTP operational claims separate**
-   from software estimator correctness — section C — and do not let a green
-   suite be cited for either.
+Recorded in the will-not-be-done bucket and restated **2026-10-25**: **no
+independent cryptographer or security review, ever.** It is not a queue item, not
+pending, and not a gap.
+
+**This settles what the fork can ever establish about itself**, and the
+consequences are larger than the first decision's:
+
+- **REPAIRED never becomes REVIEWED.** Every entry in sections A and B is in the
+  `REPAIRED` state, every one of them is self-authored, and **none will ever move
+  to `REPAIRED AND INDEPENDENTLY REVIEWED`.** That third state exists in the
+  field vocabulary only to name what is permanently absent.
+- Every *"independent verification remains"* note in
+  `audits/2026-09-30/FINDINGS-TRACKER.md` — including `C-01`'s, which is
+  otherwise fixed — **resolves here and nowhere else.**
+- The four defects in **section A.2** were introduced by this fork's own repairs,
+  three of them by one repair interacting with another. **The mechanism that
+  produces those is reviewed by nobody but its author**, and rule 12 — declare
+  the pair, test the pair — is the whole of the mitigation.
+- The instruments are in the same position. Two withdrawn verifications
+  (`WV-1`, `WV-2`), a five-of-nineteen false pass inside the enforced
+  documentation check, a dead-guard detector with a measured 16 % false-positive
+  rate **and a demonstrated false negative** — all of it found by the same author
+  who wrote the instruments.
+
+### What follows: the verdict is PERMANENTLY PARTIALLY ESTABLISHED
+
+Not "pending independent review". There is no pending.
+
+| | |
+|---|---|
+| **what is established** | that specific defects reproduce, that specific repairs change the reproduced behaviour, and that specific figures re-derive — each on the platforms named in its entry, by instruments this project wrote |
+| **what is permanently not established** | that the repairs are correct, that the instruments are sound, that the figures are right, or that any of it would survive a reviewer |
+| **what the verdict therefore is** | **partially established, permanently** — and that is the ceiling, not a waypoint |
+
+A reader who wants more than this cannot get it from this repository, and the
+honest thing is to say so in the document rather than to list routes nobody will
+walk.
 
 ### Readiness
 
-The repaired code is a suitable candidate for independent review. **It is not
-sufficient evidence for production entropy approval.**
+**The repaired code is not, and will not become, independently reviewed
+software.** It is not sufficient evidence for production entropy approval, and
+no future work in this repository changes that — only a decision to reverse
+Decision 2 would, and that decision is recorded as permanent.
 
-Until independent source review, independent build verification, artefact
-approval, physical-source evidence and release-governance requirements are
-satisfied, TruePad must retain:
+TruePad must retain:
 
 ```json
 {
@@ -474,8 +499,7 @@ completeness. **Nothing in this repository changes it, and no change to it is
 made from here.**
 
 Merging repair code and approving an entropy-assessment artefact are separate
-decisions.
-
+decisions — and on this project the second one has no path to yes.
 ---
 
 ## §6 — Dates, and how this document goes stale
