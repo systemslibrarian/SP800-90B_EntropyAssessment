@@ -8670,3 +8670,85 @@ made the same one with `retire`/`retires` — so stems are now the default there
   which answered, and the honest verdict would have been "provenance not
   establishable" rather than "answered about upstream".
 - Nothing reported upstream.
+
+## OC-94 — rule 12: the dominant mode of self-inflicted defect, measured and made declarable
+
+**Owner's item 2 of 2026-10-25. "Three of four self-introduced defects came from
+repair interaction" was an observation in a document section; it is now a rule
+with a measurement behind it.**
+
+### The measurement, and what it is not
+
+File-level overlap was tried first and is not the measurement: **nineteen
+commits touch `entropy_floor.py`**, which says nothing about interaction. **Line
+provenance is the question** — for every line a commit deleted, blame the parent
+for which commit introduced it.
+
+Every commit since 2026-10-11:
+
+| | count |
+|---|---:|
+| repairs that landed on an earlier repair's lines | **51** |
+| (later, earlier) pairs | **102** |
+| narrowed to pairs where the later repair deleted a **non-comment** line | **94** |
+| of those, **declared** by the later commit's own message | **29** |
+| **NOT declared** | **65** |
+
+The deleted-code subset is the dangerous shape: that is how a mechanism gets
+silently narrowed. The 65 is a count of **undeclared interactions**, which is a
+documentation defect — **it is not a claim that 65 behavioural defects exist**,
+and most are comment rewrites and list extensions.
+
+### Rule 12, in two halves
+
+**Name the pair** — by identifier, in the commit message, not only as prose
+about the interaction. `F11` described its interaction with the build-state line
+and named neither `OC-66` nor its commit, so no tool can check it and no reader
+can find it.
+
+**Test the pair, not the case** — exercise the case the *earlier* mechanism was
+built for. The suite exercises it incidentally and would pass a mechanism that
+had been quietly narrowed, which is exactly what `F03` and `OC-88` were.
+
+The acceptance condition in `BUG-REPAIR-GUIDE.md` step 8 now carries the
+mechanical way to find the pairs, so they are found rather than remembered.
+
+### The worked example, including what it cost
+
+`F07` restructured `restart_decision_exact.py`, deleting code introduced by
+`OC-26` and `fix(C23)`. Two mechanisms lived in that ground and **neither was
+named in `F07`'s message**:
+
+| mechanism | tested | result |
+|---|---|---|
+| `OC-76`'s `restartCutoffMethod` gate | a report relabelled `printed-binomial` | **intact** — exit 2, `INSTRUMENT MISMATCH` |
+| `A07`'s six-decimal precision guard | a log whose printed `H_I` does not determine the cutoff | **intact** — exit 2, identical message before and after `F07` |
+
+**And the second test took work, which is the finding.** The first attempt used
+`H_I = 0.966182` — adjacent to `OC-49`'s counterexample and therefore plausible
+— and the oracle **decided, exit 0**. That looks exactly like a broken guard and
+was not: `0.966182` does not straddle a cutoff step, so the test established
+nothing in either direction.
+
+A straddling value had to be **constructed**: bisect for the step between
+`H_I` 0.696 (cutoff **684**) and 0.700 (**683**), find it at
+**0.698044238717**, and take `H_I = 0.698044`, whose half-ULP interval gives
+684 at the bottom and 683 at the top. Only then does the guard have something to
+refuse — and it refused, identically on both sides of `F07`.
+
+**A plausible case that a guard correctly passes is indistinguishable from a
+guard that has stopped working.** That is instrument rule 1 and rule 7 arriving
+from a third direction, and it is the cost this rule imposes: testing a pair
+means constructing the earlier mechanism's own case, which is harder than
+running the suite.
+
+### What this does NOT establish
+
+- **Two of 65 undeclared pairs were tested.** Both intact. The other 63 are
+  **not examined**, and this entry does not imply they are sound — only that the
+  undeclared ones are now findable by the command in step 8.
+- The rule governs repairs made **from here on**. The 65 are not retrofitted
+  with declarations; doing so would be writing history rather than recording it.
+- The five realised instances are the five known. A sixth is not excluded, and
+  the search above was for *undeclared* pairs rather than for *broken* ones.
+- Nothing reported upstream.

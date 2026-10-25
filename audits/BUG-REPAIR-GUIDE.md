@@ -169,6 +169,15 @@ available; do not write an untestable numerical repair on a different ABI.
 8. **Commit** the fix and its regression test together in one commit:
    - Message form: `fix(<ID>): <what was wrong>`.
    - In the body: the affected source, the reproduction before and after, and the regression-test path.
+   - **And which earlier repairs this one touches, by identifier, with what demonstrates they still hold together** (rule 12). Find them mechanically rather than from memory — for each file the commit changes:
+
+     ```sh
+     # the old line numbers this change deletes, then who introduced them
+     git diff --unified=0 HEAD -- <file> | awk '/^@@ -/{print $2}'
+     git blame -l HEAD -- <file>
+     ```
+
+     Any commit that introduced a line this one deletes is a pair. **Name it and exercise the case it was built for** — not the suite, which exercises it incidentally and would pass a mechanism that had been quietly narrowed. Measured over the fortnight to 2026-10-25: 94 pairs where a repair deleted an earlier repair's code, **29 declared and 65 not**; and the dominant mode of self-inflicted defect in this project is two correct repairs interacting, five times over.
 9. **Update the tracker** in a separate commit, `audits: <ID> -> <STATE>`. Fill in:
    - **State:** `FORK-FIXED`
    - **Current fork status**
@@ -480,6 +489,88 @@ reproduction command — `audits/INSTRUMENT-INVENTORY.md`. A denominator that
 exists only in the shell history that produced it cannot be re-derived, cannot
 be cited, and cannot be found wrong. Every sweep this project had reported was
 in that state (`OC-67`).
+
+### Rule 12 — a repair that touches ground an earlier repair touched names that pair and tests the interaction
+
+**The dominant mode of self-inflicted defect in this project is not a bad
+repair. It is two repairs interacting, each correct about its own target.**
+
+Five realised instances, all of them defects this fork introduced:
+
+| the pair | what it produced |
+|---|---|
+| `C14`'s early `-o` claim × the assessment input | **`A05`** — a 1,000,000-byte capture replaced by a ~600-byte error report before a sample was read |
+| `C14`'s early claim × `C08`'s atomic rename | **`C24`** — no report could be written on Windows at all, by any invocation |
+| `A05`'s identity guard × `C08`'s temporary file | **`F03`** — the temporary was an unguarded second write path, and the guard printed *"the input is untouched"* when it was not |
+| `A04`'s `--version` prescan × clustered short options | **`F04`** — `-vo --version` exited 0 with nothing assessed |
+| `F02`'s label retirement × the oracle's own comment block | **`OC-88`** — the file asserted four times that a reading is a certified floor while printing `MEASURED FLOOR` |
+
+**So the rule is about declaration, and it has two halves.**
+
+**Name the pair.** A repair that modifies, bypasses or extends a mechanism an
+earlier repair installed **names that repair by identifier** in its commit
+message — not only describes the interaction in prose. `F11` described its
+interaction with the build-state line and named neither `OC-66` nor its commit;
+a tool cannot check that, and the next reader cannot find it.
+
+**Test the pair, not the case.** The acceptance condition is that the earlier
+mechanism is shown to **still hold**, by exercising the case *it* was built for
+— not by the suite passing, which exercises it incidentally and would pass a
+mechanism that had been quietly narrowed.
+
+#### The measurement this rule rests on
+
+Every commit since 2026-10-11, blaming the parent for each line the commit
+**deleted**:
+
+| | count |
+|---|---:|
+| repairs that landed on an earlier repair's lines | **51** |
+| (later, earlier) pairs | **102** |
+| pairs where the later repair deleted a **non-comment** line | **94** |
+| of those, **declared** by the later commit's own message | **29** |
+| **NOT declared** | **65** |
+
+File-level overlap is not the measurement and was tried first: nineteen commits
+touch `entropy_floor.py`, which says nothing. **Line provenance is the
+question.** The deleted-code subset is the dangerous shape, because that is how
+a mechanism gets silently narrowed.
+
+#### What testing the pair actually costs — one worked example
+
+`F07` restructured `restart_decision_exact.py`, deleting code introduced by
+`OC-26` and by `fix(C23)`. Two mechanisms lived in the ground it touched, and
+**neither was named in `F07`'s message**:
+
+- `OC-76`'s `restartCutoffMethod` gate — refuses a report produced by a
+  different statistic. Tested: **intact**, exit 2, `INSTRUMENT MISMATCH`.
+- `A07`'s six-decimal precision guard — refuses a log whose printed `H_I` does
+  not determine the integer cutoff. Tested: **intact**, exit 2, with the same
+  message before and after `F07`.
+
+**And testing the second one took work, which is the point.** The first attempt
+used `H_I = 0.966182` — near `OC-49`'s counterexample, and therefore plausible
+— and the oracle *decided*, exit 0. That looked like a broken guard and was
+not: `0.966182` does not straddle a cutoff step, so the test proved nothing. A
+straddling value had to be **constructed**, by bisecting for the step between
+`H_I` 0.696 (cutoff 684) and 0.700 (683), finding it at 0.698044238717, and
+taking `H_I = 0.698044`, whose half-ULP interval spans 684 at the bottom and 683
+at the top. **Only then does the guard have anything to refuse.**
+
+So the cost of this rule is real: *testing a guard means constructing the case
+it guards against, and a plausible-looking case that the guard correctly passes
+is indistinguishable from a guard that has stopped working.* That is instrument
+rule 1 and rule 7 again, arriving from a third direction.
+
+#### What this rule does NOT claim
+
+- **It does not say the 65 undeclared pairs contain 65 defects.** Most are
+  rewrites of comment blocks and extensions of lists. The 65 is a count of
+  **undeclared interactions**, which is a documentation defect; how many are
+  behavioural defects is not known, and the two tested here were both intact.
+- **It does not replace the suite.** The suite catches an interaction that
+  breaks an existing check. It cannot catch one that narrows a check without
+  breaking it, which is what `F03` and `OC-88` both were.
 
 ## Record discipline
 
