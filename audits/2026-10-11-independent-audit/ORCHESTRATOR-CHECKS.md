@@ -8874,3 +8874,105 @@ from the absence of instances rather than from cost.
 - The 16 % false-positive rate is **this tree's**, measured on 68 flags, and the
   five shapes are not a complete taxonomy of what the detector cannot see.
 - Nothing reported upstream.
+
+## OC-96 — the Windows `cmd` blocks are 26 lines, not ten; and the permutation fix the record recommended is not portable
+
+**Owner's item 4 of 2026-10-25.**
+
+### The `cmd` blocks: measured before choosing between the two options offered
+
+The owner offered two honest answers — convert to PowerShell, which has a
+parser, or record them as unchecked with the reason. **Measuring first changed
+which answer applies.**
+
+| | |
+|---|---:|
+| `cmd` blocks in `windows-platform-facts.yml` | **10** |
+| of those, a **single line** invoking `bash .github/scripts/windows-facts.sh <subcommand>` through MSYS2 | **8** |
+| blocks carrying real `cmd` logic | **2** |
+| lines of `cmd` no syntax tool here can parse | **26** |
+
+**Eight of the ten delegate**, and `windows-facts.sh` **is** `bash -n` checked by
+`regression-workflows.sh`. So their substance is checked; only the wrapper line
+is not. **Including the gating step** — *"8. Tally — THIS GATES"* is one line of
+`cmd` calling into the bash script, so the hazard that bit the x86-64 job (a
+syntax error aborting a gating step and hiding five gates) has almost no surface
+here: there is nothing in that step to get wrong.
+
+The two real blocks are step 0 (MSYS2 discovery, 16 lines) and step 7 (the
+verdict summary, 10 lines). **Neither gates a verdict**, and a failure in either
+is loud rather than silent: step 0 sets `MSYS2_ROOT`, so breaking it breaks every
+later step's `bash.exe` path; step 7 writes the step summary.
+
+**So: recorded as unchecked, with the number, and not converted.** The reason is
+not "no tool exists":
+
+- `pwsh` **is not installed on the development host** — measured. Converting
+  would buy a parser that cannot be invoked here, only on the runner, which is
+  the same place the conversion would first be tested.
+- 8 of the 10 blocks have nothing to convert: one line each, and the substance
+  is already checked.
+- The job is **the only Windows evidence this project has**, and it cannot be
+  run locally. Rewriting ten steps of it to gain a parse check over 26
+  non-gating lines risks that evidence for no checkable gain.
+
+`regression-workflows.sh` now reports this rather than printing a blanket
+`not bash-checked (declared shell)`:
+
+```
+  11 block(s) checked with bash -n; 10 not, of which 8 delegate to a checked bash script
+  UNCHECKED SURFACE: 2 block(s), 26 line(s) of shell no syntax tool here can parse
+```
+
+**A blanket skip and a measured one read the same and are not the same.**
+
+### getopt permutation: the decision's facts, and a wrong mechanism in the record
+
+The decision was already in the owner-decision bucket. What it lacked was
+measurements, and what it carried was a **mechanism that does not work**.
+
+**Measured on Darwin arm64.** `-i -a data.bin 1 -q -o out.json` → **exit 255,
+no report**: BSD getopt stops at the first non-option, so the five trailing
+words become operands and the operand count is wrong. Options-first → exit 0,
+report written.
+
+**Measured in this tree.** **0 of 16** real invocations put an option after an
+operand. The 24 initial hits were prose, JSON issue bodies, log text and *label
+strings* — `check_fail "ea_restart -o /dev/full" "${bindir}/ea_restart" -n -o …`
+counts the label, not the command. So enforcing the documented order **costs
+nothing here**, which is the fact the decision most needed.
+
+**And the record's recommended fix is not portable.** The row said *"a
+one-character change per tool"* — a leading `+` on each optstring. Measured with
+a four-line probe:
+
+| | glibc | macOS |
+|---|---|---|
+| leading `+` in optstring | *stop permuting* | **accepted as an option character** — `-+` taken as valid |
+
+So `"+icatvql:o:"` would **silently add a `-+` option to all three tools** on the
+development platform. The portable enforcement is a **prescan refusal** of an
+option appearing after the first operand — which these tools already have a
+prescan to carry, and which behaves identically everywhere. The row is
+corrected; **the decision is still the owner's and is not made here.**
+
+**The missing half is now measured, not argued.** Step **5c** of the x86-64 job
+records whether glibc accepts the line macOS refuses, and — the part that
+matters for `A05` — whether a permuted `-o` is **invisible to the pre-getopt
+prescan**, since the prescan stops at the first operand while getopt does not.
+`writeJsonReport`'s own guard is the authoritative one; 5c records whether the
+**early** one fired, and gates that the capture survived the alias-after-operand
+form either way.
+
+### What this does NOT establish
+
+- **The 26 unchecked `cmd` lines are unchecked.** Recording a number is not
+  checking them. If one acquires a syntax error, step 0 will fail loudly and
+  step 7 will not — and step 7's failure would be silent in exactly the way this
+  entry says is tolerable only because it gates nothing.
+- **Step 5c has not run.** The Linux permutation behaviour is **NOT RUN** and
+  the prediction above is a prediction. Nothing in the decision row should be
+  read as measured on glibc until that log exists.
+- The `+` probe tested **macOS only**. That `+` means "stop permuting" on glibc
+  is from its documentation, not from a run here.
+- Nothing reported upstream.

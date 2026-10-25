@@ -140,7 +140,7 @@ echo "  extracted: ${verdict#OK|}"
 [ -s "${work}/manifest" ] || {
     echo "regression-workflows: the extractor reported OK but wrote no manifest." >&2; exit 2; }
 
-fails=0; checked=0; skipped=0; subs=0
+fails=0; checked=0; skipped=0; subs=0; delegated=0; unchecked=0; unchecked_lines=0
 while IFS='|' read -r file job step shell nsub blockfile; do
     [ -n "${file}" ] || continue
     subs=$((subs + nsub))
@@ -158,12 +158,32 @@ while IFS='|' read -r file job step shell nsub blockfile; do
             fi
             ;;
         *)
-            # NOT A SKIP IN SILENCE. The shell this block resolved to is
-            # printed, so a block excluded from the bash check is excluded
-            # visibly and because of what the workflow DECLARES, not because of
-            # a filename or a guess.
-            printf '  %-34s %-26s %-5s not bash-checked (declared shell)\n' \
-                "${file}" "$(printf '%.26s' "${step}")" "${shell}"
+            # NOT A SKIP IN SILENCE, AND NOT A BLANKET ONE EITHER (OC-96).
+            #
+            # "not bash-checked" was true and uninformative. Measured: EIGHT of
+            # the ten cmd blocks in windows-platform-facts.yml are a SINGLE
+            # LINE invoking `bash .github/scripts/windows-facts.sh <subcommand>`
+            # through MSYS2, and that script IS checked by bash -n below. So
+            # their substance is checked; only the wrapper is not.
+            #
+            # The two that carry real cmd logic are reported as such, with
+            # their line count, because that is the unchecked surface and a
+            # number is the only honest way to describe it. cmd has no -n
+            # equivalent and no parser this project can invoke -- pwsh is not
+            # installed on the development host either -- so this is a
+            # measurement of what is unchecked, not a check.
+            nlines=$(grep -c . "${blockfile}" 2>/dev/null || echo 0)
+            delegates=$(grep -c 'windows-facts\.sh' "${blockfile}" 2>/dev/null || echo 0)
+            if [ "${nlines}" -le 2 ] && [ "${delegates}" -ge 1 ]; then
+                printf '  %-34s %-26s %-5s delegates to a bash script (checked below)\n' \
+                    "${file}" "$(printf '%.26s' "${step}")" "${shell}"
+                delegated=$((delegated + 1))
+            else
+                printf '  %-34s %-26s %-5s UNCHECKED: %s line(s) of %s logic\n' \
+                    "${file}" "$(printf '%.26s' "${step}")" "${shell}" "${nlines}" "${shell}"
+                unchecked=$((unchecked + 1))
+                unchecked_lines=$((unchecked_lines + nlines))
+            fi
             skipped=$((skipped + 1))
             ;;
     esac
@@ -184,8 +204,11 @@ for s in "${repo}"/.github/scripts/*.sh; do
 done
 
 echo
-printf '  %d block(s) checked with bash -n, %d not bash-checked by declaration, %d expression(s) substituted\n' \
-    "${checked}" "${skipped}" "${subs}"
+printf '  %d block(s) checked with bash -n; %d not, of which %d delegate to a checked bash script\n' \
+    "${checked}" "${skipped}" "${delegated}"
+printf '  UNCHECKED SURFACE: %d block(s), %d line(s) of shell no syntax tool here can parse\n' \
+    "${unchecked}" "${unchecked_lines}"
+printf '  %d GitHub expression(s) substituted\n' "${subs}"
 
 # SHAPE-03: an empty accumulator reads as success. Zero blocks checked means
 # this script looked at nothing, whatever the exit status would otherwise say.

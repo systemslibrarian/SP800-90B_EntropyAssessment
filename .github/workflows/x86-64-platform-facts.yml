@@ -199,6 +199,46 @@ jobs:
                  | tee logs/05b-r1-blast-radius.log
           fi
 
+      - name: "5c. getopt PERMUTATION: is an option after the first operand honoured?"
+        run: |
+          mkdir -p logs
+          # THE OTHER HALF OF A MEASUREMENT THAT CANNOT BE TAKEN ON macOS
+          # (OC-96). BSD getopt stops at the first non-option; glibc PERMUTES,
+          # moving options after operands to the front. Measured on Darwin
+          # arm64: `-i -a data.bin 1 -q -o out.json` exits 255 and writes no
+          # report, because the five trailing words are read as operands.
+          # Whether glibc accepts the same line is the open half, and it is a
+          # COMPATIBILITY DECISION rather than a defect -- so this MEASURES and
+          # PRINTS rather than gating on an expected answer.
+          python3 -c "
+          import os,sys
+          sys.stdout.buffer.write(os.urandom(1000000))" > logs/perm.bin
+          {
+            echo '## getopt permutation on this platform'
+            for form in before after; do
+              rm -f logs/perm.json
+              if [ "$form" = before ]; then
+                ./cpp/ea_non_iid -i -a -q -o logs/perm.json logs/perm.bin 1 >/dev/null 2>&1
+              else
+                ./cpp/ea_non_iid -i -a logs/perm.bin 1 -q -o logs/perm.json >/dev/null 2>&1
+              fi
+              rc=$?
+              if [ -s logs/perm.json ]; then wrote=YES; else wrote=no; fi
+              echo "PERMUTATION options-$form: exit=$rc report=$wrote"
+            done
+            # and the A05-relevant question: with -o AFTER the operand, did the
+            # pre-getopt prescan see it? The prescan stops at the first operand,
+            # so on a permuting platform -o can be honoured by getopt while the
+            # early identity guard was never armed. writeJsonReport's own guard
+            # is the authoritative one; this records whether the EARLY one fired.
+            rm -f logs/perm.json
+            cp logs/perm.bin logs/permalias.bin
+            ./cpp/ea_non_iid -i -a logs/permalias.bin 1 -q -o logs/permalias.bin > logs/perm-alias.txt 2>&1
+            echo "PERMUTATION alias-after-operand: exit=$?"
+            echo "PERMUTATION capture-intact: $( [ "$(wc -c < logs/permalias.bin)" = 1000000 ] && echo YES || echo '*** DESTROYED ***' )"
+          } > logs/05c-getopt-permutation.log 2>&1
+          cat logs/05c-getopt-permutation.log
+
       - name: 6. The full suite and the outside-battery regression
         run: |
           set +e
@@ -278,6 +318,10 @@ jobs:
           gate "oracle self-test" logs/07-oracle-selftest.log "oracle-selftest: PASS"
           gate "workflow shell syntax" logs/07-workflows.log "regression-workflows: PASS"
           gate "docs checks (logged in full)" logs/07-regression-docs.log "regression-docs: PASS"
+          # The permutation step MEASURES; the gate is only that it measured,
+          # and that the capture survived whatever the platform did (OC-96).
+          gate "getopt permutation measured" logs/05c-getopt-permutation.log "PERMUTATION options-after:"
+          gate "the capture survived the alias-after-operand form" logs/05c-getopt-permutation.log "PERMUTATION capture-intact: YES"
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"
