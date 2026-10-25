@@ -8341,3 +8341,104 @@ guess being committed.
   agree and both are wrong. The rule's own justification is
   `INSTRUMENT-INVENTORY.md`'s subject and is unchanged.
 - Executed on Darwin arm64. Nothing reported upstream.
+
+## OC-91 — the fork-divergence document, rewritten against its own figures
+
+**Owner's item 5 of 2026-10-21, deferred until items 1–4 were done because
+`F02`'s relabel and `OC-86`'s re-establishment both change what it must say.**
+
+`FORK-DIVERGENCE-AND-TRUST.md` is replaced. The previous version was dated
+2026-10-09 with a 2026-10-15 note bolted into the middle, and **seven of its
+statements were false** — not stale. They are listed and corrected **as false**
+in its §0, because "superseded" does not tell a reader they would have been
+wrong.
+
+### The seven
+
+| | the claim | why false |
+|---|---|---|
+| 1 | `R-1` "remains unverified and unfixed" | `FORK-FIXED`, repaired 2026-10-19, **executed** on Linux x86-64 and Windows MinGW — and it is a `long double` **format** defect, not a platform one |
+| 2 | `N-08` "remains in direct CLI paths" | `SUPPORTED-SCOPE-FIXED` |
+| 3 | `N-10` "ambiguous report semantics remain" | `SUPPORTED-SCOPE-FIXED` |
+| 4 | `NOVEL-03` "retain ambiguous labels" | `FORK-FIXED`; what remains is independent verification, a different statement |
+| 5 | the whole quantified-divergence block | described a branch merged and deleted on 2026-10-15; said 66 commits ahead where it is **179**, 62,252 insertions where it is **108,859** |
+| 6 | "Validate Linux and Windows before claiming support" | both measured, by CI; what remains is **independent** validation |
+| 7 | "Submit generally applicable repairs upstream" | **contradicts the owner's standing decision** of 2026-10-15 that nothing is reported upstream |
+
+Item 7 mattered most: a reader would have read the absence of upstream reports
+as neglect rather than as policy.
+
+### Three sections that cannot share an entry
+
+**A — code defects**, **B — standard defects**, **C — what none of this
+establishes**. A and B are separated by a single mechanical test, stated in the
+document: *would conforming exactly to the standard's text fix it?* Yes → code.
+If conforming faithfully is what produces the wrong behaviour → standard.
+
+`C18` and `C23` are the worked pair. `C18` is code: the standard says nothing
+about `long` width and 64-bit arithmetic fixes it. `C23` is standard: §3.1.4.3
+step 5's printed formula tests the wrong statistic, and implementing it
+faithfully is what rejects 83.2 % of correctly-operating sources. **Their
+remedies are opposite** — a code defect is fixed by changing the fork, a
+standard defect can only be diverged from, documented and bounded — which is
+why an entry must not drift between them.
+
+Section C carries prose. There is nothing in it to repair.
+
+### Five fields per entry, each answering a standing constraint
+
+**DEFECT** (behaviour, not a code location) · **ORIGIN** (INHERITED, or
+INTRODUCED BY THIS FORK and by which repair) · **EVIDENCE** (EXECUTED naming
+platforms / DERIVED / SOURCE-CONFIRMED — three strengths, never collapsed) ·
+**STATUS** (NOT REPAIRED / REPAIRED / REPAIRED AND INDEPENDENTLY REVIEWED —
+**and nothing is in the third state**) · **DOES NOT ESTABLISH**.
+
+**Section A.2 exists because of the ORIGIN field.** Four defects this fork
+**introduced**: `A05` and `F03` (the report writer destroying the assessment
+input, by `C14`'s and `C08`'s repairs respectively), `C24` (no report writable
+on Windows at all, by those same two interacting), and `F04` (`A04`'s own
+prescan repair covering one spelling). Three of the four came from **one repair
+interacting with another**. A fork that listed only inherited defects would be
+claiming it never broke anything.
+
+### The staleness mechanism is a mechanism
+
+New: `tools/measure-divergence.sh`, which prints §1's figures from `git` at
+`HEAD`; and a `regression-docs.sh` check that **re-runs it and fails if the
+document disagrees**. Sensitivity — three separate drifts, each caught and
+named:
+
+```
+  **179 commits ahead → **66 commits ahead   figures have drifted: ahead(179)
+  | 2,188 | → | 1,063 |                      figures have drifted: production(2,188)
+  `11207ca` → `9556649`                      figures have drifted: commit(11207ca)
+```
+
+Every count in the document names the commit and date it was taken at **at the
+point of use**, not once at the top — a single date on a document mixing
+vintages is the mechanism by which items 1–5 survived.
+
+### And a property of the enumerator worth writing down
+
+Adding `tools/measure-divergence.sh` moved the live instrument count 73 → 74,
+which the `OC-90` check caught. `git ls-files` lists tracked **and staged**
+paths, so **a new instrument begins to count the moment it is staged** — not
+when it is written, not after the commit. That is what lets the stated count and
+the tree be consistent *at commit time*: stage everything, re-run the
+enumerator, write the number it prints. Recorded in
+`INSTRUMENT-INVENTORY.md`, because the rule that an untracked file is not part
+of the record is deliberate and this is its useful consequence.
+
+### What this does NOT establish
+
+- **The document is not a review**, and says so: it is written by the author of
+  the repairs it describes, and every entry carries its own
+  DOES-NOT-ESTABLISH for that reason.
+- **Only §1's figures are enforced.** The prose will go stale in the ordinary
+  way; where it makes a claim about the tree it cites the record entry that can
+  be checked instead of asserting it.
+- **It is not the defect record and not the instrument record.** Instrument
+  defects are a third category and a large one, but they are not divergence
+  from upstream, so they are deliberately not filed there — §5 item 6 and
+  section C exist so a reader cannot miss that they exist.
+- Nothing reported upstream. No change made to the consuming project.

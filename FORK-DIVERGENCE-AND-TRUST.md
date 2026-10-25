@@ -1,186 +1,466 @@
-# Fork divergence and external trust assessment
+# Fork divergence and external trust
 
-Date: 2026-10-09
+**Measured at commit `11207ca`, 2026-10-25.** Every count in this document
+names the commit and date it was taken at. Reproduce them with
+`sh tools/measure-divergence.sh`; `cpp/selftest/regression-docs.sh` re-runs that
+script and fails if the figures below disagree with it.
 
-## Executive answer
+Supersedes the version dated 2026-10-09. **Seven statements in that version are
+false, not merely out of date** — they are listed and corrected as false in §0,
+because a reader who met them would have drawn a wrong conclusion, and
+"superseded" does not say that.
 
-This repository contains a meaningful fork of NIST's SP 800-90B reference
-implementation. It does **not** modify or redefine the SP 800-90B standard
-itself.
+## How to read this
 
-The accurate description is:
+The fork is **a patched fork of NIST's SP 800-90B reference implementation**. It
+does not modify or redefine the standard. It must not be described as
+NIST-approved, NIST-certified, the official NIST tool, or a customised version
+of SP 800-90B.
 
-> A patched fork of NIST's SP 800-90B reference implementation.
+Defects are filed in **three sections that do not overlap**:
 
-It must not be described as NIST-approved, NIST-certified, the official NIST
-tool, or a customized version of the SP 800-90B standard.
+| | section | what belongs in it |
+|---|---|---|
+| **A** | [Code defects](#a--code-defects) | the implementation does something other than what SP 800-90B specifies, or other than what it itself claims |
+| **B** | [Standard defects](#b--standard-defects) | the implementation does what SP 800-90B specifies **and the specified thing is wrong or ambiguous** |
+| **C** | [What none of this establishes](#c--what-none-of-this-establishes) | claims no software estimator can produce, whatever it computes |
 
-Most executable changes are general correctness, safety, reporting, and
-fail-closed repairs rather than TruePad-specific estimator mathematics.
-TruePad motivated the stricter provenance and production trust boundary, but
-the artifact allowlist, executable attestation, immutable input snapshot, and
-production approval policy live primarily in the TruePad repository.
+**A and B never share an entry, and an entry never drifts between them.** The
+test is single and mechanical: *would conforming exactly to the standard's text
+fix it?* If yes, it is a **code** defect. If conforming exactly to the text is
+what produces the wrong behaviour, it is a **standard** defect. `C18` is a code
+defect — the standard says nothing about `long` width, and 64-bit arithmetic
+fixes it. `C23` is a standard defect — §3.1.4.3 step 5's printed formula tests
+the wrong statistic, and implementing it faithfully is what rejects
+correctly-operating sources. The two have opposite remedies, which is why they
+must not sit together: a code defect is fixed by changing the fork, a standard
+defect can only be *diverged from*, documented and bounded.
 
-The fork is reviewable and unusually well documented, but it is not currently
-an independently trusted production entropy authority. Production approval
-must remain disabled.
+Section C carries **prose, not entries** — there is nothing to repair in it.
 
-## Quantified divergence from NIST upstream
+### Every entry in A and B carries five fields
 
-This comparison uses:
+| field | what it must say |
+|---|---|
+| **DEFECT** | the behaviour, stated as behaviour rather than as a code location |
+| **ORIGIN** | **INHERITED** from upstream, or **INTRODUCED BY THIS FORK** — and if introduced, by which repair. A fork that only inherited defects would be a fork that never broke anything, and this one did. |
+| **EVIDENCE** | **EXECUTED** (naming the platforms it ran on), **DERIVED** (follows from a proved argument), or **SOURCE-CONFIRMED** (read in the code, never run). These are three different strengths and are never collapsed. |
+| **STATUS** | **NOT REPAIRED**, **REPAIRED** (with the record entry), or **REPAIRED AND INDEPENDENTLY REVIEWED**. **REPAIRED IS NOT REVIEWED.** Nothing in this fork is in the third state. |
+| **DOES NOT ESTABLISH** | what a reader must not conclude from the repair. Every entry has one; an entry without one is incomplete. |
 
-- NIST upstream repository: `https://github.com/usnistgov/SP800-90B_EntropyAssessment`
-- NIST upstream `master`: `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289`
-- Fork repair branch: `repair/2026-10-09-verified-defects`
-- Repair branch commit: `9556649077f23e5e7978abb3e77f98122555f967`
-- Common ancestor: `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289`
+---
 
-The repair branch is 66 commits ahead of NIST upstream and zero commits behind
-it.
+## §0 — Statements in the 2026-10-09 version that are FALSE
 
-The complete repository diff contains 658 changed paths, 62,252 added text
-lines, and 364 removed text lines. That headline is misleading because audit
-evidence dominates it:
+Each is quoted, then corrected **as false**. None of these was a matter of
+emphasis or staleness: a reader acting on any of them would have been wrong
+about the state of the tree.
+
+| # | the previous version said | correction |
+|---|---|---|
+| **1** | *"`R-1`: the x86-64 80-bit `long double` IID path remains unverified and unfixed"* | **False on both halves.** `R-1` is `FORK-FIXED` in the tracker, repaired 2026-10-19, and it was **executed** on Linux x86-64 *and* Windows MinGW. It is also not a platform defect but a `long double` **format** defect: 117 of 255 alphabet sizes on a 53-bit `long double`, 155 on x87 80-bit. |
+| **2** | *"`N-08`: permissive numeric parsing remains in direct CLI paths"* | **False.** `SUPPORTED-SCOPE-FIXED`. The supported CLIs and the transpose path are fixed; the `ea_conditioning` instance stays excluded by `876ba05`, which is a scope decision and not a remaining defect in the supported product. |
+| **3** | *"`N-10`: ambiguous report semantics remain"* | **False.** `SUPPORTED-SCOPE-FIXED`, with the conditioning half excluded by the same commit. |
+| **4** | *"`NOVEL-03`: IID restart row and column results retain ambiguous labels"* | **False.** `FORK-FIXED`. Independent verification of `25fbb54` remains outstanding — which is a different statement, and is the one this document should have made. |
+| **5** | the whole **quantified divergence** block: *"Fork repair branch: `repair/2026-10-09-verified-defects`… commit `9556649`… 66 commits ahead… 658 changed paths, 62,252 added text lines"* | **False as a description of this fork.** That branch was merged into `master` at `d226f18` on 2026-10-15 and no longer exists as a separate head. Measured at `11207ca`, 2026-10-25: **179 commits ahead, 0 behind, 1,033 text files, 108,859 insertions, 461 deletions.** Every figure in that block was off by more than a factor of 1.5, and none of them said when it had been taken. |
+| **6** | route item 7: *"Validate Linux and Windows before claiming support for those platforms"* | **False as a pending action.** Both are measured, by CI rather than by acquiring machines: x86-64 Linux on every push since 2026-10-19, Windows MinGW on 2026-10-20. What remains is not validation but **independent** validation, which is item 3 of the rewritten list in §5. |
+| **7** | route item 8: *"Submit generally applicable repairs upstream where practical"*, and *"Upstream acceptance would improve maintainability and external confidence"* | **Contradicts a standing decision, and was never a mere omission.** The owner decided on 2026-10-15 that **nothing is reported upstream**. The route list described a route the project has declined to take, which is worse than not listing it: a reader would have treated the absence of upstream reports as neglect rather than as policy. §5 states the decision and its consequence instead. |
+
+**On item 7's framing.** Replies on this fork's upstream issues and pull
+requests came from `@joshuaehill`, who is not a NIST account and who deferred
+to "the NIST folks" on PR #268. No statement anywhere in this repository should
+be read as NIST having reviewed, accepted or commented on anything here.
+
+---
+
+## §1 — Quantified divergence
+
+Measured at `11207ca`, **2026-10-25**, against upstream base
+`87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289` (2026-05-26), which is the common
+ancestor. The fork is **0 commits behind**, so `base..HEAD` is the whole
+divergence.
 
 | Category | Files | Insertions | Deletions |
 |---|---:|---:|---:|
-| Production C++ and build code | 17 | 1,063 | 358 |
-| Self-tests and regression harness | 27 | 2,907 | 6 |
-| Audit and repair evidence | 609 | 57,070 | 0 |
-| Other documentation | 4 | 1,212 | 0 |
+| Production C++ and build | 21 | 2,188 | 450 |
+| Self-tests and regression harness | 50 | 7,303 | 7 |
+| CI workflows and scripts | 4 | 1,258 | — |
+| Audit and repair evidence | 950 | 96,284 | — |
+| Other documentation | 8 | 1,826 | 4 |
+| **total (text)** | **1,033** | **108,859** | **461** |
+| Binary reference artefacts | 2 | — | — |
 
-These categories account for 657 text files. The remaining changed path is a
-binary reference artifact and therefore has no textual line count.
+**179 commits ahead.** The headline is dominated by evidence: 88 % of the
+insertions are audit and repair records. **The executable delta is 2,638 lines
+of churn across 21 files** — not a cosmetic fork, and not a rewrite of the
+estimators.
 
-The meaningful executable delta is approximately 1,400 lines of production
-code churn across 17 files. This is not a cosmetic fork, but it is also not a
-62,000-line rewrite of the estimators.
+Two other counts, because they bear on how much of the above is *checked*
+rather than merely written:
 
-## Why the implementation diverged
+| | count | measured at |
+|---|---:|---|
+| enforced suite | **24** checks, **22** regression scripts | `11207ca`, 2026-10-25 |
+| instruments that a sweep must cover | **74** live, **79** frozen | `11207ca`, 2026-10-25 (`audits/INSTRUMENT-INVENTORY.md`, enforced against its enumerator) |
+| orchestrator records | **91** entries | `11207ca`, 2026-10-25 |
+| withdrawn verifications | **2** | `audits/WITHDRAWN-VERIFICATIONS.md` |
 
-### General implementation repairs
+**None of these is a measure of correctness.** A suite of 24 checks that all
+pass establishes what `cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md` says it
+establishes and nothing beyond it, and that document exists because the number
+on its own invites the opposite reading.
 
-The fork repairs behavior that is useful beyond TruePad:
+---
 
-- estimator bounds, convergence, and legitimate no-result handling;
-- IID decision and aggregate fail-closed behavior;
-- restart-test memory safety;
-- strict minimum sample requirements;
-- input-size, subset, and symbol-width handling;
-- nonregular-file and output-write failures;
-- numeric edge cases and nonfinite values;
-- accurate final verdict and JSON reporting; and
-- regression tests that detect missing fixtures, scripts, binaries, and failed
-  comparisons.
+## A — Code defects
 
-Some of these changes alter estimator or verdict behavior. They are intended as
-correctness repairs, not product-specific tuning, but they require independent
-mathematical review because they touch security-relevant calculations.
+The implementation does something other than what SP 800-90B specifies, or
+other than what it itself claims. **Conforming exactly to the standard's text
+would fix every entry here.**
 
-### TruePad-driven hardening
+Split by **origin**, because the two halves mean different things to a reviewer:
+the first is what the fork found in what it inherited, and the second is what
+the fork broke itself. A fork that listed only the first would be claiming it
+never broke anything.
 
-TruePad requires properties that a research/reference CLI does not necessarily
-provide as a production contract:
+### A.1 — Inherited from upstream
 
-- binding results to the exact assessed bytes;
-- reporting effective symbol width, sample count, subset, and entropy units;
-- failing closed on incomplete or malformed evidence;
-- identifying the precise source repository, commit, tree, build, and binary;
-- requiring complete authoritative self-tests; and
-- separating candidate build evidence from production approval.
+#### `C18` — the LRS test fails whatever the data, on any LLP64 target
 
-The strongest TruePad-specific controls are implemented in TruePad rather than
-inside the entropy estimators. The entropy fork supplies stricter tools and
-structured evidence; TruePad decides whether a particular reviewed artifact is
-eligible to participate in an assessment.
+- **DEFECT.** `n_choose_2` computed `N` in `long int`. On LLP64 targets —
+  Windows — `long` is 32 bits, so for a 1,000,000-sample input the true
+  `N = 499,960,500,780` became **−403,189,204**, `Pr(X ≥ 1)` printed
+  **−0.000367** where macOS printed **+0.365370**, and the §5.2.5 decision
+  compared against `logl()` of a negative number — **NaN**. The LRS test
+  therefore failed **whatever the data was**.
+- **ORIGIN.** INHERITED. It had sat in the record as a source-only candidate
+  whose consequence was stated in the conditional: `long int` "**would**
+  overflow".
+- **EVIDENCE.** **EXECUTED on Windows MinGW** via CI, 2026-10-20 (`OC-48`), and
+  the printed value reproduced exactly from the integer arithmetic alone by
+  `reproducers/c18_llp64_overflow.c`. Before that it was **SOURCE-CONFIRMED
+  only** — and the gap between the two is the whole point of the Windows job.
+- **STATUS.** **REPAIRED** (`OC-53`): `int64_t n_choose_2(const int64_t n)`
+  with an assertion bounding `n` to `INT_MAX`.
+- **DOES NOT ESTABLISH.** That no other 32-bit `long` arithmetic remains. The
+  repair fixes the one site the reproducer exercised; a sweep of the remaining
+  `long` arithmetic on LLP64 has **not** been done.
 
-## What the fork does not establish
+#### `R-1` — a `long double` FORMAT defect, not a platform one
 
-Neither a favorable entropy estimate nor a passing regression suite proves:
+- **DEFECT.** An unclamped probability in `lrs_test.h` aborts on an assertion
+  for a wide band of alphabet sizes.
+- **ORIGIN.** INHERITED (upstream #246, PR #248 merged and incomplete).
+- **EVIDENCE.** **EXECUTED** on Linux x86-64 and Windows MinGW: **117 of 255**
+  alphabet sizes affected on a 53-bit `long double` (Apple arm64), **155 of
+  255** on x87 80-bit. It had been labelled NOT-REPRODUCIBLE-HERE because its
+  assert does not fire on the development host — which is the class of claim a
+  single-platform project cannot evaluate about itself.
+- **STATUS.** **REPAIRED** 2026-10-19, clamping to `1.0L/k`.
+- **DOES NOT ESTABLISH.** Independent verification of the clamp remains
+  outstanding. And the figure is per-format, not per-platform: a third format
+  (binary128, Linux aarch64) is **NOT RUN**.
+
+#### `C01`/`F10` — MultiMMC chained-lookup saturation
+
+- **DEFECT.** Dictionary saturation can make the MultiMMC estimator overstate
+  entropy.
+- **ORIGIN.** INHERITED.
+- **EVIDENCE.** One **EXECUTED** overestimate (`f10_over_8bit_1M`), and at
+  width 1 a **DERIVED** exclusion: with `D_MMC = 16` and
+  `MAX_ENTRIES = 100000`, binary data gives `entries[d] ≤ 2^(d+2)`, so the cap
+  cannot bind below `d = 15` and `d = 15` has no `d+1` to suppress. **A proof,
+  not a measurement.**
+- **STATUS.** **NOT REPAIRED.** Excluded from the entropy floor at width 1 by
+  the proof above; above width 1 it contributes an **evaluated margin** of
+  3.69e-4 and the floor oracle then refuses to call its output a floor at all.
+- **DOES NOT ESTABLISH.** Anything above width 1. The margin is one measured
+  overestimate over the inputs tried; the mechanism is data-dependent, so
+  nothing bounds it.
+
+### A.2 — Introduced by this fork, and repaired
+
+**These are the entries a reviewer should read first.** Each was introduced by
+a repair this fork made, which means the fork's repairs are exactly as capable
+of creating defects as of removing them.
+
+#### `A05` / `F03` — the report writer destroyed the assessment input
+
+- **DEFECT.** Two defects in one write path, four days apart.
+  **`A05`:** `C14`'s placeholder claimed the `-o` path as soon as it was known,
+  so `-o capture.bin capture.bin` replaced a 1,000,000-byte capture with a
+  ~600-byte error report **before a single sample was read**.
+  **`F03`:** with that closed, the *temporary* beside the report was still
+  named `<report>.tmp.<pid>` and opened with `std::ios::trunc`, **which follows
+  a symlink**. Measured on all three tools: the capture came back **798 bytes**
+  of report JSON; `rename()` renamed **the symlink**, leaving the `-o` path a
+  permanent alias of the capture so every later run would destroy it again with
+  nothing in the directory to notice; and the `A05` guard then fired on the
+  second write and printed *"Nothing has been written; the input is
+  untouched"* — **both halves false when it printed.**
+- **ORIGIN.** **INTRODUCED BY THIS FORK.** `A05` by `C14`'s fail-closed repair;
+  `F03` by `C08`'s atomic-write repair. Two repairs, each correct in its own
+  terms, combining into the one failure the project cannot absorb — in January
+  the input is a physical capture that cannot be recreated.
+- **EVIDENCE.** **EXECUTED** on Darwin arm64 against a build of the
+  pre-repair commit, all three tools, with the capture's SHA-256 before and
+  after. `regression-output-aliasing.sh` fails exactly these cases on that
+  build and passes on this one.
+- **STATUS.** **REPAIRED** (`OC-77`): `O_CREAT|O_EXCL` — which does not follow
+  a symlink — plus `O_NOFOLLOW`, a random suffix from `/dev/urandom` instead of
+  the pid, the temporary identity-checked against the protected input like any
+  other write target, and an `fstat` after opening, because an open that
+  succeeded is not proof of what it opened.
+- **DOES NOT ESTABLISH.** Windows is **NOT RUN** for `F03`: it takes the
+  `MoveFileExA` branch and has no `symlink()`. The `fstat` limbs are
+  **SOURCE-CONFIRMED, not executed** — a wrong `st_uid` cannot be arranged at a
+  path whose name is unpredictable by design, which is the repair working
+  against its own test.
+
+#### `C24` — no report could be written on Windows at all
+
+- **DEFECT.** `C14`'s placeholder created the `-o` file, and `C08`'s atomic
+  write then used `rename()`, which on Windows **refuses an existing
+  destination** (errno 17). The two together meant **no report could be written
+  on Windows**, by any invocation.
+- **ORIGIN.** **INTRODUCED BY THIS FORK**, by the interaction of two of its own
+  repairs. Neither is wrong alone.
+- **EVIDENCE.** **EXECUTED on Windows MinGW** via CI, 2026-10-20, with the old
+  writer failing beside the new one in the same job.
+- **STATUS.** **REPAIRED** (`OC-57`): `MoveFileExA` with
+  `MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH` under `_WIN32`.
+- **DOES NOT ESTABLISH.** That the Windows path is otherwise sound. The job
+  measures what it measures; the ten `cmd` blocks in that workflow are checked
+  by **no syntax tool**, because `cmd` has no `-n` equivalent available here.
+
+#### `F04` — the `--version` prescan covered one spelling of the same request
+
+- **DEFECT.** `-vo --version data 1` and `-qo --version data 1` printed the
+  version banner, **exited 0, assessed nothing and wrote no report** — leaving
+  any previous report in place with a success status. The prescan tested the
+  cluster's **last** character and then required the cluster to be exactly two
+  characters, so it fired for `-o` and for nothing else.
+- **ORIGIN.** **INTRODUCED BY THIS FORK**, by `A04`'s own repair.
+- **EVIDENCE.** **EXECUTED**, all three tools, both arms.
+- **STATUS.** **REPAIRED** (`OC-80`) by walking the cluster the way `getopt`
+  does. A third spelling, `-Z --version`, was open on the pre-repair build too
+  and was found by the repair's own controls, not by the audit.
+- **DOES NOT ESTABLISH.** `getopt` **permutation** is unexamined: glibc permutes
+  non-options by default, so on Linux a `--version` placed after the first
+  operand may still reach `getopt` where this prescan stops. **Not reproduced,
+  not repaired.**
+
+#### `C16` — `H_I` without a stated scale
+
+- **DEFECT.** `ea_restart` accepted a bare `H_I` whose scale was ambiguous
+  between per-symbol and per-bit — a factor of `word_size`.
+- **ORIGIN.** INHERITED in form; the fork's own restart work surfaced it.
+- **EVIDENCE.** **EXECUTED.**
+- **STATUS.** **REPAIRED** (`OC-29`): a bare number is accepted only at width 1,
+  where the two coincide; otherwise `/symbol` or `/bit` must be stated.
+- **DOES NOT ESTABLISH.** That any figure computed before the repair used the
+  scale its author intended.
+
+---
+
+## B — Standard defects
+
+**The implementation does what SP 800-90B specifies, and the specified thing is
+wrong or ambiguous.** Conforming more faithfully would make these worse, not
+better. They cannot be "fixed" in a fork — they can only be **diverged from,
+with the divergence documented and bounded**, which is what makes this section
+the one an outside reviewer should weigh most carefully: every entry here is a
+place where this fork deliberately does **not** do what the text says.
+
+#### `C23` — §3.1.4.3 step 5's printed formula rejects correctly-operating sources
+
+- **DEFECT.** The restart sanity check forms the **maximum over cells** of a
+  1000×1000 matrix, but step 5's printed formula tests a **single binomial
+  tail**. Implemented faithfully, it rejects sources that are operating
+  correctly: **83.2 % of full-entropy 8-bit matrices**, measured.
+- **ORIGIN.** **THE STANDARD.** Upstream implements the text. There is no
+  implementation error to find.
+- **EVIDENCE.** **EXECUTED** (the 83.2 % rejection rate) and **DERIVED** (the
+  exact cutoff from Levin's representation for the multinomial maximum, in
+  exact rational arithmetic, cross-checked against brute-force enumeration to
+  better than 1e-12 on six configurations).
+- **STATUS.** **DIVERGED, deliberately.** The fork decides on the exact
+  multinomial maximum and records `restartCutoffMethod` in the report so a
+  consumer can tell which statistic produced a verdict. The printed binomial
+  figure is still computed and recorded **for traceability, and is not the
+  verdict**.
+  *The direction was inverted once:* an earlier entry had it backwards, and the
+  correction is `OC-30`. *And the verification was withdrawn once:* `WV-1`, a
+  claim to have checked 32 `H_I` values that was printed from an **empty loop**.
+  It now carries 32 oracle-derived triples and refuses fewer.
+- **DOES NOT ESTABLISH.** That the fork's cutoff is the one a certifier would
+  accept. It is a **documented divergence from the published text**, which is
+  precisely the kind of thing an accreditation body decides and this project
+  cannot. At the operating point `H_I = 0.696` both cutoffs give 684 and the
+  divergence changes no verdict for this device — proved by bisection on the
+  crossings, with the nearest disagreement at `H_I ≈ 0.888`.
+
+#### `C22c` — §6.3.4 step 6 prints a rounded quantile
+
+- **DEFECT.** The text prints `2.576` where the exact 0.995 normal quantile is
+  `2.5758293035489008`. A tool that uses the printed constant and a tool that
+  uses the exact one give different figures.
+- **ORIGIN.** **THE STANDARD** — a literal-text parity issue, not an error in
+  anyone's code.
+- **EVIDENCE.** **DERIVED.** The resulting ceiling on the entropy difference is
+  `dz·σ_max/√v` with `σ_max` bounded by Popoviciu's inequality and
+  `v = num_blocks − 1000` exact; the ceiling itself is an exact solve at a
+  **derived** argmax, computed independently from §6.3.4 step 7 as written and
+  **validated against the standard's own worked example** — NIST publishes
+  `p = 0.5715` for `d=4, N=8, v=4, X'=1.4617` and the independent
+  implementation gets `0.57148426` (`OC-86`).
+- **STATUS.** **DIVERGED:** the fork uses the exact quantile. The difference is
+  carried in the entropy floor as `C22c` — 3.3599e-3 bit at n = 10⁶, 2.1644e-3
+  at n = 8×10⁶ — so a figure from this fork and a figure from a literal-text
+  implementation can be reconciled.
+- **DOES NOT ESTABLISH.** Confirmation at **two** bitstring lengths only, the
+  two the record tabulates. The term's fall with `n` is measured, not proved,
+  and the value used at an intermediate `n` is the one tabulated at the largest
+  `n` not exceeding it.
+
+#### The entropy floor itself is **MEASURED**, not certified
+
+Not a defect, but it belongs here because it is the quantity a reader is most
+likely to over-read, and its status is set by the two entries above plus one
+term of the fork's own.
+
+The floor subtracts four terms. Their statuses are **not** the same, and the
+aggregate takes the **weakest**:
+
+| term | status |
+|---|---|
+| `C01`/`F10` | **PROVED EXCLUSION** at width 1 — unreachable, by the counting proof in A.1 |
+| `C22a` | **MEASURED** — `8.08e-15` is `c × K`, a **product of two grid maxima** |
+| `C22b` | **PROVED** — zero; conservative at every `N` |
+| `C22c` | **DERIVED** — `dX'` bounded, the ceiling an exact solve at a derived argmax (`OC-86`) |
+
+So the oracle prints **`MEASURED FLOOR (C22a)`**, naming the term that holds the
+status there, and **"certified floor" is a retired term**: no reading of the
+floor is certified, and `regression-docs.sh` fails both on the phrase without a
+retirement marker and on any assertive use of it outside quotation marks.
+
+**The certification was a WITHDRAWN VERIFICATION, not a relabel.** `OC-63`
+claimed `C22a`'s constant had been *checked* to be a supremum. That claim is
+withdrawn with its date and reason as **`WV-2`** in
+`audits/WITHDRAWN-VERIFICATIONS.md`: the interiority argument examined `c` and
+not `K`, `K` is attained at `r = 2` — the **first value in its swept list** —
+and the sweep reaches **92.8 %** of the ceiling it is supposed to bound.
+**No figure changed**; what changed is the status claimed for it.
+
+- **DOES NOT ESTABLISH.** That the floor is a lower bound in the sense a
+  certifier would want. Settling `C22a` means extending the `r` axis below 2 and
+  the `N` axis below 5, or replacing `K`'s grid maximum with an analytic
+  infimum. **Not attempted.**
+
+---
+
+## C — What none of this establishes
+
+Prose, not entries: there is nothing here to repair, and nothing a software
+estimator can produce however carefully it is built.
+
+Neither a favourable entropy estimate nor a green suite shows:
 
 - that a physical source is independent, stationary, or stable across its
   operating range;
 - that continuous health tests are appropriate for the deployed source;
 - that an extractor seed is uniform, independent, or safely managed;
-- that pad material is transferred, stored, consumed, and erased securely;
+- that pad material is transferred, stored, consumed and erased securely;
 - that pad bytes are never reused;
-- that a compiled artifact came from an uncompromised compiler, dependency
-  chain, or build host; or
-- that the producer is organizationally independent from the authority that
-  approves the artifact.
+- that a compiled artefact came from an uncompromised compiler, dependency
+  chain or build host; or
+- that the producer is organisationally independent from the authority that
+  approves the artefact.
 
-Those are physical, operational, supply-chain, and governance claims rather
-than conclusions the estimator can produce.
+Those are physical, operational, supply-chain and governance claims.
 
-## Current unresolved implementation scope
+**Three further limits belong here, because they are about this fork rather than
+about estimators in general.**
 
-The October 9 audit and subsequent repair work do not close every historical
-item:
+**Every repair in sections A and B is self-authored and UNREVIEWED.** Not one
+entry is in the `REPAIRED AND INDEPENDENTLY REVIEWED` state. The external
+audits this project has run were **read-only**: they found defects, and the
+repairs answering them were written by the same author as the code.
 
-- `N-08`: permissive numeric parsing remains in direct CLI paths;
-- `N-10`: ambiguous report semantics remain;
-- `NOVEL-03`: IID restart row and column results retain ambiguous labels;
-- `R-1`: the x86-64 80-bit `long double` IID path remains unverified and
-  unfixed; and
-- `N-03`, `N-05`, and `N-11`: conditioning-tool findings remain deferred while
-  `ea_conditioning` is outside the supported TruePad build.
+**The evidence has itself been defective, repeatedly, and the record says so.**
+Two verifications have been withdrawn (`WV-1`, `WV-2`). A five-of-nineteen
+false-pass was found inside the enforced documentation check. A dead-guard
+baseline of **40 flags** is pinned, of which **36 remain unresolved patterns**
+rather than cleared guards. Confidence in the repairs cannot exceed confidence
+in the instruments that checked them, and that is lower than a green suite
+looks.
 
-These do not recreate the arbitrary-executable TruePad bypass, but they prevent
-an honest claim that every known implementation issue is fixed.
+**A figure from an unidentified binary is uninterpretable** whatever the
+arithmetic says. The build-provenance canary exists for this, and the suite
+reports that **4 of 24** checks declare the artefact they measured — so twenty
+do not.
 
-**2026-10-15.** `repair/2026-10-09-verified-defects` is merged into master
-(`d226f18`), so the IID fail-closed verdict and the log-domain LRS probability
-are now master behaviour (audit clusters `C07` and `C03` closed in fact). The
-unrepaired tool is pinned at tag `unrepaired-reference-2026-10-15` for the
-two-figure reporting rule. The merge closes those two items and nothing else on
-this list; the repairs are self-authored and unreviewed.
+---
 
-The later `IND-01`, `IND-02`, and `IND-03` findings have repair-engineering
-fixes and regression evidence. Their remediation commits still require a
-separate independent review.
+## §5 — The route to external trust
 
-## Will outside reviewers trust the fork?
+The previous list had nine items, two of which described a route this project
+has **declined** to take (§0, items 6 and 7). Replaced, and the standing
+decisions are stated as decisions rather than left as apparent gaps.
 
-Not automatically. A security-sensitive fork carries a higher review burden,
-especially when it modifies central assessment code while retaining the names
-and version conventions of the NIST tools.
+**Nothing is reported upstream.** That is the owner's decision of 2026-10-15,
+and it is a constraint on the route, not an oversight in it. Its consequences
+are owned rather than regretted:
 
-Technically sophisticated reviewers can evaluate this fork because the source
-revisions, finding history, negative controls, and repair evidence are recorded.
-Trust should nevertheless be based on independent evidence rather than the
-repair process's own tests.
+- the private patch surface is **permanent**, and every rebase onto a future
+  upstream release is this project's work;
+- the standard defects in section B stay **this fork's documented divergences**
+  and will never be resolved by upstream adopting them;
+- no reviewer will find corroboration of these findings in an upstream issue
+  tracker, so the evidence in `audits/` has to carry the whole weight;
+- and **no statement here may imply NIST involvement.** Replies on this fork's
+  upstream issues came from `@joshuaehill`, not a NIST account.
 
-The strongest route to external trust is:
+### What would actually move this fork toward external trust
 
-1. Independently review the production-code delta against normative SP 800-90B
-   clauses and independently derived mathematical oracles.
-2. Independently verify the later `IND-01`/`IND-02`/`IND-03` remediation.
-3. Reproduce or otherwise independently verify each supported platform build.
-4. Bind approval to the exact repository, commit, source tree, compiler,
-   dependencies, flags, and executable digests.
-5. Ensure release governance prevents the artifact producer from approving
-   their own artifact.
-6. Resolve the remaining supported-path findings or publish an explicit,
-   enforced scope that excludes them.
-7. Validate Linux and Windows before claiming support for those platforms.
-8. Submit generally applicable repairs upstream where practical, reducing the
-   long-term private patch surface.
-9. Keep physical-source qualification and OTP operational claims separate from
-   software estimator correctness.
+1. **Independent review of the production delta** — 2,638 lines of churn across
+   21 files at `11207ca` — against the normative clauses and against
+   independently derived oracles. This is first because every other item is
+   weaker without it, and because **REPAIRED IS NOT REVIEWED** and nothing here
+   is in the reviewed state.
+2. **Independent review of the repairs the fork made to its own defects**, as a
+   distinct task. Section A.2 lists four defects this fork introduced, three of
+   them by one repair interacting with another. The mechanism that produces
+   those is not addressed by reviewing the original repairs.
+3. **Independent verification on each supported platform**, not reproduction of
+   this project's CI. The CI answers what the development host cannot, which is
+   a different claim from an independent party having built and run it.
+4. **Bind approval to the exact artefact** — repository, commit, tree,
+   compiler, dependencies, flags and executable digests — and keep that binding
+   outside this repository.
+5. **Release governance that prevents the producer approving their own
+   artefact.** Unchanged from the previous list and still the item least
+   affected by any amount of further software work.
+6. **Independent review of the instruments, not only the code.** This is the
+   item the previous list did not have and the one this round argues for
+   hardest: two withdrawn verifications, a false pass inside the enforced
+   suite, and 36 unresolved dead-guard patterns. A reviewer who checks the
+   repairs and not the harness is trusting the harness.
+7. **Publish the enforced scope, or close it.** `ea_conditioning` is excluded by
+   `876ba05`; `N-03`, `N-05` and `N-11` are deferred behind that exclusion. An
+   explicit enforced scope is an acceptable answer; a quiet one is not.
+8. **Keep physical-source qualification and OTP operational claims separate**
+   from software estimator correctness — section C — and do not let a green
+   suite be cited for either.
 
-Upstream acceptance would improve maintainability and external confidence, but
-it would not itself constitute NIST certification of TruePad, a physical entropy
-source, or generated pad material.
+### Readiness
 
-## Current readiness statement
+The repaired code is a suitable candidate for independent review. **It is not
+sufficient evidence for production entropy approval.**
 
-The repaired code — on master since the 2026-10-15 merge — is a suitable
-candidate for independent review. It is not sufficient evidence for production
-entropy approval.
-
-Until independent source review, build verification, artifact approval,
-physical-source evidence, and release-governance requirements are satisfied,
-TruePad must retain:
+Until independent source review, independent build verification, artefact
+approval, physical-source evidence and release-governance requirements are
+satisfied, TruePad must retain:
 
 ```json
 {
@@ -189,5 +469,65 @@ TruePad must retain:
 }
 ```
 
-Merging repair code and approving an entropy-assessment artifact are separate
+That is a statement of what the consuming project must keep, quoted here for
+completeness. **Nothing in this repository changes it, and no change to it is
+made from here.**
+
+Merging repair code and approving an entropy-assessment artefact are separate
 decisions.
+
+---
+
+## §6 — Dates, and how this document goes stale
+
+The previous version carried one date at the top, a 2026-10-15 note bolted into
+the middle, and seven statements that had become false. **A single date on a
+document that mixes measurements of different vintages tells a reader nothing**:
+it was the mechanism by which §0's items 1–5 survived.
+
+So:
+
+1. **Every count names the commit and date it was measured at**, at the point
+   of use. Not once at the top.
+2. **Every count that can be re-derived, is** — by
+   `sh tools/measure-divergence.sh`, which prints the §1 figures from `git` at
+   the current `HEAD`.
+3. **A check enforces it.** `cpp/selftest/regression-docs.sh` re-runs that
+   script and fails if the figures in §1 disagree with it. This document cannot
+   go stale in its divergence figures without the suite going red.
+4. **What a date cannot police is marked instead.** Statuses in sections A and
+   B are claims about the tree, so they carry the record entry that established
+   them (`OC-nn`, `WV-n`); a reader who doubts one reads that entry rather than
+   trusting this summary.
+5. **A superseded figure is kept with its correction, as false.** §0 is the
+   mechanism, and `audits/WITHDRAWN-VERIFICATIONS.md` is the same mechanism for
+   verifications. "Out of date" is not available as a description of a statement
+   that was wrong.
+
+The enforced figures are §1's divergence table and the derived counts beside it.
+**The prose is not enforced** and will go stale in the ordinary way; where it
+makes a claim about the tree it cites the entry that can be checked.
+
+---
+
+## §7 — What this document is not
+
+- **Not a certification, and not evidence of one.** Not NIST-approved, not
+  NIST-certified, not the official NIST tool, not a customised version of
+  SP 800-90B.
+- **Not a review.** It is written by the author of the repairs it describes.
+  Every entry in A and B says what it does not establish for that reason.
+- **Not the defect record.** The record is `audits/`, and in particular
+  `audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md` (90 entries at
+  `11207ca`) and `audits/2026-09-30/FINDINGS-TRACKER.md`. This document selects
+  the entries that bear on **divergence and trust** and will omit defects that
+  do not.
+- **Not the instrument record.** Defects in this project's own verification
+  tools are a third category, and a large one — but they are not divergence
+  from upstream, so they are not filed here. They are in the orchestrator
+  record, and §5 item 6 and section C exist so that a reader of this document
+  cannot miss that they exist.
+- **Not a statement about any physical device.** Section C.
+- **Not a scope boundary.** `INDEPENDENT-REVIEW-BOUNDARY.md` is that.
+- **Not a decision about TruePad.** The JSON in §5 is quoted, not set. No
+  change to the consuming project is made from this repository.

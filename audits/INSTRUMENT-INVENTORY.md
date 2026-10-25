@@ -22,12 +22,22 @@ understated (`OC-67`). `audits/enum-instruments.sh` implements it:
 | **c** | something in the tree **invokes** it: sourced, or compiled then run | **no — a reviewed list of 10, each with its reason** |
 | — | **excluded:** compiled outputs (`Mach-O`/`ELF`), pure data, untracked files | yes |
 
+**THE RULE COUNTS THE GIT INDEX, AND THAT IS LOAD-BEARING.** `git ls-files`
+lists tracked **and staged** paths, so a new instrument begins to count the
+moment it is staged — not when it is written, and not after the commit. That
+is what lets the stated count and the tree be consistent *at commit time*:
+stage everything, re-run the enumerator, write the number it prints. A new
+instrument that is merely present on disk is deliberately **not** counted,
+because an untracked file is not part of the record.
+
 `sh audits/enum-instruments.sh . ` prints the live count. **THE ENUMERATOR IS
 THE AUTHORITY AND THIS FILE IS NOT**: every figure below names the commit and
 date it was measured at, and `regression-docs.sh` fails if the stated figure and
-the enumerator's disagree. **Measured `live: 73 (63 mechanical + 10 reviewed)`
-at `ae023b0`, 2026-10-22.** It read 70 (60 + 10) at `32920f49`, 2026-10-21; the
-three added since are `cpp/selftest/regression-deadguard.sh`,
+the enumerator's disagree. **Measured `live: 74 (64 mechanical + 10 reviewed)`
+at `11207ca`, 2026-10-25.** It read 73 (63 + 10) at `ae023b0`, 2026-10-22 and
+70 (60 + 10) at `32920f49`, 2026-10-21. The fourth added since `32920f49` is
+`tools/measure-divergence.sh`, which enforces the fork-divergence figures
+(`OC-91`); the first three were `cpp/selftest/regression-deadguard.sh`,
 `cpp/selftest/regression-workflows.sh` and
 `audits/2026-10-11-independent-audit/oracles/compression_ceiling_exact.py` —
 **listed by diffing the enumerator's own `--list` output across the two
@@ -66,7 +76,7 @@ them was being invoked **then**. So:
 
 | set | rule that applies | count |
 |---|---|---:|
-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **73** at `ae023b0`, 2026-10-22 |
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **74** at `11207ca`, 2026-10-25 |
 | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
 
 Counting frozen by the live rule would silently retire 47 artefacts that were
@@ -98,7 +108,7 @@ thing an extension-matched glob missed.
 
 | set | count | what it is |
 |---|---:|---|
-| **LIVE** | **73** at `ae023b0`, 2026-10-22 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+| **LIVE** | **74** at `11207ca`, 2026-10-25 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
 | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
 Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
@@ -122,7 +132,7 @@ mine was wrong twice over: it omitted `.github/workflows`, the generators, the
 attempt, which is what showed the disagreement was confined to the live set and
 was about the rule rather than the tree. Applying the rule above gave **70**,
 their number exactly, with the one apparent residual explained by consequence
-(2). The live set has since grown to 73; the rule is unchanged.
+(2). The live set has since grown to 74; the rule is unchanged.
 
 **The cost, stated plainly:** `OC-64`'s shape sweep reported "33 shell
 instruments swept" against an unstated denominator. 33 of **70**, the count at the time, is under half,

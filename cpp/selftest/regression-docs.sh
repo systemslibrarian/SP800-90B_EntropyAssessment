@@ -660,6 +660,59 @@ else
     fi
 fi
 
+# THE DIVERGENCE DOCUMENT'S FIGURES ARE RE-DERIVED, NOT TRUSTED (OC-91).
+#
+# FORK-DIVERGENCE-AND-TRUST.md's previous version described a branch that had
+# been merged and deleted, said "66 commits ahead" when it was 179, and gave a
+# category table off by more than a factor of 1.5 -- none of it labelled with
+# when it had been measured. Its section 6 now promises that the figures are
+# enforced; this is what makes that a mechanism rather than a promise.
+#
+# tools/measure-divergence.sh prints the figures from git at HEAD. Every one it
+# prints must appear in the document, and the document must name the commit it
+# was measured at. A figure the script prints and the document does not carry
+# is drift; so is a commit label that is not HEAD's.
+echo
+DIVDOC="${repo}/FORK-DIVERGENCE-AND-TRUST.md"
+DIVTOOL="${repo}/tools/measure-divergence.sh"
+if [ ! -f "${DIVDOC}" ] || [ ! -x "${DIVTOOL}" ]; then
+    bad "the divergence document or its measurement script is missing:" "${DIVDOC}"
+else
+    divout=$(sh "${DIVTOOL}" 2>&1)
+    divrc=$?
+    if ! scanned "${divrc}" "divergence measurement"; then
+        :
+    else
+        divbad=""
+        # the commit the document says it was measured at must be HEAD's
+        want_sha=$(printf '%s\n' "${divout}" | sed -n 's/^measured-at-commit:[[:space:]]*//p')
+        grep -q "\`${want_sha}\`" "${DIVDOC}" || divbad="${divbad} commit(${want_sha})"
+        # and each figure the script derives must appear, formatted with commas
+        # as the document writes them
+        for pair in "commits-ahead" "production" "harness" "ci" "evidence" "docs"; do
+            case "${pair}" in
+              commits-ahead)
+                v=$(printf '%s\n' "${divout}" | sed -n 's/^commits-ahead:[[:space:]]*//p')
+                grep -q "\*\*${v} commits ahead" "${DIVDOC}" || divbad="${divbad} ahead(${v})" ;;
+              *)
+                ins=$(printf '%s\n' "${divout}" | sed -n "s/^${pair} *files=[0-9]* *insertions=\\([0-9]*\\).*/\\1/p")
+                [ -n "${ins}" ] || continue
+                # the document writes thousands with commas
+                pretty=$(printf '%s' "${ins}" | sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta')
+                grep -q "| ${pretty} |" "${DIVDOC}" \
+                    || grep -q "\*\*${pretty}\*\*" "${DIVDOC}" \
+                    || divbad="${divbad} ${pair}(${pretty})" ;;
+            esac
+        done
+        if [ -z "${divbad}" ]; then
+            note "the divergence document's figures match a re-measurement:" \
+                 "at ${want_sha}"
+        else
+            bad "the divergence document's figures have drifted:" "${divbad}"
+        fi
+    fi
+fi
+
 # AND THE ORACLE MUST NOT PRINT IT. The prose check above cannot see what a
 # program emits at run time, and the label the oracle PRINTS is the one a reader
 # acts on.
