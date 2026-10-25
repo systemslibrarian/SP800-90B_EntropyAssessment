@@ -9398,3 +9398,81 @@ reviewed software**, and that only reversing Decision 2 would change that.
   the same each time: the exemption list must learn the words the corrections
   actually use, not the words the check's author expects.
 - Nothing reported upstream.
+
+## OC-102 — glibc permutes, measured; and the permuted `-o` bypassed the early guard while the choke point held
+
+**Run `40241103943`, conclusion `success`. Step 5c's measurement is in, and it
+settles both halves of `OC-96`'s open question.**
+
+### Half one: glibc permutes
+
+```
+PERMUTATION options-before: exit=0   assessed=YES
+PERMUTATION options-after:  exit=0   assessed=YES
+PERMUTATION verdict: glibc PERMUTES -- an option after the operand is honoured
+                     here and refused on Darwin
+```
+
+Against Darwin arm64, measured in `OC-96`:
+
+| `-i -a data.bin 1 -q -o out.json` | exit | assessed |
+|---|---:|---|
+| **x86-64 Linux, glibc** | **0** | **YES** |
+| **Darwin arm64, BSD getopt** | **255** | **no** |
+
+**The same command line assesses on one supported platform and is a usage error
+on the other.** That is no longer a prediction, and `CLOSING-INVENTORY.md`'s
+owner-decision row is updated from prediction to measurement. The decision —
+enforce the documented order by a prescan refusal, or leave it platform-dependent
+— **remains the owner's and is not made here.**
+
+### Half two: the early guard WAS bypassed, and the choke point caught it
+
+This is the half that mattered, and it is the better result.
+
+With `-o` placed **after** the operand, `prescanOutputAndOperand()` stops at the
+first operand and never sees `-o` — so on a permuting platform the **early**
+identity guard is not armed, while getopt honours the option anyway. Measured:
+
+```
+PERMUTATION alias-after-operand: exit=255
+PERMUTATION capture-intact: YES
+  alias stderr: Error: refusing to write the report to 'logs/permalias.bin': it is
+               the same file as the input 'logs/permalias.bin' ... Writing it would
+               destroy the input capture. Nothing has been written.
+```
+
+**That refusal comes from `writeJsonReport`'s own guard, not from the prescan.**
+It is the choke-point check — the one moved inside `writeJsonReport` for `A05`
+and hardened for `F03`, covering all 54 report-write call sites — firing on the
+platform where the early guard was genuinely bypassed. **The design's whole
+premise is that the authoritative check sits at the write, not at the entry
+point, and this is the first measurement in which the entry point actually
+failed and the write still held.**
+
+**And this time the sentence is true.** `F03` recorded the same guard printing
+*"Nothing has been written; the input is untouched"* when both halves were false.
+Here the capture's SHA-256 is compared before and after and is **unchanged** —
+`capture-intact: YES` — so the message is accurate. The gate asserts that
+specific line, not merely that the step ran.
+
+### The rest of the run
+
+The Linux suite: **23 passed, 0 failed, 1 could not run** —
+`regression-platform-deltas` abstaining, as that platform's manifest requires.
+The suite stayed green through the detector's `has_pipefail` repair, the
+stale-claim registry's seven new declined-route entries, and the widened
+document scope.
+
+### What this does NOT establish
+
+- **Two platforms, two `getopt` implementations.** binary128 on Linux aarch64 is
+  still **NOT RUN**, and nothing here says what a third libc would do.
+- **It does not establish that the prescan is harmless.** It establishes that on
+  the one aliasing case measured, the choke point caught what the prescan
+  missed. A different early-guard function — the `--version` prescan, say — has
+  no second line of defence behind it, and `OC-80`'s note that permutation may
+  let a late `--version` reach getopt is **still unmeasured**.
+- The permutation measurement is of **`ea_non_iid`**. `ea_iid` and `ea_restart`
+  share the prescan but were not run in step 5c.
+- Nothing reported upstream.
