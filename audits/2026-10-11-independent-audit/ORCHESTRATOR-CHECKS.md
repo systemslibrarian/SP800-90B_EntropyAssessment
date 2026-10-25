@@ -8752,3 +8752,125 @@ running the suite.
 - The five realised instances are the five known. A sixth is not excluded, and
   the search above was for *undeclared* pairs rather than for *broken* ones.
 - Nothing reported upstream.
+
+## OC-95 — the dead-guard backlog, triaged: and a correction to my own figure first
+
+**Owner's item 3 of 2026-10-25: bound the backlog before working it.**
+
+### The correction I owe
+
+I reported *"a dead-guard baseline of 40 flags is pinned, of which 36 remain
+unresolved patterns rather than cleared guards."* **That was wrong, and wrong in
+the flattering direction.** A resolved flag **leaves** the baseline — the
+baseline *is* the unresolved set. So all 40 pinned signatures were unresolved;
+none of them was among the four I had counted as resolved. Two flags were
+resolved during this campaign and left (42 → 41 → 40). The "36" described
+nothing.
+
+### The unit matters: 40 signatures, 68 flagged lines
+
+The baseline deduplicates by `file|pattern|detail`, deliberately, so that a line
+number moving does not move the baseline. One signature can therefore cover
+several lines **in different groups** — `regression-docs.sh|D` covers three
+lines, one a false positive and two benign. **So the triage is by flagged line,
+68 of them, and the signature count is reported beside it rather than used as
+the denominator.**
+
+### The three groups
+
+| group | lines | share |
+|---|---:|---:|
+| **1 — a wrong result could reach a figure or a claim** | **9** | 13 % |
+| **2 — it could not: a silent failure produces a downstream failure** | **48** | 71 % |
+| **3 — false positive of the detector** | **11** | **16 %** |
+
+**Group 2's test**, applied uniformly: does a silent failure leave an absent
+fixture, an empty digest, an unlanded mutation that a *separate* landing proof
+catches, or a report line the job's expected-gates file requires? All four end
+in a failure, not a pass. Item 4's sweep measured the first of those directly:
+no script reports a false pass when `python3` cannot run.
+
+### The detector's own false-positive rate: 16 %, and it has one blind spot
+
+Eleven of 68, and **six of them are one blind spot**: a construct whose status
+is read by a mechanism the pattern matcher cannot see.
+
+| the construct | why the status is read |
+|---|---|
+| `python3 … <<'PY'` as the **last statement of a function** | its exit status **is** the function's return value — `build-provenance-canary.sh`'s `json_check()`, `build-differential.sh`'s `rule8_controls()` |
+| `grep -q … \` continued onto `\|\| …` | the `\|\|` is on the next line, which the matcher reads as a separate statement — `regression-outside-battery.sh` ×2, `regression-docs.sh` ×1 |
+| a multi-line `var=$( … python3 …` | the `python3` line is not itself an assignment, so `ASSIGN.match` misses it — `regression-docs.sh` ×2 |
+| an `assert` **inside** an interpreter heredoc | matched as if it were a shell verification command — `regression-iid-json.sh` |
+| a terminal `echo "… PASS"` **guarded by an `if ! … exit 1; fi` above it** | all three class-**A** flags, the detector's most alarming class, are this |
+
+**All three class-A flags are false positives.** That is worth saying plainly:
+the class whose detail reads *"exit status is the message, not the
+verification"* is, in this tree, 3 for 3 wrong. Add the two withdrawn before
+they ever entered the baseline — a `grep -q … ||` and a `chk` continuation — and
+**12 of 70 flags encountered this campaign were noise**. A detector whose flags
+are mostly noise trains people to dismiss them; at 16 % this one is worth
+reading, and the five shapes above are worth teaching it.
+
+### Group 1, resolved and unresolvable
+
+**One tested, confirmed and repaired.** `regression-deadguard.sh:46` —
+`grep '^provenance: fork @' … | sed …` in statement position, status unread.
+The test: suppress the provenance print inside `deadguard.py` and run it.
+
+```
+  flags now                                    40
+  flags in the pinned baseline                 40
+regression-deadguard: PASS (flag set unchanged)        exit 0
+```
+
+**No provenance line, and a PASS.** Instrument rule 4's exact shape — a
+measurement whose artefact was never declared — **inside the script whose job is
+to find dead guards**, and introduced by my own `OC-72` wiring. Now a
+precondition: absent, it refuses with exit 2 and says the flag set is about an
+unidentified tree. Verified both ways. Baseline **40 → 39**, one deletion: that
+flag is repaired, not deleted.
+
+**Six are in frozen evidence and cannot be resolved.** `repairs/2026-10-09-ind-02/rerun.sh`,
+`audits/2026-09-30/…/issue272/repro.sh` ×2, `audits/2026-09-30/…/widths.sh` ×2,
+`audits/2026-10-09-independent-audit/rerun.sh`. Guide rule 2 forbids editing
+dated evidence, and that is the right rule: these scripts produced figures the
+record cites, and changing them now would destroy the account of how those
+figures were produced. **The consequence is recorded instead: the figures those
+six lines helped produce carry an unverified-status caveat, and re-deriving them
+would mean re-running the scripts in a copy rather than repairing them in
+place.**
+
+**Two are reachable only from Windows CI.** `.github/scripts/windows-facts.sh:719`
+and `:732` — `grep … | while read` loops that drive the `GATE` logic. Resolvable
+in principle; **not resolved, because the only honest test runs on a platform
+this project cannot run locally**, and a `cmd`-shell script cannot be exercised
+here at all (item 4).
+
+### What group 2 would cost
+
+48 lines, and the cost is not the editing — it is the **testing**. Each one needs
+its own constructed failure: break the generator and confirm the downstream
+check fails rather than passes; suppress the digest and confirm the comparison
+refuses; un-land the mutation and confirm the landing proof fires. Item 4's
+sweep did exactly this for `python3` across 22 scripts and took one background
+run of several minutes plus a static pass; the compiler was **not** swept and
+that alone is a comparable piece of work.
+
+**Estimate: the 48 are roughly four sweeps** — one per tool class (`python3`
+done, compiler, `perl`, `grep`/`sed` in pipes) — and the honest return is low,
+because the class has no known realised instance: **every realised false pass
+this campaign found was group 1 or group 3 in shape, never group 2.** That is
+the argument for leaving them classified and not resolved, and it is an argument
+from the absence of instances rather than from cost.
+
+### What this does NOT establish
+
+- **Eight of the nine group-1 lines are untested.** Six cannot be tested without
+  re-running frozen evidence, two need Windows. Their assignment to group 1 is
+  **reasoned from the construct's role, not measured** — which is a weaker claim
+  than the one tested line carries, and is marked as such.
+- The group-2 assignment rests on item 4's sweep for `python3` and on reasoning
+  for the other tools. **A compiler sweep could move lines from 2 to 1.**
+- The 16 % false-positive rate is **this tree's**, measured on 68 flags, and the
+  five shapes are not a complete taxonomy of what the detector cannot see.
+- Nothing reported upstream.

@@ -41,9 +41,27 @@ mkdir -p "${work}/sweep/fork-repair" "${work}/sweep/truepad"
 SP="${work}" python3 "${repo}/audits/2026-10-11-independent-audit/deadguard.py" > "${work}/dg.out" 2>&1 || {
     echo "regression-deadguard: deadguard.py failed" >&2; cat "${work}/dg.out" >&2; exit 2; }
 
-# PROVENANCE IS DECLARED, NOT ASSUMED (rule 4 / OC-72). The detectors used to
-# hardcode "fork @ master f069898" for whatever was placed under them.
-grep '^provenance: fork @' "${work}/dg.out" | sed 's/^/  [provenance] /'
+# PROVENANCE IS DECLARED, NOT ASSUMED (rule 4 / OC-72) -- AND NOW REQUIRED
+# (OC-95).
+#
+# This was `grep ... | sed` in statement position with its status unread, which
+# the dead-guard detector flagged as pattern D against this very script. The
+# triage tested it: with the provenance print suppressed in deadguard.py, this
+# script printed NO provenance line and still reported
+# "regression-deadguard: PASS (flag set unchanged)", exit 0.
+#
+# That is instrument rule 4's exact shape -- a measurement whose artefact was
+# never declared -- inside the script whose job is to find dead guards. The
+# declaration is now a precondition: absent, this refuses with exit 2 rather
+# than reporting a flag set whose provenance is unknown.
+prov=$(grep '^provenance: fork @' "${work}/dg.out")
+if [ -z "${prov}" ]; then
+    echo "regression-deadguard: the detectors printed no provenance line, so the flag" >&2
+    echo "                      set below is about an unidentified tree. Refusing to" >&2
+    echo "                      compare it against the baseline (rule 4, OC-95)." >&2
+    exit 2
+fi
+printf '%s\n' "${prov}" | sed 's/^/  [provenance] /'
 
 python3 - "${work}/deadguard.json" > "${work}/flags.txt" <<'PY'
 import json, sys
