@@ -134,7 +134,30 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
     outdir = sys.argv[1]
+    # A PROBE MUST NOT BE ABLE TO CREATE THE THING IT ASKS ABOUT.
+    #
+    # This took sys.argv[1] as the output directory with no option handling, so
+    # `blindspot_streams.py --help` -- the obvious way to discover the
+    # interface -- created a directory literally named "--help" and wrote 34
+    # streams, 33 MB, into it. A later `git add -A` committed all 34 (a9a269f),
+    # and they reached the remote. Nothing referenced them; the corpus exists
+    # precisely so these are REGENERATED from seeds and never stored.
+    #
+    # So: an outdir that looks like an option is refused, and the help flags
+    # print the usage instead of becoming a directory. The refusal is the point
+    # -- an option-shaped operand is a mistake every time here, because this
+    # script has no options.
+    if outdir in ('-h', '--help', '-help', '--usage'):
+        raise SystemExit(__doc__)
+    if outdir.startswith('-'):
+        raise SystemExit("blindspot_streams.py: refusing to treat %r as an output "
+                         "directory: it looks like an option, and this script has "
+                         "none. Give a directory path." % outdir)
     names = sys.argv[2:] or ALL
+    unknown = [n for n in names if n not in ALL]
+    if unknown:
+        raise SystemExit("blindspot_streams.py: unknown stream name(s): %s"
+                         % ' '.join(unknown))
     os.makedirs(outdir, exist_ok=True)
     for n in names:
         emit(outdir, n, build(n))
