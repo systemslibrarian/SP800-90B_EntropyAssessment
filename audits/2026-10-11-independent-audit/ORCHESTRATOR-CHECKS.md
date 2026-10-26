@@ -10437,3 +10437,108 @@ has had support that does not originate with its author.
   an assessment verdict. Only its printed figures are used here.
 - **Nothing reported upstream, to NIST or to either project.**
 
+## OC-111 — the three-way differential on DEGENERATE inputs: 10 disagreements in 503, all smaller than the floor's own quantisation term
+
+**`OC-110` found zero disagreements over NIST's eleven reference datasets, all
+of which are reasonable sources. The defect datasets of `OC-109` are
+deliberately degenerate — clipped, drifting, replayed, unsettled — and that is
+where three implementations should be expected to part company. Five of them
+were run three ways.**
+
+```
+labels compared across >=2 implementations: 503
+labels where every implementation agrees to 1e-09: 493
+labels exceeding 1e-09:                             10
+```
+
+### The disagreement list, with the outlier named
+
+| dataset | row | delta | outlier | fork | c99 | rust |
+|---|---|---:|---|---|---|---|
+| `saturated` | Bitstring MultiMCW `P_local` | 1.265e-09 | *(two-way)* | 0.7916290836 | 0.791629082335 | — |
+| `saturated` | Bitstring MultiMCW min-entropy | 2.305e-09 | **fork** | 0.337103478467 | 0.337103480772 | 0.337103480615 |
+| `saturated` | Bitstring Lag `P_local` | 1.524e-09 | *(two-way)* | 0.79162900416 | 0.791629002636 | — |
+| `saturated` | Bitstring Lag min-entropy | 2.778e-09 | **fork** | 0.33710362324 | 0.337103626018 | 0.337103625445 |
+| `saturated` | Bitstring LZ78Y min-entropy | 2.025e-09 | rust | 0.337103586045 | 0.337103586045 | 0.33710358807 |
+| `drift` | Literal MultiMMC min-entropy | 4.066e-09 | rust | 3.77987410628 | 3.77987410628 | 3.77987411034 |
+| `drift` | Literal LZ78Y min-entropy | 4.165e-09 | rust | 3.77987097957 | 3.77987097957 | 3.77987098373 |
+| `drift` | `H_original` / Literal minimum | 4.165e-09 | rust | 3.77987097957 | 3.77987097957 | 3.77987098373 |
+| `replay` | Literal LZ78Y min-entropy | 1.954e-09 | rust | 2.18413376771 | 2.18413376771 | 2.18413376966 |
+| `warmup` | Literal MultiMCW min-entropy | 2.249e-09 | rust | 1.62517503233 | 1.62517503233 | 1.62517503458 |
+
+**Characterized before being called anyone's bug, in three groups.**
+
+**(a) Six rows where `rust` is the outlier and fork and C99 agree EXACTLY.**
+This is 256-bit MPFR against binary64, and the Rust project documents it:
+*"High-precision arithmetic also means the default need not be bit-for-bit
+identical to NIST's binary64 operations."* Two independent binary64
+implementations landing on the same bits while the high-precision one differs
+by 2e-09 is the expected signature, not a defect in anyone.
+
+**(b) Two rows where THIS FORK is the outlier** — `saturated`, Bitstring
+MultiMCW and Bitstring Lag min-entropy. Per the owner's rule these are
+candidate defects in this fork and are investigated rather than explained away.
+What the investigation finds:
+
+- Both sit **immediately downstream of a `P_local` row that also disagrees**
+  (1.265e-09 and 1.524e-09, fork versus C99), so the min-entropy difference is
+  inherited, not independently generated.
+- Both are **Bitstring prediction estimators**, and `P_local` is the quantity
+  computed by **bisection**.
+- That is **exactly the family and exactly the quantity** that
+  `known-platform-deltas.txt` lists for Darwin arm64 — Bitstring MultiMCW
+  `P_local`, Bitstring MultiMMC `P_local`, Bitstring Lag min entropy, Literal
+  Lag `P_local`. Same estimators, same quantity, on a different input.
+- The magnitude is an order larger here (2e-09 against 3e-10) and the input
+  explains the direction: `saturated` is clipped to 0 and 255, so `P_local`
+  sits at 0.79 with very long runs, which is where the bisection is most
+  sensitive.
+
+**So this fork is the outlier on two rows, in the one quantity it had already
+identified as numerically fragile, on the most degenerate input in the set.**
+It is a candidate defect and it stays open as one; what it is **not** is a new
+mechanism.
+
+**(c) Two `P_local` rows are two-way only**, because the Rust CLI keeps that
+diagnostic API-only. Their outlier column is empty by construction, not by
+agreement.
+
+### AND EVERY ONE IS SMALLER THAN THE CORRECTION THE FLOOR ALREADY APPLIES
+
+`C22a` is the floor's **MEASURED** `P_local` quantisation term, `8.08e-15 x (n+1)`:
+
+| | value |
+|---|---:|
+| `C22a` at n = 1e6 bits | **8.080e-09** bit |
+| `C22a` at n = 8e6 bits (an 8-bit source at 1e6 samples) | **6.464e-08** bit |
+| worst three-way disagreement, NIST datasets (`OC-110`) | 3.659e-10 bit |
+| **worst three-way disagreement, degenerate datasets** | **4.165e-09** bit |
+| worst row where **this fork** is the outlier | 2.778e-09 bit |
+
+**Every disagreement three independent implementations produce, on the most
+degenerate inputs available, is smaller than the quantisation correction this
+project already subtracts.** Two consequences, and they point in opposite
+directions, so both are stated:
+
+1. **The floor absorbs them.** No figure this project publishes moves, because
+   `C22a` is subtracted before the floor is reported and it is larger than the
+   spread.
+2. **It is independent support for `C22a`'s ORDER OF MAGNITUDE, and nothing
+   more.** A different team's implementation differs from this one by less than
+   `C22a`, which is consistent with `C22a` being the right size. It does **not**
+   make `C22a` a bound — `WV-2` withdrew that claim and it stays withdrawn.
+   `C22a` remains **MEASURED, not PROVED**.
+
+### What this does NOT establish
+
+- **Five datasets, one width, one platform.** 17 of the 22 defect datasets were
+  not run three ways, and the three-way on x86-64 is **NOT RUN**.
+- The two rows where this fork is the outlier are **not diagnosed**, only
+  located. Nothing here says which of the three is arithmetically closer to the
+  §6.3.7 definition — that needs an independent high-precision computation of
+  `P_local` on this input, which is **not done**.
+- `fork == c99` **exactly** on 493 of 503 rows including every assessed figure,
+  which is strong agreement between two binary64 implementations and says
+  nothing about whether binary64 is adequate here.
+- **Nothing reported upstream, to NIST or to either project.**
+
