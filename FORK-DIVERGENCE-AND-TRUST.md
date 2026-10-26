@@ -1,6 +1,6 @@
 # Fork divergence and external trust
 
-**Measured at commit `11207ca`, 2026-10-25.** Every count in this document
+**Measured at commit `34ceb59`, 2026-10-25.** Every count in this document
 names the commit and date it was taken at. Reproduce them with
 `sh tools/measure-divergence.sh`; `cpp/selftest/regression-docs.sh` re-runs that
 script and fails if the figures below disagree with it.
@@ -9,6 +9,17 @@ Supersedes the version dated 2026-10-09. **Seven statements in that version are
 false, not merely out of date** — they are listed and corrected as false in §0,
 because a reader who met them would have drawn a wrong conclusion, and
 "superseded" does not say that.
+
+**Revised 2026-10-25, after the external-validation campaign.** What changed:
+**§2** is new and leads with the first evidence in this repository that does not
+originate with the author of the code; **section D** is new, for differences
+that are neither a code defect nor a standard defect; **`C-0`** is new and is
+now the most important limitation in the document; **§4** names what is still
+open; and §0 records the one statement this sweep found **false** as against the
+several that were merely stale. **Read §2 and `C-0` together** — the first is the
+strongest thing that can be said for this tool and the second is the strongest
+thing that must be said against relying on it alone. Neither is complete without
+the other.
 
 ## How to read this
 
@@ -23,9 +34,20 @@ Defects are filed in **three sections that do not overlap**:
 |---|---|---|
 | **A** | [Code defects](#a--code-defects) | the implementation does something other than what SP 800-90B specifies, or other than what it itself claims |
 | **B** | [Standard defects](#b--standard-defects) | the implementation does what SP 800-90B specifies **and the specified thing is wrong or ambiguous** |
+| **D** | [Characterized differences](#d--characterized-differences-that-are-nobody-s-defect) | NIST's code and the publication differ, **and NIST's choice is correct or conservative** — so there is nothing to repair on either side |
 | **C** | [What none of this establishes](#c--what-none-of-this-establishes) | claims no software estimator can produce, whatever it computes |
 
-**A and B never share an entry, and an entry never drifts between them.** The
+**Why D exists, added 2026-10-25.** `OC-108` checked this fork against another
+implementation's documented list of intentional divergences and found items that
+fit none of A, B or C: places where NIST's code departs from the publication's
+text **and the code is right**, or where it takes the conservative branch of an
+ambiguity. Filing those in A would call them defects in the implementation;
+filing them in B would call them defects in the standard. **Both readings are
+wrong, and conflating them is how a reader is misled** — a mistake this project
+has already made once in its own advice. They get their own section, and every
+entry there says explicitly that it is **not a repair**.
+
+**A, B and D never share an entry, and an entry never drifts between them.** The
 test is single and mechanical: *would conforming exactly to the standard's text
 fix it?* If yes, it is a **code** defect. If conforming exactly to the text is
 what produces the wrong behaviour, it is a **standard** defect. `C18` is a code
@@ -62,7 +84,7 @@ about the state of the tree.
 | **2** | *"`N-08`: permissive numeric parsing remains in direct CLI paths"* | **False.** `SUPPORTED-SCOPE-FIXED`. The supported CLIs and the transpose path are fixed; the `ea_conditioning` instance stays excluded by `876ba05`, which is a scope decision and not a remaining defect in the supported product. |
 | **3** | *"`N-10`: ambiguous report semantics remain"* | **False.** `SUPPORTED-SCOPE-FIXED`, with the conditioning half excluded by the same commit. |
 | **4** | *"`NOVEL-03`: IID restart row and column results retain ambiguous labels"* | **False.** `FORK-FIXED`. Independent verification of `25fbb54` remains outstanding — which is a different statement, and is the one this document should have made. |
-| **5** | the whole **quantified divergence** block: *"Fork repair branch: `repair/2026-10-09-verified-defects`… commit `9556649`… 66 commits ahead… 658 changed paths, 62,252 added text lines"* | **False as a description of this fork.** That branch was merged into `master` at `d226f18` on 2026-10-15 and no longer exists as a separate head. Measured at `11207ca`, 2026-10-25: **179 commits ahead, 0 behind, 1,033 text files, 108,859 insertions, 461 deletions.** Every figure in that block was off by more than a factor of 1.5, and none of them said when it had been taken. |
+| **5** | the whole **quantified divergence** block: *"Fork repair branch: `repair/2026-10-09-verified-defects`… commit `9556649`… 66 commits ahead… 658 changed paths, 62,252 added text lines"* | **False as a description of this fork.** That branch was merged into `master` at `d226f18` on 2026-10-15 and no longer exists as a separate head. Measured at `11207ca`, 2026-10-25: **179 commits ahead, 0 behind, 1,033 text files, 108,859 insertions, 461 deletions.** (Those are the figures as of the commit named; §1 carries the current ones.) Every figure in that block was off by more than a factor of 1.5, and none of them said when it had been taken. |
 | **6** | route item 7: *"Validate Linux and Windows before claiming support for those platforms"* | **False as a pending action.** Both are measured, by CI rather than by acquiring machines: x86-64 Linux on every push since 2026-10-19, Windows MinGW on 2026-10-20. What remains is not validation but **independent** validation — which §5 Decision 2 records as permanently declined, so nothing remains as a pending action at all. |
 | **7** | route item 8: *"Submit generally applicable repairs upstream where practical"*, and *"Upstream acceptance would improve maintainability and external confidence"* | **Contradicts a standing decision, and was never a mere omission.** The owner decided on 2026-10-15 that **nothing is reported upstream**. The route list described a route the project has declined to take, which is worse than not listing it: a reader would have treated the absence of upstream reports as neglect rather than as policy. §5 states that decision and its consequences instead — and the first rewrite of §5 then made the same mistake with a different route, which §5 now records. |
 
@@ -70,6 +92,40 @@ about the state of the tree.
 requests came from `@joshuaehill`, who is not a NIST account and who deferred
 to "the NIST folks" on PR #268. No statement anywhere in this repository should
 be read as NIST having reviewed, accepted or commented on anything here.
+
+### The 2026-10-25 sweep: what was removed, and the difference that matters
+
+Every statement was re-checked at `34ceb59`. **One was false; the rest were
+stale-but-dated, which is not the same thing and must not be reported as if it
+were.**
+
+**FALSE, and corrected:** *"Binary reference artefacts | 2"*. It was true when
+written at `11207ca`, became **false at `a9a269f`** when 34 generated streams
+were committed into a directory named `--help`, and is true again at `34ceb59`
+now that they are removed. **It was caught by
+`tools/measure-divergence.sh` reporting `binary files=36` against the recorded
+2** — the enforcement this document added for an unrelated reason, catching its
+own author. Filed as `F15` in A.2.
+
+**STALE BUT NEVER FALSE:** every count in §1 — the suite's 24 checks and 22
+scripts, 74 live instruments, 91 orchestrator records, 2 register entries, 179
+commits ahead and the divergence table. **Each named the commit and date it was
+taken at, so each was a true statement about that commit and remains one.** They
+are *updated*, not corrected, and they are deliberately not listed in the table
+above: putting them there would dilute the word "false" to mean "out of date",
+which is exactly the conflation §0 exists to refuse. **The mechanism worked** —
+`regression-docs.sh` failed on the first edit of this rewrite because the
+evidence insertion count had moved by 23 lines between two commits, and would
+not pass until the figure matched.
+
+**NO SURVIVING RECOMMENDATION TO SUBMIT ANYTHING UPSTREAM.** Swept at
+`34ceb59`: the only remaining mentions of upstream are the policy statements in
+§5 Decision 1 and the corrections in §0 items 6 and 7. **That decision is final
+and this document does not carry a route to it.**
+
+**Nothing was removed as merely inconvenient.** Sections A.1, A.2, B and C's
+existing entries are unchanged by this pass except for the additions named in
+§4.
 
 ---
 
@@ -82,33 +138,144 @@ divergence.
 
 | Category | Files | Insertions | Deletions |
 |---|---:|---:|---:|
-| Production C++ and build | 21 | 2,188 | 450 |
-| Self-tests and regression harness | 50 | 7,303 | 7 |
-| CI workflows and scripts | 4 | 1,258 | — |
-| Audit and repair evidence | 950 | 96,284 | — |
-| Other documentation | 8 | 1,826 | 4 |
-| **total (text)** | **1,033** | **108,859** | **461** |
+| Production C++ and build | 21 | 2,337 | 450 |
+| Self-tests and regression harness | 53 | 7,951 | 7 |
+| CI workflows and scripts | 4 | 1,467 | — |
+| Audit and repair evidence | 951 | 99,218 | — |
+| Other documentation | 8 | 2,270 | 4 |
+| **total (text)** | **1,037** | **113,243** | **461** |
 | Binary reference artefacts | 2 | — | — |
 
-**179 commits ahead.** The headline is dominated by evidence: 88 % of the
-insertions are audit and repair records. **The executable delta is 2,638 lines
+**197 commits ahead.** The headline is dominated by evidence: 88 % of the
+insertions are audit and repair records. **The executable delta is 2,787 lines
 of churn across 21 files** — not a cosmetic fork, and not a rewrite of the
 estimators.
+
+**That binary count read 36 four commits ago, and the discrepancy was a
+defect.** `blindspot_streams.py` takes `sys.argv[1]` as its output directory
+with no option handling, so running it with `--help` to discover its interface
+created a directory literally named `--help` and wrote 34 generated streams,
+33 MB, into it; a blanket `git add -A` committed them at `a9a269f`. Removed, and
+the generator now refuses an option-shaped output directory. **The figure that
+caught it is one this document added for an unrelated reason** — which is the
+case for keeping counts that name their commit.
 
 Two other counts, because they bear on how much of the above is *checked*
 rather than merely written:
 
 | | count | measured at |
 |---|---:|---|
-| enforced suite | **24** checks, **22** regression scripts | `11207ca`, 2026-10-25 |
-| instruments that a sweep must cover | **74** live, **79** frozen | `11207ca`, 2026-10-25 (`audits/INSTRUMENT-INVENTORY.md`, enforced against its enumerator) |
-| orchestrator records | **91** entries | `11207ca`, 2026-10-25 |
-| withdrawn verifications | **2** | `audits/WITHDRAWN-VERIFICATIONS.md` |
+| enforced suite | **25** checks, **23** regression scripts | `34ceb59`, 2026-10-25 |
+| instruments that a sweep must cover | **77** live, **79** frozen | `34ceb59`, 2026-10-25 (`audits/INSTRUMENT-INVENTORY.md`, enforced against its enumerator) |
+| orchestrator records | **113** entries | `34ceb59`, 2026-10-25 |
+| register entries, withdrawn or superseded | **7** (2 `WV-`, 5 `SV-`) | `audits/WITHDRAWN-VERIFICATIONS.md` |
 
-**None of these is a measure of correctness.** A suite of 24 checks that all
+**None of these is a measure of correctness.** A suite of 25 checks that all
 pass establishes what `cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md` says it
 establishes and nothing beyond it, and that document exists because the number
-on its own invites the opposite reading.
+on its own invites the opposite reading. **The external validation in §2 is a
+different kind of statement, and it is the only one here that does not
+originate with the author of the code.**
+
+---
+
+## §2 — External validation: the strongest statement in this repository
+
+**Everything else in this document is the author of the code reporting on the
+code. This section is not, and it is placed before the defect sections because
+it is the better answer to "should I trust this fork".**
+
+### Against NIST's own published reference outputs
+
+`tools/compare-nist-reference.sh` performs `selftest`'s own loop — the same
+fixture list, the same `ea_non_iid -vv`, the same `compareresults.pl` — and
+reports the per-dataset value count and worst delta that `selftest` discards.
+
+| platform | datasets | values compared | result | worst delta |
+|---|---|---:|---|---|
+| **Linux x86-64 glibc** — the platform NIST produced its reference data on | 11 | **891** | **11 agreeing, 0 disagreeing** | **1.00808250635964e-13** |
+| Darwin arm64 | 11 | **891** | 9 agreeing, 2 disagreeing | **3.65934130219792e-10** |
+
+The 8 differing rows on Darwin arm64 are **exactly** those in
+`cpp/selftest/known-platform-deltas.txt`, inside its `1e-9` tolerance, and all
+8 are in **prediction estimators**. Linux x86-64 has deliberately no block in
+that file, so its 11-of-11 is unexcused agreement. (`OC-107`, `OC-113`; CI run
+40249281414, step 5e, gated on `datasets run: 11` **and** `disagreeing: 0`
+separately so a loop that stopped early cannot pass as agreement.)
+
+**EVERY PRIOR SELFTEST PASS IN THIS REPOSITORY'S HISTORY IS UNVERIFIED, AND
+THESE TWO RUNS REPLACE IT.** Until `OC-73`/`OC-74`, `compareresults.pl` did not
+compare the two **identity** lines of the reports it read, so it had no way to
+tell that the output came from the same input, at the same sample count, at the
+same symbol width, as the reference. Measured: a copy of `refdata/normal.res`
+rewritten to claim `SOME-OTHER-FILE.bin` and *"42 samples of 3 distinct 2-bit
+symbols"* compared **equal** to `normal.bin`'s real output — 1,000,000 samples,
+179 distinct 8-bit symbols — reporting *"Maximum delta: 6.93e-15"*, 98 values
+compared, **exit 0**. The identity lines **matched on all 11 datasets on both
+platforms** in the runs above, which is the first time that has been true of a
+comparator that checks which file it read.
+
+**And the first run of this very check was wrong.** It omitted
+`EA_ALLOW_SHORT_DATASET`, which `selftest` sets at its line 23 so the three
+10,000-sample datasets can run against this fork's §3.1.1 minimum enforcement,
+and it would have reported **three of eleven reference datasets as
+disagreeing**. The three rows that use that escape are marked in the output as
+**not a compliant assessment**. A check that nearly produced the alarm it was
+built to detect belongs in the record beside its result.
+
+### Against two independent implementations
+
+Two other SP 800-90B implementations were built and run as **separate
+binaries** — never vendored, no code copied, no license question. The Rust one
+links `MPFR`, which this fork deliberately does not; running it out of process
+is what preserves that property.
+
+| implementation | identity | build |
+|---|---|---|
+| `walters-labs/sp-800-90b` | `ef6fd02`, v0.1.1 | `cargo --release`, 256-bit MPFR via `rug` |
+| `EPI-Quantum-Crypto/libsp80090b` | `2429253`, C99 port of NIST 1.1.8 | `gcc-16 -std=c99 -O2 -ffloat-store`, portable `MARCH=` |
+
+| corpus | rows compared | exceeding `1e-9` | worst |
+|---|---:|---:|---:|
+| NIST's 11 reference datasets | **891** | **0** | 3.659e-10 |
+| this fork's outside-battery corpus, 5 streams | **295** | **0** | 6.217e-14 |
+| 5 deliberately degenerate defect datasets | **503** | **10** | 4.165e-09 |
+| **total** | **1,689** | **10** | |
+
+Of 163 three-way rows on the reference datasets, **64 agree exactly**; of 728
+rows this fork shares with the C99 port, **719 are bit-identical**.
+
+**The 10 disagreements, all on degenerate inputs:**
+
+- **6** where the **Rust** implementation is the outlier and this fork equals
+  the C99 port **exactly** — 256-bit MPFR against binary64, which that project
+  documents.
+- **2** where **this fork** is the outlier — `saturated.bin`, Bitstring MultiMCW
+  and Bitstring Lag min-entropy. See §4.
+- **2** two-way only, because the Rust CLI keeps `P_local` API-only; their
+  outlier column is empty by construction, not by agreement.
+
+**All 10 are smaller than `C22a`.** The floor's measured `P_local` quantisation
+term is `8.08e-15 x (n+1)` — **8.080e-09** bit at n = 1e6, **6.464e-08** at
+n = 8e6 — against a worst disagreement of **4.165e-09**. So **no figure this
+project publishes moves.**
+
+**This does not upgrade `C22a`.** It is consistent with `C22a` being the right
+*order of magnitude* and it is not a bound. `C22a` remains **MEASURED, not
+PROVED**, and `WV-2`'s withdrawal of the supremacy claim **stands withdrawn**.
+A reader must not infer from this section an upgrade that did not happen.
+
+### What §2 does not establish
+
+- **It is agreement, not correctness.** Three implementations of the same
+  standard agreeing establishes that they implement the same standard. Where
+  the standard is wrong — section B, and `D-3` — all three are wrong together.
+- **`ea_non_iid` only.** The IID, restart and conditioning reference paths are
+  not compared this way.
+- The three-way runs were all on **one machine**. §2's platform conclusion
+  rests on the two-platform reference comparison and on `OC-112`, not on the
+  three-way alone.
+- **Nothing was reported to NIST or to either project.**
 
 ---
 
@@ -263,6 +430,41 @@ of creating defects as of removing them.
 
 ---
 
+#### `F15` — 33 MB of generated streams committed into a directory named `--help`
+
+- **DEFECT.** `audits/2026-10-11-independent-audit/generators/blindspot_streams.py` took `sys.argv[1]` as
+  its output directory with **no option handling**, so
+  `blindspot_streams.py --help` — the obvious way to discover the interface, and
+  what was run while probing it for `OC-114` — **created a directory literally
+  named `--help`** and wrote 34 generated streams, **33 MB**, into it. A blanket
+  `git add -A` committed all 34 at `a9a269f` and pushed them. Nothing referenced
+  them; `cpp/selftest/outside-battery-corpus.txt` exists precisely so those
+  streams are **regenerated from seeds** rather than stored.
+- **ORIGIN.** **INTRODUCED BY THIS FORK**, by this campaign, four commits before
+  it was found. The generator's missing option handling is older; the commit is
+  mine.
+- **EVIDENCE.** **EXECUTED.** Found by `tools/measure-divergence.sh` reporting
+  `binary files=36` against this document's recorded **2** — a figure added for
+  an unrelated reason, which is the argument for keeping counts that name their
+  commit. Both states then observed directly: the pre-repair generator at
+  `a9a269f` run as `--help mt00` exits 0 and **creates `--help/`**; the repaired
+  one prints the usage and creates nothing.
+- **STATUS.** **REPAIRED** (`34ceb59`). The 34 files are removed; **the blobs
+  remain in history at `a9a269f` and history was not rewritten**, because the
+  record should show that this happened. The generator now prints usage for
+  `-h`/`--help`/`-help`/`--usage`, **refuses by name** any other output
+  directory beginning with `-` — this script has no options, so an
+  option-shaped operand is a mistake every time — and refuses unknown stream
+  names instead of silently producing nothing. Verified in both directions:
+  `-o` refused, 0 created; `./real mt00` still writes its file.
+- **DOES NOT ESTABLISH.** That no other probe in this campaign had a side
+  effect. This one was caught by a count that happened to cover it; **no sweep
+  for probe side effects has been run**, and the four earlier self-introduced
+  defects were each found by a different accident. A probe must not be able to
+  create the thing it asks about, and only this one generator has been made to
+  obey that.
+
+
 ## A.3 — A deliberate behaviour divergence from upstream, which is not a defect
 
 **One entry, and it is the only change in this fork that will REFUSE a command
@@ -410,6 +612,148 @@ and the sweep reaches **92.8 %** of the ceiling it is supposed to bound.
 
 ---
 
+## D — Characterized differences that are nobody's defect
+
+**NIST's code and the publication's text differ, and NIST's code is correct or
+takes the conservative branch.** Nothing here is repaired, nothing here should
+be, and **no entry in this section is a repair** — each states what was
+characterized and stops.
+
+Four of these came from `OC-108`, which checked this fork against the Rust
+implementation's own published list of intentional divergences from NIST. **That
+list found 0 defects in this fork.** Four findings already in this record were
+reached independently by a different team in a different language, which is
+**the first external support any finding in this repository has had** — and on
+one, `D-4`, the two projects reached **opposite** conclusions and both
+documented theirs as deliberate.
+
+#### `D-1` — the MCV confidence constant: binary64 against the publication's decimal
+
+- **WHAT DIFFERS.** `cpp/shared/utils.h:75` defines
+  `ZALPHA 2.5758293035489008`, the exact 0.995 standard-normal quantile in
+  binary64, where SP 800-90B's text prints the rounded decimal **`2.576`**. The
+  two give different results.
+- **WHO IS RIGHT.** **NIST's code.** `2.576` is a *rounded printing* of the true
+  quantile, so the implementation uses the correct number and the standard's
+  text uses the rounding. **Not a defect in either**, and dispositioned
+  NOT-A-BUG on exactly that reasoning (`F07`, `OC-8`).
+- **MEASURED, on values harvested from a real run** rather than from a model of
+  one — the recomputation of `P_global'` from the published `P_global` and `N`
+  reproduces the tool's own printed value exactly on all three predictors:
+
+  | predictor | with `ZALPHA` | with `2.576` | delta |
+  |---|---|---|---|
+  | Bitstring MultiMCW | 0.99911507785502614 | 0.99911499084098192 | **+8.70e-08** bit |
+  | Literal MultiMCW | 7.9611632356166352 | 7.9611594334062937 | **+3.80e-06** bit |
+  | Bitstring Lag | 0.998936306150716 | 0.99893621914778806 | **+8.70e-08** bit |
+
+- **DIRECTION.** Permissive — the code's constant yields the **higher** estimate.
+  The worst delta sits at the sixth decimal of a figure printed to 17
+  significant digits, i.e. **far above** the printed precision floor and
+  7.6e-06 relative against the project's 0.5 bit-per-bit threshold.
+- **CORROBORATED.** The Rust implementation offers both constants and its
+  **default is the binary64 one** — the same conclusion, reached independently.
+- **NOT A REPAIR.** No change was made and none is recommended. The constant is
+  also carried as the `C22c` floor term, where it is a *bound on the difference*
+  rather than a correction to the constant; see `B`.
+
+#### `D-2` — the Collision estimator clamps the adjusted mean to 2, where the publication would fall back
+
+- **WHAT DIFFERS.** `cpp/non_iid/collision_test.h:69` is
+  `if(X < 2.0) X = 2.0;` — carrying upstream's own comment *"2 is the smallest
+  meaninful value here"* — and then solves on `[2, 2.5]`. SP 800-90B §6.3.2
+  step 7 instead prescribes a **no-solution fallback** for a bound outside the
+  solvable range.
+- **WHICH WAY IT GOES, worked out because it decides whether it matters.** The
+  solvable window gives entropy in `[0, 1]`:
+  - **NIST's clamp:** `X < 2` becomes `X = 2`, so
+    `p = 0.5 + sqrt(1.25 - 1.0) = 1.0` and `entEst = -log2(1.0) = ` **0 bits**.
+  - **The publication's fallback:** `p = 0.5`, `entEst = ` **1 bit**.
+- **SO THE CLAMP IS THE CONSERVATIVE BRANCH** — it awards **zero** entropy where
+  conforming to the text would award a full bit. For an entropy *claim*, lower
+  is safe. This is the rare entry in this document whose direction is the
+  favourable one.
+- **IT IS NOT `R-1`, AND NOT THE `C22` FLOOR.** `R-1` is the
+  `assert(p_col >= 1/k)` / `p_colPower` underflow **abort** in
+  `cpp/shared/lrs_test.h` on 80-bit `long double` — a crash on compliant data,
+  found by five independent finders, 155 of 255 alphabet sizes on x86-64.
+  Different file, different quantity, different failure mode. `C22` is
+  `P_local`'s bisection quantisation. **The three share only the word "clamp"**,
+  and conflating them would be the error this section exists to prevent.
+- **EVIDENCE.** **SOURCE-CONFIRMED** and **DERIVED** — the direction is
+  arithmetic on the published formula, not a run. Labelled as such.
+- **NOT A REPAIR.** Nothing changed.
+
+#### `D-3` — the Markov six-pattern table is not a minimum over all 128-step paths
+
+- **WHAT DIFFERS.** `cpp/non_iid/markov_test.h` evaluates exactly the **six**
+  candidate sequences §6.3.3 prescribes, in the standard's order —
+  `-log2(P_0) - 127*log2(P_00)`, `-log2(P_0) - 64*log2(P_01) - 63*log2(P_10)`,
+  and four more — then `entEst = fmin(H_min/128.0, 1.0)`. **That is exactly
+  conformant.** The characterization is that six prescribed patterns are **not**
+  the minimum over all 128-step Markov paths, so the published "Markov
+  min-entropy" can exceed the true minimum over that model.
+- **WHOSE IT IS.** The **standard's**, not the implementation's — which is why a
+  reader might expect it in B. It sits here because there is nothing to diverge
+  from: conforming is correct, and the limitation is a property of what §6.3.3
+  asks for.
+- **PROBABLY IMMATERIAL HERE, AND THE REASON IS MEASURED.** Compression binds on
+  every stream this project has assessed, and the aggregation measurement found
+  that a **40-sigma** defect in a non-binding estimator leaves the min-entropy
+  figure unchanged. Markov has never bound.
+- **EVIDENCE.** **SOURCE-CONFIRMED**, against the 2026-09-30 audit's
+  verification of the six paths as conformant.
+- **NOT A REPAIR**, and **not a candidate for one** — repairing it would mean
+  departing from §6.3.3.
+
+#### `D-4` — MultiMMC's run counter: the one place two implementations chose oppositely
+
+- **WHAT DIFFERS.** §6.3.9 step 1 initialises `correct[]` to 0 and step 4.d sets
+  `correct[i-2] = 1` only when the prediction equals the sample, so a **Null**
+  prediction leaves it 0 — and the section's own **worked example** shows
+  `prediction = Null, correct = 0` for its first two rounds. NIST's code reset
+  the run counter only where the winner predicted and was **wrong**, so a Null
+  from the winner carried the run straight across it.
+- **WHAT THIS FORK DID.** **Repaired it** (`F09`), guarded by
+  `cpp/selftest/regression-multimmc.sh`, which cites the worked example as its
+  authority. Direction: the defect inflated `r`, which makes `P_local` larger
+  and the estimate **smaller** — so it was **conservative**, and the repair
+  raises estimates slightly.
+- **WHAT THE OTHER IMPLEMENTATION DID.** **Deliberately preserved it**, for
+  reference compatibility, with a targeted test demonstrating the difference.
+- **SO THIS IS A GENUINE DIVERGENCE, DOCUMENTED AS INTENTIONAL ON BOTH SIDES.**
+  It is listed here rather than in A because the *characterization* — that the
+  quirk is real and that §6.3.9's worked example contradicts it — is
+  independently corroborated, while the *choice* of remedy is a judgement two
+  projects made differently. **The repair itself is recorded in A.1.**
+- **NOT A REPAIR in this section**; `A.1` carries the repair.
+
+#### `D-5` — the restart path after an IID rejection
+
+- **WHAT DIFFERS.** The Rust project records that NIST's reference *"can reach
+  its final validation-success message after printing IID failures"*.
+- **WHAT THIS FORK DOES.** Closes it: `cpp/restart_main.cpp:1139` skips the
+  permutation tests after an earlier required IID failure, and `:1155` awards
+  **no IID restart entropy estimate**. In the `C03` neighbourhood (`OC-6`).
+- **CORROBORATED, AND ALREADY FIXED HERE.** Listed in D because the finding was
+  reached independently; the repair is in `A`.
+- **NOT A REPAIR in this section.**
+
+#### `D-6` — out-of-width values are rejected rather than masked
+
+- **WHAT DIFFERS.** Nothing, between this fork and the Rust implementation —
+  both **refuse** a sample that does not fit its declared width rather than
+  masking it. Measured here: byte-valued data declared width 1 prints
+  *"Incorrect bit width specification: Data (8) does not fit within described
+  bit width: 1"* and exits 255.
+- **WHY IT IS RECORDED.** Because it is the one item on their list where the two
+  projects **agree without having coordinated**, and an agreement is as much a
+  result as a divergence.
+- **NOT A REPAIR.**
+
+
+---
+
 ## C — What none of this establishes
 
 Prose, not entries: there is nothing here to repair, and nothing a software
@@ -429,6 +773,71 @@ Neither a favourable entropy estimate nor a green suite shows:
   approves the artefact.
 
 Those are physical, operational, supply-chain and governance claims.
+
+### C-0 — THE MOST IMPORTANT LIMITATION IN THIS DOCUMENT: the assessment cannot tell a noise source from a generator
+
+**Measured 2026-10-25 (`OC-109`), on 1,000,000 samples at width 8:**
+
+**AES-256-CTR under an all-zero key** — a stream whose entropy is **exactly
+zero**, being a deterministic function of nothing — is assessed by this fork at
+
+> **7.1449938481907544 of 8 bits, exit 0, `errorLevel 0`.**
+
+All three independent implementations agree on the binding estimator (Bitstring
+Compression) to **3.0e-14**. `/dev/urandom` gets 7.17; OpenSSL's CSPRNG gets
+6.64.
+
+**Why, stated as a property and not as a fault.** SP 800-90B §6.3 measures
+**statistical structure**. It does not measure **computational
+unpredictability**, and no estimator in §6.3 could distinguish AES-CTR output
+from physical noise without breaking AES. **This is not a defect in this fork
+and not a defect in NIST's tool: it applies to NIST's reference implementation
+exactly as much as to this one, and to every conforming implementation.** It is
+the reason the standard requires raw, unconditioned samples.
+
+**The consequence, which is this document's job to state.** **No estimator in
+this tool, repaired or not, can distinguish a raw noise source from a
+conditioned or generated stream. A favourable assessment therefore establishes
+nothing whatever about a source whose provenance is not independently
+established.** The figure is only as meaningful as the evidence that the bytes
+came off the physical source before any conditioning — and that evidence is not
+something this tool can supply.
+
+**And a threshold on the assessed rate cannot rescue it.** Five conditioned
+streams were measured, and the span is stated as measured rather than rounded:
+
+| stream | assessed | width | bits per bit |
+|---|---|--:|---:|
+| `openssl` | 6.6384051555787362 | 8 | **0.82980** |
+| `urandom-1bit` | 0.83110942028961665 | 1 | 0.83111 |
+| `drbg-zero-seed` | 7.1449938481907544 | 8 | 0.89312 |
+| `urandom` | 7.1724559457456492 | 8 | 0.89656 |
+| `urandom-4bit` | 3.6877536942326419 | 4 | **0.92194** |
+
+**The measured span is 0.82980 to 0.92194 bits per bit** — a band 0.09 wide,
+which already overlaps what a plausible raw source could report. Worse, the
+lower end of it is not even a property of conditioning: the OpenSSL stream
+assessed at 0.82980 only because its Literal Lag `P_local` bound, and **the
+cause was a single integer** —
+
+| stream | `C` | `r` | `P_global'` | `P_local` | min entropy |
+|---|---:|---:|---|---|---|
+| the measured OpenSSL stream | 3946 | **4** | 0.0041075 | **0.010038** | **6.6384** |
+| a fresh stream, same command | 4007 | **3** | 0.0041697 | *did not bind* | **7.9058** |
+
+Four fresh `openssl rand` streams from the identical command all gave Literal
+Lag ≈ 7.91–7.95 and none of them bound on it. **The longest run of correct lag
+predictions differed by one — `r = 4` against `r = 3` — and that single
+increment moved the estimate by 1.27 bits.** `P_local` is a step function of a
+max-of-runs statistic with a heavy tail, so an individual capture's assessed
+rate carries more than a bit of noise from one integer. **A ceiling on bits per
+bit cannot be stable against that**, and the band it would have to sit outside
+is not even well defined.
+
+**What does defend against it: provenance, and nothing else in this
+repository.** See `audits/` for what the record carries; the qualification
+procedure that must bind provenance to the capture is not this document's
+subject.
 
 **Three further limits belong here, because they are about this fork rather than
 about estimators in general.**
@@ -460,6 +869,98 @@ reports that **4 of 24** checks declare the artefact they measured — so twenty
 do not.
 
 ---
+
+---
+
+## §4 — What is still open, named
+
+**Every item here is open as of `34ceb59`, 2026-10-25.** An open item with no
+name is an open item nobody tracks.
+
+### The strongest open candidate the campaign produced
+
+**Bitstring MultiMCW `P_local`, and the min-entropy derived from it.**
+Implicated by **two independent routes**, which is why it ranks above everything
+else open:
+
+1. **It is one of the 2 rows of `known-platform-deltas.txt`'s 8 that an
+   independent implementation does NOT reproduce.** `OC-112` ran the C99 port
+   against NIST's own refdata on Darwin arm64 using this fork's comparator: **5
+   of the 8 rows came back bit-identical to every printed digit**, which is
+   strong evidence those 5 are a platform property. Bitstring MultiMCW `P_local`
+   and its min entropy are **not** among the 5 — there, this fork differs from
+   NIST and the C99 port does not.
+2. **It is one of the 2 rows where this fork is the outlier three ways.**
+   `OC-111`, on `saturated.bin`: Bitstring MultiMCW min-entropy, delta
+   **2.305e-09**, with this fork low against a C99 and a Rust value that agree
+   closely with each other.
+
+**What is known:** it is **arm64-only** — the fork agrees with NIST on x86-64 to
+1.01e-13 (§2), and `biased-random-bytes`'s worst delta falls from 3.66e-10 on
+arm64 to **4.24e-14** on x86-64, a factor of 8,600. It is **sub-nanobit**, and
+smaller than `C22a`. It is in a quantity computed by **bisection**, which is the
+known-fragile one.
+
+**What is NOT known:** which of the three is arithmetically closer to §6.3.7's
+definition. That needs an independent high-precision computation of `P_local` on
+that input, and **it has not been done**. The item is **located, twice, and
+unresolved.**
+
+### Queued, not repaired
+
+- **`C22c`'s two copies.** `audits/2026-10-11-independent-audit/oracles/entropy_floor.py:188` holds the
+  live table whose `max()` the published floor subtracts;
+  `compression_ceiling_exact.py:215` holds **its own separate copy** and
+  verifies *that* against NIST's worked example. Mutating the floor's copy
+  `3.3599e-3 -> 3.3700e-3` leaves `oracle-selftest` **passing** (`OC-105`). The
+  independent verification is real, correct, and verifies a different copy of
+  the number than the one in use. **Two copies, one checked.** The fix is to
+  wire them together and verify by breaking; it is not done.
+- **`OC-67`'s per-family denominator** and **`mutation-lib`'s own
+  `MUTATION-DID-NOT-APPLY` contract**, both also `NOT CAUGHT` by mutation in
+  `OC-105`. The second is the mechanism adopted to stop this project reporting
+  unearned verdicts, and it is the one mechanism with no case in which it fires.
+- **`deadguard.py` reports `flags: 0` over an empty scan.** Run with `SP=.` it
+  prints `files touched: 0` and the tree hash of the **empty string**
+  (`e3b0c442...`) — `SHAPE-03` in the instrument built to find `SHAPE-03`. The
+  suite is immune because `OC-95` made the provenance line a precondition; a
+  human running it by hand is not.
+
+### Open because it stopped reproducing without being understood
+
+- **The Linux `regression-docs` failure.** It **did not reproduce** in the
+  8e6941f run — `regression-docs: PASS` both inside the suite and in its own
+  gated log — and it is therefore **still open, not closed**, with its four
+  dead hypotheses recorded. A defect that stopped reproducing without being
+  understood stays open.
+
+### NOT RUN, and staying that way until the physical prerequisite exists
+
+- **`binary128` on Linux aarch64.** No such host is available. **NOT RUN.**
+- **`jent-raw` and `jent-restart`** of `OC-109`'s defect corpus need a
+  `jitterentropy-library` checkout. **NOT RUN.**
+- **The three-way differential on x86-64.** All three implementations were built
+  and run on one machine; §2's platform conclusion rests on the two-platform
+  reference comparison and on `OC-112`, not on a three-way x86-64 run. **NOT
+  RUN.**
+
+### The repair-interaction backlog, with its measured bands
+
+`OC-94` found **94** pairs where a later repair deleted or rewrote a non-comment
+line an earlier repair added, **29 declared**, leaving **65 undeclared**;
+re-measured at `OC-100` as **66**, four commits having landed since. Banded:
+
+| band | both facts | count |
+|---|---|---:|
+| **1** | the later repair rewrote the earlier one's lines **and** either reaches a figure | **27** |
+| **2** | reaches a claim rather than a figure | **39** |
+
+Band 1 collapses to **15 distinct earlier mechanisms**. `OC-105` mutated **9**
+of those 15: **4 CAUGHT, 4 NOT CAUGHT, 1 control-failed**. **6 of the 15 were
+not mutated at all** — the three canary entries, the two `C23` entries,
+`210aed6`, and `5c3353f`, which has **no runnable case** — so the unguarded
+count is a **floor, not a total**. **Band 2's 39 pairs are not examined.**
+
 
 ## §5 — Two standing decisions, and what they settle permanently
 
@@ -570,11 +1071,18 @@ So:
 3. **A check enforces it.** `cpp/selftest/regression-docs.sh` re-runs that
    script and fails if the figures in §1 disagree with it. This document cannot
    go stale in its divergence figures without the suite going red.
-4. **What a date cannot police is marked instead.** Statuses in sections A and
-   B are claims about the tree, so they carry the record entry that established
-   them (`OC-nn`, `WV-n`); a reader who doubts one reads that entry rather than
-   trusting this summary.
-5. **A superseded figure is kept with its correction, as false.** §0 is the
+4. **What a date cannot police is marked instead.** Statuses in sections A, B
+   and D are claims about the tree, so they carry the record entry that
+   established them (`OC-nn`, `WV-n`, `SV-n`); a reader who doubts one reads
+   that entry rather than trusting this summary.
+5. **A figure that is true at its commit and false later is still false
+   later**, and the 2026-10-25 sweep is the worked example: the binary-artefact
+   count was true at `11207ca`, false at `a9a269f`, and true again at
+   `34ceb59` — caught by the re-measurement in point 3, not by reading. **A
+   count that names its commit is auditable; it is not self-correcting.** The
+   distinction between *false* and *stale-but-dated* is drawn explicitly in §0,
+   because collapsing it would make "false" mean "old".
+6. **A superseded figure is kept with its correction, as false.** §0 is the
    mechanism, and `audits/WITHDRAWN-VERIFICATIONS.md` is the same mechanism for
    verifications. "Out of date" is not available as a description of a statement
    that was wrong.
