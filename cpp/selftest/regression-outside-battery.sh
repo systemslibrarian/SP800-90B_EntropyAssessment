@@ -69,6 +69,10 @@
 set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
+# OC-122: the recorded per-stream figures for the pinned corpus. Its absence is
+# a refusal, not a skip -- a deterministic check with no recorded values to
+# compare against has verified nothing.
+FIGURES="${here}/outside-battery-figures.txt"
 repo=$(cd "${here}/../.." && pwd)
 tool="${OUTSIDE_BATTERY_TOOL:-${repo}/tools/outside-battery-check}"
 src="${repo}/tools/outside-battery-check.cpp"
@@ -311,6 +315,7 @@ if [ "${full}" = "1" ]; then
 		bindfail=0
 		comp_ok=0
 		comp_binds=0
+		deterministic_ok=0
 		vals=""
 		# OC-120: every clean stream the mode selected, not just the MT five.
 		# The mean bound below has a standard error of stdev/sqrt(n), so n is
@@ -318,20 +323,33 @@ if [ "${full}" = "1" ]; then
 		# cost (~0.6 s per 1-bit run). CLEAN is the 25 clean streams in full
 		# mode and the 5 fast ones otherwise.
 		for n in ${CLEAN}; do
-			OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}" "${ea}" -v "${work}/${n}.bin" 1 > "${work}/${n}.ea" 2>&1
+			# OC-122: -v -v, NOT -v. Verbose 1 prints the summary at SIX
+			# DECIMALS ("Compression Test Estimate = 0.847017"), so a 1e-9
+			# deterministic comparison against a 17-digit recorded figure reads
+			# the display quantisation as drift -- measured: all 25 streams
+			# "DRIFTED" by ~1e-7 on the first run, from precision alone. A check
+			# cannot be tighter than the number it reads. Verbose 2 prints
+			# "min entropy = " at 17 significant digits, which is the form
+			# outside-battery-figures.txt records.
+			OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}" "${ea}" -i -a -v -v "${work}/${n}.bin" 1 > "${work}/${n}.ea" 2>&1
 			read -r binder value <<-EOF
 			$(python3 - "${work}/${n}.ea" <<-'PY'
 			import re, sys
-			pat = re.compile(r'^\s+(.*?)\s+(?:Test\s+)?Estimate\s*=\s*([0-9.]+)\s*/')
+			pat = re.compile(r'^Literal (.*?) Estimate: min entropy = ([-0-9.e+]+)$')
 			d = {}
 			for line in open(sys.argv[1]):
-			    m = pat.match(line)
+			    m = pat.match(line.rstrip())
 			    if m:
 			        d[m.group(1).strip()] = float(m.group(2))
 			if not d:
 			    print("NONE 0"); raise SystemExit
 			k = min(d, key=d.get)
-			print("%s %.6f" % ("Compression" if "Compression" in k else k.replace(" ", "_"), d[k]))
+			# OC-122: SEVENTEEN SIGNIFICANT DIGITS, not six. At %.6f the extracted
+			# value differs from the recorded 17-digit figure by ~1e-7, which a
+			# 1e-9 deterministic comparison reads as drift -- measured: every one
+			# of the 25 streams "DRIFTED" on the first run, by the display
+			# precision alone. A check cannot be tighter than the number it reads.
+			print("%s %.17g" % ("Compression" if "Compression" in k else k.replace(" ", "_"), d[k]))
 			PY
 			)
 			EOF
@@ -387,12 +405,44 @@ if [ "${full}" = "1" ]; then
 			#
 			# What remains is what the measurement supports: ANY estimator may
 			# bind, and the Compression SHARE is counted against a floor.
+			# OC-122: THE DETERMINISTIC COMPARISON, which is what a
+			# digest-pinned corpus is for, and which NOTHING did before.
+			# Compared against outside-battery-figures.txt at 1e-9 RELATIVE --
+			# pin-check.sh's RELTOL and the platform manifest's per-row
+			# allowance -- because these bytes are FIXED and the expected
+			# run-to-run variation is ZERO. This is the check that can see a
+			# small drift. The two statistical checks further down cannot, and
+			# on this corpus they are SUBSUMED by it; they are kept as
+			# informational, because they are the right acceptance criteria for
+			# a FRESH-DRAW campaign and the wrong ones for deterministic input.
+			want=$(awk -v nm="${n}" '$1 == nm { print $3 }' "${FIGURES}" 2>/dev/null)
+			wantest=$(awk -v nm="${n}" '$1 == nm { print $2 }' "${FIGURES}" 2>/dev/null)
+			if [ -z "${want}" ]; then
+				note "no recorded figure for ${n}" "add it to outside-battery-figures.txt"
+				bindfail=$((bindfail + 1))
+			else
+				dverdict=$(python3 -c "
+want, got = float('${want}'), float('${value}')
+rel = abs(got - want)/abs(want) if want else abs(got - want)
+print(('OK %.3e' if rel <= 1e-9 else 'DRIFT %.3e') % rel)")
+				case "${dverdict}" in
+					OK*) deterministic_ok=$((deterministic_ok + 1)) ;;
+					*)   note "FIGURE DRIFTED on ${n}" \
+					          "recorded ${want}, got ${value}, rel ${dverdict#* } > 1e-9"
+					     bindfail=$((bindfail + 1)) ;;
+				esac
+				if [ "${binder}" != "${wantest}" ]; then
+					note "BINDING ESTIMATOR CHANGED on ${n}" "recorded ${wantest}, got ${binder}"
+					bindfail=$((bindfail + 1))
+				fi
+			fi
+
 			comp_ok=$((comp_ok + 1))
 			[ "${binder}" = "Compression" ] && comp_binds=$((comp_binds + 1))
 			inrange=$(python3 -c "print(1 if 0.7700 <= ${value} <= 0.9667 else 0)")
-			[ "${inrange}" = "1" ] || {
-				note "out of the measured band on ${n}" "${value} not in [0.7700, 0.9667] (pooled n=600)"
-				bindfail=$((bindfail + 1)); }
+			[ "${inrange}" = "1" ] || \
+				note "[fresh-draw criterion, not enforced] out of band on ${n}" \
+				     "${value} not in [0.7700, 0.9667]"
 		done
 		# OC-120: THE MEAN BOUND, WHICH IS THE SHIFT DETECTOR.
 		#
@@ -471,19 +521,22 @@ MEANPY
 )
 			case "${meanverdict}" in
 				OK*)     note "mean within 3 SE of the corpus centre:" "${meanverdict#OK }" ;;
-				SHIFT*)  note "MEAN SHIFTED beyond 3 SE" "${meanverdict#SHIFT }"
-				         bindfail=$((bindfail + 1)) ;;
-				*)       note "mean bound could not be evaluated" "${meanverdict}"
-				         bindfail=$((bindfail + 1)) ;;
+				SHIFT*)  note "[fresh-draw criterion, not enforced] MEAN SHIFTED"  "${meanverdict#SHIFT }"
+				         ;;
+				*)       note "[fresh-draw criterion] mean bound unevaluable" "${meanverdict}"
+				         ;;
 			esac
 			share=$(python3 -c "print(1 if ${comp_binds} * 100 >= 80 * ${comp_ok} else 0)")
-			[ "${share}" = "1" ] || {
-				note "Compression share below the measured floor" \
+			[ "${share}" = "1" ] || \
+				note "[fresh-draw criterion, not enforced] Compression share low" \
 				     "${comp_binds}/${comp_ok} < 80% (measured 94.8% at pooled n=600)"
-				bindfail=$((bindfail + 1)); }
+				
 		fi
 		if [ "${bindfail}" -eq 0 ]; then
-			note "binder in [0.7700, 0.9667], Compression ${comp_binds}/${comp_ok}:" "${vals# }"
+			note "ENFORCED ${deterministic_ok}/${comp_ok} figures match at 1e-9 rel:" \
+			     "deterministic regression on the pinned corpus"
+			note "[informational] band/mean/share are fresh-draw criteria:" \
+			     "Compression ${comp_binds}/${comp_ok}; subsumed here by the 1e-9 check"
 		else
 			note "Compression binds 5/5 at 0.8546 +/- 0.0092:" "${bindfail} deviation(s)"
 			echo "    -> OC-16's ENTIRE HEADROOM TABLE assumes Compression is the binding"

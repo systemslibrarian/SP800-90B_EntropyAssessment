@@ -1,0 +1,52 @@
+# OC-122: RECORDED PER-STREAM FIGURES FOR THE PINNED CORPUS.
+#
+# WHY THIS FILE EXISTS. Until now NOTHING compared this corpus's figures against
+# recorded values at numerical tolerance. outside-battery-corpus.txt pins the
+# BYTES by digest; the FIGURES were pinned nowhere. compareresults.pl covers the
+# ELEVEN NIST datasets at 1e-10, and pin-check.sh binds ONE value for ONE NIST
+# stream -- neither touches these 25. Measured consequence: a uniform +0.005
+# shift in every figure here PASSES the window, PASSES the mean bound, and
+# leaves pin-check and the corpus digests untouched.
+#
+# WHY A NUMERICAL TOLERANCE AND NOT A STATISTICAL ONE. These streams come from
+# fixed seeds and the corpus is digest-pinned, so re-running reproduces the same
+# bytes and the same figures. The expected run-to-run variation is ZERO. A
+# 3-sigma band derived from how much DIFFERENT random streams vary is the right
+# tolerance for sampling the population and the WRONG tolerance for re-running
+# fixed bytes -- the same category error as demanding an independent sample of a
+# deterministic quantity, inverted.
+#
+# THE TOLERANCE IS 1e-9 RELATIVE, matching pin-check.sh's RELTOL and
+# known-platform-deltas.txt's per-row allowance, because the prediction
+# estimators differ between the two supported platforms by up to 3.66e-10
+# (OC-112) and a tighter bound would false-fail on x86-64. Measured headroom on
+# one platform: agreement is ~1e-13, so roughly four orders.
+#
+# FORMAT: <stream> <binding-estimator> <figure>
+# Measured on Darwin arm64 at the commit that added this file, with the
+# binding estimator named so a change in WHICH estimator binds is also visible.
+mt00           Compression              0.8470166039320538
+mt01           Compression              0.84393574968158624
+mt02           Compression              0.86122232922826625
+mt03           Compression              0.85523792001017851
+mt04           Compression              0.86577353935099044
+sha00          Compression              0.86804180410131726
+sha01          Compression              0.82807661600407512
+sha02          Compression              0.82992453369381447
+sha03          Compression              0.80034557864237588
+sha04          Compression              0.83094269035986612
+sha05          Compression              0.82525590023957396
+sha06          Compression              0.81617009788716499
+sha07          Collision                0.9123575249746354
+sha08          Compression              0.84418445063582215
+sha09          Compression              0.84940597966484865
+sha10          Compression              0.87920792372365808
+sha11          Compression              0.83813600374598118
+sha12          Compression              0.91404759493179599
+sha13          Compression              0.89852622373020863
+sha14          Compression              0.83152156610790573
+sha15          Compression              0.83746123493148039
+sha16          Compression              0.81655021326462951
+sha17          Compression              0.84932513741165316
+sha18          Compression              0.82568811166690026
+sha19          Compression              0.83888950949440744

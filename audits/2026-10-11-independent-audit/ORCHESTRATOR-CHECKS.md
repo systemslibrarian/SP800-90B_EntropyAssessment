@@ -11883,3 +11883,167 @@ diligence.
   physical source is not among them.
 - Nothing reported upstream.
 
+## OC-122 — the deterministic check that did not exist, and the 24 warnings classified
+
+### Item 1, established first: NONE
+
+**No enforced check compared this corpus's per-stream figures against recorded
+values at numerical tolerance.** The inventory of what does exist:
+
+| check | tolerance | what it covers |
+|---|---|---|
+| `compareresults.pl` via `selftest` | `1e-10` | the **11 NIST datasets** under `bin/` |
+| `pin-check.sh` | `RELTOL=1e-9` | **one** value, `ringOsc-nist.bin` — a NIST dataset |
+| `known-platform-deltas.txt` | `1e-9`, 8 rows | the NIST datasets again |
+| `outside-battery-corpus.txt` | — | the corpus's **BYTES**, by digest |
+| the four pinned figures `8538.7 59.938 40.21 0.8546` | — | **`grep -q` that the string still appears in `ORCHESTRATOR-CHECKS.md`** — a documentation-citation check, not a recomputation |
+
+**So the figures were pinned nowhere.** And the predicted gap is real, measured
+on the corpus's own 25 values with a uniform `+0.005` shift:
+
+```
+  window  [0.7700, 0.9667]  PASSES
+  mean bound +/-0.015106     PASSES  (mean 0.853290, offset exactly 0.005000)
+  pin-check                  UNAFFECTED -- different file
+  corpus digests             UNAFFECTED -- the bytes did not change
+```
+
+One qualification the owner's framing did not include, and it matters: a change
+in `ea_non_iid` **would** be caught by `selftest` at `1e-10` — **on the eleven
+NIST datasets.** The gap is specific: a change confined to a path these 1-bit
+MT/SHA streams exercise and the NIST set does not would pass everything.
+
+### The gap closed
+
+`cpp/selftest/outside-battery-figures.txt` records all **25** clean streams as
+`<stream> <binding-estimator> <figure>` at 17 significant digits, measured on
+Darwin arm64, with the binder named so a change in **which** estimator binds is
+visible too. Compared at **`1e-9` relative** — `pin-check`'s `RELTOL` and the
+platform manifest's per-row allowance — because the prediction estimators differ
+between the two supported platforms by up to `3.66e-10` (`OC-112`) and a tighter
+bound would false-fail on x86-64. Measured headroom on one platform: ~`1e-13`,
+so roughly four orders. An absent figures file is a **refusal**, not a skip.
+
+**Verified by observing failure**, with the perturbation the owner specified:
+
+```
+  perturbed mt00 by +1e-6:  0.8470166039320538 -> 0.8470176039320538
+  FIGURE DRIFTED on mt00    rel 1.181e-06 > 1e-9      regression-outside-battery: FAIL
+  restored                                             regression-outside-battery: PASS
+```
+
+**And the check caught two defects in itself before it caught anything else.**
+
+1. **Six decimals, not seventeen.** The script ran `ea_non_iid -v` and parsed
+   the verbose-1 summary — `Compression Test Estimate = 0.847017` — so **all 25
+   streams reported `DRIFTED` by ~`1e-7` on the first run, from display
+   quantisation alone.** A check cannot be tighter than the number it reads.
+   Switched to `-v -v` and the `min entropy = ` lines at 17 digits, which is the
+   form the recorded file uses.
+2. **My own figure generator was truncated by a pipe.** `mkfig.sh | tee | head -8`
+   SIGPIPE'd the generator at 8 of 25 streams. The recorded-figure file would
+   have been short and the check would have refused 17 streams for having no
+   recorded value. **The same SIGPIPE fault this record has catalogued four
+   times, committed again, against my own script.**
+
+### Each check's honest job, in the code
+
+| check | job | status on the pinned corpus |
+|---|---|---|
+| **per-stream figures at `1e-9`** | **deterministic regression** — sees any behavioural change | **ENFORCED.** This is what a digest-pinned corpus is for. |
+| the band `[0.7700, 0.9667]` | gross-failure detector from 600 **fresh** draws | **informational.** Subsumed, by six orders. |
+| the mean bound `+/-0.015106` | population shift detector | **informational.** Subsumed. |
+| the Compression share floor 80 % | fresh-draw acceptance | **informational.** Subsumed. |
+
+The three statistical checks still compute and print, labelled
+`[fresh-draw criterion, not enforced]`, and **no longer fail the suite**. They
+are the right acceptance criteria for a fresh-draw campaign — `n = 600`, method
+in `reproducers/compression-window-tail.sh` — and **enforcing a statistical band
+against deterministic input is the same category error as demanding an
+independent sample of a deterministic quantity, inverted.** The suite now reports
+`ENFORCED 25/25 figures match at 1e-9 rel`.
+
+### Item 2 — the 24 warnings classified, and all are bounded
+
+**19 VLA warnings resolve to FIVE distinct sites**, repeated across the three
+tools. **Every one is sized by the ALPHABET, none by the sample count or the
+file length:**
+
+| site | declaration | size | bytes at the maximum |
+|---|---|---|---:|
+| `non_iid/compression_test.h:104` | `int64_t dict[alph_size]` | `alph_size` | 2,048 |
+| `non_iid/multi_mcw_test.h:13` | `long win_cnts[NUM_WINS][alph_size]`, `win_poses[...]` | `4 x alph_size`, twice | **16,384** |
+| `shared/most_common.h:9` | `long counts[alph_size]` | `alph_size` | 2,048 |
+| `shared/utils.h:503` | `int symbol_map_down_table[max_symbols]` | `1 << word_size` | 1,024 |
+| `shared/utils.h:690` | same | `1 << word_size` | 1,024 |
+
+**The bound is verified on both paths, not assumed:**
+
+- **command line:** all three mains refuse outside 1–8 —
+  `!parse_unsigned_decimal(argv[1], inint) || inint < 1 || inint > 8`.
+- **inferred:** `utils.h:466` is `for(i=8; (i>0) && ((datamask & curbit) == 0); i--)`
+  over a **`uint8_t`** OR-reduction, so it **starts at 8 and counts down** —
+  `word_size <= 8` by construction.
+- `alph_size` is then **counted up** over `max_symbols = 1 << word_size <= 256`
+  entries, so `alph_size <= 256`.
+
+**Largest VLA in the supported tools: 16 KB of stack. No input-derived VLA
+exists, so there is no stack-overflow exposure from this class, and nothing is
+repaired.**
+
+**The 5 `sprintf` warnings are TWO distinct sites** (the rest are the `#include`
+lines that pull them in):
+
+**`iid/permutation_tests.h:303`** — destination is **heap**:
+`new char[(size_t)(floor(log10(max_symbol))+2.0)*sample_size+1]`, written
+`"%u "` per element from a `uint8_t`.
+
+- **The sizing is exact**, not generous: `max_symbol = 255` gives
+  `floor(log10(255))+2 = 4` and `"255 "` is 4 chars; `max_symbol = 1` gives 2 and
+  `"1 "` is 2. It depends on `data[i] <= max_symbol`, which holds because
+  `max_symbol` is `dp->maxsymbol`, the maximum over the same array.
+- **The degenerate case is `max_symbol = 0`**, where `log10(0) = -inf` and the
+  cast is undefined. **It is unreachable, doubly.** Measured: a 1,000,000-byte
+  all-zero file gives `ea_iid` **exit 255** —
+  *"Symbol alphabet consists of 1 symbol. No entropy awarded"* — before the
+  permutation tests run. And `compression()` itself carries
+  **`assert(max_symbol > 0)`** at line 292.
+- **Largest safe input: any, at any size.** The buffer scales with
+  `sample_size`, so it is a heap allocation that grows with the file rather than
+  a fixed buffer that overruns.
+- **The one caveat, already on record:** `assert` vanishes under `-DNDEBUG`,
+  which no supported target sets and which `C09` already records as a hazard
+  class with a measured heap-buffer-overflow at `markov_test.h:48`.
+
+**`shared/TestRunUtils.h:659`** — `sha256_hash_string` writes
+`sprintf(outputBuffer + i*2, "%02x", hash[i])` for exactly
+`SHA256_DIGEST_LENGTH = 32` iterations: offsets 0..62, two chars each, NUL at 64,
+so it **requires 65 bytes**.
+
+- **Not input-derived at all** — a fixed 32-iteration loop over a digest.
+- **Its only caller is `conditioning_main.cpp:521`**, with
+  `char hash[2*SHA256_DIGEST_LENGTH+1]` = **exactly 65**.
+- And `ea_conditioning` is **not one of the three supported programs** —
+  `make all` builds `ea_non_iid ea_iid ea_restart`, which `regression-docs.sh`
+  asserts. **So this call site is not reachable from the supported product at
+  all**; the warning appears only because the definition is compiled.
+
+**Split: 5 of 5 VLA sites constant-bounded at 256; 2 of 2 `sprintf` sites exactly
+sized with their degenerate case unreachable. Nothing repaired, because nothing
+input-derived can be reached.**
+
+### What this does NOT establish
+
+- The figures are recorded **on Darwin arm64**. The x86-64 run will exercise the
+  `1e-9` tolerance against the platform delta for the first time **in CI**; if
+  any row exceeds it there, that is a finding and the tolerance must not simply
+  be widened.
+- The deterministic check covers the **25 clean streams**. The 5 defect streams
+  and the blindspot case have no recorded figure.
+- The VLA classification is **by reading the declarations and verifying the
+  bounds**, not by fuzzing. A 16 KB stack frame is fine on a default 8 MB stack
+  and was not tested against a constrained one.
+- The `sprintf` analysis covers **reachability from the three supported tools**.
+  `ea_conditioning` is out of scope and is where the only 65-byte buffer lives.
+- Nothing reported upstream.
+
