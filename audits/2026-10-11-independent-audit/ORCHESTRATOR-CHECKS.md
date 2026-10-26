@@ -10542,3 +10542,225 @@ directions, so both are stated:
   nothing about whether binary64 is adequate here.
 - **Nothing reported upstream, to NIST or to either project.**
 
+## OC-112 — an independent implementation reproduces 5 of this fork's 8 platform deltas BIT-IDENTICALLY, and the other 3 do not survive
+
+**`OC-110` had to state a limit: all three implementations ran on one machine,
+so the measurement could not separate *"these differences are
+platform-dependent"* from *"these differences are implementation-dependent"*.
+This separates them, and the answer is "mostly the platform, and not entirely".**
+
+### The experiment
+
+`known-platform-deltas.txt` excuses a failing `selftest` on Darwin arm64 for 8
+named rows. Its premise is that those differences belong to the **platform** —
+`-ffloat-store`, arm64 `long double`, instruction reassociation — and not to
+this fork. That premise has never been tested against anything but this fork.
+
+So the **independently written C99 port** was run against **NIST's own reference
+outputs**, on Darwin arm64, using **this fork's own comparator**. The C99 tool
+prints NIST's exact output format, including the two identity lines
+`compareresults.pl` checks, so the comparator reads it with no adaptation — which
+is also why no new parser can be blamed for the result.
+
+- if the C99 port shows the **same** deltas, they belong to the **platform**, and
+  the manifest records a property rather than excusing a defect;
+- if the C99 port matches refdata where this fork does not, they belong to
+  **this fork**, and the manifest has been excusing a defect.
+
+```
+C99 port vs NIST refdata on Darwin arm64: 11 run, 5 agreeing, 6 disagreeing
+```
+
+**And 4 of those 6 are not arithmetic.** They are key-set differences: the C99
+port emits an `H_bitstring` line for 1-bit data where NIST's refdata has none —
+`"No reference value for H_bitstring (output has it, reference does not): 1"`.
+A reporting difference between that port and NIST, with max numeric deltas of
+8.22e-12, 4.33e-15, 2.14e-14 and 5.31e-14. **The genuine numeric disagreements
+are on `biased-random-bytes.bin` and `ringOsc-nist.bin` — the same two datasets
+as this fork.**
+
+### THE RESULT, ROW BY ROW
+
+**Bit-identical to this fork's manifest — every printed digit (5 of 8):**
+
+| dataset | row | field | delta |
+|---|---|---|---|
+| `biased-random-bytes` | Bitstring MultiMMC | `P_local` | `2.46381248736327e-10` |
+| `biased-random-bytes` | Bitstring MultiMMC | min entropy | `3.65934130219792e-10` |
+| `biased-random-bytes` | Bitstring Lag | min entropy | `1.33402060231713e-10` |
+| `biased-random-bytes` | Literal Lag | `P_local` | `1.57978075066012e-10` |
+| `biased-random-bytes` | Literal Lag | min entropy | `3.14868464634799e-10` |
+
+**Same row, different magnitude (1):**
+
+| dataset | row | fork | C99 |
+|---|---|---|---|
+| `ringOsc-nist` | Literal MultiMCW min entropy | `1.5468587521994e-10` | `3.20619142346601e-10` |
+
+**In the manifest, NOT in the C99 run — the C99 port agrees with refdata where
+this fork does not (2):**
+
+| dataset | row | field | the fork's delta |
+|---|---|---|---|
+| `biased-random-bytes` | Bitstring MultiMCW | `P_local` | `1.25069510303888e-10` |
+| `biased-random-bytes` | Bitstring MultiMCW | min entropy | `1.85757652315655e-10` |
+
+**In the C99 run, NOT in the manifest — this fork agrees with refdata where the
+C99 port does not (2):**
+
+| dataset | row | field | the C99 delta |
+|---|---|---|---|
+| `biased-random-bytes` | Bitstring LZ78Y | min entropy | `1.2912356600614e-10` |
+| `ringOsc-nist` | Literal MultiMCW | `P_local` | `1.8170209781232e-10` |
+
+### WHAT THIS ESTABLISHES, AND WHAT IT COSTS THE MANIFEST
+
+**Five of the eight rows are vindicated as a platform property, and the evidence
+is as strong as this kind of evidence gets.** A C99 program written by a
+different team, compiled by a different compiler (`gcc-16` versus Apple clang)
+with a portable `MARCH=`, differs from NIST's published reference outputs by the
+**same amount to every printed digit** on five rows. Agreement to 15 significant
+figures on five independent quantities is not coincidence: it is the same
+floating-point reassociation on the same hardware, reached through different
+source code. For those five rows `known-platform-deltas.txt` records a property
+of the platform, **not** a defect it excuses — which is exactly what the file has
+always claimed and has never until now had evidence for.
+
+**And the other three do not survive, which is the part that matters.** The
+effect is **not purely** the platform:
+
+- **2 rows the manifest lists, the C99 port does not exhibit.** Bitstring
+  MultiMCW `P_local` and its min entropy. There, this fork differs from NIST and
+  an independent implementation on the same machine does not. Those two rows are
+  **a fork-specific observation**, and the manifest's blanket framing — *"a
+  difference this manifest excuses cannot be dismissed as negligible"* — now has
+  a sharper reading for them: they are not shown to be the platform's.
+- **1 row differs in magnitude by a factor of 2.07.** `ringOsc-nist` Literal
+  MultiMCW min entropy: `1.55e-10` here, `3.21e-10` there. Both drift, by
+  different amounts, in the same quantity.
+- **2 rows the C99 port exhibits that the manifest does not list**, where this
+  fork matches refdata and the C99 port does not. Symmetry: each implementation
+  has rows the other does not.
+
+**Recorded, not repaired.** The manifest is unchanged by this entry: all 8 rows
+remain within its 1e-9 tolerance and every figure this project publishes is
+unmoved. What changes is what the file is **known** to be recording — **5 of 8
+rows: a measured platform property, independently corroborated; 3 of 8 rows:
+a fork-specific numerical difference of the same order, not corroborated.** The
+file should say so, and that is queued.
+
+**It also narrows `OC-111`.** The two rows where this fork was the outlier on
+`saturated.bin` were Bitstring **MultiMCW** min-entropy and Bitstring **Lag**
+min-entropy. Bitstring MultiMCW is one of the two rows the C99 port does **not**
+reproduce here. So the `saturated.bin` outlier and the `biased-random-bytes`
+uncorroborated row are **the same estimator**, found twice by two different
+routes — which is now the strongest candidate defect in this fork that this
+campaign has produced, and it stays **OPEN**.
+
+### What this does NOT establish
+
+- **One platform still.** This says the five rows are reproducible by another
+  implementation *here*. It does not say what any of them do on x86-64, which is
+  where the reference data was produced and where `selftest` is expected to pass
+  outright. **NOT RUN.**
+- **Two implementations is not many.** Five identical rows is strong; it is
+  still n = 2.
+- The 4 key-set failures mean the C99 port and NIST **disagree about what to
+  report** for 1-bit data. That is unexamined here and is not this fork's
+  business, but it does mean "5 agreeing, 6 disagreeing" must not be read as
+  "the C99 port is worse".
+- Nothing here diagnoses the Bitstring MultiMCW difference. It is **located**,
+  twice, and left open.
+- **Nothing reported upstream, to NIST or to either project.**
+
+## OC-113 — on the platform NIST's reference data was produced on, this fork reproduces all 11 reference outputs: 891 values, worst delta 1.01e-13
+
+**The Linux half of `OC-107`, and it settles both `OC-107` and `OC-112`.**
+
+CI step 5e, run 40249281414 at `289bb16`, `Linux x86_64`, `LDBL_MANT_DIG: 64`:
+
+| dataset | result | compared | max delta |
+|---|---|---:|---|
+| `biased-random-bits.bin` | PASS | 60 | 4.18241830058008e-14 |
+| `biased-random-bytes.bin` | PASS | 103 | **4.24382751162966e-14** |
+| `data.pi.bin` | PASS | 59 | 4.32986979603811e-15 |
+| `normal.bin` | PASS | 98 | 6.93196230865691e-15 |
+| `rand1_short.bin` | PASS | 59 | 4.77395900588817e-15 † |
+| `rand4_short.bin` | PASS | 98 | 2.44249065417534e-15 † |
+| `rand8_short.bin` | PASS | 99 | 7.7715611723761e-16 † |
+| `ringOsc-nist.bin` | PASS | 60 | **5.60662627435704e-15** |
+| `truerand_1bit.bin` | PASS | 59 | 5.30686605770825e-14 |
+| `truerand_4bit.bin` | PASS | 98 | 3.47499806707674e-14 |
+| `truerand_8bit.bin` | PASS | 98 | 1.00808250635964e-13 |
+
+† the short-dataset escape; **not a compliant assessment**.
+
+```
+datasets run: 11   agreeing: 11   disagreeing: 0
+```
+
+**All 17 gates PASS**, including the two new ones — `all 11 reference datasets
+ran` and `every reference dataset agrees on glibc`, gated separately so a loop
+that stopped early cannot pass as agreement.
+
+### THE ANSWER TO "DOES THE TOOL WORK CORRECTLY", STATED PLAINLY
+
+**On Linux x86-64 with glibc — the platform NIST's reference data was produced
+on — this fork reproduces every one of NIST's published reference outputs across
+all 11 datasets, 891 compared values, to a worst discrepancy of 1.01e-13, with
+the identity of each input verified. Zero disagreements.**
+
+On Darwin arm64 the same 891 values agree except for 8, worst 3.66e-10, all
+inside the 1e-9 tolerance `known-platform-deltas.txt` records, and all in the
+prediction estimators.
+
+That sentence, with that measurement behind it, is what *"the tool works
+correctly"* means for this fork — and it is now said of a comparator that
+**checks the identity of what it read**, which every pass before `OC-73`/`OC-74`
+did not.
+
+### AND IT SETTLES `OC-112`
+
+The two datasets that disagree on Darwin arm64 agree on glibc, and the size of
+the change is the whole argument:
+
+| dataset | row | Darwin arm64 | Linux x86-64 | ratio |
+|---|---|---:|---:|---:|
+| `biased-random-bytes` | worst | **3.66e-10** | **4.24e-14** | **8,600x smaller** |
+| `ringOsc-nist` | worst | **1.55e-10** | **5.61e-15** | **27,500x smaller** |
+
+**A fork defect does not shrink by four and a half orders of magnitude when the
+architecture changes.** Combined with `OC-112` — where an independently written
+C99 port reproduced 5 of the 8 Darwin rows **bit-identically** — the platform
+explanation for `known-platform-deltas.txt` is now supported from two
+independent directions:
+
+1. the differences **vanish** on the reference architecture, and
+2. a **different implementation** reproduces most of them exactly on the
+   non-reference one.
+
+**`OC-112`'s three uncorroborated rows are narrowed accordingly.** Bitstring
+MultiMCW `P_local` and its min entropy, and the `ringOsc` MultiMCW magnitude,
+are **arm64-only differences between two implementations that both agree with
+NIST on x86-64**. That is a far weaker thing than a defect: it is two
+implementations reassociating differently on one architecture, in a quantity
+computed by bisection, with both correct where the reference data was made.
+
+**The `saturated.bin` outlier of `OC-111` is therefore downgraded but not
+closed.** It is the same estimator (Bitstring MultiMCW), it is still the only
+quantity where this fork is the outlier against two independent
+implementations, and it is still arm64-only and sub-nanobit. **It stays OPEN as
+a candidate, with its direction and platform now known.**
+
+### What this does NOT establish
+
+- **It is agreement with NIST's outputs, not correctness of the standard.**
+  `OC-108`'s Markov six-pattern item and section B of the divergence document
+  are untouched by any amount of agreement.
+- **The three short datasets used the escape** on both platforms, so their rows
+  are not compliant assessments and are marked as such in the output.
+- `ea_non_iid` only. The IID, restart and conditioning reference paths are not
+  compared this way.
+- **binary128 on Linux aarch64 stays NOT RUN.**
+- Nothing reported upstream.
+
