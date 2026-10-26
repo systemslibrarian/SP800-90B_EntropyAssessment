@@ -626,6 +626,65 @@ the method **FLAGS** `blindspot_streams.py` as it stood at `a9a269f` and **does
 not flag** the repaired version at `HEAD`.
 
 
+### Rule 14 — a constraint derived from a sample is validated against an independent sample
+
+**NUMBERING NOTE.** The owner's instruction said to record this "where RULE 31
+lives". **No rule numbered 31 exists in this repository** — this guide runs 6
+through 13, with 10 VACATED, and a repository-wide search for `rule 3[0-9]`
+returns nothing. That numbering belongs to another rule set, so this is **Rule
+14**, the next real slot here. Anyone reconciling the two schemes should read
+this entry as the one that instruction asked for.
+
+**THE RULE.** Any **threshold, window, allowlist, tolerance or pinned range**
+whose value came from a measurement is **not trusted until it has been tested
+against a sample it was not built from.** Not re-derived from more of the same
+draw — *validated against an independent one.*
+
+**THE WORKED EXAMPLE, and it is the cleanest this repository has produced.**
+
+`regression-outside-battery.sh` accepted the binding estimator's value in
+`[0.8270, 0.8822]`, from `0.8546 +/- 0.0092` measured on **five** clean streams,
+and required the binder to be **Compression**. `OC-118` measured 300 fresh draws
+and found the window rejected **32 %** of ordinary clean streams and the binder
+requirement a further **5.3 %**. The centre was right; the tolerance was 2.8x
+too small.
+
+**The repair then committed the same error inside itself.** Having learned that
+four estimators bind — Compression, Collision, t-Tuple, LRS — it replaced "must
+be Compression" with an **allowlist of those four**, *built from the same 300
+draws*. `OC-119` drew an **independent** 300 at a different seed base and found
+a **fifth**, `Lag`, binding twice. **The allowlist would have rejected them.**
+
+So: repairing an under-sampled constraint, the fix was itself derived from the
+same under-sampled data, and **only replication could have caught it.** The
+error reproduced one level up, in the act of being fixed.
+
+**And the remedy matters as much as the diagnosis.** The allowlist was
+**removed, not extended**. Extending it to five waits for a sixth; the shape of
+the constraint was wrong, not its contents. What replaced it is a **share**
+against a floor — a statistic that does not enumerate.
+
+**WHY THERE IS NO EXCUSE.** `compression-window-tail.sh` now takes a **seed-base
+argument** precisely so that a replication is a different sample rather than the
+same one again. 300 independent draws cost about fifteen minutes. **A constraint
+that has never met an independent sample is an untested constraint, and the test
+is cheap.**
+
+**WHAT VALIDATION MEANS HERE.** Not "the second sample agrees" — the second
+sample's *job* is to disagree. `OC-119`'s two samples were statistically
+indistinguishable (Welch `t = 0.547`) **and the replication still broke the
+fix**, because what failed was not the central estimate but an **enumeration at
+the edge**. So:
+
+1. **Compare the constraint's decision, not just its statistics.** Would the
+   second sample have *passed* the constraint built from the first?
+2. **Look at the tail and the categories, not the mean.** Means replicate easily;
+   extrema and category lists do not.
+3. **A range-derived bound does not converge.** `OC-119`'s minimum sat 0.0099
+   below the first sample's. More measurement widens such a bound; it does not
+   tighten it. Say so rather than re-deriving forever.
+
+
 ## Record discipline
 
 Rules about how findings are stated and ranked, not about how instruments

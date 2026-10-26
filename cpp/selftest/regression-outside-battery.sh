@@ -312,7 +312,12 @@ if [ "${full}" = "1" ]; then
 		comp_ok=0
 		comp_binds=0
 		vals=""
-		for n in ${CLEAN_FAST}; do
+		# OC-120: every clean stream the mode selected, not just the MT five.
+		# The mean bound below has a standard error of stdev/sqrt(n), so n is
+		# load-bearing: 25 streams make it 2.2x tighter than 5 at no meaningful
+		# cost (~0.6 s per 1-bit run). CLEAN is the 25 clean streams in full
+		# mode and the 5 fast ones otherwise.
+		for n in ${CLEAN}; do
 			OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}" "${ea}" -v "${work}/${n}.bin" 1 > "${work}/${n}.ea" 2>&1
 			read -r binder value <<-EOF
 			$(python3 - "${work}/${n}.ea" <<-'PY'
@@ -389,7 +394,51 @@ if [ "${full}" = "1" ]; then
 				note "out of the measured band on ${n}" "${value} not in [0.7700, 0.9667] (pooled n=600)"
 				bindfail=$((bindfail + 1)); }
 		done
+		# OC-120: THE MEAN BOUND, WHICH IS THE SHIFT DETECTOR.
+		#
+		# TWO CHECKS WITH DIFFERENT JOBS, because only one of them improves
+		# with measurement:
+		#
+		#   the WINDOW above is the GROSS-FAILURE detector. It is derived from
+		#   the observed RANGE, which does not converge -- OC-119's replication
+		#   put the minimum 0.0099 BELOW the first sample's, and more draws
+		#   widen such a bound rather than tightening it. So it is set wide
+		#   from the pooled n = 600 and IS NOT RE-DERIVED from new samples.
+		#   Chasing a non-converging extremum is work with no end. Its job is
+		#   to catch a stream that is wildly wrong, not to detect a shift.
+		#
+		#   the MEAN BOUND here is the SHIFT detector. The standard error of a
+		#   mean is stdev/sqrt(n), which shrinks at a known rate, so this one
+		#   DOES get better with measurement and IS re-derived as n grows.
+		#
+		# Pooled n = 600 (OC-118 + OC-119): mean 0.854221, stdev 0.025177.
+		# The bound is 3 standard errors at the number of streams actually
+		# examined -- computed from comp_ok rather than assumed, so a loop that
+		# stopped early cannot pass as a tighter bound.
+		#   n = 25:  3 * 0.025177/sqrt(25) = 0.0151  -> [0.8391, 0.8693]
+		#   n =  5:  3 * 0.025177/sqrt(5)  = 0.0338  -> [0.8204, 0.8880]
 		if [ "${comp_ok}" -gt 0 ]; then
+			meanverdict=$(python3 - "${comp_ok}" ${vals} <<'MEANPY'
+import sys, math
+n = int(sys.argv[1])
+vals = [float(x) for x in sys.argv[2:]]
+if not vals or n != len(vals):
+    print("REFUSED %d values for %d streams" % (len(vals), n)); raise SystemExit
+CENTRE, SD = 0.854221, 0.025177          # pooled n=600
+se = SD / math.sqrt(len(vals))
+m = sum(vals) / len(vals)
+tol = 3 * se
+print("%s mean=%.6f centre=%.6f tol=%.6f n=%d"
+      % ("OK" if abs(m - CENTRE) <= tol else "SHIFT", m, CENTRE, tol, len(vals)))
+MEANPY
+)
+			case "${meanverdict}" in
+				OK*)     note "mean within 3 SE of the pooled centre:" "${meanverdict#OK }" ;;
+				SHIFT*)  note "MEAN SHIFTED beyond 3 SE" "${meanverdict#SHIFT }"
+				         bindfail=$((bindfail + 1)) ;;
+				*)       note "mean bound could not be evaluated" "${meanverdict}"
+				         bindfail=$((bindfail + 1)) ;;
+			esac
 			share=$(python3 -c "print(1 if ${comp_binds} * 100 >= 80 * ${comp_ok} else 0)")
 			[ "${share}" = "1" ] || {
 				note "Compression share below the measured floor" \

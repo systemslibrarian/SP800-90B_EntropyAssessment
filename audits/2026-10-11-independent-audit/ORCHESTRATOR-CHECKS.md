@@ -11398,3 +11398,264 @@ The share floor is re-derived at the pooled rate: `94.8% - 3*sqrt(p(1-p)/25) =
 - Two pseudorandom generators at width 1. **Not a property of a physical source.**
 - Nothing reported upstream.
 
+## OC-120 — rule 14, the sample-derived-constraint sweep, the mean bound, the 13.7x gap, and two gaps closed
+
+### Item 1 — rule 14, and a numbering correction
+
+**The owner asked for this "where RULE 31 lives". No rule numbered 31 exists in
+this repository**: `audits/BUG-REPAIR-GUIDE.md` runs 6–13 with 10 VACATED, and a
+repository-wide search for `rule 3[0-9]` returns nothing. That numbering belongs
+to another rule set. Recorded as **rule 14**, the next real slot, with the
+mismatch noted in the rule itself so the two schemes can be reconciled.
+
+**Rule 14: a constraint derived from a sample is validated against an
+independent sample.** The allowlist is its worked example, and the rule records
+the part that matters most — `OC-119`'s two samples were statistically
+**indistinguishable** (Welch `t = 0.547`) **and the replication still broke the
+fix**, because what failed was not the central estimate but an **enumeration at
+the edge**. So validation compares the constraint's *decision*, not its
+statistics.
+
+### The sweep for sample-derived constraints
+
+| | |
+|---|---:|
+| candidate lines | **105** across **27** files |
+| **enforced** by the suite | see below |
+
+**105 is a FLOOR on candidates, and the blind spot is named**: the method keys
+on a numeric constraint near a measurement word (`measured`, `observed`, `n=`,
+`draws`, `streams`), so it (a) cannot distinguish an *enforced* constraint from
+a figure quoted in prose — 28 of the 105 are in `ORCHESTRATOR-CHECKS.md`, which
+enforces nothing — and (b) misses any constraint whose provenance is not stated
+in words near it. **Both positive controls fired**: the Compression window and
+`known-platform-deltas.txt`'s `1e-9` were both found.
+
+The enforced ones, with provenance and replication status:
+
+| constraint | from what measurement | n | independent sample? |
+|---|---|---|---|
+| Compression window `[0.7700, 0.9667]` | clean-stream draws | **600** | **YES** (`OC-119`) |
+| Compression share floor 80 % | same | **600** | **YES** |
+| mean bound, 3 SE of 0.854221 | same | **600** | **YES** |
+| `known-platform-deltas.txt` `1e-9`, 8 rows | one run per row, Darwin arm64 | **1** | **PARTIAL** — `OC-112` reproduced 5 of 8 rows bit-identically with an independent *implementation*, not an independent *sample* |
+| `outside-battery-check.cpp` 5.731 sigma, 30x | the 25-stream corpus | **25** | **NO** |
+| `pin-check.sh` `EXPECTED` at `RELTOL=1e-9` | one run on digest-verified bytes | **1** | **N/A** — fixed bytes, deterministic, variance zero by construction |
+| **`C22a` = `c x K` = 8.08e-15** | two grid maxima | see below | **NO** |
+
+### `C22a`, scoped and NOT restatused
+
+Its status is unchanged in this pass, as instructed. What it rests on:
+
+- **`c = 0.4991`** — max over **592 near-root points**, argmax at `N = 10,000`,
+  `r = 3`, **INTERIOR**, and bit-identical when the refinement window is
+  extended nine orders (`OC-63`). *"As good as a measurement gets."*
+- **`K = 1.6189e-14`** — sup over an `(N, r, ldomain)` sweep of
+  `2^-52/(|f'(p*)| p* ln 2)`, **attained at `N = 5`, `r = 2`**, and **`r = 2` is
+  the FIRST value in the swept list `[2, 3, 4, 5, 6, 8, ...]`**. Whether the true
+  infimum lies at `r = 2` or at **`r = 1`** — which the standard admits when the
+  longest run of correct predictions is 0 — **was never examined.**
+
+**So `K` is a boundary-attained maximum from a single grid, which is exactly the
+shape that just failed**, and `C22a`'s own comment already says rule 9 "applies
+to this factor and was never applied to it". The margin is thin: the sweep's
+worst realised inflation reaches **92.8 %** of the ceiling.
+
+**Can an independent grid be run? In principle yes, and the tooling now exists**
+— `reproducers/c22_bound.cpp` evaluates `calc_p_local` from production headers,
+and `oracles/plocal_exact.py` supplies the exact root and derivative, so the
+integrand is computable wherever the root lies in the domain.
+
+**What it would cost is not compute — it is recovering the grid.** Attempted
+here at `r in {1,2,3}`, `N in {5,10,50,1000}`, `ldomain = 1/2`: **all twelve
+points were REFUSED by the oracle** — `target not bracketed: f(lo) = -4.158` and
+similar — because at those `(r, N)` the root lies **below** the domain floor and
+there is no `P_local` to solve for. The original sweep's `(N, r, ldomain)` choices
+are therefore **load-bearing and are not in the repository** — only the two
+outputs and a prose description of the `r`-list survive. **The grid must be
+reconstructed before any replication means anything**, and that is the cost.
+
+**The refusal is itself the result worth keeping**: the oracle declined twelve
+times rather than returning a number. A less careful probe would have returned
+garbage and it would have looked like a replication.
+
+**What it would establish:** whether `K`'s maximum sits at `r = 2` because that
+is the true infimum of `|f'(p*)| p*`, or merely because `r = 2` was the smallest
+`r` tried. If `r = 1` admits an in-domain root with a larger integrand, **`C22a`
+is too small and the floor subtracts too little** — the permissive direction.
+
+### Item 2 — the mean bound added, the window frozen
+
+**Two checks with different jobs, because only one improves with measurement.**
+
+- **The window is the gross-failure detector.** Derived from the observed
+  **range**, which does not converge — `OC-119`'s minimum sat 0.0099 below the
+  first sample's. Set wide from the pooled `n = 600` and **no longer
+  re-derived**; its job is stated in the check. Chasing a non-converging
+  extremum is work with no end.
+- **The mean bound is the shift detector.** Standard error `stdev/sqrt(n)`
+  shrinks at a known rate, so it **is** re-derived as `n` grows. Centre
+  `0.854221`, `sd 0.025177`, bound **3 SE at the number of streams actually
+  examined** — computed from `comp_ok`, not assumed, so a loop that stopped
+  early cannot pass as a tighter bound.
+
+**And section 6 now examines every clean stream the mode selected**, not just
+the five MT ones: 25 in full mode makes the bound **2.2x tighter** at ~0.6 s per
+run.
+
+**Control, on the real corpus in full mode:**
+```
+  mean within 3 SE of the pooled centre:  mean=0.848290 centre=0.854221 tol=0.015106 n=25
+  binder in [0.7700, 0.9667], Compression 24/25
+  regression-outside-battery: PASS
+```
+24 of 25 bind on Compression — consistent with the measured 94.8 % — which the
+old `5/5` requirement would have **failed**.
+
+### THE DEMONSTRATION, which is the reason for having two checks
+
+A systematic shift applied to every one of the 25 real corpus values:
+
+| shift | window | mean bound |
+|---|---|---|
+| **+0.0215** | **PASS** | **FAIL** |
+| **+0.0300** | **PASS** | **FAIL** |
+| **+0.0520** | **PASS** | **FAIL** |
+| **-0.0095** | **PASS** | **FAIL** |
+| -0.0310 | FAIL | FAIL |
+
+**The window tolerates `+0.053 / -0.030` before any stream leaves it; the mean
+bound catches `+0.0210 / -0.0092`.** So the band where **only the mean bound
+fires** is `+0.021..+0.053` upward and `-0.009..-0.030` downward — a shift of
+two to five per-stream standard errors that the window cannot see at all. **That
+band is the new check's entire reason for existing.**
+
+The asymmetry is worth stating rather than hiding: the corpus mean is
+**0.848290** against a pooled centre of **0.854221**, an offset of
+**-0.005931**, so the bound is 0.0210 away upward and only 0.0092 downward. The
+25 pinned streams sit slightly low relative to 600 draws.
+
+**My first attempt at this demonstration was wrong and the correction is the
+point**: it reported that `+0.016` fails the mean bound. It does not — the offset
+has to be overcome first, and the crossover is `+0.0210`. Computed, not
+estimated.
+
+**What each cannot see**, stated as required: the **mean bound is blind to one
+bad stream** (one outlier moves a 25-stream mean by a twenty-fifth of its
+excursion, so a single stream could go to zero and the mean would shift 0.034 —
+caught, but a single stream at 0.80 would not be); the **window is blind to any
+shift smaller than the per-stream spread**, 0.025, and in fact to anything below
+`+0.053 / -0.030` on this corpus.
+
+### Item 3 — the 13.7x gap: the compiler, and NOT safely adjustable
+
+The two builds, compared:
+
+| | this fork | the C99 port |
+|---|---|---|
+| compiler | **Apple clang 21.0.0** | **Homebrew GCC 16.2.0** |
+| optimization | `-O2` | `-O2` |
+| `-ffloat-store` | passed | passed |
+| `-ffp-contract` | not set | `fast` |
+| `-march` | none on arm64 | none (`MARCH=`) |
+| fast-math / unsafe-math / mfpmath | **none** | **none** |
+
+**`-ffp-contract` is NOT the cause — measured.** The fork was rebuilt at
+`fast`, `on` and `off`; all three produce the **identical**
+`P_local = 0.79162908359969442`. FMA contraction changes nothing here.
+
+**AND THE FLAG THAT DOES DIFFER IS ONE APPLE CLANG SILENTLY IGNORES.** Every
+compile of `ea_non_iid` emits
+
+```
+clang++: warning: optimization flag '-ffloat-store' is not supported
+         [-Wignored-optimization-argument]
+```
+
+**The Makefile has passed `-ffloat-store` for the life of this fork and Apple
+clang has discarded it every time**, while GCC honours it. It is visible on
+every build and had not been read. On arm64 there is no x87 excess precision for
+it to suppress, so it would be expected to be a no-op even if honoured — which
+is consistent with the fork's value not moving — but **a flag the project
+believes is setting its floating-point behaviour is not set.**
+
+**Testing it by building this fork with GCC is blocked**: Homebrew GCC cannot
+link `jsoncpp` here, which is a recorded property of this host, so the
+compiler-isolated comparison on the tool is **NOT RUN**.
+
+**VERDICT: the difference is code generation and `libm`, and it is not safely
+adjustable.** The one flag that varies is not implemented by this compiler, and
+the one that is implemented does nothing. **No flag was adopted.** Nothing that
+disables IEEE semantics was tried or considered.
+
+**And the envelope is not wider than it needs to be.** Both arm64 values —
+1.179e-9 and 8.607e-11 — sit inside the **1.812e-9** envelope the 53-bit format
+imposes (`OC-116`). The fork lands at a worse point *within* the format's
+envelope, not outside it, so the envelope is the format's and the estimators are
+not paying for a build flag.
+
+### Item 4(a) — the battery re-checks before every arm
+
+It refused to **start** dirty but not to **continue** when the tree went dirty
+under it, which is how `OC-117` lost two edits. Each arm now re-checks the file
+it is about to mutate and **refuses rather than restoring over** it.
+
+**Verified by observing it fire**, with the start gate disabled so the per-arm
+check is what decides:
+```
+  A02/A06 platform-delta manifest   REFUSED  cpp/selftest/known-platform-deltas.txt
+                                             has uncommitted changes; restoring
+                                             would destroy them
+```
+and the edit survived.
+
+**It cost one more lesson on the way.** That verification ran in the background
+past a restore, and the battery left a **live `C22c` mutation**
+(`3.3599e-3 -> 3.3700e-3`) in `entropy_floor.py`. Found by `git status`, the
+processes killed, both files restored from git, and the constant confirmed back
+at `3.3599e-3`. **A mutation battery must not be run in the background while the
+tree is being edited** — the per-arm guard prevents it restoring over edits; it
+does not prevent it leaving its own mutation behind if it is killed mid-arm.
+Recorded.
+
+### Item 4(b) — the `O_EXCL` case CANNOT be built as specified, and the reason is the repair working
+
+The case asked for is "a regular file at the temporary's path". **That path
+cannot be planted at.** The suffix is `.tmp.%08lx%08lx` where
+
+- the first half is `r1 = time(NULL) ^ (getpid() << 16)` — **predictable**;
+- the second is **8 bytes read from `/dev/urandom` per attempt** —
+  **unpredictable**, 32 bits in the suffix, so planting is 1 in 4,294,967,296
+  per attempt.
+
+**So `O_EXCL` is a second line the test cannot reach precisely because the first
+line holds.** `F03` replaced a predictable `getpid()` temp with an unpredictable
+one, and the unpredictable suffix is the guard the `F03` cases *do* test. That
+`O_EXCL` removal is undetectable through the tool's interface is **defence in
+depth, not an untested half.**
+
+**The one condition where `O_EXCL` is load-bearing, named and NOT RUN.** If
+`fopen("/dev/urandom")` fails, `r2` stays 0 and
+`r2 = (attempt * 2654435761) ^ r1`, which at **attempt 0 is `0 ^ r1 = r1`** —
+verified arithmetically. The path becomes `.tmp.<r1><r1>` with `r1` fully
+predictable, and **`O_EXCL` is then the only remaining guard**. Reaching it
+needs a sandbox with no readable `/dev/urandom`; **NOT RUN here**, with that as
+the reason.
+
+So `OC-117`'s "`NOT CAUGHT`" stands as a *measurement* and is **re-interpreted**:
+not a gap to bolt a case onto, but an unreachable second layer plus one named
+condition that is physically out of reach on this host.
+
+### What this does NOT establish
+
+- The 105 is a **floor on candidates**, with the blind spot named; the enforced
+  table is seven rows and was assembled **by reading**, so a constraint whose
+  provenance is not stated near it is missed by both.
+- **`C22a`'s status is unchanged.** Nothing here replicates it; the entry scopes
+  what replication would cost and what it would establish.
+- The `-ffloat-store` finding is that the flag is **ignored**, not that honouring
+  it would change any figure. On arm64 it is expected to be a no-op, and that
+  expectation is **not measured** — the GCC build that would measure it is
+  blocked.
+- Nothing reported upstream.
+

@@ -41,11 +41,30 @@ caught=0; missed=0; noapply=0; ctlfail=0
 digest() { local h; h=$( (command -v shasum >/dev/null && shasum -a 256 "$1") || sha256sum "$1" ); echo "${h%% *}"; }
 note() { printf '  %-44s %-22s %s\n' "$1" "$2" "${3:-}"; }
 
+# OC-120: THE TREE IS RE-CHECKED BEFORE EVERY ARM, NOT ONLY AT THE START.
+#
+# This script refused to START on a dirty tree but not to CONTINUE when the
+# tree went dirty under it. In OC-117 that happened: files were edited in the
+# working tree while the battery ran, and `git checkout --` restored over
+# those edits and DESTROYED them. The digest check caught that no verdict had
+# been earned, which is why two arms reported RESTORE FAILED -- but the edits
+# were already gone.
+#
+# So each arm now re-checks the file it is about to mutate, and REFUSES rather
+# than restoring over something that changed.
+arm_tree_is_clean() {   # arm_tree_is_clean <file> -- 0 if safe to mutate
+    git diff --quiet -- "$1" && git diff --cached --quiet -- "$1"
+}
+
 # run_pair <label> <mech> <file> <old> <new> <test-cmd...>
 run_pair() {
     local label=$1 mech=$2 file=$3 old=$4 new=$5; shift 5
     local before after ctl_rc mut_rc
     if [ ! -f "${file}" ]; then note "${label}" "FILE ABSENT" "${file}"; noapply=$((noapply+1)); return; fi
+    if ! arm_tree_is_clean "${file}"; then
+        note "${label}" "REFUSED" "${file} has uncommitted changes; restoring would destroy them"
+        noapply=$((noapply+1)); return
+    fi
     before=$(digest "${file}")
 
     # THE CONTROL ARM FIRST. A case that was already failing cannot be used to
