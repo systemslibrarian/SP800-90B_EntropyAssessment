@@ -10945,3 +10945,142 @@ enough draws to see the tail, and that is queued, not claimed.
   examined here.
 - Nothing reported upstream.
 
+## OC-116 — the Bitstring MultiMCW candidate RESOLVED: upstream's algorithm, platform-visible, quantitatively explained
+
+**Owner's item 1. Verdict: NOT this fork's defect. It is an upstream numerical
+fragility, invisible on x86-64 and worth ~1.8e-9 on any target whose
+`long double` is 53-bit. Resolved, not unresolved.**
+
+### (a) Has this fork modified MultiMCW, or anything it calls? NO
+
+| file / function | upstream `87c104d` | this fork | code-only comparison |
+|---|---|---|---|
+| `cpp/non_iid/multi_mcw_test.h` | — | — | **BYTE-IDENTICAL**, sha256 `43cb164e0ece5658` |
+| `prediction_estimate_function` | 397 ch | 397 ch | **IDENTICAL** `99f83bc857a5a3f2` |
+| `calc_p_local` | 1212 ch | 1212 ch | **IDENTICAL** `b7161513faf980e3` |
+| `relEpsilonEqual` | 1002 ch | 1002 ch | **IDENTICAL** `8f0e7056eef244ab` |
+| `predictionEstimate` | 1767 ch | 1767 ch | **IDENTICAL** `595d1722d5b3ece9` |
+
+`predictionEstimate` grew 39 -> 57 lines, which **looks** like a modification and
+is **entirely the `F13` comment block**: comment- and whitespace-stripped, the
+two hash identically. `F09` repaired **MultiMMC**'s run counter — a different
+estimator — and the names must not be allowed to collapse.
+
+**Positive control for the comparison method**, because a sweep that finds
+nothing needs one: the same strip-and-compare reports ***DIFFERS*** on
+`read_file_subset` (4362 -> 5641 ch) and `calc_stats` (382 -> 446 ch), and
+IDENTICAL on `std_dev` and `free_data`. The method detects code changes and
+reports none here.
+
+**So this fork cannot be the origin, and the question is upstream-or-platform.**
+
+### (b) An independent oracle, and it does NOT agree with this fork
+
+**The decomposition first, because it says where to look.** On `saturated.bin`,
+Bitstring MultiMCW, this fork and the C99 port agree **exactly** on every
+integer and on `P_global'`:
+
+```
+  C = 4337056      r = 81      N = 7999937
+  P_global  = 0.54213626932312087
+  P_global' = 0.54258999794492346
+```
+
+and differ **only** in `P_local`. **The predictor counted identically; the
+entire divergence is in solving `P_local`.**
+
+`audits/2026-10-11-independent-audit/oracles/plocal_exact.py` solves the same
+§6.3.7 equation the production code states —
+`f(p) = ln(1-px) - ln((r+1-rx)q) - (N+1)ln(x)` with `x` the root of
+`x = 1 + q p^r x^(r+1)` — at **80 decimal digits**, finding `x` by a bracketed
+root-find rather than a capped iteration, and bisecting `p` far below the
+quantity in dispute. It implements no part of either tool.
+
+| | `P_local` | \|delta\| from the oracle |
+|---|---|---:|
+| **ORACLE (80 dps)** | **0.7916290824210893820486581** | — |
+| the C99 port | 0.79162908233501794 | **8.607e-11** |
+| **this fork** | 0.79162908359969442 | **1.179e-9** |
+
+**The C99 port is 13.7x closer. The oracle's min-entropy is
+0.3371034806146510**, against the Rust implementation's `0.337103480615` —
+agreement to ~1e-13, the best of the three, consistent with its 256-bit MPFR.
+**This fork is the least accurate of the three on this input.**
+
+### (c) Is it the `long double` format? YES, and the amplifier is identified
+
+**The stopping rule is NOT the explanation**, which had to be eliminated first:
+`relEpsilonEqual(pVal, log_alpha, ..., 4)` is a 4-ulp test on the function
+value, `|df/dp| = 0.98012409` near the root, so the rule admits only
+**9.108e-18** of slack in `p` — **nine orders of magnitude tighter** than the
+1.18e-9 spread. The bracket at break is 5.078e-17 wide. The error is in
+*evaluating* `f`, not in stopping early.
+
+**THE MECHANISM.** At the root `q*p^r = 1.2563137e-9`, so
+
+> **`x = 1.0000000012563138425` — `x` sits just above 1.0.**
+
+Float spacing near 1.0 is `2^-52` at 53-bit and `2^-63` at 64-bit; `d(log x)/dx`
+is ~1 there, so `log(x)` inherits that **absolute** error; and the term
+**`(N+1)*log(x)` with `N+1 = 7,999,938` multiplies it by eight million**.
+`|df/dp| ~ 0.98` then passes it into `p` almost 1:1:
+
+| `long double` | spacing near 1.0 | predicted error in `p` | measured |
+|---|---|---:|---|
+| **53-bit** — Apple arm64, MSVC | 2.22045e-16 | **1.81237e-9** | this fork **1.17861e-9**, C99 **8.60714e-11** |
+| **64-bit** — x86-64 x87 | 1.0842e-19 | **8.84944e-13** | vs NIST refdata **1.01e-13** (`OC-113`) |
+
+**Every measured value sits inside its platform's predicted envelope.** The two
+arm64 implementations differ because they land at different points *within* the
+same 1.8e-9 envelope — different `libm` (Apple clang vs `gcc-16`), different
+operation order — **not because either is wrong**. An emulation of the
+production algorithm at 53-bit inner precision lands at 9.574e-11, also inside
+the envelope, which is why the emulation reproduces the *envelope* and not any
+particular implementation's digit.
+
+**This is `R-1`'s format difference appearing as an accuracy loss instead of a
+crash.** `R-1` is the `assert(p_col >= 1/k)` abort in `lrs_test.h` on 80-bit
+`long double`; this is the same type, the same platform axis, a different
+failure mode.
+
+### THE VERDICT, and it closes `OC-112`'s open question too
+
+**Upstream's defect, platform-visible, quantitatively explained.** Specifically:
+§6.3.7's recommended evaluation computes `(N+1)*log(x)` where `x = 1 + eps` with
+`eps ~ 1.3e-9`, which discards most of `eps`'s significance before multiplying
+by `N`. Carrying the increment separately — `log1p` of the increment, or solving
+in terms of `x-1` — would remove the amplification. **Not reported upstream**,
+per the standing decision.
+
+**`OC-112`'s three non-surviving rows are now explained.** It found 5 of the 8
+Darwin rows reproduced **bit-identically** by the C99 port and 3 not. Both
+outcomes are the same phenomenon: inside a 1.8e-9 envelope, two independent
+implementations sometimes land on the same float and sometimes do not. **The 5
+identical rows are where the rounding coincided; the 3 others are where it did
+not. Neither is evidence of a defect in either implementation.**
+
+**Direction and magnitude.** Two-sided — this fork reads high on this row and
+the C99 port low. **Sub-nanobit, and smaller than the floor's own correction**:
+`C22a` is `8.08e-15 x (n+1)`, which at `n = 8e6` is **6.464e-08**, fifty-five
+times the worst error here. **No figure this project publishes moves.**
+
+**`OC-111`'s `saturated.bin` outlier is CLOSED by this entry** — same estimator,
+same mechanism, and the oracle names which implementation is closer. **The
+"strongest open candidate the campaign produced" was a 53-bit `long double`
+envelope in upstream's root-finder.**
+
+### What this does NOT establish
+
+- **One input, one row.** `saturated.bin` Bitstring MultiMCW at `r = 81`,
+  `N = 7999937`. The envelope argument generalizes; the specific digits do not.
+- The oracle solves the equation **the production code states**. If §6.3.7's
+  text and that equation differ, the oracle inherits the discrepancy — it was
+  not independently re-derived from the publication here.
+- **Bitstring Lag on `saturated.bin`** (2.778e-09) was not run through the
+  oracle. It is the same estimator family, the same `P_local` solver and the
+  same envelope, so it is **expected** to be the same finding — expected is not
+  measured, and it is recorded as not measured.
+- **binary128 on Linux aarch64 stays NOT RUN**, and that is the one platform
+  where this envelope would be ~113-bit and the effect negligible.
+- Nothing reported upstream.
+

@@ -135,6 +135,77 @@ run_pair "mutation-lib's landing contract" "65b00d8" \
     'MUTATION-DID-NOT-APPLY' 'MUTATION-DID-NOT-APPLY-X' \
     bash cpp/selftest/harness-inventory-mutation-test.sh
 
+# ---------------------------------------------------------------------------
+# OC-117: the mechanisms OC-105 did NOT cover.
+#
+# OC-105 reported "9 of 15 mutated". That CONFLATED ARMS WITH MECHANISMS: its
+# nine arms covered EIGHT of the fifteen band-1 mechanisms, because c2f2b94
+# took two arms and acedae5/ada37a1 shared two. Seven were uncovered, one of
+# which (5c3353f, two instrument RULES) has no runnable case at all. The six
+# workable ones follow.
+# ---------------------------------------------------------------------------
+
+run_pair "the canary's input precondition" "8ff739d" \
+    tools/build-provenance-canary.sh \
+    'EXPECTED_SHA="327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468c"' \
+    'EXPECTED_SHA="327773dd47cc480794f205f306aadd20972e258d9b0b880b7d12ad992e0b468d"' \
+    bash tools/build-provenance-canary.sh cpp/ea_iid
+
+run_pair "C23's recomputed cutoff decision" "5074fff" \
+    cpp/selftest/regression-restart.sh '1:572:570' '1:572:571' \
+    bash cpp/selftest/regression-restart.sh
+
+run_pair "C23's cutoff-method gate" "7a0be01" \
+    cpp/selftest/regression-restart.sh \
+    "d.get('restartCutoffMethod') == 'exact-multinomial-maximum'" \
+    "d.get('restartCutoffMethod') == 'printed-binomial-SUPERSEDED'" \
+    bash cpp/selftest/regression-restart.sh
+
+# 210aed6 needs a REBUILD, which run_pair does not do, so it gets its own arm.
+# The mutation removes O_EXCL from the temporary's open -- the primitive oac-13
+# introduced so the temporary cannot land on an existing file -- and the F03
+# cases of regression-output-aliasing.sh are what must notice.
+atomic_write_pair() {
+    local label="atomic report write (O_EXCL)" mech="210aed6"
+    local b="${work_a:=$(mktemp -d "${TMPDIR:-/tmp}/ea-atomic.XXXXXX")}"
+    rm -rf "${b}"; mkdir -p "${b}"
+    cp -R cpp "${b}/cpp" || { note "${label}" "SETUP FAILED"; noapply=$((noapply+1)); return; }
+    # control: build the copy UNMUTATED and confirm the regression passes there,
+    # so a failure later cannot be blamed on the copy or the compiler.
+    ( cd "${b}/cpp" && rm -f *.o ea_non_iid ea_iid ea_restart && make -j4 non_iid iid restart ) >/dev/null 2>&1
+    if ! REGRESSION_OUTPUT_BINDIR="${b}/cpp" bash cpp/selftest/regression-output-aliasing.sh >/dev/null 2>&1; then
+        note "${label}" "CONTROL FAILED" "the unmutated copy already fails (${mech})"
+        ctlfail=$((ctlfail+1)); rm -rf "${b}"; return
+    fi
+    python3 - "${b}/cpp/shared/TestRunUtils.h" <<'PY'
+import sys
+p=sys.argv[1]; s=open(p).read()
+old='int flags = O_WRONLY | O_CREAT | O_EXCL;'
+assert old in s, 'anchor missing'
+open(p,'w').write(s.replace(old,'int flags = O_WRONLY | O_CREAT;',1))
+PY
+    ( cd "${b}/cpp" && rm -f *.o ea_non_iid ea_iid ea_restart && make -j4 non_iid iid restart ) >/dev/null 2>&1
+    if ! grep -q 'O_WRONLY | O_CREAT;' "${b}/cpp/shared/TestRunUtils.h"; then
+        note "${label}" "MUTATION-DID-NOT-APPLY" "O_EXCL still present"
+        noapply=$((noapply+1)); rm -rf "${b}"; return
+    fi
+    REGRESSION_OUTPUT_BINDIR="${b}/cpp" bash cpp/selftest/regression-output-aliasing.sh >/dev/null 2>&1
+    local mrc=$?
+    rm -rf "${b}"
+    if [ "${mrc}" -ne 0 ]; then
+        note "${label}" "CAUGHT" "control 0, mutant ${mrc} (${mech})"
+        caught=$((caught+1))
+    else
+        note "${label}" "NOT CAUGHT" "control 0, mutant 0 -- unguarded (${mech})"
+        missed=$((missed+1))
+    fi
+}
+atomic_write_pair
+
+note "canary 3-way re-signaturing (b12247c)" "NOT MUTATED" "needs four builds; declared, not claimed"
+note "canary long-double widening (9aa991d)" "NOT MUTATED" "needs an 80-bit host; binary128 stays NOT RUN"
+note "two instrument rules (5c3353f)" "NO RUNNABLE CASE" "rule text, not a mechanism (OC-100)"
+
 echo
 printf 'band1-pair-mutations: %d CAUGHT, %d NOT CAUGHT, %d no-apply/restore, %d control-failed\n' \
     "${caught}" "${missed}" "${noapply}" "${ctlfail}"
