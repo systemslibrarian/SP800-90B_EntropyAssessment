@@ -457,12 +457,30 @@ of creating defects as of removing them.
   option-shaped operand is a mistake every time — and refuses unknown stream
   names instead of silently producing nothing. Verified in both directions:
   `-o` refused, 0 created; `./real mt00` still writes its file.
-- **DOES NOT ESTABLISH.** That no other probe in this campaign had a side
-  effect. This one was caught by a count that happened to cover it; **no sweep
-  for probe side effects has been run**, and the four earlier self-introduced
-  defects were each found by a different accident. A probe must not be able to
-  create the thing it asks about, and only this one generator has been made to
-  obey that.
+- **WHAT IS IN THE HISTORY, SO IT IS NOT A MYSTERY LATER.** Commit `a9a269f`
+  permanently contains **34 files, 33 MB, under a directory named `--help`**:
+  `B_osc5000.bin`, `C_osc500.bin`, `D_lag5000.bin`, `E_weaklag5000.bin`,
+  `F_xor30.bin`, `G_xor13_01..03.bin` and the `mt00..04` / `sha00..19` clean
+  streams. **They are generated output, not evidence.** Every one is reproducible
+  from a fixed seed by
+  `audits/2026-10-11-independent-audit/generators/blindspot_streams.py`, and
+  `cpp/selftest/outside-battery-corpus.txt` carries their digests — which is
+  exactly why they must not be stored. **History was deliberately not
+  rewritten:** a force-push would erase the evidence that this happened, and the
+  record is worth more than the 33 MB. Anyone cloning this repository pays for it
+  once; this entry is why they will not have to wonder what it was.
+- **DOES NOT ESTABLISH.** That no other probe in this campaign had a side effect.
+  This one was caught by a count that happened to cover it, and the four earlier
+  self-introduced defects were each found by a different accident. **A sweep has
+  since been run** (`OC-118`, and the class is guide **rule 13**): of 123 tracked
+  `.sh` and `.py` files, **44** read a positional argument as a path with no
+  option handling — a **floor on candidates**, because the method cannot tell a
+  work directory from an irreversible one — narrowing to **5** that create or
+  destroy at an unvalidated positional path, **all five under
+  `audits/2026-09-30`**, which is FROZEN, uninvoked, and forbidden to edit by
+  guide rule 2. They are **recorded, not repaired**. Both controls fired: the
+  method flags the pre-repair generator at `a9a269f` and does not flag the
+  repaired one.
 
 
 ## A.3 — A deliberate behaviour divergence from upstream, which is not a defect

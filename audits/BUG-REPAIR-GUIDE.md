@@ -572,6 +572,60 @@ rule 1 and rule 7 again, arriving from a third direction.
   breaks an existing check. It cannot catch one that narrows a check without
   breaking it, which is what `F03` and `OC-88` both were.
 
+### Rule 13 — a program that does not parse its arguments does something irreversible with one of them
+
+**Three instances in this repository, all in the same family, and the third one
+committed 33 MB.** The class is not "bad argument handling"; it is that **an
+unparsed argument reaches an operation that cannot be undone.**
+
+| | the unparsed argument | what it reached | the irreversible part |
+|---|---|---|---|
+| **`A04`/`F04`** | `--version` after `-o` | the option parser, which took it as `-o`'s **value** | **exit 0 with nothing assessed** and the previous report left in place — a harness reads success where no assessment happened |
+| **`OC-104`** | any option after the file operand | `getopt`, which **permutes** on glibc and does not on BSD | the same command line **assessed and wrote a report** on one supported platform and died on the usage path on the other |
+| **`F15`** | `--help` as `sys.argv[1]` | `os.makedirs(outdir)` | a **directory literally named `--help`** holding 34 generated streams, 33 MB, committed and pushed at `a9a269f` |
+
+**What the three share.** Each program had no option handling at the point the
+argument arrived: `versionOptionRequested` walked argv with a heuristic rather
+than the parser's own rules; the tools handed the question to `getopt` and
+inherited its platform-dependent answer; `blindspot_streams.py` had no option
+handling at all and treated position 1 as a path unconditionally.
+
+**What makes it a class rather than three bugs.** In all three the *detection*
+was accidental — `F04` by a control set built for something else, `OC-104` by a
+CI probe of a different question, `F15` by a divergence count added for an
+unrelated reason. **None was found by looking for it**, which is why it is
+written down.
+
+**THE RULE.** Before an argument reaches an operation that creates, destroys,
+truncates, renames, or exits zero:
+
+1. **Options are recognised by the parser that will actually parse them**, not
+   by a hand-rolled walk. Where a hand-rolled walk is unavoidable — because the
+   check must happen before `getopt` — **one** walk serves every caller, because
+   three copies is how `F04` survived its own repair (`OC-104`).
+2. **An operand that is option-shaped is refused, not interpreted**, where the
+   program has no options in that position. `blindspot_streams.py` has none, so
+   any `-`-leading output directory is a mistake every time.
+3. **`-h`/`--help` never becomes data.** It is the first thing a reader of an
+   unfamiliar script types.
+4. **A probe must not be able to create the thing it asks about.**
+
+**The sweep, with its blind spot named.** Of 123 tracked `.sh` and `.py` files,
+**44** read a positional argument as a path with no option handling — a **floor
+on candidates, not a count of defects**, because the method cannot distinguish
+"takes `$1` as a work directory" from "would do something irreversible with an
+option-shaped `$1`". Narrowed to those that **create or destroy** at an
+unvalidated positional path: **5 of 123**, and **all five are under
+`audits/2026-09-30`**, which `audits/enum-instruments.sh` lists as FROZEN —
+dated audit evidence that guide rule 2 forbids editing and that **nothing
+invokes now**. So they are **recorded, not repaired**, and the defect is
+unreachable rather than tolerated.
+
+**Both controls fired**, because a sweep reporting a small number needs them:
+the method **FLAGS** `blindspot_streams.py` as it stood at `a9a269f` and **does
+not flag** the repaired version at `HEAD`.
+
+
 ## Record discipline
 
 Rules about how findings are stated and ranked, not about how instruments

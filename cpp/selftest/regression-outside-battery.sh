@@ -309,6 +309,8 @@ if [ "${full}" = "1" ]; then
 		cannot_run=$((cannot_run + 1))
 	else
 		bindfail=0
+		comp_ok=0
+		comp_binds=0
 		vals=""
 		for n in ${CLEAN_FAST}; do
 			OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}" "${ea}" -v "${work}/${n}.bin" 1 > "${work}/${n}.ea" 2>&1
@@ -329,19 +331,59 @@ if [ "${full}" = "1" ]; then
 			)
 			EOF
 			vals="${vals} ${value}"
-			if [ "${binder}" != "Compression" ]; then
-				note "binding estimator on ${n}" "${binder} (expected Compression)"
-				bindfail=$((bindfail + 1))
-			else
-				# 0.8546 +/- 0.0092 -> accept 3 sd, i.e. [0.8270, 0.8822]
-				inrange=$(python3 -c "print(1 if 0.8270 <= ${value} <= 0.8822 else 0)")
-				[ "${inrange}" = "1" ] || {
-					note "Compression out of band on ${n}" "${value} not in [0.8270, 0.8822]"
-					bindfail=$((bindfail + 1)); }
-			fi
+			# OC-118: THE WINDOW AND THE BINDER REQUIREMENT, BOTH RESET FROM A
+			# MEASURED DISTRIBUTION INSTEAD OF FROM FIVE DRAWS.
+			#
+			# Until now this required Compression to bind on every clean stream
+			# and its value to lie in [0.8270, 0.8822] -- 3 sd from
+			# "0.8546 +/- 0.0092" measured on FIVE streams (OC-16). Measured
+			# again on THREE HUNDRED fresh draws from the same two generators
+			# and the same seeding discipline
+			# (reproducers/compression-window-tail.sh, seeds 900000+, which
+			# cannot collide with the pinned 0xA / 0xC0+i / sha 0..19):
+			#
+			#   binds Compression  284/300 (94.7%)  Collision 11, LRS 3, t-Tuple 2
+			#   mean   0.854784   median 0.851422   stdev 0.025732
+			#   min    0.805141   max    0.941540
+			#   outside [0.8270, 0.8822]: 96 of 300 = 32.0% (45 below, 51 above)
+			#
+			# So the CENTRE was right -- 0.8546 sits at percentile 54.0 -- and
+			# the tolerance was 2.8x too small. The old window would have failed
+			# a THIRD of ordinary clean draws and the 5/5 Compression
+			# requirement a further 5.3%. It never fired only because the corpus
+			# is seeded and digest-pinned, so these streams are the same bytes
+			# every run (OC-115 called that latent; this measures the rate).
+			#
+			# THE NEW WINDOW: the observed range over n = 300 widened by one
+			# sample standard deviation each side. Rule 9 -- a sweep's extremum
+			# is a LOWER BOUND on the spread -- so the range is widened rather
+			# than used as-is, and one sd is a margin chosen and stated, not
+			# derived:  [0.805141 - 0.025732, 0.941540 + 0.025732]
+			#
+			# THE BINDER: four estimators were observed binding, so requiring
+			# one is wrong. Any of the four is accepted and the Compression
+			# SHARE is counted instead, against a floor from the measured rate
+			# at corpus size: 94.7% - 3*sqrt(p(1-p)/25) = 81.3%, so 80%.
+			case "${binder}" in
+				Compression|Collision|t-Tuple|LRS) comp_ok=$((comp_ok + 1))
+					[ "${binder}" = "Compression" ] && comp_binds=$((comp_binds + 1)) ;;
+				*) note "binding estimator on ${n}" "${binder} -- not one of the four seen in 300 draws"
+					bindfail=$((bindfail + 1)) ;;
+			esac
+			inrange=$(python3 -c "print(1 if 0.7794 <= ${value} <= 0.9672 else 0)")
+			[ "${inrange}" = "1" ] || {
+				note "out of the measured band on ${n}" "${value} not in [0.7794, 0.9672] (n=300)"
+				bindfail=$((bindfail + 1)); }
 		done
+		if [ "${comp_ok}" -gt 0 ]; then
+			share=$(python3 -c "print(1 if ${comp_binds} * 100 >= 80 * ${comp_ok} else 0)")
+			[ "${share}" = "1" ] || {
+				note "Compression share below the measured floor" \
+				     "${comp_binds}/${comp_ok} < 80% (measured 94.7% at n=300)"
+				bindfail=$((bindfail + 1)); }
+		fi
 		if [ "${bindfail}" -eq 0 ]; then
-			note "Compression binds 5/5 at 0.8546 +/- 0.0092:" "${vals# }"
+			note "binding estimator in [0.7794, 0.9672], Compression ${comp_binds}/${comp_ok}:" "${vals# }"
 		else
 			note "Compression binds 5/5 at 0.8546 +/- 0.0092:" "${bindfail} deviation(s)"
 			echo "    -> OC-16's ENTIRE HEADROOM TABLE assumes Compression is the binding"
@@ -351,7 +393,7 @@ if [ "${full}" = "1" ]; then
 		fi
 	fi
 else
-	note "Compression binds 5/5 clean streams:" "SKIPPED (set OUTSIDE_BATTERY_FULL=1)"
+	note "binding estimator in the measured band:" "SKIPPED (set OUTSIDE_BATTERY_FULL=1)"
 fi
 
 echo

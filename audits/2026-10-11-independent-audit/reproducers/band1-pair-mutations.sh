@@ -177,13 +177,26 @@ atomic_write_pair() {
         note "${label}" "CONTROL FAILED" "the unmutated copy already fails (${mech})"
         ctlfail=$((ctlfail+1)); rm -rf "${b}"; return
     fi
-    python3 - "${b}/cpp/shared/TestRunUtils.h" <<'PY'
+    # THE HEREDOC'S STATUS IS READ. regression-deadguard.sh flagged this as a
+    # pattern-B dead guard the moment it was written -- an interpreter heredoc
+    # carrying an assertion whose exit status nobody reads -- and it was right:
+    # a missing anchor would have made the assert fail silently. Caught by the
+    # detector on the very first suite run after this arm was added, which is
+    # the baseline mechanism doing its job rather than a baseline to rebase.
+    if ! python3 - "${b}/cpp/shared/TestRunUtils.h" <<'PY'
 import sys
-p=sys.argv[1]; s=open(p).read()
-old='int flags = O_WRONLY | O_CREAT | O_EXCL;'
-assert old in s, 'anchor missing'
-open(p,'w').write(s.replace(old,'int flags = O_WRONLY | O_CREAT;',1))
+p = sys.argv[1]
+s = open(p).read()
+old = 'int flags = O_WRONLY | O_CREAT | O_EXCL;'
+if old not in s:
+    sys.stderr.write('band1: O_EXCL anchor not found in %s\n' % p)
+    raise SystemExit(1)
+open(p, 'w').write(s.replace(old, 'int flags = O_WRONLY | O_CREAT;', 1))
 PY
+    then
+        note "${label}" "MUTATION-DID-NOT-APPLY" "the O_EXCL anchor was not found"
+        noapply=$((noapply + 1)); rm -rf "${b}"; return
+    fi
     ( cd "${b}/cpp" && rm -f *.o ea_non_iid ea_iid ea_restart && make -j4 non_iid iid restart ) >/dev/null 2>&1
     if ! grep -q 'O_WRONLY | O_CREAT;' "${b}/cpp/shared/TestRunUtils.h"; then
         note "${label}" "MUTATION-DID-NOT-APPLY" "O_EXCL still present"

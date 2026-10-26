@@ -76,7 +76,7 @@ them was being invoked **then**. So:
 
 | set | rule that applies | count |
 |---|---|---:|
-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **77** at `289bb16`, 2026-10-25 |
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **79** at `be87175`, 2026-10-26 |
 | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
 
 Counting frozen by the live rule would silently retire 47 artefacts that were
@@ -108,7 +108,7 @@ thing an extension-matched glob missed.
 
 | set | count | what it is |
 |---|---:|---|
-| **LIVE** | **77** at `289bb16`, 2026-10-25 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+| **LIVE** | **79** at `be87175`, 2026-10-26 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
 | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
 Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for

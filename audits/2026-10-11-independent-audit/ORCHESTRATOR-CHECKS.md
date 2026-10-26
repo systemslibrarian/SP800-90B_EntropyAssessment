@@ -11084,3 +11084,226 @@ envelope in upstream's root-finder.**
   where this envelope would be ~113-bit and the effect negligible.
 - Nothing reported upstream.
 
+## OC-117 — the top band named and worked: 6 CAUGHT, 5 NOT CAUGHT, and "9 of 15" corrected to 8
+
+**Owner's item 3, and the two numbers stated plainly first because the report
+did not.**
+
+### Which band is which, and what the 15 counts
+
+| band | the two facts | pairs |
+|---|---|---:|
+| **1 — THE TOP BAND** | the later repair rewrote a non-comment line the earlier one added, **and** either reaches a **figure** | **27** |
+| 2 | reaches a **claim** (the harness, CI) rather than a figure | **39** |
+| | total undeclared | **66** |
+
+**The 15 counts DISTINCT EARLIER MECHANISMS, not pairs and not tests.** Band 1's
+27 pairs touch only 15 distinct earlier repairs — seven pairs all touch
+`65b00d8` — and testing a mechanism once discharges every pair that touched it.
+
+### AND "9 of 15 mutated" WAS WRONG: nine ARMS covered EIGHT mechanisms
+
+`OC-105` ran nine mutation arms and reported them as "9 of 15". **It conflated
+arms with mechanisms**: `c2f2b94` took two arms, and `acedae5`/`ada37a1` shared
+two more. Audited:
+
+```
+  arms run                     9
+  mechanisms covered           8  of 15
+  mechanisms NOT covered       7  of 15   (one with no runnable case)
+```
+
+**It is not the dead-guard count either.** The three **class-A** dead-guard
+determinations are a separate set of three flags, settled by mutation in
+`OC-98`. Nothing in this repository has a "9 of 15" that refers to them.
+
+### The six workable mechanisms, worked
+
+| mechanism | pairs | mutation | result |
+|---|--:|---|---|
+| `8ff739d` the canary itself | 1 | `EXPECTED_SHA` last digit `...468c -> ...468d` | **CAUGHT** (control 0, mutant 2) |
+| `5074fff` `C23` as a recomputed decision | 2 | `C23_PINS` triple `1:572:570 -> 1:572:571` | **CAUGHT** (mutant 1) |
+| `7a0be01` `fix(C23)`'s cutoff method | 1 | the gate's expected `restartCutoffMethod`, `exact-multinomial-maximum -> printed-binomial-SUPERSEDED` | **CAUGHT** (mutant 1) |
+| `210aed6` `oac-13`'s atomic report write | 1 | `int flags = O_WRONLY \| O_CREAT \| O_EXCL;` -> drop `O_EXCL`, **rebuilt** | **NOT CAUGHT** |
+| `b12247c` canary re-signatured 3-way | 2 | — | **NOT MUTATED**, needs four builds; declared |
+| `9aa991d` canary widened to both `long double` formats | 1 | — | **NOT MUTATED**, needs an 80-bit host; binary128 stays **NOT RUN** |
+
+The `210aed6` arm carries its own control: the tree is copied, built
+**unmutated**, and `regression-output-aliasing.sh` is required to pass against
+that copy before the mutation is applied — so a later failure cannot be blamed
+on the copy or the compiler.
+
+### THE NEW FINDING: removing `O_EXCL` is not caught
+
+**`F03`'s own regression does not notice when the temporary's `O_EXCL` is
+removed.** Control 0, mutant 0. `O_EXCL` is the primitive `oac-13` introduced so
+the temporary cannot land on a file that already exists — the guard against the
+symlink-aliasing half of `F03` — and nothing in
+`regression-output-aliasing.sh`'s 3 `F03` cases distinguishes a build that has
+it from one that does not.
+
+**Why the existing cases miss it.** They plant a symlink at the temporary's
+*predicted* path and check the capture survives. With `O_EXCL` gone the open
+still **fails** on the planted symlink for a different reason — `O_NOFOLLOW` is
+also set — so the capture survives and the case passes. **The two guards are
+redundant for exactly the input the test uses**, which is why removing one is
+invisible. A case that distinguishes them needs a **regular file** at the
+temporary's path, not a symlink.
+
+**Queued, not repaired**: measurement and repair are separate passes, and adding
+that case needs its own break-verification and rebuild cycle.
+
+### The running total for band 1
+
+```
+  CAUGHT        6   c2f2b94 x2, b072bf7, 8ff739d, 5074fff, 7a0be01
+  NOT CAUGHT    5   acedae5+ada37a1 x2, 6b4717e, 65b00d8, 210aed6
+  no verdict    2   (see below)
+  not mutated   2   b12247c, 9aa991d
+  no case       1   5c3353f
+```
+
+**12 of the 15 mechanisms now have a mutation verdict**, against 8 before.
+**5 are unguarded.** The top band is **not empty**, and what remains is named:
+two canary mechanisms needing builds this host cannot provide, and one rule-text
+entry with nothing to run.
+
+### TWO ARMS PRODUCED NO VERDICT, AND THE CAUSE WAS ME
+
+`outside-battery pinned figures` and `the divergence-figure enforcement` both
+reported **RESTORE FAILED**. The battery restores with `git checkout --`, and
+**I edited both of those files in the working tree while the battery was
+running**, so the restore reverted them to committed state — which differs from
+what the arm measured — and **the digest check refused to earn a verdict.**
+
+**The guard worked and it cost me the edits**: the new Compression window and the
+`F15` blob entry were both destroyed and had to be re-applied. The battery
+refuses to *start* on a dirty tree; it does not refuse to *continue* when the
+tree becomes dirty under it. **That is the defect, and it is in the battery**:
+recorded here, not repaired, because the arms it affected are the two already
+shown CAUGHT in `OC-105`.
+
+### What this does NOT establish
+
+- **Band 2's 39 pairs remain unexamined.**
+- `NOT CAUGHT` means **no case in the suite notices this change**. It does not
+  mean the value or the code is wrong — all five mutated things are believed
+  correct.
+- One mutation per mechanism. A mechanism that catches one break can miss
+  another, and `210aed6` is the proof in the other direction: it survived
+  `OC-105`'s claim of coverage precisely because nobody had broken it.
+- Nothing reported upstream.
+
+## OC-118 — the Compression window reset from 300 draws, not 5; and guide rule 13
+
+**Owner's items 2 and 5.**
+
+### The tail, measured
+
+`audits/2026-10-11-independent-audit/reproducers/compression-window-tail.sh`
+draws fresh clean streams from the **same two generators and the same seeding
+discipline** as the corpus — imported from `blindspot_streams.py` rather than
+reimplemented — with seeds from **900000**, which cannot collide with the pinned
+`0xA`, `0xC0+i` or `sha 0..19`. It records what the check reads: **which
+estimator binds and its value.**
+
+**n = 300**, 150 Mersenne Twister and 150 SHA-256 counter mode, 1,000,000
+one-bit samples each:
+
+| | |
+|---|---|
+| binding estimator | **Compression 284**, Collision **11**, LRS **3**, t-Tuple **2** |
+| mean / median | **0.854784** / 0.851422 |
+| **stdev** | **0.025732** |
+| min … max | **0.805141** … **0.941540** |
+| p0.5 / p5 / p50 / p95 / p99.5 | 0.80831 / 0.81882 / 0.85205 / 0.89672 / 0.93383 |
+
+**Two things follow, and they point opposite ways.**
+
+1. **The pinned centre was right.** `0.8546` sits at **percentile 54.0** of this
+   sample. `OC-16` measured the centre correctly from five draws.
+2. **The tolerance was 2.8x too small**, and the consequences are large:
+   **96 of 300 draws — 32.0% — fall outside `[0.8270, 0.8822]`** (45 below, 51
+   above), and a further **5.3%** bind on something other than Compression,
+   which failed the check outright. **The check as written would reject about a
+   third of ordinary clean streams.**
+
+It never fired because the corpus is seeded and digest-pinned: the same bytes,
+the same values, every run. `OC-115` called that latent; this is the rate.
+
+### The window, set from the measurement
+
+```
+  [0.805141 - 0.025732,  0.941540 + 0.025732]  =  [0.7794, 0.9672]
+```
+
+**The observed range widened by one sample standard deviation each side.** Rule 9
+— a sweep's extremum is a **lower bound** on the spread, not the spread — so the
+range cannot be used as-is; **one sd is a margin chosen and stated, not derived.**
+`n = 300` and the method are recorded in the check itself, beside the numbers.
+
+**And the binder requirement was wrong in kind, not degree.** Four estimators
+were observed binding, so demanding one is a false requirement. Any of the four
+is accepted, and the **Compression share** is counted against a floor derived
+from the measured rate at corpus size: `94.7% - 3*sqrt(p(1-p)/25) = 81.3%`, so
+**80%**.
+
+**Verified by observing failure, both directions:**
+
+| value | new window | old window |
+|---|---|---|
+| **0.82980** — the `OC-115` draw | **PASS** | PASS |
+| 0.805141 — the measured minimum | **PASS** | **FAIL** |
+| 0.941540 — the measured maximum | **PASS** | **FAIL** |
+| 0.7793 / 0.9673 — just outside | **FAIL** | FAIL |
+
+and the share floor: `24/25` PASS, `20/25` PASS, **`19/25` FAIL**. End to end,
+`OUTSIDE_BATTERY_FULL=1` reports
+`binding estimator in [0.7794, 0.9672], Compression 5/5` and the script **PASSES**.
+
+### WHAT THE NEW WINDOW STILL CANNOT COVER
+
+- **It is not a bound.** `n = 300` gives a range, and **2 of the 300 fall outside
+  a 3-sd window computed from the same sample** (`[0.7776, 0.9320]` against a
+  max of 0.9415) — so the distribution is **heavier-tailed than Gaussian** and
+  the true extremes are not known.
+- **A window 0.19 wide is a weak instrument.** It will not notice a systematic
+  shift smaller than the per-stream variance. The better instrument for the same
+  purpose is a bound on the **mean** over the corpus, whose standard error is
+  `0.025732/sqrt(25) = 0.0051` — five times tighter than the old per-stream
+  window pretended to be. **Not changed here**, because that is a redesign of
+  what the check asserts rather than a correction of its numbers.
+- **It is measured on two pseudorandom generators at width 1.** A physical source
+  is not one of them, and this figure is not quoted as a property of one.
+
+### Guide rule 13, and the sweep
+
+`--help` taken as a positional path is the **third** instance of one class, now
+written down as **rule 13** in `audits/BUG-REPAIR-GUIDE.md`: *a program that
+does not parse its arguments does something irreversible with one of them.*
+`A04`/`F04` (exit 0 with nothing assessed), `OC-104` (one command line, two
+operations on two platforms), `F15` (33 MB under a directory named `--help`).
+**In all three the detection was accidental** — none was found by looking.
+
+**The sweep, with its blind spot named.** Of **123** tracked `.sh` and `.py`
+files, **44** read a positional argument as a path with no option handling —
+a **floor on candidates, not a count of defects**, because the method cannot
+distinguish "takes `$1` as a work directory" from "would do something
+irreversible with an option-shaped `$1`". Narrowed to **create or destroy at an
+unvalidated positional path: 5 of 123**, and **all five are under
+`audits/2026-09-30`**, which `audits/enum-instruments.sh` lists as **FROZEN** —
+dated evidence that guide rule 2 forbids editing and that nothing invokes now.
+**Recorded, not repaired**, and unreachable rather than tolerated.
+
+**Both controls fired**, because a sweep reporting a small number needs one: the
+method **FLAGS** `blindspot_streams.py` as it stood at `a9a269f` and **does not
+flag** the repaired version at `HEAD`.
+
+### What this does NOT establish
+
+- The `F15` blobs are described in `FORK-DIVERGENCE-AND-TRUST.md` so the history
+  is not a mystery; **they are still in the history** and still cost every clone.
+- The 5 frozen hits were **not executed** to confirm they would misbehave. They
+  are flagged by shape, and the shape is the rule's definition.
+- Nothing reported upstream.
+
