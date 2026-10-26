@@ -9974,3 +9974,217 @@ files, rather than reporting zero flags over zero files.
   cover every shape.
 - Nothing reported upstream.
 
+## OC-108 — the Rust implementation's divergence list, checked item by item against this fork: the first external corroboration this repository has had
+
+**New-task item 3. Two independent SP 800-90B implementations were cloned as
+comparison oracles — `walters-labs/sp-800-90b` at `ef6fd02` (Rust, MPFR) and
+`EPI-Quantum-Crypto/libsp80090b` at `2429253` (C99 port of NIST 1.1.8). Neither
+is vendored; both are built and run as separate binaries, so no license
+question arises. The Rust project documents the places where it intentionally
+differs from NIST's reference implementation. Each is checked here against this
+fork's own source and record.**
+
+Note on `MPFR`: the Rust implementation links `MPFR` through `rug`. This fork
+**deliberately avoids `MPFR`/`GMP`** for LGPL isolation, and `regression-docs.sh`
+asserts that no built program links them. Running the Rust tool as a **separate
+binary** leaves that property untouched, and it is the only reason this
+comparison is possible at all without changing what this fork links.
+
+### 1. The MCV confidence constant — **EXHIBITS IT, AND ALREADY FOUND HERE**
+
+Their statement: NIST's MCV uses the binary64 constant `2.5758293035489008`
+where the publication prints decimal `2.576`, and *"the two intentionally
+produce different results."*
+
+This fork: `cpp/shared/utils.h:75` defines
+`#define ZALPHA 2.5758293035489008` — **the identical value** — and
+`:76` `ZALPHA_L 2.575829303548900384158L`. Used by `most_common.h:30`,
+`utils.h:1229` and four sites in `lrs_test.h`.
+
+**Found here independently, twice over.** `OC-8` measured it on real values
+harvested from a real run and reported the magnitudes rather than an adjective:
+
+| predictor | tool `ZALPHA` | spec `2.576` | delta |
+|---|---|---|---|
+| Bitstring MultiMCW | 0.99911507785502614 | 0.99911499084098192 | **+8.70e-08** bit |
+| Literal MultiMCW | 7.9611632356166352 | 7.9611594334062937 | **+3.80e-06** bit |
+| Bitstring Lag | 0.998936306150716 | 0.99893621914778806 | **+8.70e-08** bit |
+
+and `entropy_floor.py:469` carries it as a standing floor term,
+`C22c ZALPHA vs the literal 2.576 ... DERIVED`.
+
+**This fork went further than their note in two ways**, and both matter: it
+determined the **direction** (permissive — the tool's constant yields the higher
+estimate) and it determined **which constant is correct** — `2.576` is a
+*rounded printing* of the true 0.995 quantile, so the tool uses the right number
+and the standard's text uses the rounding. Dispositioned **NOT-A-BUG** on that
+reasoning (prior `F07`, restated by `predictors-6`).
+
+**And their default agrees with that conclusion:**
+`ConfidenceConstant::NistReference` is the Rust default, with `Publication`
+offered as an option. So this is **corroboration of the mechanism and agreement
+on the resolution**, from a project that reached it independently.
+
+### 2. The Collision estimator's boundary policy below 2 — **EXHIBITS IT; NEW HERE AS A CHARACTERIZATION; and it is NOT R-1**
+
+Their statement: the implementation *"clamps the adjusted mean to at least 2 and
+solves `E[T] = 2 + 2p(1-p)` directly. A bound of 2 gives zero entropy; a bound
+at or above 2.5 gives one bit per sample. **This differs from applying the
+publication's no-solution fallback to a bound below 2.**"*
+
+This fork: `cpp/non_iid/collision_test.h:69`
+
+```c
+	X -= ZALPHA * s/sqrt(v);
+	//2 is the smallest meaninful value here.
+	if(X < 2.0) X = 2.0;
+```
+then `if(X < 2.5) { p = 0.5 + sqrt(1.25 - 0.5 * X); ... } else { p = 0.5; entEst = 1.0; }`.
+
+**The direction, worked out here because it decides whether this matters.** The
+solvable window is `X` in `[2, 2.5]`, giving entropy in `[0, 1]`:
+
+- **NIST's clamp:** `X < 2` becomes `X = 2`, so `p = 0.5 + sqrt(0.25) = 1.0` and
+  `entEst = -log2(1.0) = ` **0 bits**.
+- **The publication's no-solution fallback:** `p = 0.5`, `entEst = ` **1 bit**.
+
+**So the clamp is the CONSERVATIVE branch** — it awards zero entropy where the
+publication's fallback would award a full bit. For an entropy *claim*, lower is
+safe. That is the opposite of the usual finding in this record and it is why
+this one is recorded without alarm.
+
+**It is NOT the same issue as `R-1`.** `R-1` is the
+`assert(p_col >= 1/k)` / `p_colPower` underflow **abort** in `lrs_test.h` on
+80-bit `long double` — a crash on compliant data, five independent finders, 155
+of 255 alphabet sizes on x86-64. Different file, different quantity, different
+failure mode. **Nor is it the `C22` floor**, which is `P_local`'s bisection
+quantisation. The only thing the three share is the word "clamp".
+
+**New here as a characterization.** The 2026-09-30 audit verified §6.3.2's
+arithmetic against a literal implementation and this fork's own comment block
+documents the `v < 2` NaN path (upstream #264). Neither records that the clamp
+**diverges from the publication's fallback**. Recorded now, with the direction.
+
+### 3. MultiMMC's `longest_correct_run` quirk — **EXHIBITS IT, ALREADY REPAIRED HERE, AND THE TWO PROJECTS WENT OPPOSITE WAYS**
+
+Their statement: *"This implementation deliberately preserves a reference-code
+quirk: an unavailable winning prediction leaves the run counter unchanged, while
+an incorrect available prediction resets it."*
+
+**This fork found the same quirk and REPAIRED it, as `F09`.**
+`cpp/non_iid/multi_mmc_test.h:67`:
+
+```c
+      // See the generic path below: SP 800-90B 6.3.9 leaves correct[i-2] at 0
+      // for a Null prediction, so a Null from the winner ends the run. The
+      // run counter was only reset where the winner predicted and was wrong.
+```
+
+guarded by `cpp/selftest/regression-multimmc.sh`, whose header cites §6.3.9
+step 1 and step 4.d and **the worked example in that section**, which shows
+`prediction = Null, correct = 0` for its first two rounds.
+
+**So: independent corroboration that the quirk is real, and a genuine
+divergence in what to do about it.** The Rust project preserves it for
+reference compatibility; this fork follows the publication's own worked example.
+Neither is a bug in the other — it is a documented, deliberate difference on
+both sides, which is the most useful possible outcome of this comparison.
+
+This fork also recorded the direction: *"an inflated r makes `P_local` larger
+and the estimate smaller, so the defect was conservative"* — i.e. upstream's
+quirk is permissive in the counter and conservative in the figure.
+
+### 4. LRS's negative sentinel — **EXHIBITS IT, AND ALREADY FOUND HERE**
+
+Their statement: *"An empty range returns `NoRepeatedSubstringRange` instead of
+NIST's negative sentinel."*
+
+This fork: `cpp/shared/lrs_test.h` sets `t_tuple_res = -1.0` and
+`lrs_res = -1.0` (`:157`, `:158`, `:271`) and `Pmax = -1.0` (`:241`).
+
+**Found here as `R-2`** — `cpp/selftest/regression-restart.sh:270` asserts
+*"the `-1` sentinel is not folded in"*, i.e. that a sentinel never reaches the
+minimum as if it were an entropy value. **Corroborated**; the two projects chose
+different remedies (a typed error vs a guard against folding it in).
+
+### 5. The Markov six-pattern table — **EXHIBITS IT; NEW HERE AS A CHARACTERIZATION**
+
+Their statement: *"This follows NIST's six-pattern table, not a general
+optimization over all 128-bit Markov paths. The two calculations can differ on
+some inputs."*
+
+This fork: `cpp/non_iid/markov_test.h` evaluates exactly six candidates in the
+specification's order —
+`-log2(P_0) - 127*log2(P_00)`, `-log2(P_0) - 64*log2(P_01) - 63*log2(P_10)`,
+`-log2(P_0) - log2(P_01) - 126*log2(P_11)`, and the three with `P_1` leading —
+then `entEst = fmin(H_min/128.0, 1.0)`. **Verbatim the structure they describe.**
+
+The 2026-09-30 audit recorded `| 6.3.3 | Markov | 6 paths, min/128 | yes |` with
+the no-path case noted, i.e. it verified the six paths **as conformant to the
+standard**, which they are. **What is new here is the limitation**: six
+prescribed patterns are not the minimum over all 128-step paths, so the
+published "Markov min-entropy" can exceed the true minimum over that model.
+That is a **standard** defect, section B territory, not an implementation one.
+
+**Probably immaterial to any figure in this record**, and the reason is already
+measured: Compression binds on every stream this project has assessed, and the
+aggregation measurement found that a 40-sigma defect in a non-binding estimator
+leaves the min-entropy figure unchanged. Recorded as a characterization, with
+that caveat stated rather than assumed.
+
+### 6. The restart API after an IID rejection — **EXHIBITS IT, ALREADY REPAIRED HERE**
+
+Their statement: *"sanity failure short-circuits; IID rejection and incomplete
+estimation prevent a validated output. **The reference can reach its final
+validation-success message after printing IID failures.**"*
+
+**This fork closed exactly that.** `cpp/restart_main.cpp`:
+
+```
+:1139  "** Skipped IID permutation tests after an earlier required IID test failure"
+:1155  "IID restart test suite failed; no IID restart entropy estimate was awarded."
+```
+
+so an IID failure short-circuits the permutation tests and **no IID restart
+estimate is awarded**. In the `C03` neighbourhood (`OC-6`). **Corroborated, and
+already fixed here.**
+
+### 7. Out-of-width values: rejected, not masked — **AGREES WITH THIS FORK'S CHOICE**
+
+Their statement: *"out-of-width values are rejected rather than masked."* This
+fork refuses too — measured: `ea_non_iid -o r in.bin 1` on byte-valued data
+prints *"Incorrect bit width specification: Data (8) does not fit within
+described bit width: 1"* and exits 255. **Same choice, independently.**
+
+### The tally, with the identity of what it counts
+
+**7 items from their list checked against this fork's source and record:**
+
+| outcome | count | items |
+|---|---:|---|
+| exhibits it, **already found here** under another name | **4** | MCV constant (`C22`/`OC-8`/`C22c`), LRS sentinel (`R-2`), MultiMMC quirk (`F09`, **repaired**), restart-after-IID (**repaired**, `C03` neighbourhood) |
+| exhibits it, **new here as a characterization** | **2** | the Collision `X < 2` clamp vs the publication's fallback; the Markov six-pattern limitation |
+| **agrees** with a choice this fork already made | **1** | out-of-width rejected rather than masked |
+| exhibits it and is a **defect in this fork** | **0** | — |
+
+**This is the first external support any finding in this repository has had.**
+Four findings in this record were reached independently by a different team in a
+different language, and on the two where this fork took a position — the MCV
+constant's correctness and MultiMMC's run counter — the positions are
+reasoned from the publication on both sides and differ only on MultiMMC, where
+the disagreement is documented as deliberate by both projects.
+
+### What this does NOT establish
+
+- **Their list is their list.** Seven items are checked; their "Intentional
+  compatibility differences" section also covers arithmetic precision, seeding,
+  permutation minimums and conditioning, which bear on quantities this fork does
+  not publish.
+- **Nothing is validated by agreement with them.** Two implementations agreeing
+  that NIST's code does X is evidence that it does X. It is not evidence that X
+  is right.
+- The Collision and Markov characterizations are **determinations by reading the
+  code and the standard**, labelled as such — not measurements. The Collision
+  direction (0 bits vs 1 bit) is arithmetic on the published formula, not a run.
+- **Nothing reported upstream, to NIST or to either project.**
+
