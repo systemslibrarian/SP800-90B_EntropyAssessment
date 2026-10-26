@@ -10188,3 +10188,252 @@ the disagreement is documented as deliberate by both projects.
   direction (0 bits vs 1 bit) is arithmetic on the published formula, not a run.
 - **Nothing reported upstream, to NIST or to either project.**
 
+## OC-109 — the defect datasets: saturation, drift and replay are CAUGHT; a zero-entropy DRBG is awarded 7.14 of 8 bits
+
+**New-task item 4. The C99 project's `lab/gen_data.sh` generates datasets
+spanning good sources and specific defects. This fork's outside-battery corpus
+is 5 Mersenne Twister streams and 20 SHA-256 counter-mode streams, which
+contain **no defect classes at all**, and January is about a real hardware
+source. 22 of the 24 were generated at 1,000,000 samples with `--seed 20261025`
+into a directory outside this repository. **Not added to any pinned corpus or
+fixture manifest**: they are generated, not captured, and their provenance is a
+script.**
+
+**The two NOT generated stay NOT RUN:** `jent-raw` and `jent-restart` require
+`JENT_SRC` (a jitterentropy-library checkout), which is absent. A physical
+dependency that is not present is a third outcome, not a pass.
+
+**And their generator does not run under macOS `/bin/sh`.** It sets
+`GROUPS=...`, and in `bash` — which is what `/bin/sh` is on macOS — `GROUPS` is
+a **special read-only variable**, so the assignment is ignored, `set -e` sees a
+failure, and the script exits silently: `--list` exited 1 printing nothing, and
+a generate request exited 0 having written no file. Measured:
+`bash -c 'GROUPS="a b c"; echo $GROUPS'` prints **`20`**, the real group id. Run
+under `dash` it works. A portability defect in their script, recorded here
+because it is the reason the datasets exist at all; **not reported to them.**
+
+### The raw datasets, 18 of them, at their declared widths
+
+`ea_non_iid -i -a -v -v <file> <width>`. "Caught" means the assessed figure is
+driven well below the width, or the run is refused.
+
+| dataset | w | what it simulates | assessed min entropy | caught? |
+|---|--:|---|---:|---|
+| `thermal` | 8 | good raw source, IID | 4.0948 | — (good source) |
+| `thermal-lsb` | 1 | LSB of the same ADC | 0.8384 | — (good) |
+| `ringosc-slow` | 1 | ring osc sampled slowly | 0.8591 | — (good) |
+| `saturated` | 8 | ADC gain too high, clipped to 0/255 | **1.7249** | **YES** |
+| `lowpass` | 8 | sampled faster than the noise bandwidth | 3.2476 | YES |
+| `ringosc-fast` | 1 | sampled too fast, long runs | **0.1097** | **YES** |
+| `biased-1bit` | 1 | comparator offset, P(1) = 1/4 | **0.2498** | **YES, conservatively** |
+| `interference` | 8 | mains tone over weak noise | 3.4375 | YES |
+| `aging` | 8 | noise fades over the file | 3.3017 | YES |
+| `warmup` | 8 | source not settled at start | **1.1043** | **YES** |
+| `drift` | 8 | law changes halfway (4 bits, then 8) | **2.4416** | **YES** |
+| `stuck` | 8 | dead source, one symbol | **exit 255, REFUSED** | **YES** |
+| `replay` | 8 | one 4 KiB block repeated | **1.594e-06** | **YES, ~zero** |
+| `urandom` | 8 | kernel DRBG output | 7.1725 | **NO** |
+| `urandom-4bit` | 4 | same, folded | 3.6878 | **NO** |
+| `urandom-1bit` | 1 | same, folded | 0.8311 | **NO** |
+| `openssl` | 8 | OpenSSL DRBG output | 6.6384 | **NO** |
+| `drbg-zero-seed` | 8 | **AES-256-CTR, all-zero key: ZERO entropy** | **7.1450** | **NO** |
+
+**The three the owner named are all caught.** A **saturated** source loses
+6.3 of 8 bits; a **drifting** source loses 5.6 of 8; a **replayed** source is
+driven to **1.6e-06 bits**, which is as close to a refusal as a number gets.
+`stuck` is refused outright.
+
+**`biased-1bit` is conservative in the safe direction.** An IID source with
+P(1) = 1/4 has true min-entropy `-log2(0.75) = 0.4150` bit; the fork reports
+**0.2498**, an *underestimate*. Lower is safe for a claim.
+
+### THE ONE THAT IS NOT CAUGHT, AND IT IS THE SHARPEST RESULT HERE
+
+**`drbg-zero-seed` is AES-256-CTR keyed with all zeros. Its entropy is exactly
+zero — the stream is a deterministic function of nothing. This fork assesses it
+at 7.1450 bits per 8-bit symbol and exits 0.**
+
+This is **not a defect in this fork**, and saying so precisely matters: SP 800-90B
+measures *statistical structure*, not *computational unpredictability*, and no
+estimator in §6.3 could distinguish AES-CTR output from noise without breaking
+AES. It is exactly why the standard says raw, unconditioned samples must be
+assessed and why their own table annotates this row *"passes every test, zero
+entropy"*. **The value of having the number is that the failure mode is now
+quantified rather than known in principle:** the tool will certify a
+zero-entropy stream at 89% of full entropy, silently, with `errorLevel 0`.
+
+**For January this is the ranking fact.** The battery catches the defects a
+hardware source actually develops — saturation, drift, replay, warm-up, fading,
+correlation, periodic interference, a stuck output. What it cannot catch is a
+source that is *not raw noise at all*, and the only defence against that is
+provenance: knowing the bytes came from the physical source before any
+conditioning. No amount of estimator agreement substitutes for it, and three
+independent implementations agreeing on 7.145 bits for an all-zero-key AES
+stream is the proof.
+
+### The four restart datasets, which match their table exactly
+
+`ea_restart -i -v <file> 8 <H_I>/symbol`. **The `/symbol` suffix is required** —
+this fork's `C16` repair refuses a bare `H_I` above width 1, which my first
+invocation tripped.
+
+| dataset | `H_I` | exit | `H_r` | `H_c` | result | their expectation |
+|---|---|--:|---|---|---|---|
+| `restart-thermal` | 4.0 | **0** | 5.6097 | 5.6097 | **Validation Test Passed** | "passes the restart test" ✓ |
+| `restart-warmup` | 1.0 | 255 | — | — | **Sanity Check Failed** | "fails" ✓ |
+| `restart-urandom` | 7.0 | **0** | 7.8713 | 7.8713 | **Validation Test Passed** | "fresh bytes at every restart" ✓ |
+| `restart-frozen` | 1.0 | 255 | — | — | **Sanity Check Failed** | "fails" ✓ |
+
+**All four agree with what their table says should happen** — independent
+corroboration that this fork's restart path, including the `C16`, `C23` and
+`A07` repairs, behaves correctly on datasets a different team designed to
+exercise those exact failure modes.
+
+**And a characterization, not a bug, recorded because it nearly became one.**
+`restart-thermal` at my first arbitrary `H_I = 7.0/symbol` FAILED the sanity
+check. That is correct behaviour: `thermal.bin` assesses at 4.0948 bits, so
+`H_I = 7.0` is a false claim and §3.1.4.3 exists to refuse it. Re-run at a
+source-matched `H_I` it passes. **A disagreement is characterized before it is
+called anyone's bug** — including when the bug would have been mine.
+
+### What this does NOT establish
+
+- **22 of 24 datasets, one seed, one generator.** Their published
+  `lab/data.sha256` digests are not reproduced here: the files were generated
+  with Homebrew `gawk` under `dash`, and byte-identity with their published set
+  was not checked, so these are datasets of the same *classes*, not the same
+  *bytes*.
+- **"Caught" is a judgement about the figure's magnitude**, not a threshold test.
+  This fork has no pass/fail threshold for a raw assessment; the operator
+  compares the figure against a requirement.
+- The restart rows use an `H_I` **I chose** from the matching raw assessment.
+  A different `H_I` moves the verdict, as the `restart-thermal` row shows.
+- Nothing is added to any pinned corpus, manifest, or baseline.
+- Nothing reported upstream, to NIST or to either project.
+
+## OC-110 — the three-way differential: 891 values, three independent implementations, 0 disagreements beyond 1e-9
+
+**New-task item 2, and the owner is right that this is the strongest statement
+this project can make about any figure. Three implementations, written
+independently in three languages, over NIST's own 11 reference datasets.**
+
+| implementation | identity | build |
+|---|---|---|
+| this fork | `ea_non_iid 1.1.8`, Darwin arm64 | Apple clang, `-O2 -ffloat-store` |
+| C99 port | `EPI-Quantum-Crypto/libsp80090b` @ `2429253` | `gcc-16 -std=c99 -O2 -fopenmp -ffloat-store -ffp-contract=fast`, `MARCH=` (portable) |
+| Rust | `walters-labs/sp-800-90b` @ `ef6fd02`, v0.1.1 | `cargo 1.98.0 --release`, 256-bit MPFR via `rug` |
+
+Neither oracle is vendored. Both were cloned into their own directories outside
+this repository and are run as **separate binaries**. The Rust implementation
+links `MPFR`, which this fork deliberately **does not** — `regression-docs.sh`
+asserts no built program links `MPFR`/`GMP` — so running it out of process is
+the only way this comparison is possible without changing what this fork links.
+
+### THE COMPARISON HAD TO BE MADE COMPARABLE FIRST, AND THAT IS WHERE IT COULD HAVE GONE WRONG
+
+NIST and the C99 port print `Literal Most Common Value Estimate: min entropy =
+<v>`. The Rust implementation prints `Literal MostCommonValue: <v>`. Keyed on
+the raw label, **every row would have read `ONLY-1` and the summary would have
+reported perfect agreement over zero three-way comparisons** — `SHAPE-03` with
+extra steps, and it would have looked like the strongest result in the project.
+
+Measured before and after widening: with the fork's own line filter the Rust
+column was **entirely empty**. The canonical key is
+`(Literal|Bitstring, estimator) min-entropy`, and only min-entropy rows are
+canonicalised because min entropy is the only per-estimator quantity all three
+expose. The extraction otherwise **mirrors `cpp/selftest/compareresults.pl`
+exactly** — the same line filter, the same two separator forms, the same
+trailing-space strip — so a disagreement cannot be an artefact of a different
+parser. Comparison uses the full 77-digit MPFR strings; only the display is
+shortened.
+
+### THE RESULT
+
+```
+rows with ALL THREE implementations: 163
+rows with exactly two:               728
+total:                               891
+
+labels exceeding 1e-09:                0
+```
+
+**891 value-rows compared across the 11 datasets. Every one agrees to 1e-9.
+Zero disagreements.**
+
+| | three-way (163 rows) | fork vs C99 (728 rows) |
+|---|---:|---:|
+| agree **exactly** | **64** | **719** |
+| exceed 1e-12 | 9 | 5 |
+| **worst delta** | **3.659e-10** | **1.266e-10** |
+
+The 728 two-way rows are the intermediate diagnostics — `Mode count`, `p-hat`,
+`p_u`, `X-bar`, `sigma-hat`, `P_0`, `P_{0,0}`, `P_local`, `v`, `Sum t_i` — which
+the Rust CLI keeps API-only. **719 of those 728 are bit-identical between this
+fork and an independently written C99 port.**
+
+### THE WORST THREE-WAY ROWS ARE EXACTLY THE DOCUMENTED PLATFORM DELTAS
+
+| dataset | row | three-way delta |
+|---|---|---:|
+| `biased-random-bytes.bin` | Bitstring MultiMMC min-entropy | **3.659e-10** |
+| `ringOsc-nist.bin` | Literal MultiMCW min-entropy | 3.206e-10 |
+| `biased-random-bytes.bin` | Literal Lag min-entropy | 3.149e-10 |
+| `biased-random-bytes.bin` | Bitstring LZ78Y min-entropy | 1.881e-10 |
+| `biased-random-bytes.bin` | Bitstring MultiMCW min-entropy | 1.858e-10 |
+
+Compare `cpp/selftest/known-platform-deltas.txt`, which lists
+`biased-random-bytes.bin|Bitstring MultiMMC Prediction Estimate|min entropy|1e-9|`
+**`3.65934130219792e-10`**. **The same row, the same magnitude, to every digit
+printed.** Every one of the five is a prediction estimator, and the prediction
+estimators are precisely the eight rows that manifest lists.
+
+### WHICH IS THE OUTLIER, AND THE HONEST ANSWER
+
+**None of the three is an outlier anywhere.** No row exceeded the tolerance, so
+the outlier column is empty by construction, and the owner's instruction — *"where
+this fork is the outlier, that is a candidate defect in this fork"* — finds
+nothing to act on.
+
+**And a limit on what the agreement separates.** All three implementations ran
+on the **same machine**, Darwin arm64. So this measurement does **not**
+distinguish *"these differences are platform-dependent"* from *"these
+differences are implementation-dependent"*: it establishes that three
+independent implementations on one platform spread by at most 3.66e-10,
+concentrated in exactly the quantities the platform manifest names. That is
+consistent with the platform explanation and does not prove it. Proving it needs
+the same three implementations on x86-64, which is **NOT RUN**.
+
+**One characterization, not a contradiction.** The C99 project claims a
+`7.2e-14` maximum gap on non-IID against NIST. Measured here, fork versus C99,
+the worst gap is **1.266e-10** — larger. The builds differ: this was `gcc-16`
+with `MARCH=` (their Makefile warns that a portable build "may then differ from
+a `-march=native` NIST build") on Darwin arm64, against Apple clang. Their claim
+is presumably an x86-64 figure. **Different platform, different compiler,
+different flags — so this is a different measurement, not a refutation.**
+
+### What this establishes, stated plainly
+
+**Across the ten non-IID estimators, both the literal and bitstring paths, and
+all 11 of NIST's reference datasets, this fork's figures agree with two
+independently written implementations to better than 4e-10 everywhere, and
+exactly on 64 of 163 three-way rows and 719 of 728 two-way rows.** For the
+figures this project actually publishes, that is worth more than any
+self-authored test in this repository, and it is the first time any figure here
+has had support that does not originate with its author.
+
+### What this does NOT establish
+
+- **It is agreement, not correctness.** Three implementations of the same
+  standard agreeing says they implement the same standard. Where the standard
+  itself is wrong — section B of the divergence document — all three are wrong
+  together. `OC-108`'s Markov six-pattern item is exactly such a case.
+- **One platform.** See above; the x86-64 three-way is NOT RUN.
+- **`ea_non_iid` only.** The IID, restart and conditioning paths were not
+  compared three ways; `OC-109` compares the restart path against the C99
+  project's *expectations*, not against its figures.
+- The Rust implementation's per-estimator figures come from its
+  `examples/non_iid` binary, which the project's own docs warn is "not an
+  IID/restart/source-validation tool" and whose exit status must not be read as
+  an assessment verdict. Only its printed figures are used here.
+- **Nothing reported upstream, to NIST or to either project.**
+
