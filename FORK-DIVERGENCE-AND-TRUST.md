@@ -828,11 +828,24 @@ cause was a single integer** —
 Four fresh `openssl rand` streams from the identical command all gave Literal
 Lag ≈ 7.91–7.95 and none of them bound on it. **The longest run of correct lag
 predictions differed by one — `r = 4` against `r = 3` — and that single
-increment moved the estimate by 1.27 bits.** `P_local` is a step function of a
-max-of-runs statistic with a heavy tail, so an individual capture's assessed
-rate carries more than a bit of noise from one integer. **A ceiling on bits per
-bit cannot be stable against that**, and the band it would have to sit outside
-is not even well defined.
+increment moved that estimator by 1.2674253400228785 bit/sample.**
+
+**Two quantities must not be conflated here** (`OC-115`). The *estimator's* jump
+is 1.267 bit/sample; the **assessed figure's** spread across those five draws of
+one source is **0.7153525775424896 bit/sample, 0.08942 bit/bit** — smaller,
+because the assessed figure is the minimum over all estimators and Lag bound in
+only one of the five. Four draws cluster within 0.216 bit/sample and the fifth
+sits 0.68 below their median, so the distribution is **heavy-tailed** and
+"range" flatters it. `n = 5`, so that spread is a **lower bound on the
+variance, not a bound**, and it is characterized for an OpenSSL CSPRNG at
+width 8 — which estimator binds is source-dependent, so it does not transfer to
+a physical source.
+
+**A ceiling on bits per bit cannot be stable against that**, and the band it
+would have to sit outside is not even well defined. **A guard cannot
+discriminate across a gap smaller than the single-capture variance of the
+quantity it reads**, and here the gap is 0.09 bit/bit against a measured spread
+of 0.089.
 
 **What does defend against it: provenance, and nothing else in this
 repository.** See `audits/` for what the record carries; the qualification
@@ -920,6 +933,16 @@ unresolved.**
   `MUTATION-DID-NOT-APPLY` contract**, both also `NOT CAUGHT` by mutation in
   `OC-105`. The second is the mechanism adopted to stop this project reporting
   unearned verdicts, and it is the one mechanism with no case in which it fires.
+- **`regression-outside-battery.sh`'s Compression window is 9.7x narrower than
+  the measured single-capture spread.** It accepts `[0.8270, 0.8822]`, 3 sd from
+  `0.8546 +/- 0.0092` measured on 5 clean streams; a draw with a `P_local`
+  excursion was measured at **0.82980**, **0.0028** inside the lower bound, and
+  the spread on 5 draws of another source is **0.0894** against that `0.0092`
+  (`OC-115`). **Latent, not live:** the 25 clean streams come from fixed seeds
+  and the corpus is digest-pinned, so the window is never sampled afresh — it
+  becomes live if the corpus is re-seeded or extended. Direction is a false
+  **FAIL**, not a false pass. Widening it from `n = 5` would swap one
+  under-sampled figure for another, so the fix is to measure the tail first.
 - **`deadguard.py` reports `flags: 0` over an empty scan.** Run with `SP=.` it
   prints `files touched: 0` and the tree hash of the **empty string**
   (`e3b0c442...`) — `SHAPE-03` in the instrument built to find `SHAPE-03`. The

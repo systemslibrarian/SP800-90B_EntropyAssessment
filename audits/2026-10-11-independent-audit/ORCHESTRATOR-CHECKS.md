@@ -10850,3 +10850,98 @@ than the quantisation term the floor already subtracts.**
   claim about the non-IID battery's sensitivity to oscillation in general.
 - **Nothing reported upstream, to NIST or to either project.**
 
+## OC-115 — the single-capture variance, separated from the estimator jump; and a tolerance 9.7x narrower than it
+
+**Two numbers were being conflated downstream, and the smaller one is the one
+that matters. Measured on five `openssl rand` streams from the identical
+command, width 8, 1,000,000 samples each.**
+
+### The two quantities are not the same
+
+| quantity | value | what it is |
+|---|---:|---|
+| the **Lag estimator's** jump, `r = 3 -> 4` | **1.2674253400228785** bit/sample | one estimator's step at that `C`/`N`. It reaches the reported figure **only when Lag is the minimum**. |
+| the **assessed figure's** spread, 5 draws of one source | **0.7153525775424896** bit/sample (**0.08942** bit/bit) | what a single capture's reported figure actually varies by |
+
+Using `1.27` as the variance of a *reported* figure **overstates it by 77 %**.
+The assessed figure is the minimum over all estimators, and Lag bound in only
+one of the five draws.
+
+| draw | assessed | bit/bit | did Lag bind? |
+|---|---|---:|---|
+| the `OC-109` stream | 6.6384051555787362 | **0.82980** | **yes**, `r = 4`, `P_local = 0.010038` |
+| `ossl1` | 7.3143196724744621 | 0.91429 | no, `r = 3` |
+| `ossl2` | 7.1377117056905979 | 0.89221 | no |
+| `ossl3` | 7.3337658725840837 | 0.91672 | no |
+| `ossl4` | 7.3537577331212258 | 0.91922 | no |
+
+**And "range" is the wrong summary, because the distribution is heavy-tailed.**
+Four draws cluster within **0.216** bit/sample (7.1377–7.3538); the fifth sits
+**0.68** below their median. `-log2(0.010037855160187185) = 6.638405155578736`,
+matching the printed figure exactly, so `P_local` did bind.
+
+**`n = 5`. The spread is a lower bound on the true variance, not a bound** —
+rule 6: an observed maximum is not a bound. And it is characterized for *an
+OpenSSL CSPRNG at width 8*: which estimator binds is source-dependent, so this
+figure does not transfer to a physical source.
+
+### Does anything in THIS repository treat one assessment as a source's rate?
+
+Swept. **No** — and the reason each is safe is worth recording, because "it
+pins a figure" and "it claims a source's rate" look alike:
+
+- **`cpp/selftest/pin-check.sh`** pins `0.12644573619605429` at `RELTOL=1e-9`,
+  but against `SAMPLE_SHA256=7d37dc37...`, **verified before comparing**. Fixed
+  bytes, so re-running is deterministic and single-draw variance cannot apply.
+  Correctly scoped.
+- **`known-platform-deltas.txt`** records differences between implementations on
+  the *same* bytes. Not a source rate.
+- **`regression-outside-battery.sh`** is the one place a **cross-stream**
+  statistic is pinned, and **it already carries its spread**:
+  *"Compression binds 5 of 5 clean streams at 0.8546 +/- 0.0092"*.
+
+### BUT THAT SPREAD IS 9.7x TOO NARROW, AND THE MARGIN IS 0.0028
+
+`regression-outside-battery.sh:337` accepts Compression in **`[0.8270, 0.8822]`**,
+derived as 3 sd from `0.8546 +/- 0.0092` — measured on 5 clean streams.
+
+| | bit/bit |
+|---|---:|
+| spread on their 5 clean streams (the `+/- 0.0092`) | 0.0092 |
+| spread on my 5 `openssl` streams | **0.0894** |
+| **ratio** | **9.7x** |
+| my `P_local`-excursion draw | **0.82980** |
+| its margin inside the window's lower bound `0.8270` | **0.00280** |
+
+**Their five streams happened not to contain a `P_local` excursion; mine
+contained one.** So `+/- 0.0092` is a lower bound measured on a sample that
+missed the tail, and the 3-sd window built on it is correspondingly narrow — an
+ordinary clean draw lands within **a third of one sd** of breaching it.
+
+**LATENT, NOT LIVE, and the scoping is the point.** The 25 clean streams are
+generated from **fixed seeds** (`random.Random(0xA ...)`, `sha_bits` keyed on a
+format string) and the corpus is **digest-pinned over 31 entries**, so every run
+produces the same bytes and the same Compression values. **The window is never
+sampled afresh, so it cannot fail today.** It becomes live the moment the corpus
+is **re-seeded or extended** — which is exactly when someone would trust it most.
+
+**Direction: a false FAIL, not a false pass.** The window is too narrow, so it
+would report a defect where there is none. That is the safe direction for a
+detector and it is still an instrument defect, and by this project's own rule a
+count from an instrument with unmeasured error is a **floor**.
+
+**Not repaired in this pass.** Widening it from `n = 5` would be swapping one
+under-sampled figure for another; the honest fix is to measure the spread on
+enough draws to see the tail, and that is queued, not claimed.
+
+### What this does NOT establish
+
+- **`n = 5` on one source at one width.** Nothing here characterizes the
+  variance of a physical source's assessment, which is what January needs.
+- It does not say the `0.8546` centre is wrong — only that the `+/- 0.0092`
+  beside it is an under-sampled spread.
+- The sweep covered this repository's pinned figures. **Whatever consumes an
+  assessment as a device property lies outside this repository** and is not
+  examined here.
+- Nothing reported upstream.
+
