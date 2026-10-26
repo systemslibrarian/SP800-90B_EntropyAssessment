@@ -10192,9 +10192,12 @@ the disagreement is documented as deliberate by both projects.
 
 **New-task item 4. The C99 project's `lab/gen_data.sh` generates datasets
 spanning good sources and specific defects. This fork's outside-battery corpus
-is 5 Mersenne Twister streams and 20 SHA-256 counter-mode streams, which
-contain **no defect classes at all**, and January is about a real hardware
-source. 22 of the 24 were generated at 1,000,000 samples with `--seed 20261025`
+is 31 streams in four families — and the brief's *"no defect classes at all"*
+is **not right**, as `OC-114` measures: 5 of them are injected-signal defects
+and 1 is a deliberate blind-spot case. What **is** right, and is the point, is
+that **none** of saturation, drift, replay, warm-up, fading or DRBG output
+appears in it. The corpus exercises the outside battery's detector; it does not
+exercise the source model. And January is about a real hardware source. 22 of the 24 were generated at 1,000,000 samples with `--seed 20261025`
 into a directory outside this repository. **Not added to any pinned corpus or
 fixture manifest**: they are generated, not captured, and their provenance is a
 script.**
@@ -10763,4 +10766,87 @@ a candidate, with its direction and platform now known.**
   compared this way.
 - **binary128 on Linux aarch64 stays NOT RUN.**
 - Nothing reported upstream.
+
+## OC-114 — the outside-battery corpus, three ways; and the premise that it holds no defect classes is wrong
+
+**The second half of new-task item 2, and a correction to the brief.**
+
+### The corpus does contain defect classes — just not physical ones
+
+The item said this fork's outside-battery corpus *"is 5 Mersenne Twister
+streams and 20 SHA-256 counter-mode streams, which contain no defect classes at
+all."* `cpp/selftest/outside-battery-corpus.txt` declares **four** families:
+
+```
+  mt         5   Mersenne Twister clean streams
+  sha       20   SHA-256 counter-mode clean streams
+  defect     5   B_osc5000 (8538.7x at 59.938 Hz), C_osc500, D_lag5000,
+                 E_weaklag5000 (40.21 sigma at lag 5000), F_xor30
+  blindspot  1   G_xor13_02, the OC-18 case that must stay silent
+```
+
+**31 streams in four families, 5 of them defect streams and 1 a deliberate
+blind-spot case.** The brief's 25 is the *clean* subset — the false-positive
+denominator behind the `0 of 25` figure.
+
+**The substance of the point stands, and is worth restating precisely:** those 5
+defects are **injected signal** defects — periodic oscillation, lag correlation,
+XOR mixing — built to exercise the *outside battery's own detector*. They are not
+the failure modes of a physical source. **None of saturation, drift, replay,
+warm-up, fading or DRBG output appears anywhere in this repository's pinned
+corpus**, which is exactly why `OC-109` was worth doing. The corpus tests a
+detector; it does not test the source model.
+
+### The three-way result
+
+Regenerated from seeds by `blindspot_streams.py` into a directory outside this
+repository — one clean stream of each generator, two defect streams, and the
+blind-spot case:
+
+```
+labels compared across >=2 implementations: 295
+labels where every implementation agrees to 1e-09: 295
+labels exceeding 1e-09:                              0
+```
+
+| stream | what it is | fork | C99 | delta |
+|---|---|---|---|---:|
+| `mt00` | clean Mersenne Twister | 0.8470166039320538 | 0.8470166039319968 | 5.695e-14 |
+| `sha00` | clean SHA-256 counter | 0.8680418041013173 | 0.8680418041012551 | 6.217e-14 |
+| `B_osc5000` | 8538.7x oscillation at 59.938 Hz | 0.6121263459047682 | 0.6121263459047682 | **0.000e+00** |
+| `E_weaklag5000` | 40.21 sigma lag at 5000 | 0.856713069515719 | 0.8567130695156596 | 5.940e-14 |
+| `G_xor13_02` | the `OC-18` case that must stay silent | 0.8600027307935295 | 0.8600027307935897 | 6.017e-14 |
+
+**Zero disagreements, worst 6.2e-14 — and the strongest injected defect in the
+corpus, `B_osc5000`, agrees bit-for-bit between two independent
+implementations.**
+
+Note what that row also shows: `B_osc5000` carries an **8538.7x** oscillation
+that the outside battery detects at 59.938 Hz, and `ea_non_iid` assesses it at
+**0.612** against `mt00`'s 0.847 — so the non-IID battery does register it,
+by about 0.235 bit. The outside battery exists because 0.235 bit is not how
+you want to find a 8538x spectral spike.
+
+### The complete item-2 tally, with the identity of what it counts
+
+| corpus | rows compared | exceeding 1e-9 | worst |
+|---|---:|---:|---:|
+| NIST's 11 reference datasets (`OC-110`) | **891** | **0** | 3.659e-10 |
+| the outside-battery corpus, 5 streams | **295** | **0** | 6.217e-14 |
+| the defect datasets, 5 degenerate (`OC-111`) | **503** | **10** | 4.165e-09 |
+| **total** | **1,689** | **10** | |
+
+**1,689 value-rows compared across three independently written implementations.
+Ten disagreements, all of them on deliberately degenerate inputs, all smaller
+than the quantisation term the floor already subtracts.**
+
+### What this does NOT establish
+
+- **5 of 31 streams**, chosen to span the four families, not the whole corpus.
+- The corpus is **regenerated from seeds**; the generated bytes were not checked
+  against `outside-battery-corpus.txt`'s pinned digests in this run, so these
+  are the right streams by construction and not by verification.
+- The `B_osc5000` 0.235-bit observation is **one stream at one width**, not a
+  claim about the non-IID battery's sensitivity to oscillation in general.
+- **Nothing reported upstream, to NIST or to either project.**
 
