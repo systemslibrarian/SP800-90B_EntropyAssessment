@@ -169,8 +169,13 @@ Every entry carries the same five fields.
   **`~/repos/TruePad` was read by that script when it ran and has not been
   modified by any of this work.**
 
-### `SV-5` — `.github/scripts/windows-facts.sh:719` — **VERIFICATION STANDS**
-### `SV-6` — `.github/scripts/windows-facts.sh:732` — **VERIFICATION STANDS**
+### `SV-5` — `.github/scripts/windows-facts.sh:719` and `:732` — **VERIFICATION STANDS**
+
+**One verification over two flagged lines.** The two pipes are the same
+mechanism guarded by the same precondition, so they are one entry rather than
+two with a shared body — which is what `regression-docs.sh` caught when the
+five-field check was extended to cover `SV-` entries: a register entry with no
+fields of its own is not an entry.
 
 - **CLAIM.** That the Windows platform-facts tally is correct — the tally behind
   **`C18` CONFIRMED** (LLP64 overflow, NaN threshold, LRS fails whatever the
@@ -190,7 +195,7 @@ Every entry carries the same five fields.
 
 ### The count, with the identity of what it counts
 
-**6 flags examined; 0 verifications withdrawn; 2 superseded (1 with a second
+**6 flagged lines examined across 5 register entries; 0 verifications withdrawn; 2 superseded (1 with a second
 independent support, 1 on its transcript alone); 4 verifications stand (3 the
 detector's or my own false positives, 1 a guard that was armed all along).**
 

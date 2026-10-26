@@ -710,15 +710,21 @@ else
     wvbad=$(python3 - "${WVREG}" <<'WVPY'
 import re, sys
 raw = open(sys.argv[1], encoding='utf-8').read()
-FIELDS = ('CLAIM', 'WITHDRAWN', 'REASON', 'WHAT NOW STANDS', 'WHAT LEANED ON IT')
-parts = re.split(r'^## (WV-\d+)[^\n]*$', raw, flags=re.M)
+FIELDS = ('CLAIM', 'REASON', 'WHAT NOW STANDS', 'WHAT LEANED ON IT')
+# OC-106: the register gained SV- entries -- verifications SUPERSEDED or found
+# to STAND rather than withdrawn. They were not checked, so six entries added
+# to enforce a rule sat outside the rule's own enforcement. Both prefixes are
+# scanned now. The second field is WITHDRAWN for a WV- entry and SUPERSEDED
+# for an SV- one, which is the only difference.
+SECOND = {'WV': 'WITHDRAWN', 'SV': 'SUPERSEDED'}
+parts = re.split(r'^#+ (?:`)?((?:WV|SV)-\d+)(?:`)?[^\n]*$', raw, flags=re.M)
 # parts = [preamble, id, body, id, body, ...]
 bad = []
 n = 0
 for i in range(1, len(parts) - 1, 2):
     wid, body = parts[i], parts[i + 1]
     n += 1
-    for f in FIELDS:
+    for f in FIELDS + (SECOND[wid.split('-')[0]],):
         if not re.search(r'\*\*%s\b' % re.escape(f), body):
             bad.append('%s:missing-%s' % (wid, f.replace(' ', '-')))
     if not re.search(r'\b20\d\d-\d\d-\d\d\b', body):
@@ -733,7 +739,7 @@ WVPY
         :
     elif [ -z "${wvbad}" ]; then
         note "every withdrawn verification carries its five fields:" \
-             "yes, over $(grep -c '^## WV-' "${WVREG}") entries"
+             "yes, over $(grep -cE '^#+ (`)?(WV|SV)-[0-9]' "${WVREG}") entries"
     else
         bad "withdrawn-verification entries are incomplete:" "${wvbad}"
     fi

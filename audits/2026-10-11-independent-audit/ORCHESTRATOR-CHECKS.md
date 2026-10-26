@@ -9763,3 +9763,214 @@ divergence is neither an inherited defect nor one this fork introduced.
   steps 5c and 5d, not by this script's own 29 rows.
 - Nothing reported upstream.
 
+## OC-105 — the band-1 pairs tested by BREAKING the earlier mechanism: 4 of 9 are unguarded, and C22c is one of them
+
+**Owner's item 4, and the owner was right that it is the item that matters
+most. `OC-100` reported that 14 of band 1's 15 mechanisms "were exercised this
+campaign". That claim is true and it is not a pair test.**
+
+### What was wrong with `OC-100`'s reassurance
+
+"Exercised" meant **the mechanism's own case was run and it passed**. A passing
+test cannot distinguish *"the earlier mechanism still works"* from *"nothing
+checks the earlier mechanism any more"* — and the second is exactly the risk a
+repair-interaction pair carries. So each mechanism was given the treatment the
+class-A dead-guard flags got in `OC-98`: **break the earlier mechanism, run the
+case that is supposed to catch it, and report whether it fails.**
+
+`audits/2026-10-11-independent-audit/reproducers/band1-pair-mutations.sh`, with
+four outcomes rather than two — `CAUGHT`, `NOT CAUGHT`,
+`MUTATION-DID-NOT-APPLY`, `CONTROL FAILED` — because a mutation that did not
+land and a case that was already failing each earn no verdict. It refuses to
+run on a dirty tree, since it restores with `git checkout --`.
+
+### The result
+
+```
+  A02/A06 platform-delta manifest    CAUGHT      control 0, mutant 1 (c2f2b94)
+  A02/A06 the tolerance itself       CAUGHT      control 0, mutant 1 (c2f2b94)
+  C22c compression ceiling, n=1e6    NOT CAUGHT  control 0, mutant 0 (acedae5+ada37a1)
+  C22c compression ceiling, n=8e6    NOT CAUGHT  control 0, mutant 0 (acedae5+ada37a1)
+  OC-67 per-family denominator       NOT CAUGHT  control 0, mutant 0 (6b4717e)
+  the oracles' exit contract         CAUGHT      control 0, mutant 1 (b072bf7)
+  outside-battery pinned figures     CAUGHT      control 0, mutant 1 (feef1a1)
+  the divergence-figure enforcement  CONTROL FAILED  exit 1 before any mutation (4ad3095)
+  mutation-lib's landing contract    NOT CAUGHT  control 0, mutant 0 (65b00d8)
+
+band1-pair-mutations: 4 CAUGHT, 4 NOT CAUGHT, 0 no-apply/restore, 1 control-failed
+```
+
+**4 CAUGHT, 4 NOT CAUGHT, 1 CONTROL FAILED, out of 9 mechanisms mutated.** Six
+of band 1's fifteen mechanisms were not mutated at all and are declared as such
+below. So the honest count is: **of 9 band-1 mechanisms tested by mutation, 4
+are guarded, 4 are not, and 1 could not be judged.**
+
+### THE ONE THAT MATTERS: `C22c` HAS TWO COPIES AND THE ORACLE CHECKS THE OTHER ONE
+
+The owner called `C22c` *"the strongest result in this project"*. Mutating
+`3.3599e-3` to `3.3700e-3` in `entropy_floor.py` leaves `oracle-selftest`
+**passing**. The mechanism, located:
+
+- `entropy_floor.py:188` holds `C22C_FAMILIES_BY_N`, and
+  `C22C_BY_N = tuple((n0, max(f.values())) for n0, f in C22C_FAMILIES_BY_N)`
+  makes `3.3599e-3` the term **the published floor actually subtracts** for any
+  report with n >= 1,000,000. The constant is **live**, not dead code.
+- `compression_ceiling_exact.py:215` holds **its own separate copy**,
+  `SCAN = {10 ** 6: "3.3599e-3", 8 * 10 ** 6: "2.1644e-3"}`, kept as strings
+  because their precision is part of the claim — and it verifies **that** copy
+  against the standard's own worked example.
+
+**So the independent verification is real, correct, validated against NIST's
+published example, and it verifies a different copy of the number than the one
+the floor uses.** Two copies, one checked. `OC-86` established that `C22c`
+agrees with an exact computation; it did not establish that the agreement is
+*enforced* on the consumer, and nothing has since.
+
+This is the same shape as `F02`/`WV-2`, where a verification was found to rest
+on a different thing than the figure it was cited for — and it is the third
+time in this campaign that an instrument has been found to check its own copy
+of a value rather than the one in use.
+
+**Not repaired in this pass**, because measurement and repair are separate
+passes and the owner's list ends at item 5. **Recorded as the top of the queue:**
+the two copies must be wired together — the oracle should read
+`entropy_floor.py`'s table, or the table should be derived from the oracle —
+and until they are, `C22c`'s agreement is a statement about
+`compression_ceiling_exact.py`, not about the floor.
+
+### `OC-67`'s per-family denominator: the same shape
+
+`'collision': 7.84e-4 -> 7.90e-4` is likewise not caught. It is a non-binding
+family member at these n (compression binds), so the *floor* does not move —
+but that is an argument about this input, not a guard, and the entry that
+introduced the family table was justified by `SHAPE-07` precisely so that the
+non-binding members would be visible rather than hidden.
+
+### `mutation-lib`'s landing contract has no negative control of its own
+
+Renaming `MUTATION-DID-NOT-APPLY` is not caught by
+`harness-inventory-mutation-test.sh`, because every mutation that harness
+performs **does** apply. So the mechanism adopted to stop the project reporting
+unearned verdicts — the third outcome itself — is the one mechanism with no case
+in which it fires. `OC-98` measured a false negative in the dead-guard detector
+by planting one of each class; the same treatment is owed here and is queued.
+
+### The `CONTROL FAILED` arm was caused by this very campaign
+
+`regression-docs.sh` exited 1 **before** any mutation. Diagnosed: the
+instrument inventory's stated live count said **74** while the enumerator said
+**76**, because `OC-104` added `regression-option-order.sh` and this entry added
+`band1-pair-mutations.sh` and neither updated `audits/INSTRUMENT-INVENTORY.md`.
+**The enforcement `OC-91` added worked exactly as designed, and caught its
+author.** Fixed to `**76** at `36cafb3``, and the arm is re-run below.
+
+### The six band-1 mechanisms NOT mutated, declared
+
+`5074fff` and `7a0be01` (`C23`), `210aed6` (the atomic report write), `8ff739d`,
+`9aa991d` and `b12247c` (the three canary entries), and `5c3353f` (two
+instrument rules — **no runnable case exists**, as `OC-100` already declared).
+The canary trio needs a four-build setup and `C23`/`210aed6` need a rebuild per
+mutation; they are queued, not claimed. **Counts in this entry are therefore a
+floor on the unguarded mechanisms, not a total.**
+
+### What this does NOT establish
+
+- **9 of 15 mechanisms mutated, one mutation each.** A mechanism that catches
+  one break can miss another.
+- **Band 2's 39 pairs are untouched**, as in `OC-100`.
+- A `NOT CAUGHT` result says **no case in the suite notices this change**. It
+  does not say the value is wrong — all four mutated values are believed
+  correct, and three of the four were independently computed.
+- Nothing reported upstream.
+
+## OC-106 — the dead-guard work closed out: 0 verifications withdrawn, and the register's own rule was not enforced on its new entries
+
+**Owner's item 5, in three parts.**
+
+### Part 1 — the six frozen class-1 flags: the figures named, and NOTHING withdrawn
+
+The owner asked for these to be recorded as **withdrawn** verifications, on the
+reasoning that freezing a script does not retire the figures it produced. The
+measurement in `OC-98` says otherwise, and recording a withdrawal that did not
+happen would be recording something false. So each is recorded in
+`audits/WITHDRAWN-VERIFICATIONS.md` with all five fields, under the branch the
+owner's own instruction provides — *"if a figure has independent support, name
+it and close as superseded instead"*.
+
+| entry | flag | figures it guarded | outcome |
+|---|---|---|---|
+| `SV-1` | `issue272/repro.sh:11,:15,:18` | upstream #272's mutant-survival figures: dropping `n x H_bitstring` and dropping `H_original` each leave `Assessed min entropy` unchanged on four reference files | **SUPERSEDED** — the transcript is the witness, **and** the same conclusion is independently supported by the aggregation-blind-spot measurement (a 40-sigma defect leaves the figure unchanged because Compression binds), reached by a different route |
+| `SV-2` | `widths.sh:6,:13,:14` | the literal-vs-bitstring agreement for widths 2–8 against the C++ literal reference | **SUPERSEDED on its transcript ALONE** — no other instrument in this repository recomputes these, which is weaker than `SV-1` and is recorded as such |
+| `SV-3` | `repairs/2026-10-09-ind-02/rerun.sh:45` | `ind-02`'s report-shape claims: `errorLevel 2`, `IID false`, `assessmentComplete true`, no `hAssessed` | **VERIFICATION STANDS** — `set -e` is active at that line, and the detector's own `has_set_e` field said so |
+| `SV-4` | `audits/2026-10-09-independent-audit/rerun.sh:71` | the TruePad unattested-tools count | **VERIFICATION STANDS** — the next line captures `$?` to a file the audit reads; the matcher's `STATUSREAD` does not recognise that form |
+| `SV-5` | `windows-facts.sh:719` and `:732` | the Windows tally behind **`C18` CONFIRMED** and **`C24` NEW** | **VERIFICATION STANDS** — `$V`'s existence and non-emptiness are preconditions checked at `:703`, and `OC-98` exercised three paths |
+
+**6 flagged lines, 5 register entries, 0 verifications withdrawn, 2 superseded
+(one with a second independent support, one on its transcript alone), 3 entries
+where the verification stands.**
+
+### AND THE REGISTER'S OWN RULE WAS NOT BEING ENFORCED ON THEM
+
+`regression-docs.sh` checks that every register entry carries its five fields.
+It split on `^## (WV-\d+)`, so **six entries added to satisfy that rule sat
+outside the rule's enforcement**. Extended to both prefixes, with the second
+field being `WITHDRAWN` for a `WV-` entry and `SUPERSEDED` for an `SV-` one.
+
+**It immediately caught a real gap of mine:** `SV-5` and `SV-6` had been written
+as two consecutive headings sharing one field block, so `SV-5` had no fields of
+its own. They are one verification over two flagged lines and are now one entry.
+The check went from **2 entries** to **7**.
+
+### Part 2 — the three class-A determinations, re-established by breaking
+
+Already done by mutation in `OC-98`, with the mutation text recorded there:
+`regression-input-identity.sh` (`if(!sha256.empty())` -> `if(false)`),
+`sanitizer-restart-c01.sh` (`h_i = H_I` -> `2.0 * H_I` at both sites, rebuilt,
+reached via `EA_RESTART_SANITIZER_BIN`), and `verify-fixture-inventory.sh`
+(three separate mutations: a manifest line removed, an unlisted `sneaked.bin`
+added, one fixture's first byte changed). **Three confirmed false positives,
+none confirmed-broken, none unmutable** — control exit 0 and PASS, mutant exit 1
+with a distinct reason in every case, three distinct reasons for the third.
+Those are results by mutation, not by inspection.
+
+### Part 3 — the detector re-run after its own repair
+
+```
+provenance: fork @ master 8e6941f
+flags: 67
+by pattern: {'B': 21, 'C': 29, 'D': 14, 'A': 3}
+files touched: 27
+```
+Baseline signatures: **39**.
+
+**No change** — not in the flag count, not in the pattern mix, not in the group
+assignment, and not in the 68 -> 67 deduplication. `OC-98` predicted this: the
+`has_pipefail` fix's reach in this tree is zero files, because the one file that
+mentions `pipefail` also sets it. The prediction is now a measurement.
+
+**And a dead-guard shape in the detector's own reporting, found while doing
+this.** Run with `SP=.` — a plausible invocation — it prints
+
+```
+provenance: fork @ COMMIT-UNESTABLISHED (tree sha256 e3b0c44298fc1c14)
+flags: 0
+files touched: 0
+```
+
+`e3b0c442...` is the SHA-256 of the **empty string**: it scanned nothing and
+reported `flags: 0`. That is `SHAPE-03` verbatim in the instrument built to find
+`SHAPE-03`. `regression-deadguard.sh` is immune because `OC-95` made the
+provenance line a **precondition** — which is the one reason the suite cannot
+be fooled by it — but a human running the detector by hand can be, and
+`flags: 0` from an empty scan is the most reassuring possible wrong answer.
+**Queued, not repaired:** `deadguard.py` should refuse a scan that found no
+files, rather than reporting zero flags over zero files.
+
+### What this does NOT establish
+
+- `SV-2`'s figures rest on **one** support, a recorded transcript nobody re-reads.
+- The `67` is a **floor**, as `OC-98` established: a measured 16% false-positive
+  rate, a demonstrated false negative, and four patterns that do not claim to
+  cover every shape.
+- Nothing reported upstream.
+

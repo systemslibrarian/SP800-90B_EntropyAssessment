@@ -371,6 +371,22 @@ jobs:
           cat logs/05d-late-version.log
           exit 0
 
+      - name: "5e. NIST's 11 reference datasets, per dataset, with the repaired comparator"
+        run: |
+          # OC-107. `selftest` prints a pass/fail summary; this prints the
+          # per-dataset value count and worst delta that compareresults.pl
+          # computes and selftest discards, so the question "does this fork
+          # agree with NIST's published reference outputs, and by how much" has
+          # a two-platform answer rather than a Darwin-only one.
+          #
+          # set +e for the same reason as 5c and 5d: the subject is statuses.
+          # The gate is on the log, below.
+          set +e
+          mkdir -p logs
+          ./tools/compare-nist-reference.sh . > logs/05e-nist-reference.log 2>&1
+          cat logs/05e-nist-reference.log
+          exit 0
+
       - name: 6. The full suite and the outside-battery regression
         run: |
           set +e
@@ -461,6 +477,14 @@ jobs:
           # (OC-103 -> OC-104): no vacuous run, and all nine late forms refused
           # by name with no control wrongly refused.
           gate "late --version measured" logs/05d-late-version.log "LATEVERSION VERDICT:"
+          # OC-107: Linux x86-64 is the platform NIST's reference data was
+          # produced on, and known-platform-deltas.txt deliberately lists NO
+          # block for it -- so here, unlike Darwin arm64, every one of the 11
+          # datasets must agree outright. "11 run" is gated separately from
+          # "0 disagreeing" so that a loop that stopped early cannot pass as
+          # agreement.
+          gate "all 11 reference datasets ran" logs/05e-nist-reference.log "datasets run: 11"
+          gate "every reference dataset agrees on glibc" logs/05e-nist-reference.log "disagreeing: 0"
           gate "no vacuous run on this platform" logs/05d-late-version.log "LATEVERSION VERDICT: no vacuous run observed"
           gate "all late forms refused, no control refused" logs/05d-late-version.log "LATEVERSION REFUSAL VERDICT: all 9 late forms refused"
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
