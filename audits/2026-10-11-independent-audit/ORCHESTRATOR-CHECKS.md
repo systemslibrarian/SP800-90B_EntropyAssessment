@@ -11659,3 +11659,227 @@ condition that is physically out of reach on this host.
   blocked.
 - Nothing reported upstream.
 
+## OC-121 — C22a's attainment point ANSWERED and justified; the asymmetry removed; the mutation hazard closed; and -ffloat-store read for the first time
+
+### Item 1 — C22a at r = 1: OUTCOME 1, the safe one
+
+**The grid was not recovered. The domain was taken from the mathematics**:
+`p in [1/k, 1)` with `k` the alphabet size — `calc_p_local`'s own `1/k` floor
+(`utils.h:1089`, `c22_bound.cpp:70`) — and `k <= 256` because §3.1.1 symbols
+are 1–8 bits. `r` is `max_run_len + 1` (`utils.h:1234`), so **`r = 1` means the
+longest run of correct predictions is zero**, which is reachable whenever no
+prediction is ever correct.
+
+`audits/2026-10-11-independent-audit/oracles/c22a_rscan.py`, 60 digits:
+
+| axis | result |
+|---|---|
+| **`r = 1`** | **NO IN-DOMAIN ROOT at any (N, k).** `f(1/k)` is already below `ln(0.99)`, so the root lies **below** the domain floor and `P_local` cannot be solved at all. |
+| **`r = 2`** | **THE MAXIMUM: 1.61892e-14**, which reproduces the recorded `K = 1.6189e-14` to **1.00001x**. |
+| `r >= 3` | monotone decreasing — 0.679x, 0.512x, 0.400x, 0.301x, 0.068x — collapsing to ~1e-45 by `r = 12`, **no resurgence out to `r = 200`**. |
+| **`N`** | **`N = 5` is an INTERIOR maximum, not a boundary.** Every integer 2–10 scanned: the integrand **rises** 2→5 (0.985, 0.998, 0.9999, **1.00001**) and **falls** 5→10, with 100, 1000, 10^4 and 10^6 all lower. |
+| `k` | the integrand is **k-independent** once `1/k < p*`; `k` only gates admissibility. |
+
+**And the `r = 1` exclusion is not fragile.** It would first become admissible
+at **`k = 498`**, which is **1.95x the largest alphabet the standard permits**,
+and `k <= 256` is a constraint of §3.1.1 rather than a tunable.
+
+**So `r = 2` is the GENUINE BOUNDARY of the admissible domain, not merely the
+smallest value tried.** `C22a`'s attainment point is justified on both axes, and
+an independent computation over a domain defined from the mathematics
+reproduces `K` to five significant figures **at exactly the recorded point**.
+
+**`C22a`'s STATUS: still MEASURED, not PROVED** — monotonicity in `r` and in
+large `N` is established by **scan**, not analytically, and `K` remains a
+supremum over a finite grid. **What changed is that the gap `F02` named is
+CLOSED**: both factors of the product now have an attainment argument, where
+before only `c` did. The comment block in `entropy_floor.py` is rewritten to
+say so, and `WV-2`'s withdrawal of the *supremacy* claim **stands**.
+
+**The twelve-point refusal stays in the record.** `OC-120`'s probe at
+`ldomain = 1/2` was refused at all twelve points — `target not bracketed` —
+because the root lay below the domain floor there. That refusal is why this
+entry exists: a less careful probe would have returned numbers that looked like
+a replication.
+
+### Item 2 — the asymmetry removed, deliberately
+
+| centring | catches upward | catches downward | ratio |
+|---|---|---|---|
+| pooled **population** centre 0.854221 | +0.021037 | −0.009175 | **2.29x downward** |
+| **corpus** mean at the pin 0.848290 | **+0.015106** | **−0.015106** | **1.00x** |
+
+**The old bound was 2.29x more sensitive DOWNWARD — the conservative
+direction — leaving the permissive direction the loosely-guarded one.** For an
+entropy instrument that is backwards, and an asymmetry favouring the permissive
+direction must not be incidental.
+
+**The question this check now asks: "has this tool drifted from its established
+behaviour on these pinned bytes."** That is a regression question, which is the
+job it has in a regression suite. It does **not** ask "does this tool agree with
+the population of clean streams" — a different question, and the one that
+produced the asymmetry. Control: `mean=0.848290 centre=0.848290 tol=0.015106
+n=25`, Compression 24/25.
+
+**And what the tolerance costs, stated in the check**: the 25 streams are
+digest-pinned and seed-regenerated, so the corpus mean is **deterministic to
+~1e-13** locally and ~1e-9 across the two platforms. A tolerance of 0.0151 is
+six to eight orders looser than that. **It will never false-fire and will miss
+any drift below 0.015** — a gross detector by construction. A ~1e-9 bound would
+catch real estimator changes and still clear the platform delta; **not adopted**,
+because that redesigns what the check asserts.
+
+### Item 3 — the mutation hazard closed, three ways
+
+**The battery had NO TRAP AT ALL**, which is why a kill could leave a live
+mutation. Now: `MUTATING` tracks the file under mutation and
+`trap 'restore_mutating' EXIT HUP INT TERM` restores it on **every** exit path.
+
+**`cpp/selftest/regression-constants.sh`** is new, runs **LAST** in the suite,
+and asserts that no mutated constant survives. It **compares values against
+recorded ones rather than searching for a marker**, because every mutation these
+batteries perform substitutes one numeric literal for another and **leaves no
+marker at all** — a marker search would pass trivially. It **imports** the floor
+oracle rather than grepping it, so a renamed symbol or a syntax error fails here
+instead of passing silently, and it refuses if fewer than 7 constants were
+actually compared (`SHAPE-03`).
+
+**Verified by breaking it, with the exact mutation that survived the kill:**
+```
+  C22C 1e6 compression HAS BEEN CHANGED   recorded 3.3599e-3, found 0.00337
+  regression-constants: FAIL (1)                                    exit 1
+  ... after `git checkout --`:
+  regression-constants: PASS (7 floor constants + the manifest)      exit 0
+```
+
+**It is deliberately LAST and out of alphabetical order**, because
+`run-all-checks.sh` runs the inventory in **file order** and this must run after
+anything that could leave a mutation. The rationale is recorded **in the
+inventory** so nobody sorts it back to the front.
+
+**And that exposed a second defect**: `regression-docs.sh` counted the inventory
+with `grep -c ''`, i.e. **lines, not scripts**, so the first comment block ever
+added to that file inflated the count by five and failed the check. Fixed to
+count non-comment, non-blank lines.
+
+**The operational rule is guide rule 15**: a mutation battery runs in the
+foreground, on a clean tree re-checked per arm, and restores on every exit path
+— placed where a future session reads it before starting one.
+
+### Item 4 — the `O_EXCL` NOT RUN ELIMINATED rather than left untested
+
+The fallback is **removed**. If the random source cannot be read, the write is
+**refused** with the reason named, instead of falling back to
+`r2 = (attempt * 2654435761) ^ r1` — which at attempt 0 is `0 ^ r1 = r1`
+exactly, making the suffix `.tmp.<r1><r1>` with
+`r1 = time(NULL) ^ (getpid() << 16)`, fully derivable from the clock and the
+pid. **That was the one condition in which `O_EXCL` was load-bearing, and it no
+longer exists.**
+
+`EA_TEST_RANDOM_SOURCE` exists only so the refusal is testable — not an option,
+not documented as one.
+
+**Verified by observing it fail, on all three tools:**
+
+| | exit | report | capture | stray temps |
+|---|---|---|---|---|
+| readable source (control) | **0** | written, `errorLevel 0` | — | — |
+| **unreadable source** | **255** | **none** | **byte-identical** | **0** |
+
+with stderr naming the reason. Six cases added to
+`regression-output-aliasing.sh` — three refusals and three controls, so the
+refusal cannot pass as "this tool never writes a report". **The item closes as
+ELIMINATED, not untested.**
+
+### Item 5 — the build warnings, read for the first time
+
+```
+  27 warnings across the three tools, before:
+     19  [-Wvla-cxx-extension]          variable-length arrays, upstream style
+      5  [-Wdeprecated-declarations]    all `sprintf` -- TestRunUtils.h:659,
+                                        permutation_tests.h:303
+      3  [-Wignored-optimization-argument]   one per tool, ALL -ffloat-store
+```
+
+**`-ffloat-store` was the ONLY silently-ignored flag**, and it had been in the
+Makefile unconditionally for the life of this fork while Apple clang discarded
+it on **every single build**, announcing so each time. **So any claim that this
+fork controlled excess precision through that flag WAS NEVER TRUE on macOS.** It
+was true on Linux/GCC, which honours it.
+
+The flag is now **probed** — compiled against an empty translation unit and kept
+only if the compiler does not complain — so it is still passed where it is
+honoured and dropped where it is not. **Warnings 27 → 24**, and the three
+ignored-flag warnings are gone.
+
+**And a silently-ignored flag now FAILS the build**, so this cannot recur:
+`-Werror=ignored-optimization-argument`, itself probed because only clang has
+that warning name. **Verified by breaking it** — forcing `-ffloat-store` back in
+gives
+`clang++: error: optimization flag '-ffloat-store' is not supported
+[-Werror,-Wignored-optimization-argument]`
+and the build **fails** instead of warning.
+
+**The GCC comparison stays NOT RUN**, with jsoncpp linkage as the reason. On
+arm64 there is no x87 excess precision for the flag to suppress, so dropping it
+is **expected** to change nothing — and that expectation is **not measured**,
+because the build that would measure it is the one that cannot link.
+
+### Item 6 — the two unreplicated constraints, named, and one of them was not sampled at all
+
+**`OC-120`'s table was wrong about the first of them.**
+
+| | what produced it | n | status |
+|---|---|---|---|
+| **`5.731 sigma`** (`outside-battery-check.cpp`) | **DERIVED** — Bonferroni over 100,000 lags at family-wise alpha 0.001 | — | **rule 14 does not apply.** The 25 clean streams were its **validation**, not its source: max \|z\| 5.01, mean 4.31, sd 0.25, zero exceedances. A threshold not built from a sample needs its derivation checked, not a second sample. |
+| **`30.0x` spectral ratio** (same file) | **EMPIRICAL** — "1.48x the observed clean max of 20.2 over 25 clean streams" | **25** | **was genuinely unreplicated. NOW REPLICATED.** |
+
+**The 30x threshold, against an independent sample** — 100 fresh draws,
+seeds 920000+, clear of the 900000/910000 bases:
+
+```
+  n = 100   min 12.6   max 19.5   mean 14.51   sd 1.30   unreadable 0
+  draws above the recorded clean max 20.2 :   0 of 100
+  draws above the threshold 30.0          :   0 of 100
+  margin recorded 30.0/20.2 = 1.49x   measured 30.0/19.5 = 1.54x
+```
+
+**The threshold survives, and comfortably**: it sits ~12 standard deviations
+above the mean of a tight distribution (9 % coefficient of variation). Unlike
+the Compression window, this one was **not** marginal.
+
+**The probe failed first and the tool caught it.** Two of the first three draws
+read `UNREADABLE`, because the stream generator was written inline as
+`bytes(random.Random(seed).getrandbits(1) for _ in range(N))` — which
+**constructs a new identically-seeded generator on every draw**, so every bit
+came out the same. `outside-battery-check` refused it: *"degenerate input (zero
+variance)"*. A probe fault, found by the subject's own guard rather than by me.
+
+**And what an independent sample would add to the PARTIAL row: nothing.**
+`known-platform-deltas.txt`'s eight rows are **deterministic for fixed bytes** —
+re-running reproduces the same digits, so a second sample is a **repeat, not a
+replication**. What is meaningful for a deterministic quantity is an independent
+**implementation** (`OC-112`: 5 of 8 bit-identical), an independent **platform**
+(`OC-113`: deltas shrink 8,600x and 27,500x on x86-64), or an independent
+**computation of the true value** (`OC-116`: an 80-digit oracle placed both
+inside the 53-bit envelope). **All three are done and none is a sample.** Rule 14
+now carries that distinction explicitly, because demanding "an independent
+sample" of a deterministic quantity is a category error that would look like
+diligence.
+
+### What this does NOT establish
+
+- **`C22a` is still MEASURED, not PROVED**, and the floor's status is unchanged.
+  The `r` and large-`N` monotonicity is a scan, not a proof.
+- The `c22a_rscan` domain is **mine**, derived from the code's `1/k` assertion
+  and §3.1.1's symbol widths. If the original sweep's `ldomain` meant something
+  else, this answers a different question than the one that produced `K` — the
+  agreement to 1.00001x is the evidence that it does not.
+- **24 build warnings remain** (19 VLA, 5 `sprintf`). Neither is a silently
+  ignored flag; neither was addressed.
+- The `-ffloat-store` finding is that the flag was **ignored**, not that
+  honouring it would move any figure. **NOT MEASURED.**
+- The spectral replication is **100 draws from the same two generators**. A
+  physical source is not among them.
+- Nothing reported upstream.
+

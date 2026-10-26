@@ -411,12 +411,27 @@ if [ "${full}" = "1" ]; then
 		#   mean is stdev/sqrt(n), which shrinks at a known rate, so this one
 		#   DOES get better with measurement and IS re-derived as n grows.
 		#
-		# Pooled n = 600 (OC-118 + OC-119): mean 0.854221, stdev 0.025177.
-		# The bound is 3 standard errors at the number of streams actually
-		# examined -- computed from comp_ok rather than assumed, so a loop that
-		# stopped early cannot pass as a tighter bound.
-		#   n = 25:  3 * 0.025177/sqrt(25) = 0.0151  -> [0.8391, 0.8693]
-		#   n =  5:  3 * 0.025177/sqrt(5)  = 0.0338  -> [0.8204, 0.8880]
+		# The spread comes from the pooled n = 600 (OC-118 + OC-119); the
+		# CENTRE comes from this corpus at the pin (OC-121 -- see the python
+		# block for why). The bound is 3 standard errors at the number of
+		# streams actually examined, computed from comp_ok rather than assumed,
+		# so a loop that stopped early cannot pass as a tighter bound.
+		#   n = 25:  3 * 0.025177/sqrt(25) = 0.015106  -> [0.833184, 0.863396]
+		#   n =  5:  3 * 0.025177/sqrt(5)  = 0.033779  -> [0.814511, 0.882069]
+		#
+		# SENSITIVITY, BOTH DIRECTIONS, now symmetric: +0.015106 / -0.015106.
+		# Before this change it was +0.021037 / -0.009175.
+		#
+		# AND WHAT THIS TOLERANCE COSTS. The 25 streams are digest-pinned and
+		# regenerated from fixed seeds, so the corpus mean is DETERMINISTIC to
+		# floating-point reproducibility -- about 1e-13 here, 1e-9 across the
+		# two supported platforms. A tolerance of 0.0151 is therefore six to
+		# eight orders of magnitude looser than the quantity's actual
+		# reproducibility. It will never false-fire, and it will miss any drift
+		# below 0.015. That is a GROSS drift detector by construction. A bound
+		# at ~1e-9 would catch real estimator changes and still clear the
+		# platform delta; it is NOT adopted here because that is a redesign of
+		# what this check asserts rather than a correction of its centre.
 		if [ "${comp_ok}" -gt 0 ]; then
 			meanverdict=$(python3 - "${comp_ok}" ${vals} <<'MEANPY'
 import sys, math
@@ -424,7 +439,29 @@ n = int(sys.argv[1])
 vals = [float(x) for x in sys.argv[2:]]
 if not vals or n != len(vals):
     print("REFUSED %d values for %d streams" % (len(vals), n)); raise SystemExit
-CENTRE, SD = 0.854221, 0.025177          # pooled n=600
+# OC-121: CENTRED ON THE CORPUS'S OWN MEAN, NOT THE POPULATION'S, AND THE
+# CHOICE IS DELIBERATE BECAUSE THE ASYMMETRY RAN THE WRONG WAY.
+#
+# Centred on the pooled population centre 0.854221, this bound caught a shift
+# of +0.0210 upward and -0.0092 downward -- because the corpus mean sits
+# 0.005931 BELOW that centre. That is 2.3x more sensitive DOWNWARD.
+#
+# For an entropy instrument that is backwards. A downward drift reports LESS
+# entropy and is conservative; an upward drift reports MORE and is PERMISSIVE,
+# which is the direction that makes a figure wrong in the way that matters. An
+# asymmetry favouring the permissive direction must not be incidental, so it
+# is removed.
+#
+# THE QUESTION THIS CHECK ASKS: "has this tool drifted from its established
+# behaviour on these pinned bytes" -- a regression question, which is the job
+# it has in a regression suite. It does NOT ask "does this tool agree with the
+# population of clean streams"; that is a different question and it is the one
+# that produced the asymmetry.
+#
+# So the centre is the corpus's own mean at the pinned commit, measured over
+# the 25 digest-pinned clean streams, and the tolerance is symmetric:
+#   centre 0.848290   tol 3 * 0.025177/sqrt(n)   =>  +/- 0.015106 at n = 25
+CENTRE, SD = 0.848290, 0.025177          # corpus mean at the pin; pooled sd, n=600
 se = SD / math.sqrt(len(vals))
 m = sum(vals) / len(vals)
 tol = 3 * se
@@ -433,7 +470,7 @@ print("%s mean=%.6f centre=%.6f tol=%.6f n=%d"
 MEANPY
 )
 			case "${meanverdict}" in
-				OK*)     note "mean within 3 SE of the pooled centre:" "${meanverdict#OK }" ;;
+				OK*)     note "mean within 3 SE of the corpus centre:" "${meanverdict#OK }" ;;
 				SHIFT*)  note "MEAN SHIFTED beyond 3 SE" "${meanverdict#SHIFT }"
 				         bindfail=$((bindfail + 1)) ;;
 				*)       note "mean bound could not be evaluated" "${meanverdict}"

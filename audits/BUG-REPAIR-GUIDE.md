@@ -626,6 +626,50 @@ the method **FLAGS** `blindspot_streams.py` as it stood at `a9a269f` and **does
 not flag** the repaired version at `HEAD`.
 
 
+### Rule 15 — a mutation battery is run in the foreground, on a clean tree, and restores on every exit path
+
+**OPERATIONAL, and it is here because a future session will read it before
+starting a battery.** A mutation battery edits production constants in place.
+Three ways that has gone wrong in this repository, all of them measured:
+
+1. **A battery left a LIVE mutation behind.** A background verification of
+   `band1-pair-mutations.sh` was killed mid-arm and left
+   `C22c = 3.3700e-3` in `entropy_floor.py` where the recorded value is
+   `3.3599e-3` — **the constant every entropy figure in this project
+   subtracts.** Nothing downstream announced it. It was caught by `git status`,
+   which is not a check and is run by nothing.
+2. **A battery restored over uncommitted edits.** `OC-117`: files were edited in
+   the working tree while the battery ran; its `git checkout --` reverted them
+   and **destroyed the edits**. The digest check correctly refused to earn a
+   verdict, but the work was already gone.
+3. **The battery had no trap at all**, which is why a kill could leave a
+   mutation behind in the first place.
+
+**THE RULE, in three parts:**
+
+- **FOREGROUND.** A mutation battery is never backgrounded while the tree is
+  being edited. The two failures above both required a battery running
+  unattended against a tree someone else was touching.
+- **CLEAN TREE, RE-CHECKED PER ARM.** Not only at the start. The battery now
+  re-checks each file before mutating it and **refuses rather than restoring
+  over** something that changed.
+- **RESTORE ON EVERY EXIT PATH.** `trap … EXIT HUP INT TERM`, not only on clean
+  completion, with the file currently under mutation tracked so the trap knows
+  what to put back.
+
+**AND A CHECK, BECAUSE A RULE IS NOT A GUARD.**
+`cpp/selftest/regression-constants.sh` runs **last** in the suite and asserts
+that no mutated constant survives. It **compares values against recorded ones
+rather than searching for a marker**, because every mutation these batteries
+perform substitutes one numeric literal for another and **leaves no marker at
+all** — a marker search would pass. It imports the floor oracle rather than
+grepping it, so a renamed symbol or a syntax error fails here instead of
+passing silently. Verified by breaking: applying the exact mutation that
+survived the kill makes it report
+`C22C 1e6 compression HAS BEEN CHANGED  recorded 3.3599e-3, found 0.00337`
+and exit 1; restoring makes it pass.
+
+
 ### Rule 14 — a constraint derived from a sample is validated against an independent sample
 
 **NUMBERING NOTE.** The owner's instruction said to record this "where RULE 31
@@ -683,6 +727,29 @@ the edge**. So:
 3. **A range-derived bound does not converge.** `OC-119`'s minimum sat 0.0099
    below the first sample's. More measurement widens such a bound; it does not
    tighten it. Say so rather than re-deriving forever.
+
+**AND THE RULE DOES NOT APPLY TO A DETERMINISTIC QUANTITY.** `OC-121` found two
+constraints that look sampled and are not:
+
+- **`5.731 sigma`** in `tools/outside-battery-check.cpp` is **DERIVED** —
+  Bonferroni over 100,000 lags at family-wise alpha 0.001 — and the 25 clean
+  streams were its **validation**, not its source. A threshold that was not
+  built from a sample needs no independent sample; it needs its derivation
+  checked.
+- **`known-platform-deltas.txt`'s eight rows** are **deterministic for fixed
+  bytes**: re-running the same input reproduces the same digits, so a "second
+  sample" is a **repeat, not a replication.** What is meaningful there is an
+  independent **implementation** (`OC-112`: 5 of 8 rows bit-identical from a C99
+  port), an independent **platform** (`OC-113`: the deltas shrink 8,600x and
+  27,500x on x86-64), or an independent **computation of the true value**
+  (`OC-116`: an 80-digit oracle placed both implementations inside the 53-bit
+  envelope). All three have been done; none of them is a sample.
+
+**So before applying this rule, ask what kind of number it is.** Sampled —
+validate against an independent sample. Derived — check the derivation. 
+Deterministic — vary the implementation, the platform, or the arithmetic, and
+say which. Demanding "an independent sample" of a deterministic quantity is a
+category error that would look like diligence.
 
 
 ## Record discipline

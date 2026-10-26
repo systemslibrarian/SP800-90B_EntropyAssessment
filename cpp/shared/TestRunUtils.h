@@ -123,6 +123,12 @@ static FileIdentity sameFileIdentity(const char *outPath, const char *inPath) {
 // it, at `-o` parse time, and no report write of any kind can reach the
 // capture. A usage error with no operand protects nothing, because there is no
 // input to destroy, and the stale report is replaced as before.
+// OC-121: named so a regression can point it at an unreadable path and observe
+// the refusal. Not a command-line option and not documented as one; it exists
+// to make the refusal testable, which is the only way it gets verified.
+static const char *g_randomSourcePath =
+    (getenv("EA_TEST_RANDOM_SOURCE") != NULL) ? getenv("EA_TEST_RANDOM_SOURCE") : "/dev/urandom";
+
 static string g_protectedInputPath;
 
 static void protectInputPath(const string &path) { g_protectedInputPath = path; }
@@ -451,12 +457,40 @@ bool writeJsonReport(const string &path, const string &json) {
         char suffix[24];
         unsigned long r1 = (unsigned long) time(NULL) ^ ((unsigned long) getpid() << 16);
         // a second, independent draw so two processes in the same second differ
+        // OC-121: NO DERIVABLE FALLBACK. IF THE RANDOM SOURCE CANNOT BE READ,
+        // REFUSE TO WRITE.
+        //
+        // This used to fall back to `r2 = (attempt * 2654435761) ^ r1`, which
+        // at attempt 0 is `0 ^ r1 = r1` EXACTLY -- so with /dev/urandom
+        // unreadable the suffix became `.tmp.<r1><r1>` with
+        // r1 = time(NULL) ^ (getpid() << 16), FULLY PREDICTABLE from the clock
+        // and the pid. That was the one condition in which O_EXCL below was
+        // load-bearing rather than redundant, and it was unreachable for
+        // testing on any host with a working /dev/urandom.
+        //
+        // Rather than leave it untested, the condition is REMOVED: an
+        // unreadable random source is a refusal with its reason named, not a
+        // weaker suffix. A report is not worth writing to a path an attacker
+        // can compute. Nothing is written and the input is untouched, which is
+        // the same posture every other refusal in this file takes.
         unsigned long r2 = 0;
         {
-            FILE *rf = fopen("/dev/urandom", "rb");
-            if (rf) { if (fread(&r2, sizeof(r2), 1, rf) != 1) r2 = 0; fclose(rf); }
+            FILE *rf = fopen(g_randomSourcePath, "rb");
+            if (rf != NULL) {
+                if (fread(&r2, sizeof(r2), 1, rf) != 1) r2 = 0;
+                fclose(rf);
+            }
         }
-        if (r2 == 0) r2 = (unsigned long) (attempt * 2654435761UL) ^ r1;
+        if (r2 == 0) {
+            fprintf(stderr,
+                "Error: cannot read randomness from '%s' to name a temporary file\n"
+                "       beside the report '%s'. Refusing to write: the fallback name\n"
+                "       would be derivable from the clock and the process id, and a\n"
+                "       predictable temporary path is the defect F03 closed. Nothing\n"
+                "       has been written; the input is untouched.\n",
+                g_randomSourcePath, path.c_str());
+            return false;
+        }
         snprintf(suffix, sizeof(suffix), ".tmp.%08lx%08lx",
                  (unsigned long)(r1 & 0xffffffffUL), (unsigned long)(r2 & 0xffffffffUL));
         tmp = path + suffix;

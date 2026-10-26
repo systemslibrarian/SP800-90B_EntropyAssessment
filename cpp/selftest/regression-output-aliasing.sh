@@ -296,6 +296,50 @@ ctl_assess() { # ctl_assess <label> <args...>
         fail "control: ${label}" "exit 0 but no completed report"
     fi
 }
+# ---- OC-121: an unreadable random source is a REFUSAL, not a weaker suffix --
+#
+# F03 gave the temporary an unpredictable suffix. The second half came from
+# /dev/urandom, and if that could not be read the code fell back to
+# `r2 = (attempt * 2654435761) ^ r1`, which at attempt 0 is `0 ^ r1 = r1`
+# EXACTLY -- so the suffix became `.tmp.<r1><r1>` with
+# r1 = time(NULL) ^ (getpid() << 16), fully derivable from the clock and the
+# pid. That was the ONE condition in which O_EXCL was load-bearing rather than
+# redundant with O_NOFOLLOW, and it was unreachable for testing on any host
+# with a working /dev/urandom -- which is why OC-117 could not build the case.
+#
+# The condition was REMOVED rather than left untested. EA_TEST_RANDOM_SOURCE
+# exists only so this case can observe the refusal.
+for tool in ea_non_iid ea_iid ea_restart; do
+    case "${tool}" in
+        ea_restart) rtail="1 0.9" ;;
+        *)          rtail="1" ;;
+    esac
+    rm -f "${work}/rand.json"
+    before=$(sha_of "${work}/capture.bin")
+    ( cd "${work}" && EA_TEST_RANDOM_SOURCE=/nonexistent/no-random \
+        "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>rand.err )
+    rc=$?
+    if [ "${rc}" -ne 0 ] \
+       && [ ! -e "${work}/rand.json" ] \
+       && grep -q 'cannot read randomness' "${work}/rand.err" \
+       && [ "$(sha_of "${work}/capture.bin")" = "${before}" ] \
+       && [ "$(ls -1 "${work}" | grep -c '\.tmp\.')" -eq 0 ]; then
+        pass "${tool}: unreadable random source refused, nothing written"
+    else
+        fail "${tool}: unreadable random source" \
+             "rc=${rc} report=$([ -e "${work}/rand.json" ] && echo present || echo absent) named=$(grep -qc 'cannot read randomness' "${work}/rand.err" 2>/dev/null || echo no)"
+    fi
+    # and the control: a READABLE source still writes, so the refusal above is
+    # not just "this tool never writes a report".
+    rm -f "${work}/rand.json"
+    ( cd "${work}" && "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>&1 )
+    if [ -s "${work}/rand.json" ]; then
+        pass "${tool}: readable random source still writes"
+    else
+        fail "${tool}: readable random source" "no report written"
+    fi
+done
+
 ctl_assess "-o NAME still assesses"        -i -a -q -o f04ctl.json capture.bin 1
 ctl_assess "-oNAME (attached) still assesses" -i -a -q -of04ctl.json capture.bin 1
 ctl_assess "-vo NAME (cluster) still assesses" -i -a -q -vo f04ctl.json capture.bin 1

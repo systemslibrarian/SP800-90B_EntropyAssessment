@@ -26,8 +26,8 @@ allow_platform=0
 DELTA_MANIFEST="known-platform-deltas.txt"
 here_cmp="./check-platform-deltas.py"
 REGRESSION_INVENTORY="regression-script-inventory.txt"
-EXPECTED_REGRESSION_SCRIPTS=23
-EXPECTED_TOTAL_CHECKS=25
+EXPECTED_REGRESSION_SCRIPTS=24
+EXPECTED_TOTAL_CHECKS=26
 
 inventory_error() {
     echo "run-all-checks: regression inventory error: $*" >&2
@@ -39,6 +39,14 @@ inventory_error() {
 inventory_names=""
 inventory_count=0
 while IFS= read -r name || [ -n "${name}" ]; do
+    # OC-121: COMMENTS AND BLANKS ARE SKIPPED, NOT REJECTED. The inventory had
+    # never contained one, so the first comment ever added -- recording WHY
+    # regression-constants.sh is deliberately last and must not be sorted back
+    # into alphabetical order -- was rejected as a malformed entry. A file whose
+    # ordering is load-bearing must be able to say so inside itself.
+    case "${name}" in
+        ''|'#'*) continue ;;
+    esac
     case "${name}" in
         regression-[A-Za-z0-9]*.sh) ;;
         *) inventory_error "malformed entry ${name:-<empty>}" ;;
@@ -248,6 +256,9 @@ echo
 echo "regression scripts (authoritative inventory verified)"
 found=0
 while IFS= read -r name || [ -n "${name}" ]; do
+    case "${name}" in
+        ''|'#'*) continue ;;
+    esac
     s="./${name}"
     found=$((found + 1))
     run "$(basename "${s}" .sh)" "${s}"

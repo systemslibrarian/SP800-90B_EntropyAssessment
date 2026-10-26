@@ -21,3 +21,9 @@ regression-selftest-inventory.sh
 regression-subset.sh
 regression-width.sh
 regression-workflows.sh
+# regression-constants.sh IS DELIBERATELY LAST AND NOT IN ALPHABETICAL ORDER.
+# run-all-checks.sh runs this inventory in FILE ORDER, and this check asserts
+# that no mutated constant survives anywhere -- so it must run AFTER everything
+# that could leave one behind. Sorting it back into place would silently move
+# it to the front and defeat that. (OC-121)
+regression-constants.sh

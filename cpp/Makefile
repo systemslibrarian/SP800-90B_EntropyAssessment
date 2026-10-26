@@ -28,7 +28,27 @@ OPENMP_CXXFLAGS = -fopenmp
 OPENMP_LIB =
 endif
 
-CXXFLAGS = -std=c++11 $(OPENMP_CXXFLAGS) -O2 -ffloat-store -I/usr/include/jsoncpp
+# OC-121: -ffloat-store IS PASSED ONLY WHERE THE COMPILER HONOURS IT.
+#
+# It had been unconditional for the life of this fork, and Apple clang
+# DISCARDED IT ON EVERY BUILD -- "warning: optimization flag '-ffloat-store' is
+# not supported [-Wignored-optimization-argument]", three times per full build,
+# once per tool, visible every time and never read. So any claim that this fork
+# controlled excess precision through that flag WAS NEVER TRUE on macOS. It
+# was true on Linux/GCC, which does honour it.
+#
+# The flag is probed rather than assumed: compile an empty translation unit
+# with it and keep it only if the compiler does not complain. On arm64 there is
+# no x87 excess precision for it to suppress, so dropping it is expected to
+# change nothing there -- an expectation that is NOT measured, because the GCC
+# build that would measure it cannot link jsoncpp on this host.
+FLOAT_STORE := $(shell printf 'int main(void){return 0;}' > /tmp/.ea_fs_$$.c 2>/dev/null;     if $(CXX) -x c++ -ffloat-store -c /tmp/.ea_fs_$$.c -o /dev/null 2>&1        | grep -q 'ignored-optimization-argument\|not supported\|unrecognized';     then echo ""; else echo "-ffloat-store"; fi; rm -f /tmp/.ea_fs_$$.c)
+
+# AND A SILENTLY IGNORED FLAG NOW FAILS THE BUILD RATHER THAN WARNING, so this
+# cannot recur. Probed too, since only clang has this warning name.
+IGNORED_FLAG_IS_ERROR := $(shell printf 'int main(void){return 0;}' > /tmp/.ea_wf_$$.c 2>/dev/null;     if $(CXX) -x c++ -Werror=ignored-optimization-argument -c /tmp/.ea_wf_$$.c -o /dev/null 2>/dev/null;     then echo "-Werror=ignored-optimization-argument"; else echo ""; fi; rm -f /tmp/.ea_wf_$$.c)
+
+CXXFLAGS = -std=c++11 $(OPENMP_CXXFLAGS) -O2 $(FLOAT_STORE) $(IGNORED_FLAG_IS_ERROR) -I/usr/include/jsoncpp
 ifeq ($(ARCH),x86)
 CXXFLAGS += -march=native
 endif

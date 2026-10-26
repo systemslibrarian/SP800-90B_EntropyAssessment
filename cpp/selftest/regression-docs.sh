@@ -1015,7 +1015,11 @@ else
     n_mut=$(ls "${here}"/*mutation-test.sh "${here}"/regression-deadguard.sh 2>/dev/null | grep -c .)
     n_pres=$(grep -lE 'HARNESS FAULT|is absent or empty|INPUT-DID-NOT-REACH' "${here}"/*.sh 2>/dev/null | grep -c .)
     n_hard=$(grep -lE 'echo .*[0-9]+ (of|values|comparisons|files|checks)' "${here}"/*.sh 2>/dev/null | grep -c .)
-    n_scripts=$(grep -c '' "${here}/regression-script-inventory.txt")
+    # OC-121: COUNT SCRIPTS, NOT LINES. This was `grep -c ''`, which counts
+    # every line -- so the first comment block ever added to the inventory
+    # inflated the count by five and failed this check. The inventory is a list
+    # of script names; comments and blanks are not scripts.
+    n_scripts=$(grep -cE '^[^#[:space:]]' "${here}/regression-script-inventory.txt")
     # The counts sit inside markdown table cells, so no end-of-line anchor:
     # match the arrow and the number as a token. The first version anchored on
     # "$" and reported every count stale, which is a detector that cannot pass.

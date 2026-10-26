@@ -37,6 +37,30 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 2
 fi
 
+# OC-121: RESTORE ON EVERY EXIT PATH, INCLUDING SIGNAL AND KILL.
+#
+# THIS SCRIPT HAD NO TRAP AT ALL. A background verification of it was killed
+# mid-arm and left a LIVE C22c MUTATION in entropy_floor.py -- 3.3599e-3 ->
+# 3.3700e-3, the constant every entropy figure in this project subtracts.
+# Nothing downstream would have announced it; it was caught by `git status`.
+# That is the most dangerous mechanism in this repository, and the absence of a
+# trap is why a kill could leave it behind.
+#
+# The file currently under mutation is now tracked and restored by a trap that
+# fires on EXIT, HUP, INT and TERM -- not only on clean completion.
+MUTATING=""
+restore_mutating() {
+    if [ -n "${MUTATING}" ] && [ -e "${MUTATING}" ]; then
+        if git checkout -- "${MUTATING}" 2>/dev/null; then
+            echo "band1: restored ${MUTATING} on exit" >&2
+        else
+            echo "band1: *** COULD NOT RESTORE ${MUTATING} -- CHECK IT BY HAND ***" >&2
+        fi
+        MUTATING=""
+    fi
+}
+trap 'restore_mutating' EXIT HUP INT TERM
+
 caught=0; missed=0; noapply=0; ctlfail=0
 digest() { local h; h=$( (command -v shasum >/dev/null && shasum -a 256 "$1") || sha256sum "$1" ); echo "${h%% *}"; }
 note() { printf '  %-44s %-22s %s\n' "$1" "$2" "${3:-}"; }
@@ -75,6 +99,7 @@ run_pair() {
         ctlfail=$((ctlfail+1)); return
     fi
 
+    MUTATING="${file}"
     OLD="${old}" NEW="${new}" python3 - "${file}" <<'PY'
 import os, sys
 p = sys.argv[1]
@@ -91,6 +116,7 @@ PY
 
     "$@" >/dev/null 2>&1; mut_rc=$?
     git checkout -- "${file}"
+    MUTATING=""
     if [ "$(digest "${file}")" != "${before}" ]; then
         note "${label}" "RESTORE FAILED" "${file} did not return to its committed state"
         noapply=$((noapply+1)); return
