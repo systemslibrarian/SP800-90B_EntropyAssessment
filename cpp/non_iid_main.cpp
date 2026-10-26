@@ -20,6 +20,13 @@
 
 [[ noreturn ]] void print_usage() {
     printf("Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]\n\n");
+    // OC-104: a user who hits the refusal reads this text, so the rule it
+    // enforces is stated here and not only in the error message.
+    printf("\t EVERY OPTION MUST COME BEFORE <file_name>. An option placed after it is\n");
+    printf("\t refused, because glibc rearranges such a command line and parses the\n");
+    printf("\t option while BSD and macOS treat it as another operand -- one command\n");
+    printf("\t line, two different operations on two supported platforms. A negative\n");
+    printf("\t number after <file_name> is still read as a value, not an option.\n\n");
     printf("\t <file_name>: Must be relative path to a binary file with at least 1 million entries (samples).\n");
     printf("\t [bits_per_symbol]: Must be between 1-8, inclusive. By default this value is inferred from the data.\n");
     printf("\t [-i|-c]: '-i' for initial entropy estimate, '-c' for conditioned sequential dataset entropy estimate. The initial entropy estimate is the default.\n");
@@ -124,6 +131,14 @@ int main(int argc, char* argv[]) {
     // A04: the prescan now understands that `-o` and `-l`/`-s` consume a
     // following argument, so `-o --version data 1` no longer prints the
     // version and exits 0 with nothing assessed (TestRunUtils.h).
+    // OC-104: a command line whose meaning depends on the C library is
+    // refused before anything is parsed, printed or written. This runs
+    // ahead of the --version gate so a malformed line gets the specific
+    // message rather than a version banner or a usage dump.
+    if (refuseOptionAfterOperand(argc, argv, "icatvql:o:",
+            "ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]")) {
+        exit(-1);
+    }
     if (versionOptionRequested(argc, argv, "icatvql:o:")) {
         printVersion("non_iid");
         exit(0);

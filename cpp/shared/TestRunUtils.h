@@ -127,6 +127,95 @@ static string g_protectedInputPath;
 
 static void protectInputPath(const string &path) { g_protectedInputPath = path; }
 
+// ===========================================================================
+// ONE WALK OF argv, BECAUSE THREE COPIES OF IT IS HOW F04 HAPPENED.
+//
+// Two functions used to walk argv with the same stopping rule and the same
+// cluster arithmetic: the identity prescan (A05) and the --version gate (A04).
+// F04 was the consequence -- the arithmetic was repaired in one of them and
+// left wrong in the other, so the bypass stayed fully open through a different
+// spelling of the same options. They are now a single walk that collects
+// everything any caller needs, so a correction cannot reach one caller and
+// miss another. OC-104 adds a third caller, which is what forced the issue.
+//
+// Every field is an index into argv, or -1 for absent.
+struct ArgScan {
+    int firstOperand;        // index of the first operand; argc if there is none
+    int versionAt;           // a pre-operand "--version"
+    int rejectAt;            // the first option the optstring does not list
+    int dashDashAt;          // the "--" separator
+    int lateOptionAt;        // the first option-shaped element AFTER the operand
+    const char *outPath;     // the pre-operand -o value
+};
+
+// An argument after the operand that parses COMPLETELY as a floating point
+// number is a value, not an option. ea_restart's third operand is H_I, and
+// "-1", "-inf" and "-nan" are H_I values an operator legitimately types -- the
+// argv logger measured both of them in regression-restart.sh's N-04, 2 of 256
+// real invocations. No optstring here contains a digit, so a numeric argument
+// is never an option for these tools. OC-40's platform divergence therefore
+// REMAINS for exactly these arguments: both platforms refuse them, by different
+// routes, and that is recorded rather than changed, because refusing "-1" with
+// "put every option before the file" would be a wrong message about a value the
+// operator meant as a value.
+static bool argLooksNumeric(const char *a) {
+    if (a == NULL || a[0] == '\0') return false;
+    char *end = NULL;
+    (void) strtod(a, &end);
+    return end != NULL && end != a && *end == '\0';
+}
+
+static void scanArgs(int argc, char *argv[], const char *optstring, ArgScan *s) {
+    s->firstOperand = argc;
+    s->versionAt = s->rejectAt = s->dashDashAt = s->lateOptionAt = -1;
+    s->outPath = NULL;
+
+    int i = 1;
+    for (; i < argc; i++) {
+        const char *a = argv[i];
+        if (a == NULL) { s->firstOperand = i; return; }
+        if (strcmp(a, "--") == 0) { s->dashDashAt = i; i++; break; }
+        if (a[0] != '-' || a[1] == '\0') break;          // the first operand
+        if (a[1] == '-') {                               // a long option
+            if (s->versionAt < 0 && strcmp(a, "--version") == 0) s->versionAt = i;
+            continue;
+        }
+        for (size_t k = 1; a[k] != '\0'; k++) {
+            const char *p = strchr(optstring, a[k]);
+            // strchr can find the ':' separator itself rather than an option
+            // letter, so a literal ':' in a cluster is not a known option.
+            if (p == NULL || a[k] == ':') {
+                if (s->rejectAt < 0) s->rejectAt = i;    // getopt will reject it
+                break;
+            }
+            if (p[1] == ':') {                           // takes an argument
+                if (a[k + 1] != '\0') {                  // attached: "-oout"
+                    if (a[k] == 'o') s->outPath = a + k + 1;
+                } else if (i + 1 < argc) {               // separate: "-o out"
+                    if (a[k] == 'o') s->outPath = argv[i + 1];
+                    i++;                                 // and it is NOT an option
+                }
+                break;
+            }
+        }
+    }
+    s->firstOperand = i;
+
+    // From the first operand onward, an option-shaped element is an argument
+    // glibc PERMUTES into an option and BSD leaves as an operand -- one command
+    // line meaning two different things on two supported platforms. "--" ends
+    // the search: there the operator has said what they meant.
+    for (int j = i + 1; j < argc; j++) {
+        const char *a = argv[j];
+        if (a == NULL) return;
+        if (strcmp(a, "--") == 0) return;
+        if (a[0] == '-' && a[1] != '\0' && !argLooksNumeric(a)) {
+            s->lateOptionAt = j;
+            return;
+        }
+    }
+}
+
 // Find the -o value and the first operand the way getopt will, so the identity
 // check can run before anything is written. Handles clusters ("-vo out"),
 // attached arguments ("-oout", "-l5,10"), the "--" separator, and options that
@@ -134,30 +223,12 @@ static void protectInputPath(const string &path) { g_protectedInputPath = path; 
 // did not understand.
 static void prescanOutputAndOperand(int argc, char *argv[], const char *optstring,
                                     string *outPath, string *operand) {
+    ArgScan s;
+    scanArgs(argc, argv, optstring, &s);
     outPath->clear();
     operand->clear();
-    int i = 1;
-    for (; i < argc; i++) {
-        const char *a = argv[i];
-        if (a == NULL) return;
-        if (strcmp(a, "--") == 0) { i++; break; }
-        if (a[0] != '-' || a[1] == '\0') break;          // the first operand
-        if (a[1] == '-') continue;                       // a long option (--version)
-        for (size_t k = 1; a[k] != '\0'; k++) {
-            const char *p = strchr(optstring, a[k]);
-            if (p == NULL) break;                        // getopt will reject it
-            if (p[1] == ':') {                           // this option takes an argument
-                if (a[k + 1] != '\0') {                  // attached: "-oout"
-                    if (a[k] == 'o') *outPath = a + k + 1;
-                } else if (i + 1 < argc) {               // separate: "-o out"
-                    if (a[k] == 'o') *outPath = argv[i + 1];
-                    i++;
-                }
-                break;
-            }
-        }
-    }
-    if (i < argc && argv[i] != NULL) *operand = argv[i];
+    if (s.outPath != NULL) *outPath = s.outPath;
+    if (s.firstOperand < argc && argv[s.firstOperand] != NULL) *operand = argv[s.firstOperand];
 }
 
 // Refuse before any destructive open. Returns true when it is safe to proceed.
@@ -233,45 +304,78 @@ static bool outputTargetIsSafe(const string &outPath, const char *inPath) {
 // cluster length, which is why no length test remains.
 // ===========================================================================
 static bool versionOptionRequested(int argc, char *argv[], const char *optstring) {
-    for (int i = 1; i < argc; i++) {
-        const char *a = argv[i];
-        if (a == NULL) return false;
-        if (strcmp(a, "--") == 0) return false;            // end of options
-        if (a[0] != '-' || a[1] == '\0') return false;     // first operand, or "-"
-        if (strcmp(a, "--version") == 0) return true;      // a real option
-        // The cluster, exactly as getopt reads it.
-        for (size_t j = 1; a[j] != '\0'; j++) {
-            const char *p = strchr(optstring, a[j]);
-            if (p == NULL || a[j] == ':') {
-                // AN UNRECOGNISED OPTION MAKES THIS NOT A VERSION REQUEST.
-                //
-                // Found by this repair's own control set, and OPEN BEFORE IT
-                // TOO: `-Z --version data.bin 1` printed the banner and exited
-                // 0 on the pre-repair build as well. The operator supplied an
-                // operand and an invalid option, so they asked for an
-                // assessment and got exit 0 with nothing assessed -- the same
-                // class as F04 itself, through a third spelling.
-                //
-                // Returning false hands the element to getopt, which reports
-                // the invalid option and makes the run fail. A legitimate
-                // --version request contains no invalid options, so this costs
-                // nothing: whichever comes first, a `--version` or an
-                // unrecognised option, decides.
-                //
-                // ('a[j] == \':\'' guards strchr finding the separator itself
-                // rather than an option letter.)
-                return false;
-            }
-            if (p[1] == ':') {
-                // This letter takes an argument. If anything follows it in
-                // this element, THAT is the argument; otherwise the argument
-                // is the next element and must not be read as an option.
-                if (a[j + 1] == '\0') i++;
-                break;
-            }
-        }
-    }
-    return false;
+    ArgScan s;
+    scanArgs(argc, argv, optstring, &s);
+    if (s.versionAt < 0) return false;
+    // Whichever comes FIRST decides: a "--version", an unrecognised option, or
+    // the "--" separator. An unrecognised option means the operator asked for
+    // an assessment and made a mistake, so the element goes to getopt, which
+    // reports it and makes the run fail; returning true there would be exit 0
+    // with nothing assessed, which is F04 itself.
+    if (s.rejectAt   >= 0 && s.rejectAt   < s.versionAt) return false;
+    if (s.dashDashAt >= 0 && s.dashDashAt < s.versionAt) return false;
+    return true;
+}
+
+// ===========================================================================
+// OC-104 -- A COMMAND LINE WHOSE MEANING DEPENDS ON THE C LIBRARY IS REFUSED.
+//
+// BEHAVIOUR CHANGE, not a repair. Measured 2026-10-25 on both platforms:
+//
+//   glibc / x86-64 (CI step 5c)  getopt PERMUTES. `ea_non_iid -i -a f 1 -q -o r`
+//                                parses -q and -o, assesses f, and writes r.
+//   BSD / macOS arm64            getopt STOPS at the first operand. The same
+//                                line leaves "-q -o r" as operands, so argc
+//                                after optind is 4 and the run dies on the
+//                                usage path with nothing assessed.
+//
+// One command line, two supported platforms, two different operations. Every
+// guard reading the identity prescan is unarmed for the permuting case,
+// because the prescan stops where BSD getopt stops: a `-o` after the operand
+// never reaches outputTargetIsSafe, so the early aliasing refusal is SKIPPED.
+// OC-102 measured that writeJsonReport's choke point still caught it, so no
+// capture was ever at risk -- but a guard that cannot be shown to be armed is
+// recorded as unarmed, not as passing, and this one is unarmed by construction
+// on one of the two supported platforms.
+//
+// The leading '+' in the optstring, which stops glibc permuting, was measured
+// NOT to work on macOS (OC-96), so the refusal is portable code here instead.
+//
+// WHAT IT COSTS, re-measured rather than carried forward. An argv logger
+// compiled into all three tools captured 256 real invocations across the full
+// selftest suite. 2 of the 256 put an option-shaped argument after the
+// operand, and BOTH are numeric H_I values ("-inf" and "-1") in
+// regression-restart.sh's N-04, which argLooksNumeric exempts. 0 of 256 use a
+// genuine option spelling after the operand. The January re-pin procedure
+// (`ea_non_iid -vv bin/ringOsc-nist.bin`) is unaffected. The only sites the
+// refusal does break are step 5c's own two permutation probes in
+// .github/workflows/x86-64-platform-facts.yml, whose purpose is to exercise
+// this exact shape; they are converted to assert the refusal.
+//
+// Returns true when it has refused and printed why; the caller exits.
+// ===========================================================================
+static bool refuseOptionAfterOperand(int argc, char *argv[], const char *optstring,
+                                     const char *usage) {
+    ArgScan s;
+    scanArgs(argc, argv, optstring, &s);
+    if (s.lateOptionAt < 0) return false;
+    const char *bad = argv[s.lateOptionAt];
+    const char *operand = (s.firstOperand < argc && argv[s.firstOperand] != NULL)
+                          ? argv[s.firstOperand] : "(none)";
+    fprintf(stderr,
+        "Error: '%s' looks like an option but appears after the file operand '%s'.\n"
+        "       Refusing to run: what this command line MEANS depends on the C\n"
+        "       library. glibc rearranges it and parses '%s'; BSD and macOS treat\n"
+        "       it as another operand and fail on the usage path. One line, two\n"
+        "       supported platforms, two different operations -- and guessing which\n"
+        "       was wanted is worse than refusing. Nothing has been written.\n"
+        "\n"
+        "       Put every option BEFORE the file:\n"
+        "         %s\n"
+        "       If '%s' is meant as an operand and not an option, separate the\n"
+        "       operands with '--'.\n",
+        bad, operand, bad, usage, bad);
+    return true;
 }
 
 // Write a JSON report, reporting a failure instead of silently losing it.

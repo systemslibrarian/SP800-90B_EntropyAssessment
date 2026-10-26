@@ -9476,3 +9476,290 @@ document scope.
 - The permutation measurement is of **`ea_non_iid`**. `ea_iid` and `ea_restart`
   share the prescan but were not run in step 5c.
 - Nothing reported upstream.
+
+## OC-103 — a late `--version` measured on both platforms, and every prescan consumer enumerated
+
+**Owner's items 1–4 of the 2026-10-25 return. Measurement only; `OC-104` is the
+fix, as a separate pass.**
+
+### Item 1 — the measurement, both platforms, all three tools
+
+**There is no short version spelling to measure.** None of the three optstrings
+(`"icatvl:qo:"`, `"icatvql:o:"`, `"invqo:s:"`) contains `V`, and `--version` is
+implemented **only** by the prescan — so `-V` is simply an unknown option. It is
+measured anyway, because "there is no short spelling" is itself a result.
+
+The probe was wrong twice before it was right, and both faults are the recorded
+ones:
+
+- **a reused output path.** The first run reported *"report written YES"* at
+  exit 255 with nothing assessed. There was no write: the previous row's report
+  was still there. One fresh directory per row.
+- **urandom declared width 1.** The control arm exited 255 — *"Data (8) does not
+  fit within described bit width: 1"* — so every row was being compared against
+  a control that did not work. `OC-80` records this exact fixture mistake; it
+  was made again here. Fixed to 0x00/0x01 bytes.
+
+With a working control and a negative control, so the `assessed` signal is
+**observed in both polarities**:
+
+| tool | form | exit | banner | assessed | report |
+|---|---|---:|---|---|---|
+| all three | `control` (options first) | **0** | no | **YES** | written, `errorLevel 0` |
+| all three | `neg-control` (absent input) | 255 | no | no | written (the `C14` error report) |
+| all three | `<in> <w> --version` | **255** | no | no | **no** |
+| all three | `<in> <w> -o r --version` | **255** | no | no | **no** |
+| all three | `<in> <w> -V` | **255** | no | no | **no** |
+| all three | `<in> <w> -o r` | **255** | no | no | **no** |
+
+**Darwin arm64, measured 2026-10-25.** On glibc, CI step 5d measured the same
+four forms: `LATEVERSION VERDICT: no vacuous run observed`. **So the outcome
+that would have ranked above everything else — exit 0 with nothing assessed on
+Linux — does NOT occur.** Every late form fails closed on both platforms,
+through `print_usage()`: with BSD `getopt` the options stay as operands and
+`argc - optind` is 4 rather than 1 or 2; with glibc they are permuted into
+unknown options and rejected. **The hazard was real and the outcome was benign**,
+which is why it was measured before it was repaired.
+
+### Item 2 — every prescan consumer, with its backstop or without one
+
+The prescan family is **two walks of argv with the same stopping rule**, and
+between them they produce **three** things. The products are what matters, because
+permutation does not corrupt all of them equally.
+
+| product | produced by | corrupted when options follow the operand? |
+|---|---|---|
+| `*operand` | `prescanOutputAndOperand` | **no** — permutation does not move *which element is the first operand* |
+| `*outPath` | `prescanOutputAndOperand` | **YES** — a `-o` after the operand is never seen; `outPath` is empty |
+| the `--version` verdict | `versionOptionRequested` | **YES** — the walk returns false |
+
+**Six consumers read those three products:**
+
+| # | consumer | site | reads | corrupted? | second line of defence at the point of effect |
+|---:|---|---|---|---|---|
+| 1 | arms the protected input path | `non_iid:140`, `iid:135`, `restart:409` | `*operand` | no | the authoritative `protectInputPath(file_path)` post-`getopt` (`:248`/`:245`/`:468`) — **but that runs AFTER the `C14` placeholder write**, which `claimReportTarget` performs inside the `getopt` loop, so for that one write the early arming is the *only* arming |
+| 2 | the early aliasing refusal | `non_iid:141`, `iid:136`, `restart:410` | `*outPath` **and** `*operand` | **YES** | **two**: `writeJsonReport`'s choke point at `TestRunUtils.h:312`, measured to hold under permutation (`OC-102`), and the post-`getopt` `outputTargetIsSafe(outputfilename, file_path)` |
+| 3 | the `inPath == NULL` short-circuit inside that refusal | `TestRunUtils.h:165` | `*operand` | no | same as 2 |
+| 4 | the report-path choke point | `TestRunUtils.h:312` | the armed state from 1 | no | **none — it IS the last line**, by design |
+| 5 | the temp-path choke point | `TestRunUtils.h:361` | the armed state from 1 | no | **none — it IS the last line**, by design |
+| 6 | print the banner and `exit(0)` | `non_iid:127`, `iid:122`, `restart:396` | the `--version` verdict | **YES** | **UNPROTECTED** — nothing else implements `--version` at all |
+
+**The answer to "class or instance": a class, and the class has exactly two
+members.** `*outPath` and the `--version` verdict are the only two products
+whose correctness depends on *position*, so they are the only two things
+permutation can take away. `*operand` does not depend on position, which is why
+consumers 1, 3, 4 and 5 are sound and why `OC-102` found the capture intact.
+
+**Count, with the identity of what it counts: 1 of 6 consumers has no second
+line of defence** — consumer 6. Consumers 4 and 5 also have nothing behind
+them, but they are *terminal by design*, which is the opposite of unprotected.
+And consumer 6's lack of a backstop **costs nothing today only by accident**:
+the fallback is `getopt`'s invalid-option path, measured above as exit 255. It
+is fail-closed because `--version` happens not to be in any optstring, not
+because anything was arranged to catch it.
+
+### Item 3 — the one that could not run
+
+**`regression-platform-deltas`**, and it is the **expected abstention**, not the
+undiagnosed failure: its `known-platform-deltas.txt` block is `platform Darwin
+arm64 Apple clang`, there is deliberately **no Linux block**, and the script
+abstains rather than inventing one. `regression-docs` **PASSED** on Linux in
+that run, both inside the suite and in its own gated log — so **the undiagnosed
+Linux `regression-docs` failure did not reproduce, and stays OPEN with its four
+dead hypotheses**, because a defect that stopped reproducing without being
+understood stays open.
+
+### Item 4 — what 5c establishes about the two-platform reporting rule
+
+The rule has been *"a correct repair argument is still a per-platform claim"*.
+**5c establishes something stronger and worse: a COMMAND LINE does not
+necessarily denote the same OPERATION across supported platforms.** The
+reporting rule therefore binds one level earlier than it was written — not only
+"the same test may give different answers on two platforms", but "the same
+*request* may not be the same request". Evidence: `ea_non_iid -i -a f 1 -q -o r`
+**assessed and wrote `r`** on x86-64 glibc and **died on the usage path with
+nothing assessed** on Darwin arm64.
+
+**And the freshly checked result, not the number carried forward.** The previous
+answer was *0 of 16 real invocations*, from reading scripts. Reading scripts is
+the wrong instrument: a regex over the tree found "65 sites", almost all of them
+English prose, and a stricter regex found 7, because the selftest scripts invoke
+through `"${ea_non_iid}"` rather than by name. So an **argv logger was compiled
+into all three tools** and the full suite was run under it.
+
+**256 real invocations captured**, across five tool-binary names (`ea_non_iid`
+87, `ea_restart` 95, `ea_iid` 54, `ea_asan` 19, `ea_non_iid_identity_test` 1;
+0 unmapped). **2 of the 256 place an option-shaped argument after the first
+operand**, and **both are numeric `H_I` values** — `ea_restart -n r8.bin 8 -inf`
+and `... 8 -1`, in `regression-restart.sh`'s `N-04`. **0 of 256 use a genuine
+option spelling after the operand.**
+
+So the expected answer *"none"* is confirmed as a checked result at sixteen times
+the coverage — **and the two it did find are ones the earlier method could never
+have found**, because `OC-40` had already recorded them as a platform note and
+they are not a "comparison or recorded delta" at all. The hazard is recorded as
+**latent for genuine options** and **live-but-benign for numeric operands**: for
+those two, `OC-40`'s divergence is real, present today, and both platforms
+refuse.
+
+### What this does NOT establish
+
+- **Nothing about shapes not measured.** Four forms, three tools, two platforms.
+- The 256 invocations are **the suite's**, not an operator's. A January runbook
+  command typed by hand is not in that population; the documented examples were
+  read separately and all put options first.
+- `ea_asan` and `ea_non_iid_identity_test` were mapped to the optstrings of the
+  tools they are built from. That mapping is **by inspection of the build rules**,
+  not measured from the binaries.
+- Nothing reported upstream.
+
+## OC-104 — the prescan refusal, authorized and landed: one walk of argv, and a test verified by breaking it
+
+**Owner's item 3, authorized explicitly. This is a BEHAVIOUR CHANGE, not a
+repair, and it is the only change in this fork that refuses a command line
+upstream accepts.**
+
+### What it does
+
+All three tools refuse a command line with an option placed after
+`<file_name>`, naming the offending argument and printing the correct form. The
+portable prescan refusal, **not** the leading `+` in the optstring — `OC-96`
+measured that `+` does not work on macOS.
+
+```
+Error: '-q' looks like an option but appears after the file operand 'capture.bin'.
+       Refusing to run: what this command line MEANS depends on the C
+       library. glibc rearranges it and parses '-q'; BSD and macOS treat
+       it as another operand and fail on the usage path. One line, two
+       supported platforms, two different operations -- and guessing which
+       was wanted is worse than refusing. Nothing has been written.
+```
+
+### THE NUMERIC EXEMPTION, which the measurement forced
+
+The argv logger of `OC-103` found that **2 of 256 real invocations** put an
+option-shaped argument after the operand, and both are **numeric `H_I` values**:
+`ea_restart -n r8.bin 8 -inf` and `... 8 -1`. A number after the operand is a
+**value**, not an option — no optstring here contains a digit — and refusing
+`-1` with *"put every option before the file"* would be a wrong message about
+something the operator meant as a value. So `argLooksNumeric` (a full-string
+`strtod`) exempts them.
+
+**This is the single most important consequence of measuring before repairing.**
+The text sweep had said the only affected sites were step 5c's own probes. Had
+the refusal landed on that basis it would have broken `N-04`, which is a check
+that `ea_restart` refuses a malformed `H_I` — a guard, broken by a guard.
+
+**It also means `OC-40`'s divergence REMAINS for exactly these arguments**, and
+that is recorded rather than changed: `-inf` still reaches the `H_I` parser on
+BSD and still goes through `getopt`'s invalid-option path on glibc. Both refuse;
+the message differs.
+
+### RULE 12 DECLARATION — the two pairs, both tested
+
+**`A04`/`F04` — `versionOptionRequested`'s cluster walk.** Rather than add a
+*fourth* copy of the walk-to-the-first-operand logic, the refusal, the identity
+prescan and the `--version` gate now share **one** walk, `scanArgs`, which
+collects every product any caller needs. **Three copies of that walk is
+precisely how `F04` happened**: the cluster arithmetic was repaired in the
+prescan and left wrong in the version gate, so the bypass stayed fully open
+through a different spelling of the same options. A unified walk makes that
+class of defect structurally impossible rather than merely fixed.
+
+*Pair test:* the four `F04` cluster forms (`-o`, `-vo`, `-qo` `--version`, and
+`-Z --version`) must behave exactly as `F04` left them, and the new refusal must
+stay silent on all of them — they put their options before the operand. **4 of 4
+PASS.**
+
+**`A05`/`F03` — the identity prescan and the `writeJsonReport` choke point.**
+The refusal fires earlier than both.
+
+*Pair test:* the permuted aliasing form `perm.bin 1 -o perm.bin` must now be
+refused **by option order**, with the capture byte identical; and the ordinary
+form `-o perm.bin perm.bin 1` must still be refused **by identity**, not by
+option order — the earlier repair still doing its own job is the other half of
+the pair. **2 of 2 PASS.**
+
+### THE TEST IS VERIFIED BY BREAKING IT, AND BOTH RUNS ARE RECORDED
+
+`cpp/selftest/regression-option-order.sh`, 29 checks. The mutation removes the
+`refuseOptionAfterOperand` **call** from all three mains, leaving the function
+compiled but unreachable — the state the tree was in before this entry.
+
+| build | `build-state` sha256 (`ea_non_iid`) | result |
+|---|---|---|
+| refusal present | `2dc6b5bb4453b955` | **`regression-option-order: PASS`**, 29 of 29 |
+| refusal removed | `47fd9e5ae3322d53` | **`regression-option-order: FAIL (10)`** |
+
+The two builds are distinguished by digest, so "the mutation landed" is shown
+and not assumed. The ten failures are the nine refusal rows (three forms ×
+three tools) plus the `A05` permuted-alias pair row.
+
+**And on macOS the mutant still exits 255 on every one of those rows.** What the
+refusal changes *here* is the message and the cross-platform agreement, not the
+exit status — BSD `getopt` was already failing these lines on the usage path.
+The exit-status difference is a **glibc** effect, which is why the assertion
+moved into CI as well.
+
+### THE TEST'S OWN DEAD ASSERTION, found by running it
+
+The first version of the regression reported **6 failures against the repaired
+build**. Cause: `-q` was in its lead options, and quiet mode **suppresses the
+result line**. So `assessed()` could never read `YES` — every *"nothing was
+assessed"* assertion would have passed whatever the tool did, and every control
+arm failed. `-q` was removed so the signal is live in **both** polarities.
+
+**This is the sixth instrument in this fork whose failing state had never been
+observed, and it was caught only because the owner required the break-run.** A
+test whose failing state was never observed is not a test.
+
+### CI: the measurement had to move OUT of the tools
+
+Step 5c measured permutation **by running `ea_non_iid` with an option after the
+operand**. With the refusal in place that probe would report
+*"no permutation observed"* — **false**, and worse than no measurement, because
+the refusal fires before `getopt` is reached. A `getopt` property is a property
+of the C library, so 5c now measures it with a **twenty-line C program** that
+calls `getopt` and nothing else, and asserts the tools' refusal separately.
+
+Step 5d's gate moves from *"it measured"* to the outcome the fix pass owed: **no
+vacuous run, all nine late forms refused by name, and no control wrongly
+refused** — counted rather than grepped, so a form that stopped being measured
+cannot pass as a form that was refused.
+
+Writing 5c cost two further instrument errors, both caught before pushing: a
+**heredoc** whose closing delimiter must sit at column 1 **terminated the YAML
+block scalar** (the workflow stopped parsing), and a `\n` that survived three
+escaping layers as `\\n` so the C program printed a **literal** `\n`.
+
+### Checked against every existing invocation before landing
+
+- **256 real invocations** under the argv logger: **0** use a genuine option
+  spelling after the operand (`OC-103`).
+- **The January re-pin procedure** — `ea_non_iid -vv bin/ringOsc-nist.bin` —
+  options first, unaffected.
+- **The documented examples** in `BUILDING.md` — options first.
+- **The two sites it does break** are step 5c's own permutation probes in
+  `.github/workflows/x86-64-platform-facts.yml`, whose purpose was to exercise
+  this exact shape. Converted to assert the refusal.
+- **Nothing TruePad invokes was read or changed.** `~/repos/TruePad` was not
+  touched.
+
+### Documented where a user would find it
+
+The tools' own `print_usage()` (a user who hits the refusal reads that text),
+`BUILDING.md`'s *Operator command line* section, and a new
+`FORK-DIVERGENCE-AND-TRUST.md` **§A.3**, which exists because a deliberate
+divergence is neither an inherited defect nor one this fork introduced.
+
+### What this does NOT establish
+
+- **Nothing about operands that begin with `-` and are not numbers.** A file
+  genuinely named `-weird.bin` now needs `--`; it needed `./` before.
+- The refusal is **not** a fix for the unarmed guard, it is a fix for the
+  ambiguity. Consumer 2 of `OC-103`'s table is still unarmed on a permuting
+  platform *for any line that reaches it* — there are now simply no such lines.
+- **The 29 checks run on Darwin arm64.** Their glibc behaviour is asserted by CI
+  steps 5c and 5d, not by this script's own 29 rows.
+- Nothing reported upstream.
+

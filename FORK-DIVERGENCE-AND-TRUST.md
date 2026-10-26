@@ -263,6 +263,57 @@ of creating defects as of removing them.
 
 ---
 
+## A.3 — A deliberate behaviour divergence from upstream, which is not a defect
+
+**One entry, and it is the only change in this fork that will REFUSE a command
+line upstream accepts.** It is recorded in section A because that is where a
+reader looks for differences in the code's behaviour, and separated into its
+own subsection because calling it a defect would be wrong in both directions:
+it was not a defect that it existed, and it is not a repair that it is gone.
+
+#### `OC-104` — an option after the file operand is refused
+
+- **WHAT CHANGED.** All three tools refuse a command line with an option
+  placed after `<file_name>`, naming the offending argument and printing the
+  correct form. Upstream accepts such a line, as did this fork until
+  2026-10-25.
+- **WHY, AND IT IS MEASURED NOT STYLISTIC.** `getopt` disagrees across the two
+  supported platforms. **glibc PERMUTES** the command line and parses the
+  option; **BSD/macOS stops at the first operand** and treats it as another
+  operand. Measured both ways: `ea_non_iid -i -a f 1 -q -o r` **assessed and
+  wrote `r`** on x86-64 glibc (CI step 5c) and **died on the usage path with
+  nothing assessed** on Darwin arm64. One command line, two supported
+  platforms, two different operations. Worse, every guard reading the
+  pre-`getopt` identity prescan is **unarmed by construction** on the permuting
+  side, because the prescan stops where BSD `getopt` stops — so a `-o` after
+  the operand never reached `outputTargetIsSafe`. `OC-102` measured that
+  `writeJsonReport`'s choke point still caught it, so no capture was ever at
+  risk; but an unarmed guard is recorded as unarmed, not as passing.
+- **EVIDENCE.** **EXECUTED**, on both platforms. `regression-option-order.sh`,
+  29 checks, **verified by breaking it**: 10 failures against a build with the
+  refusal removed, 0 with it in place, the two builds distinguished by
+  `build-state` sha256. CI step 5c now measures the `getopt` fact with a
+  standalone C program — *not* through the tools, which would report "no
+  permutation" now that they refuse first — and asserts the refusal separately.
+- **WHAT IT COSTS, re-measured rather than carried forward.** An argv logger
+  compiled into all three tools captured **256 real invocations** across the
+  full suite. **2 of 256** put an option-shaped argument after the operand, and
+  **both are numeric `H_I` values** (`-inf`, `-1`) in `regression-restart.sh`'s
+  `N-04`, which the refusal **exempts** — a number after the operand is a value,
+  not an option. **0 of 256 use a genuine option spelling after the operand.**
+  The two sites the change does break are CI step 5c's own permutation probes,
+  whose purpose was to exercise this shape; they are converted to assert the
+  refusal. The January re-pin procedure is unaffected.
+- **DOES NOT ESTABLISH.** That the divergence `OC-40` recorded is gone. For
+  **numeric** arguments after the operand it **REMAINS**: `ea_restart f 8 -inf`
+  still reaches the `H_I` parser on BSD and still goes through `getopt`'s
+  invalid-option path on glibc. Both refuse; the message differs. That is
+  unchanged, deliberately, because refusing `-1` with *"put every option before
+  the file"* would be a wrong message about a value the operator meant as a
+  value.
+
+---
+
 ## B — Standard defects
 
 **The implementation does what SP 800-90B specifies, and the specified thing is

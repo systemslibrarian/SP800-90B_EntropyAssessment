@@ -26,8 +26,8 @@ allow_platform=0
 DELTA_MANIFEST="known-platform-deltas.txt"
 here_cmp="./check-platform-deltas.py"
 REGRESSION_INVENTORY="regression-script-inventory.txt"
-EXPECTED_REGRESSION_SCRIPTS=22
-EXPECTED_TOTAL_CHECKS=24
+EXPECTED_REGRESSION_SCRIPTS=23
+EXPECTED_TOTAL_CHECKS=25
 
 inventory_error() {
     echo "run-all-checks: regression inventory error: $*" >&2

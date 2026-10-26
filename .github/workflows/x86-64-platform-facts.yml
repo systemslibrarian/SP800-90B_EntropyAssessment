@@ -199,7 +199,7 @@ jobs:
                  | tee logs/05b-r1-blast-radius.log
           fi
 
-      - name: "5c. getopt PERMUTATION: is an option after the first operand honoured?"
+      - name: "5c. getopt PERMUTATION as a libc fact, and the refusal that now covers it"
         run: |
           # A PROBE THAT MEASURES EXIT STATUSES MUST NOT RUN UNDER set -e
           # (OC-97). GitHub runs `run:` blocks as `bash -e`, so the FIRST
@@ -211,51 +211,84 @@ jobs:
           #
           # So: set +e, and the step always exits 0. What judges it is the GATE
           # on its log -- a probe that did not measure leaves no
-          # "PERMUTATION options-after:" line and the gate fails. The step's own
-          # status would be the wrong instrument here, because every
-          # interesting outcome is a non-zero one.
+          # "PERMUTATION libc:" line and the gate fails.
+          #
+          # WHY THE MEASUREMENT MOVED OUT OF THE TOOLS (OC-104). Until this
+          # commit the permutation fact was measured BY running ea_non_iid with
+          # an option after the operand. OC-104 makes the tools REFUSE that
+          # shape, so the old probe would now report "no permutation observed"
+          # -- which is false, and worse than no measurement, because the
+          # refusal fires before getopt is ever reached. The libc fact is a
+          # property of the C library, so it is measured with a twenty-line C
+          # program that calls getopt directly and nothing else. The tools'
+          # behaviour is asserted separately, below.
           set +e
           mkdir -p logs
-          # THE SIGNAL IS errorLevel 0, NOT THE PRESENCE OF A FILE. C14 claims
-          # the -o path with a placeholder as soon as it is known, so a FAILED
-          # run still leaves a report there -- `[ -s report.json ]` was true on
-          # a run that exited 255. OC-80 records this exact mistake being made
-          # in F04's controls; it is made here again and corrected here again.
-          assessed() { grep -q '"errorLevel" : 0' "$1" 2>/dev/null && echo YES || echo no; }
-          # 0/1 BYTES, NOT urandom. The first draft wrote urandom and declared
-          # width 1, so the tool refused the file for having 8-bit symbols --
-          # exit 255 on the CONTROL arm, which would have made every row of
-          # this probe meaningless. A fixture must satisfy the width it is
-          # declared with.
-          python3 -c "import os,sys; sys.stdout.buffer.write(bytes(b & 1 for b in os.urandom(1000000)))" > logs/perm.bin
+          # NO HEREDOC HERE. A heredoc's closing delimiter must be at column 1,
+          # which terminates the YAML block scalar: the workflow stopped
+          # parsing as YAML the first time this step was written. printf keeps
+          # every line inside the block's indentation. regression-workflows.sh
+          # runs bash -n over this block, and PyYAML parses the file, so both
+          # halves of that mistake are now caught locally.
+          printf '%s\n' \
+            '#include <stdio.h>' \
+            '#include <unistd.h>' \
+            'int main(int argc, char **argv) {' \
+            '    int opt, n = 0;' \
+            '    while ((opt = getopt(argc, argv, "q")) != -1) if (opt == 0x71) n++;' \
+            '    printf("parsed_q=%d optind=%d argc=%d%s", n, optind, argc, "\n");' \
+            '    return 0;' \
+            '}' > logs/gp.c
+          cc -O1 -o logs/gp logs/gp.c
           {
-            echo "## getopt permutation on this platform"
+            echo "## getopt permutation on this platform, measured without the tools"
+            echo -n "PERMUTATION libc: "
+            ./logs/gp operand 1 -q
+            if ./logs/gp operand 1 -q | grep -q 'parsed_q=1'; then
+              echo "PERMUTATION verdict: this libc PERMUTES -- an option after the operand IS parsed"
+            else
+              echo "PERMUTATION verdict: this libc does NOT permute -- same as Darwin arm64"
+            fi
+
+            # And the tools must now refuse that shape, identically to Darwin.
+            # THE SIGNAL IS errorLevel 0, NOT THE PRESENCE OF A FILE. C14 claims
+            # the -o path with a placeholder as soon as it is known, so a FAILED
+            # run still leaves a report there -- `[ -s report.json ]` was true on
+            # a run that exited 255. OC-80 records this exact mistake being made
+            # in F04's controls.
+            assessed() { grep -q '"errorLevel" : 0' "$1" 2>/dev/null && echo YES || echo no; }
+            # 0/1 BYTES, NOT urandom: urandom declared width 1 is refused for
+            # having 8-bit symbols, which would make the CONTROL arm fail and
+            # every row meaningless. A fixture must satisfy its declared width.
+            python3 -c "import os,sys; sys.stdout.buffer.write(bytes(b & 1 for b in os.urandom(1000000)))" > logs/perm.bin
             echo "fixture: $(wc -c < logs/perm.bin) bytes"
+
             rm -f logs/perm.json
             ./cpp/ea_non_iid -i -a -q -o logs/perm.json logs/perm.bin 1 >/dev/null 2>&1
-            rc=$?
-            wrote=$(assessed logs/perm.json)
-            echo "PERMUTATION options-before: exit=$rc assessed=$wrote"
+            echo "REFUSAL options-before: exit=$? assessed=$(assessed logs/perm.json)"
+
             rm -f logs/perm.json
-            ./cpp/ea_non_iid -i -a logs/perm.bin 1 -q -o logs/perm.json >/dev/null 2>&1
+            ./cpp/ea_non_iid -i -a logs/perm.bin 1 -q -o logs/perm.json >logs/perm-late.txt 2>&1
             rc=$?
-            wrote=$(assessed logs/perm.json)
-            echo "PERMUTATION options-after: exit=$rc assessed=$wrote"
-            if [ "$wrote" = YES ]; then
-              echo "PERMUTATION verdict: glibc PERMUTES -- an option after the operand is honoured here and refused on Darwin"
+            a=$(assessed logs/perm.json)
+            msg=no; grep -q 'appears after the file operand' logs/perm-late.txt && msg=YES
+            echo "REFUSAL options-after: exit=$rc assessed=$a named=$msg"
+            if [ "$rc" != 0 ] && [ "$a" = no ] && [ "$msg" = YES ]; then
+              echo "REFUSAL verdict: refused with the naming message, as on Darwin arm64"
             else
-              echo "PERMUTATION verdict: no permutation observed -- same as Darwin arm64"
+              echo "REFUSAL verdict: *** NOT REFUSED *** exit=$rc assessed=$a named=$msg"
             fi
-            # The A05-relevant half: with -o AFTER the operand, did the
-            # pre-getopt prescan see it? The prescan stops at the first operand
-            # while getopt does not, so on a permuting platform -o can be
-            # honoured with the EARLY identity guard never armed.
-            # writeJsonReport's own guard is the authoritative one; this records
-            # whether the capture survived regardless.
+
+            # The A05-relevant half: a permuted -o aimed at the INPUT. Before
+            # OC-104 the early identity guard was unarmed here and
+            # writeJsonReport's choke point was what saved the capture
+            # (OC-102). The refusal now fires ahead of both; the capture is
+            # checked regardless, because that is the failure the project
+            # cannot absorb.
             cp logs/perm.bin logs/permalias.bin
             before=$(sha256sum logs/permalias.bin | cut -d" " -f1)
             ./cpp/ea_non_iid -i -a logs/permalias.bin 1 -q -o logs/permalias.bin > logs/perm-alias.txt 2>&1
-            echo "PERMUTATION alias-after-operand: exit=$?"
+            echo "REFUSAL alias-after-operand: exit=$?"
             after=$(sha256sum logs/permalias.bin | cut -d" " -f1)
             [ "$before" = "$after" ] && echo "PERMUTATION capture-intact: YES" \
                                      || echo "PERMUTATION capture-intact: *** DESTROYED ***"
@@ -266,13 +299,15 @@ jobs:
 
       - name: "5d. A LATE --version: does permutation reach the prescan's blind spot?"
         run: |
-          # MEASURE ONLY (OC-103). OC-80 noted that glibc permutation might let a
-          # --version placed AFTER the operand reach getopt, where the prescan --
-          # which stops at the first operand -- never sees it. 5c measured that
-          # glibc does permute, which promoted that note from speculation to a
-          # testable case. This step takes the measurement; it does not gate on
-          # the outcome, because a gate on an unfixed defect is a red job that
-          # tells you nothing new each run. The FIX PASS adds the gate.
+          # MEASURED IN 8e6941f, FIXED IN OC-104, AND NOW ASSERTED. OC-80 noted
+          # that glibc permutation might let a --version placed AFTER the
+          # operand reach getopt, where the prescan -- which stops at the first
+          # operand -- never sees it. 5c measured that glibc does permute,
+          # promoting that note to a testable case; this step measured it on
+          # both platforms (exit 255, nothing assessed, no report, via the
+          # usage path); OC-104 then made the shape refuse explicitly. So the
+          # gate moves from "it measured" to "no vacuous run, and the refusal
+          # named the argument" -- which is what the fix pass owed.
           #
           # 5c's three lessons are applied here: set +e (the subject is exit
           # statuses), a 0/1 fixture (urandom at width 1 is refused), and
@@ -297,15 +332,20 @@ jobs:
                 rc=$?
                 ban=no; grep -q 'Disclaimer: NIST-developed' logs/lv.out && ban=YES
                 a=$(assessed logs/lv.json)
+                ref=no; grep -q 'appears after the file operand' logs/lv.out && ref=YES
                 vac=no
                 if [ "$rc" = 0 ] && [ "$a" = no ]; then vac=YES; fi
-                echo "LATEVERSION $t $form: exit=$rc banner=$ban assessed=$a vacuous=$vac"
+                echo "LATEVERSION $t $form: exit=$rc banner=$ban assessed=$a refused=$ref vacuous=$vac"
               done
             done
             # a cluster fragment taken as -o's attached argument would leave a
             # stray file; name any that appear.
             for f in logs/*; do
+              # 5c's artefacts live in the same directory, so they are named
+              # here too -- otherwise six of its files read as strays and a
+              # real stray would be lost among them (observed locally).
               case "$f" in logs/lv.bin|logs/lv.json|logs/lv.out|logs/0*|logs/??-*) ;;
+                logs/gp|logs/gp.c|logs/perm.bin|logs/perm.json|logs/permalias.bin|logs/perm-alias.txt|logs/perm-late.txt) ;;
                 *) echo "LATEVERSION stray-file: $f" ;;
               esac
             done
@@ -314,6 +354,19 @@ jobs:
             echo "LATEVERSION VERDICT: at least one form exits 0 having assessed nothing -- a LIVE vacuous-run path" >> logs/05d-late-version.log
           else
             echo "LATEVERSION VERDICT: no vacuous run observed on this platform" >> logs/05d-late-version.log
+          fi
+          # Every LATE form must now be refused BY NAME. The control must not
+          # be: a refusal that fires on the well-formed line is worse than the
+          # defect. Counted rather than grepped, so a form that stopped being
+          # measured cannot pass as a form that was refused.
+          late_n=$(grep -c 'LATEVERSION .* \(late\|late_with_o\|lateV\):' logs/05d-late-version.log)
+          late_ref=$(grep 'LATEVERSION .* \(late\|late_with_o\|lateV\):' logs/05d-late-version.log | grep -c 'refused=YES')
+          ctl_ref=$(grep 'LATEVERSION .* control:' logs/05d-late-version.log | grep -c 'refused=YES')
+          echo "LATEVERSION REFUSAL: ${late_ref} of ${late_n} late forms refused by name; ${ctl_ref} controls wrongly refused" >> logs/05d-late-version.log
+          if [ "${late_n}" -eq 9 ] && [ "${late_ref}" -eq 9 ] && [ "${ctl_ref}" -eq 0 ]; then
+            echo "LATEVERSION REFUSAL VERDICT: all 9 late forms refused, no control refused" >> logs/05d-late-version.log
+          else
+            echo "LATEVERSION REFUSAL VERDICT: *** MISMATCH *** ${late_ref}/${late_n} late, ${ctl_ref} controls" >> logs/05d-late-version.log
           fi
           cat logs/05d-late-version.log
           exit 0
@@ -397,13 +450,19 @@ jobs:
           gate "oracle self-test" logs/07-oracle-selftest.log "oracle-selftest: PASS"
           gate "workflow shell syntax" logs/07-workflows.log "regression-workflows: PASS"
           gate "docs checks (logged in full)" logs/07-regression-docs.log "regression-docs: PASS"
-          # The permutation step MEASURES; the gate is only that it measured,
-          # and that the capture survived whatever the platform did (OC-96).
-          gate "getopt permutation measured" logs/05c-getopt-permutation.log "PERMUTATION options-after:"
+          # 5c measures the libc fact and ASSERTS the refusal (OC-104). The
+          # permutation line is still gated as "it measured", because what the
+          # libc does is a fact to record, not a pass or a fail; the refusal
+          # and the capture are gated as outcomes.
+          gate "getopt permutation measured" logs/05c-getopt-permutation.log "PERMUTATION libc:"
+          gate "a late option is refused by name" logs/05c-getopt-permutation.log "REFUSAL verdict: refused with the naming message"
           gate "the capture survived the alias-after-operand form" logs/05c-getopt-permutation.log "PERMUTATION capture-intact: YES"
-          # 5d MEASURES; the gate asserts only that it measured and reached a
-          # verdict. Gating on the verdict waits for the fix pass (OC-103).
+          # 5d now gates on the OUTCOME, which is what the fix pass owed
+          # (OC-103 -> OC-104): no vacuous run, and all nine late forms refused
+          # by name with no control wrongly refused.
           gate "late --version measured" logs/05d-late-version.log "LATEVERSION VERDICT:"
+          gate "no vacuous run on this platform" logs/05d-late-version.log "LATEVERSION VERDICT: no vacuous run observed"
+          gate "all late forms refused, no control refused" logs/05d-late-version.log "LATEVERSION REFUSAL VERDICT: all 9 late forms refused"
           gate "outside-battery regression" logs/06-outside-battery.log "regression-outside-battery: PASS"
           gate "script-inventory mutations" logs/06-mutation-inventory.log "harness-inventory-mutation-test: PASS"
           gate "corpus mutations"           logs/06-mutation-corpus.log   "outside-battery-mutation-test: PASS"

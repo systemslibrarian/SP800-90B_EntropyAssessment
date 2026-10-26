@@ -116,6 +116,28 @@ cd cpp
 - The tool now **refuses** a dataset of fewer than 1,000,000 samples, which
   is the minimum SP 800-90B Section 3.1.1 requires. It exits nonzero and,
   with `-o`, writes a JSON report carrying `errorLevel` and `errorMessage`.
+- **Every option must come BEFORE `<file_name>`.** This fork **refuses** a
+  command line with an option after the file operand — a behaviour change from
+  upstream, made 2026-10-25 (`OC-104`), and the one change here that will
+  reject a command line that worked on Linux before it. The reason is measured,
+  not stylistic: **glibc `getopt` permutes** such a line and parses the option,
+  while **BSD/macOS `getopt` stops at the first operand** and treats it as
+  another operand. So `ea_non_iid -i -a capture.bin 1 -q -o r.json` *assessed
+  and wrote a report* on Linux and *died on the usage path* on macOS — one
+  command line naming two different operations on two supported platforms, with
+  every guard that reads the pre-`getopt` prescan unarmed on the permuting side.
+  Rather than guess which was meant, all three tools now refuse it, name the
+  offending argument, and print the correct form.
+  - What still works unchanged: options before the file (every documented
+    example, including the January re-pin procedure), `--version` on its own,
+    and `--` to end the options explicitly.
+  - **A negative number after the file is still a value, not an option**, so
+    `ea_restart -n r8.bin 8 -1` and `... 8 -inf` reach the `H_I` parser as
+    before. Those two are the only shapes an argv logger found among 256 real
+    invocations of the full suite, and they are exempt by design.
+  - If a script of yours puts options last, move them before the file. If an
+    operand of yours genuinely begins with `-` and is not a number, put `--`
+    before the operands.
   It used to warn on stdout and assess the data anyway with `errorLevel` 0.
   The count checked is the number of samples actually loaded, so a `-l`
   subset smaller than the minimum is refused too.
