@@ -26,16 +26,22 @@ repo=$(cd "${here}/../../.." && pwd)
 tool="${repo}/cpp/ea_non_iid"
 [ -x "${tool}" ] || { echo "compression-window-tail: no ea_non_iid" >&2; exit 2; }
 DRAWS=${1:-200}
+# A SECOND ARGUMENT, so a replication is a DIFFERENT SAMPLE and not a re-run of
+# the same one. OC-119 needed this: the first n=300 sample was taken while the
+# host later reported memory pressure, and the only way to test that sample is
+# to draw an independent one. Any base clear of the pinned seeds works
+# (0xA = 10, 0xC0+i = 192..196, sha 0..19).
+SEEDBASE=${2:-900000}
 work=$(mktemp -d "${TMPDIR:-/tmp}/ctail.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT HUP INT TERM
 
-echo "draws=${DRAWS}  N=1000000 samples  width=1  tool=$(basename "${tool}")"
+echo "draws=${DRAWS}  seedbase=${SEEDBASE}  N=1000000 samples  width=1  tool=$(basename "${tool}")"
 echo "GEN SEED      BINDER                  VALUE"
 i=0
 while [ "${i}" -lt "${DRAWS}" ]; do
     # Fresh seeds well clear of the pinned ones (0xA = 10, 0xC0+i = 192..196,
     # sha 0..19). 900000+ cannot collide with any of them.
-    seed=$((900000 + i))
+    seed=$((SEEDBASE + i))
     if [ $((i % 2)) -eq 0 ]; then gen=mt; else gen=sha; fi
     GEN="${gen}" SEED="${seed}" OUT="${work}/s.bin" python3 - "${repo}" <<'PY'
 import os, sys, random, hashlib

@@ -11307,3 +11307,94 @@ flag** the repaired version at `HEAD`.
   are flagged by shape, and the shape is the rule's definition.
 - Nothing reported upstream.
 
+## OC-119 — the tail measurement replicated after a memory-pressure kill, and the replication caught a defect in OC-118's own fix
+
+**A background job was killed for low memory while `OC-118`'s sample was being
+analysed. The arithmetic is deterministic from the log, so re-running it would
+only reproduce itself; what needed redoing was the MEASUREMENT, because an
+OOM-killed tool run would have put a wrong figure in the record.**
+
+### First, the existing sample was checked for corruption rather than trusted
+
+An OOM-killed `ea_non_iid` produces no estimator lines, and the harness's
+extractor prints `NONE 0` for that case — so corruption is visible, not silent:
+
+```
+  rows where no estimator was parsed (NONE):  0
+  rows with value 0.000000000:                0
+  data rows:                                  300
+  distinct seeds:                             300   (900000..900299, no gaps)
+```
+
+### Then an INDEPENDENT 300 draws, because a re-run of the same seeds tests nothing
+
+`compression-window-tail.sh` gained a **second argument**, the seed base, so a
+replication is a different sample rather than the same one again.
+
+| | first, seeds 900000+ | replication, seeds 910000+ |
+|---|---|---|
+| draws / corrupt rows | 300 / **0** | 300 / **0** |
+| Compression binds | 284 (94.7%) | 285 (95.0%) |
+| other binders | Collision 11, LRS 3, t-Tuple 2 | Collision 11, t-Tuple 2, **Lag 2** |
+| mean / median | 0.854784 / 0.851422 | 0.853658 / 0.851569 |
+| stdev | 0.025732 | 0.024596 |
+| min / max | 0.805141 / 0.941540 | **0.795197** / 0.935128 |
+| outside the ORIGINAL window | 96 (32.0%) | 82 (27.3%) |
+| outside `OC-118`'s window | **0** | **0** |
+
+**Welch `t = 0.547` on the two means** (difference 0.001126), so the samples are
+**indistinguishable**. **The memory pressure did not corrupt the first
+measurement**, and `OC-118`'s conclusion — centre right, tolerance 2.8x too
+small, about a third of clean draws rejected — replicates.
+
+### AND THE REPLICATION CAUGHT A DEFECT IN `OC-118`'s OWN FIX
+
+`OC-118` replaced the "must be Compression" requirement with an **allowlist of
+the four estimators seen binding in n = 300**. The independent sample found a
+**fifth — `Lag`, twice — which that allowlist would have rejected.**
+
+**An allowlist built from a sample is the same under-sampling error `OC-118` was
+repairing, one level up.** So it is **removed, not extended**: extending it would
+only wait for a sixth. Any estimator may bind; what is checked is the
+**Compression share** against a floor, plus the value window. **A fix made from
+n = 300 lasted exactly as long as it took to draw another 300.**
+
+### The window re-derived from the pooled sample
+
+```
+  POOLED n=600:  mean 0.854221   stdev 0.025177   min 0.795197   max 0.941540
+  window = [0.795197 - 0.025177,  0.941540 + 0.025177]  =  [0.7700, 0.9667]
+```
+
+The share floor is re-derived at the pooled rate: `94.8% - 3*sqrt(p(1-p)/25) =
+81.4%`, so **80%** stands.
+
+**Verified by observing failure, both directions:**
+
+| value | pooled window | original window |
+|---|---|---|
+| **0.795197** — the replication's minimum | **PASS** | **FAIL** |
+| **0.941540** — the pooled maximum | **PASS** | **FAIL** |
+| 0.82980 — the `OC-115` draw | PASS | PASS |
+| 0.7699 / 0.9668 — just outside | **FAIL** | FAIL |
+
+**All 600 draws fall inside `[0.7700, 0.9667]`**, and
+`OUTSIDE_BATTERY_FULL=1` reports
+`binder in [0.7700, 0.9667], Compression 5/5` with the script **PASSING**.
+
+### What this does NOT establish
+
+- **`n = 600` is still a sample.** The pooled range is a **lower bound** on the
+  spread (rule 9), and the replication's minimum already sat **below** the first
+  sample's — which is the whole reason the allowlist failed. A third sample may
+  find a sixth binder or a lower minimum.
+- **The margin is shrinking as n grows.** `OC-118`'s window had 0.0257 of
+  headroom below the then-minimum; the pooled one has 0.0252 below a minimum
+  that moved down by 0.0099. The window is not converging quickly.
+- **The deeper point stands unaddressed**: a per-stream window this wide is a
+  weak instrument, and a bound on the **mean** (pooled standard error
+  `0.025177/sqrt(25) = 0.0050`) is the better one. Still **not changed**, because
+  that is a redesign of what the check asserts.
+- Two pseudorandom generators at width 1. **Not a property of a physical source.**
+- Nothing reported upstream.
+

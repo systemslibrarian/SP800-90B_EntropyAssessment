@@ -342,10 +342,15 @@ if [ "${full}" = "1" ]; then
 			# (reproducers/compression-window-tail.sh, seeds 900000+, which
 			# cannot collide with the pinned 0xA / 0xC0+i / sha 0..19):
 			#
-			#   binds Compression  284/300 (94.7%)  Collision 11, LRS 3, t-Tuple 2
-			#   mean   0.854784   median 0.851422   stdev 0.025732
-			#   min    0.805141   max    0.941540
-			#   outside [0.8270, 0.8822]: 96 of 300 = 32.0% (45 below, 51 above)
+			#   first  n=300, seeds 900000+:  Compression 284 (94.7%), mean
+			#          0.854784, stdev 0.025732, min 0.805141, max 0.941540,
+			#          96 of 300 = 32.0% outside [0.8270, 0.8822]
+			#   repl.  n=300, seeds 910000+:  Compression 285 (95.0%), mean
+			#          0.853658, stdev 0.024596, min 0.795197, max 0.935128,
+			#          82 of 300 = 27.3% outside. Welch t = 0.547 against the
+			#          first, so the two are indistinguishable (OC-119).
+			#   POOLED n=600: mean 0.854221, stdev 0.025177,
+			#          min 0.795197, max 0.941540
 			#
 			# So the CENTRE was right -- 0.8546 sits at percentile 54.0 -- and
 			# the tolerance was 2.8x too small. The old window would have failed
@@ -360,30 +365,39 @@ if [ "${full}" = "1" ]; then
 			# than used as-is, and one sd is a margin chosen and stated, not
 			# derived:  [0.805141 - 0.025732, 0.941540 + 0.025732]
 			#
-			# THE BINDER: four estimators were observed binding, so requiring
-			# one is wrong. Any of the four is accepted and the Compression
-			# SHARE is counted instead, against a floor from the measured rate
-			# at corpus size: 94.7% - 3*sqrt(p(1-p)/25) = 81.3%, so 80%.
-			case "${binder}" in
-				Compression|Collision|t-Tuple|LRS) comp_ok=$((comp_ok + 1))
-					[ "${binder}" = "Compression" ] && comp_binds=$((comp_binds + 1)) ;;
-				*) note "binding estimator on ${n}" "${binder} -- not one of the four seen in 300 draws"
-					bindfail=$((bindfail + 1)) ;;
-			esac
-			inrange=$(python3 -c "print(1 if 0.7794 <= ${value} <= 0.9672 else 0)")
+			# THE BINDER: FIVE estimators were observed binding across n = 600,
+			# so requiring any particular set is wrong. The Compression SHARE is
+			# counted instead, against a floor from the pooled rate at corpus
+			# size: 94.8% - 3*sqrt(p(1-p)/25) = 81.4%, so 80%.
+			# OC-119: NO ALLOWLIST OF BINDING ESTIMATORS, and the reason is a
+			# replication that caught the first attempt.
+			#
+			# The first version of this check accepted the four estimators seen
+			# binding in n = 300 (Compression, Collision, t-Tuple, LRS). An
+			# INDEPENDENT 300 draws at seeds 910000+ found a FIFTH -- Lag, twice
+			# -- which that allowlist would have rejected. An allowlist built
+			# from a sample is the same under-sampling error this check was
+			# being repaired for, one level up, so it is removed rather than
+			# extended: extending it would only wait for a sixth.
+			#
+			# What remains is what the measurement supports: ANY estimator may
+			# bind, and the Compression SHARE is counted against a floor.
+			comp_ok=$((comp_ok + 1))
+			[ "${binder}" = "Compression" ] && comp_binds=$((comp_binds + 1))
+			inrange=$(python3 -c "print(1 if 0.7700 <= ${value} <= 0.9667 else 0)")
 			[ "${inrange}" = "1" ] || {
-				note "out of the measured band on ${n}" "${value} not in [0.7794, 0.9672] (n=300)"
+				note "out of the measured band on ${n}" "${value} not in [0.7700, 0.9667] (pooled n=600)"
 				bindfail=$((bindfail + 1)); }
 		done
 		if [ "${comp_ok}" -gt 0 ]; then
 			share=$(python3 -c "print(1 if ${comp_binds} * 100 >= 80 * ${comp_ok} else 0)")
 			[ "${share}" = "1" ] || {
 				note "Compression share below the measured floor" \
-				     "${comp_binds}/${comp_ok} < 80% (measured 94.7% at n=300)"
+				     "${comp_binds}/${comp_ok} < 80% (measured 94.8% at pooled n=600)"
 				bindfail=$((bindfail + 1)); }
 		fi
 		if [ "${bindfail}" -eq 0 ]; then
-			note "binding estimator in [0.7794, 0.9672], Compression ${comp_binds}/${comp_ok}:" "${vals# }"
+			note "binder in [0.7700, 0.9667], Compression ${comp_binds}/${comp_ok}:" "${vals# }"
 		else
 			note "Compression binds 5/5 at 0.8546 +/- 0.0092:" "${bindfail} deviation(s)"
 			echo "    -> OC-16's ENTIRE HEADROOM TABLE assumes Compression is the binding"
