@@ -214,6 +214,73 @@ For every row with an upstream issue or PR, re-query GitHub (step 2), apply the 
 
 Deduplicating files (identical copies of upstream sources, logs or reports in the audit archive) is housekeeping. It never removes or resolves a finding. Before removing any audit file, confirm that the tracker's evidence paths for every finding still resolve.
 
+## THE MECHANISM UNDERNEATH THE RULES
+
+**Every numbered rule below is a special case of one sentence, and so is
+`SHAPE-03` in `audits/2026-10-11-independent-audit/DEFECT-SHAPES.md`:**
+
+> **A result that was never produced is indistinguishable from a result that
+> passed.**
+
+**And the reason nobody investigates it: the failure presents as an ABSENCE, and
+an absence looks like work not yet done.** A missing figure reads as *"that one
+still needs recording."* A gate with no output reads as *"that step was
+skipped."* An empty comparison reads as *"nothing to compare."* None of those
+reads as *"the instrument did not run and its verdict is a fiction"* — which is
+what each of them was.
+
+### TEN instances in this repository, with their references
+
+| # | the instrument | the absence | what it reported |
+|---|---|---|---|
+| 1 | `compareresults.pl` (`OC-4`) | a 0-byte reference file | zero comparisons, untouched `$retstatus`, **`selftest: PASS`** |
+| 2 | `compareresults.pl` | **both** sides empty — measured reachable | zero comparisons, exit 0, **"Maximum delta: 0"** |
+| 3 | `regression-restart.sh` (`WV-1`, `OC-75`) | `C23_PINS` held nothing, so the loop body never executed | it **printed `C23`'s cutoff claim anyway** |
+| 4 | `regression-docs.sh` (`DEAD-GUARD-SWEEP` class 3) | four checks driven from `grep` extractions that could return the empty set | breaking the pattern made it report that **every commit SHA resolves** |
+| 5 | `regression-docs.sh` (the interpreter sweep) | `python3` absent | five checks **passed** rather than abstaining; `scanned()` gained a third outcome |
+| 6 | the x86-64 workflow (`OC-84`) | an empty `if true; then / fi` aborted the step, so **five gates never ran** | the table reads **`never ran` -> `PASS`** |
+| 7 | the x86-64 workflow (`OC-97`) | step 5c aborted under `bash -e`, **skipping step 6 entirely** | the full suite's gate had nothing to judge |
+| 8 | the three-way differential (`OC-110`) | the Rust column keyed on raw labels, so **every row matched nothing** | would have reported **perfect agreement over zero three-way comparisons** |
+| 9 | `outside-battery-figures.txt` (`OC-123`) | a generator SIGPIPE'd at 8 of 25 rows | 17 streams read as **"awaiting figures"**, and an unknown row was **silently ignored** |
+| 10 | `deadguard.py` (`OC-106`) | `SP=.` scanned nothing — tree hash `e3b0c442…`, the **empty string's** | **`flags: 0`, `files touched: 0`** — `SHAPE-03` in the instrument built to find `SHAPE-03` |
+
+**Ten, not nine.** The owner's list of six — the empty loop, the runs that never
+happened, the skipped step, the Rust column, the short figures file, the
+detector's own dead guard — are numbers 3, 6, 7, 8, 9 and 10. Four more are in
+the record and belong on the list: numbers 1, 2, 4 and 5. **A near miss is
+excluded** rather than counted: `OC-121`'s twelve-point `C22a` probe **refused
+all twelve** points instead of returning numbers, which is this mechanism being
+defeated, not an instance of it.
+
+**And a separate count that must not be merged with this one.** "The sixth
+instrument whose failing state had never been observed" (`OC-104`) counts
+something else: a test that *ran* and *could not fail*. That overlaps this
+family but is not the same claim, and the two numbers are kept apart.
+
+### THE SINGLE REMEDY, which is the same every time
+
+> **Record what should be present, and refuse when it is not.**
+
+Not "check for failures" — **count what was examined and compare it to a
+recorded expectation.** Every rule below is that instruction applied to a
+different kind of thing:
+
+| rule | what it says must be recorded and refused on |
+|---|---|
+| 6 | the rows a sweep actually sampled |
+| 7 | that the baseline accepted, before the mutant is judged |
+| 13 | that an argument was parsed, before it reaches something irreversible |
+| 14 | that a sample-derived constraint met an independent sample |
+| 16 | the precision and variability the tolerance was chosen against |
+| 17 | the expected size of an artifact, so a truncated one is refused |
+| `SHAPE-03` | the count of comparisons, so zero cannot read as agreement |
+
+**A tenth instance will be a special case of it too.** The question to ask of
+any check is not *"does it detect the defect"* but **"what does it do when it
+examines nothing, and can I tell that outcome from a pass?"**
+
+---
+
 ### Rule 6 — a sweep is evidence about the rows it sampled
 
 A sampled table is **sampled rows**, never an interval. Where a claim about
