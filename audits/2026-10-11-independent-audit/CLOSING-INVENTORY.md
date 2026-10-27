@@ -34,7 +34,12 @@ this time. The other run on the closing revision, **x86-64 `40496388186`,
 PASSED** — so the platform facts and the nine commits' worth of claims that had
 never been measured off Darwin arm64 are measured and green; it is the new
 workflow alone that was red. Local suite on the repaired tree:
-**26 passed, 0 failed**.
+**26 passed, 0 failed**. The repair is `302812d`, and both workflows passed on
+it — `c22c-source-check` `40501921020`, the first green run in its existence,
+and x86-64 `40501921056` — with the gated limbs confirmed **live** in those
+runs rather than skipped: no `NOT VERIFIED HERE` line in the one, and
+`every commit SHA in NOTICE and the tracker resolves: yes` in the other's
+artefact log.
 
 ## What the campaign established
 

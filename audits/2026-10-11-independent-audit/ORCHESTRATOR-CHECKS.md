@@ -13058,6 +13058,34 @@ has a negative control and it still passes. `regression-constants.sh` PASS
 PASS. `regression-deadguard.sh` PASS, flags **40**, baseline unchanged — the
 new helper added no flag.
 
+### Measured on x86-64, and the limbs confirmed LIVE rather than quiet
+
+The repair was pushed as `302812d` and both workflows ran on it. This is the
+part that could not be established locally, because the whole fault is that a
+local tree is always a full clone.
+
+| run | workflow | result |
+|---|---|---|
+| `40501921020` | `c22c-source-check` | **success** — the first green run in its existence, all three steps, including the sweep and the three-minute re-derivation that had never executed in CI because the red run died at step 1 |
+| `40501921056` | `x86-64 platform facts` | **success** |
+
+**And green was checked for the right reason, which is the whole point of the
+two-halves repair.** A pass here would have been worthless if the limbs had
+gone quiet:
+
+- `c22c-source-check`'s log carries `fetch-depth: 0` and **no
+  `NOT VERIFIED HERE` line at all** — so every stamped commit was actually
+  resolved, not waived.
+- `07-regression-docs.log`, pulled from the run's artefacts, prints
+  `every commit SHA in NOTICE and the tracker resolves: yes` and
+  `the divergence document's measurement is current: 21 commit(s) behind HEAD`
+  — both gated limbs **ran**, neither printed `NOT CHECKED HERE`. The gate fires
+  only where the tree genuinely cannot answer.
+
+Per the standing convention, the two run ids above are recorded by a commit
+after the one they measured; the runs fired by *that* commit are not chased
+further, because the lag is by construction and does not terminate.
+
 ### What this does NOT establish
 
 - **In a shallow or partial clone the stamp's commit field is UNVERIFIED, not
