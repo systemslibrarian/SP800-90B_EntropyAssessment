@@ -333,7 +333,26 @@ if [ "${full}" = "1" ]; then
 		# the second is a check. So: the expected count is recorded here, a
 		# short file names how many are missing, an unknown stream name is a
 		# failure, and a duplicate is a failure.
-		EXPECTED_FIGURES=25
+		# OC-124: DERIVED FROM THE MANIFEST, NOT HAND-MAINTAINED.
+		#
+		# This was `EXPECTED_FIGURES=25`, a second count standing beside a
+		# machine-readable list -- the same shape as the GENERATORS table with
+		# nothing asserting its completeness, and the inventory that covered
+		# five of thirty-nine. A count maintained beside a list diverges from
+		# it; that is what hand-maintained counts do.
+		#
+		# n_mt and n_sha are COUNTED FROM outside-battery-corpus.txt at parse
+		# time (its first field is the family), so the clean subset is already
+		# a function of the manifest and the figures count follows from it.
+		#
+		# Consequence, and it is the wanted one: adding a 26th clean stream to
+		# the manifest raises this automatically and the figures check then
+		# FAILS until a figure is recorded for it. The failure is the prompt to
+		# do the work and it cannot be forgotten. (The corpus's own pinned
+		# composition, EXPECT_MT/EXPECT_SHA, fails too -- that is a separate and
+		# deliberate statement about what the corpus should contain, asserted
+		# against the manifest at :150, not a third copy of this number.)
+		EXPECTED_FIGURES=$((n_mt + n_sha))
 		fig_rows=$(grep -cE '^[^#[:space:]]' "${FIGURES}" 2>/dev/null || echo 0)
 		if [ "${fig_rows}" -ne "${EXPECTED_FIGURES}" ]; then
 			if [ "${fig_rows}" -lt "${EXPECTED_FIGURES}" ]; then
