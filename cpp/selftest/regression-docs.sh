@@ -91,6 +91,37 @@ decl() { # decl <file> <var> -- the constant a script declares about itself
 # frozen by design; documentation references are not. Each floor sits well under
 # the count observed at f069898, which is recorded beside it.
 nwords() { echo "$#"; }
+
+# WHY THIS TREE MAY NOT BE ABLE TO ANSWER ABOUT A COMMIT (OC-127).
+# Two checks below ask git whether a documented commit exists and whether a
+# measured commit is an ancestor of HEAD. In a SHALLOW clone git truthfully
+# says it has neither, for every commit but the tip, because they were never
+# fetched -- and reading that as "the documentation cites commits that do not
+# exist" is a confident wrong answer. Measured in a `--depth=1` clone of
+# 5f79f74 before this guard existed: 27 of the documented SHAs reported as not
+# resolving, and the script exited 2 at that check. Prints the reason and
+# SKIPS the two limbs rather than refusing, the same decision as
+# c22c_source.py's; CI passes fetch-depth: 0, so they stay live there.
+# Echoes a reason when the history is truncated, nothing when it is complete.
+history_incomplete() {
+    # No git at all counts as incomplete, not as complete. The Python twin
+    # treats an undetermined answer as incomplete deliberately -- the refusal
+    # is the destructive answer and should need a POSITIVE result to fire --
+    # and these two must not disagree about the same tree. Without this, a
+    # release tarball would print 27 commit SHAs as unresolvable, which is the
+    # very fault being repaired, arriving by a different route.
+    if ! git rev-parse --git-dir >/dev/null 2>&1; then
+        echo "no git repository here"; return 0
+    fi
+    if [ "$(git rev-parse --is-shallow-repository 2>/dev/null)" = "true" ]; then
+        echo "shallow clone"; return 0
+    fi
+    if git config --get-regexp '^remote\..*\.promisor$' >/dev/null 2>&1; then
+        echo "partial clone with a promisor remote"; return 0
+    fi
+    return 1
+}
+HIST_INCOMPLETE=$(history_incomplete || true)
 floor() { # floor <label> <observed> <minimum>
     if [ "$2" -lt "$3" ]; then
         bad "${1}:" "extracted only $2 item(s), floor is $3 - the pattern no longer matches, so this check verifies nothing"
@@ -146,11 +177,16 @@ shas=$( { grep -ohE 'Commit [0-9a-f]{7,40}\.' NOTICE | sed 's/^Commit //; s/\.$/
           grep -ohE '`87c104d[0-9a-f]*`' NOTICE "${TRACKER}" | tr -d '`'
         } | sort -u )
 floor "commit SHA extraction from NOTICE and the tracker" "$(nwords ${shas})" 10   # 23 at f069898
-for h in ${shas}; do
-    git cat-file -e "${h}^{commit}" 2>/dev/null || missing="${missing} ${h}"
-done
-if [ -z "${missing}" ]; then note "every commit SHA in NOTICE and the tracker resolves:" "yes"
-else bad "commit SHAs that do not resolve:" "${missing}"; fi
+if [ -n "${HIST_INCOMPLETE}" ]; then
+    note "every commit SHA in NOTICE and the tracker resolves:" \
+         "NOT CHECKED HERE -- ${HIST_INCOMPLETE}, so this tree cannot be asked"
+else
+    for h in ${shas}; do
+        git cat-file -e "${h}^{commit}" 2>/dev/null || missing="${missing} ${h}"
+    done
+    if [ -z "${missing}" ]; then note "every commit SHA in NOTICE and the tracker resolves:" "yes"
+    else bad "commit SHAs that do not resolve:" "${missing}"; fi
+fi
 
 # -------------------------------------------------------- 2. referenced paths
 missing=""
@@ -862,7 +898,10 @@ else
         # not in this history was measured somewhere else.
         DIV_STALE_AFTER=40
         behind=$(printf '%s\n' "${divout}" | sed -n 's/^behind-head:[[:space:]]*//p')
-        if ! git merge-base --is-ancestor "${div_at}" HEAD 2>/dev/null; then
+        if [ -n "${HIST_INCOMPLETE}" ]; then
+            note "the divergence document's commit is an ancestor of HEAD:" \
+                 "NOT CHECKED HERE -- ${HIST_INCOMPLETE}"
+        elif ! git merge-base --is-ancestor "${div_at}" HEAD 2>/dev/null; then
             bad "the divergence document names a commit that is not an ancestor of HEAD:" "${div_at}"
         elif [ -n "${behind}" ] && [ "${behind}" -gt "${DIV_STALE_AFTER}" ]; then
             bad "the divergence document is stale:" \

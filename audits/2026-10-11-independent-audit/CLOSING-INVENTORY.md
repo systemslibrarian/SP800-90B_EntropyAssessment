@@ -8,6 +8,34 @@ The buckets below are unchanged by this revision; the previous headline — the
 Windows measurement and the outside audit, 2026-10-20 — is in this file's
 history and in `OC-48`–`OC-58`.
 
+**The closing revision was not the last commit.** Pushing it fired
+`c22c-source-check` for the first time in its existence, and that run —
+`40496388177` — **went red**: the stamp-provenance limb read a shallow CI
+checkout (`actions/checkout`'s default `fetch-depth: 1`, one commit) as proof
+that a stamped ancestor "is not a commit in this repository". The stamps, the
+digest and every carried value were correct; the instrument was wrong about the
+tree it stood in. **And it was not confined to a provenance line: because
+`entropy_floor.py` validates at import, the floor could not be LOADED in a
+shallow clone — measured — so a clone made the ordinary CI way could not
+compute an entropy figure at all.** Repaired in the revision after this one,
+in two halves —
+the probe now reports an unanswerable question as unverified instead of
+refusing, and the workflow is given full history so the limb stays live rather
+than going quiet (`OC-127`). Sweeping for the mechanism rather than the bug
+then found **the same fault in two more limbs of `regression-docs.sh`**, where
+a shallow clone made the suite's own documentation check declare 27 documented
+commit SHAs bogus; both are gated and skip with a printed reason. Those two had
+never been wrong in CI only because the x86-64 workflow already passes
+`fetch-depth: 0` for an unrelated reason — **correct by an accident of someone
+else's requirement**, which the new workflow did not inherit. **A closing claim
+of green was disproved by the first run on a platform no local tree
+resembles**, which is the rule in `OC-41` arriving once more, about clone depth
+this time. The other run on the closing revision, **x86-64 `40496388186`,
+PASSED** — so the platform facts and the nine commits' worth of claims that had
+never been measured off Darwin arm64 are measured and green; it is the new
+workflow alone that was red. Local suite on the repaired tree:
+**26 passed, 0 failed**.
+
 ## What the campaign established
 
 Three findings lead, because they are the ones that would survive an outside

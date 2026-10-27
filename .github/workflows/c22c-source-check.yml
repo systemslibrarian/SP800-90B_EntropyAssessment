@@ -46,6 +46,16 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          # THE STAMPS CITE ANCESTORS, SO THE HISTORY HAS TO BE HERE (OC-127).
+          # The default is fetch-depth: 1, and this workflow's first run
+          # refused on a stamp citing a commit eight back: present in the
+          # repository, absent from a one-commit clone. c22c_source.py no
+          # longer reads that as "not a commit in this repository" -- it
+          # records the claim as unverified instead -- so with the default the
+          # check would now PASS while verifying nothing. Full history keeps
+          # the limb live. The other two workflows already set this.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:

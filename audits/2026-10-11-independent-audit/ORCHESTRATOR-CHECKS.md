@@ -12866,3 +12866,234 @@ govern dated evidence.
   `CLOSING-INVENTORY.md`'s closing revision, because the commit carrying a
   run's id cannot be the commit that run measured.
 - Nothing reported upstream.
+
+## OC-127 — the closing revision's own CI run went red; the probe had a third case it had already reasoned about; and the same fault was in two more instruments
+
+The campaign was closed at `5f79f74` and the eight commits pushed. The push
+fired `c22c-source-check` for the **first time in its existence** — one run
+ever, `40496388177`, and it **FAILED**:
+
+```
+c22c_source: REFUSED
+  the C22c compression stamp at n = 8000000 records repo commit a812fdec3ed1,
+  which is not a commit in this repository
+```
+
+It is a commit in this repository. `git merge-base --is-ancestor a812fdec3ed1
+master` answers yes, it is `HEAD@{8}`, and it was pushed in the same push that
+produced this run. Nothing was wrong with the stamp, the digest, or any carried
+value. **The instrument was wrong about the tree it was standing in.**
+
+### The cause, from the run's own log rather than inferred
+
+```
+Run actions/checkout@v4
+  fetch-depth: 1
+[command]/usr/bin/git ... fetch --no-tags --prune --depth=1 origin +5f79f740...
+```
+
+`actions/checkout@v4` defaults to `fetch-depth: 1`. The CI tree held **exactly
+one commit**. The stamp cited an ancestor eight back, `git cat-file -e` said it
+had no such object, and `_git_object_exists` read that denial as the refusal
+case.
+
+**Proven both ways on one commit, which is the whole argument** — same tree,
+same stamps, same file bytes, only the history depth differing:
+
+| clone of `5f79f74` | `rev-parse --is-shallow-repository` | commits | `c22c_source.py` |
+|---|---|---:|---|
+| `--depth=1` | `true` | 1 | **REFUSED**, exit 1 |
+| full | `false` | 691 | **PASS**, exit 0 |
+
+### The part that makes this worth an entry
+
+`_git_object_exists` already carried a long docstring reasoning about exactly
+this class of problem. It had been through one revision: the first version
+refused whenever git could not be run, which made `regression-constants.sh`
+refuse in a release tarball, contradicting that script's stated reason for
+existing. The fix was a three-way return — present, absent, or **unanswerable**
+— and the docstring states the principle outright: *"a commit git says it does
+not have is a REFUSAL; a commit git cannot be asked about is recorded as
+unverified."*
+
+The principle was right and the enumeration was short by one. "No git" and "git
+with the whole history" are not the only trees. A **shallow clone is a git
+repository** — it answers `rev-parse --git-dir`, so `_git_available()` returns
+true — and it still says it does not have a commit that is unquestionably in
+the repository's history, because it was never fetched. That tree *cannot be
+asked*, and it was being read as *having answered*. This is the
+`my-own-probes-answer-the-wrong-question` shape: the probe returned a confident,
+plausible, wrong answer, and the thing it got wrong was its own footing.
+
+### How far it reached: the floor could not be computed at all
+
+The red CI step was `c22c_source.py` run directly, which understates this.
+`entropy_floor.py` imports the module and validates at **import time**, so in a
+shallow clone the floor did not fail — it could not be **loaded**:
+
+```
+  File ".../oracles/entropy_floor.py", line 270, in <module>
+c22c_source.C22cSourceError: the C22c compression stamp at n = 8000000 records
+  repo commit a812fdec3ed1, which is not a commit in this repository
+```
+
+Measured in the same `--depth=1` clone: **unpatched, `entropy_floor.py` dies at
+import with `C22cSourceError`**; patched, it reaches its usage message. So the
+subject of this defect is not a provenance annotation — it is **every entropy
+figure this fork computes, in any shallow clone**, which includes every CI
+checkout that does not opt out of the default. The one-line consequence: a
+clone made the ordinary CI way could not price a pad.
+
+And the irony is on the record already. The three-way return exists *precisely*
+so the constants stay checkable in a tree without full git — a release tarball
+— and the same class of fault, one tree-shape later, took out the floor.
+
+### The repair of the first instrument, in two halves, because either alone is a defect
+
+1. **`c22c_source.py`** — a negative is a refusal **only when the tree can
+   answer**. New `_history_is_incomplete()` returns a reason string when the
+   history is known truncated, `False` when known complete, and `None` when
+   undetermined; the caller treats `None` as incomplete, because the refusal is
+   the destructive answer and should need a **positive** result to fire. Two
+   truncations are detected: a shallow clone (`--is-shallow-repository`) and a
+   partial clone (a `remote.*.promisor` config key — its commits are normally
+   all present, but it can lazily fetch, so it is reported rather than
+   trusted). Asked **only on the negative**, so a complete tree pays nothing.
+2. **`c22c-source-check.yml`** — `fetch-depth: 0`. Half 1 alone would have
+   turned a red run green **by going quiet**: the limb would report "not
+   verified here" forever and nothing would check the field. That is the
+   dead-guard hazard this repository has already measured at a 16 % detector
+   false-positive rate (`OC-95`), and it would have been self-inflicted. The
+   other two workflows already set `fetch-depth: 0`; this one was new and did
+   not.
+
+### The same fault twice more, found by sweeping for the mechanism
+
+The repair above fixes one instrument. The mechanism — *asking git about a
+commit in a tree that was never given it* — is not specific to `c22c_source.py`,
+so the tree was swept for every history-dependent git call in `audits/`,
+`cpp/selftest/` and `.github/`. Five call sites; two more have the fault, both
+in **`regression-docs.sh`**, the suite's own documentation check:
+
+| site | the call | what a shallow clone makes it say |
+|---|---|---|
+| limb 1, commit SHAs | `git cat-file -e "${h}^{commit}"` over the SHAs in `NOTICE` and the tracker | **"commit SHAs that do not resolve"** listing **27 of them** — i.e. the documentation's entire provenance record declared bogus |
+| the staleness limb | `git merge-base --is-ancestor "${div_at}" HEAD` | "the divergence document names a commit that is not an ancestor of HEAD" — and the comment above it reads *"a document naming a commit that is not in this history was measured somewhere else"*, which is the same misreading written down as the intent |
+
+Reproduced before touching either: in a `--depth=1` clone of `5f79f74` the
+unpatched script printed all 27 and **exited 2 at that check**, so the second
+limb never ran — the first instance masked the second.
+
+The third site, `audits/2026-10-09-independent-audit/rerun.sh`, has the same
+`cat-file -e` shape and `exit 2`. **Left alone deliberately:** it is a dated
+rerun script for a past audit, it is not in the suite and not in CI, and
+editing dated evidence to fix a hypothetical is the fault this repository
+already names. It is recorded here instead.
+
+Both live limbs are now gated on `history_incomplete()` — the shell twin of the
+Python helper, same two detections — and **skip with a printed reason** rather
+than refusing. Isolated against the unmodified script, four runs:
+
+| clone | script | result |
+|---|---|---|
+| full, unbuilt | original | FAIL (2 checks) |
+| full, unbuilt | patched | **FAIL (2 checks)** — identical; the 2 are an unbuilt clone's pinned-figure checks, not this |
+| shallow, unbuilt | original | 3 of the rest failed |
+| shallow, unbuilt | patched | **2 of the rest failed** — exactly one failure removed, the spurious one |
+
+The full-clone pair is the control that matters: on a complete history the
+change does nothing at all. On the real built tree the script PASSES, with the
+limb live and the SHAs resolving.
+
+**A third tree shape, found by making the two helpers agree.** The shell helper
+first treated "git cannot answer" as a complete history, while the Python twin
+treats an undetermined answer as incomplete by design. Two instruments
+disagreeing about the same tree is itself a defect, so the shell one was
+aligned — and aligning it fixed a case nobody had asked about: in a
+**release tarball with no `.git` at all**, the unpatched script reports the
+documented SHAs as unresolvable, and the patched one skips with
+`no git repository here, so this tree cannot be asked`. Measured on a copy of
+the clone with `.git` removed. That is the same tarball case
+`c22c_source.py`'s docstring was already written to protect, failing in a
+different instrument — so the fault had **three** tree shapes, not two, and the
+third was reached only by refusing to let the two helpers differ.
+
+**Why this was worth sweeping for.** `regression-docs.sh` runs in CI, and it
+has never been wrong there, because the x86-64 workflow passes
+`fetch-depth: 0` — for an unrelated reason, noted in its own comment as "the
+tag build needs history". **Two instruments were correct in CI by an accident
+of someone else's requirement.** The new workflow did not inherit that accident
+and the fault surfaced immediately.
+
+### Measured, with the arm that shows the weakening
+
+Five arms on clones of one commit, the patched module in each:
+
+| arm | expected | result |
+|---|---|---|
+| shallow, genuine stamps | pass, claim reported unverified | exit 0, `NOT VERIFIED HERE: ... history is incomplete (shallow clone)` |
+| full, genuine stamps | pass, silent | exit 0, no note |
+| full, stamp set to a 40-hex commit that does not exist | **REFUSE** — the limb is live | exit 1, `REFUSED` |
+| shallow, same bogus stamp | pass with the note — **the weakening, stated** | exit 0, note |
+| `--filter=blob:none` partial clone, genuine stamps | pass, silent — every commit is present | exit 0, **0 unverified lines**; helper reports `partial clone with a promisor remote` when asked |
+
+The third arm is the one that matters: the guard still fires on a complete
+history, so this is a narrowing to where the question is answerable, not a
+removal. The fourth is the price, and it is why half 2 exists.
+
+**The other run on the same push passed.** x86-64 `40496388186` on `5f79f74`:
+**success**, 50 minutes — which is what `OC-126` was waiting for, since nine
+commits of claims had been measured on Darwin arm64 only. `regression-docs.sh`
+ran green inside it with both faulty limbs live, for the reason given above: that
+workflow passes `fetch-depth: 0`. So of the two runs on the closing revision, the
+one with full history was right and the one with the default was wrong, which is
+the finding in one line.
+
+Suite on the repaired tree: `run-all-checks.sh --allow-known-platform-deltas`
+**26 passed, 0 failed** (24 regression scripts), the documented expectation;
+`oracle-selftest.sh` **32 of 32**, including the
+pre-existing fixture `a commit id that is not in this repository` — the limb
+has a negative control and it still passes. `regression-constants.sh` PASS
+(10 constants, the C22c digest, the sweep, the manifest). `regression-workflows.sh`
+PASS. `regression-deadguard.sh` PASS, flags **40**, baseline unchanged — the
+new helper added no flag.
+
+### What this does NOT establish
+
+- **In a shallow or partial clone the stamp's commit field is UNVERIFIED, not
+  checked, and a bogus value passes there.** Measured, arm 4. The claim is live
+  in CI and on any full clone, and nowhere else. It is printed rather than
+  silent, which is the only reason this is acceptable.
+- **The partial-clone limb is exercised but has no fixture.** A real
+  `--filter=blob:none` clone was made and the helper returns `partial clone
+  with a promisor remote` on it — and that clone reports
+  `is-shallow-repository: false`, so the shallow limb alone would have missed
+  it. The module still **passes cleanly there, with zero unverified lines**,
+  because a blob-filtered clone has every commit and the limb is consulted only
+  on a negative. So it is measured, not merely inspected; what is missing is a
+  standing fixture in `oracle-selftest.sh`, since making one means cloning in a
+  test. The conservative direction is accepted: a partial clone that could have
+  answered will be reported unverified if it ever does lack the object.
+- **`None` is treated as incomplete, so a git that fails in an unforeseen way
+  now downgrades rather than refuses.** That is the deliberate direction, and it
+  means an unforeseen git failure is a quiet unverified line, not a stop.
+- **This says nothing about the other two workflows' correctness**, only that
+  they already pass full history for their own reasons.
+- **The campaign was declared closed one commit before this was found**, by a
+  push whose first CI run disproved part of what the closing revision asserted.
+  Three sessions' local green did not catch it, because every local tree is a
+  full clone. **The rule is the one already written: verified on the hosts it
+  was verified on — and a clone depth is part of the host.**
+- **Neither helper has a standing fixture, and the shell one has no negative
+  control at all.** All five arms, both clone shapes and the tarball were
+  measured by hand, in temporary clones. The one limb with a standing fixture is
+  the pre-existing `a commit id that is not in this repository` in
+  `oracle-selftest.sh`, which covers the full-clone refusal and nothing else. A
+  fixture for the shallow case means cloning inside a test, and the digest pin
+  makes a fabricated stamp awkward; it was not built. **So the guard against
+  this regressing is this entry, not a test** — which is weaker, and is the
+  honest description.
+- **Three tree shapes were measured; "truncated history" is not enumerated.**
+  Shallow, promisor-partial and no-git are the three that were tried. Grafts,
+  replace refs and a `git worktree` with an unusual layout were not.
+- **Unreviewed, like everything else here** (`C8`).

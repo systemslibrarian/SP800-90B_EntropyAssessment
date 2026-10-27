@@ -227,6 +227,24 @@ def _git_object_exists(commit):
     says it does not have is a REFUSAL; a commit git cannot be asked about is
     recorded as unverified and printed. The field's FORMAT is checked either
     way, and the derivation sha256 -- the stronger claim -- needs no git at all.
+
+    THE THIRD CASE, AND IT COST A RED CI RUN (OC-127). "No git at all" and "git
+    with the whole history" are not the only trees this runs in. A SHALLOW or
+    otherwise truncated clone is a git repository, answers `rev-parse
+    --git-dir`, and still says it does not have a commit that is unquestionably
+    in the repository's history -- because it was never fetched. The first
+    version read that denial as the refusal case and said the stamp "is not a
+    commit in this repository". It was: `actions/checkout@v4` defaults to
+    `fetch-depth: 1`, so the CI tree held exactly one commit, and the stamp
+    cited an ancestor eight commits back. Proven both ways on one tree: a
+    `--depth=1` clone REFUSED, a full clone of the same commit PASSED.
+
+    So a negative is only a refusal when the tree can actually answer -- when
+    its history is complete. Where it is truncated the answer is unverified,
+    like the no-git case. This weakens the check exactly where it cannot be
+    made, and nowhere else; CI is given `fetch-depth: 0` so the check stays
+    LIVE there rather than going quiet, which is the dead-guard hazard this
+    repository has already measured (OC-95).
     """
     if not _git_available():
         UNVERIFIED.append("the stamped repo commit %s was not confirmed to "
@@ -239,7 +257,59 @@ def _git_object_exists(commit):
         UNVERIFIED.append("the stamped repo commit %s was not confirmed to "
                           "exist: git could not be run (%s)" % (commit[:12], exc))
         return None
-    return rc == 0
+    if rc == 0:
+        return True
+    # Absent. Only a complete history may call that a refusal; see the
+    # docstring's third case. Asked only on the negative, so a complete tree
+    # pays nothing and the common path is unchanged.
+    incomplete = _history_is_incomplete()
+    if incomplete is not False:
+        UNVERIFIED.append("the stamped repo commit %s was not confirmed to "
+                          "exist: this tree's history is incomplete (%s), so "
+                          "git cannot be asked about an ancestor it never "
+                          "fetched" % (commit[:12], incomplete or "undetermined"))
+        return None
+    return False
+
+
+def _history_is_incomplete():
+    """Why this tree cannot answer about an arbitrary ancestor, or False.
+
+    Returns a short reason string when the history is known to be truncated,
+    False when it is known to be complete, and None when that could not be
+    determined -- and None is treated as incomplete by the caller, because the
+    refusal is the destructive answer and it should need a positive result to
+    fire.
+
+    Two truncations are detected. A SHALLOW clone (`--depth=N`) reports itself
+    through `rev-parse --is-shallow-repository`. A PARTIAL clone (`--filter=`)
+    records a promisor remote in its config; its commits are normally all
+    present, but it can lazily fetch, so it is reported rather than trusted.
+    """
+    try:
+        r = subprocess.run(['git', '-C', HERE, 'rev-parse',
+                            '--is-shallow-repository'],
+                           capture_output=True, text=True)
+    except OSError:
+        return None
+    if r.returncode != 0:
+        return None
+    if r.stdout.strip() == 'true':
+        return "shallow clone"
+    if r.stdout.strip() != 'false':
+        return None
+    try:
+        r = subprocess.run(['git', '-C', HERE, 'config', '--get-regexp',
+                            r'^remote\..*\.promisor$'],
+                           capture_output=True, text=True)
+    except OSError:
+        return None
+    # rc 1 is "no such key", which is the ordinary full-clone answer.
+    if r.returncode == 0 and r.stdout.strip():
+        return "partial clone with a promisor remote"
+    if r.returncode not in (0, 1):
+        return None
+    return False
 
 
 def _tracked_by_git(path):
