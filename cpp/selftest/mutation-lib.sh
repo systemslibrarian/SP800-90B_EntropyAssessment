@@ -218,9 +218,16 @@ mut_summary() {
     # document is checked against the script. This is the first of those two
     # links: set MUT_DECLARED and a harness that gains or loses a case FAILS
     # here instead of quietly reporting a new total that nothing compares.
+    #
+    # IT IS NOT BOOKED AS `NOT CAUGHT`. In this project that verdict means "no
+    # case in the suite notices this change" -- an unguarded mechanism -- and it
+    # is read that way in the record. A declaration that disagrees with the tally
+    # is a bookkeeping fault in the harness, which is a different thing, so it
+    # gets its own line and its own exit status rather than inflating the count
+    # the record treats as findings.
+    local drift=""
     if [ -n "${MUT_DECLARED}" ] && [ "${total}" -ne "${MUT_DECLARED}" ]; then
-        MUT_FAIL=$((MUT_FAIL + 1))
-        MUT_FAIL_LABELS="${MUT_FAIL_LABELS} declared-count-drift"
+        drift=yes
         mut_note "declared count" "*** DECLARED ${MUT_DECLARED}, RAN ${total} -- the harness and its declaration disagree ***"
     fi
     printf '%s: %d of %d mutations landed and were caught' "${name}" "${MUT_PASS}" "${total}"
@@ -229,7 +236,11 @@ mut_summary() {
     printf '\n'
     [ "${MUT_FAIL}" -ne 0 ] && printf '%s: not caught:%s\n' "${name}" "${MUT_FAIL_LABELS}"
     [ "${MUT_NOAPPLY}" -ne 0 ] && printf '%s: did not apply (the harness is broken, not the guard):%s\n' "${name}" "${MUT_NOAPPLY_LABELS}"
-    if [ "${MUT_FAIL}" -eq 0 ] && [ "${MUT_NOAPPLY}" -eq 0 ]; then
+    if [ -n "${drift}" ]; then
+        printf '%s: DECLARATION DRIFT (declared %s, ran %s) -- the tally above is not the harness this document describes\n' \
+            "${name}" "${MUT_DECLARED}" "${total}"
+    fi
+    if [ "${MUT_FAIL}" -eq 0 ] && [ "${MUT_NOAPPLY}" -eq 0 ] && [ -z "${drift}" ]; then
         printf '%s: PASS\n' "${name}"
         return 0
     fi

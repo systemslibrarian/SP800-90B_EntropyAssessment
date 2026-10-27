@@ -69,6 +69,14 @@ DOCS_SKIPPED=$(${DOCS_LS} '*.md' NOTICE 2>/dev/null | sort -u | grep -Ec "${DOCS
 fails=0
 note() { printf '  %-52s %s\n' "$1" "$2"; }
 bad()  { note "$1" "$2"; fails=$((fails + 1)); }
+# OC-126: DEFINED HERE, not beside its second caller. The first version of this
+# helper sat 41 lines below the scope check that used it, so the substitution was
+# empty, the regex became `of (24|) `, grep REFUSED on the empty alternative, and
+# `|| true` swallowed the refusal -- a check that could not fail, caught only by
+# running its negative control.
+decl() { # decl <file> <var> -- the constant a script declares about itself
+    sed -n "s/^${2}=\([0-9][0-9]*\)$/\1/p" "$1" | head -1
+}
 
 # An extraction that matches nothing produces an empty accumulator, and an empty
 # accumulator reads exactly like "nothing was wrong". Every extraction below
@@ -1027,6 +1035,38 @@ else
     grep -qE "→ ${n_pres}( \||$)"  "${SCOPE}" || sbad="${sbad} input-presence-count(${n_pres})"
     grep -qE "→ ${n_hard}( \||$)"  "${SCOPE}" || sbad="${sbad} hardcoded-claim-count(${n_hard})"
     grep -q "| ${n_scripts} |" "${SCOPE}" || sbad="${sbad} regression-script-count(${n_scripts})"
+
+    # OC-126: THE PROSE COUNTS, NOT ONLY THE ARROW-FORM EVIDENCE.
+    #
+    # The four checks above read the evidence column. The STATUS column states
+    # the same numbers again in prose -- "3 of 22 scripts are covered", "4 of 22
+    # assert presence", "they cover 3 of 22" -- and those copies went stale while
+    # this check passed, because it was reading the other copy. Two copies of a
+    # number with a check on one of them is the defect this project has already
+    # paid for twice (C22c's six family values, OC-125; the oracle that verified
+    # its own copy, OC-109).
+    #
+    # So the denominator every prose count shares is derived here and every
+    # occurrence of the "N of M" form in the file must use it. The numerators are
+    # already checked above; this is the denominator they are stated against.
+    sc_total=$(decl "${here}/run-all-checks.sh" EXPECTED_TOTAL_CHECKS)
+    prose=$(grep -oE '[0-9]+ of [0-9]+ (scripts|assert|checks)' "${SCOPE}")
+    n_prose=$(printf '%s\n' "${prose}" | grep -c . )
+    if [ -z "${n_scripts}" ] || [ -z "${sc_total}" ]; then
+        # THE SOURCES OF TRUTH FIRST. If either denominator cannot be read, this
+        # check has nothing to compare against and says so; it does not pass.
+        sbad="${sbad} prose-denominator-SOURCE-UNREADABLE(scripts='${n_scripts}',checks='${sc_total}')"
+    elif [ "${n_prose}" -lt 3 ]; then
+        sbad="${sbad} prose-count-form-vanished(${n_prose})"
+    else
+        wrong_denom=$(printf '%s\n' "${prose}" | grep -vE "of (${n_scripts}|${sc_total}) ")
+        gr=$?
+        if [ "${gr}" -gt 1 ]; then
+            sbad="${sbad} prose-denominator-SCAN-DID-NOT-RUN(rc ${gr})"
+        elif [ -n "${wrong_denom}" ]; then
+            sbad="${sbad} prose-denominator($(printf '%s' "${wrong_denom}" | tr '\n' ';'))"
+        fi
+    fi
     if [ -z "${sbad}" ]; then
         note "the suite's scope statement matches the tree:" "yes"
     else
@@ -1062,9 +1102,6 @@ fi
 INV="${repo}/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md"
 ORACLES="${repo}/audits/2026-10-11-independent-audit/oracles"
 inv_rows=0
-decl() { # decl <file> <var> -- the constant a script declares about itself
-    sed -n "s/^${2}=\([0-9][0-9]*\)$/\1/p" "$1" | head -1
-}
 inv_count() { # inv_count <label> <extended-regex> <sed-extract> <declared>
     local label=$1 re=$2 ex=$3 want=$4 got
     got=$(grep -oE "${re}" "${INV}" | head -1 | sed -e "${ex}")
