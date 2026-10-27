@@ -181,8 +181,21 @@ cite "generator docstring: mt range" audits/2026-10-11-independent-audit/generat
 cite "generator docstring: sha range" audits/2026-10-11-independent-audit/generators/blindspot_streams.py 'sha00\.\.sha[0-9]+' 's/sha00\.\.sha//' "$((EXPECT_SHA - 1))"
 cite "OC-17: calibration total"   audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md 'Calibration: [0-9]+ independent clean streams' 's/Calibration: \([0-9]*\).*/\1/' "${cite_total}"
 cite "OC-17: 0/N false positives" audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md '\*\*0/[0-9]+\*\* over 5\.731' 's/\*\*0\/\([0-9]*\).*/\1/' "${cite_total}"
+# OC-126: THE FIGURE MUST BE CITED AS A FIGURE, NOT AS SOMEONE'S PREFIX.
+#
+# This was a bare substring grep, and a bare decimal is a substring of every
+# longer decimal that starts with it. The band-1 battery's arm for this guard
+# mutates 0.8546 -> 0.8547 and reported NOT CAUGHT from OC-125 on -- because
+# OC-116..OC-118 had written the measured mean 0.854784 into the record at
+# b9531b8, so the mutated figure still "matched". The guard was satisfiable by
+# an unrelated number, and the arm could not tell the difference.
+#
+# Anchored on both sides: not preceded by a digit or a dot, not followed by a
+# digit. Measured on the current record -- 8538.7 11 hits, 59.938 10, 40.21 8,
+# 0.8546 10 (one of its eleven bare hits WAS inside a longer number), and the
+# mutated 0.8547 drops from 2 to 0.
 for fig in 8538.7 59.938 40.21 0.8546; do   # the figures this script pins must still be the ones the record cites
-	grep -q -- "${fig}" "${cite_root}/audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md" 2>/dev/null \
+	grep -qE "(^|[^0-9.])${fig//./\\.}([^0-9]|$)" "${cite_root}/audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md" 2>/dev/null \
 		|| cbad "pinned figure no longer cited in ORCHESTRATOR-CHECKS.md:" "${fig}"
 done
 for nm in B_osc5000 E_weaklag5000 G_xor13_; do  # and the names behind them must be the generator's names (G is built from a format string)

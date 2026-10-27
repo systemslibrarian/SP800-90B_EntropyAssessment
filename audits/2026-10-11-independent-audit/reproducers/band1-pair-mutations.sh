@@ -198,11 +198,34 @@ run_pair "the oracles' exit contract" "b072bf7" \
     "${O}/restart_decision_exact.py" 'sys.exit(2)' 'sys.exit(0)' \
     bash "${O}/oracle-selftest.sh"
 
-run_pair "outside-battery pinned figures" "feef1a1" \
-    cpp/selftest/regression-outside-battery.sh \
-    'for fig in 8538.7 59.938 40.21 0.8546; do' \
-    'for fig in 8538.7 59.938 40.21 0.8547; do' \
-    bash cpp/selftest/regression-outside-battery.sh
+# THIS ARM'S MUTATION WAS ABSORBED BY A COINCIDENCE (found OC-126).
+#
+# It replaces a pinned figure with 0.8547 and requires the guard to notice that
+# the record no longer cites it. The guard's citation test was a BARE SUBSTRING
+# grep, and at b9531b8 `OC-116..OC-118` wrote the measured mean 0.854784 into
+# ORCHESTRATOR-CHECKS.md -- so "0.8547" was still found, in the middle of an
+# unrelated number, and the arm reported NOT CAUGHT from OC-125 on. That is why
+# this arm was CAUGHT at OC-105 and NOT CAUGHT later with no change to either
+# the guard or the arm: the DOCUMENT moved under both of them.
+#
+# Two repairs, not one. The guard is anchored so a figure must be cited as a
+# figure (OC-126, in regression-outside-battery.sh). And the arm now asserts
+# that its replacement value is ABSENT from the cited document before it will
+# draw a verdict -- because a mutation to a value the document happens to
+# contain tests nothing, and the next number written into a 12,000-line record
+# could re-create exactly this situation in silence.
+_cite_doc="audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md"
+if grep -qE '(^|[^0-9.])0\.8547([^0-9]|$)' "${_cite_doc}"; then
+    note "outside-battery pinned figures" "MUTATION-DID-NOT-APPLY" \
+         "0.8547 is cited in ${_cite_doc}, so replacing 0.8546 with it tests nothing"
+    noapply=$((noapply+1))
+else
+    run_pair "outside-battery pinned figures" "feef1a1" \
+        cpp/selftest/regression-outside-battery.sh \
+        'for fig in 8538.7 59.938 40.21 0.8546; do' \
+        'for fig in 8538.7 59.938 40.21 0.8547; do' \
+        bash cpp/selftest/regression-outside-battery.sh
+fi
 
 # THIS ARM MUTATED A STRING THE ENFORCEMENT DOES NOT READ (found OC-125).
 #
