@@ -12434,3 +12434,50 @@ new.
 **The second is a hand-maintained count caught by its enumerator**, which is
 the structure `OC-124` and rule 16's sibling exist to produce: the document was
 found to be four behind by a check, not by anyone remembering to update it.
+
+### The re-run was COMPLETE, and it exposed a stale arm
+
+With both controls fixed the battery reports **10 CAUGHT, 4 NOT CAUGHT, 0
+control-failed, COMPLETE**. Fixing the controls changed one verdict in the
+other direction, and that is its own finding.
+
+**`the divergence-figure enforcement` reported NOT CAUGHT, and the arm is
+wrong, not the guard.** The arm replaced the first occurrence of `11207ca` in
+`FORK-DIVERGENCE-AND-TRUST.md` — which is a **historical mention on line 87**,
+part of the record of what the document's *previous* version got wrong. The
+enforcement reads two other things: the commit named on **line 3**
+(`**Measured at commit `<sha>``) and the **figures** it re-measures at that
+commit.
+
+**Measured, on the current tree:**
+
+| mutation | regression-docs |
+|---|---|
+| `11207ca` → `1120700` (what the arm did) | **byte-identical output, exit 0** |
+| `**Measured at commit `34ceb59`` → `…`3400000`` | exit **2**, *"divergence measurement — THE SCAN DID NOT RUN, so its silence means nothing: no result"* |
+| `**197 commits ahead` → `**196 commits ahead` | exit **1**, *"the divergence document's figures have drifted: ahead(197)"* |
+
+So **the guard is live and refuses correctly; the arm was testing nothing.**
+The anchor went stale at `cdc2969`, when the document was re-measured from
+`11207ca` to `34ceb59` — a repair moved the thing the arm pointed at and
+nothing connected the two. The arm now mutates a **figure**, which is what it
+is named for; the measured-at commit exercises the *staleness* limb instead.
+
+**WHY THE EARLIER RUN SAID CAUGHT IS NOT ESTABLISHED.** The same arm, with the
+same mutation, reported **CAUGHT** earlier the same day against a tree whose
+`regression-docs.sh` is **byte-identical** to now (`git diff 235fe08 HEAD --`
+is empty) and whose line 87 is byte-identical. A worktree reproduction at that
+commit was attempted and is **not usable**: a worktree has no built binaries,
+so its control fails on the pinned-figure check for a reason unrelated to the
+arm. **That verdict cannot be reproduced and is recorded as unexplained rather
+than quietly replaced.** The honest reading is that an unexplained CAUGHT is
+worth less than a reproducible NOT CAUGHT, and the arm has been repaired so
+that future runs test the mechanism either way.
+
+**One thing this does establish about the battery's own guard.**
+`arm_tree_is_clean` checks only **the file about to be mutated** (`OC-120`).
+Every checker reads many other files, so a concurrent edit anywhere else in
+the tree can still flip a verdict without the battery noticing — which is the
+`OC-117` hazard, narrowed but not closed. It is named here because this
+session edited the tree while a battery ran, and did so believing the per-arm
+check covered it.

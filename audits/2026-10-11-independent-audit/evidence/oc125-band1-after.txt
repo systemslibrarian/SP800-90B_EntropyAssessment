@@ -6,9 +6,9 @@ band-1 pair mutations -- breaking the EARLIER mechanism of each pair
   C22c compression ceiling, n=8000000          CAUGHT                 control 0, mutant 1 (acedae5+ada37a1, now OC-125)
   C22c collision ceiling, n=1000000            CAUGHT                 control 0, mutant 1 (acedae5+ada37a1, now OC-125)
   C22c stamp: the derivation sha256            CAUGHT                 control 0, mutant 1 (OC-125)
-  the oracles' exit contract                   CONTROL FAILED         exit 1 before any mutation (b072bf7)
+  the oracles' exit contract                   CAUGHT                 control 0, mutant 1 (b072bf7)
   outside-battery pinned figures               NOT CAUGHT             control 0, mutant 0 -- unguarded (feef1a1)
-  the divergence-figure enforcement            CONTROL FAILED         exit 1 before any mutation (4ad3095)
+  the divergence-figure enforcement            NOT CAUGHT             control 0, mutant 0 -- unguarded (4ad3095)
   mutation-lib's landing contract              NOT CAUGHT             control 0, mutant 0 -- unguarded (65b00d8)
   the canary's input precondition              CAUGHT                 control 0, mutant 2 (8ff739d)
   C23's recomputed cutoff decision             CAUGHT                 control 0, mutant 1 (5074fff)
@@ -18,5 +18,5 @@ band-1 pair mutations -- breaking the EARLIER mechanism of each pair
   canary long-double widening (9aa991d)        NOT MUTATED            needs an 80-bit host; binary128 stays NOT RUN
   two instrument rules (5c3353f)               NO RUNNABLE CASE       rule text, not a mechanism (OC-100)
 
-band1-pair-mutations: 9 CAUGHT, 3 NOT CAUGHT, 0 no-apply/restore, 2 control-failed
-band1-pair-mutations: INCONCLUSIVE (an arm produced no verdict)
+band1-pair-mutations: 10 CAUGHT, 4 NOT CAUGHT, 0 no-apply/restore, 0 control-failed
+band1-pair-mutations: COMPLETE

@@ -204,9 +204,31 @@ run_pair "outside-battery pinned figures" "feef1a1" \
     'for fig in 8538.7 59.938 40.21 0.8547; do' \
     bash cpp/selftest/regression-outside-battery.sh
 
+# THIS ARM MUTATED A STRING THE ENFORCEMENT DOES NOT READ (found OC-125).
+#
+# It replaced the first occurrence of `11207ca`, which is a HISTORICAL mention
+# on line 87 -- part of the record of what the document's previous version got
+# wrong. The enforcement reads two other things: the commit named on line 3
+# (`**Measured at commit `<sha>``) and the FIGURES it re-measures at that
+# commit. Measured on the current tree: mutating `11207ca` leaves
+# regression-docs.sh byte-identical and exit 0. The arm was testing nothing,
+# and the document was re-measured from `11207ca` to `34ceb59` at `cdc2969`,
+# which is when the anchor went stale.
+#
+# The arm is named for the FIGURE enforcement, so it mutates a figure. The
+# re-measurement then reports `figures have drifted: ahead(197)` and exits 1.
+# Mutating the measured-at commit instead exits 2 -- "THE SCAN DID NOT RUN, so
+# its silence means nothing" -- which is also a refusal, and also correct, but
+# it tests the staleness limb rather than the figure limb.
+#
+# WHY THE PREVIOUS RUN SAID CAUGHT IS NOT ESTABLISHED. The battery reported
+# CAUGHT for this arm on 2026-10-26 with the SAME mutation, against a tree
+# whose regression-docs.sh is byte-identical and whose line 87 is byte-identical
+# to now. That verdict cannot be reproduced and is not explained here. It is
+# recorded as unexplained rather than quietly replaced.
 run_pair "the divergence-figure enforcement" "4ad3095" \
     FORK-DIVERGENCE-AND-TRUST.md \
-    '11207ca' '1120700' \
+    '**197 commits ahead' '**196 commits ahead' \
     bash cpp/selftest/regression-docs.sh
 
 run_pair "mutation-lib's landing contract" "65b00d8" \
