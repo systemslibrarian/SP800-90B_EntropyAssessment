@@ -1,0 +1,21 @@
+c22c one-source sweep
+
+  family values enforced to one source                   9 target(s)
+  second copies                                          FAIL  9 found
+        audits/2026-10-11-independent-audit/reproducers/band1-pair-mutations.sh:152  3.3599e-3 as a non-comment token  -> compression n=1000000
+        audits/2026-10-11-independent-audit/reproducers/band1-pair-mutations.sh:156  2.1644e-3 as a non-comment token  -> compression n=8000000
+        audits/2026-10-11-independent-audit/reproducers/band1-pair-mutations.sh:160  7.84e-4 as a non-comment token  -> collision n=1000000 record
+        cpp/selftest/regression-constants.sh:52  3.3599e-3 as a non-comment token  -> compression n=1000000
+        cpp/selftest/regression-constants.sh:53  7.84e-4 as a non-comment token  -> collision n=1000000 record
+        cpp/selftest/regression-constants.sh:54  6.887e-5 as a non-comment token  -> proportion record
+        cpp/selftest/regression-constants.sh:55  2.1644e-3 as a non-comment token  -> compression n=8000000
+        cpp/selftest/regression-constants.sh:56  4.66e-4 as a non-comment token  -> collision n=8000000 record
+        cpp/selftest/regression-constants.sh:57  6.887e-5 as a non-comment token  -> proportion record
+  inputs cross-checked (not collapsed)                   PASS  identical strings everywhere
+
+positive control -- the same value three ways, in a temporary tree
+  the live constant on line 3 is REPORTED                PASS
+  the docstring on line 1 is not                         PASS
+  the # comment on line 2 is not                         PASS
+
+c22c-copy-sweep: FAIL (1)

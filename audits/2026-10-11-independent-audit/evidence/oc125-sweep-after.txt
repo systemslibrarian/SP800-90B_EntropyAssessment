@@ -1,0 +1,12 @@
+c22c one-source sweep
+
+  family values enforced to one source                   9 target(s)
+  second copies                                          PASS  no second copy in any executable or data file
+  inputs cross-checked (not collapsed)                   PASS  identical strings everywhere
+
+positive control -- the same value three ways, in a temporary tree
+  the live constant on line 3 is REPORTED                PASS
+  the docstring on line 1 is not                         PASS
+  the # comment on line 2 is not                         PASS
+
+c22c-copy-sweep: PASS

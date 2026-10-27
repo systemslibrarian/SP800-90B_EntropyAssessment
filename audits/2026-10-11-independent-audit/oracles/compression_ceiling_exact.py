@@ -54,6 +54,7 @@ most N * log2(N), so a tail bound of that times the next power is added and
 printed; the sum stops when the bound is below 10^-(dps-5).
 """
 import sys
+from decimal import Decimal
 from mpmath import mp, mpf, log, sqrt, mpmathify
 
 mp.dps = 50
@@ -134,8 +135,37 @@ def solve_p(target, d, N, v, b=6, lo=None, hi=None):
     return (lo + hi) / 2, None
 
 
+# THE QUANTILES ARE BUILT AT A FIXED HIGH PRECISION, AND THAT IS A REPAIR
+# (OC-125). These two were plain module-level mpf() calls, so each was built at
+# whatever mp.dps happened to be in effect WHEN THIS MODULE WAS IMPORTED -- the
+# mpmath default of 53 bits when run as a script, 50 digits when something else
+# had already set it. z_spec - z_tool = 1.706964511e-4 out of two numbers near
+# 2.576, so at 53 bits the difference loses twelve of its sixteen digits to
+# cancellation, and every ceiling computed from it inherits that. The `dps`
+# argument these functions take could not fix it: it sets the WORKING
+# precision, and the constants were already rounded.
+#
+# Measured: the collision ceiling at n = 8e6 comes out 0.00046643872746941443
+# with the constants built at 53 bits and 0.00046643872746936080 with them
+# built at 50 digits or more. Same code, same dps argument, different import
+# order.
+#
+# NEITHER OF THIS FILE'S TWO CONTROLS COULD SEE IT. The self-comparison
+# recomputes every row at a second working precision, which does not touch the
+# constants; the live-sensitivity control perturbs z_spec by 1e-5, which is
+# eight orders of magnitude larger than the error. And every comparison this
+# file made was at three significant figures, where the error is invisible.
+# What exposed it was the EXACT comparison against the carried value that
+# OC-125 introduced -- the first check here that read more than three digits.
+#
+# 120 digits because the decimal strings have at most 17: an mpf built at 120
+# digits represents them exactly, so no working precision up to 120 can be
+# limited by them.
+_Q_DPS = mp.dps
+mp.dps = 120
 Z_TOOL = mpf("2.5758293035489008")      # the exact 0.995 quantile the tool uses
 Z_SPEC = mpf("2.576")                   # the value 6.3.4 step 6 prints
+mp.dps = _Q_DPS
 COMPRESSION_D = 1000
 B = 6
 
@@ -196,6 +226,24 @@ if __name__ == '__main__':
         raise SystemExit("the implementation does not reproduce the standard's example; "
                          "nothing below it means anything")
     print()
+    # THE VALUES COME FROM THE ONE SOURCE (OC-125). This block used to carry
+    # its own two literals --
+    #
+    #     TABULATED = {10 ** 6: "3.36e-3", 8 * 10 ** 6: "2.16e-3"}
+    #     SCAN      = {10 ** 6: "3.3599e-3", 8 * 10 ** 6: "2.1644e-3"}
+    #
+    # and that is exactly the two-copies defect. This file recomputed the
+    # ceiling from 6.3.4 step 7, compared it against the literal sitting beside
+    # it, printed AGREES, and was entirely unaffected by whatever
+    # entropy_floor.py actually subtracted. Measured twice: mutating the
+    # subtracted copy 3.3599e-3 -> 3.3700e-3 left oracle-selftest GREEN
+    # (OC-105, and the band-1 battery again on 2026-10-26, where both C22c arms
+    # reported NOT CAUGHT).
+    #
+    # So the comparison now reads c22c_source.json -- the same string
+    # entropy_floor.py subtracts. The precision is still part of the datum and
+    # the values are still STRINGS, for the reason the next paragraph gives.
+    #
     # THE RECORDED VALUES ARE KEPT AS STRINGS, because their PRECISION is part
     # of the datum and an mpf does not carry it. The first draft of this block
     # counted significant figures by rendering mpf("3.36e-3") to 20 places,
@@ -205,14 +253,23 @@ if __name__ == '__main__':
     # problem.
     #
     # TWO comparisons, because they are two different claims:
-    #   TABULATED  the 3-figure values entropy_floor.py carries and subtracts.
-    #   SCAN       what production's own 801-point scan printed, to 5 figures
-    #              (p_local_exact.py). Agreement here is the stronger result:
-    #              it compares this derivation against that computation at the
-    #              precision the computation reported, not at the precision the
-    #              table rounded to.
-    TABULATED = {10 ** 6: "3.36e-3", 8 * 10 ** 6: "2.16e-3"}
-    SCAN = {10 ** 6: "3.3599e-3", 8 * 10 ** 6: "2.1644e-3"}
+    #   RECORD    the 3-figure values OC-22 Part 3 published, compared at half
+    #             a unit in their last digit.
+    #   CARRIED   the full-precision value entropy_floor.py subtracts. This
+    #             comparison is EXACT: the carried string must be this
+    #             derivation's own output, ceiling-rounded to the declared
+    #             number of digits. Not a tolerance -- an exact predicate on a
+    #             declared rounding, which is what carrying full precision
+    #             bought.
+    import c22c_source as SRC
+    try:
+        doc = SRC.validate()
+    except SRC.C22cSourceError as exc:
+        raise SystemExit("the C22c one source does not validate, so there is "
+                         "nothing to compare against:\n  %s" % exc)
+    digits = doc['digits']
+    RECORD = {row['n']: row['compression']['record_3fig'] for row in doc['rows']}
+    CARRIED = {row['n']: row['compression']['value'] for row in doc['rows']}
 
     def sig_and_tol(text):
         """Significant figures and half-unit-in-the-last-digit, from the TEXT."""
@@ -226,21 +283,34 @@ if __name__ == '__main__':
 
     bad = 0
     rows = []
-    for n in sorted(TABULATED):
+    for n in sorted(RECORD):
         r = ceiling_at(n)
-        for label, table in (("tabulated", TABULATED), ("production scan", SCAN)):
-            sf, tol, val = sig_and_tol(table[n])
-            diff = r['ceiling'] - val
-            agree = abs(diff) <= tol
-            if not agree:
-                bad += 1
-            rows.append((n, label, table[n], sf, r['ceiling'], diff, tol, agree))
-            print("  vs %-16s %s  (%d sig figs)" % (label, table[n], sf))
-            print("     residual  = %s   (%.4f %% of it)"
-                  % (mp.nstr(diff, 6), float(100 * diff / val)))
-            print("     tolerance = %s   (half a unit in the last digit)" % mp.nstr(tol, 6))
-            print("     used      = %.1f %% of the tolerance" % float(100 * abs(diff) / tol))
-            print("     VERDICT   = %s" % ("AGREES" if agree else "*** DISAGREES ***"))
+        # (1) the record, at half a unit in its last published digit.
+        sf, tol, val = sig_and_tol(RECORD[n])
+        diff = r['ceiling'] - val
+        agree = abs(diff) <= tol
+        if not agree:
+            bad += 1
+        rows.append((n, "record 3 fig", RECORD[n], sf, r['ceiling'], diff, tol, agree))
+        print("  vs the record    %s  (%d sig figs)" % (RECORD[n], sf))
+        print("     residual  = %s   (%.4f %% of it)"
+              % (mp.nstr(diff, 6), float(100 * diff / val)))
+        print("     tolerance = %s   (half a unit in the last digit)" % mp.nstr(tol, 6))
+        print("     used      = %.1f %% of the tolerance" % float(100 * abs(diff) / tol))
+        print("     VERDICT   = %s" % ("AGREES" if agree else "*** DISAGREES ***"))
+        # (2) the carried value, EXACTLY: it must be this output rounded up.
+        want = SRC.round_up(mp.nstr(r['ceiling'], digits + 20, strip_zeros=False), digits)
+        got = Decimal(CARRIED[n])
+        exact = (want == got)
+        if not exact:
+            bad += 1
+        rows.append((n, "carried (exact)", CARRIED[n], SRC.sigdigits(CARRIED[n]),
+                     r['ceiling'], mpf(str(got - want)), mpf(0), exact))
+        print("  vs the carried   %s  (%d digits, the value that is SUBTRACTED)"
+              % (CARRIED[n], SRC.sigdigits(CARRIED[n])))
+        print("     this output rounded up to %d digits = %s" % (digits, want))
+        print("     VERDICT   = %s"
+              % ("EXACT" if exact else "*** NOT THIS DERIVATION'S OUTPUT ***"))
         print()
     print("| n | compared with | value | sig figs | independent | residual | tolerance | agrees |")
     print("|---:|---|---:|---:|---:|---:|---:|---|")

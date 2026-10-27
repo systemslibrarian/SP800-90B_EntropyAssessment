@@ -27,8 +27,37 @@ Usage:  zalpha_ceiling_by_n.py
 """
 from mpmath import mp, mpf, log, sqrt
 
+# THE QUANTILES ARE BUILT AT A FIXED HIGH PRECISION, AND THAT IS A REPAIR
+# (OC-125). These two were plain module-level mpf() calls, so each was built at
+# whatever mp.dps happened to be in effect WHEN THIS MODULE WAS IMPORTED -- the
+# mpmath default of 53 bits when run as a script, 50 digits when something else
+# had already set it. z_spec - z_tool = 1.706964511e-4 out of two numbers near
+# 2.576, so at 53 bits the difference loses twelve of its sixteen digits to
+# cancellation, and every ceiling computed from it inherits that. The `dps`
+# argument these functions take could not fix it: it sets the WORKING
+# precision, and the constants were already rounded.
+#
+# Measured: the collision ceiling at n = 8e6 comes out 0.00046643872746941443
+# with the constants built at 53 bits and 0.00046643872746936080 with them
+# built at 50 digits or more. Same code, same dps argument, different import
+# order.
+#
+# NEITHER OF THIS FILE'S TWO CONTROLS COULD SEE IT. The self-comparison
+# recomputes every row at a second working precision, which does not touch the
+# constants; the live-sensitivity control perturbs z_spec by 1e-5, which is
+# eight orders of magnitude larger than the error. And every comparison this
+# file made was at three significant figures, where the error is invisible.
+# What exposed it was the EXACT comparison against the carried value that
+# OC-125 introduced -- the first check here that read more than three digits.
+#
+# 120 digits because the decimal strings have at most 17: an mpf built at 120
+# digits represents them exactly, so no working precision up to 120 can be
+# limited by them.
+_Q_DPS = mp.dps
+mp.dps = 120
 Z_TOOL = mpf("2.5758293035489008")
 Z_SPEC = mpf("2.576")
+mp.dps = _Q_DPS
 # SP 800-90B 6.3.4 step 2: the first d blocks are the dictionary, the remaining
 # v = num_blocks - d are the test blocks the statistic averages over.
 # cpp/non_iid/compression_test.h: `d = 1000;`.
@@ -262,8 +291,38 @@ def main():
              "holds" if ok_mono_b else "FAILS", "holds" if ok_mono_c else "FAILS"))
     print()
     print("D. AGAINST THE RECORD (ORCHESTRATOR-CHECKS.md, OC-22 Part 3)")
-    REC_COLL = {1_000_000: (1.48e-7, 7.84e-4), 8_000_000: (5.23e-8, 4.66e-4)}
-    REC_COMP = {1_000_000: (166666, 2.15e-6, 3.36e-3), 8_000_000: (1333333, 8.89e-7, 2.16e-3)}
+    # THE CEILING VALUES COME FROM THE ONE SOURCE (OC-125). This block used to
+    # carry its own copies --
+    #
+    #     REC_COLL = {1_000_000: (1.48e-7, 7.84e-4), 8_000_000: (5.23e-8, 4.66e-4)}
+    #     REC_COMP = {1_000_000: (166666, 2.15e-6, 3.36e-3), ...}
+    #
+    # the second of which held the compression ceiling as well, so the six
+    # family values were recorded in SEVEN places and nothing compared the copy
+    # that was subtracted against the copy a derivation verified. The three
+    # ceilings now come from c22c_source.json; the collision dX' and the
+    # compression num_blocks and dX' stay here, because they are INPUTS to the
+    # ceilings rather than the ceilings, and the one-source rule is scoped to
+    # the six values C22c maxes over. c22c-copy-sweep.sh states and enforces
+    # that scope.
+    #
+    # The collision family is also compared EXACTLY against the carried value
+    # here -- not only against the record's three figures -- because this is
+    # the derivation that produced it.
+    import c22c_source as SRC
+    from decimal import Decimal
+    try:
+        _doc = SRC.validate()
+    except SRC.C22cSourceError as exc:
+        print("   *** the C22c one source does not validate: %s" % exc)
+        return 1
+    _digits = _doc['digits']
+    _by_n = {row['n']: row for row in _doc['rows']}
+    REC_COLL = {n: (dx, float(_by_n[n]['collision']['record_3fig']))
+                for n, dx in ((1_000_000, 1.48e-7), (8_000_000, 5.23e-8))}
+    REC_COMP = {n: (nb, dx, float(_by_n[n]['compression']['record_3fig']))
+                for n, nb, dx in ((1_000_000, 166666, 2.15e-6),
+                                  (8_000_000, 1333333, 8.89e-7))}
     ok_rec = True
     print("| quantity | n | recorded | here | agrees |")
     print("|---|---:|---:|---:|---|")
@@ -281,15 +340,33 @@ def main():
             ok_rec = ok_rec and ok
             print("| %s | %d | %.6g | %.6g | %s (tol %.3f%%) |"
                   % (lab, n, rv, mv, "yes" if ok else "*** NO ***", 100 * tol))
-        print("| compression ceiling | %d | %.3e | (production solve, not reimplemented here) | n/a |" % (n, rc))
+        print("| compression ceiling | %d | %.3e | (derived in compression_ceiling_exact.py, compared there) | n/a |" % (n, rc))
+    print()
+    print("E. AGAINST THE CARRIED VALUE -- the collision number that is SUBTRACTED")
+    print("| n | carried | this derivation, rounded up to %d digits | exact |" % _digits)
+    print("|---:|---:|---:|---|")
+    ok_carried = True
+    for n in sorted(REC_COLL):
+        g, _dx = worst_collision(n, 50)
+        want = SRC.round_up(mp.nstr(g, _digits + 20, strip_zeros=False), _digits)
+        got = Decimal(_by_n[n]['collision']['value'])
+        ok = (want == got)
+        ok_carried = ok_carried and ok
+        print("| %d | %s | %s | %s |" % (n, got, want,
+              "yes" if ok else "*** NOT THIS DERIVATION'S OUTPUT ***"))
+    print()
+    if not ok_carried:
+        print("   the carried collision value is not what this file computes; the")
+        print("   value entropy_floor.py subtracts does not come from a live")
+        print("   derivation. Re-run c22c_derive.py --restamp.")
     print()
     if ok_rec:
         print("=> THE RECORD'S C22c IS REPRODUCED where it can be checked independently.")
         print("   The TABULATED term is the COMPRESSION ceiling, and the maximum over")
         print("   estimators is what entropy_floor.py subtracts. Its dX' and num_blocks")
-        print("   reproduce to three significant figures; its final ceiling comes from a")
-        print("   scan through the production compression solve, which this script")
-        print("   deliberately does not reimplement (OC-41).")
+        print("   reproduce to three significant figures; its final ceiling is derived")
+        print("   from 6.3.4 step 7 by compression_ceiling_exact.py, which this script")
+        print("   deliberately does not duplicate (OC-41, OC-86).")
         print()
         print("   OC-59 SAID THE TABULATED VALUES DID NOT REPRODUCE. That was wrong: it")
         print("   computed the COLLISION family, which is 4.3-4.6x smaller, and the ratio")
@@ -298,7 +375,8 @@ def main():
         print("   away by subtracting it (OC-62).")
     else:
         print("=> some recorded quantity is NOT reproduced; read the table above.")
-    return 0 if (ok_mono_b and ok_mono_c and ok_self and live and ok_rec) else 1
+    return 0 if (ok_mono_b and ok_mono_c and ok_self and live and ok_rec
+                 and ok_carried) else 1
 
     return 0 if (ok_mono_a and ok_mono_b and ok_self and live) else 1
 

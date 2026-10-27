@@ -216,6 +216,86 @@ chk "a path that does not exist cannot decide"        2 "CANNOT DECIDE"         
 chk "no arguments at all cannot decide"              2 ""                          $D
 
 echo
+echo "c22c_source.py -- the ONE SOURCE's fast validation (OC-125)"
+# WHY THESE CASES. The two-copies defect was invisible because a check that
+# verified the wrong object still passed. The fast validation's whole job is to
+# refuse a source it cannot stand behind, so every limb of that refusal needs
+# its own negative control with its OWN distinct reason -- the discipline the
+# four A08 fixtures taught, where the first version refused four times for one
+# shared accidental cause and tested nothing.
+#
+# Each fixture changes exactly ONE thing in a COPY of the genuine source.
+S="python3 ${here}/c22c_source.py"
+python3 - "${here}/c22c_source.json" "${work}" <<'PYEOF2'
+import json, os, sys
+src, W = sys.argv[1], sys.argv[2]
+base = json.load(open(src))
+
+def w(name, mut):
+    d = json.loads(json.dumps(base))
+    mut(d)
+    json.dump(d, open(os.path.join(W, name), 'w'), indent=2)
+
+def drop_stamp_field(d):
+    del d['rows'][0]['compression']['stamp']['validated_against']
+w('c22c_no_provenance.json', drop_stamp_field)
+
+def wrong_sha(d):
+    st = d['rows'][0]['compression']['stamp']
+    st['derivation_sha256'] = '0' * 64
+w('c22c_stale_derivation.json', wrong_sha)
+
+# THESE TWO FIXTURES ARE DERIVED FROM THE SOURCE, NOT WRITTEN. The first
+# version assigned the value as a literal -- and c22c-copy-sweep.sh reported
+# both, correctly: a fixture that names one of these numbers is another copy
+# of it, which is the defect the fixtures are here to guard against. Third
+# time the sweep caught its own author.
+def float_value(d):
+    c = d['rows'][0]['compression']
+    c['value'] = float(c['value'])          # the same number, as a float
+w('c22c_float_value.json', float_value)
+
+def short_value(d):
+    c = d['rows'][0]['compression']
+    c['value'] = '%.3g' % float(c['value'])  # the same number, 3 digits
+w('c22c_wrong_digits.json', short_value)
+
+def round_down(d):
+    d['rounding'] = 'nearest'
+w('c22c_rounds_down.json', round_down)
+
+def ascending(d):
+    d['rows'] = list(reversed(d['rows']))
+w('c22c_row_order.json', ascending)
+
+def carried_proportion(d):
+    d['families']['proportion']['carried'] = True
+w('c22c_carried_proportion.json', carried_proportion)
+
+def bad_commit(d):
+    d['rows'][0]['compression']['stamp']['stamped_at_repo_commit'] = 'f' * 40
+w('c22c_absent_commit.json', bad_commit)
+PYEOF2
+built $? c22c_no_provenance.json c22c_stale_derivation.json c22c_float_value.json \
+         c22c_wrong_digits.json c22c_rounds_down.json c22c_row_order.json \
+         c22c_carried_proportion.json c22c_absent_commit.json
+chk "the genuine source validates"                0 ""                        $S --validate
+chk "a missing provenance field is REFUSED"       1 "no validated_against"    $S --validate "${work}/c22c_no_provenance.json"
+chk "a stamp whose derivation has changed"        1 "derivation changed"      $S --validate "${work}/c22c_stale_derivation.json"
+chk "a float value loses its precision"           1 "not a string"            $S --validate "${work}/c22c_float_value.json"
+chk "fewer digits than the source declares"       1 "significant digits"      $S --validate "${work}/c22c_wrong_digits.json"
+chk "rounding that is not toward a larger term"   1 "subtracts too little"    $S --validate "${work}/c22c_rounds_down.json"
+chk "rows in ascending n break the lookup"        1 "descending n order"      $S --validate "${work}/c22c_row_order.json"
+chk "a CARRIED proportion value is refused"       1 "would be a copy"         $S --validate "${work}/c22c_carried_proportion.json"
+chk "a commit id that is not in this repository"  1 "not a commit"            $S --validate "${work}/c22c_absent_commit.json"
+chk "a source that does not exist"                1 "does not exist"          $S --validate "${work}/c22c_absent.json"
+chk "an unrelated JSON document is not a source"  1 "schema"                  $S --validate "${work}/unrelated.json"
+
+echo
+echo "c22c-copy-sweep.sh -- one source per family value, with its own control"
+chk "no second copy of any C22c family value"     0 "PASS" bash "${here}/c22c-copy-sweep.sh"
+
+echo
 echo "compression_ceiling_exact.py -- C22c's binding term, against the STANDARD (OC-86)"
 # This is the only oracle here validated against something outside the project:
 # SP 800-90B 6.3.4's own worked example, for which NIST publishes p = 0.5715.

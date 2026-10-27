@@ -12157,3 +12157,236 @@ risk. **The method's positive control fires on that exact line.**
   pipelines.
 - Nothing reported upstream.
 
+
+## OC-125 — the two-copies linkage closed: one source, a digest pin, a slow re-derivation, and a precision defect the exact comparison exposed
+
+### What the defect was
+
+`C22c` is the term `entropy_floor.py` subtracts from a reported min-entropy
+figure. It is a **max over three estimator families at two bitstring lengths**:
+six numbers. Those six numbers were recorded in **seven places at three
+precisions**, and nothing compared the copy that was **subtracted** against the
+copy a derivation **verified**.
+
+| where | which | precision | role |
+|---|---|---|---|
+| `entropy_floor.py` `C22C_FAMILIES_BY_N` | all 6 | 3–5 fig | **SUBTRACTED** |
+| `compression_ceiling_exact.py` `SCAN` | compression ×2 | 5 fig | compared |
+| `compression_ceiling_exact.py` `TABULATED` | compression ×2 | 3 fig | compared |
+| `zalpha_ceiling_by_n.py` `REC_COLL` | collision ×2 | 3 fig | compared |
+| `zalpha_ceiling_by_n.py` `REC_COMP` | compression ×2 | 3 fig | printed |
+| `regression-constants.sh` | all 6 | 3–5 fig | pinned |
+| `band1-pair-mutations.sh` | 3 | — | mutated |
+
+`compression_ceiling_exact.py` re-derived the ceiling from SP 800-90B 6.3.4
+step 7, compared it against the literal **in its own file**, printed `AGREES`,
+and was unaffected by whatever the floor subtracted. **Measured twice:**
+mutating the subtracted copy `3.3599e-3 → 3.3700e-3` left `oracle-selftest`
+green as `OC-105`, and the band-1 battery re-ran both C22c arms on 2026-10-26
+and reported `NOT CAUGHT` for each.
+
+### The fix is one object, not one more check
+
+The values live in `oracles/c22c_source.json`. `entropy_floor.py` reads it,
+both derivations verify their own output against it, the fast suite pins a
+**digest** of it, and `c22c-copy-sweep.sh` enforces that nothing else records
+one of these numbers. **Three distinct checks, failing for three reasons:**
+
+| check | where | what it catches | cost |
+|---|---|---|---|
+| shape | `c22c_source.py --validate` | a missing stamp field, a stamp whose derivation's sha256 has changed, a value at the wrong precision, a non-ceiling rounding, rows out of order | ms |
+| values | the digest, in `regression-constants.sh` | a drift in any carried number | ms |
+| wiring | the floor's effective values vs the source's | a floor rewired back to literals of its own | ms |
+| re-derivation | `c22c_derive.py`, on demand + `c22c-source-check.yml` | a carried value that is no longer its derivation's output | ~4 min |
+
+**The pin is a digest, not a value**, because a literal in the test would be
+the seventh copy. A sha256 held *outside* the file it covers is still a
+comparison of values rather than of markers, in one 64-character string.
+
+**The proportion family is computed, not carried.** At the domain edge
+`p = 1/n` the standard error is exactly `1/n`, so the gap is
+`log2((1+z_spec)/(1+z_tool))` — closed, exact, n-independent. Carrying a value
+for one line of exact arithmetic would add a copy and buy nothing. Its
+subtraction is done in `Decimal` before rounding to float once: in double the
+difference of two numbers near 2.576 loses four of sixteen digits to
+cancellation, **measured at 2.3e-12 relative before that was fixed**.
+
+### The number that moves, and the direction
+
+| n | family | was | now | change |
+|---:|---|---:|---:|---:|
+| 1e6 | compression **(binds)** | `3.3599e-3` | `0.0033599300369315859237` | **+3.0036931585923617932e-8** |
+| 8e6 | compression **(binds)** | `2.1644e-3` | `0.0021644012494542512297` | **+1.249454251229696301e-9** |
+| 1e6 | collision | `7.84e-4` | `0.00078445330772897960714` | +4.5331e-7 |
+| 8e6 | collision | `4.66e-4` | `0.00046643872746936079515` | +4.3873e-7 |
+| any | proportion | `6.887e-5` | `6.886711443818212e-5` | −2.8856e-9 |
+
+**C22c is a max and compression binds at both lengths, so only the first two
+rows move C22c.** The collision and proportion changes alter nothing that is
+subtracted — collision sits 4.3–4.6× below compression, proportion 31–49×.
+
+**C22c is SUBTRACTED, so a larger C22c is a LOWER floor.** The old values
+subtracted too little: the floor they produced was **permissive** by
+3.0e-8 bit at n = 1e6, and the fix makes it **more conservative** by that
+amount. **No published figure changes materially** — 3.0e-8 bit against a C22c
+of 3.36e-3 bit is 9e-6 of the term and 3.5e-8 of a typical figure.
+
+**And that is not the reason for the fix.** The 3.0e-8 bound held *only while
+the two copies happened to agree*. An undetected drift in the subtracted copy
+moved the floor by the size of the drift, in either direction, with the
+verification still green. **The unbounded exposure is what closes; the measured
+3.0e-8 is incidental.**
+
+**Part of it was already closed, by accident.** `regression-constants.sh` has
+pinned these six literals by value since `OC-121`, which was written for the
+**mutation-landing hazard** — a battery killed mid-arm leaving a live C22c
+mutation in the tree — and not for the linkage at all. It closed the
+fast-suite half of this defect without anyone intending to. The half it did
+not close is the one closed here: nothing tied the subtracted number to the
+derivation's output.
+
+### A precision defect the exact comparison exposed
+
+Making the comparison exact immediately found something three-figure
+comparisons could not. `zalpha_ceiling_by_n.py` built its quantile constants
+as plain module-level `mpf()` calls, so **each was built at whatever `mp.dps`
+happened to be in effect when the module was imported**:
+
+```
+constants built at dps 15   -> collision ceiling at n=8e6  0.0004664387274694144281636569
+constants built at dps 50   ->                             0.0004664387274693607951408045
+constants built at dps 120  ->                             0.0004664387274693607951408045
+```
+
+Same code, same `dps` argument, **different import order**. `z_spec − z_tool`
+is `1.7069645e-4` out of two numbers near 2.576, so at 53 bits the difference
+loses twelve of its sixteen digits, and every ceiling computed from it
+inherits that. **The `dps` argument could not fix it** — it sets the working
+precision, and the constants were already rounded.
+
+**Neither of that file's two controls could see it.** The self-comparison
+recomputes every row at a second working precision, which does not touch the
+constants; the live-sensitivity control perturbs `z_spec` by `1e-5`, eight
+orders larger than the error. And every comparison the file made was at three
+significant figures. Run as a script it had **always** printed a collision
+ceiling accurate to only ~12 digits.
+
+Repaired in both oracles: the quantiles are now built at a fixed 120 digits
+and the working precision restored, so no caller's import order can degrade
+them. **The carried values did not change** — the restamp after the repair
+produced the identical digest `0345092696b52c91…`, because the values had been
+stamped from an import that happened to be at 50 digits.
+
+`C22c`'s status is **unchanged: DERIVED**. Nothing here changes what the
+derivation establishes; it changes what is wired to it.
+
+### Twenty digits is measured, not preferred
+
+The carried values are the derivations' output **ceiling-rounded to 20
+significant digits** — always toward a larger subtraction, and the float
+conversion is nudged upward if it would land below the carried decimal. Both
+derivations were recomputed at working precision **80** and agree with the
+dps-50 result **to 25 digits at both lengths**, so an exact comparison at 20
+digits tests the derivation rather than the arithmetic's last bits. The
+re-derivation check asserts that stability on every run.
+
+### The relative magnitudes, now written down
+
+| term | value at n = 1e6, width 1 | share of what is subtracted | status |
+|---|---:|---:|---|
+| **C22c** | 3.3599300e-3 | **99.99976 %** | DERIVED |
+| C22a | 8.08e-9 | 0.00024 % | MEASURED |
+| C22b | 0 | 0 % | PROVED |
+
+C22c is **five orders of magnitude** larger than C22a and is essentially the
+whole subtraction; at n = 8e6 the ratio narrows to 33,484× and C22c is still
+99.997 %. **The scrutiny had gone the other way.** C22a — 0.00024 % of the
+subtraction — received a grid-interiority argument, a nine-order refinement
+sweep, an independent 80-digit solver, a withdrawn verification with its own
+register entry, and a domain scan over r/N/k. C22c — 99.99976 % — was a
+hand-typed constant nothing compared against its derivation. The proportions
+were never tabulated, so **nobody could see that the effort was inverted**.
+They are now in `entropy_floor.py`'s own header, beside the terms.
+
+### Two scoping notes, kept where they are read
+
+**The C22c battery arms' `NOT CAUGHT` was a statement about a checker, not
+about the repository.** Those arms ran `oracle-selftest.sh` as their only
+checker, and `oracle-selftest` could not catch a mutation in the subtracted
+copy because it compared against the *second* copy. `regression-constants.sh`
+would have caught the same mutation and had done since `OC-121`. The arms now
+run the repository's actual guard, and the distinction is recorded in the
+battery itself, beside the arms, so the verdict cannot be read as an unguarded
+tree.
+
+**The sweep's scope is declared, in two parts.** The six family ceilings and
+the record's three-figure publications of them are **collapsed** to one
+source. The derivations' *inputs* — `z_tool`, `z_spec`, `d`, `b` — are
+**cross-checked for string identity but deliberately not collapsed**, because
+two independent statements of an input make a disagreement surface as a
+disagreement between derivations. Prose is **out of scope**: a `.md` document
+cannot be a consumer, and rewriting the audit record's historical tables to
+satisfy a sweep would be the wrong direction.
+
+### The sweep caught its author on its first run
+
+`c22c_derive.py` was written carrying the record's five published three-figure
+values as constants, to seed the source with. **The sweep reported all five.**
+They are read forward out of the existing source now, and the generator
+**refuses** rather than inventing a published figure that no derivation
+produces. That is the control that matters: the sweep found a copy nobody had
+thought of, which is the thing it exists for.
+
+Its own positive control tests the **discrimination rule**, not liveness: a
+temporary file carries the same family value three times — a live constant, a
+`#` comment, a docstring — and the sweep must report **exactly the first**. A
+control that only asked "did it find the copy I gave it" would pass while the
+comment rule was wrong, and the comment rule is what decides what is invisible.
+
+### What was observed failing
+
+| check | before | after |
+|---|---|---|
+| `c22c-copy-sweep.sh` | **FAIL, 14 findings in 3 files**, then 9 in 2 | PASS, 0 |
+| `regression-constants.sh` C22c | 6 value literals | PASS with the digest, wiring, and sweep |
+| `zalpha_ceiling_by_n.py` standalone | **FAIL** — carried value is not this derivation's output (digit 12) | PASS, exact at both lengths |
+| the fast validation | — | 11 negative controls, each with its own distinct refusal |
+| `c22c_source.py --validate` after a derivation edit | **REFUSED by name**, unprompted, telling the author to restamp | PASS after restamping |
+| `regression-workflows.sh` | `expected 2 workflow file(s), found 3` — a hand-maintained count | PASS; an expected **set** that fails by name in both directions |
+
+The stamp mechanism's live demonstration was not staged: editing the two
+oracles to repair the precision defect made the fast validation refuse with
+*"the derivation changed since the value was stamped: re-run
+`c22c_derive.py --restamp`"*, which is exactly the stale-value case it exists
+to prevent.
+
+### Limits
+
+- The digest is a hash of the values; an edit that changed a value **and**
+  recomputed the digest would pass the fast suite, as any checksum would. The
+  re-derivation check is what closes that, and it is slow by nature.
+- The exact comparison is **brittle by decision**: a future `mpmath` that moves
+  digit 20 fails CI. That is the intended direction. The cause is established
+  before anything is widened, and the 20-digit choice sits 15 orders inside the
+  solver's demonstrated accuracy specifically so that arithmetic noise cannot
+  reach it.
+- The sweep reads executable and data files, recognises a copy as a
+  non-docstring Python constant or a numeric token on a non-comment line, and
+  matches at 3 significant figures. **A value recorded only inside a longer
+  prose string, or computed rather than written, is not visible to it.**
+- The `c22c-source-check.yml` workflow has not yet run; it is wired to push on
+  the oracle paths and to manual dispatch.
+- Nothing reported upstream.
+
+### Rule 12 declaration — the four repairs this one touches, and the pair test for each
+
+| # | earlier repair | what it established | how OC-125 could have undone it | pair test |
+|---|---|---|---|---|
+| 1 | `OC-121` `regression-constants.sh` | no mutated constant survives in the floor oracle, **by comparing values not markers** | its six value literals were replaced by a digest, which could have made it blind to a mutated constant | the retargeted battery arms mutate a carried value and the **stamp**, and require `regression-constants.sh` to FAIL |
+| 2 | `OC-86` / `A08` `oracle-selftest` + `compression_ceiling_exact.py` | the compression ceiling is validated against **the standard's own worked example**, and the record's 3-figure values are reproduced | rewiring the comparison to the one source could have dropped the record comparison or the worked-example self-check | the worked example still runs first and gates everything after it; the record comparison still runs, now against the source's `record_3fig`; `c22c_derive.py` asserts both |
+| 3 | `OC-105` / `OC-120` / `OC-121` the band-1 battery | arms report CAUGHT / NOT CAUGHT honestly, refuse on a dirty tree, and restore on **every** exit path including a kill | retargeting to a JSON file and a different checker could silently produce `MUTATION-DID-NOT-APPLY`, and a verdict from an unapplied mutation is not a verdict | the battery is re-run end to end: the arms must report CAUGHT rather than `MUTATION-DID-NOT-APPLY`, and the tree must be clean afterwards |
+| 4 | `A02` / `A06` the platform-delta manifest | `known-platform-deltas.txt` has 8 rows, every tolerance `1e-9`, asserted inside `regression-constants.sh` | edits to that file could have dropped or weakened the manifest assertion while the C22c half was being rewritten | the manifest assertion still prints and still passes; the battery's two existing manifest arms must still report CAUGHT |
+
+**None of the four is a repair whose mechanism this one replaces.** All four are
+repairs whose **checks** this one rewires, which is the interaction worth
+testing: a check that was moved is a check that may have stopped checking.

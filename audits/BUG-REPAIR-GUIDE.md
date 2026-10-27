@@ -731,9 +731,29 @@ number to a different kind. **Before choosing a tolerance, ask two questions:**
   `n = 600`). **These differ by eleven orders of magnitude and are not
   interchangeable.**
 
+**THIRD INSTANCE, TOO TIGHT AGAIN, IN A CHECK WRITTEN TO ENFORCE THIS GUIDE
+(`OC-125`).** The C22c re-derivation check compared the proportion family's
+closed form — **computed in double, so ~17 significant digits** — against an
+80-digit numerical maximisation **at 20 digits**, and reported both rows
+disagreeing. The numbers were right to every digit either side could carry. A
+20-digit comparison against a `float` can only ever fail. Fixed by splitting
+one comparison into **two claims, each at the precision of what it reads**: the
+*mathematics* (exact closed form vs the sweep, at 20 digits) and the
+*implementation* (the float the floor actually uses vs that exact value, **in
+units in the last place**, bound 4, measured 0.39). The instance matters
+because the session that wrote it had written this rule.
+
 A tolerance that sits between those two bounds is a check. One outside them is
 either a false alarm generator or a formality. See [[rule 14]] for the companion
 rule about *where the tolerance's value came from*.
+
+**AND WHEN A COMPARISON CANNOT BE PUT BETWEEN THOSE BOUNDS, CARRY MORE
+DIGITS INSTEAD OF WIDENING.** The same repair carried C22c's values at 20
+significant digits — 15 orders inside the derivation's demonstrated accuracy —
+precisely so the comparison could be **exact** rather than tolerance-bounded.
+A tolerance is what you need when the carried number is less precise than the
+check wants; raising the carried precision removes the question rather than
+answering it.
 
 
 ### Rule 17 — a truncated artifact is well-formed, which is why awareness does not fix this

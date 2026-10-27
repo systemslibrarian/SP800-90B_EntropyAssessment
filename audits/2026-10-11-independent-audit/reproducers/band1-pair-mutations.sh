@@ -148,17 +148,51 @@ run_pair "A02/A06 the tolerance itself" "c2f2b94" \
     'Bitstring MultiMMC Prediction Estimate|min entropy|1e-30|3.65934130219792e-10' \
     bash cpp/selftest/regression-platform-deltas.sh
 
-run_pair "C22c compression ceiling, n=1e6" "acedae5+ada37a1" \
-    "${O}/entropy_floor.py" '3.3599e-3' '3.3700e-3' \
-    bash "${O}/oracle-selftest.sh"
+# ---------------------------------------------------------------- C22c (OC-125)
+#
+# THESE THREE ARMS CHANGED TARGET AND CHECKER, AND BOTH CHANGES MATTER.
+#
+# TARGET. They used to mutate a literal in entropy_floor.py. The six C22c
+# family values now live in exactly one place, c22c_source.json, and nothing
+# else records them -- including this file, which is why the old and new
+# strings are ASKED FOR rather than written here. A battery that named the
+# number it replaces would be the seventh copy of it, and c22c-copy-sweep.sh
+# reports this file when it is.
+#
+# CHECKER. They used to run oracle-selftest.sh, and both reported NOT CAUGHT.
+# THAT VERDICT WAS A STATEMENT ABOUT THAT CHECKER, NOT ABOUT THE REPOSITORY,
+# and it must not be read as an unguarded tree: regression-constants.sh has
+# pinned these values since OC-121 and would have caught the same mutation.
+# What oracle-selftest could not catch was the two-copies defect itself -- it
+# re-derived the ceiling and compared it against a SECOND copy in
+# compression_ceiling_exact.py, so it was green no matter what the floor
+# subtracted. The checker is now the repository's actual guard, so a verdict
+# here is a statement about the repository.
+# THE OLD AND NEW STRINGS ARE ASKED FOR, NEVER WRITTEN. c22c_source.py has
+# --value, --perturb and --stamp-sha for exactly this; the perturbation lives
+# there rather than in a heredoc here, both so this file names no number and
+# because the heredoc made regression-deadguard.sh flag these arms twice.
+C="python3 ${O}/c22c_source.py"
 
-run_pair "C22c compression ceiling, n=8e6" "acedae5+ada37a1" \
-    "${O}/entropy_floor.py" '2.1644e-3' '2.1700e-3' \
-    bash "${O}/oracle-selftest.sh"
+for _fam_n in "compression 1000000" "compression 8000000" "collision 1000000"; do
+    set -- ${_fam_n}
+    _fam=$1; _n=$2
+    _old=$(${C} --value "${_fam}" "${_n}") || { echo "band1: cannot read the C22c source" >&2; exit 2; }
+    _new=$(${C} --perturb "${_old}") || { echo "band1: cannot perturb the value" >&2; exit 2; }
+    run_pair "C22c ${_fam} ceiling, n=${_n}" "acedae5+ada37a1, now OC-125" \
+        "${O}/c22c_source.json" "${_old}" "${_new}" \
+        bash cpp/selftest/regression-constants.sh
+done
 
-run_pair "OC-67 per-family denominator" "6b4717e" \
-    "${O}/entropy_floor.py" "'collision': 7.84e-4" "'collision': 7.90e-4" \
-    bash "${O}/oracle-selftest.sh"
+# THE STAMP IS A MECHANISM TOO, so it gets an arm. The fast validation refuses
+# when a stamp's recorded derivation sha256 stops matching the file in the
+# tree -- that is what stops an edited derivation from quietly leaving a stale
+# value behind. Breaking the recorded sha must therefore FAIL the suite; if it
+# does not, editing a derivation is silent again.
+_sha=$(${C} --stamp-sha compression 1000000) || { echo "band1: cannot read the C22c stamp" >&2; exit 2; }
+run_pair "C22c stamp: the derivation sha256" "OC-125" \
+    "${O}/c22c_source.json" "${_sha}" "${_sha%??}00" \
+    bash cpp/selftest/regression-constants.sh
 
 run_pair "the oracles' exit contract" "b072bf7" \
     "${O}/restart_decision_exact.py" 'sys.exit(2)' 'sys.exit(0)' \

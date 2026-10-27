@@ -1,0 +1,69 @@
+name: c22c-source-check
+
+# THE SLOW HALF OF THE C22c ONE-SOURCE GUARD (OC-125).
+#
+# The fast suite checks the SHAPE of audits/.../oracles/c22c_source.json --
+# every stamp present, every stamp's derivation still at the sha256 the value
+# was stamped against, the carried values' digest unchanged, and the floor
+# actually reading them. That is milliseconds and it runs locally.
+#
+# It cannot check that a carried NUMBER is still its derivation's output,
+# because that means re-deriving: a bisection on SP 800-90B 6.3.4 step 7 at
+# working precision 50 and again at 80, four times over. About three minutes.
+# This is where that runs.
+#
+# WHAT A FAILURE HERE MEANS. Either a carried value is no longer what the
+# derivation produces -- in which case the floor is subtracting a number
+# nothing stands behind -- or the derivation's own arithmetic has moved under
+# a new mpmath. The two are distinguished by the dps-80 row in the output.
+# NEITHER IS FIXED BY LOOSENING THE COMPARISON: the comparison is exact by
+# decision, and the cause is established before anything changes. See
+# audits/BUG-REPAIR-GUIDE.md.
+#
+# This workflow builds nothing and reads no hardware. It is a numerical check
+# and its result is platform evidence only in the weak sense that it says the
+# derivation reproduces on x86-64 Linux as well as on the Darwin arm64 host
+# the values were stamped on.
+
+on:
+  push:
+    paths:
+      - 'audits/2026-10-11-independent-audit/oracles/c22c_source.json'
+      - 'audits/2026-10-11-independent-audit/oracles/c22c_source.py'
+      - 'audits/2026-10-11-independent-audit/oracles/c22c_derive.py'
+      - 'audits/2026-10-11-independent-audit/oracles/compression_ceiling_exact.py'
+      - 'audits/2026-10-11-independent-audit/oracles/zalpha_ceiling_by_n.py'
+      - 'audits/2026-10-11-independent-audit/oracles/entropy_floor.py'
+      - '.github/workflows/c22c-source-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rederive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: install mpmath
+        run: python3 -m pip install --disable-pip-version-check mpmath
+
+      - name: record what is being checked
+        run: |
+          python3 -c 'import mpmath, sys; print("mpmath", mpmath.__version__); print(sys.version)'
+          # The stamps say which derivation produced each value, at which
+          # sha256, and when. Printed so a failure is readable without the
+          # file to hand.
+          python3 audits/2026-10-11-independent-audit/oracles/c22c_source.py
+
+      - name: one source per family value (sweep, with its own control)
+        run: bash audits/2026-10-11-independent-audit/oracles/c22c-copy-sweep.sh
+
+      - name: re-derive every carried value and compare exactly
+        run: python3 audits/2026-10-11-independent-audit/oracles/c22c_derive.py

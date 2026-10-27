@@ -40,7 +40,17 @@ repo=$(cd "${here}/../.." && pwd)
 . "${here}/buildstate-lib.sh" 2>/dev/null || true
 
 # A workflow file dropped from the tree must not read as "nothing to check".
-EXPECTED_WORKFLOWS=2
+# THE EXPECTED SET, NOT A COUNT (OC-125). This was EXPECTED_WORKFLOWS=2, a
+# hand-maintained number beside a machine-readable directory listing: adding a
+# workflow failed this check with arithmetic ("expected 2, found 3") instead of
+# naming anything, and REMOVING one could have been made to pass by editing a
+# digit. A set fails by NAME in both directions -- a missing workflow is named
+# missing, an unexpected one is named unexpected -- and deriving the set from
+# the directory is not an option, because a check that agrees with whatever it
+# was given is a defect.
+EXPECTED_WORKFLOWS="c22c-source-check.yml
+windows-platform-facts.yml
+x86-64-platform-facts.yml"
 
 if ! python3 -c 'import yaml' >/dev/null 2>&1; then
     echo "regression-workflows: PyYAML is not available, so the workflows cannot be parsed." >&2
@@ -57,12 +67,16 @@ verdict=$(EXPECTED_WORKFLOWS="${EXPECTED_WORKFLOWS}" python3 - "${repo}" "${work
 import os, re, sys, yaml
 
 repo, work = sys.argv[1], sys.argv[2]
-expected = int(os.environ['EXPECTED_WORKFLOWS'])
+expected = sorted(x.strip() for x in os.environ['EXPECTED_WORKFLOWS'].split('\n')
+                  if x.strip())
 wfdir = os.path.join(repo, '.github', 'workflows')
 files = sorted(f for f in os.listdir(wfdir) if f.endswith(('.yml', '.yaml')))
-if len(files) != expected:
-    print("FATAL|expected %d workflow file(s), found %d: %s"
-          % (expected, len(files), ", ".join(files) or "none"))
+if files != expected:
+    missing = [f for f in expected if f not in files]
+    extra = [f for f in files if f not in expected]
+    print("FATAL|the workflow set is not the expected set.%s%s"
+          % ("  MISSING: " + ", ".join(missing) if missing else "",
+             "  UNEXPECTED: " + ", ".join(extra) if extra else ""))
     raise SystemExit(0)
 
 # GitHub Actions expressions are substituted before the shell ever sees them, so

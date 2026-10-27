@@ -18,6 +18,33 @@
 # working-tree diff, and because this must also hold in a release tarball with
 # no git history. The values are recorded here, in this file.
 #
+# THE C22c FAMILY VALUES ARE PINNED BY DIGEST, NOT BY VALUE (OC-125). This
+# file used to carry all six of them as literals:
+#
+#     "C22C 1e6 compression": "3.3599e-3",   ... and five more
+#
+# which made it the sixth of seven places the same six numbers were recorded.
+# One source for each family value is the rule now, and a literal here would
+# break it. So what is recorded instead is a sha256 over the carried values in
+# canonical form -- a hash, held OUTSIDE the file it covers, which is still a
+# comparison of values rather than of markers while being one 64-character
+# string. A mutation to any carried value changes it.
+#
+# Three distinct C22c checks, because they fail for three different reasons:
+#
+#   SHAPE     c22c_source.py --validate: every stamp present, every stamp's
+#             derivation still at the sha256 the value was stamped against,
+#             every value at the declared precision. Milliseconds.
+#   VALUES    the digest. Detects a drift in a carried number.
+#   WIRING    the floor's effective C22C_FAMILIES_BY_N must EQUAL what the
+#             source says. This is the one that catches a floor rewired back
+#             to literals of its own, which the digest and the shape check
+#             would both pass.
+#
+# Re-deriving the numbers is a separate, slow check: c22c_derive.py, run on
+# demand and by .github/workflows/c22c-source-check.yml. A forty-second
+# derivation does not belong in a suite that has to stay fast.
+#
 # EXIT  0 all constants match   1 a constant differs   2 could not run
 
 set -u
@@ -37,7 +64,10 @@ command -v python3 >/dev/null 2>&1 || {
 # ---- the floor's constants, read out of the module rather than grepped ------
 # Importing it means a syntax error or a renamed symbol is a FAILURE here
 # rather than a silent pass, which a grep could not distinguish.
-out=$(FLOORPATH="${FLOOR}" python3 - <<'PY'
+EXPECT_DIGEST="0345092696b52c91a99efa8af422807a30de1230d538d01ccd41422727cbdea7"
+EXPECT_DIGEST_LINES=4
+out=$(FLOORPATH="${FLOOR}" WANT_DIGEST="${EXPECT_DIGEST}" \
+      WANT_DIGEST_LINES="${EXPECT_DIGEST_LINES}" python3 - <<'PY'
 import importlib.util, os, sys
 spec = importlib.util.spec_from_file_location("floor", os.environ["FLOORPATH"])
 m = importlib.util.module_from_spec(spec)
@@ -46,27 +76,53 @@ try:
 except BaseException as e:            # a SystemExit from argv parsing is fine
     if not isinstance(e, SystemExit):
         print("IMPORTFAIL %s" % e); raise SystemExit(0)
-# RECORDED VALUES. Each is a figure the published floor subtracts or reports.
-WANT = {
-    "C22A_PER_N":      "8.08e-15",
-    "C22C 1e6 compression": "3.3599e-3",
-    "C22C 1e6 collision":   "7.84e-4",
-    "C22C 1e6 proportion":  "6.887e-5",
-    "C22C 8e6 compression": "2.1644e-3",
-    "C22C 8e6 collision":   "4.66e-4",
-    "C22C 8e6 proportion":  "6.887e-5",
-}
-got = {}
-got["C22A_PER_N"] = repr(getattr(m, "C22A_PER_N", None))
-fam = dict(getattr(m, "C22C_FAMILIES_BY_N", ()))
-for n, tag in ((10**6, "1e6"), (8 * 10**6, "8e6")):
-    d = fam.get(n, {})
-    for key in ("compression", "collision", "proportion"):
-        got["C22C %s %s" % (tag, key)] = repr(d.get(key))
+# RECORDED VALUES. C22A_PER_N is recorded here because it has only ever had
+# one home; the C22c family values are NOT, for the reason in the header.
+WANT = {"C22A_PER_N": "8.08e-15"}
+got = {"C22A_PER_N": repr(getattr(m, "C22A_PER_N", None))}
 for k, want in WANT.items():
     g = got.get(k)
     ok = (g is not None) and (float(g) == float(want))
     print("%s|%s|%s|%s" % ("OK" if ok else "DIFF", k, want, g))
+
+# ---- C22c: shape, then values by digest, then the wiring -------------------
+sys.path.insert(0, os.path.dirname(os.environ["FLOORPATH"]))
+try:
+    import c22c_source as SRC
+except Exception as e:
+    print("DIFF|C22c source module|importable|%s" % e)
+    raise SystemExit(0)
+try:
+    SRC.validate()
+    print("OK|C22c source shape|stamped and well-formed|validated")
+except Exception as e:
+    print("DIFF|C22c source shape|stamped and well-formed|%s" % e)
+    raise SystemExit(0)
+try:
+    digest, canon = SRC.values_digest()
+    lines = len(canon.splitlines())
+except Exception as e:
+    print("DIFF|C22c values digest|computable|%s" % e)
+    raise SystemExit(0)
+print("%s|C22c values digest|%s|%s"
+      % ("OK" if digest == os.environ["WANT_DIGEST"] else "DIFF",
+         os.environ["WANT_DIGEST"], digest))
+print("%s|C22c values covered by the digest|%s|%s"
+      % ("OK" if str(lines) == os.environ["WANT_DIGEST_LINES"] else "DIFF",
+         os.environ["WANT_DIGEST_LINES"], lines))
+
+# THE WIRING. The floor must be using the source's numbers, not numbers of its
+# own that happen to be right today. Compared as floats, exactly, because that
+# is what gets subtracted.
+src_fam = dict(SRC.families_by_n())
+floor_fam = dict(getattr(m, "C22C_FAMILIES_BY_N", ()))
+for n in sorted(src_fam, reverse=True):
+    for key in SRC.FAMILIES_ALL:
+        want_v = src_fam[n].get(key)
+        got_v = floor_fam.get(n, {}).get(key)
+        ok = (got_v is not None) and (repr(got_v) == repr(want_v))
+        print("%s|C22c wiring n=%d %s|%r|%r"
+              % ("OK" if ok else "DIFF", n, key, want_v, got_v))
 PY
 )
 rc=$?
@@ -90,9 +146,41 @@ done <<EOF
 ${out}
 EOF
 
-# An empty read is not a pass (SHAPE-03): declare the floor.
-if [ "${n_checked}" -lt 7 ]; then
-    bad "constants actually compared:" "${n_checked}, expected at least 7"
+# AN EMPTY READ IS NOT A PASS, AND NEITHER IS A SHORT ONE (SHAPE-03). The
+# expected SET is declared, not a count: a check that agrees with whatever it
+# was given is a defect, and a count alone cannot say WHICH row went missing.
+EXPECT_KEYS="C22A_PER_N
+C22c source shape
+C22c values digest
+C22c values covered by the digest
+C22c wiring n=8000000 collision
+C22c wiring n=8000000 compression
+C22c wiring n=8000000 proportion
+C22c wiring n=1000000 collision
+C22c wiring n=1000000 compression
+C22c wiring n=1000000 proportion"
+got_keys=$(printf '%s\n' "${out}" | awk -F'|' '/^(OK|DIFF)\|/ {print $2}' | sort)
+want_keys=$(printf '%s\n' "${EXPECT_KEYS}" | sort)
+if [ "${got_keys}" != "${want_keys}" ]; then
+    bad "the set of constants compared is not the expected set" \
+        "$(printf '%s\n' "${EXPECT_KEYS}" | wc -l | tr -d ' ') expected, ${n_checked} seen"
+    miss=$(comm -23 <(printf '%s\n' "${want_keys}") <(printf '%s\n' "${got_keys}"))
+    extra=$(comm -13 <(printf '%s\n' "${want_keys}") <(printf '%s\n' "${got_keys}"))
+    [ -n "${miss}" ]  && printf '        missing:    %s\n' "$(printf '%s' "${miss}" | tr '\n' ';')"
+    [ -n "${extra}" ] && printf '        unexpected: %s\n' "$(printf '%s' "${extra}" | tr '\n' ';')"
+fi
+
+# ---- ONE SOURCE for each family value, swept, with its own control ---------
+SWEEP="${repo}/audits/2026-10-11-independent-audit/oracles/c22c-copy-sweep.sh"
+if [ -x "${SWEEP}" ] || [ -r "${SWEEP}" ]; then
+    if sweep_out=$(bash "${SWEEP}" 2>&1); then
+        note "one source per family value (swept, with control)" "no second copy"
+    else
+        bad "a SECOND COPY of a C22c family value exists" "c22c-copy-sweep.sh FAILED"
+        printf '%s\n' "${sweep_out}" | sed -n '/FAIL/,$p' | head -20 | sed 's/^/        /'
+    fi
+else
+    bad "the one-source sweep is missing:" "${SWEEP}"
 fi
 
 # ---- the platform manifest's tolerances -----------------------------------
@@ -110,7 +198,7 @@ fi
 
 echo
 if [ "${fails}" -eq 0 ]; then
-    echo "regression-constants: PASS (${n_checked} floor constants + the manifest)"
+    echo "regression-constants: PASS (${n_checked} constants, the C22c digest, the sweep, the manifest)"
     exit 0
 fi
 echo "regression-constants: FAIL (${fails})"

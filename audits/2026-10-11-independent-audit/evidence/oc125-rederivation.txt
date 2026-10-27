@@ -1,0 +1,31 @@
+C22c -- re-deriving the one source (c22c_source.json)
+
+| n | family | carried | re-derived (dps 50) | rounded 20 | dps 80 | verdict |
+|---:|---|---:|---:|---:|---:|---|
+| 8000000 | compression | 0.0021644012494542512297 | 0.0021644012494542512296963 | 0.0021644012494542512297 | 0.0021644012494542512297 | AGREES |
+| 8000000 | collision | 0.00046643872746936079515 | 0.000466438727469360795140804 | 0.00046643872746936079515 | 0.00046643872746936079515 | AGREES |
+| 1000000 | compression | 0.0033599300369315859237 | 0.00335993003693158592361793 | 0.0033599300369315859237 | 0.0033599300369315859237 | AGREES |
+| 1000000 | collision | 0.00078445330772897960714 | 0.000784453307728979607134721 | 0.00078445330772897960714 | 0.00078445330772897960714 | AGREES |
+
+against the record's own three-figure publication (OC-22 Part 3)
+| n | family | recorded | re-derived | residual | half a unit | agrees |
+|---:|---|---:|---:|---:|---:|---|
+| 8000000 | compression | 2.16e-3 | 0.0021644012 | +4.401e-06 | 5.0e-06 | yes |
+| 8000000 | collision | 4.66e-4 | 0.00046643873 | +4.387e-07 | 5.0e-07 | yes |
+| 1000000 | compression | 3.36e-3 | 0.00335993 | -6.996e-08 | 5.0e-06 | yes |
+| 1000000 | collision | 7.84e-4 | 0.00078445331 | +4.533e-07 | 5.0e-07 | yes |
+
+the proportion family: the closed form IS the maximum (dps 80)
+| n | exact closed form | swept maximum | argmax | argmax is 1/n | agrees to 20 digits |
+|---:|---:|---:|---:|---|---|
+| 1000000 | 0.000068867114438182114775 | 0.000068867114438182114775 | 1.0e-6 | yes | yes |
+| 8000000 | 0.000068867114438182114775 | 0.000068867114438182114775 | 1.25e-7 | yes | yes |
+
+the float closed form c22c_source.py computes: 6.8867114438182118951e-05
+  against the exact value, in ulp of double: 0.39 ulp (bound 4) -> agrees
+
+proportion vs the record's 0.00006887: -2.886e-09, half a unit is 5.0e-09 -> agrees
+
+values digest: 0345092696b52c91a99efa8af422807a30de1230d538d01ccd41422727cbdea7
+
+c22c_derive: PASS -- every carried value is its derivation's own output, ceiling-rounded to 20 digits, stable at dps 80

@@ -19,6 +19,33 @@ source cited. Chosen as the most valuable remaining software item (OC-33):
 every measurement in this audit exists to support this one number, and the
 number was the only thing still produced by hand.
 
+WHICH TERM IS WHICH SIZE, AND WHY THAT DECIDES WHERE SCRUTINY BELONGS
+
+This was not written down anywhere until OC-125, and the omission had a
+consequence. At width 1 and the 1,000,000 samples 3.1.1 requires as a minimum:
+
+    term   value at n = 1e6     share of what is subtracted   status
+    C22c   3.3599300e-3         99.99976 %                    DERIVED
+    C22a   8.08e-9              0.00024 %                     MEASURED
+    C22b   0                    0 %                           PROVED
+
+C22c is FIVE ORDERS OF MAGNITUDE larger than C22a and is essentially the
+entire subtraction. At n = 8e6 the ratio narrows to 33,484x and C22c is still
+99.997 % of the total. The binding family inside C22c is COMPRESSION at both
+lengths, 4.3x over the collision runner-up at n = 1e6 and 4.6x at n = 8e6.
+
+AND THE SCRUTINY WENT THE OTHER WAY. C22a -- 0.00024 % of the subtraction --
+received a grid-interiority argument, a nine-order refinement sweep, an
+independent 80-digit solver, a withdrawn verification with its own register
+entry, and a scan over the mathematically-defined r/N/k domain. C22c --
+99.99976 % of it -- was a hand-typed constant that nothing compared against
+the derivation that produced it, and a mutation of it left the oracles' own
+selftest green. The relative magnitudes were never tabulated, so nobody could
+see that the effort was inverted.
+
+So the proportions live here now, beside the terms, where the next person
+deciding what to examine will read them.
+
 WHAT THIS REFUSES TO DO
 
   * It will not read a report with errorLevel != 0, or one carrying
@@ -184,10 +211,63 @@ C22B = 0.0             # P_global' at/near N == 1: conservative at every N, noth
 # discarded 4.4e-6 bit -- 88% of what three figures permits -- in the direction
 # of subtracting too LITTLE. The extra digits cost nothing and drop the
 # comparison tolerance from 0.231% to 0.0023%.
-C22C_FAMILIES_BY_N = (
-    (8_000_000, {'compression': 2.1644e-3, 'collision': 4.66e-4, 'proportion': 6.887e-5}),
-    (1_000_000, {'compression': 3.3599e-3, 'collision': 7.84e-4, 'proportion': 6.887e-5}),
-)
+# =============================================================================
+# THE VALUES ARE NO LONGER WRITTEN HERE (OC-125). THIS WAS THE DEFECT.
+#
+# Until this commit the six family ceilings were literals in this file:
+#
+#     C22C_FAMILIES_BY_N = (
+#         (8_000_000, {'compression': 2.1644e-3, 'collision': 4.66e-4, ...}),
+#         (1_000_000, {'compression': 3.3599e-3, 'collision': 7.84e-4, ...}),
+#     )
+#
+# and compression_ceiling_exact.py carried a SECOND copy of the compression
+# pair, which it compared against its own fresh derivation of 6.3.4 step 7.
+# So the value that was VERIFIED and the value that was SUBTRACTED were
+# different objects, and nothing joined them. Measured twice: mutating the copy
+# above, 3.3599e-3 -> 3.3700e-3, left oracle-selftest GREEN -- once as OC-105,
+# and again when the band-1 battery re-ran both C22c arms on 2026-10-26 and
+# reported NOT CAUGHT for each. The derivation kept agreeing with the literal
+# beside it while this file subtracted whatever it liked.
+#
+# The sweep that followed found the same six numbers recorded in SEVEN places
+# at three precisions (c22c-copy-sweep.sh lists them). They now live in exactly
+# one: c22c_source.json, read here, verified against live derivations by
+# c22c_derive.py, and pinned in the fast suite by a DIGEST rather than a second
+# copy.
+#
+# WHAT MOVED. The carried values are the derivations' own output, ceiling-
+# rounded to 20 digits, instead of the record's 3-to-5-figure roundings. C22c
+# rises by 3.0036931585923617932e-8 bit at n = 1e6 and 1.249454251229696301e-9
+# at n = 8e6, both from COMPRESSION, which binds at both lengths. C22c is
+# SUBTRACTED, so a larger C22c means a LOWER floor: the old values subtracted
+# too little and the floor was permissive by exactly that amount. Nothing
+# published changes materially -- 3.0e-8 against a C22c of 3.36e-3.
+#
+# AND THAT IS NOT THE REASON FOR THE FIX. The 3.0e-8 bound held only while the
+# two copies happened to agree. An undetected drift in this file moved the
+# floor by the size of the drift, in either direction, with the verification
+# still green. The unbounded exposure is what closes.
+#
+# PARTLY CLOSED ALREADY, BY ACCIDENT: regression-constants.sh has pinned these
+# six literals by value since OC-121, which was written for the mutation-
+# landing hazard and not for this. It closed the fast-suite half of the defect
+# without anyone intending to.
+#
+# REFUSAL, NOT A DEFAULT. If the source is absent, malformed, unstamped, or its
+# derivation has changed since the value was stamped, this module raises at
+# import and no floor is produced. There is no fallback table: a fallback would
+# be a seventh copy, and it would be the one that runs on the day the source
+# goes missing.
+# =============================================================================
+# The oracles' own directory, because this module is also loaded BY PATH --
+# regression-constants.sh uses importlib.util.spec_from_file_location -- and in
+# that case sys.path does not contain it. Without this the import below fails
+# in the one caller whose whole job is to notice when these values move.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import c22c_source as _c22c_src
+
+C22C_FAMILIES_BY_N = _c22c_src.families_by_n()
 C22C_BY_N = tuple((n0, max(f.values())) for n0, f in C22C_FAMILIES_BY_N)
 
 def c22c_families(n):

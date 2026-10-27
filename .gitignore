@@ -12,6 +12,13 @@ ea_transpose
 restart-report-label-test
 .vscode
 *.json
+# THE C22c ONE SOURCE IS DATA, NOT OUTPUT, AND *.json ABOVE WOULD HAVE EATEN IT
+# (OC-125). It is the only recording of the six family ceilings
+# entropy_floor.py subtracts; the module REFUSES at import if it is absent, so
+# committing everything else without it would have left a repository whose
+# floor cannot be computed at all -- working perfectly on the machine that
+# wrote it. Caught by `git status` not listing it, which is not a check.
+!audits/2026-10-11-independent-audit/oracles/c22c_source.json
 .DS_Store
 *.res
 

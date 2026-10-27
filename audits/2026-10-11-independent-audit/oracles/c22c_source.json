@@ -1,0 +1,89 @@
+{
+  "schema": "c22c-source/1",
+  "subject": "C22c -- the ZALPHA-rounding ceiling entropy_floor.py subtracts from a reported min-entropy figure. A MAX over three estimator families at two bitstring lengths.",
+  "one_source_rule": "These are the only recordings of these values in the repository. entropy_floor.py subtracts them, compression_ceiling_exact.py and zalpha_ceiling_by_n.py verify them against their own fresh derivations, and regression-constants.sh pins a DIGEST of them rather than a second copy. c22c-copy-sweep.sh enforces that, with a positive control. Before OC-125 the same six numbers lived in seven places and nothing compared the copy that was subtracted against the copy the derivation verified.",
+  "digits": 20,
+  "rounding": "ceiling",
+  "rounding_why": "C22c is SUBTRACTED, so a value rounded down subtracts too little and the floor it produces is permissive. Truncation is therefore always toward a larger subtraction, and the float conversion in c22c_source.py is nudged upward if it would land below the carried decimal.",
+  "lookup": "The term used at bitstring length n is the first row with n0 <= n, rows descending. That is an upper bound because the ceiling falls with n (dX' ~ sigma_max/sqrt(v), v ~ n/6), which zalpha_ceiling_by_n.py measures rather than asserts.",
+  "inputs": {
+    "z_tool": "2.5758293035489008",
+    "z_spec": "2.576",
+    "z_note": "the exact 0.995 normal quantile the tool uses, and the value 6.3.4 step 6 prints. NOT collapsed into one source: each derivation states them independently, so a disagreement surfaces as a disagreement between derivations. c22c-copy-sweep.sh cross-checks that the statements are identical strings.",
+    "compression_d": 1000,
+    "compression_b": 6
+  },
+  "families": {
+    "proportion": {
+      "carried": false,
+      "computed_inline": "log2((1 + z_spec) / (1 + z_tool))",
+      "record_3fig": "6.887e-5",
+      "why_not_carried": "At the domain edge p = 1/n the standard error is exactly 1/n, so the gap is log2((1+z_spec)/(1+z_tool)) with no approximation and no n dependence. Carrying a value for one line of exact arithmetic would add a copy and buy nothing. It is also the only family where full precision LOWERS the value -- the exact form is 6.8867114e-5 against the first-order 6.8868758e-5 the record rounded to 6.887e-5 -- and it cannot affect C22c either way, because compression binds by a factor of 48.8 at n = 1e6.",
+      "validated_against": "zalpha_ceiling_by_n.py's numerical maximisation over p >= 1/n, which finds its argmax at p = 1/n exactly and agrees with the closed form to 25 digits at both lengths."
+    }
+  },
+  "rows": [
+    {
+      "n": 8000000,
+      "compression": {
+        "value": "0.0021644012494542512297",
+        "record_3fig": "2.16e-3",
+        "stamp": {
+          "derivation": "compression_ceiling_exact.py",
+          "entry_point": "ceiling_at",
+          "derivation_sha256": "ea6a77195740d1324e6b622ba4bb9b701bddaf42942177471151561cee3594d5",
+          "produced": "2026-10-26",
+          "working_precision_dps": 50,
+          "stability_control": "recomputed at dps 80; the carried 20 digits unchanged",
+          "validated_against": "SP 800-90B 6.3.4's own worked example: d=4, N=8, v=4, X'=1.4617, for which NIST publishes p = 0.5715 and min-entropy 0.1345. An external check of the derivation, not a comparison against the tool it audits.",
+          "stamped_at_repo_commit": "a812fdec3ed1ce6cc234babb667ebfe6312a23fb"
+        }
+      },
+      "collision": {
+        "value": "0.00046643872746936079515",
+        "record_3fig": "4.66e-4",
+        "stamp": {
+          "derivation": "zalpha_ceiling_by_n.py",
+          "entry_point": "worst_collision",
+          "derivation_sha256": "4f08f176572a03dc3820e239d4ba0f366854a0131237ffc67d19811043e753d4",
+          "produced": "2026-10-26",
+          "working_precision_dps": 50,
+          "stability_control": "recomputed at dps 80; the carried 20 digits unchanged",
+          "validated_against": "its own two controls in zalpha_ceiling_by_n.py -- every row recomputed at a second working precision, and a live-sensitivity perturbation of z_spec that the ceiling must follow -- plus the record's three-figure publication in OC-22 Part 3.",
+          "stamped_at_repo_commit": "a812fdec3ed1ce6cc234babb667ebfe6312a23fb"
+        }
+      }
+    },
+    {
+      "n": 1000000,
+      "compression": {
+        "value": "0.0033599300369315859237",
+        "record_3fig": "3.36e-3",
+        "stamp": {
+          "derivation": "compression_ceiling_exact.py",
+          "entry_point": "ceiling_at",
+          "derivation_sha256": "ea6a77195740d1324e6b622ba4bb9b701bddaf42942177471151561cee3594d5",
+          "produced": "2026-10-26",
+          "working_precision_dps": 50,
+          "stability_control": "recomputed at dps 80; the carried 20 digits unchanged",
+          "validated_against": "SP 800-90B 6.3.4's own worked example: d=4, N=8, v=4, X'=1.4617, for which NIST publishes p = 0.5715 and min-entropy 0.1345. An external check of the derivation, not a comparison against the tool it audits.",
+          "stamped_at_repo_commit": "a812fdec3ed1ce6cc234babb667ebfe6312a23fb"
+        }
+      },
+      "collision": {
+        "value": "0.00078445330772897960714",
+        "record_3fig": "7.84e-4",
+        "stamp": {
+          "derivation": "zalpha_ceiling_by_n.py",
+          "entry_point": "worst_collision",
+          "derivation_sha256": "4f08f176572a03dc3820e239d4ba0f366854a0131237ffc67d19811043e753d4",
+          "produced": "2026-10-26",
+          "working_precision_dps": 50,
+          "stability_control": "recomputed at dps 80; the carried 20 digits unchanged",
+          "validated_against": "its own two controls in zalpha_ceiling_by_n.py -- every row recomputed at a second working precision, and a live-sensitivity perturbation of z_spec that the ceiling must follow -- plus the record's three-figure publication in OC-22 Part 3.",
+          "stamped_at_repo_commit": "a812fdec3ed1ce6cc234babb667ebfe6312a23fb"
+        }
+      }
+    }
+  ]
+}
