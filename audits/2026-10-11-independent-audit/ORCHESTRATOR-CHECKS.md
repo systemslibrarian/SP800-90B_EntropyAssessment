@@ -12694,6 +12694,100 @@ at `0.8547` gives `CORPUS pinned figure no longer cited in
 ORCHESTRATOR-CHECKS.md: 0.8547` and exit 1, where the bare-substring version
 passed.
 
+#### AND THE FIXED REPLACEMENT VALUE FAILED WITHIN THE HOUR, BY THE HAND THAT PREDICTED IT
+
+Writing this entry put `0.8547` into this document — as a cited figure,
+anchored, in the table above — so the precondition the arm had just acquired
+fired, the arm reported `MUTATION-DID-NOT-APPLY`, and the battery went
+`INCONCLUSIVE`. The comment that predicted *"the next number written into a
+12,000-line record could re-create exactly this situation"* was proved right
+by the paragraph describing it (`de292ec`).
+
+So the arm no longer asserts a replacement value; it **searches** for one. The
+one-digit neighbours of `0.8546` are tried first, then every other `0.85xx` —
+**99 candidates, no duplicates** — and the first one this document does not
+cite is used. Two controls on the search itself: the chosen value must be
+absent and `0.8546` must be present, or the arm says `MUTATION-DID-NOT-APPLY`
+rather than drawing a verdict from a guard that would have refused anyway. If
+every candidate is cited it refuses, and a refusal is `INCONCLUSIVE`, never a
+pass.
+
+**Why 99 and not 9.** The first search had nine candidates, and every record of
+this arm's output cites the value it chose — the measured line below cites one,
+which burns it. Nine entries like this one would have exhausted the list, and
+the arm would have gone `INCONCLUSIVE` for a reason unrelated to the guard. A
+candidate list that the record of the test can exhaust is the same hazard at a
+slower rate; at 99 it is a hazard a reader can see coming, which is the most
+a list can offer.
+
+**Measured in isolation against scratch records, 2026-10-27:** a record citing
+only `0.8546` → the first neighbour chosen; a record citing the first two
+neighbours → the third; a record citing all 99 → none chosen, refusal; a record
+not citing `0.8546` → the second control reports it absent.
+
+**The battery, re-run on the tree at `de292ec`, 2026-10-27:**
+`12 CAUGHT, 2 NOT CAUGHT, 0 no-apply/restore, 0 control-failed, COMPLETE`, the
+arm reporting `outside-battery pinned figures (0.8546 -> 0.8548)  CAUGHT
+control 0, mutant 1 (feef1a1)`. The two `NOT CAUGHT` are the two in the table
+above and no other. That run measured the nine-candidate search; the
+99-candidate list differs from it only in what it tries after the ninth
+refusal, and was measured in isolation as above.
+
+#### THE CLOSING REVISION STATED FOUR COUNTS A SECOND TIME, AND THE CHECK READ ONLY THE FIRST
+
+`CLOSING-INVENTORY.md`'s closing revision (2026-10-27) names the suite, the
+oracle self-test, the aliasing suite and the instrument enumerator in its
+headline — a second statement of counts the staleness section already makes.
+`inv_count` read `head -1`, so the headline's copies would have been checked
+by nothing while every row reported a match: **two copies of a number with a
+check on one of them, the family's shape, in the check built for the family.**
+Every occurrence is now compared and must agree, their number is summed, and
+the sweep must find exactly that many lines — one pair per line is the
+contract, and a line carrying two is counted twice by the rows and once by the
+sweep, which fails. Two rows were added: the script count against
+`EXPECTED_REGRESSION_SCRIPTS`, and the live instrument count against the
+enumerator's own output rather than a figure typed beside it.
+
+Verified by observing failure — six limbs, the inventory restored from a copy
+(not `git checkout --`) and shown byte-identical after each:
+
+| mutation | what was observed |
+|---|---|
+| the headline's second `expect 26 passed` → 27 | `the document says 26,27 (2 occurrence(s)), the script declares 26`; `12 found, 10 covered` |
+| `24 regression scripts` → 23 | `the document says 23 (1 occurrence(s)), the script declares 24`; `8 of 9 rows compared` |
+| `**86 live instruments**` → 87 | `the document says 87 (1 occurrence(s)), the script declares 86` |
+| the headline's second `(32 cases)` → 33 | `the document says 32,33 (2 occurrence(s)), the script declares 32` |
+| a planted pair no row covers | `13 found, 12 covered by the table above` |
+| two pairs joined onto one line | `11 found, 12 covered by the table above` |
+
+Control, unmodified: `9 rows, 12 occurrences`; `every script-count pair in the
+inventory is checked: yes (12)`; `PASS`.
+
+#### THE ANCHORED GUARD WAS FLAGGED AS A DEAD GUARD, AND THE FLAG IS THE DETECTOR'S KNOWN NOISE
+
+Running the suite on this revision, `regression-deadguard` reported one new
+flag against the baseline of 39:
+
+```
++ cpp/selftest/regression-outside-battery.sh|D|verification command upstream of a pipe, no pipefail, no set -e
+```
+
+The flagged statement is the anchored citation grep above. `deadguard.py`
+decides class D with `'|' in s` — any bar in the statement — and the anchor
+`(^|[^0-9.])…([^0-9]|$)` carries two, both inside a quoted ERE alternation.
+There is no pipe: the grep's status is read by `|| cbad`, and the subject was
+broken rather than inspected — the battery's arm mutated the pinned list and
+the guard fired (`control 0, mutant 1`, above, on the tree carrying this
+construct). The detector's false-positive rate was measured at 16 % on 68 flags (`OC-95`; a floor, `OC-98`),
+and this is a member of that class: a bar inside quotes.
+
+The baseline is **rebased from 39 to 40 flags**, with this entry as the reason.
+Not done: teaching the detector to skip bars inside quotes, because its counts
+are pinned floors and a change to what it flags would move every number that
+cites it. The flag stays in the baseline as what it is — a construct the
+detector cannot read — rather than the guard being rewritten to please the
+detector.
+
 ### "Verified the wrong object" — the family, now five instances in two sessions
 
 The shape that has cost this project the most, in order:
@@ -12764,7 +12858,11 @@ govern dated evidence.
   what the outside-battery arm did for two days while its tally was correct.
 - **Nothing here is reviewed by anyone but its author**, and the three repairs in
   this entry are themselves unreviewed (`C8`).
-- **x86-64 has not seen any of this.** Eight commits are unpushed, so the last
-  CI measurement on the platform NIST's reference data was produced on is
-  `OC-123`, run `40425913108`. Every claim here is Darwin arm64 only.
+- **x86-64 had not seen any of this when the entry was written.** Nine
+  commits were unpushed, so the last CI measurement on the platform NIST's
+  reference data was produced on was `OC-123`, run `40425913108`, and every
+  claim above was Darwin arm64 only. They were pushed with the closing
+  revision on 2026-10-27; the run that measured them is recorded in
+  `CLOSING-INVENTORY.md`'s closing revision, because the commit carrying a
+  run's id cannot be the commit that run measured.
 - Nothing reported upstream.

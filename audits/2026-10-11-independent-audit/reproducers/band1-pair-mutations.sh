@@ -229,8 +229,18 @@ run_pair "the oracles' exit contract" "b072bf7" \
 # whatever number the record happens to contain today.
 _cite_doc="audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md"
 _cited() { grep -qE "(^|[^0-9.])${1//./\\.}([^0-9]|$)" "${_cite_doc}"; }
+# NINE CANDIDATES WAS THE SAME HAZARD AT A SLOWER RATE. Every record of this
+# arm's output cites the value it chose, which burns that candidate; nine
+# entries would have exhausted the list and the arm would have refused for a
+# reason unrelated to the guard. So: the one-digit neighbours first, then every
+# other 0.85xx -- 99 candidates, no duplicates (verified in isolation, OC-126).
+_cands() {
+    echo 0.8547 0.8548 0.8549 0.8541 0.8542 0.8543 0.8544 0.8545 0.8540
+    local a b
+    for a in 0 1 2 3 5 6 7 8 9; do for b in 0 1 2 3 4 5 6 7 8 9; do echo "0.85${a}${b}"; done; done
+}
 _repl=""
-for _cand in 0.8547 0.8548 0.8549 0.8541 0.8542 0.8543 0.8544 0.8545 0.8540; do
+for _cand in $(_cands); do
     _cited "${_cand}" || { _repl="${_cand}"; break; }
 done
 if [ -z "${_repl}" ]; then

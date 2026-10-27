@@ -26,6 +26,7 @@ cpp/selftest/regression-multimmc.sh|B|no set -e, status never read
 cpp/selftest/regression-notrun.sh|C|verification command in statement position, status never read, no set -e
 cpp/selftest/regression-output.sh|C|verification command in statement position, status never read, no set -e
 cpp/selftest/regression-outside-battery.sh|C|verification command in statement position, status never read, no set -e
+cpp/selftest/regression-outside-battery.sh|D|verification command upstream of a pipe, no pipefail, no set -e
 cpp/selftest/regression-platform-deltas.sh|C|verification command in statement position, status never read, no set -e
 cpp/selftest/regression-restart.sh|B|no set -e, status never read
 cpp/selftest/regression-restart.sh|C|verification command in statement position, status never read, no set -e

@@ -763,6 +763,7 @@ fi
 # It compares the LIVE figure only. The frozen figure is fixed by construction
 # -- dated evidence does not grow -- and the inventory says so.
 echo
+inv_live=""   # read again by the closing inventory's count table below
 INVDOC="${repo}/audits/INSTRUMENT-INVENTORY.md"
 if [ ! -f "${INVDOC}" ] || [ ! -x "${repo}/audits/enum-instruments.sh" ]; then
     bad "the instrument inventory or its enumerator is missing:" "${INVDOC}"
@@ -1101,24 +1102,40 @@ fi
 # either direction fails.
 INV="${repo}/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md"
 ORACLES="${repo}/audits/2026-10-11-independent-audit/oracles"
-inv_rows=0
+inv_rows=0; inv_hits=0
+# EVERY OCCURRENCE IS COMPARED, NOT THE FIRST (the closing revision, 2026-10-27).
+# The first version read `head -1`, so a second statement of the same count --
+# which the closing revision makes, in its headline -- would have been checked
+# by nothing while the row reported a match: two copies of a number with a check
+# on one of them, the shape OC-126 names as the sixth instance. All occurrences
+# must agree with the declaration, their number is summed, and the sweep below
+# must find exactly that many lines. ONE PAIR PER LINE is the contract: a line
+# carrying two pairs is counted twice here and once there, and fails.
 inv_count() { # inv_count <label> <extended-regex> <sed-extract> <declared>
-    local label=$1 re=$2 ex=$3 want=$4 got
-    got=$(grep -oE "${re}" "${INV}" | head -1 | sed -e "${ex}")
-    if [ -z "${got}" ]; then
+    local label=$1 re=$2 ex=$3 want=$4 got n
+    n=$(grep -cE "${re}" "${INV}")
+    if [ "${n}" -eq 0 ]; then
         bad "${label}:" "the inventory no longer states it in the checked form -- NO RESULT"
-    elif [ -z "${want}" ]; then
+        return
+    fi
+    if [ -z "${want}" ]; then
         bad "${label}:" "the script's own declaration is unreadable; nothing to compare"
-    elif [ "${got}" != "${want}" ]; then
-        bad "${label}:" "the document says ${got}, the script declares ${want}"
+        return
+    fi
+    got=$(grep -oE "${re}" "${INV}" | sed -e "${ex}" | sort -u | tr '\n' ',' | sed 's/,$//')
+    if [ "${got}" != "${want}" ]; then
+        bad "${label}:" "the document says ${got} (${n} occurrence(s)), the script declares ${want}"
     else
-        inv_rows=$((inv_rows + 1))
+        inv_rows=$((inv_rows + 1)); inv_hits=$((inv_hits + n))
     fi
 }
 
 inv_count "inventory vs run-all-checks' total" \
     'expect [0-9]+ passed, 0 failed' 's/expect \([0-9]*\).*/\1/' \
     "$(decl "${here}/run-all-checks.sh" EXPECTED_TOTAL_CHECKS)"
+inv_count "inventory vs run-all-checks' script count" \
+    'run-all-checks\.sh[^0-9]*[0-9]+ regression scripts' 's/.*[^0-9]\([0-9]*\) regression scripts/\1/' \
+    "$(decl "${here}/run-all-checks.sh" EXPECTED_REGRESSION_SCRIPTS)"
 inv_count "inventory vs harness-inventory's declaration" \
     'harness-inventory-mutation-test\.sh +# expect [0-9]+ of [0-9]+' 's/.*of //' \
     "$(decl "${here}/harness-inventory-mutation-test.sh" MUT_DECLARED)"
@@ -1131,27 +1148,35 @@ inv_count "inventory vs platform-deltas' declaration" \
 inv_count "inventory vs oracle-selftest (the command block)" \
     'oracle-selftest\.sh +# [0-9]+ cases' 's/.*# \([0-9]*\).*/\1/' \
     "$(decl "${ORACLES}/oracle-selftest.sh" DECLARED_CASES)"
-inv_count "inventory vs oracle-selftest (the A07/A08 prose)" \
+inv_count "inventory vs oracle-selftest (the prose)" \
     'oracle-selftest\.sh` \([0-9]+ cases\)' 's/.*(\([0-9]*\).*/\1/' \
     "$(decl "${ORACLES}/oracle-selftest.sh" DECLARED_CASES)"
 inv_count "inventory vs output-aliasing's declaration" \
     'regression-output-aliasing\.sh` \([0-9]+ checks\)' 's/.*(\([0-9]*\).*/\1/' \
     "$(decl "${here}/regression-output-aliasing.sh" DECLARED_CASES)"
+# The live instrument count, against the enumerator that ran above (OC-90's
+# check covers audits/INSTRUMENT-INVENTORY.md; this covers the closing
+# revision's copy). An empty inv_live means the enumerator did not run, and
+# the row then reports "unreadable" rather than matching an empty string.
+inv_count "inventory vs the instrument enumerator" \
+    '\*\*[0-9]+ live instruments\*\*' 's/[^0-9]*\([0-9]*\).*/\1/' \
+    "${inv_live:-}"
 
-INV_CHECKED_ROWS=7
+INV_CHECKED_ROWS=9
 if [ "${inv_rows}" -ne "${INV_CHECKED_ROWS}" ]; then
     bad "the inventory's count table:" "${inv_rows} of ${INV_CHECKED_ROWS} rows compared"
 else
-    note "the inventory's counts match the scripts' declarations:" "yes (${inv_rows} rows)"
+    note "the inventory's counts match the scripts' declarations:" "yes (${inv_rows} rows, ${inv_hits} occurrences)"
 fi
 
 # The sweep for a count this table does not cover. Any line of the inventory
 # naming one of these scripts AND carrying a count-shaped number must be one of
-# the rows above; a new one fails here rather than drifting unobserved.
-inv_pairs=$(grep -cE '(run-all-checks|harness-inventory-mutation-test|outside-battery-mutation-test|regression-platform-deltas|oracle-selftest|regression-output-aliasing)[^ ]*(\.sh)?.*[0-9]+ ?(cases|checks|passed|mutations|of [0-9]+)' "${INV}")
-if [ "${inv_pairs}" -ne "${INV_CHECKED_ROWS}" ]; then
+# the occurrences counted above; a new one fails here rather than drifting
+# unobserved, and so does a second pair on a line already counted once.
+inv_pairs=$(grep -cE '(run-all-checks|harness-inventory-mutation-test|outside-battery-mutation-test|regression-platform-deltas|oracle-selftest|regression-output-aliasing|enum-instruments)[^ ]*(\.sh)?.*[0-9]+ ?(cases|checks|passed|mutations|regression scripts|live instruments|of [0-9]+)' "${INV}")
+if [ "${inv_pairs}" -ne "${inv_hits}" ]; then
     bad "script-count pairs in the inventory:" \
-        "${inv_pairs} found, ${INV_CHECKED_ROWS} covered by the table above"
+        "${inv_pairs} found, ${inv_hits} covered by the table above"
 else
     note "every script-count pair in the inventory is checked:" "yes (${inv_pairs})"
 fi

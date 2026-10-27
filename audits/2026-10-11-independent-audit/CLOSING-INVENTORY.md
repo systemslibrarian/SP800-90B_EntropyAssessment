@@ -1,34 +1,100 @@
 # What is left — closing inventory
 
-Date: **2026-10-20**, rewritten after the Windows measurement (`OC-48`) and
-again after an outside read-only audit (`OC-49`–`OC-52`). State:
-`master` at the commit adding this revision. Written to be read cold, by
-someone who has not followed the work.
+Date: **2026-10-27**. **This is the closing revision. The campaign is closed,
+nothing further is planned, and the next thing that moves this repository is
+the device in January 2027.** State: `master` at the commit adding this
+revision. Written to be read cold, by someone who has not followed the work.
+The buckets below are unchanged by this revision; the previous headline — the
+Windows measurement and the outside audit, 2026-10-20 — is in this file's
+history and in `OC-48`–`OC-58`.
 
-**An outside read-only audit, 2026-10-20, pinned at fork `769115d8`,
-reproduced defects in this tree and in this audit's own oracles.** Everything
-it reported that was checked here held, with one correction in the fork's
-favour: Windows now builds. Its highest-priority item was a **data-destroying
-regression introduced by one of this audit's own repairs** — `-o <input>` with
-the output path equal to the input replaced a 1,000,000-byte capture with a
-602-byte error report before a single sample was read (`A05`). Repaired, with
-18 alias cases shown refused and shown failing against the pre-fix build. In
-January the input is a capture that cannot be recreated, so that item mattered
-more than everything else on the list put together.
+## What the campaign established
 
-**Where this revision leaves it.** `C18` is **repaired**, not merely
-characterised: the Windows blocker moved to `seed()`, which is now **measured**
-rather than predicted. `A02` and `A06` are **closed**. The remaining software
-items are `C24` (portability, repairable here) and `seed()` (an entropy path,
-the owner's call). The needs-nothing bucket is **not** empty.
+Three findings lead, because they are the ones that would survive an outside
+reader's scepticism:
 
-**The headline changed two revisions ago.** The version before that said the fork
-had reached the hardware wall and the first bucket was down to one small item.
-Measuring Windows **reopened the software work**: it confirmed a defect that
-had been a reading of the source for a year (`C18`), and it found a new one in
-two repairs this audit itself authored (`C24`). Neither is a wrong figure —
-both are fail-closed — but neither existed as a *measured* item before today,
-and the first bucket is no longer nearly empty.
+1. **The figures agree with three independent references.** This fork matches
+   NIST's published reference outputs on **Linux x86-64 with GCC — the
+   platform NIST produced that data on — with no exceptions claimed**: the
+   platform-delta manifest deliberately lists **no block** for Linux, so a
+   `selftest` failure there is not excused and the x86-64 CI job fails rather
+   than adopting macOS's eight documented last-digit deltas. And across
+   **1,689 value-rows** compared against **two independently written
+   implementations**, there were **10** disagreements, every one of them
+   separated into a platform effect or an identified fork defect (`OC-110`–`OC-114`,
+   the three-way differential).
+2. **`C22a`'s attainment point is justified on both axes, not merely
+   sampled.** `K` = 1.6189e-14 is attained at `N` = 5, `r` = 2; `N` = 5 is an
+   **interior** maximum, and `r` = 2 is the **genuine boundary of the
+   admissible domain** — at `r` = 1 the root of `P_local` falls below the
+   `1/k` floor the code itself imposes, so it cannot be solved at all, and
+   `r` = 1 would first become admissible at `k` = 498, **1.95x the largest
+   alphabet §3.1.1 permits**. An independent computation over a domain taken
+   from the mathematics reproduces the recorded constant to five significant
+   figures at exactly the recorded point (`OC-121`). It remains **MEASURED,
+   not PROVED**: monotonicity in `r` and at large `N` is established by scan.
+3. **`C22c`'s six family values have one source, and the oracle can no longer
+   verify its own copy.** The values are derived once, pinned by digest, and
+   the defect that made this necessary — a sweep that mutated one copy while
+   the check read another — is closed (`OC-125`). No entropy was recovered,
+   because none was being thrown away: the 4.5–4.9x ratio was Compression
+   versus Collision, a mechanism, as a consistent ratio always is (`OC-62`).
+
+Beyond those, the instruments. Each count below is compared against the
+script that declares it by `cpp/selftest/regression-docs.sh`, or is dated and
+attributed, because hand-typed counts in this document drifted six times
+before that rule existed (`OC-126`):
+
+- `cpp/selftest/run-all-checks.sh` runs 24 regression scripts
+  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 26 passed, 0 failed);
+- `audits/enum-instruments.sh` prints **86 live instruments** (measured
+  2026-10-26 at `76875b5`; the count has a hand-reviewed limb, `OC-126`);
+- three mutation harnesses — `harness-inventory-mutation-test.sh`,
+  `outside-battery-mutation-test.sh`, and the band-1 pair battery
+  `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
+  CAUGHT** over the undeclared repair-interaction pairs, the two named below;
+- `oracles/oracle-selftest.sh` (32 cases), each refusal against its own reason;
+- `cpp/selftest/regression-output-aliasing.sh` (46 checks), the input capture
+  shown preserved against every alias of its own path.
+
+And: a **measured floor** with every subtracted term named and its status
+printed; `C18` and `C24` repaired and **measured on Windows**; `R-1` live on
+x86-64 via CI; and the standard's own blind spot quantified — **an AES-CTR
+stream with an all-zero key, entropy exactly zero, is assessed at 7.145 of 8
+bits** (`OC-109`), which is why provenance and not estimator agreement is the
+defence.
+
+## What remains permanently open, and why
+
+- **No independent review, ever** (`C8`). The owner has decided there will be
+  none. **REPAIRED is not REVIEWED, and on this project it never becomes
+  REVIEWED.** The consequence is stated rather than implied: **the verdict is
+  partially established, PERMANENTLY.** That is the ceiling, not a waypoint.
+  Every repair, every instrument, and every one of the four defects this
+  fork's own repairs introduced (`FORK-DIVERGENCE-AND-TRUST.md` section A.2)
+  is reviewed by nobody but its author. Rule 12 — the repair-interaction
+  declaration — is the whole of the mitigation.
+- **Nothing is reported upstream**, including the strongest findings the
+  campaign produced. `UPSTREAM-REPORT-INVENTORY.md` is documentation of what
+  is wrong with the tool being run, and is not sent.
+- **Two withdrawn verifications stand withdrawn** (`WV-1`, `WV-2`), each
+  naming what leaned on it.
+- **Two mechanisms are measured unguarded**, and that count is a floor:
+  `mutation-lib`'s own landing contract, and the `O_EXCL` atomic write whose
+  load-bearing condition has been eliminated (`OC-117`, `OC-126`).
+- **`F10`/`C01`** is unreachable at width 1 by proof and is estimator numerics
+  above it; **`seed()`** is deferred under the vendor reference qualification.
+  Both are owner decisions, not tasks.
+
+## What waits on the device
+
+Everything that could make a statement about a **source** rather than an
+**instrument**: the restart assessment decided with the corrected cutoff and
+recorded with its method and the binary's identity; the per-device baseline,
+which cannot be synthesised by construction; the re-based pinned figure; and
+the health-test and operating-range evidence the estimator cannot produce.
+Synthetic data establishes claims about instruments, never about sources.
+**All of it is NOT RUN and stays NOT RUN.** The table is below.
 
 ## What this repository is, in four sentences
 
@@ -327,7 +393,7 @@ figure; `ea_iid` and `ea_restart` pass chi square, the §5.2.5 LRS test and the
 restart sanity check before exiting at `seed()`; reports write correctly; the
 §5.2.5 figures match macOS exactly.
 
-### What actually moved this document, across five revisions
+### What actually moved this document, across six revisions
 
 None of it was moved by an argument.
 
@@ -346,9 +412,18 @@ None of it was moved by an argument.
 - **Asking what a consistent ratio was made of**, rather than which side was
   wrong, turned a claim that the record was unreproduced into a reconciliation
   of it (rule 9's corollary, `OC-62`).
+- **Measuring this document's own counts against the scripts that know them**
+  found the staleness section — whose purpose is to detect staleness — wrong
+  by six about the suite and by twenty about the oracle self-test, three of
+  the replacement counts wrong in the same session, and a sixth instance of
+  the defect in the suite's own scope statement (`OC-126`). Every such count
+  is now derived from its script or dated and attributed, and the check that
+  enforces it was itself found unable to fail by its negative control.
 
-Four of those five were instruments catching **themselves**. That is the only
-reason to believe the rest.
+Four of the first five were instruments catching **themselves**; the sixth was
+a reader catching an instrument's absence, and the instrument then built caught
+its author's counts wrong twice on its first run. That is the only reason to
+believe the rest.
 
 **On the project's central claim, nothing moved and nothing can.** What this
 device's entropy actually is, whether its restart data is accepted, whether a
