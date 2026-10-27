@@ -626,6 +626,106 @@ the method **FLAGS** `blindspot_streams.py` as it stood at `a9a269f` and **does
 not flag** the repaired version at `HEAD`.
 
 
+### Rule 16 — a tolerance is matched to the precision AND the variability of what it reads
+
+**One class, found from both directions in the same campaign.** A tolerance has
+two independent upper bounds on its usefulness, and violating either makes the
+check useless in a way that looks like rigour:
+
+1. **It cannot be tighter than the format it reads.** A check that parses a
+   number out of formatted output inherits that format's quantisation.
+2. **It cannot be looser than the quantity's own variability** and still detect
+   anything. A statistical band on a deterministic quantity detects nothing.
+
+**WORKED EXAMPLE, TOO TIGHT (`OC-122`).** The deterministic corpus check
+compared at `1e-9` relative against figures recorded to 17 significant digits —
+but it parsed them from `ea_non_iid -v`, whose **summary prints six decimals**
+(`Compression Test Estimate = 0.847017`). **All 25 streams reported `DRIFTED` on
+the first run, by ~`1e-7`, from display quantisation alone.** Nothing had
+drifted. Fixed by reading `-v -v`'s `min entropy = ` lines at 17 digits — *a
+check cannot be tighter than the number it reads.*
+
+**WORKED EXAMPLE, TOO LOOSE (`OC-118`..`OC-122`).** The same corpus had a
+3-sigma statistical band, `+/-0.015106`, derived from how much **different
+random streams** vary. But those 25 streams are seed-generated and
+digest-pinned, so they reproduce to ~`1e-13` and the expected run-to-run
+variation is **zero**. Measured consequence: **a uniform `+0.005` shift in every
+figure passed.** The right tolerance for sampling a population is the wrong
+tolerance for re-running fixed bytes.
+
+**The two are the same error.** Both apply a tolerance chosen for one kind of
+number to a different kind. **Before choosing a tolerance, ask two questions:**
+
+- **What precision does the source actually print?** That is the floor.
+- **What varies, and by how much, between the runs this check will compare?**
+  For fixed bytes on one platform: floating-point reproducibility (~`1e-13`
+  here). For fixed bytes across platforms: the documented platform delta
+  (`3.66e-10`, `OC-112`). For fresh draws: the population spread (`0.025`,
+  `n = 600`). **These differ by eleven orders of magnitude and are not
+  interchangeable.**
+
+A tolerance that sits between those two bounds is a check. One outside them is
+either a false alarm generator or a formality. See [[rule 14]] for the companion
+rule about *where the tolerance's value came from*.
+
+
+### Rule 17 — a truncated artifact is well-formed, which is why awareness does not fix this
+
+**FIVE instances in this record of one fault, and the fifth was committed by a
+session that had catalogued the previous four.** So the remedy is not awareness.
+
+| # | the pipeline | what it cost |
+|---|---|---|
+| 1 | `<tool> \| head -8` | SIGPIPE killed the tool and `$?` was **head's** status; every number in that probe was about the wrong process |
+| 2 | `<tool> \| head` in a probe reading exit codes | the same, in a different probe |
+| 3 | `<tool output> \| tail` for a verdict | the status read was the reader's |
+| 4 | a suite tally read through a pipe | `echo "suite exit=$?"` reported `tail`'s status, so a **failing suite looked green** |
+| **5** | **`mkfig.sh \| tee figs.txt \| head -8`** | **a 25-row generator truncated to 8 rows, and `figs.txt` looked like a complete file** |
+
+**WHAT MAKES THIS CLASS DANGEROUS, and it is not the exit status.** A truncated
+artifact is **well-formed**: 8 valid rows of a 25-row file parse exactly as well
+as 25. Nothing downstream can distinguish it from a complete one. In instance 5
+the recorded-figures file would have been accepted and the check would merely
+have reported "no recorded figure" for 17 streams — which reads as *"those
+streams need adding"*, not as *"the generator was killed"*. **Four previous
+instances did not prevent the fifth because the failure presents as an absence,
+and an absence looks like work not yet done.**
+
+**THE RULE.**
+
+1. **A producer that writes an artifact writes a FILE. The consumer reads the
+   file.** Never a pipeline from generator to formatter to limiter. Instance 5
+   would not have been possible.
+2. **If a pipeline must be used, read the producer's status explicitly** —
+   `${PIPESTATUS[0]}` or `set -o pipefail`. `$?` after a pipeline is the
+   **last** command's status, which is the formatter's.
+3. **An artifact with an expected size records that size and refuses a short
+   file**, naming how many rows are missing. That is the defence that works
+   without anyone remembering this rule — and it is what `OC-123` added, after
+   establishing that the check reported `25/25` for whatever it was given and
+   **silently ignored an unknown row**.
+
+**THE SWEEP, with the blind spot named.** 133 lines in tracked `.sh`/`.py`/`.yml`
+match "producer into early-closer" — **a floor, and mostly false**: the dominant
+idiom is `printf '%s' "$out" | grep -q`, where the data is already captured in a
+variable and truncating the pipeline loses nothing. Narrowing to pipelines that
+**run work** into an early closer: **18**, of which **5 feed a capture**. Each of
+those five was read:
+
+- `regression-272.sh:135` and `regression-output-aliasing.sh:198` — `ls … | head -1`
+  to pick a filename. Cheap, restartable, and the first line is what is wanted.
+- `regression-chisquare.sh:75`, `regression-estimator-guards.sh:279`,
+  `regression-nonregular.sh:108` — `<tool> | sed -n 's/…/p'` capturing one
+  value. The tool may be SIGPIPEd after `sed` has what it needs, but **the
+  captured value is complete**, no artifact is written, and the tool's status is
+  not read for a verdict.
+
+**So: zero instances in the tracked tree of a generator writing a committed
+artifact through an early closer.** Instance 5 lived in a scratchpad script,
+which the sweep does not cover — **named as the blind spot, not as an absence of
+risk.** The method's positive control fires on that exact line.
+
+
 ### Rule 15 — a mutation battery is run in the foreground, on a clean tree, and restores on every exit path
 
 **OPERATIONAL, and it is here because a future session will read it before

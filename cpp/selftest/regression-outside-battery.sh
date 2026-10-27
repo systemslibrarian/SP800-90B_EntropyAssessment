@@ -194,6 +194,10 @@ CLEAN_FAST="${MT# }"
 CLEAN_REST="${SHA# }"
 if [ "${full}" = "1" ]; then
 	CLEAN="${CLEAN_FAST} ${CLEAN_REST}"
+# OC-123: the FULL clean set, independent of mode. The figures file
+# records all 25 even when fast mode examines 5, so validating it needs
+# the whole set rather than the subset being run.
+CLEAN_ALL="${MT} ${SHA}"
 	DEFECTS="${DEFECT_ALL# }"
 else
 	CLEAN="${CLEAN_FAST}"
@@ -317,6 +321,41 @@ if [ "${full}" = "1" ]; then
 		comp_binds=0
 		deterministic_ok=0
 		vals=""
+		# OC-123: THE FIGURES FILE IS VALIDATED AS A SET, NOT CONSULTED ROW BY
+		# ROW. Established by test before this was written:
+		#   truncated to 8 rows  -> FAILED, but with 17 "no recorded figure"
+		#                           notes and NO expected count: it reported
+		#                           whatever the loop happened to find.
+		#   an EXTRA unknown row -> *** PASSED ***, reporting "ENFORCED 25/25"
+		#                           and ignoring the unknown row completely.
+		#   one row removed      -> FAILED and named the stream.
+		# "Reports 25/25" and "requires 25" are different properties, and only
+		# the second is a check. So: the expected count is recorded here, a
+		# short file names how many are missing, an unknown stream name is a
+		# failure, and a duplicate is a failure.
+		EXPECTED_FIGURES=25
+		fig_rows=$(grep -cE '^[^#[:space:]]' "${FIGURES}" 2>/dev/null || echo 0)
+		if [ "${fig_rows}" -ne "${EXPECTED_FIGURES}" ]; then
+			if [ "${fig_rows}" -lt "${EXPECTED_FIGURES}" ]; then
+				note "FIGURES FILE WRONG SIZE" \
+				     "${fig_rows} of ${EXPECTED_FIGURES} rows, $((EXPECTED_FIGURES - fig_rows)) missing"
+			else
+				note "FIGURES FILE WRONG SIZE" \
+				     "${fig_rows} of ${EXPECTED_FIGURES} rows, $((fig_rows - EXPECTED_FIGURES)) unexpected"
+			fi
+			bindfail=$((bindfail + 1))
+		fi
+		# every recorded name must be one of the clean streams, and appear once
+		for fname in $(awk '/^[^#[:space:]]/ { print $1 }' "${FIGURES}" 2>/dev/null); do
+			case " ${CLEAN_ALL} " in
+				*" ${fname} "*) ;;
+				*) note "FIGURES FILE names an unknown stream" "${fname}"
+				   bindfail=$((bindfail + 1)) ;;
+			esac
+			dup=$(awk -v nm="${fname}" '/^[^#[:space:]]/ && $1 == nm' "${FIGURES}" | grep -c .)
+			[ "${dup}" -eq 1 ] || { note "FIGURES FILE duplicate row" "${fname} x${dup}"
+			                        bindfail=$((bindfail + 1)); }
+		done
 		# OC-120: every clean stream the mode selected, not just the MT five.
 		# The mean bound below has a standard error of stdev/sqrt(n), so n is
 		# load-bearing: 25 streams make it 2.2x tighter than 5 at no meaningful

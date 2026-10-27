@@ -12047,3 +12047,113 @@ input-derived can be reached.**
   `ea_conditioning` is out of scope and is where the only 65-byte buffer lives.
 - Nothing reported upstream.
 
+## OC-123 — the figures check required nothing; rules 16 and 17; and both sweeps with their controls
+
+### Item 1 — established by test, and TEST B was the defect
+
+| test | result |
+|---|---|
+| truncated to 8 rows | **FAILED** — but with 17 `no recorded figure` notes, **no "8 of 25"**, and no recorded expected count: it reported whatever the loop found |
+| **an EXTRA unknown row `bogus_stream`** | **PASSED**, reporting `ENFORCED 25/25` and **ignoring the unknown row entirely** |
+| one row removed | FAILED and named `sha19` |
+
+**"Reports 25/25" and "requires 25" are different properties, and only the
+second is a check.** The first is the shape this record has now found nine
+times. The figures file was being *consulted row by row*, never *validated as a
+set*.
+
+**Closed.** `EXPECTED_FIGURES=25` is recorded in the check; a wrong row count
+fails naming how many are missing **or unexpected**; a name not in the clean set
+fails; a duplicate fails. Verified in five directions:
+
+```
+  control, 25 rows      ENFORCED 25/25 figures match at 1e-9 rel        PASS
+  truncated to 8        FIGURES FILE WRONG SIZE  8 of 25 rows, 17 missing   FAIL
+  extra unknown row     FIGURES FILE names an unknown stream  bogus_stream  FAIL
+                        FIGURES FILE WRONG SIZE  26 of 25 rows, 1 unexpected
+  one row removed       24 of 25 rows, 1 missing; no recorded figure for sha19  FAIL
+  duplicated row        FIGURES FILE duplicate row  mt00 x2                FAIL
+  restored              ENFORCED 25/25                                   PASS
+```
+
+The `(-1 missing)` wording of the first attempt was itself wrong for a surplus
+and is now two branches.
+
+### Item 2 — rule 16, and the sweep
+
+**Guide rule 16: a tolerance is matched to the precision AND the variability of
+what it reads.** Two independent bounds, violated from both directions in this
+campaign — too tight for the format (`%.6f` read at `1e-9`, all 25 streams
+"drifting" from quantisation alone) and too loose for the quantity (a 3-sigma
+band on bytes that reproduce to `1e-13`, letting `+0.005` pass). Both incidents
+are its worked examples, one each way.
+
+**The sweep: 20 of 127 tracked scripts extract a number and compare it
+numerically.** For each, the source's printed precision against the applied
+tolerance:
+
+| check | source format | tolerance | verdict |
+|---|---|---|---|
+| `pin-check.sh` | `Assessed min entropy: %.17g` — measured `0.12644573619604868` | `1e-9` | ok |
+| `check-platform-deltas.py` | `.res` at `%.17g` — measured `0.15182732507652347` | `1e-9` | ok |
+| `regression-estimator-guards.sh` | `min entropy = %.17g` | `1e-9` | ok |
+| `regression-multimmc.sh` | `min entropy = %.17g` | exact | ok |
+| `regression-iid-json.sh` | JSON number | `1e-12` | ok |
+| `regression-constants.sh` | python `repr` | `1e-9` | ok |
+| `regression-outside-battery.sh` | **was `%.6f`**, now `%.17g` | `1e-9` | **the one violation, already fixed** |
+
+**One violation, and it is the one `OC-122` fixed.** Everything else reads a
+17-significant-digit source against a tolerance of `1e-9` or looser, so the
+tolerance sits above the format's floor in every case. The mpmath oracles'
+`1e-28`..`1e-45` are **derivative step sizes and bracket epsilons, not
+comparisons against parsed text**, so they are not in this class.
+
+**Both positive controls fired**: the sweep found `regression-outside-battery.sh`
+(the repaired case) and `pin-check.sh` (`RELTOL=1e-9` against a 17-digit figure).
+
+### Item 3 — rule 17, and why four instances did not prevent the fifth
+
+**Guide rule 17**, with all five instances tabulated. **The dangerous property
+is not the exit status: a truncated artifact is WELL-FORMED.** Eight valid rows
+of a 25-row file parse exactly as well as 25, so nothing downstream can tell
+them apart. In instance 5 the short figures file would have produced
+`no recorded figure` for 17 streams — which reads as *"those need adding"*, not
+as *"the generator was killed"*. **The failure presents as an absence, and an
+absence looks like work not yet done.** That is why awareness failed four times.
+
+The remedy is structural, in three parts: a producer writing an artifact writes
+a **file** and the consumer reads the file; a pipeline that must exist reads
+`${PIPESTATUS[0]}`; and **an artifact with an expected size records it and
+refuses a short file** — which is item 1 above, and is the only part that works
+without anyone remembering the rule.
+
+**The sweep, with its blind spot named.** **133** lines match "producer into
+early-closer" — **a floor, and mostly false**, because the dominant idiom is
+`printf '%s' "$out" | grep -q`, where the data is already captured and
+truncation loses nothing. Narrowed to pipelines that **run work**: **18**, of
+which **5 feed a capture**, and all five were read:
+
+- `regression-272.sh:135`, `regression-output-aliasing.sh:198` — `ls … | head -1`
+  for a filename. Cheap, restartable, first line is what is wanted.
+- `regression-chisquare.sh:75`, `regression-estimator-guards.sh:279`,
+  `regression-nonregular.sh:108` — `<tool> | sed -n` capturing one value. The
+  tool may be SIGPIPEd once `sed` has it, but **the captured value is complete**,
+  no artifact is written, and the status is not read for a verdict.
+
+**Zero instances in the tracked tree of a generator writing a committed artifact
+through an early closer.** Instance 5 lived in a **scratchpad** script, which
+the sweep does not cover — recorded as the blind spot, not as an absence of
+risk. **The method's positive control fires on that exact line.**
+
+### What this does NOT establish
+
+- `EXPECTED_FIGURES=25` is a **second hand-maintained count**, and adding a 26th
+  clean stream now requires updating both the corpus and this number. The check
+  names the mismatch, which is the trade.
+- The rule-16 sweep classified **20** scripts by **reading** each source's
+  format. A check whose source precision varies by code path would be misfiled.
+- The rule-17 sweep's narrowing from 133 to 18 is a **heuristic on producer
+  shape**, and it does not cover scratchpads, `eval`, or dynamically built
+  pipelines.
+- Nothing reported upstream.
+
