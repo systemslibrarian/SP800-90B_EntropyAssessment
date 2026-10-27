@@ -413,7 +413,22 @@ def validate(path=None, check_git=True):
                 _fail("the C22c %s stamp at n = %d records "
                       "working_precision_dps %r, not an integer"
                       % (fam, n, stamp['working_precision_dps']))
-    if check_git and _tracked_by_git(os.path.abspath(path)) is False:
+    # SCOPED TO THE REAL SOURCE, AND THAT SCOPE IS THE FIX FOR A FAULT THIS
+    # CHECK CAUSED. The claim is "the REPOSITORY's one source is in the
+    # repository". Applied to any path handed in, it fired on every negative
+    # control in oracle-selftest.sh -- each of which is a mutated COPY in a
+    # temporary directory, and so untracked by construction. The row-order
+    # fixture then refused for "not tracked by git" instead of for the row
+    # order, which is the A08 fault again: several fixtures refusing for one
+    # shared accidental reason, testing nothing. The others happened to fail
+    # earlier in the loop and hid it.
+    #
+    # No fixture exercises this limb, deliberately: the only way to make the
+    # real source untracked is to untrack it. It was observed failing against
+    # the genuine condition instead -- `.gitignore`'s blanket *.json had hidden
+    # the file, and `--validate` refused until it was staged (OC-125).
+    if check_git and os.path.abspath(path) == os.path.abspath(SOURCE) \
+       and _tracked_by_git(os.path.abspath(path)) is False:
         _fail("the C22c source %s is NOT TRACKED BY GIT. It is the only "
               "recording of the values entropy_floor.py subtracts, and that "
               "module refuses at import without it -- so a clone of this "

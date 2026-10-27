@@ -937,20 +937,53 @@ definition. That needs an independent high-precision computation of `P_local` on
 that input, and **it has not been done**. The item is **located, twice, and
 unresolved.**
 
+### Closed since the last revision
+
+- **`C22c`'s two copies — CLOSED (`OC-125`, 2026-10-26).** The six family
+  ceilings now live only in
+  `audits/2026-10-11-independent-audit/oracles/c22c_source.json`, carried at 20
+  significant digits and **ceiling**-rounded so truncation is always toward a
+  larger subtraction. `entropy_floor.py` reads it and **refuses at import**
+  without it; both derivations verify their own fresh output against it;
+  `regression-constants.sh` pins a **digest** rather than a second copy; and
+  `c22c-copy-sweep.sh` enforces one-ness with a control that tests its
+  discrimination rule. **A sweep found the same six numbers in SEVEN places,
+  not two** — the pair that mattered was only two of them.
+
+  **Verified by breaking, both runs recorded.** Mutating the single source now
+  **fails** `regression-constants.sh`: the band-1 battery's three C22c arms and
+  a new stamp arm all report **CAUGHT**, where the two original arms reported
+  `NOT CAUGHT` on 2026-10-26 before the fix. Reinstating the old literals in
+  the floor produces **six** named wiring failures plus six sweep findings.
+
+  **What moved:** `C22c` rises **+3.00e-8 bit** at n = 1e6 and **+1.25e-9** at
+  n = 8e6, both from the COMPRESSION family, which binds. `C22c` is
+  subtracted, so the floor is **more conservative** by that amount: the old
+  values subtracted too little. **No published figure changes materially** —
+  3.0e-8 against a `C22c` of 3.36e-3. And that is not the reason for the fix:
+  the 3.0e-8 bound held only while the two copies happened to agree, and an
+  undetected drift moved the floor by the size of the drift with the
+  verification still green. `C22c`'s status is **unchanged: DERIVED**.
+
+- **A precision defect the exact comparison exposed (`OC-125`).** Both oracles
+  built their quantile constants as module-level `mpf()` calls, so each was
+  built at whatever working precision happened to be in effect **at import**.
+  `z_spec - z_tool` is 1.707e-4 out of two numbers near 2.576, so at 53 bits
+  the difference loses twelve of sixteen digits and the collision ceiling came
+  out `0.00046643872746941443` instead of `...36080` — same code, same `dps`
+  argument, **different import order**. Neither of that file's two controls
+  could see it: one varies the working precision, which does not touch the
+  constants, and the other perturbs `z` by 1e-5, eight orders larger. Every
+  comparison it made was at three significant figures. Repaired: the quantiles
+  are built at a fixed 120 digits. **The carried values did not change** — the
+  restamp produced an identical digest.
+
 ### Queued, not repaired
 
-- **`C22c`'s two copies.** `audits/2026-10-11-independent-audit/oracles/entropy_floor.py:188` holds the
-  live table whose `max()` the published floor subtracts;
-  `compression_ceiling_exact.py:215` holds **its own separate copy** and
-  verifies *that* against NIST's worked example. Mutating the floor's copy
-  `3.3599e-3 -> 3.3700e-3` leaves `oracle-selftest` **passing** (`OC-105`). The
-  independent verification is real, correct, and verifies a different copy of
-  the number than the one in use. **Two copies, one checked.** The fix is to
-  wire them together and verify by breaking; it is not done.
-- **`OC-67`'s per-family denominator** and **`mutation-lib`'s own
-  `MUTATION-DID-NOT-APPLY` contract**, both also `NOT CAUGHT` by mutation in
-  `OC-105`. The second is the mechanism adopted to stop this project reporting
-  unearned verdicts, and it is the one mechanism with no case in which it fires.
+- **`mutation-lib`'s own `MUTATION-DID-NOT-APPLY` contract**, still
+  `NOT CAUGHT` by mutation (`OC-105`, and again 2026-10-26). It is the
+  mechanism adopted to stop this project reporting unearned verdicts, and it is
+  the one mechanism with no case in which it fires.
 - **`regression-outside-battery.sh`'s Compression window is 9.7x narrower than
   the measured single-capture spread.** It accepts `[0.8270, 0.8822]`, 3 sd from
   `0.8546 +/- 0.0092` measured on 5 clean streams; a draw with a `P_local`

@@ -12390,3 +12390,47 @@ to prevent.
 **None of the four is a repair whose mechanism this one replaces.** All four are
 repairs whose **checks** this one rewires, which is the interaction worth
 testing: a check that was moved is a check that may have stopped checking.
+
+### The pair test, run
+
+| arm | 2026-10-26 before | after |
+|---|---|---|
+| C22c compression ceiling, n=1e6 | **NOT CAUGHT** (checker: `oracle-selftest`) | **CAUGHT** (checker: `regression-constants.sh`) |
+| C22c compression ceiling, n=8e6 | **NOT CAUGHT** | **CAUGHT** |
+| C22c collision ceiling, n=1e6 (was "OC-67 per-family denominator") | **NOT CAUGHT** | **CAUGHT** |
+| C22c stamp: the derivation sha256 | did not exist | **CAUGHT** |
+| A02/A06 platform-delta manifest | CAUGHT | CAUGHT |
+| A02/A06 the tolerance itself | CAUGHT | CAUGHT |
+| the canary's input precondition | CAUGHT | CAUGHT |
+| C23's recomputed cutoff decision | CAUGHT | CAUGHT |
+| C23's cutoff-method gate | CAUGHT | CAUGHT |
+
+**6 CAUGHT → 9 CAUGHT, 7 NOT CAUGHT → 3.** The three that remain are
+unrelated to this repair: `regression-outside-battery`'s pinned figures,
+`mutation-lib`'s own landing contract, and the `O_EXCL` atomic write.
+
+### TWO ARMS REPORTED `CONTROL FAILED`, AND BOTH WERE THIS REPAIR'S FAULT
+
+The first battery run after the fix was **INCONCLUSIVE**, not green: two arms'
+checkers were already failing before any mutation, so neither earned a verdict.
+That is the `OC-105` three-outcome contract doing its job — a `CONTROL FAILED`
+is not a pass and is not a failure, it is *no result* — and both causes were
+mine.
+
+| arm | checker | why it was failing | fix |
+|---|---|---|---|
+| the oracles' exit contract | `oracle-selftest.sh` | the **`rows in ascending n`** fixture refused for *"not tracked by git"* instead of for the row order. The tracked-by-git guard added hours earlier applied to **any** path, and every negative control is a mutated **copy in a temporary directory** — untracked by construction | the guard is scoped to the real source. The other ten fixtures hid it by failing earlier in the loop |
+| the divergence-figure enforcement | `regression-docs.sh` | the **instrument inventory's live count was four behind**: this repair added four instruments (`c22c_source.py`, `c22c_derive.py`, `c22c-copy-sweep.sh`, the workflow) and `audits/INSTRUMENT-INVENTORY.md` still said 82 | the inventory says **86 at `76875b5`**, with a line naming the four. `audits/enum-instruments.sh` is what found it |
+
+**The first of those is the A08 fault for the third time in one session** —
+several fixtures refusing for one shared accidental reason — and this instance
+was introduced *by a guard added in response to a different finding*. It is
+recorded here rather than quietly fixed because the pattern is the point: a new
+refusal placed before existing refusals silently captures all of them, and the
+only thing that catches it is a fixture suite whose cases each assert their
+**own distinct reason**. Ten of the eleven cases passed while testing nothing
+new.
+
+**The second is a hand-maintained count caught by its enumerator**, which is
+the structure `OC-124` and rule 16's sibling exist to produce: the document was
+found to be four behind by a check, not by anyone remembering to update it.

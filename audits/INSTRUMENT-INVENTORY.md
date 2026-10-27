@@ -76,11 +76,19 @@ them was being invoked **then**. So:
 
 | set | rule that applies | count |
 |---|---|---:|
-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **82** at `b53ff5d`, 2026-10-26 |
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **86** at `76875b5`, 2026-10-26 |
 | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
 
 Counting frozen by the live rule would silently retire 47 artefacts that were
 instruments when they produced the evidence the record still cites.
+
+**82 -> 86 at `76875b5` (`OC-125`).** Four instruments, all of the C22c
+one-source guard: `oracles/c22c_source.py` (the loader and its fast
+validation), `oracles/c22c_derive.py` (the slow re-derivation),
+`oracles/c22c-copy-sweep.sh` (one source per family value, with a control) and
+`.github/workflows/c22c-source-check.yml`. The count is checked against
+`audits/enum-instruments.sh` by `regression-docs.sh`, which is how this
+document was found to be four behind rather than by anyone remembering.
 
 Three consequences the rule settles, each of which was got wrong once:
 
@@ -108,7 +116,7 @@ thing an extension-matched glob missed.
 
 | set | count | what it is |
 |---|---:|---|
-| **LIVE** | **82** at `b53ff5d`, 2026-10-26 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+| **LIVE** | **86** at `76875b5`, 2026-10-26 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
 | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
 Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
