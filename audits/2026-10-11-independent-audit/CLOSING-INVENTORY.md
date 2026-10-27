@@ -184,10 +184,10 @@ MARGIN (not a floor)` above it. The **aggregate** label at width 1 is
 expected-result manifest, with all four required failures demonstrated.
 
 `A05` and `A04` have left it, repaired in the previous round, with
-`cpp/selftest/regression-output-aliasing.sh` (27 checks) holding them and shown
+`cpp/selftest/regression-output-aliasing.sh` (46 checks) holding them and shown
 failing against a pre-fix build. `A07` and `A08` have left it too: this audit's
 own oracles were exiting 0 on malformed and unrelated input, and
-`oracles/oracle-selftest.sh` (12 cases) now holds each refusal against the
+`oracles/oracle-selftest.sh` (32 cases) now holds each refusal against the
 reason it is supposed to fail for.
 
 ## Needs another platform — now genuinely empty, and measured rather than argued
@@ -362,9 +362,10 @@ the merge, and two entries were wrong when it was. The checks are cheap:
 
 ```sh
 cd cpp && make non_iid iid restart && cd selftest
-./run-all-checks.sh --allow-known-platform-deltas   # expect 20 passed, 0 failed
+./run-all-checks.sh --allow-known-platform-deltas   # expect 26 passed, 0 failed
 ./harness-inventory-mutation-test.sh                # expect 5 of 5 mutations landed
 ./outside-battery-mutation-test.sh                  # expect 9 of 9 mutations landed
+./regression-docs.sh                                # the prose claims that can be checked
 ```
 
 And the two platform jobs, which are the cheap way to find the class of claim
@@ -372,11 +373,8 @@ that is true only on the host you wrote it on:
 
 ```sh
 ./regression-platform-deltas.sh                      # 6 cases; the platform exception
-cd ../../audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh  # 12 cases
+cd ../../audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh  # 32 cases
 ```
-
-And the two platform jobs, which are the cheap way to find the class of claim
-that is true only on the host you wrote it on:
 
 **Every `gh` command here names the repository, and that is load-bearing**
 (`OC-93`): this checkout has an `upstream` remote, `gh` with no `-R` resolves to
@@ -404,8 +402,6 @@ Read the Windows job's `verdict.log` first. A `GATE FAIL` there is a measured
 finding, not a broken job: as of 2026-10-20 the expected failures are
 `libdivsufsort` having no package, `C18`, and the three `C24` gates. Anything
 else failing is new.
-./regression-docs.sh                                # the prose claims that can be checked
-```
 
 A mutation harness that reports `MUTATION-DID-NOT-APPLY` is telling you the
 harness is broken, not the guard (`mutation-lib.sh`, `OC-33`). An item in the

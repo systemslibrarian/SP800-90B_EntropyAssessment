@@ -23,6 +23,12 @@ here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "${here}/../.." && pwd)
 . "${here}/mutation-lib.sh"
 
+# OC-126: declared here, asserted against the runtime tally by mut_summary,
+# and read from here by regression-docs.sh. One number, three places that
+# must agree, and a drift anywhere fails rather than printing a new total.
+MUT_DECLARED=9
+
+
 guard="${here}/regression-outside-battery.sh"
 manifest="${here}/outside-battery-corpus.txt"
 [ -r "${guard}" ] && [ -r "${manifest}" ] || { echo "outside-battery-mutation-test: guard or manifest missing" >&2; exit 2; }

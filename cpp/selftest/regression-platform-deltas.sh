@@ -22,6 +22,11 @@ here=$(cd "$(dirname "$0")" && pwd)
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-platdelta.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT HUP INT TERM
 fails=0
+cases=0
+# OC-126: DECLARED HERE, ASSERTED BELOW, READ BY regression-docs.sh.
+# CLOSING-INVENTORY.md states this number; a case added or removed without
+# changing it fails this script rather than silently making the document wrong.
+DECLARED_CASES=6
 CC_ID="$(${CXX:-c++} --version 2>&1 | head -1)"
 
 check() { # check <transcript> [uname-s] [uname-m] [cc]
@@ -35,13 +40,14 @@ expect() { # expect <label> <0|1> <must-appear> <transcript> [plat...]
     check "$@"; local rc=$?
     if [ "${rc}" != "${want}" ]; then
         printf '  %-50s FAIL  rc %s, wanted %s\n' "${label}" "${rc}" "${want}"
-        sed 's/^/        /' "${work}/out"; fails=$((fails + 1)); return
+        sed 's/^/        /' "${work}/out"; cases=$((cases + 1)); fails=$((fails + 1)); return
     fi
     if [ -n "${frag}" ] && ! grep -qF "${frag}" "${work}/out"; then
         printf '  %-50s FAIL  right verdict, wrong reason\n' "${label}"
         printf '        wanted a mention of: %s\n' "${frag}"
-        sed 's/^/        /' "${work}/out"; fails=$((fails + 1)); return
+        sed 's/^/        /' "${work}/out"; cases=$((cases + 1)); fails=$((fails + 1)); return
     fi
+    cases=$((cases + 1))
     printf '  %-50s PASS\n' "${label}"
 }
 
@@ -105,8 +111,18 @@ expect "4. the WRONG PLATFORM fails" 1 "no manifest block matches" \
 # and a manifest that cannot be read must refuse, not wave through
 SELFTEST_DELTA_MANIFEST="${work}/nope.txt" PLAT_S="$(uname -s)" PLAT_M="$(uname -m)" \
     PLAT_CC="${CC_ID}" python3 "${here}/check-platform-deltas.py" < "${genuine}" >/dev/null 2>&1
-[ $? -eq 2 ] && printf '  %-50s PASS\n' "5. an unreadable manifest refuses (rc 2)" \
+# $? FIRST: incrementing the counter before reading it destroys the status
+# this case exists to check (caught by the case failing, OC-126).
+_rc5=$?
+cases=$((cases + 1))
+[ "${_rc5}" -eq 2 ] && printf '  %-50s PASS\n' "5. an unreadable manifest refuses (rc 2)" \
              || { printf '  %-50s FAIL\n' "5. an unreadable manifest refuses (rc 2)"; fails=$((fails + 1)); }
 
+if [ "${cases}" -ne "${DECLARED_CASES}" ]; then
+    printf '  %-50s FAIL  declared %s, ran %s\n' "the declared case count" "${DECLARED_CASES}" "${cases}"
+    fails=$((fails + 1))
+fi
+
+printf 'regression-platform-deltas: %d of %d declared cases ran\n' "${cases}" "${DECLARED_CASES}"
 if [ "${fails}" -eq 0 ]; then echo "regression-platform-deltas: PASS"; exit 0; fi
 echo "regression-platform-deltas: FAIL (${fails} case(s))"; exit 1

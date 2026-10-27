@@ -67,6 +67,7 @@
 #   mut_summary "harness-name"   # prints the tally and returns the exit status
 
 MUT_PASS=0
+MUT_DECLARED=""         # OC-126: the case count this harness says it has, if any
 MUT_BASELINE_OK=""      # yes once an unmutated baseline has been shown accepted
 MUT_NEGATIVE_SEEN=""    # yes once any negative fixture has been evaluated
 MUT_FAIL=0
@@ -209,6 +210,19 @@ mut_summary() {
     fi
     local name=$1
     local total=$((MUT_PASS + MUT_FAIL + MUT_NOAPPLY))
+    # OC-126: THE HARNESS CHECKS ITS OWN DECLARED COUNT AGAINST WHAT IT RAN.
+    #
+    # Every count this project has written in prose about a script has drifted
+    # -- five times, measured. The remedy is that the number lives in the
+    # script, the script asserts it against its own runtime tally, and the
+    # document is checked against the script. This is the first of those two
+    # links: set MUT_DECLARED and a harness that gains or loses a case FAILS
+    # here instead of quietly reporting a new total that nothing compares.
+    if [ -n "${MUT_DECLARED}" ] && [ "${total}" -ne "${MUT_DECLARED}" ]; then
+        MUT_FAIL=$((MUT_FAIL + 1))
+        MUT_FAIL_LABELS="${MUT_FAIL_LABELS} declared-count-drift"
+        mut_note "declared count" "*** DECLARED ${MUT_DECLARED}, RAN ${total} -- the harness and its declaration disagree ***"
+    fi
     printf '%s: %d of %d mutations landed and were caught' "${name}" "${MUT_PASS}" "${total}"
     [ "${MUT_FAIL}" -ne 0 ] && printf ', %d NOT CAUGHT' "${MUT_FAIL}"
     [ "${MUT_NOAPPLY}" -ne 0 ] && printf ', %d DID NOT APPLY' "${MUT_NOAPPLY}"

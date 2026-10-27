@@ -33,8 +33,17 @@ bs_print "${bindir}/ea_non_iid" "${bindir}/ea_iid" "${bindir}/ea_restart"
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-alias.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT HUP INT TERM
 fails=0
-pass() { printf '  %-52s PASS\n' "$1"; }
-fail() { printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
+# OC-126: every verdict is counted, and the total is declared.
+#
+# This script printed a PASS per case and counted only failures, so nothing
+# knew how many cases it had. CLOSING-INVENTORY.md stated "(27 checks)" and was
+# measured at 47 -- the fifth hand-typed count in this repository to drift. The
+# declaration now lives here, is asserted against the tally below, and is read
+# from here by regression-docs.sh.
+cases=0
+DECLARED_CASES=46
+pass() { cases=$((cases + 1)); printf '  %-52s PASS\n' "$1"; }
+fail() { cases=$((cases + 1)); printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
 
 # A 1-bit input the tools accept, so a refusal cannot be confused with an input
 # rejection. splitmix64 bit 0: no short period, and it passes the required
@@ -353,6 +362,12 @@ else
     fail "control: a real --version still prints the banner" "the option was broken, not fixed"
 fi
 
+if [ "${cases}" -ne "${DECLARED_CASES}" ]; then
+    printf '  %-52s FAIL  declared %s, ran %s\n' "the declared case count" "${DECLARED_CASES}" "${cases}"
+    fails=$((fails + 1))
+fi
+
+printf 'regression-output-aliasing: %d of %d declared cases ran\n' "${cases}" "${DECLARED_CASES}"
 if [ "${fails}" -eq 0 ]; then
     echo "regression-output-aliasing: PASS"
     exit 0

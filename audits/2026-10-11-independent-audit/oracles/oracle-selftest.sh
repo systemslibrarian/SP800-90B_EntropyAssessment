@@ -24,19 +24,34 @@ repo=$(cd "${here}/../../.." && pwd)
 work=$(mktemp -d "${TMPDIR:-/tmp}/oracle-selftest.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT HUP INT TERM
 fails=0
+# OC-126: THE SUITE COUNTS ITSELF, AND DECLARES THE TOTAL.
+#
+# This script printed a verdict per case and no tally, so the only way to learn
+# its size was to count its output by hand. CLOSING-INVENTORY.md said "12
+# cases" in two places and the measured figure is 32 -- stale by 20, and the
+# fifth instance of a hand-typed count drifting in this repository.
+#
+# skipped is counted separately and added in, so the declaration is invariant
+# under EA_SKIP_SLOW_ORACLES: a skip is still a case this suite HAS, it is just
+# a case that did not run. A declaration that changed with the flag would have
+# to be stated twice, which is the defect again.
+cases=0
+skipped=0
+DECLARED_CASES=32
 chk() { # chk <label> <expected-exit> <expected-text-fragment> <cmd...>
     local label=$1 want=$2 frag=$3; shift 3
     local out rc
     out=$("$@" 2>&1); rc=$?
     if [ "${rc}" != "${want}" ]; then
         printf '  %-44s FAIL  exit %s, wanted %s\n' "${label}" "${rc}" "${want}"
-        fails=$((fails + 1)); return
+        cases=$((cases + 1)); fails=$((fails + 1)); return
     fi
     if [ -n "${frag}" ] && ! printf '%s' "${out}" | grep -qF "${frag}"; then
         printf '  %-44s FAIL  exit %s but not for the stated reason\n' "${label}" "${rc}"
         printf '        wanted a mention of: %s\n' "${frag}"
-        fails=$((fails + 1)); return
+        cases=$((cases + 1)); fails=$((fails + 1)); return
     fi
+    cases=$((cases + 1))
     printf '  %-44s PASS  (exit %s)\n' "${label}" "${rc}"
 }
 
@@ -306,6 +321,7 @@ echo "compression_ceiling_exact.py -- C22c's binding term, against the STANDARD 
 # ~55 s, which is why it is last. EA_SKIP_SLOW_ORACLES=1 skips it, and then says
 # so as a SKIP rather than passing: a check that did not run supports no claim.
 if [ "${EA_SKIP_SLOW_ORACLES:-0}" = "1" ]; then
+    skipped=$((skipped + 1))
     printf '  %-44s SKIP  EA_SKIP_SLOW_ORACLES=1\n' "C22c compression ceiling vs the standard"
 else
     # On ONE line deliberately: split across a backslash continuation, the
@@ -316,5 +332,16 @@ else
     chk "worked example, then both recorded ceilings" 0 "AGREES" python3 "${here}/compression_ceiling_exact.py"
 fi
 
-if [ "${fails}" -eq 0 ]; then echo; echo "oracle-selftest: PASS"; exit 0; fi
-echo; echo "oracle-selftest: FAIL (${fails} case(s))"; exit 1
+total=$((cases + skipped))
+if [ "${total}" -ne "${DECLARED_CASES}" ]; then
+    printf '  %-44s FAIL  declared %s, ran %s (+%s skipped)\n' \
+        "the declared case count" "${DECLARED_CASES}" "${cases}" "${skipped}"
+    fails=$((fails + 1))
+fi
+
+echo
+printf 'oracle-selftest: %d of %d declared cases ran' "${cases}" "${DECLARED_CASES}"
+[ "${skipped}" -ne 0 ] && printf ', %d skipped' "${skipped}"
+printf '\n'
+if [ "${fails}" -eq 0 ]; then echo "oracle-selftest: PASS"; exit 0; fi
+echo "oracle-selftest: FAIL (${fails} case(s))"; exit 1

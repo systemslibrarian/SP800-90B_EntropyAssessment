@@ -7,6 +7,12 @@ set -u
 
 here=$(cd "$(dirname "$0")" && pwd)
 . "${here}/mutation-lib.sh"
+
+# OC-126: declared here, asserted against the runtime tally by mut_summary,
+# and read from here by regression-docs.sh. One number, three places that
+# must agree, and a drift anywhere fails rather than printing a new total.
+MUT_DECLARED=5
+
 scratch=$(mktemp -d "${TMPDIR:-/tmp}/sp80090b-harness-inventory.XXXXXX") || exit 2
 trap 'rm -rf "${scratch}"' EXIT HUP INT TERM
 

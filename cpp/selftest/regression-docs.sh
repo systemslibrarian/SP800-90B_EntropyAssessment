@@ -1034,6 +1034,91 @@ else
     fi
 fi
 
+# ------------- the inventory's counts against the scripts' own declarations
+#
+# OC-126. THE FIFTH INSTANCE OF ONE DEFECT, AND THE REMEDY FOR THE CLASS.
+#
+# Five hand-typed counts in this repository have drifted: a canonical inventory
+# that covered 5 of 39, its replacement that covered 13 of 38, the GENERATORS
+# table nothing asserted complete, EXPECTED_FIGURES as a second hand-maintained
+# count, and CLOSING-INVENTORY.md's staleness section -- the section whose whole
+# purpose is to detect staleness -- wrong by six about run-all-checks and by
+# twenty about oracle-selftest.
+#
+# The cause is identical every time: a number in prose that describes something
+# a script knows, with nothing comparing the two. So every such number is now
+# one of three things, and this check enforces the first two:
+#
+#   DERIVED   the script declares it; the document is compared against it here
+#   CHECKED   as above, in the other direction
+#   DATED     a measurement that no script can recompute, which then says where
+#             it came from and when, so a reader can tell it from an assertion
+#
+# THE GENERIC ROW COUNT IS WHY THIS CANNOT GO STALE QUIETLY. A table of seven
+# comparisons that silently matched nothing would pass, which is the defect
+# again at one remove -- so the rows that matched are counted, the document is
+# swept for script-count pairs this table does not cover, and a mismatch in
+# either direction fails.
+INV="${repo}/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md"
+ORACLES="${repo}/audits/2026-10-11-independent-audit/oracles"
+inv_rows=0
+decl() { # decl <file> <var> -- the constant a script declares about itself
+    sed -n "s/^${2}=\([0-9][0-9]*\)$/\1/p" "$1" | head -1
+}
+inv_count() { # inv_count <label> <extended-regex> <sed-extract> <declared>
+    local label=$1 re=$2 ex=$3 want=$4 got
+    got=$(grep -oE "${re}" "${INV}" | head -1 | sed -e "${ex}")
+    if [ -z "${got}" ]; then
+        bad "${label}:" "the inventory no longer states it in the checked form -- NO RESULT"
+    elif [ -z "${want}" ]; then
+        bad "${label}:" "the script's own declaration is unreadable; nothing to compare"
+    elif [ "${got}" != "${want}" ]; then
+        bad "${label}:" "the document says ${got}, the script declares ${want}"
+    else
+        inv_rows=$((inv_rows + 1))
+    fi
+}
+
+inv_count "inventory vs run-all-checks' total" \
+    'expect [0-9]+ passed, 0 failed' 's/expect \([0-9]*\).*/\1/' \
+    "$(decl "${here}/run-all-checks.sh" EXPECTED_TOTAL_CHECKS)"
+inv_count "inventory vs harness-inventory's declaration" \
+    'harness-inventory-mutation-test\.sh +# expect [0-9]+ of [0-9]+' 's/.*of //' \
+    "$(decl "${here}/harness-inventory-mutation-test.sh" MUT_DECLARED)"
+inv_count "inventory vs outside-battery's declaration" \
+    'outside-battery-mutation-test\.sh +# expect [0-9]+ of [0-9]+' 's/.*of //' \
+    "$(decl "${here}/outside-battery-mutation-test.sh" MUT_DECLARED)"
+inv_count "inventory vs platform-deltas' declaration" \
+    'regression-platform-deltas\.sh +# [0-9]+ cases' 's/.*# \([0-9]*\).*/\1/' \
+    "$(decl "${here}/regression-platform-deltas.sh" DECLARED_CASES)"
+inv_count "inventory vs oracle-selftest (the command block)" \
+    'oracle-selftest\.sh +# [0-9]+ cases' 's/.*# \([0-9]*\).*/\1/' \
+    "$(decl "${ORACLES}/oracle-selftest.sh" DECLARED_CASES)"
+inv_count "inventory vs oracle-selftest (the A07/A08 prose)" \
+    'oracle-selftest\.sh` \([0-9]+ cases\)' 's/.*(\([0-9]*\).*/\1/' \
+    "$(decl "${ORACLES}/oracle-selftest.sh" DECLARED_CASES)"
+inv_count "inventory vs output-aliasing's declaration" \
+    'regression-output-aliasing\.sh` \([0-9]+ checks\)' 's/.*(\([0-9]*\).*/\1/' \
+    "$(decl "${here}/regression-output-aliasing.sh" DECLARED_CASES)"
+
+INV_CHECKED_ROWS=7
+if [ "${inv_rows}" -ne "${INV_CHECKED_ROWS}" ]; then
+    bad "the inventory's count table:" "${inv_rows} of ${INV_CHECKED_ROWS} rows compared"
+else
+    note "the inventory's counts match the scripts' declarations:" "yes (${inv_rows} rows)"
+fi
+
+# The sweep for a count this table does not cover. Any line of the inventory
+# naming one of these scripts AND carrying a count-shaped number must be one of
+# the rows above; a new one fails here rather than drifting unobserved.
+inv_pairs=$(grep -cE '(run-all-checks|harness-inventory-mutation-test|outside-battery-mutation-test|regression-platform-deltas|oracle-selftest|regression-output-aliasing)[^ ]*(\.sh)?.*[0-9]+ ?(cases|checks|passed|mutations|of [0-9]+)' "${INV}")
+if [ "${inv_pairs}" -ne "${INV_CHECKED_ROWS}" ]; then
+    bad "script-count pairs in the inventory:" \
+        "${inv_pairs} found, ${INV_CHECKED_ROWS} covered by the table above"
+else
+    note "every script-count pair in the inventory is checked:" "yes (${inv_pairs})"
+fi
+
 echo
 # COULD NOT RUN is reported BEFORE pass/fail, because an incomplete run's
 # verdict on the checks it did reach is not the verdict on the file.
