@@ -214,17 +214,43 @@ run_pair "the oracles' exit contract" "b072bf7" \
 # draw a verdict -- because a mutation to a value the document happens to
 # contain tests nothing, and the next number written into a 12,000-line record
 # could re-create exactly this situation in silence.
+# AND THE FIRST VERSION OF THIS PRECONDITION MADE THE ARM UNUSABLE, WITHIN THE
+# HOUR, BY MY OWN HAND. Writing the OC-126 entry put "0.8547" into
+# ORCHESTRATOR-CHECKS.md seven times -- documenting this very defect -- so the
+# precondition fired, the arm reported MUTATION-DID-NOT-APPLY, and the battery
+# went INCONCLUSIVE. The hazard named in the comment above re-created itself
+# immediately, which is the strongest evidence that a FIXED replacement value is
+# the wrong design.
+#
+# So the arm SEARCHES for a replacement instead of asserting one: increment the
+# last digit until a value is found that the cited document does not cite, and
+# refuse only if every candidate is taken. The mutation stays a one-digit change
+# to a pinned figure -- what the arm is named for -- and it cannot be absorbed by
+# whatever number the record happens to contain today.
 _cite_doc="audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md"
-if grep -qE '(^|[^0-9.])0\.8547([^0-9]|$)' "${_cite_doc}"; then
+_cited() { grep -qE "(^|[^0-9.])${1//./\\.}([^0-9]|$)" "${_cite_doc}"; }
+_repl=""
+for _cand in 0.8547 0.8548 0.8549 0.8541 0.8542 0.8543 0.8544 0.8545 0.8540; do
+    _cited "${_cand}" || { _repl="${_cand}"; break; }
+done
+if [ -z "${_repl}" ]; then
     note "outside-battery pinned figures" "MUTATION-DID-NOT-APPLY" \
-         "0.8547 is cited in ${_cite_doc}, so replacing 0.8546 with it tests nothing"
+         "every candidate replacement for 0.8546 is cited in ${_cite_doc}"
     noapply=$((noapply+1))
 else
-    run_pair "outside-battery pinned figures" "feef1a1" \
-        cpp/selftest/regression-outside-battery.sh \
-        'for fig in 8538.7 59.938 40.21 0.8546; do' \
-        'for fig in 8538.7 59.938 40.21 0.8547; do' \
-        bash cpp/selftest/regression-outside-battery.sh
+    # the control for the search itself: the value it chose must be absent, and
+    # the value being replaced must be present, or the arm is testing nothing.
+    if ! _cited 0.8546; then
+        note "outside-battery pinned figures" "MUTATION-DID-NOT-APPLY" \
+             "0.8546 is not cited in ${_cite_doc}; the guard would refuse before any mutation"
+        noapply=$((noapply+1))
+    else
+        run_pair "outside-battery pinned figures (0.8546 -> ${_repl})" "feef1a1" \
+            cpp/selftest/regression-outside-battery.sh \
+            'for fig in 8538.7 59.938 40.21 0.8546; do' \
+            "for fig in 8538.7 59.938 40.21 ${_repl}; do" \
+            bash cpp/selftest/regression-outside-battery.sh
+    fi
 fi
 
 # THIS ARM MUTATED A STRING THE ENFORCEMENT DOES NOT READ (found OC-125).

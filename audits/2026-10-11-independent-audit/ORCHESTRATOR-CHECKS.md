@@ -12481,3 +12481,290 @@ the tree can still flip a verdict without the battery noticing — which is the
 `OC-117` hazard, narrowed but not closed. It is named here because this
 session edited the tree while a battery ran, and did so believing the per-arm
 check covered it.
+
+## OC-126 — every count derived or dated; the sixth instance of one defect; and the battery's NOT CAUGHT reduced to two
+
+Four items, asked in this order: repair the two stale numbers found by reading,
+verify every other count in `CLOSING-INVENTORY.md`, stop hand-typing counts, and
+say whether the battery's `NOT CAUGHT` arms are the known ones. The third is the
+one that stops this recurring and it produced the most.
+
+### Item 1 — the two found, and they are two DIFFERENT failures
+
+| what | which failure | repair |
+|---|---|---|
+| `expect 20 passed, 0 failed` against `EXPECTED_TOTAL_CHECKS=26` | **a stale claim** — true when written, overtaken by six added checks | the number, and then the mechanism in item 3 |
+| a paragraph duplicated at 370–379, and `./regression-docs.sh`'s invocation orphaned below a later paragraph with a stray fence | **editing damage** — never true, a botched edit | the invocation is back in the first block; the duplicate is gone |
+
+Worth separating because the remedies differ. A stale claim wants a check; a
+duplicated paragraph wants a reader. No check would have caught the second, and
+no reader reliably catches the first.
+
+### Item 2 — every count in that document, measured against its script
+
+| the document said | the script says | verdict |
+|---|---|---|
+| `run-all-checks` 20 passed | **26 passed, 0 failed** (24 regression scripts) | **STALE by 6** |
+| `oracle-selftest` 12 cases, in the staleness block | **32 cases** | **STALE by 20** |
+| `oracle-selftest` 12 cases, again in the `A07`/`A08` prose | **32 cases** | **STALE by 20**, a second copy |
+| `regression-output-aliasing` 27 checks | **46 cases** | **STALE by 19** |
+| `harness-inventory-mutation-test` 5 of 5 | 5 of 5 | correct |
+| `outside-battery-mutation-test` 9 of 9 | 9 of 9 | correct |
+| `regression-platform-deltas` 6 cases | 6 cases | correct |
+
+**THE 8-VERSUS-9 WAS MY MISCOUNT, NOT A MISSING MUTATION — direction
+established before repairing anything.** The outside battery's populate-and-
+verify baseline is counted by a direct `MUT_PASS=$((MUT_PASS + 1))` at line 44
+rather than by a `mut_expect_*` call, so grepping the call sites undercounts by
+one. The harness's own runtime tally is `MUT_PASS + MUT_FAIL + MUT_NOAPPLY`,
+derived, and it says 9. The seven mutation cases cover the guard's seven
+manifest-integrity refusals; **no mechanism is untested, and nothing was added.**
+
+**AND TWO MORE OF MY GREPS WERE WRONG IN THE SAME SESSION.** `regression-output-
+aliasing` measured 47 by `grep -c 'PASS|FAIL'` and is **46** — the 47th line was
+the script's own summary. `oracle-selftest` measured 28 the same way and is
+**32** — four of its labels are longer than the `%-44s` field, so the two-space
+pattern never matched them. **Three counts of a script taken from outside it,
+three wrong answers.** That is the argument for item 3 better than any of the
+five historical instances, because all three were made while writing the entry
+that repairs them.
+
+### Item 3 — the mechanism: every count derived, checked, or dated
+
+The cause has been identical five times: a number in prose describing something
+a script knows, with nothing comparing the two. So each such number is now one
+of three things, and the first two are enforced:
+
+- **DERIVED** — the script declares it; the document is compared against it
+- **CHECKED** — as above, in the other direction
+- **DATED** — a measurement no script can recompute, which then names where it
+  came from and when, so a reader can tell it from an assertion
+
+**Link 1: each instrument declares its own count and asserts it against its own
+tally.** `MUT_DECLARED` in `mutation-lib.sh`'s contract (both mutation
+harnesses); `DECLARED_CASES` in `oracle-selftest.sh`,
+`regression-output-aliasing.sh` and `regression-platform-deltas.sh` — **the
+first two of which had no tally at all**, only a failure counter, so nothing in
+the repository knew how many cases they had.
+
+`oracle-selftest`'s declaration is invariant under `EA_SKIP_SLOW_ORACLES`: a
+skip is counted separately and added in, because a declaration that changed with
+the flag would have to be stated twice, which is the defect again.
+
+**A declaration drift is NOT booked as `NOT CAUGHT`.** In this project that
+verdict means "no case in the suite notices this change" and the record reads it
+that way; a harness whose declaration disagrees with its tally is a bookkeeping
+fault. It gets its own outcome line and its own exit status. The first version
+conflated them, which would have put a clerical error into the same column as an
+unguarded mechanism.
+
+**Link 2: `regression-docs.sh` compares all seven numbers in
+`CLOSING-INVENTORY.md` against those declarations**, and sweeps the document for
+a script-count pair the table does not cover — because a table of seven
+comparisons that silently matched nothing would pass, which is the same defect
+at one remove.
+
+#### Verified by observing failure — six limbs, each restored after
+
+| limb | mutation | what was observed |
+|---|---|---|
+| the script moves, the document does not | `EXPECTED_TOTAL_CHECKS` 26 → 27 | `the document says 26, the script declares 27`; `6 of 7 rows compared`; exit 1 |
+| the document's form is reworded away | `# expect 26 passed, 0 failed` → `# all checks should pass` | `no longer states it in the checked form -- NO RESULT`; `6 found, 7 covered`; exit 1 |
+| a harness gains a case silently | `MUT_DECLARED` 9 → 8 | `DECLARED 8, RAN 9`, `DECLARATION DRIFT`, exit **1** against the control's exit **0** |
+| an eighth pair appears in the document | a planted `run-all-checks.sh` (99 checks) line | `8 found, 7 covered by the table above`; exit 1 |
+| a prose denominator goes stale | `3 of 24 scripts` → `3 of 22` | `prose-denominator(3 of 22 scripts;4 of 22 assert;19 of 23 checks)` |
+| a prose count's form vanishes | the digits spelled as words | `prose-count-form-vanished(0)` |
+| the derived source is unreadable | `EXPECTED_TOTAL_CHECKS=twenty-six` | `prose-denominator-SOURCE-UNREADABLE(scripts='24',checks='')` |
+
+Two declarations were also **caught wrong by their own new assertion on its
+first run** — 47 against a measured 46, and 28 against a measured 32. The tally
+found my count wrong before any document did.
+
+#### The sweep of the other records, with its positive control and its floor
+
+`count-sweep.py` (kept in the session scratchpad, not an instrument): every line
+of a tracked markdown file that names a script the tree contains **and** carries
+a count-shaped number. **106 candidate lines over 73 tracked markdown files
+against 170 script basenames.**
+
+**Positive control, run before the result was read:** a planted
+`` `cpp/selftest/oracle-selftest.sh` (999 cases) `` line in `README.md` took the
+sweep from 106 to **107** and was reported with its file, line and matched
+token; removing it returned 106. The sweep can find what it is looking for.
+
+**106 IS A FLOOR ON CANDIDATES, NOT A TOTAL.** Named blind spots:
+
+- **line-scoped.** A count whose sentence names the script two lines earlier is
+  invisible. This is the largest gap and it is not bounded.
+- **noun-list-scoped.** The count must be followed by one of eighteen nouns; a
+  number attached to any other word is missed.
+- **no table-cell continuation.** A markdown row split across lines is read as
+  two lines, so a script in one and its number in the other is missed.
+- **it cannot tell live from dated.** Most of the 106 are **dated records and
+  correct as written** — `REPAIR-STRATEGY.md`'s "20 passed, 0 failed (18
+  regression scripts)" names the commit `d226f18` and the log directory it was
+  measured in, and `DEAD-GUARD-SWEEP.md`'s numbers are before/after transcripts.
+  Triage is by reading, and that is the detector's limit, not a defect in it.
+
+#### THE SIXTH INSTANCE, found by the sweep, in the document whose counts are already checked
+
+`cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md` states each count **twice**:
+once in the evidence column as a command with an arrow to its value, and again
+in the status column as prose. `regression-docs.sh` checked the arrow form since
+`OC-76`. **The prose copy was stale in five places** — "3 of 22 scripts", "4 of
+22 assert", "they cover 3 of 22" (the suite is **24**), "it is **4 of 24**" and
+"the **19 of 23** checks that do not say" (build-state coverage is **5 of 26**).
+
+**Two copies of a number with a check on one of them**: the same shape as
+`C22c`'s six family values (`OC-125`) and the oracle that verified its own copy
+(`OC-109`). Four of the five are now derived from
+`regression-script-inventory.txt` and `EXPECTED_TOTAL_CHECKS`, and every `N of M`
+occurrence in the file must use one of them.
+
+**The fifth is DATED AND ATTRIBUTED instead, because it is not derivable.**
+`bs_seen` is a runtime count. Seven scripts source `buildstate-lib.sh` and only
+five are suite members that declare, so a static count gives **7** and would be
+wrong. The document now says 5 of 26, names the command and the date, and says
+why a reading of the tree cannot produce it.
+
+#### AND MY OWN CHECK COULD NOT FAIL — the fifth instance, written an hour after naming the fourth
+
+The first version of that prose-denominator check **passed both of its negative
+controls.** `decl()` was defined **41 lines below** the scope check that called
+it, so the substitution was empty, the regex became `of (24|) `, grep **refused**
+on the empty sub-expression with rc 2, and `|| true` swallowed the refusal.
+
+```
+  the suite's scope statement matches the tree:        yes     <- with "3 of 22" planted
+  the suite's scope statement matches the tree:        yes     <- with the form worded away
+```
+
+`decl()` has moved to the top beside the other helpers; an unreadable source is
+reported as `SOURCE-UNREADABLE`; and `rc > 1` is reported as
+`SCAN-DID-NOT-RUN`, never as silence. **It was caught only by running the
+control, and nothing else in the session would have caught it.**
+
+### Item 4 — the battery: 12 CAUGHT, 2 NOT CAUGHT, and the record's tally was pre-repair
+
+**The live result is `12 CAUGHT, 2 NOT CAUGHT, 0 no-apply/restore, 0
+control-failed, COMPLETE`**, tree clean afterwards.
+
+**`OC-125` recorded `10 CAUGHT, 4 NOT CAUGHT`. That was measured BEFORE its own
+last repair** — `ae68ce8` retargeted the divergence-figure arm at the string the
+guard reads, and that arm reports `CAUGHT`. The entry states the pre-repair
+tally with no note that the repair moved it, which is the drift the totals work
+exists to expose, in the totals work's own record.
+
+| the four | now | status |
+|---|---|---|
+| the divergence-figure enforcement | **CAUGHT** | repaired at `ae68ce8`; the arm was mutating a historical mention, not the string the guard reads |
+| outside-battery pinned figures | **CAUGHT** | **had NO recorded reason and an unexplained flip. Explained and repaired here.** |
+| `mutation-lib`'s landing contract | NOT CAUGHT | **known, reason recorded** (`OC-117`): `MUTATION-DID-NOT-APPLY` is the one mechanism with no case in which it fires, because every mutation the harness performs does apply. Queued. |
+| the `O_EXCL` atomic write | NOT CAUGHT | **known, reason recorded** (`OC-117`, re-interpreted `OC-121`): the one condition where `O_EXCL` was load-bearing has been **eliminated**, so nothing guards a change nothing needs guarded |
+
+**None is new, and nothing appeared in a known one's slot.** A correction to the
+question as put: **the two arms needing builds this host cannot provide are
+`NOT MUTATED`, not `NOT CAUGHT`** — `b12247c` needs four builds and `9aa991d` an
+80-bit host — and a third, `5c3353f`, is `NO RUNNABLE CASE`. Those three are
+declared outcomes outside the `NOT CAUGHT` tally; conflating them would make the
+unguarded count 5 when it is 2.
+
+#### The outside-battery arm: CAUGHT, then NOT CAUGHT, with no change to the arm or the guard
+
+The arm replaces a pinned figure `0.8546` with `0.8547` and requires
+`regression-outside-battery.sh` to notice the record no longer cites it. The
+guard's citation test was a **bare substring grep**, and a bare decimal is a
+substring of every longer decimal beginning with it.
+
+At `b9531b8` — `OC-116`..`OC-118` — the measured mean **`0.854784`** was written
+into `ORCHESTRATOR-CHECKS.md`. From that commit on, `0.8547` was still "found",
+inside an unrelated number. **The document moved under both the arm and the
+guard.** `git log -S'0.8547'` names the commit, so unlike the divergence arm's
+unexplained `CAUGHT`, this flip reproduces and is accounted for.
+
+**Two defects, two repairs:**
+
+| | repair | measured |
+|---|---|---|
+| the **guard** | the figure must be cited **as** a figure: not preceded by a digit or dot, not followed by a digit | `8538.7` 11 hits, `59.938` 10, `40.21` 8, `0.8546` **10** — one of its eleven bare hits *was* inside a longer number — and `0.8547` **2 → 0** |
+| the **arm** | asserts its replacement value is **absent** from the cited document before drawing a verdict, and reports `MUTATION-DID-NOT-APPLY` if present | a mutation to a value the document happens to contain tests nothing, and the next number written into a 12,000-line record could re-create this in silence |
+
+Verified by observing failure: with the anchored guard, pointing the pinned list
+at `0.8547` gives `CORPUS pinned figure no longer cited in
+ORCHESTRATOR-CHECKS.md: 0.8547` and exit 1, where the bare-substring version
+passed.
+
+### "Verified the wrong object" — the family, now five instances in two sessions
+
+The shape that has cost this project the most, in order:
+
+| # | instance | what was actually verified |
+|---|---|---|
+| 1 | the git-tracking guard added for a different finding captured **ten of eleven** `oracle-selftest` fixtures, which all refused for *"not tracked by git"* — every negative control is a mutated copy in a temporary directory, untracked by construction (`OC-125`) | that a temporary file is untracked |
+| 2 | the divergence arm mutated `11207ca` on line 87, a **historical mention** of what the document's previous version got wrong, while the enforcement reads line 3 and the figures (`OC-125`) | nothing |
+| 3 | the outside-battery arm's `0.8547` was absorbed by `0.854784`; the guard's bare grep was satisfiable by an unrelated number (here) | that some number in a 12,000-line document starts with those digits |
+| 4 | the scope statement's check read the arrow-form copy while the prose copy went stale (here) | the copy that was not drifting |
+| 5 | my own prose-denominator check, which passed both negative controls because its helper was defined 41 lines after its use (here) | nothing |
+
+**Instances 1 and 2 are recorded here as the `A08` third instance in one
+session**, as `OC-125` named them: several fixtures refusing for one shared
+accidental reason, and an arm pointed at the wrong string. The common remedy is
+the one `A08` established and this entry applies twice more: **a fixture or an
+arm must assert its own distinct reason, and a new refusal placed before
+existing refusals silently captures all of them.**
+
+### Instruments: 86 live, with the enumerator's blind spot beside it
+
+`sh audits/enum-instruments.sh .` prints **`live: 86 (76 mechanical + 10
+reviewed)`** at `76875b5`, 2026-10-26, unchanged by this entry — which modified
+seven existing instruments and added none. `regression-docs.sh` fails if the
+stated figure and the enumerator's disagree.
+
+**The blind spot, restated beside the count as the earlier counts were:** limb
+(c) — "something in the tree invokes it" — is a **reviewed list of 10, not a
+pattern**, because both mechanisations failed: `git grep` for a basename near an
+invocation verb took the count from 61 to **112** by admitting every prose
+mention in a `.md` file while *still* missing the C++ reproducers whose only
+build line is a comment inside themselves, and `file -b` answers
+`c program text, ASCII text` for both a C++ reproducer and a POSIX shell script.
+So **86 is a count under a rule with a hand-reviewed limb**, and the frozen
+figure of 79 is kept because the present-tense rule would say 32 and must not
+govern dated evidence.
+
+### Faults of my own in this session, recorded because they are the pattern
+
+- **`git checkout --` destroyed uncommitted work three times.** Restoring a
+  mutated file after a negative control reverted `CLOSING-INVENTORY.md` (twice,
+  losing the whole repair) and the anchored guard in
+  `regression-outside-battery.sh` (once). This is the `A05` shape — a restore
+  that destroys the thing it was protecting — and `band1-pair-mutations.sh`'s
+  refusal to run on a dirty tree exists for exactly this reason. **Commit before
+  running a negative control, or copy the file aside; `git checkout --` is not
+  an undo.**
+- **The counter clobbered the status it was counting.** `cases=$((cases + 1))`
+  inserted before `[ $? -eq 2 ]` destroyed the exit status case 5 of
+  `regression-platform-deltas.sh` exists to check. Caught by the case failing.
+- The `decl()`-after-use defect above.
+
+### What this does NOT establish
+
+- **The sweep's 106 is a floor on candidates with four named blind spots**, the
+  largest being line scope. A count whose sentence names its script a line away
+  is not found by it, and no bound on that class is measured.
+- **Only `CLOSING-INVENTORY.md` and the scope statement are mechanically
+  checked.** Every other document's counts were triaged **by reading**, and the
+  triage rests on the live/dated distinction a reader makes, not a tool.
+- **`NOT CAUGHT` counts remain FLOORS** on unguarded mechanisms (`OC-117`): one
+  mutation per mechanism, and a mechanism that catches one break can miss
+  another. Two is the number of mechanisms **measured** unguarded, not the number
+  that are.
+- **Band 2's 39 pairs are still untouched**, as in `OC-100`.
+- **The declaration contract checks arithmetic, not adequacy.** A harness can
+  declare 9, run 9, and still test the wrong nine things — which is precisely
+  what the outside-battery arm did for two days while its tally was correct.
+- **Nothing here is reviewed by anyone but its author**, and the three repairs in
+  this entry are themselves unreviewed (`C8`).
+- **x86-64 has not seen any of this.** Eight commits are unpushed, so the last
+  CI measurement on the platform NIST's reference data was produced on is
+  `OC-123`, run `40425913108`. Every claim here is Darwin arm64 only.
+- Nothing reported upstream.
