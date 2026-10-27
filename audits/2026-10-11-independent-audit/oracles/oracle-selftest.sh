@@ -37,7 +37,7 @@ fails=0
 # to be stated twice, which is the defect again.
 cases=0
 skipped=0
-DECLARED_CASES=32
+DECLARED_CASES=33
 chk() { # chk <label> <expected-exit> <expected-text-fragment> <cmd...>
     local label=$1 want=$2 frag=$3; shift 3
     local out rc
@@ -305,6 +305,20 @@ chk "a CARRIED proportion value is refused"       1 "would be a copy"         $S
 chk "a commit id that is not in this repository"  1 "not a commit"            $S --validate "${work}/c22c_absent_commit.json"
 chk "a source that does not exist"                1 "does not exist"          $S --validate "${work}/c22c_absent.json"
 chk "an unrelated JSON document is not a source"  1 "schema"                  $S --validate "${work}/unrelated.json"
+
+echo
+echo "git-classification-test.py -- the tree-shape case list, on stubbed git (rule 18)"
+# OC-128. THE CASE LIST, NOT THE GIT CALL. OC-127 was a correct rule with an
+# enumeration short by one: a shallow clone satisfied "is a git repository" and
+# took the branch meant for a commit that does not exist. The fixture stubs
+# git's answers and checks all eight shapes, so the failure that happened --
+# losing a shape -- fails a test instead of a CI run. It does NOT test the real
+# git interaction, and says so in its own header; the clone measurements in
+# OC-127 are dated evidence, not a test. Verified by observing failure under
+# three mutations: the reverted fix (shallow -> False), the silenced guard
+# (full-absent -> None), and the shallow case deleted from the enumeration,
+# which still returned None by the fallback and was caught on the REASON alone.
+chk "eight tree shapes, each with its reason"     0 "PASS" python3 "${here}/git-classification-test.py"
 
 echo
 echo "c22c-copy-sweep.sh -- one source per family value, with its own control"

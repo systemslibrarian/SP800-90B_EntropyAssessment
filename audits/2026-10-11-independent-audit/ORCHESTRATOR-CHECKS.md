@@ -13125,3 +13125,152 @@ further, because the lag is by construction and does not terminate.
   Shallow, promisor-partial and no-git are the three that were tried. Grafts,
   replace refs and a `git worktree` with an unusual layout were not.
 - **Unreviewed, like everything else here** (`C8`).
+
+## OC-128 — rule 18, the classification sweep, and a fixture for the case list rather than the clone
+
+Two items, both arising from `OC-127`: name the pattern it belongs to, and
+decide explicitly whether the helpers get a standing test instead of a record.
+
+### Item 1 — rule 18, and why it is not rules 6 or 9
+
+`OC-127` was not a wrong idea about anything. The docstring stated the right
+principle in the right words; the code implemented that principle faithfully;
+the defect was in neither. **A correct rule with an incomplete case list** —
+and the fork has now produced four of these:
+
+| # | the classification | the case the list could not see |
+|---|---|---|
+| 1 | tree shape (`c22c_source.py`) | a shallow clone, which satisfies "is a git repository" |
+| 2 | the admissible `r` in `C22a`'s grid | `r = 1`, never tried; `r = 2` won by being first (`OC-121`) |
+| 3 | what counts as a generator | one produced by a helper module the caller imports |
+| 4 | the dead-guard groups | signatures that deduplicate across groups (`OC-95`, `OC-98`) |
+
+Rules 6 and 9 govern evidence about an enumerated set — the rows a sweep
+sampled, the extremum it found. **Rule 18 is one level up: the enumeration
+itself.** The asymmetry that makes it dangerous is that a classification's
+**correctness is visible in the code and its completeness is visible nowhere**,
+so review reads the rule, agrees with it, and moves on. Written to
+`audits/BUG-REPAIR-GUIDE.md` with instance 1 as the worked example and the
+other three named; four clauses, the operative one being **state what the
+classification cannot see beside the branch** — not in a record entry, and not
+150 lines up in a file header.
+
+### Item 1, second half — the sweep, and what it found
+
+Tracked `.sh`/`.py`/`.yml` outside the frozen areas, for branches deciding
+**membership** on a tree shape, file kind, or source type: **72 sites, a
+FLOOR.** The first version proposed **213** by matching every mention of an
+estimator family name — 29 hits in one derivation script were all the word
+`compression` — and the narrowing is recorded rather than quietly applied,
+because the loose number would have been the one quoted. **56 of the 72 carried
+no completeness statement within ±14 lines, and that is an UPPER bound on gaps,
+not a floor.**
+
+Hand review of the membership-critical sites found **two** load-bearing
+classifications whose completeness is genuinely unrecorded, and three sweep hits
+that are not findings:
+
+| site | verdict |
+|---|---|
+| `regression-docs.sh:1017`, the rule-citation scan's `.md`/`.sh`/`.py` filter | **A GAP, and the only one with a demonstrated false negative** |
+| `deadguard.py:171`, `.sh` only | **Scope stated, completeness not.** It walks the whole tracked tree (`$SP/sweep/fork-master` is a symlink to the repo root, not the live set — checked, because the live-set denominator was wrong in this entry's first draft): **64 `.sh` read against 66 `.py` and 3 `.yml` not**, so the pinned flag count of 40 is a count over **64 of 133** files of those kinds |
+| `c22c-copy-sweep.sh:187`, `CODE_EXT` | **Not a gap.** The header states the `.md` exclusion *and its reason*; it is 150 lines from the branch, which is why the detector called it bare — an instance of clause 1, not a defect. Its prediction holds: two `.md` files do carry a family value |
+| `enum-instruments.sh:39-40`, `LIVE`/`FROZEN` | Stated ~55 lines away, at the print: it reports what its own present-tense rule would say about frozen evidence (32) beside the historical 79 |
+| `run-all-checks.sh:51`, `regression-[A-Za-z0-9]*.sh)` | Not a blind spot — anything else is an `inventory_error`. Recorded so the hit is not mistaken for a finding |
+
+**The gap, measured both ways rather than argued.** Six rule citations live in
+file kinds the scan cannot read: three `.yml`, two `.pl`, one `.txt`, citing
+rules 2, 3, 6, 7 and 8. A neutral citation of an undefined `rule 99`:
+
+| where it was planted | the check says |
+|---|---|
+| `audits/BUG-REPAIR-GUIDE.md` (a kind it reads) | `cited rule numbers with no definition: ...:980(rule 99)` → **FAIL** |
+| `.github/workflows/x86-64-platform-facts.yml` (a kind it does not) | `every cited rule number has a definition: yes` → **PASS** |
+| nothing planted, both files restored | `yes` → PASS, the control |
+
+So the green line is a claim about three file kinds and does not say so. **Left
+as found and named, not repaired** — widening the scan is a change to a live
+instrument on a closed campaign, and the honest move is the record plus this
+measurement.
+
+**And the first attempt at that control failed in a way worth keeping.** The
+planted text read "cites rule 99, which has no definition" — and the scan
+exempts any citation whose context says `no definition|undefined|VACATED`,
+deliberately, so that writing *about* an undefined rule is allowed. The fixture
+wording tripped the exemption and the `.md` arm reported `yes`, which looked
+like a second false negative and was not. **The control had to be re-run with
+neutral wording.** That is
+`a-fixture-value-the-record-will-cite` in miniature: the probe's own text became
+part of what the probe measured.
+
+### Item 2 — the fixture, and the decision taken explicitly
+
+The objection is accepted: a record is what has failed repeatedly here, so the
+helpers would regress. And the expensive part — real clones — is not what needs
+testing. **`OC-127` was not a defect in how git was called. Every call was
+correct and every answer git gave was true.** The defect was the case list, and
+the case list is a pure function of what git returns.
+
+`oracles/git-classification-test.py` stubs `subprocess.run` with a table of
+scripted git answers and asserts the classification for **eight** tree shapes,
+each with its reason. Milliseconds, no filesystem. Wired into
+`oracle-selftest.sh` as one case; `DECLARED_CASES` 32 → **33**, and the three
+`32 cases` statements in `CLOSING-INVENTORY.md` followed — observed failing
+first, in both directions (`the document says 32 (1 occurrence(s)), the script
+declares 33`, and the prose row at 2 occurrences), which is the `OC-126`
+contract doing its job on the first count added since it was built.
+
+**What it does not test, in its own header rather than only here:** not the real
+git interaction. Whether `--is-shallow-repository` actually prints `true` in a
+`--depth=1` clone was measured by hand in `OC-127` and is **dated evidence, not
+a test**. If a future git renamed that option the fixture would still pass while
+the classification silently degraded to "complete history" — **the destructive
+direction** — and only a clone-based test would catch it. Grafts and replace
+refs stay not-tried, for the reason given in `OC-127`: never measured, so
+nothing here would be evidence.
+
+**Verified by observing it fail, three mutations and a control:**
+
+| mutation | the fixture says |
+|---|---|
+| the `OC-127` fix reverted — a negative is always a refusal | FAIL: `shallow`, `promisor` and `ancient-git` returned `False`, wanted `None` |
+| the guard silenced — never refuse | FAIL: `full-absent` returned `None`, wanted `False` |
+| the shallow case deleted from the enumeration | FAIL **on the reason alone** — it still returned `None` via the undetermined fallback, and was caught because the note said `incomplete (undetermined)` instead of `shallow clone` |
+| restored | PASS, 8 shapes |
+
+The third is the one that justifies asserting reasons and not just verdicts: the
+exact defect of `OC-127`, reintroduced, changes no verdict in that arm.
+
+**The fixture corrected its own author before it passed.** Its first case list
+expected `git could not be run` for a missing git binary. It is not: with no git
+at all, `_git_available()` is asked first and answers no, so the note is `no git
+repository here`, and the `could not be run` limb is reachable only if git
+works for `rev-parse` and then disappears before `cat-file`. A shape was added
+for exactly that. **A fixture written to test a case list failed on its author's
+case list** — which is the rule arriving once more, inside the test for it.
+
+### What this does NOT establish
+
+- **The two gaps are named, not closed.** The rule-citation scan still reads
+  three file kinds, and `deadguard.py` still sees only `.sh`. Both are
+  deliberate: the campaign is closed and widening a live instrument is new work.
+- **The sweep's 72 is a floor with a keyword-list blind spot**, and its
+  "statement nearby" test is wrong in both directions — it counts docstring
+  prose as a branch and missed statements at 55 and 150 lines' distance. **This
+  rule applies to the sweep written for it**, and the sweep's own classification
+  is the least evidenced thing in this entry.
+- **Only tracked `.sh`/`.py`/`.yml` were swept.** `.c`/`.cpp`/`.pl`/`.mjs`
+  instruments branch on classifications too and were not examined.
+- **The sweep script is NOT committed**, deliberately, as with rule 17's: it is
+  a one-off measurement reported here, not a standing instrument, so the numbers
+  above are dated evidence and nothing re-runs them. A reader should not go
+  looking for it in `oracles/`. The one thing from this entry that *is* standing
+  is the fixture.
+- **The fixture tests one module's helper.** `regression-docs.sh`'s shell twin
+  `history_incomplete()` has **no fixture and no negative control** — it was
+  measured by hand against real clones and a tarball in `OC-127`, and that
+  remains its only evidence.
+- **Nothing here is reviewed by anyone but its author** (`C8`), rule 18
+  included, and a rule written by the person who broke it four times is not
+  independent confirmation that the four are one pattern.
+- Nothing reported upstream.

@@ -80,13 +80,14 @@ before that rule existed (`OC-126`):
 
 - `cpp/selftest/run-all-checks.sh` runs 24 regression scripts
   (`./run-all-checks.sh --allow-known-platform-deltas` — expect 26 passed, 0 failed);
-- `audits/enum-instruments.sh` prints **86 live instruments** (measured
-  2026-10-26 at `76875b5`; the count has a hand-reviewed limb, `OC-126`);
+- `audits/enum-instruments.sh` prints **87 live instruments** (measured
+  2026-10-27 at `a5422cf`, up one for `oracles/git-classification-test.py`,
+  `OC-128`; the count has a hand-reviewed limb, `OC-126`);
 - three mutation harnesses — `harness-inventory-mutation-test.sh`,
   `outside-battery-mutation-test.sh`, and the band-1 pair battery
   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
   CAUGHT** over the undeclared repair-interaction pairs, the two named below;
-- `oracles/oracle-selftest.sh` (32 cases), each refusal against its own reason;
+- `oracles/oracle-selftest.sh` (33 cases), each refusal against its own reason;
 - `cpp/selftest/regression-output-aliasing.sh` (46 checks), the input capture
   shown preserved against every alias of its own path.
 
@@ -286,7 +287,7 @@ expected-result manifest, with all four required failures demonstrated.
 `cpp/selftest/regression-output-aliasing.sh` (46 checks) holding them and shown
 failing against a pre-fix build. `A07` and `A08` have left it too: this audit's
 own oracles were exiting 0 on malformed and unrelated input, and
-`oracles/oracle-selftest.sh` (32 cases) now holds each refusal against the
+`oracles/oracle-selftest.sh` (33 cases) now holds each refusal against the
 reason it is supposed to fail for.
 
 ## Needs another platform — now genuinely empty, and measured rather than argued
@@ -481,7 +482,7 @@ that is true only on the host you wrote it on:
 
 ```sh
 ./regression-platform-deltas.sh                      # 6 cases; the platform exception
-cd ../../audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh  # 32 cases
+cd ../../audits/2026-10-11-independent-audit/oracles && ./oracle-selftest.sh  # 33 cases
 ```
 
 **Every `gh` command here names the repository, and that is load-bearing**

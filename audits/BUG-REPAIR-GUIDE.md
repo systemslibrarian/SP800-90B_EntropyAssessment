@@ -813,6 +813,81 @@ which the sweep does not cover — **named as the blind spot, not as an absence 
 risk.** The method's positive control fires on that exact line.
 
 
+### Rule 18 — a classification's COMPLETENESS is a separate claim from its correctness, and needs its own evidence
+
+**FOUR instances, and in every one the rule was RIGHT.** Nothing here is a
+wrong idea about the subject. What failed each time was the list of cases the
+rule was applied to — and because the rule itself reads correctly, review slides
+over it.
+
+| # | the classification | the rule, which was correct | the case the list could not see | what it cost |
+|---|---|---|---|---|
+| 1 | tree shape, `c22c_source.py` | a commit git *says it lacks* is a refusal; one git *cannot be asked about* is unverified — stated in the docstring, in those words | **a shallow clone**, which satisfies "is a git repository" and so took the refusal branch | the closing revision's first CI run went red, and `entropy_floor.py` could not be **loaded** in any shallow clone (`OC-127`) |
+| 2 | the admissible `r` in `C22a`'s grid | the maximum of the integrand over the admissible domain | **`r = 1`**, never in the list; `r = 2` was the maximum because it was the first value tried | a constant asserted as attained at a boundary that had not been shown to be the boundary (`OC-121`) |
+| 3 | what counts as a generator | a deterministic input generator is a counted artefact | **a generator produced by a helper module it imports** — the rule set saw the caller, not the module | the table's completeness was asserted by nobody; the README now reads "generators (and helper modules they import)" |
+| 4 | the dead-guard detector's groups | each flagged shape belongs to exactly one class, A–D | signatures that **deduplicate across groups**, so the first group count was wrong | group 1 fell from 9 to 1 on measurement, and its counts are floors (`OC-95`, `OC-98`) |
+
+**WHY IT IS ITS OWN RULE.** Rules 6 and 9 are about the *rows a sweep sampled*
+and the *extremum it found* — evidence about a set that was enumerated. This is
+about the enumeration itself, one level up: a branch is taken on the strength of
+a classification, and **the classification's correctness is visible in the code
+while its completeness is not visible anywhere.** Instance 1 is the proof: the
+docstring states the right principle, the code implements that principle
+faithfully, and the defect is in neither. It is in the gap between "a git
+repository" and the trees that are one.
+
+**THE RULE.**
+
+1. **When code branches on a classification, state what the classification
+   cannot see, beside the branch** — not in a record entry, not 150 lines up in
+   a file header, but where someone adding a case will read it. The reader who
+   needs it is the one adding a fifth branch to a list of four.
+2. **A classification's completeness is evidence, so measure it.** "What
+   proportion of the surface does this see?" has a number, and the number
+   belongs next to the claim. `deadguard.py` sees `.sh`; the fact worth writing
+   is that it walks the whole tracked tree and this is **64 of 133** files of
+   the three scriptable kinds — `64` `.sh` read, `66` `.py` and `3` `.yml` not.
+3. **Test the case list, not only the calls.** Where the branch is a function of
+   something stubbed cheaply, a fixture over every shape costs milliseconds and
+   catches the failure that actually happens — a shape going missing. See
+   `oracles/git-classification-test.py`, whose eight shapes include the one
+   `OC-127` lost; it does not test the real interaction, and says so.
+4. **A negative branch gets the destructive answer only on a positive result.**
+   Instance 1's repair: a refusal fires only when the tree is *known* able to
+   answer, and "undetermined" is treated as unanswerable — because the refusal
+   is the destructive direction and should have to be earned.
+
+**THE SWEEP, with its own numbers in the right direction.** Tracked
+`.sh`/`.py`/`.yml` outside the frozen evidence areas, for branches that decide
+**membership** on a tree shape, a file kind, or a source type: **72 sites — a
+FLOOR**, since a token list is only what one reader thought to spell. A first
+version proposed 213 by matching every *mention* of an estimator family; naming
+a family is not branching on it, and the narrowing is recorded because the loose
+number would have been quoted. Of the 72, **56 carried no completeness statement
+within ±14 lines** — and that figure is an **UPPER bound on gaps, not a floor**,
+which hand review then confirmed: most are false positives of the detector.
+
+Hand review of the membership-critical sites:
+
+| site | verdict |
+|---|---|
+| `regression-docs.sh:1017` — the rule-citation scan reads `.md`, `.sh`, `.py` | **A GAP, with a DEMONSTRATED false negative.** Six rule citations live in kinds it cannot read — three `.yml`, two `.pl`, one `.txt`, citing rules 2, 3, 6, 7 and 8. Measured both ways: a neutral citation of an undefined `rule 99` planted in a `.md` **fails** the check; the same text in a `.yml` **passes**. So `every cited rule number has a definition: yes` is a claim about three file kinds, and it does not say so. |
+| `deadguard.py:171` — `if not fn.endswith('.sh'): continue` | **SCOPE stated, COMPLETENESS not.** The docstring's first line says "shell scripts", which is the *correctness* of the classification. What is absent is the size of what it cannot see. It walks the whole tracked tree, so the figure is **64 `.sh` read against 66 `.py` and 3 `.yml` not** — the pinned flag count of 40 is a count over **64 of 133** files of those kinds, and nothing beside the branch says so. |
+| `c22c-copy-sweep.sh:187` — `CODE_EXT`, nine extensions | **NOT a gap — correctly stated, in the wrong place.** The header gives the exclusion and its reason ("a `.md` document cannot be a consumer... rewriting history to satisfy a sweep would be the wrong direction"). It is 150 lines from the branch, which is why this sweep's detector called it bare: an instance of clause 1 rather than a defect. Two `.md` files do carry a family value, as the header predicts. |
+| `enum-instruments.sh:39-40` — `LIVE` / `FROZEN` | **Stated, ~55 lines away.** The script prints what its own present-tense rule would say about frozen evidence (32) beside the historical 79, which is exactly clause 2 done properly — but the gap statement is at the print, not at the sets. |
+| `run-all-checks.sh:51` — `regression-[A-Za-z0-9]*.sh)` | **Not a blind spot.** Anything else is an `inventory_error`; it fails closed and loudly. Recorded so the sweep's hit is not mistaken for a finding. |
+
+**WHAT THE SWEEP CANNOT SEE, since this rule applies to itself.** Its
+"statement nearby" test is a keyword match in a ±14-line window, and it is
+wrong in both directions: it called `c22c-copy-sweep.sh` and two lines of
+`c22c_source.py` bare when the statements exist further off, and it counts
+docstring prose as a branch. So the honest form of the result is: **72 is a
+floor on sites, 56 an upper bound on gaps, and 2 is the number of
+load-bearing classifications hand review found with their completeness
+genuinely unrecorded.** Both are left as found, named here rather than
+repaired, because the campaign is closed.
+
+
 ### Rule 15 — a mutation battery is run in the foreground, on a clean tree, and restores on every exit path
 
 **OPERATIONAL, and it is here because a future session will read it before
