@@ -13249,6 +13249,23 @@ works for `rev-parse` and then disappears before `cat-file`. A shape was added
 for exactly that. **A fixture written to test a case list failed on its author's
 case list** — which is the rule arriving once more, inside the test for it.
 
+### Measured on x86-64, and the lag cut by decision
+
+x86-64 `40604537019` on `64b13a5`: **success**, and the artefact log shows the
+new fixture actually ran rather than the pass being inferred —
+`eight tree shapes, each with its reason  PASS  (exit 0)` and
+`oracle-selftest: 33 of 33 declared cases ran`. So the fixture is not a
+Darwin-only instrument, and the declared-count contract holds on both platforms.
+`c22c-source-check` correctly did **not** fire: none of its path-filtered files
+changed, and a workflow that stays quiet when its subject is untouched is the
+filter working.
+
+**This is the last run recorded, and that is a decision, not an exhaustion.**
+The commit carrying a run's id cannot be the commit that run measured, so the
+record lags by one by construction and chasing it does not terminate. It is cut
+here. The run this commit fires is not recorded by anything, and a reader
+wanting it should run `gh run list -R systemslibrarian/SP800-90B_EntropyAssessment`.
+
 ### What this does NOT establish
 
 - **The two gaps are named, not closed.** The rule-citation scan still reads

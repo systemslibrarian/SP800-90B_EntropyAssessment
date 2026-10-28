@@ -39,7 +39,13 @@ it — `c22c-source-check` `40501921020`, the first green run in its existence,
 and x86-64 `40501921056` — with the gated limbs confirmed **live** in those
 runs rather than skipped: no `NOT VERIFIED HERE` line in the one, and
 `every commit SHA in NOTICE and the tracker resolves: yes` in the other's
-artefact log.
+artefact log. `OC-128` then closed the campaign: rule 18 (a classification's
+completeness is a separate claim from its correctness), a membership-sweep whose
+two load-bearing gaps are named and left as found, and a stubbed-git fixture
+over eight tree shapes — `64b13a5`, x86-64 `40604537019`, whose own artefact
+log shows the fixture running and every declared self-test case run. **The
+run-id lag is cut there by decision; nothing records the run this revision
+fires.**
 
 ## What the campaign established
 
