@@ -1,0 +1,12 @@
+regression-notrun.sh rc=0 regression-notrun: PASS
+regression-option-order.sh rc=0 regression-option-order: PASS
+regression-output-aliasing.sh rc=0 regression-output-aliasing: PASS
+regression-output.sh rc=0 regression-output: PASS (3 skipped)
+regression-outside-battery.sh rc=0 regression-outside-battery: PASS
+regression-platform-deltas.sh rc=0 regression-platform-deltas: PASS
+regression-restart.sh rc=0 regression-restart: PASS
+regression-restart-notrun.sh rc=0 regression-restart-notrun: PASS
+regression-selftest-inventory.sh rc=0 regression-selftest-inventory: PASS
+regression-subset.sh rc=0 regression-subset: PASS
+regression-width.sh rc=0 regression-width: PASS
+batch time budget reached before regression-workflows.sh

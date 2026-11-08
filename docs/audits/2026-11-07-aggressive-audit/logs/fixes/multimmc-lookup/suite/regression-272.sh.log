@@ -1,0 +1,8 @@
+baseline truerand_8bit:      clean (as required)
+baseline biased-random-bits: clean (as required)
+mutant 1 (drop n x Hbit):    caught by final figures: Assessed min entropy
+mutant 2 (drop H_original):  caught by final figures: Assessed min entropy
+selftest exit status:        nonzero (1) when the first sample mismatches
+selftest naming:             the failing sample is named in the summary
+
+regression-272: PASS

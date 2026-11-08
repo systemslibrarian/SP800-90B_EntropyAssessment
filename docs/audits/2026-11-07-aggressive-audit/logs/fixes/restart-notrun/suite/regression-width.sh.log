@@ -1,0 +1,13 @@
+ea_non_iid inferred width:                         bitsPerSymbol 4, inferred true
+ea_non_iid declared width:                         bitsPerSymbol 8, inferred false
+ea_iid inferred width:                             bitsPerSymbol 4, inferred true
+ea_iid declared width:                             bitsPerSymbol 8, inferred false
+N-08 ea_non_iid refuses width 8x:                  refused
+N-08 ea_non_iid refuses width +8:                  refused
+N-08 ea_non_iid refuses width 0x8:                 refused
+N-08 ea_iid refuses width 8x:                      refused
+N-08 ea_iid refuses width +8:                      refused
+N-08 ea_iid refuses width 0x8:                     refused
+inference unchanged for 4-bit data:                still infers 4
+
+regression-width: PASS

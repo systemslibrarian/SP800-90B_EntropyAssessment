@@ -1,0 +1,14 @@
+  C22A_PER_N                                               8.08e-15
+  C22c source shape                                        stamped and well-formed
+  C22c values digest                                       0345092696b52c91a99efa8af422807a30de1230d538d01ccd41422727cbdea7
+  C22c values covered by the digest                        4
+  C22c wiring n=8000000 compression                        0.0021644012494542514
+  C22c wiring n=8000000 collision                          0.0004664387274693608
+  C22c wiring n=8000000 proportion                         6.886711443818212e-05
+  C22c wiring n=1000000 compression                        0.003359930036931586
+  C22c wiring n=1000000 collision                          0.0007844533077289796
+  C22c wiring n=1000000 proportion                         6.886711443818212e-05
+  one source per family value (swept, with control)        no second copy
+  platform manifest: 8 rows, all tolerance 1e-9            unchanged
+
+regression-constants: PASS (10 constants, the C22c digest, the sweep, the manifest)

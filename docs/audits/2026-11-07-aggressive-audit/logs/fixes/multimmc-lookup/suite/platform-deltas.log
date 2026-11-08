@@ -1,0 +1,1 @@
+8 expected platform delta(s), all within tolerance, on Darwin arm64 (tolerances are measured magnitudes with headroom, not bounds; headroom used: 2.7x-8.0x, widest at biased-random-bytes.bin | Bitstring MultiMCW Prediction Estimate | P_local where 1.25e-10 is allowed 1e-09)

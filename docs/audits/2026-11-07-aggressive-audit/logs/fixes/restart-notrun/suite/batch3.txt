@@ -1,0 +1,2 @@
+regression-workflows.sh rc=0 regression-workflows: PASS (python3.14 first on PATH)
+regression-constants.sh rc=0 regression-constants: PASS (10 constants, the C22c digest, the sweep,  (python3.14 first on PATH)
