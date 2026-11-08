@@ -535,7 +535,7 @@ unreadable random source).
   write-fails-midway half is Linux-only evidence. Known.
 
 ### C14 / A04 / A05 / F03 / F04 / OC-104 — the output-path contract
-(`97fbc6c`, `663f9ae`, `de61365`, `b63aff1`, `36cafb3`)
+(`97bfc6c`, `663f9ae`, `de61365`, `b63aff1`, `36cafb3`)
 
 Guards, in execution order (`non_iid_main.cpp:138-159`, same in the other two):
 1. `refuseOptionAfterOperand()` (`TestRunUtils.h:363-385`) — any non-numeric
