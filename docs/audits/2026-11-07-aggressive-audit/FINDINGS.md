@@ -212,8 +212,39 @@ and reports only where the measured magnitude differs from the recorded one.
 
 ## 4. What was tested and found clean
 
-_(the differential, the refusals, the degenerate-value hunt, the sanitizer runs, fuzzing, determinism —
-each with its coverage statement and what it cannot see)_
+Each item says what was covered and what it cannot see (rule 18).
+
+**4.1 Estimator arithmetic vs the standard — clean up to the documented quantile.** 156 differential records at
+50,000 samples (26 families × widths 1, 8 × literal/bitstring/assessed; `logs/diff/SUMMARY.md`): 17 AGREE, 94
+`CPP_HIGHER` **all** of which vanish when the reference uses the exact 0.995 quantile (D-1), 27 NOT_RUN (binary
+sources have no bitstring term, by the text), 18 TOOL_REFUSED (single-symbol files refused with "1 symbol";
+out-of-width files refused per D-6), **0 CPP_LOWER, 0 INTERMEDIATE_DIFF** — every printed intermediate (counts,
+proportions, bounds, run lengths, tuple lengths) of all ten estimators matched the spec-only Python on every case
+to 1e-9 or exactly. At 1,000,000 samples the Lag estimator was additionally matched exactly on the X2 files
+(§1.4). Cannot see: intermediates the C++ does not print; the 1,000,000-sample reference for the other nine
+estimators (pure Python, hours per module — run only where named); the 22-record partial 999,999 sweep.
+
+**4.2 The final answer.** On every differential and experiment record the assessed figure equals the minimum of
+the printed estimates (`fold-consistency OK` on all X4 runs; the driver's `assessed` pseudo-case AGREEs or is
+D-1-explained). No NaN or ±inf was produced at compliant size on the degenerate inputs tried (strictly alternating
+bits at widths 1 and 8, a two-symbol 8-bit alphabet, one symbol appearing once among 10⁶, a counter mod 256);
+zero estimates print as IEEE `-0` (PROV-16, cosmetic); no not-run flag was set where it should not be. Cannot
+see: a NaN producer that none of these inputs reached (the F13 mechanism — `std::min` folds in `main` are not
+NaN-safe — remains a reasoned suspicion with no producer found at compliant size).
+
+**4.3 Intake and refusals.** Exactly 1,000,000 is the boundary for both tools at both widths and for `-l` subsets
+that load fewer (X7: 20 runs; exit 255, `errorLevel −1`, class `input`); `ea_restart` refuses 999,999 and 1,000,001;
+`EA_ALLOW_SHORT_DATASET` does not relax the restart requirement. Out-of-width symbols are refused rather than masked.
+Cannot see: the `-c` byte-vs-output count (AA-01 — not clean).
+
+**4.4 Build reproducibility.** The same source built twice to the same path is byte-identical; a different output
+path changes only the Mach-O UUID and ad-hoc signature. The pre-audit hash change was the OpenSSL relink (AA-05),
+not non-determinism.
+
+**4.5 Memory safety (ASan + UBSan), threading (TSan), fuzzing (AFL++), determinism across thread counts** —
+_(filled in when the stages complete; interim: 60+ ASan/UBSan runs over the self-test corpus and the 50,000-sample
+corpus show no AddressSanitizer report and no UBSan report other than the three benign `uint8_t` ring-buffer
+truncations in `lag_test.h`.)_
 
 ---
 
