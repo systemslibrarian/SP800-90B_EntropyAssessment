@@ -120,7 +120,7 @@ restart IID-suite failure lacks `errorClass` (PROV-09, executed) · JSON `mcvEst
 (PROV-03, known) · `type` is the empty string in every completed `ea_non_iid`/`ea_iid` report while the placeholder
 and restart reports fill it (PROV-11, known) · lossy UTF-8 transcoding of `commandline`/`filename` — a stray
 continuation byte swallows the following ASCII byte (PROV-12, known) · non-binary chi-square independence with
-`df ≤ 0` reported applied and PASSED where §5.2.1 says "do not apply" (PROV-13; short inputs only) · Makefile flag
+`df ≤ 0` reported applied and PASSED where §5.2.1 says "do not apply", and GOF `T = nan` → `P-value = 1` → Passed when an expected bin count is 0 (PROV-13; UBSan `chi_square_tests.h:439`; short inputs under the escape only) · Makefile flag
 probes write to the fixed path `/tmp/.ea_fs_$.c` (PROV-14) · zero estimates print as IEEE `-0`/`-0.0` (PROV-16,
 known) · the OC-104 refusal fires after a pre-operand `--` with a false reason (PROV-17) · contradictory mode flags
 (`-i -c`, `-a -t`) resolved silently by the last (PROV-20) · `xoshiro_jump(k)` for k ≥ 2 is `J(I+J)^(k−1)` not `J^k`
@@ -254,12 +254,23 @@ Cannot see: the `-c` byte-vs-output count (AA-01 — not clean).
 path changes only the Mach-O UUID and ad-hoc signature. The pre-audit hash change was the OpenSSL relink (AA-05),
 not non-determinism.
 
-**4.5 Memory safety (ASan + UBSan), threading (TSan), fuzzing (AFL++), determinism across thread counts** —
-_(filled in when the stages complete; interim: 60+ ASan/UBSan runs over the self-test corpus and the 50,000-sample
-corpus show no AddressSanitizer report and no UBSan report other than the three benign `uint8_t` ring-buffer
-truncations in `lag_test.h`.)_
+**4.5 Memory safety (ASan + UBSan) — clean.** Stages a–d of the sanitizer plan (self-test corpus at 1,000,000;
+every 50,000-sample corpus file in `-i -a` and `-c` at its width; 170 agent-made edge files; `ea_iid` on the
+50,000-sample files): 318 primary runs, 177 continue passes, **no AddressSanitizer report of any kind** and no
+LeakSanitizer (unavailable on this runtime, probed). Every UBSan report falls in three classes, all read in full
+(`logs/sanitizers/RESULTS.md`, `logs/sanitizers/asan_ubsan/`): (i) `implicit-signed-integer-truncation` at
+`lag_test.h:86/108/111` on every input — deliberate `uint8_t` ring-buffer index wrap under `LAGMASK`, no memory
+effect, and the Lag counts match the reference exactly; (ii) `float-divide-by-zero` at `chi_square_tests.h:439`
+(a zero expected bin count → GOF `T = nan`, `P-value = 1`, "Passed"), `utils.h:1229` (`N − 1 = 0` → `p′ = min(1, inf) = 1`,
+zero entropy, fail-closed) and `utils.h:1084` (`divide(a, 0)`) — **all only on 3- to 40-sample inputs under
+`EA_ALLOW_SHORT_DATASET=1`**; at the 1,000,000 gate with k ≤ 256 every expected bin count is ≥ 5 by the §5.2 binning
+and `N` is in the millions, so none is reachable in production; the chi-square NaN→PASS mechanism the analysis
+suspected is thereby confirmed real and confined to the escape (PROV-13); (iii) three `SIGABRT`s on 17- to
+20-sample `ea_iid` runs — `assert(n>=p)` in `periodicity`, the PROV-24 escape-only class. Cannot see: inputs the
+corpus does not contain; LeakSanitizer; stage e (`ea_restart` at 1,000,000 under ASan), TSan and the
+thread-count determinism runs, which complete after this draft — their results replace this paragraph.
 
----
+**4.6 Fuzzing, determinism, SAalgs32 scaling, fix-branch verification** — _(CHAIN-6; filled in when complete)_
 
 ## 5. Method, instruments, and their known blind spots
 
