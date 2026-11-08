@@ -1,0 +1,117 @@
+# t-Tuple / LRS brute-force probe (analysis phase, 2026-11-07)
+binary: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+binary sha256: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2  (every run below is NON-COMPLIANT: short dataset)
+tolerance for floats: rel 1e-12; integers exact; brute force uses Z=2.575829303548901 (ZALPHA) for the code comparison
+
+## Brute force vs the standard's worked examples (cutoff 3, Z = 2.576) -- validates the probe, not the code
+6.3.5 example expects t=3, Q=[9,4,3], p_hat_max=0.5405, p_u=0.8276, H=0.273
+   brute force: t=3 Q[1..3]=[9, 4, 3] p_hat_max=0.5405 p_u=0.8276 H=0.273
+6.3.6 example expects u=4, v=5, P4=0.0131, P5=0.0074, Pmax4=0.3381, Pmax5=0.3744, p_hat=0.3744, p_u=0.6531, H=0.6146
+   brute force: u=4 v=5 P4=0.0131 P5=0.0074 Pmax4=0.3381 Pmax5=0.3744 p_hat=0.3744 p_u=0.6531 H=0.6146
+
+## A_spec_example_w2: n=21 width=2 sha256=9a0e378d966138a4a210d3ec1ed941d63b424b65f95e05a6171ef4371daf56af
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/A_spec_example_w2.bin 2   -> exit 0; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-A_spec_example_w2.out
+   [Literal] brute force: L=21 v=5 u=1 t=0 Q[1..min(v,6)]=[9, 4, 3, 2, 2]
+   [Literal] t-Tuple: brute force says UNDEFINED (Q[1]=9 < 35); code message: t-Tuple Estimate: No strings are repeated 35 times. t-Tuple estimate failed.
+   [Literal] LRS: brute u=1 v=5 p_hat=0.37436239611602046 p_u=0.6531090180293067 H=0.6146042659903591
+   [Literal] LRS: code  u=1 v=5 p_hat=0.3743623961160204571819 p_u=0.6531090180293065428074 H=0.61460426599035933  => MATCH
+   [Bitstring] brute force: L=42 v=10 u=1 t=0 Q[1..min(v,6)]=[30, 21, 13, 8, 5, 4]
+   [Bitstring] t-Tuple: brute force says UNDEFINED (Q[1]=30 < 35); code message: t-Tuple Estimate: No strings are repeated 35 times. t-Tuple estimate failed.
+   [Bitstring] LRS: brute u=1 v=10 p_hat=0.5818815331010453 p_u=0.7803045794953184 H=0.35789072789081483
+   [Bitstring] LRS: code  u=1 v=10 p_hat=0.581881533101045289591 p_u=0.7803045794953182845433 H=0.35789072789081505  => MATCH
+   summary line: H_bitstring = -0
+   summary line: H_bitstring Per Symbol = -0
+   summary line: H_original = -0
+
+## B_bits_p03_n4000_w1: n=4000 width=1 sha256=cce8fc155fc4d3569dced3993116b9cb28bc2f8bfa2382111cd6e66aad7c843c
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/B_bits_p03_n4000_w1.bin 1   -> exit 0; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-B_bits_p03_n4000_w1.out
+   alph_size=2 <= 2 under -i: Bitstring path not run by design (non_iid_main.cpp:467)
+   [Literal] brute force: L=4000 v=25 u=14 t=13 Q[1..min(v,6)]=[2802, 1960, 1388, 974, 697, 501]
+   [Literal] t-Tuple: brute t=13 p_hat_max=0.7088047623775215 p_u=0.7273100919853925 H=0.4593574999484683
+   [Literal] t-Tuple: code  t=13 p_hat_max=0.7088047623775215466679 p_u=0.7273100919853925372394 H=0.45935749994846831  => MATCH
+   [Literal] t-Tuple with the text's 2.576 instead: H=0.45935506741515647 (code - text = +2.433e-06 bit; D-1 direction)
+   [Literal] LRS: brute u=14 v=25 p_hat=0.5828380477344851 p_u=0.6029228550904118 H=0.7299546760098855
+   [Literal] LRS: code  u=14 v=25 p_hat=0.5828380477344851096078 p_u=0.6029228550904117689413 H=0.72995467600988551  => MATCH
+   summary line: H_original = 0.44388470273562519
+
+## C_k4_biased_n1200_w8: n=1200 width=8 sha256=f765bea6f0f64fdec5331bba66feb171af2ea339b977e5f778a2b0a60b7ea053
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/C_k4_biased_n1200_w8.bin 8   -> exit 0; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-C_k4_biased_n1200_w8.out
+   [Literal] brute force: L=1200 v=11 u=5 t=4 Q[1..min(v,6)]=[584, 289, 137, 66, 32, 15]
+   [Literal] t-Tuple: brute t=4 p_hat_max=0.4909523349192216 p_u=0.5281406393754262 H=0.9210059366827174
+   [Literal] t-Tuple: code  t=4 p_hat_max=0.4909523349192215779802 p_u=0.5281406393754262129647 H=0.92100593668271735  => MATCH
+   [Literal] t-Tuple with the text's 2.576 instead: H=0.9209992047815869 (code - text = +6.732e-06 bit; D-1 direction)
+   [Literal] LRS: brute u=5 v=11 p_hat=0.3573505395105241 p_u=0.3929990823734655 H=1.3474021509958376
+   [Literal] LRS: code  u=5 v=11 p_hat=0.3573505395105240900477 p_u=0.3929990823734654803445 H=1.3474021509958376  => MATCH
+   [Bitstring] brute force: L=9600 v=92 u=37 t=36 Q[1..min(v,6)]=[7092, 5738, 4384, 3030, 2339, 1648]
+   [Bitstring] t-Tuple: brute t=36 p_hat_max=0.8610979705935187 p_u=0.8701904989067949 H=0.2005968298531857
+   [Bitstring] t-Tuple: code  t=36 p_hat_max=0.8610979705935186689914 p_u=0.8701904989067948958947 H=0.20059682985318569  => MATCH
+   [Bitstring] t-Tuple with the text's 2.576 instead: H=0.2005958308839226 (code - text = +9.990e-07 bit; D-1 direction)
+   [Bitstring] LRS: brute u=37 v=92 p_hat=0.8451956148477234 p_u=0.8547054793851718 H=0.226500723579117
+   [Bitstring] LRS: code  u=37 v=92 p_hat=0.8451956148477234309624 p_u=0.8547054793851718290654 H=0.22650072357911699  => MATCH
+   summary line: H_bitstring = 0.12974085685610784
+   summary line: H_bitstring Per Symbol = 1.0379268548488627
+   summary line: H_original = 0.92100593668271735
+
+## D_cutoff35_boundary_w8: n=824 width=8 sha256=c949619ace8d5c6b065cd92a771f6e1ba1cb944b1ead871f90967b4ff5aff48c
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/D_cutoff35_boundary_w8.bin 8   -> exit 0; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-D_cutoff35_boundary_w8.out
+   [Literal] brute force: L=824 v=4 u=3 t=2 Q[1..min(v,6)]=[35, 35, 34, 3]
+   [Literal] t-Tuple: brute t=2 p_hat_max=0.2062215774443722 p_u=0.242548939211019 H=2.0436522249747053
+   [Literal] t-Tuple: code  t=2 p_hat_max=0.2062215774443721949538 p_u=0.2425489392110189712515 H=2.0436522249747058  => MATCH
+   [Literal] t-Tuple with the text's 2.576 instead: H=2.043637905922405 (code - text = +1.432e-05 bit; D-1 direction)
+   [Literal] LRS: brute u=3 v=4 p_hat=0.11895639260313408 p_u=0.14802403153969004 H=2.7560966800557707
+   [Literal] LRS: code  u=3 v=4 p_hat=0.1189563926031340784784 p_u=0.1480240315396900430134 H=2.7560966800557707  => MATCH
+   [Bitstring] brute force: L=6592 v=39 u=18 t=17 Q[1..min(v,6)]=[3372, 1776, 952, 514, 298, 157]
+   [Bitstring] t-Tuple: brute t=17 p_hat_max=0.7349224996692156 p_u=0.7489263876719013 H=0.4171041724112882
+   [Bitstring] t-Tuple: code  t=17 p_hat_max=0.7349224996692156341993 p_u=0.7489263876719013390826 H=0.41710417241128822  => MATCH
+   [Bitstring] t-Tuple with the text's 2.576 instead: H=0.4171023847255385 (code - text = +1.788e-06 bit; D-1 direction)
+   [Bitstring] LRS: brute u=18 v=39 p_hat=0.6744640273946829 p_u=0.689330923711901 H=0.5367313581364423
+   [Bitstring] LRS: code  u=18 v=39 p_hat=0.6744640273946829189811 p_u=0.6893309237119009669215 H=0.53673135813644235  => MATCH
+   summary line: H_bitstring = 0.41710417241128822
+   summary line: H_bitstring Per Symbol = 3.3368333792903058
+   summary line: H_original = 2.0436522249747058
+
+## E_period7_n300_w3: n=300 width=3 sha256=f730ed9da0a92a39ed45ee6f2e55637e04b0a7a07c5a9c6081f16bcbb7272762
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/E_period7_n300_w3.bin 3   -> exit 0; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-E_period7_n300_w3.out
+   [Literal] brute force: L=300 v=293 u=63 t=62 Q[1..min(v,6)]=[43, 43, 43, 43, 43, 43]
+   [Literal] t-Tuple: brute t=62 p_hat_max=0.9694894039877567 p_u=0.9951093591047315 H=0.007073013282872074
+   [Literal] t-Tuple: code  t=62 p_hat_max=0.9694894039877567371022 p_u=0.9951093591047315278786 H=0.0070730132828720742  => MATCH
+   [Literal] t-Tuple with the text's 2.576 instead: H=0.007070551843548397 (code - text = +2.461e-06 bit; D-1 direction)
+   [Literal] LRS: brute u=63 v=293 p_hat=0.9920574384600286 p_u=1.0 H=-0.0
+   [Literal] LRS: code  u=63 v=293 p_hat=0.9920574384600285844371 p_u=1 H=-0  => MATCH
+   [Bitstring] brute force: L=900 v=879 u=187 t=186 Q[1..min(v,6)]=[514, 299, 170, 128, 86, 43]
+   [Bitstring] t-Tuple: brute t=186 p_hat_max=0.9839107592557089 p_u=0.9947196932205996 H=0.0076380558378292135
+   [Bitstring] t-Tuple: code  t=186 p_hat_max=0.983910759255708922133 p_u=0.9947196932205996100507 H=0.0076380558378292135  => MATCH
+   [Bitstring] t-Tuple with the text's 2.576 instead: H=0.007637016961281182 (code - text = +1.039e-06 bit; D-1 direction)
+   [Bitstring] LRS: brute u=187 v=879 p_hat=0.9959730283159965 p_u=1.0 H=-0.0
+   [Bitstring] LRS: code  u=187 v=879 p_hat=0.9959730283159965447126 p_u=1 H=-0  => MATCH
+   summary line: H_bitstring = -0
+   summary line: H_bitstring Per Symbol = -0
+   summary line: H_original = -0
+
+## F_const0_n500_w1: n=500 width=1 sha256=e6304a473c65ecd0ccffbd2f5925a8f51c44b11f59b66cfcc055e4bb911b8fa0
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/F_const0_n500_w1.bin 1   -> exit 255; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-F_const0_n500_w1.out
+   alph_size=1 <= 2 under -i: Bitstring path not run by design (non_iid_main.cpp:467)
+   [Literal] brute force: L=500 v=499 u=467 t=466 Q[1..min(v,6)]=[500, 499, 498, 497, 496, 495]
+   [Literal] t-Tuple: brute t=466 p_hat_max=1.0 p_u=1.0 H=-0.0
+   [Literal] t-Tuple: code  t=None p_hat_max=None p_u=None H=None  => !!! MISMATCH
+   [Literal] t-Tuple with the text's 2.576 instead: H=-0.0 (code - text = +0.000e+00 bit; D-1 direction)
+   [Literal] LRS: brute u=467 v=499 p_hat=1.0 p_u=1.0 H=-0.0
+   [Literal] LRS: code  u=None v=None p_hat=None p_u=None H=None  => !!! MISMATCH
+
+## G_rand8_n2000_w8: n=2000 width=8 sha256=8198ed9c1d517ba3b0360daa6a0ec0fdf25e6c3eba9eefe654e957eb106b4b0e
+   cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/G_rand8_n2000_w8.bin 8   -> exit 0; stdout at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-ttuple-lrs-G_rand8_n2000_w8.out
+   [Literal] brute force: L=2000 v=2 u=1 t=0 Q[1..min(v,6)]=[18, 2]
+   [Literal] t-Tuple: brute force says UNDEFINED (Q[1]=18 < 35); code message: t-Tuple Estimate: No strings are repeated 35 times. t-Tuple estimate failed.
+   [Literal] LRS: brute u=1 v=2 p_hat=0.0039034517258629314 p_u=0.007495860980227756 H=7.059690087934442
+   [Literal] LRS: code  u=1 v=2 p_hat=0.003903451725862931449146 p_u=0.007495860980227754891136 H=7.0596900879344426  => MATCH
+   [Bitstring] brute force: L=16000 v=27 u=10 t=9 Q[1..min(v,6)]=[8067, 4064, 2042, 1036, 531, 294]
+   [Bitstring] t-Tuple: brute t=9 p_hat_max=0.5256531308141938 p_u=0.535821898071779 H=0.9001745521654634
+   [Bitstring] t-Tuple: code  t=9 p_hat_max=0.5256531308141938474421 p_u=0.5358218980717790458357 H=0.90017455216546338  => MATCH
+   [Bitstring] t-Tuple with the text's 2.576 instead: H=0.9001727377801282 (code - text = +1.814e-06 bit; D-1 direction)
+   [Bitstring] LRS: brute u=10 v=27 p_hat=0.5092029289862731 p_u=0.5193833816302783 H=0.9451282411004241
+   [Bitstring] LRS: code  u=10 v=27 p_hat=0.5092029289862730623284 p_u=0.5193833816302783068508 H=0.94512824110042415  => MATCH
+   summary line: H_bitstring = 0.70647834225061057
+   summary line: H_bitstring Per Symbol = 5.6518267380048846
+   summary line: H_original = 6.1136980091842883
+

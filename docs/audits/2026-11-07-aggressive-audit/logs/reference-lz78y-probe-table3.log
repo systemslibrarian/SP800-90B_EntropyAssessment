@@ -1,0 +1,180 @@
+rows: 136
+r=    1 printed=0.0000 computed(N=1e6)=0.000000 computed(N=1e6-17)=0.000000 diff=1.01e-08
+r=    2 printed=0.0001 computed(N=1e6)=0.000100 computed(N=1e6-17)=0.000100 diff=2.56e-07
+r=    3 printed=0.0022 computed(N=1e6)=0.002160 computed(N=1e6-17)=0.002160 diff=4.04e-05
+r=    4 printed=0.0100 computed(N=1e6)=0.010038 computed(N=1e6-17)=0.010038 diff=3.79e-05
+r=    5 printed=0.0253 computed(N=1e6)=0.025273 computed(N=1e6-17)=0.025273 diff=2.68e-05
+r=    6 printed=0.0468 computed(N=1e6)=0.046828 computed(N=1e6-17)=0.046828 diff=2.76e-05
+r=    7 printed=0.0728 computed(N=1e6)=0.072802 computed(N=1e6-17)=0.072802 diff=2.18e-06
+r=    8 printed=0.1014 computed(N=1e6)=0.101409 computed(N=1e6-17)=0.101409 diff=9.28e-06
+r=    9 printed=0.1313 computed(N=1e6)=0.131264 computed(N=1e6-17)=0.131264 diff=3.65e-05
+r=   10 printed=0.1614 computed(N=1e6)=0.161385 computed(N=1e6-17)=0.161385 diff=1.54e-05
+r=   11 printed=0.1911 computed(N=1e6)=0.191117 computed(N=1e6-17)=0.191118 diff=1.73e-05
+r=   12 printed=0.2200 computed(N=1e6)=0.220044 computed(N=1e6-17)=0.220044 diff=4.40e-05
+r=   13 printed=0.2479 computed(N=1e6)=0.247914 computed(N=1e6-17)=0.247915 diff=1.42e-05
+r=   14 printed=0.2746 computed(N=1e6)=0.274591 computed(N=1e6-17)=0.274591 diff=9.24e-06
+r=   15 printed=0.3000 computed(N=1e6)=0.300013 computed(N=1e6-17)=0.300013 diff=1.28e-05
+r=   16 printed=0.3242 computed(N=1e6)=0.324169 computed(N=1e6-17)=0.324170 diff=3.08e-05
+r=   17 printed=0.3471 computed(N=1e6)=0.347081 computed(N=1e6-17)=0.347082 diff=1.88e-05
+r=   18 printed=0.3688 computed(N=1e6)=0.368789 computed(N=1e6-17)=0.368790 diff=1.05e-05
+r=   19 printed=0.3893 computed(N=1e6)=0.389347 computed(N=1e6-17)=0.389347 diff=4.67e-05
+r=   20 printed=0.4088 computed(N=1e6)=0.408812 computed(N=1e6-17)=0.408812 diff=1.15e-05
+r=   21 printed=0.4272 computed(N=1e6)=0.427245 computed(N=1e6-17)=0.427246 diff=4.52e-05
+r=   22 printed=0.4447 computed(N=1e6)=0.444709 computed(N=1e6-17)=0.444709 diff=8.92e-06
+r=   23 printed=0.4613 computed(N=1e6)=0.461263 computed(N=1e6-17)=0.461263 diff=3.73e-05
+r=   24 printed=0.4770 computed(N=1e6)=0.476964 computed(N=1e6-17)=0.476965 diff=3.58e-05
+r=   25 printed=0.4919 computed(N=1e6)=0.491868 computed(N=1e6-17)=0.491868 diff=3.20e-05
+r=   26 printed=0.5060 computed(N=1e6)=0.506026 computed(N=1e6-17)=0.506026 diff=2.57e-05
+r=   27 printed=0.5195 computed(N=1e6)=0.519486 computed(N=1e6-17)=0.519486 diff=1.44e-05
+r=   28 printed=0.5323 computed(N=1e6)=0.532293 computed(N=1e6-17)=0.532293 diff=7.15e-06
+r=   29 printed=0.5445 computed(N=1e6)=0.544489 computed(N=1e6-17)=0.544490 diff=1.06e-05
+r=   30 printed=0.5561 computed(N=1e6)=0.556114 computed(N=1e6-17)=0.556115 diff=1.43e-05
+r=   31 printed=0.5672 computed(N=1e6)=0.567204 computed(N=1e6-17)=0.567204 diff=3.64e-06
+r=   32 printed=0.5778 computed(N=1e6)=0.577791 computed(N=1e6-17)=0.577791 diff=8.95e-06
+r=   33 printed=0.5879 computed(N=1e6)=0.587908 computed(N=1e6-17)=0.587908 diff=7.58e-06
+r=   34 printed=0.5976 computed(N=1e6)=0.597582 computed(N=1e6-17)=0.597582 diff=1.79e-05
+r=   35 printed=0.6068 computed(N=1e6)=0.606841 computed(N=1e6-17)=0.606841 diff=4.12e-05
+r=   36 printed=0.6157 computed(N=1e6)=0.615710 computed(N=1e6-17)=0.615710 diff=9.69e-06
+r=   37 printed=0.6242 computed(N=1e6)=0.624211 computed(N=1e6-17)=0.624211 diff=1.05e-05
+r=   38 printed=0.6324 computed(N=1e6)=0.632365 computed(N=1e6-17)=0.632365 diff=3.49e-05
+r=   39 printed=0.6402 computed(N=1e6)=0.640193 computed(N=1e6-17)=0.640193 diff=6.98e-06
+r=   40 printed=0.6477 computed(N=1e6)=0.647713 computed(N=1e6-17)=0.647713 diff=1.28e-05
+r=   41 printed=0.6549 computed(N=1e6)=0.654942 computed(N=1e6-17)=0.654942 diff=4.15e-05
+r=   42 printed=0.6619 computed(N=1e6)=0.661895 computed(N=1e6-17)=0.661895 diff=4.87e-06
+r=   43 printed=0.6686 computed(N=1e6)=0.668588 computed(N=1e6-17)=0.668589 diff=1.16e-05
+r=   44 printed=0.6750 computed(N=1e6)=0.675035 computed(N=1e6-17)=0.675035 diff=3.52e-05
+r=   45 printed=0.6812 computed(N=1e6)=0.681248 computed(N=1e6-17)=0.681249 diff=4.84e-05
+r=   46 printed=0.6872 computed(N=1e6)=0.687240 computed(N=1e6-17)=0.687240 diff=4.00e-05
+r=   47 printed=0.6930 computed(N=1e6)=0.693021 computed(N=1e6-17)=0.693022 diff=2.14e-05
+r=   48 printed=0.6986 computed(N=1e6)=0.698603 computed(N=1e6-17)=0.698603 diff=2.98e-06
+r=   49 printed=0.7040 computed(N=1e6)=0.703995 computed(N=1e6-17)=0.703995 diff=5.28e-06
+r=   55 printed=0.7092 computed(N=1e6)=0.732838 computed(N=1e6-17)=0.732838 diff=2.36e-02  <-- DIFF
+r=   60 printed=0.7328 computed(N=1e6)=0.753055 computed(N=1e6-17)=0.753055 diff=2.03e-02  <-- DIFF
+r=   65 printed=0.7531 computed(N=1e6)=0.770535 computed(N=1e6-17)=0.770535 diff=1.74e-02  <-- DIFF
+r=   70 printed=0.7705 computed(N=1e6)=0.785788 computed(N=1e6-17)=0.785788 diff=1.53e-02  <-- DIFF
+r=   75 printed=0.7858 computed(N=1e6)=0.799207 computed(N=1e6-17)=0.799208 diff=1.34e-02  <-- DIFF
+r=   80 printed=0.7992 computed(N=1e6)=0.811101 computed(N=1e6-17)=0.811101 diff=1.19e-02  <-- DIFF
+r=   85 printed=0.8111 computed(N=1e6)=0.821710 computed(N=1e6-17)=0.821710 diff=1.06e-02  <-- DIFF
+r=   90 printed=0.8217 computed(N=1e6)=0.831230 computed(N=1e6-17)=0.831230 diff=9.53e-03  <-- DIFF
+r=   95 printed=0.8312 computed(N=1e6)=0.839818 computed(N=1e6-17)=0.839818 diff=8.62e-03  <-- DIFF
+r=  100 printed=0.8398 computed(N=1e6)=0.847603 computed(N=1e6-17)=0.847603 diff=7.80e-03  <-- DIFF
+r=  105 printed=0.8476 computed(N=1e6)=0.854690 computed(N=1e6-17)=0.854691 diff=7.09e-03  <-- DIFF
+r=  110 printed=0.8547 computed(N=1e6)=0.861169 computed(N=1e6-17)=0.861169 diff=6.47e-03  <-- DIFF
+r=  115 printed=0.8612 computed(N=1e6)=0.867114 computed(N=1e6-17)=0.867114 diff=5.91e-03  <-- DIFF
+r=  120 printed=0.8671 computed(N=1e6)=0.872586 computed(N=1e6-17)=0.872587 diff=5.49e-03  <-- DIFF
+r=  125 printed=0.8726 computed(N=1e6)=0.877641 computed(N=1e6-17)=0.877641 diff=5.04e-03  <-- DIFF
+r=  130 printed=0.8776 computed(N=1e6)=0.882322 computed(N=1e6-17)=0.882322 diff=4.72e-03  <-- DIFF
+r=  135 printed=0.8823 computed(N=1e6)=0.886670 computed(N=1e6-17)=0.886670 diff=4.37e-03  <-- DIFF
+r=  140 printed=0.8867 computed(N=1e6)=0.890719 computed(N=1e6-17)=0.890719 diff=4.02e-03  <-- DIFF
+r=  145 printed=0.8907 computed(N=1e6)=0.894498 computed(N=1e6-17)=0.894498 diff=3.80e-03  <-- DIFF
+r=  150 printed=0.8945 computed(N=1e6)=0.898032 computed(N=1e6-17)=0.898032 diff=3.53e-03  <-- DIFF
+r=  155 printed=0.8980 computed(N=1e6)=0.901345 computed(N=1e6-17)=0.901345 diff=3.35e-03  <-- DIFF
+r=  160 printed=0.9045 computed(N=1e6)=0.904457 computed(N=1e6-17)=0.904457 diff=4.33e-05
+r=  165 printed=0.9074 computed(N=1e6)=0.907384 computed(N=1e6-17)=0.907384 diff=1.56e-05
+r=  170 printed=0.9101 computed(N=1e6)=0.910144 computed(N=1e6-17)=0.910144 diff=4.38e-05
+r=  175 printed=0.9127 computed(N=1e6)=0.912749 computed(N=1e6-17)=0.912749 diff=4.89e-05
+r=  180 printed=0.9152 computed(N=1e6)=0.915212 computed(N=1e6-17)=0.915212 diff=1.21e-05
+r=  185 printed=0.9175 computed(N=1e6)=0.917545 computed(N=1e6-17)=0.917545 diff=4.47e-05
+r=  190 printed=0.9198 computed(N=1e6)=0.919757 computed(N=1e6-17)=0.919757 diff=4.35e-05
+r=  195 printed=0.9219 computed(N=1e6)=0.921857 computed(N=1e6-17)=0.921857 diff=4.33e-05
+r=  200 printed=0.9239 computed(N=1e6)=0.923853 computed(N=1e6-17)=0.923853 diff=4.66e-05
+r=  205 printed=0.9258 computed(N=1e6)=0.925754 computed(N=1e6-17)=0.925754 diff=4.61e-05
+r=  210 printed=0.9276 computed(N=1e6)=0.927565 computed(N=1e6-17)=0.927565 diff=3.50e-05
+r=  215 printed=0.9293 computed(N=1e6)=0.929293 computed(N=1e6-17)=0.929293 diff=7.20e-06
+r=  220 printed=0.9309 computed(N=1e6)=0.930943 computed(N=1e6-17)=0.930943 diff=4.28e-05
+r=  225 printed=0.9325 computed(N=1e6)=0.932520 computed(N=1e6-17)=0.932520 diff=2.01e-05
+r=  230 printed=0.9340 computed(N=1e6)=0.934029 computed(N=1e6-17)=0.934029 diff=2.94e-05
+r=  235 printed=0.9355 computed(N=1e6)=0.935475 computed(N=1e6-17)=0.935475 diff=2.52e-05
+r=  240 printed=0.9369 computed(N=1e6)=0.936860 computed(N=1e6-17)=0.936861 diff=3.96e-05
+r=  245 printed=0.9382 computed(N=1e6)=0.938190 computed(N=1e6-17)=0.938190 diff=1.02e-05
+r=  250 printed=0.9395 computed(N=1e6)=0.939466 computed(N=1e6-17)=0.939466 diff=3.39e-05
+r=  255 printed=0.9407 computed(N=1e6)=0.940693 computed(N=1e6-17)=0.940693 diff=7.37e-06
+r=  260 printed=0.9419 computed(N=1e6)=0.941872 computed(N=1e6-17)=0.941872 diff=2.79e-05
+r=  265 printed=0.9430 computed(N=1e6)=0.943007 computed(N=1e6-17)=0.943007 diff=7.11e-06
+r=  270 printed=0.9441 computed(N=1e6)=0.944100 computed(N=1e6-17)=0.944100 diff=1.52e-07
+r=  275 printed=0.9452 computed(N=1e6)=0.945153 computed(N=1e6-17)=0.945154 diff=4.65e-05
+r=  280 printed=0.9462 computed(N=1e6)=0.946169 computed(N=1e6-17)=0.946169 diff=3.08e-05
+r=  285 printed=0.9471 computed(N=1e6)=0.947149 computed(N=1e6-17)=0.947149 diff=4.92e-05
+r=  290 printed=0.9481 computed(N=1e6)=0.948095 computed(N=1e6-17)=0.948095 diff=4.60e-06
+r=  295 printed=0.9490 computed(N=1e6)=0.949009 computed(N=1e6-17)=0.949010 diff=9.46e-06
+r=  300 printed=0.9499 computed(N=1e6)=0.949893 computed(N=1e6-17)=0.949893 diff=7.03e-06
+r=  310 printed=0.9516 computed(N=1e6)=0.951574 computed(N=1e6-17)=0.951574 diff=2.58e-05
+r=  320 printed=0.9531 computed(N=1e6)=0.953150 computed(N=1e6-17)=0.953150 diff=5.00e-05
+r=  330 printed=0.9546 computed(N=1e6)=0.954630 computed(N=1e6-17)=0.954630 diff=2.98e-05
+r=  340 printed=0.9560 computed(N=1e6)=0.956022 computed(N=1e6-17)=0.956022 diff=2.20e-05
+r=  350 printed=0.9573 computed(N=1e6)=0.957334 computed(N=1e6-17)=0.957334 diff=3.41e-05
+r=  360 printed=0.9586 computed(N=1e6)=0.958573 computed(N=1e6-17)=0.958573 diff=2.72e-05
+r=  370 printed=0.9597 computed(N=1e6)=0.959744 computed(N=1e6-17)=0.959744 diff=4.40e-05
+r=  380 printed=0.9609 computed(N=1e6)=0.960853 computed(N=1e6-17)=0.960853 diff=4.70e-05
+r=  390 printed=0.9619 computed(N=1e6)=0.961905 computed(N=1e6-17)=0.961905 diff=4.50e-06
+r=  400 printed=0.9629 computed(N=1e6)=0.962903 computed(N=1e6-17)=0.962903 diff=2.92e-06
+r=  410 printed=0.9639 computed(N=1e6)=0.963852 computed(N=1e6-17)=0.963852 diff=4.79e-05
+r=  420 printed=0.9648 computed(N=1e6)=0.964756 computed(N=1e6-17)=0.964756 diff=4.45e-05
+r=  430 printed=0.9656 computed(N=1e6)=0.965616 computed(N=1e6-17)=0.965616 diff=1.65e-05
+r=  440 printed=0.9664 computed(N=1e6)=0.966438 computed(N=1e6-17)=0.966438 diff=3.77e-05
+r=  450 printed=0.9672 computed(N=1e6)=0.967222 computed(N=1e6-17)=0.967222 diff=2.20e-05
+r=  460 printed=0.9680 computed(N=1e6)=0.967972 computed(N=1e6-17)=0.967972 diff=2.83e-05
+r=  470 printed=0.9687 computed(N=1e6)=0.968689 computed(N=1e6-17)=0.968689 diff=1.09e-05
+r=  480 printed=0.9694 computed(N=1e6)=0.969376 computed(N=1e6-17)=0.969376 diff=2.39e-05
+r=  490 printed=0.9700 computed(N=1e6)=0.970035 computed(N=1e6-17)=0.970035 diff=3.47e-05
+r=  500 printed=0.9707 computed(N=1e6)=0.970666 computed(N=1e6-17)=0.970667 diff=3.35e-05
+r=  550 printed=0.9735 computed(N=1e6)=0.973475 computed(N=1e6-17)=0.973475 diff=2.45e-05
+r=  600 printed=0.9758 computed(N=1e6)=0.975808 computed(N=1e6-17)=0.975809 diff=8.50e-06
+r=  650 printed=0.9778 computed(N=1e6)=0.977776 computed(N=1e6-17)=0.977776 diff=2.39e-05
+r=  700 printed=0.9795 computed(N=1e6)=0.979457 computed(N=1e6-17)=0.979457 diff=4.29e-05
+r=  750 printed=0.9809 computed(N=1e6)=0.980909 computed(N=1e6-17)=0.980909 diff=9.36e-06
+r=  800 printed=0.9822 computed(N=1e6)=0.982176 computed(N=1e6-17)=0.982176 diff=2.39e-05
+r=  850 printed=0.9833 computed(N=1e6)=0.983290 computed(N=1e6-17)=0.983290 diff=9.53e-06
+r=  900 printed=0.9843 computed(N=1e6)=0.984278 computed(N=1e6-17)=0.984278 diff=2.19e-05
+r=  950 printed=0.9852 computed(N=1e6)=0.985159 computed(N=1e6-17)=0.985159 diff=4.08e-05
+r= 1000 printed=0.9860 computed(N=1e6)=0.985950 computed(N=1e6-17)=0.985950 diff=5.00e-05
+r= 1500 printed=0.9909 computed(N=1e6)=0.990898 computed(N=1e6-17)=0.990898 diff=1.65e-06
+r= 2000 printed=0.9933 computed(N=1e6)=0.993320 computed(N=1e6-17)=0.993320 diff=1.98e-05
+r= 2500 printed=0.9947 computed(N=1e6)=0.994748 computed(N=1e6-17)=0.994748 diff=4.82e-05
+r= 3000 printed=0.9957 computed(N=1e6)=0.995687 computed(N=1e6-17)=0.995687 diff=1.29e-05
+r= 4000 printed=0.9968 computed(N=1e6)=0.996841 computed(N=1e6-17)=0.996841 diff=4.14e-05
+r= 5000 printed=0.9975 computed(N=1e6)=0.997521 computed(N=1e6-17)=0.997521 diff=2.08e-05
+r=10000 printed=0.9988 computed(N=1e6)=0.998836 computed(N=1e6-17)=0.998836 diff=3.56e-05
+rows disagreeing beyond printed precision: [(55, 0.7092, 0.732837643623979), (60, 0.7328, 0.7530550788003079), (65, 0.7531, 0.7705345997540318), (70, 0.7705, 0.7857876559017514), (75, 0.7858, 0.7992074186288685), (80, 0.7992, 0.8111007055255957), (85, 0.8111, 0.821710213121186), (90, 0.8217, 0.8312302842494712), (95, 0.8312, 0.8398182804061978), (100, 0.8398, 0.8476029128288489), (105, 0.8476, 0.8546904337253349), (110, 0.8547, 0.8611692984018038), (115, 0.8612, 0.8671137189102602), (120, 0.8671, 0.8725864033588244), (125, 0.8726, 0.8776406895384126), (130, 0.8776, 0.8823222228590464), (135, 0.8823, 0.8866702877682795), (140, 0.8867, 0.8907188730370532), (145, 0.8907, 0.8944975307486724), (150, 0.8945, 0.8980320739797565), (155, 0.898, 0.901345147325878)]
+  printed 0.7092 at r=55 would be the computed value at r in [50]
+  computed 0.732838 at r=55 matches the printed value of rows r in [60]
+  printed 0.7328 at r=60 would be the computed value at r in [55]
+  computed 0.753055 at r=60 matches the printed value of rows r in [65]
+  printed 0.7531 at r=65 would be the computed value at r in [60]
+  computed 0.770535 at r=65 matches the printed value of rows r in [70]
+  printed 0.7705 at r=70 would be the computed value at r in [65]
+  computed 0.785788 at r=70 matches the printed value of rows r in [75]
+  printed 0.7858 at r=75 would be the computed value at r in [70]
+  computed 0.799207 at r=75 matches the printed value of rows r in [80]
+  printed 0.7992 at r=80 would be the computed value at r in [75]
+  computed 0.811101 at r=80 matches the printed value of rows r in [85]
+  printed 0.8111 at r=85 would be the computed value at r in [80]
+  computed 0.821710 at r=85 matches the printed value of rows r in [90]
+  printed 0.8217 at r=90 would be the computed value at r in [85]
+  computed 0.831230 at r=90 matches the printed value of rows r in [95]
+  printed 0.8312 at r=95 would be the computed value at r in [90]
+  computed 0.839818 at r=95 matches the printed value of rows r in [100]
+  printed 0.8398 at r=100 would be the computed value at r in [95]
+  computed 0.847603 at r=100 matches the printed value of rows r in [105]
+  printed 0.8476 at r=105 would be the computed value at r in [100]
+  computed 0.854690 at r=105 matches the printed value of rows r in [110]
+  printed 0.8547 at r=110 would be the computed value at r in [105]
+  computed 0.861169 at r=110 matches the printed value of rows r in [115]
+  printed 0.8612 at r=115 would be the computed value at r in [110]
+  computed 0.867114 at r=115 matches the printed value of rows r in [120]
+  printed 0.8671 at r=120 would be the computed value at r in [115]
+  computed 0.872586 at r=120 matches the printed value of rows r in [125]
+  printed 0.8726 at r=125 would be the computed value at r in [120]
+  computed 0.877641 at r=125 matches the printed value of rows r in [130]
+  printed 0.8776 at r=130 would be the computed value at r in [125]
+  computed 0.882322 at r=130 matches the printed value of rows r in [135]
+  printed 0.8823 at r=135 would be the computed value at r in [130]
+  computed 0.886670 at r=135 matches the printed value of rows r in [140]
+  printed 0.8867 at r=140 would be the computed value at r in [135]
+  computed 0.890719 at r=140 matches the printed value of rows r in [145]
+  printed 0.8907 at r=145 would be the computed value at r in [140]
+  computed 0.894498 at r=145 matches the printed value of rows r in [150]
+  printed 0.8945 at r=150 would be the computed value at r in [145]
+  computed 0.898032 at r=150 matches the printed value of rows r in [155]
+  printed 0.8980 at r=155 would be the computed value at r in [150]
+  computed 0.901345 at r=155 matches the printed value of rows r in []

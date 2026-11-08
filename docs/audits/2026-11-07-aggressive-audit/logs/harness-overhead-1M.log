@@ -1,0 +1,2 @@
+n=1000000 bits=8000000 k=256 binary=False
+read+mask 0.002s | bitstring 0.024s | alphabet 0.017s | sha256 0.001s | parse C++ text 0.0008s | total harness overhead 0.045s

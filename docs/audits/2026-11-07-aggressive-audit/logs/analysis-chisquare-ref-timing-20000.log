@@ -1,0 +1,10 @@
+8-bit literal L=20000: 0.067 s  W=3 W_direct=3 indep_df=1711 gof_df=2295
+8-bit bitstring L=20000 (160000 bits): 0.491 s  W=32 W_direct=None indep_df=2046 gof_df=9
+1-bit literal L=20000: 0.121 s  W=26 W_direct=26 indep_df=254 gof_df=9
+8-bit literal L=20000 method=suffix only: 0.095 s  W=3 W_direct=None indep_df=1711 gof_df=2295
+8-bit bitstring method=suffix only: 0.629 s  W=32 W_direct=None indep_df=2046 gof_df=9
+bits n=5000: suffix array 0.003 s, kasai 0.002 s, W=22
+bits n=10000: suffix array 0.006 s, kasai 0.007 s, W=24
+bits n=20000: suffix array 0.040 s, kasai 0.007 s, W=30
+bits n=160000: suffix array 0.355 s, kasai 0.155 s, W=32
+chi2_sf(65300, 65280)=0.47719681687192755 crit=66402.29842662351 in 0.002 s

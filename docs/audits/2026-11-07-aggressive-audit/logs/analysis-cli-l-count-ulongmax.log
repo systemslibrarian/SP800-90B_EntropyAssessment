@@ -1,0 +1,7 @@
+
+*** Warning: dataset contains 2000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***

@@ -1,0 +1,6 @@
+input: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/restart/restart_rand8_100x100.bin
+0d627beab8d280669725fafda2e749dfe94d1df2176f7d41355565ed960de7a5  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/restart/restart_rand8_100x100.bin
+python: Python 3.14.7
+iid rc=0 .080263000 s
+non-iid rc=0 .310243000 s
+bitstring-iid rc=0 .172054000 s

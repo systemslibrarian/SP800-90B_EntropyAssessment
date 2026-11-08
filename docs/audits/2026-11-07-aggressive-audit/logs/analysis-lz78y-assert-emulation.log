@@ -1,0 +1,15 @@
+# lz78y-assert-emulation.py -- double-precision emulation of utils.h:1087-1108 at the guard call utils.h:1151
+# faithful ONLY where long double == double (this host: Darwin arm64)
+triples tried: 1584; emulated assert aborts: 0; log-domain (a<=0 or b<=0, would give -inf/NaN): 150
+| L | N | P | C | r | curMax=P_global' | status | p*x or f, iterations |
+|---:|---:|---:|---:|---:|---|---|---|
+
+## Fine sweep at L=20000 (N=19983), k=2: which (C, r) abort?  (P spacing 300..2000)
+aborting (P, C, r) combos: 0
+
+## Control: ordinary (C, r) for N=999983 must be 'ok'
+N=999983 C=499990 r=20 -> ('ok', 0.5012864262176566, (-0.5006789676408083, 3))
+N=999983 C=979970 r=534 -> ('ok', 0.9803473969145625, (-0.49004573750003144, 4))
+N=999983 C=799263 r=73 -> ('ok', 0.8003083236197791, (-0.017302504508878793, 3))
+N=9983 C=4998 r=19 -> ('ok', 0.5135418493731606, (-0.015364654937293878, 4))
+exit=0

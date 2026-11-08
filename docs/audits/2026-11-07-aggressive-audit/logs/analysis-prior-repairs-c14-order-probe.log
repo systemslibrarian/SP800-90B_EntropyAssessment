@@ -1,0 +1,44 @@
+binary sha256:
+1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid
+4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart
+fixture sha256:
+17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  bin/rand8_short.bin
+== step 1: baseline good report (EA_ALLOW_SHORT_DATASET=1) ==
+rc=0
+good.json errorLevel= 0 testCases= 11
+== step 2 (CONTROL, the shape regression-output.sh tests): -o FIRST then an unknown option ==
+rc=255
+CONTROL: replaced
+  errorLevel= -1 reportComplete= False
+== step 3 (PROBE A): unknown option BEFORE -o ==
+rc=255
+PROBE A: STALE SUCCESS SURVIVED (byte-identical to good.json)
+--- stdout/stderr head:
+cpp/ea_non_iid: illegal option -- Z
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+== step 4 (PROBE B): malformed -l BEFORE -o ==
+rc=255
+PROBE B: STALE SUCCESS SURVIVED (byte-identical to good.json)
+--- stdout head:
+Error: -l requires unsigned decimal <index>,<samples>.
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+== step 5 (PROBE C, ea_iid): unknown option BEFORE -o ==
+rc=255
+PROBE C: STALE SUCCESS SURVIVED
+== step 6 (PROBE D, ea_restart): unknown option BEFORE -o ==
+rc=255
+PROBE D: STALE SUCCESS SURVIVED
+== step 7 (PROBE E): doubled -o, first aliases the input ==
+rc=255
+capture before=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+capture after =17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+PROBE E: capture intact
+rep.json: absent
+--- stderr head:
+Error: refusing to write the report to '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/c14probe/cap.bin': it is the same file as the
+       input '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/c14probe/cap.bin' (or that cannot be ruled out). Writing it would destroy
+       the input capture. Nothing has been written.
+Error: the output path '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/c14probe/cap.bin' cannot be written; refusing to assess.

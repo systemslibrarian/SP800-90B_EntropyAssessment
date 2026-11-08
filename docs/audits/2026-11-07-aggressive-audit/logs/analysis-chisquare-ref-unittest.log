@@ -1,0 +1,57 @@
+test_R5_both_decisions_reported (reference.py90b.tests.test_chisquare.BinaryGoodnessOfFit.test_R5_both_decisions_reported) ... ok
+test_R6_constant_bits_not_applied (reference.py90b.tests.test_chisquare.BinaryGoodnessOfFit.test_R6_constant_bits_not_applied) ... ok
+test_alternating_40_is_perfectly_fitted (reference.py90b.tests.test_chisquare.BinaryGoodnessOfFit.test_alternating_40_is_perfectly_fitted) ... ok
+test_strongly_drifting_bits_fail (reference.py90b.tests.test_chisquare.BinaryGoodnessOfFit.test_strongly_drifting_bits_fail) ... ok
+test_ten_ones_then_ten_zeros_by_hand (reference.py90b.tests.test_chisquare.BinaryGoodnessOfFit.test_ten_ones_then_ten_zeros_by_hand) ... ok
+test_R4_no_m_at_all (reference.py90b.tests.test_chisquare.BinaryIndependence.test_R4_no_m_at_all) ... ok
+test_alternating_40_by_hand (reference.py90b.tests.test_chisquare.BinaryIndependence.test_alternating_40_by_hand) ... ok
+test_cap_at_11 (reference.py90b.tests.test_chisquare.BinaryIndependence.test_cap_at_11) ... ok
+test_exact_boundary_3162_3163 (reference.py90b.tests.test_chisquare.BinaryIndependence.test_exact_boundary_3162_3163) ... ok
+test_m1_fails_the_test (reference.py90b.tests.test_chisquare.BinaryIndependence.test_m1_fails_the_test) ... ok
+test_spec_example_m (reference.py90b.tests.test_chisquare.BinaryIndependence.test_spec_example_m) ... ok
+test_uniform_random_bits_pass (reference.py90b.tests.test_chisquare.BinaryIndependence.test_uniform_random_bits_pass) ... ok
+test_goodness_of_fit_matches (reference.py90b.tests.test_chisquare.CapturedLabelsRand8Short.test_goodness_of_fit_matches) ... /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/tests/test_chisquare.py:576: ResourceWarning: unclosed file <_io.BufferedReader name='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin'>
+  raw = np.frombuffer(open(self.PATH, "rb").read(), dtype=np.uint8)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_independence_df_and_verdict_match_T_does_not (reference.py90b.tests.test_chisquare.CapturedLabelsRand8Short.test_independence_df_and_verdict_match_T_does_not) ... ok
+test_lrs_matches (reference.py90b.tests.test_chisquare.CapturedLabelsRand8Short.test_lrs_matches) ... ok
+test_R5_the_printed_27_887_is_not_the_0_999_quantile (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_R5_the_printed_27_887_is_not_the_0_999_quantile) ... ok
+test_critical_values_by_bisection (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_critical_values_by_bisection) ... ok
+test_df1_is_folded_normal (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_df1_is_folded_normal) ... ok
+test_df2_is_exponential (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_df2_is_exponential) ... ok
+test_df4_closed_form (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_df4_closed_form) ... ok
+test_edges_and_large_df (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_edges_and_large_df) ... ok
+test_tabulated_quantiles (reference.py90b.tests.test_chisquare.Chi2SurvivalFunction.test_tabulated_quantiles) ... ok
+test_bitstring_cli_matches_estimate (reference.py90b.tests.test_chisquare.CommandLine.test_bitstring_cli_matches_estimate) ... ok
+test_example_11_through_the_cli (reference.py90b.tests.test_chisquare.CommandLine.test_example_11_through_the_cli) ... ok
+test_low_bits_are_the_symbol (reference.py90b.tests.test_chisquare.CommandLine.test_low_bits_are_the_symbol) ... ok
+test_variant_and_usage (reference.py90b.tests.test_chisquare.CommandLine.test_variant_and_usage) ... ok
+test_R7_binary_is_the_declared_width (reference.py90b.tests.test_chisquare.Degenerate.test_R7_binary_is_the_declared_width) ... ok
+test_all_one_symbol_8bit (reference.py90b.tests.test_chisquare.Degenerate.test_all_one_symbol_8bit) ... ok
+test_all_zero_bits (reference.py90b.tests.test_chisquare.Degenerate.test_all_zero_bits) ... ok
+test_bitstring_track (reference.py90b.tests.test_chisquare.Degenerate.test_bitstring_track) ... ok
+test_flat_labels_present (reference.py90b.tests.test_chisquare.Degenerate.test_flat_labels_present) ... ok
+test_odd_length_uses_floor_pairs (reference.py90b.tests.test_chisquare.Degenerate.test_odd_length_uses_floor_pairs) ... ok
+test_single_symbol (reference.py90b.tests.test_chisquare.Degenerate.test_single_symbol) ... ok
+test_unknown_option_and_bad_symbols (reference.py90b.tests.test_chisquare.Degenerate.test_unknown_option_and_bad_symbols) ... ok
+test_R1_declared_alphabet_changes_only_k (reference.py90b.tests.test_chisquare.Example11Independence.test_R1_declared_alphabet_changes_only_k) ... ok
+test_alphabet_and_proportions (reference.py90b.tests.test_chisquare.Example11Independence.test_alphabet_and_proportions) ... ok
+test_bins_match_the_table (reference.py90b.tests.test_chisquare.Example11Independence.test_bins_match_the_table) ... ok
+test_frequencies_statistic_and_decision (reference.py90b.tests.test_chisquare.Example11Independence.test_frequencies_statistic_and_decision) ... ok
+test_through_estimate_and_flat_labels (reference.py90b.tests.test_chisquare.Example11Independence.test_through_estimate_and_flat_labels) ... ok
+test_bins (reference.py90b.tests.test_chisquare.Example12GoodnessOfFitBinning.test_bins) ... ok
+test_remainder_is_not_used_but_counts_are_from_all_of_S (reference.py90b.tests.test_chisquare.Example12GoodnessOfFitBinning.test_remainder_is_not_used_but_counts_are_from_all_of_S) ... ok
+test_statistic_by_hand_on_the_sorted_sequence (reference.py90b.tests.test_chisquare.Example12GoodnessOfFitBinning.test_statistic_by_hand_on_the_sorted_sequence) ... ok
+test_W_edge_cases (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_W_edge_cases) ... ok
+test_W_suffix_equals_direct_on_random_inputs (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_W_suffix_equals_direct_on_random_inputs) ... ok
+test_alternating_40_by_hand (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_alternating_40_by_hand) ... ok
+test_auto_cross_checks_and_method_choice (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_auto_cross_checks_and_method_choice) ... ok
+test_degenerate_constant_sequence_passes (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_degenerate_constant_sequence_passes) ... ok
+test_hand_example_01011 (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_hand_example_01011) ... ok
+test_underflow_path (reference.py90b.tests.test_chisquare.LongestRepeatedSubstring.test_underflow_path) ... ok
+
+----------------------------------------------------------------------
+Ran 49 tests in 0.364s
+
+OK

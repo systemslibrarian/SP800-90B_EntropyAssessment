@@ -1,0 +1,140 @@
+== chi2_sf closed forms ==
+sf(3.7,2) 0.1572371663136275 exp(-1.85) 0.1572371663136276
+sf(1,1) 0.31731050786291437 erfc(sqrt(.5)) 0.317310507862914
+sf(7.3,4) 0.12085874882121234 closed 0.12085874882121238
+sf(60,2) 9.357622968840163e-14 exp(-30) 9.357622968840175e-14
+== tabulated 0.999 quantiles ==
+sf(16.266,3) = 0.0010001116
+sf(27.877,9) = 0.0010000634
+sf(27.887,9) = 0.00099622756
+sf(10.828,1) = 0.00099976572
+sf(149.449,100) = 0.0010000462
+sf(3.841,1) = 0.050013684
+sf(23.209,10) = 0.010000866
+sf(18.307,10) = 0.050000589
+== critical values by bisection ==
+1 10.827566170662733
+2 13.815510557964275
+3 16.266236196238133
+9 27.877164871256575
+10 29.588298445074425
+100 149.4492527790389
+735 859.2017015617315
+1206 1363.4840660018342
+2046 2249.3908801623097
+== large df sanity ==
+sf(50000,50000) 0.49915895565553847 sf(51000,50000) 0.0008345791931005052 sf(49000,50000) 0.9992674203448778
+sf(1026.2423761301056,735) 5.514377257622269e-12
+sf(1288.2367907397536,1206) 0.04933304971347684
+== Example 11 ==
+{
+ "L": 100,
+ "k": 3,
+ "T": 3.4571197058750203,
+ "df": 3,
+ "P-value": 0.32636628350523356,
+ "critical_value": 16.266236196238133,
+ "applied": true,
+ "fail_by_pvalue": false,
+ "fail_by_critical_value": false,
+ "failed": false,
+ "nbin": 6,
+ "npairs": 50,
+ "exact_boundary": false,
+ "merged_last_two": false,
+ "bins": [
+  {
+   "pairs": [
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     3
+    ]
+   ],
+   "E": 6.195,
+   "o": 7
+  },
+  {
+   "pairs": [
+    [
+     3,
+     1
+    ],
+    [
+     1,
+     2
+    ]
+   ],
+   "E": 8.295,
+   "o": 6
+  },
+  {
+   "pairs": [
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "E": 11.525,
+   "o": 10
+  },
+  {
+   "pairs": [
+    [
+     2,
+     3
+    ]
+   ],
+   "E": 7.79,
+   "o": 8
+  },
+  {
+   "pairs": [
+    [
+     3,
+     2
+    ]
+   ],
+   "E": 7.79,
+   "o": 12
+  },
+  {
+   "pairs": [
+    [
+     2,
+     2
+    ]
+   ],
+   "E": 8.405,
+   "o": 7
+  }
+ ]
+}
+== Example 12 (binning) ==
+{'L': 160, 'k': 4, 'T': 266.2879007784669, 'df': 18, 'P-value': 3.908962386770849e-46, 'critical_value': 42.31239633167997, 'applied': True, 'fail_by_pvalue': True, 'fail_by_critical_value': True, 'failed': True, 'failed_if_df_zero_degenerate': False, 'nbin': 3, 'subset_length': 16, 'exact_boundary': False, 'merged_last_two': False}
+[{'values': [3, 0], 'E': 5.3, 'o': [16, 16, 11, 0, 0, 0, 0, 0, 0, 10]}, {'values': [2], 'E': 5.2, 'o': [0, 0, 0, 0, 0, 0, 14, 16, 16, 6]}, {'values': [1], 'E': 5.5, 'o': [0, 0, 5, 16, 16, 16, 2, 0, 0, 0]}]
+== 5.2.3 example m ==
+{'m': 2, 'm_uncapped_floor': 2, 'm_found': True}
+{'m': 11, 'm_uncapped_floor': 13, 'm_found': True}
+{'m': 1, 'm_uncapped_floor': 1, 'm_found': True} {'m': 2, 'm_uncapped_floor': 2, 'm_found': True}
+{'m': 0, 'm_uncapped_floor': 0, 'm_found': False} {'m': 0, 'm_uncapped_floor': 0, 'm_found': False}
+== hand cases ==
+alt40 indep {'L': 40, 'k': 2, 'n0': 20, 'n1': 20, 'p0': 0.5, 'p1': 0.5, 'm': 2, 'm_uncapped_floor': 2, 'm_found': True, 'T': 60.0, 'df': 2, 'P-value': 9.357622968840163e-14, 'critical_value': 13.815510557964275, 'applied': True, 'fail_by_pvalue': True, 'fail_by_critical_value': True, 'failed': True, 'nblocks': 20, 'tuples': 4}
+alt40 gof {'L': 40, 'n1': 20, 'p': 0.5, 'subset_length': 4, 'e0': 2.0, 'e1': 2.0, 'T': 0.0, 'df': 9, 'P-value': 1.0, 'critical_value': 27.877164871256575, 'applied': True, 'fail_by_pvalue': False, 'fail_by_critical_value': False, 'failed': False, 'fail_by_printed_critical_value': False, 'printed_critical_value': 27.887}
+alt40 lrs {'L': 40, 'k': 2, 'P_col': 0.5, 'W': 38, 'N': 3, 'p_col^W': 3.637978807091713e-12, 'log(p_col^W)': -26.33959286127792, 'p_col^W underflowed': False, 'Pr(X >= 1)': 1.0913936421235434e-11, 'applied': True, 'passed': False, 'W_suffix': 38, 'W_direct': 38}
+01011 lrs {'L': 5, 'k': 2, 'P_col': 0.52, 'W': 2, 'N': 6, 'p_col^W': 0.27040000000000003, 'log(p_col^W)': -1.3078529348133279, 'p_col^W underflowed': False, 'Pr(X >= 1)': 0.8491626298332732, 'applied': True, 'passed': True, 'W_suffix': 2, 'W_direct': 2}
+7777 lrs {'L': 4, 'k': 1, 'P_col': 1.0, 'W': 3, 'N': 1, 'p_col^W': 1.0, 'log(p_col^W)': 0.0, 'p_col^W underflowed': False, 'Pr(X >= 1)': 1.0, 'applied': True, 'passed': True, 'W_suffix': 3, 'W_direct': 3}
+7777 indep {'L': 4, 'k': 1, 'T': 0.0, 'df': 0, 'P-value': nan, 'critical_value': nan, 'applied': False, 'fail_by_pvalue': False, 'fail_by_critical_value': False, 'failed': False, 'nbin': 1, 'npairs': 2, 'exact_boundary': False, 'merged_last_two': False, 'bins': [{'pairs': [(7, 7)], 'E': 2.0, 'o': 2}]}
+7777 gof {'L': 4, 'k': 1, 'T': 4.000000000000001, 'df': 0, 'P-value': nan, 'critical_value': nan, 'applied': False, 'fail_by_pvalue': False, 'fail_by_critical_value': False, 'failed': False, 'failed_if_df_zero_degenerate': True, 'nbin': 1, 'subset_length': 0, 'exact_boundary': False, 'merged_last_two': False, 'bins': [{'values': [7], 'E': 0.4, 'o': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}]}
+ones10zeros10 gof {'L': 20, 'n1': 10, 'p': 0.5, 'subset_length': 2, 'e0': 1.0, 'e1': 1.0, 'T': 20.0, 'df': 9, 'P-value': 0.017912404529843304, 'critical_value': 27.877164871256575, 'applied': True, 'fail_by_pvalue': False, 'fail_by_critical_value': False, 'failed': False, 'fail_by_printed_critical_value': False, 'printed_critical_value': 27.887}
+== estimate() on small random ==
+{'min_entropy': nan, 'L': 5000, 'bits_per_symbol': 8, 'track': 'literal', 'binary': False, 'alphabet': 'observed', 'variant': 'literal', 'gof_df_zero': 'not_applied', 'bit_order': None, 'bitstring_limit': None, 'chi_square_tests_failed': True, 'lrs_length_test_passed': True, 'section_5_2_passed': False, 'Chi square independence: T': 489.0639527520072, 'Chi square independence: df': 241, 'Chi square independence: P-value': 5.128340990679509e-19, 'Chi square goodness of fit: T': 741.2940344962549, 'Chi square goodness of fit: df': 747, 'Chi square goodness of fit: P-value': 0.5520097401760728, 'Chi square tests': 'Failed', 'Literal Longest Repeated Substring results: P_col': 0.00410704, 'Literal Longest Repeated Substring results: W': 3, 'Literal Longest Repeated Substring results: Pr(X >= 1)': 0.5789872851821426, 'Length of longest repeated substring test': 'Passed'}
+{'min_entropy': nan, 'L': 40000, 'bits_per_symbol': 8, 'track': 'bitstring', 'binary': True, 'alphabet': 'observed', 'variant': 'literal', 'gof_df_zero': 'not_applied', 'bit_order': 'msb', 'bitstring_limit': None, 'chi_square_tests_failed': False, 'lrs_length_test_passed': True, 'section_5_2_passed': True, 'Chi square independence: T': 548.5697822204878, 'Chi square independence: df': 510, 'Chi square independence: P-value': 0.11521605124710955, 'Chi square goodness of fit: T': 11.116946718968586, 'Chi square goodness of fit: df': 9, 'Chi square goodness of fit: P-value': 0.26777796880951404, 'Chi square tests': 'Passed', 'Bitstring Longest Repeated Substring results: P_col': 0.50000210125, 'Bitstring Longest Repeated Substring results: W': 30, 'Bitstring Longest Repeated Substring results: Pr(X >= 1)': 0.5248160586387318, 'Length of longest repeated substring test': 'Passed'}
+{'L': 40000, 'k': 2, 'P_col': 0.50000210125, 'W': 30, 'N': 798820435, 'p_col^W': 9.314399982642744e-10, 'log(p_col^W)': -20.794289342063273, 'p_col^W underflowed': False, 'Pr(X >= 1)': 0.5248160586387318, 'applied': True, 'passed': True, 'W_suffix': 30, 'W_direct': 30}

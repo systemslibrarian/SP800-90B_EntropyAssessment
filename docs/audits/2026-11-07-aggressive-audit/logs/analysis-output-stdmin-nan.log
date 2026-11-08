@@ -1,0 +1,6 @@
+after MCV  min(0.30, 1.0)      H=0.29999999999999999
+after NaN  min(NaN, 0.30)      H=nan  (isnan=1)
+after next min(0.70, NaN)      H=0.69999999999999996  <-- running minimum 0.30 is gone
+guard (NaN >= 0) = 0  -> treated as 'not run', flagged, H kept
+guard (+inf >= 0) = 1 -> folded: min(+inf,0.30)=0.29999999999999999, no flag
+fmin(NaN, 0.30)=0.29999999999999999 fmin(0.30, NaN)=0.29999999999999999

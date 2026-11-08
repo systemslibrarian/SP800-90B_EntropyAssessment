@@ -1,0 +1,166 @@
+# py90b differential corpus manifest -- written by harness/gen_corpus.py
+# generator sha256: abb317a7a7bd639e2f5e04aa886fe57b50b3f5c8ca2f741835d7b3e8833711b9
+# key prefix: py90b-corpus-2026-11-07/  (all randomness is SHA-256 counter mode under this key;
+#   no numpy RNG is used, so the bytes do not depend on any library version)
+# written: 2026-11-07 21:15:21 -0500
+# columns (tab-separated): name	bps	n	sha256	construction
+# 'bps' is the DECLARED width the driver passes to the tool; 'n' is the file size in bytes
+# (one symbol per byte).  Files with n < 1000000 need EA_ALLOW_SHORT_DATASET=1 (non-compliant).
+alternating-1bit-1000000.bin	1	1000000	2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3	alternating 0, 1, 0, ... (at width 1 identical to period2, counter, counter3)
+alternating-1bit-50000.bin	1	50000	e3630883bf967f2689fbaf4ade9dc4d2a23e32d718c34b69815f13513fd0c628	alternating 0, 1, 0, ... (at width 1 identical to period2, counter, counter3)
+alternating-1bit-999999.bin	1	999999	0ef6eb1ad887103f025037a06682dadb962218da5fb6d9d9751852f647f3e898	alternating 0, 1, 0, ... (at width 1 identical to period2, counter, counter3)
+alternating-8bit-1000000.bin	8	1000000	1154f32145a447f97d232dd0a72efe4f860ff546940a8aaef7a78d8daeb9a3c5	alternating 0, 255, 0, ...
+alternating-8bit-50000.bin	8	50000	2787b016576b0c648da50113dc883b80119a2149af39e7a41540b7df8512891e	alternating 0, 255, 0, ...
+alternating-8bit-999999.bin	8	999999	291ace5592033777e94d0220d8799eb68ab467892910ea5f6bc8d4525d4c7ee5	alternating 0, 255, 0, ...
+counter-1bit-1000000.bin	1	1000000	2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3	counter: i mod 2^1 (at width 1 identical to alternating)
+counter-1bit-50000.bin	1	50000	e3630883bf967f2689fbaf4ade9dc4d2a23e32d718c34b69815f13513fd0c628	counter: i mod 2^1 (at width 1 identical to alternating)
+counter-1bit-999999.bin	1	999999	0ef6eb1ad887103f025037a06682dadb962218da5fb6d9d9751852f647f3e898	counter: i mod 2^1 (at width 1 identical to alternating)
+counter-8bit-1000000.bin	8	1000000	67870dfc9c64e7aa270a3f7e8051ae65d207f93fc3df04d7572e6365af69cd0d	counter: i mod 2^8
+counter-8bit-50000.bin	8	50000	9d3550b2e0ae28ea766fd775454403cd4888c27509cb10d1be190f89b3f1decd	counter: i mod 2^8
+counter-8bit-999999.bin	8	999999	48f1c4119ca9aa364204e8d1f66247f7013b362266710055449a9653479b19e5	counter: i mod 2^8
+counter3-1bit-1000000.bin	1	1000000	2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3	counter stepping by 3: (3 i) mod 2^1 (at width 1 identical to alternating)
+counter3-1bit-50000.bin	1	50000	e3630883bf967f2689fbaf4ade9dc4d2a23e32d718c34b69815f13513fd0c628	counter stepping by 3: (3 i) mod 2^1 (at width 1 identical to alternating)
+counter3-1bit-999999.bin	1	999999	0ef6eb1ad887103f025037a06682dadb962218da5fb6d9d9751852f647f3e898	counter stepping by 3: (3 i) mod 2^1 (at width 1 identical to alternating)
+counter3-8bit-1000000.bin	8	1000000	475fcbbd42dbdb67d36d01d6f54ba10002a6914d2b4824db1843b0e70fad3194	counter stepping by 3: (3 i) mod 2^8
+counter3-8bit-50000.bin	8	50000	4598a08ef1d67531bc91bd19197d28181aecd23e80159c4561b78fff3983ac48	counter stepping by 3: (3 i) mod 2^8
+counter3-8bit-999999.bin	8	999999	2db79126db93c461e8558cc744bb03f8989ba1819f3e9442d0e7c24e73854207	counter stepping by 3: (3 i) mod 2^8
+csprng-1bit-1000000.bin	1	1000000	f5a2bbe8db53c7c877e35c7a45f0217b89e04aa90af007cb582e851a222c9632	SHA-256 counter-mode keystream 'csprng-1bit' (keystream bits, MSB-first); the 'good' control
+csprng-1bit-5000.bin	1	5000	4c4cdd7856420f2283ce9bfdba5cd7e16a19d680a838b30984eac7916fcbee99	SHA-256 counter-mode keystream 'csprng-1bit' (keystream bits, MSB-first); the 'good' control
+csprng-1bit-50000.bin	1	50000	55a38df59971e5cded5f20c8421e617dba9127d6c8cefb4ce9fb15cb07ba5789	SHA-256 counter-mode keystream 'csprng-1bit' (keystream bits, MSB-first); the 'good' control
+csprng-1bit-999999.bin	1	999999	e98ee65bf08e1348df6e1e1a173dda499d2357cac2d575d2e1dabc21420aa287	SHA-256 counter-mode keystream 'csprng-1bit' (keystream bits, MSB-first); the 'good' control
+csprng-8bit-1000000.bin	8	1000000	c98c420474bd9a41c9d186ce3fb31bcc3aaa7f7a97f067695de087634363624a	SHA-256 counter-mode keystream 'csprng-8bit' (keystream bytes); the 'good' control
+csprng-8bit-5000.bin	8	5000	310f10bc65c25c99ffe9171b950b05846934f10cccb17607f3c93bfce693b469	SHA-256 counter-mode keystream 'csprng-8bit' (keystream bytes); the 'good' control
+csprng-8bit-50000.bin	8	50000	b66085a1b1a2c97f1c6177d6546fb105f05614ff29b529f9461f8a24fbc1ee2e	SHA-256 counter-mode keystream 'csprng-8bit' (keystream bytes); the 'good' control
+csprng-8bit-999999.bin	8	999999	bdb411bdf0d02692b6142c6fe3e2e2dc275b13c04da774ee35c6f861a029d1a2	SHA-256 counter-mode keystream 'csprng-8bit' (keystream bytes); the 'good' control
+lfsr16-tap1-1bit-1000000.bin	1	1000000	8582b8e0c194eb94aaef4b8500b61fb5a018f0ba8b7ed3b7fdb22f472724895c	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; one output bit (state & 1) per clock, one clock per symbol
+lfsr16-tap1-1bit-50000.bin	1	50000	85c7d7259e885b85a6ed477dc8416649901890ed745df1a46f807454ee83fbe6	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; one output bit (state & 1) per clock, one clock per symbol
+lfsr16-tap1-1bit-999999.bin	1	999999	e14565080a27f02f7121fbc42d4864a1b0f735f86a1883e4c3be427aed881f35	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; one output bit (state & 1) per clock, one clock per symbol
+lfsr16-tap1-8bit-1000000.bin	8	1000000	78c7520d53ea4db61c0baea7b49fc105cab357580f7f098b7b46e0218739d02f	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; one output bit per clock, 8 clocks packed MSB-first per byte
+lfsr16-tap1-8bit-50000.bin	8	50000	b2cbc89f255fda90513942d4696a758c1d4d093cc18079767774bed845d7962e	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; one output bit per clock, 8 clocks packed MSB-first per byte
+lfsr16-tap1-8bit-999999.bin	8	999999	d4846228800ee3c0bd7b0344afa692c366171160bee132a5fbb415efd9b79ffd	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; one output bit per clock, 8 clocks packed MSB-first per byte
+lfsr16-tap8-1bit-1000000.bin	1	1000000	c2f5b6344fc4ac38bd760d93579cf6f4948a16d79981bf44380c8ad278b03362	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; low 8 bits of the state per clock, unpacked MSB-first to 8 one-bit symbols
+lfsr16-tap8-1bit-50000.bin	1	50000	ddeb7dfed06d48fcfc7332ba89d7256eeee9564739d552a9d394ab437b860198	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; low 8 bits of the state per clock, unpacked MSB-first to 8 one-bit symbols
+lfsr16-tap8-1bit-999999.bin	1	999999	12bfe624f75e079106bd007f21da6d36234bf37bda7dbc451b0f6705c60fae24	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; low 8 bits of the state per clock, unpacked MSB-first to 8 one-bit symbols
+lfsr16-tap8-8bit-1000000.bin	8	1000000	03e0772826f51e24bc1cbfc07a35c83486dbd4be53cf73c2dd4d42dad11fa64a	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; low 8 bits of the state per clock (overlapping windows), one clock per byte
+lfsr16-tap8-8bit-50000.bin	8	50000	c3e8a7570400456f50cb99e9f9615a8ee8271c721fc348745065647c81af60e4	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; low 8 bits of the state per clock (overlapping windows), one clock per byte
+lfsr16-tap8-8bit-999999.bin	8	999999	d317476b9e8842d3863144aa81cfacaf53545ad31a50dff8f47a2a29e31dcb43	lfsr16: Fibonacci LFSR x^16+x^14+x^13+x^11+1, seed 0xACE1, period 65535; low 8 bits of the state per clock (overlapping windows), one clock per byte
+lfsr32-tap1-1bit-1000000.bin	1	1000000	023dc7746e037719a22fc45bab48ff244568dcd7af163a5563a7bb4e36fc4181	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; one output bit (state & 1) per clock, one clock per symbol
+lfsr32-tap1-1bit-50000.bin	1	50000	36f0d0aff3622e242255d4812a3befa88f7996e83d9ccad1b576ced27222124d	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; one output bit (state & 1) per clock, one clock per symbol
+lfsr32-tap1-1bit-999999.bin	1	999999	c69dfea76de0769a884ad6f85ab3be001118d4f4a856d6d1a7cae440b6d51ca0	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; one output bit (state & 1) per clock, one clock per symbol
+lfsr32-tap1-8bit-1000000.bin	8	1000000	37fc7c8780fa60bc29c9eab987d2c866a414cd539f2177e2406e2ac185557cca	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; one output bit per clock, 8 clocks packed MSB-first per byte
+lfsr32-tap1-8bit-50000.bin	8	50000	201b5ca162c04e9ce25f5bfe1e9555d152c15864f13f2ebe06c7e5592c361ddc	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; one output bit per clock, 8 clocks packed MSB-first per byte
+lfsr32-tap1-8bit-999999.bin	8	999999	cff2312ac20019b3a8179f14cc1129229f85d533b739c0c8e491f7ae840ac85b	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; one output bit per clock, 8 clocks packed MSB-first per byte
+lfsr32-tap8-1bit-1000000.bin	1	1000000	a3ae46b8e8b4f5ef81f64c2bbff9e679e23ff5269abf5a0749d1261bddb2b717	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; low 8 bits of the state per clock, unpacked MSB-first to 8 one-bit symbols
+lfsr32-tap8-1bit-50000.bin	1	50000	dfd1f8f7992dd8b36fa2d4deedae49288b59fc332bdb752394a9e26907ede83a	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; low 8 bits of the state per clock, unpacked MSB-first to 8 one-bit symbols
+lfsr32-tap8-1bit-999999.bin	1	999999	a2efa0bf25ff97b9ac05b193350780ede10b6d7aed299602d03cdda84472e434	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; low 8 bits of the state per clock, unpacked MSB-first to 8 one-bit symbols
+lfsr32-tap8-8bit-1000000.bin	8	1000000	05d9de60924952aeb92e0be541350ce247bee0a3aa63fef8d737c2f1f115d1b4	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; low 8 bits of the state per clock (overlapping windows), one clock per byte
+lfsr32-tap8-8bit-50000.bin	8	50000	7401bca6b5fee00b816fa91e8c0926d77ce946df14800781b66003b8871bbca3	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; low 8 bits of the state per clock (overlapping windows), one clock per byte
+lfsr32-tap8-8bit-999999.bin	8	999999	568d41f6e129df64d732f06f566b78cf780294886f8d2aba9e2c299dd8b4b483	lfsr32: Fibonacci LFSR x^32+x^22+x^2+x+1, seed 0xACE1ACE1, period 4294967295; low 8 bits of the state per clock (overlapping windows), one clock per byte
+onesym0-1bit-1000000.bin	1	1000000	d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025	all symbols 0
+onesym0-1bit-50000.bin	1	50000	5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d	all symbols 0
+onesym0-1bit-999999.bin	1	999999	69b03c6b922868bb629ec73abe5a6b3a2aa6546e2ffd9fc2c67f70ccf0599ec0	all symbols 0
+onesym0-8bit-1000000.bin	8	1000000	d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025	all symbols 0
+onesym0-8bit-50000.bin	8	50000	5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d	all symbols 0
+onesym0-8bit-999999.bin	8	999999	69b03c6b922868bb629ec73abe5a6b3a2aa6546e2ffd9fc2c67f70ccf0599ec0	all symbols 0
+onesymmax-1bit-1000000.bin	1	1000000	1fb6a051d8996888485d47fea0007a88e1e78ea273fa5fb60e1ab00608dbb764	all symbols 1 (= 2^1-1)
+onesymmax-1bit-50000.bin	1	50000	793060f4a877d83552cd30050b734b64b0374e5491ea2cce477a77fe27c61235	all symbols 1 (= 2^1-1)
+onesymmax-1bit-999999.bin	1	999999	6303827c092d9373af5c949700cab1c06530e84569780230bfe5eccf9d3d15e6	all symbols 1 (= 2^1-1)
+onesymmax-8bit-1000000.bin	8	1000000	bfa872a3021d48c84643f831ee5f9358bceccf3ad6a5f8b3a7a00e0b3f22bdbc	all symbols 255 (= 2^8-1)
+onesymmax-8bit-50000.bin	8	50000	41121633b17bc2601e62d954894967cedf78fa92fd8dcdfcac6e8083e2a5c46a	all symbols 255 (= 2^8-1)
+onesymmax-8bit-999999.bin	8	999999	978a7902e9c0e7d5beae2440a0fda44ad7c2e1c09970733ae17c824915b09e72	all symbols 255 (= 2^8-1)
+overwidth-1bit-1000000.bin	1	1000000	1e9d01ca427490ce7a838e8004bfd6e1aa104956f30ea994887e34d20edd5357	DECLARED 1 bit; values in {0,1,2,3} uniform (two keystream 'overwidth-1bit' bits per symbol) -- symbols exceed the declared width
+overwidth-1bit-50000.bin	1	50000	0cf2ee0e4f6c29e0e3125dc79cdea4960d36bd47f2c0c7c0a11bedcb2039dbb6	DECLARED 1 bit; values in {0,1,2,3} uniform (two keystream 'overwidth-1bit' bits per symbol) -- symbols exceed the declared width
+overwidth-1bit-999999.bin	1	999999	e8e5ac42d7d5e9439564d83be629133ccf7a080402d59234f54df07d8f622cf9	DECLARED 1 bit; values in {0,1,2,3} uniform (two keystream 'overwidth-1bit' bits per symbol) -- symbols exceed the declared width
+overwidth-7bit-1000000.bin	7	1000000	5d95e7f170647e9b25104465d4e3811603d9ff849ab43379977d0f50962eb42c	DECLARED 7 bits; values 0..255 from keystream 'overwidth-7bit' -- symbols exceed the declared width.  Stands in for the impossible 'declared 8, values > 255' file
+overwidth-7bit-50000.bin	7	50000	0503da1e9a7627a43221bd0ce7d7ffd8d70c9a6ffb94ecf311eb854896c1a87f	DECLARED 7 bits; values 0..255 from keystream 'overwidth-7bit' -- symbols exceed the declared width.  Stands in for the impossible 'declared 8, values > 255' file
+overwidth-7bit-999999.bin	7	999999	609e7643346fdda550590e2302a6a42f5ba65e869a212e78433092fdf13754bb	DECLARED 7 bits; values 0..255 from keystream 'overwidth-7bit' -- symbols exceed the declared width.  Stands in for the impossible 'declared 8, values > 255' file
+period1000-1bit-1000000.bin	1	1000000	adb7e21bcc4aa80b8f56e318da24e67047f92bd2546e79da0c4ff4aee114c090	periodic, period 1000: keystream 'period1000-1bit' chunk 0 of length 1000, minimal period checked = 1000
+period1000-1bit-50000.bin	1	50000	f759de4e7d07b01ff238968933bef1871a24a87e3c2eaa857554d5491b61b112	periodic, period 1000: keystream 'period1000-1bit' chunk 0 of length 1000, minimal period checked = 1000
+period1000-1bit-999999.bin	1	999999	15e1c26419eb926e2ad89876842246e8ec5653d557e208a8e4ff796fe85ac00d	periodic, period 1000: keystream 'period1000-1bit' chunk 0 of length 1000, minimal period checked = 1000
+period1000-8bit-1000000.bin	8	1000000	ab603dfdd8d397657d78f222efa67284541c2926aa8eece62cceaf4fb1425a5f	periodic, period 1000: keystream 'period1000-8bit' chunk 0 of length 1000, minimal period checked = 1000
+period1000-8bit-50000.bin	8	50000	cca81ea1ee4a99f07732a41e0eebd3e94ab10f1bbfec130bd94e17e1da0afe3f	periodic, period 1000: keystream 'period1000-8bit' chunk 0 of length 1000, minimal period checked = 1000
+period1000-8bit-999999.bin	8	999999	b7e867503cfc086e52bd7f13d6501032a3569a5755928628db8e6facb9c2db0b	periodic, period 1000: keystream 'period1000-8bit' chunk 0 of length 1000, minimal period checked = 1000
+period1023-1bit-1000000.bin	1	1000000	cbe7599b8df995d9f11b1a055a4a7bc8d0131cf4d409f0935d44ef4c9f402b23	periodic, period 1023: keystream 'period1023-1bit' chunk 0 of length 1023, minimal period checked = 1023
+period1023-1bit-50000.bin	1	50000	d41907b95d9e412036fb2b4c9b8003afe2521dda23d385cbbaf31edde752652e	periodic, period 1023: keystream 'period1023-1bit' chunk 0 of length 1023, minimal period checked = 1023
+period1023-1bit-999999.bin	1	999999	a1ec1347f9da45b17f1036d7223fd6c8c8519868220258e2e1379e8e0cc8ebbf	periodic, period 1023: keystream 'period1023-1bit' chunk 0 of length 1023, minimal period checked = 1023
+period1023-8bit-1000000.bin	8	1000000	63c467428c8a0e314723dc03108ed91bc3d7192e7eeecdfb455bc45220cce387	periodic, period 1023: keystream 'period1023-8bit' chunk 0 of length 1023, minimal period checked = 1023
+period1023-8bit-50000.bin	8	50000	d2ef3a57d6627f29ed8872f7fcc61cb9c04e65176ace79e2fdf0991ca62ab025	periodic, period 1023: keystream 'period1023-8bit' chunk 0 of length 1023, minimal period checked = 1023
+period1023-8bit-999999.bin	8	999999	f3824765fdb2e9a5d31481a7c041dbb167b61a74dd8dd99a6f5da61a0f707c53	periodic, period 1023: keystream 'period1023-8bit' chunk 0 of length 1023, minimal period checked = 1023
+period16-1bit-1000000.bin	1	1000000	9509b372441018ccdf5ebe4a3976412ccbe28b72c160ad8ebd2a04c5ec3fcbaf	periodic, period 16: keystream 'period16-1bit' chunk 0 of length 16, minimal period checked = 16
+period16-1bit-50000.bin	1	50000	093e25e60fc58bd0908cddbd1b3ec6cf741fb3d13721a8c7d8a55ec847274b02	periodic, period 16: keystream 'period16-1bit' chunk 0 of length 16, minimal period checked = 16
+period16-1bit-999999.bin	1	999999	daf5827f683c060ca6b296a96134e3bdea8f5a7597b55363fa1b85681e34e5f8	periodic, period 16: keystream 'period16-1bit' chunk 0 of length 16, minimal period checked = 16
+period16-8bit-1000000.bin	8	1000000	a1c96ccff62422ee19dc52e2c4ed88cde6f069e35511bd7cff02a6a8eea0af99	periodic, period 16: pattern 0,1,...,15 (distinct symbols)
+period16-8bit-50000.bin	8	50000	b7a1338dcfd2a3aafc05e9ad66fce786610946b969004043b7b61f15257ad73e	periodic, period 16: pattern 0,1,...,15 (distinct symbols)
+period16-8bit-999999.bin	8	999999	f6caad8cf878035a8697f10c0aadcf1231feff46cf89b51df5ef75b83107b9ad	periodic, period 16: pattern 0,1,...,15 (distinct symbols)
+period2-1bit-1000000.bin	1	1000000	2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3	periodic, period 2: pattern 0,1 (at width 1 identical to alternating, counter, counter3)
+period2-1bit-50000.bin	1	50000	e3630883bf967f2689fbaf4ade9dc4d2a23e32d718c34b69815f13513fd0c628	periodic, period 2: pattern 0,1 (at width 1 identical to alternating, counter, counter3)
+period2-1bit-999999.bin	1	999999	0ef6eb1ad887103f025037a06682dadb962218da5fb6d9d9751852f647f3e898	periodic, period 2: pattern 0,1 (at width 1 identical to alternating, counter, counter3)
+period2-8bit-1000000.bin	8	1000000	2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3	periodic, period 2: pattern 0,1,...,1 (distinct symbols)
+period2-8bit-50000.bin	8	50000	e3630883bf967f2689fbaf4ade9dc4d2a23e32d718c34b69815f13513fd0c628	periodic, period 2: pattern 0,1,...,1 (distinct symbols)
+period2-8bit-999999.bin	8	999999	0ef6eb1ad887103f025037a06682dadb962218da5fb6d9d9751852f647f3e898	periodic, period 2: pattern 0,1,...,1 (distinct symbols)
+period255-1bit-1000000.bin	1	1000000	9502741d69cd76b655ff7b04bf582a7a164acebc608fccde214899b13a854fa7	periodic, period 255: keystream 'period255-1bit' chunk 0 of length 255, minimal period checked = 255
+period255-1bit-50000.bin	1	50000	5b032fdb0fee0b66e1b8b855191e0d496d7e4f47b9d825d801700acb02e30803	periodic, period 255: keystream 'period255-1bit' chunk 0 of length 255, minimal period checked = 255
+period255-1bit-999999.bin	1	999999	d1eb980d435cef1feb3c2598ab242f6d229ab705e567cd5b341de131c1a685da	periodic, period 255: keystream 'period255-1bit' chunk 0 of length 255, minimal period checked = 255
+period255-8bit-1000000.bin	8	1000000	c596f5438f65a47180533148f2200a7cc53c75e3d155988ee8a7ebbf4c5d97af	periodic, period 255: pattern 0,1,...,254 (distinct symbols)
+period255-8bit-50000.bin	8	50000	dc7b5da06f18c94643852bc3f31728b74a55353bbc2fa61430cb3676b5be19b4	periodic, period 255: pattern 0,1,...,254 (distinct symbols)
+period255-8bit-999999.bin	8	999999	ae019e51c9f27ab427a2f4d6f35625f7650db59f9e87cc83fdde91e095e11b39	periodic, period 255: pattern 0,1,...,254 (distinct symbols)
+period256-1bit-1000000.bin	1	1000000	3ec7171f4aae5e8defcf2193d049408580b24c5fbfff4b47ed246ceb1d51fd62	periodic, period 256: keystream 'period256-1bit' chunk 0 of length 256, minimal period checked = 256
+period256-1bit-50000.bin	1	50000	7fe52dd5546df26ac6ba52ff7771d228582c670c3a7b0c7215a35e979d901f33	periodic, period 256: keystream 'period256-1bit' chunk 0 of length 256, minimal period checked = 256
+period256-1bit-999999.bin	1	999999	32914971eaf882f9cdbc3c918067c6aa67ae23a35e2a3456ecdd20864306f115	periodic, period 256: keystream 'period256-1bit' chunk 0 of length 256, minimal period checked = 256
+period256-8bit-1000000.bin	8	1000000	67870dfc9c64e7aa270a3f7e8051ae65d207f93fc3df04d7572e6365af69cd0d	periodic, period 256: pattern 0,1,...,255 (distinct symbols)
+period256-8bit-50000.bin	8	50000	9d3550b2e0ae28ea766fd775454403cd4888c27509cb10d1be190f89b3f1decd	periodic, period 256: pattern 0,1,...,255 (distinct symbols)
+period256-8bit-999999.bin	8	999999	48f1c4119ca9aa364204e8d1f66247f7013b362266710055449a9653479b19e5	periodic, period 256: pattern 0,1,...,255 (distinct symbols)
+period3-1bit-1000000.bin	1	1000000	3d24014654e5c049e9c91f90a546bef4f175aa08cbf540ce68fa86a2c7d0de11	periodic, period 3: keystream 'period3-1bit' chunk 0 of length 3, minimal period checked = 3
+period3-1bit-50000.bin	1	50000	0bed986f91b471752144d0bc3bc77f432ae184ebb04cf39dcfc5cf97cea8272f	periodic, period 3: keystream 'period3-1bit' chunk 0 of length 3, minimal period checked = 3
+period3-1bit-999999.bin	1	999999	abd5507086ee11103c429bd6022418371e03b8fa56503bd73a3b4fab54d53db5	periodic, period 3: keystream 'period3-1bit' chunk 0 of length 3, minimal period checked = 3
+period3-8bit-1000000.bin	8	1000000	4152856eba73997b19add20486c4cbe27743c7458541382430a6bd9e90af43e0	periodic, period 3: pattern 0,1,...,2 (distinct symbols)
+period3-8bit-50000.bin	8	50000	88a7de4c8f62fe1290b6577bbd1cc16c4bc5f65f71bc63a1e683c1b2ff3c1ec9	periodic, period 3: pattern 0,1,...,2 (distinct symbols)
+period3-8bit-999999.bin	8	999999	cca62dbc36f50074816185d16ec5237940a969c495b6fe47361ae9abda74f60e	periodic, period 3: pattern 0,1,...,2 (distinct symbols)
+period4095-1bit-1000000.bin	1	1000000	778d53b769d38491e0b1c73eca1381614332a9a6d4e69cde6b1a22dfb296756f	periodic, period 4095: keystream 'period4095-1bit' chunk 0 of length 4095, minimal period checked = 4095
+period4095-1bit-50000.bin	1	50000	f7d491457ac691deb398d48b01871e07000982cb7d66d1f4119756bccb230632	periodic, period 4095: keystream 'period4095-1bit' chunk 0 of length 4095, minimal period checked = 4095
+period4095-1bit-999999.bin	1	999999	59d30545df909fd6b7ad5bc0bb3980aae19d0656854bf6512ed82aedfa552ce1	periodic, period 4095: keystream 'period4095-1bit' chunk 0 of length 4095, minimal period checked = 4095
+period4095-8bit-1000000.bin	8	1000000	9ba0462dcb5c202e85c08e9161853ccd358d9135d445c73a61612728f7126ab3	periodic, period 4095: keystream 'period4095-8bit' chunk 0 of length 4095, minimal period checked = 4095
+period4095-8bit-50000.bin	8	50000	138aef408415333a997d44292c59c3df0700b00b767d9630843efda3e22326ee	periodic, period 4095: keystream 'period4095-8bit' chunk 0 of length 4095, minimal period checked = 4095
+period4095-8bit-999999.bin	8	999999	1e6d4abd26e88ee93f91c56d17d4ffa86e4c13ae6714b96fd674c70c89399762	periodic, period 4095: keystream 'period4095-8bit' chunk 0 of length 4095, minimal period checked = 4095
+period4096-1bit-1000000.bin	1	1000000	72ffe1ca96161225cfae43766d0976a8006f43c823e12babd91a73775593d591	periodic, period 4096: keystream 'period4096-1bit' chunk 0 of length 4096, minimal period checked = 4096
+period4096-1bit-50000.bin	1	50000	baffea06bf69f666dafc09e82d2dd0b0076e9569207bfa7b20e1b256e11460c2	periodic, period 4096: keystream 'period4096-1bit' chunk 0 of length 4096, minimal period checked = 4096
+period4096-1bit-999999.bin	1	999999	29da44f440f9809fea3038cf5670aad4786f46051b137c8ccaee54bc8f02aac5	periodic, period 4096: keystream 'period4096-1bit' chunk 0 of length 4096, minimal period checked = 4096
+period4096-8bit-1000000.bin	8	1000000	063f5911010848689f6fccfa640c229bfa2a2b2285d1a280690e55972c5b3458	periodic, period 4096: keystream 'period4096-8bit' chunk 0 of length 4096, minimal period checked = 4096
+period4096-8bit-50000.bin	8	50000	7bb5bfba9f4ef5c3314afcd05bb892561a02a014a7713c634b9ccde96ce7c10f	periodic, period 4096: keystream 'period4096-8bit' chunk 0 of length 4096, minimal period checked = 4096
+period4096-8bit-999999.bin	8	999999	6524b990b5ff804891a22e3f1ab4ef65d92c8c6b9297e755036f7ef1bd85d880	periodic, period 4096: keystream 'period4096-8bit' chunk 0 of length 4096, minimal period checked = 4096
+period7-1bit-1000000.bin	1	1000000	3ab560ba1b54fdf24e8af20f66078718327951f6a2d6160b194a6cc4d34ce045	periodic, period 7: keystream 'period7-1bit' chunk 0 of length 7, minimal period checked = 7
+period7-1bit-50000.bin	1	50000	1baeb14b5eabdaa9385d44b1001b8b21a4eba6a58efd4b5008bb8d06bf3fbfdd	periodic, period 7: keystream 'period7-1bit' chunk 0 of length 7, minimal period checked = 7
+period7-1bit-999999.bin	1	999999	6ecd33d774484cbaff5daeb552c06f940a432808be968d9386259d8865cca8b5	periodic, period 7: keystream 'period7-1bit' chunk 0 of length 7, minimal period checked = 7
+period7-8bit-1000000.bin	8	1000000	c3eafa72614b1885f169ac27db9415486f6995e1cdb0e373acf0b85f08e800c4	periodic, period 7: pattern 0,1,...,6 (distinct symbols)
+period7-8bit-50000.bin	8	50000	6bed5c021670d872650537b675f5a6e9169891ec3f2578d914b4fa46eaf58016	periodic, period 7: pattern 0,1,...,6 (distinct symbols)
+period7-8bit-999999.bin	8	999999	e99804fb7790d522913fa6022d3f2461163a88626c1bc2c4d6f0acb78141b2d7	periodic, period 7: pattern 0,1,...,6 (distinct symbols)
+runs10-1bit-1000000.bin	1	1000000	b666067ffec7e051a76dc008b84d02f1828f3088712ef7d1dd639bb2ee90855f	runs of length 10: symbol = floor(i/10) mod 2^1
+runs10-1bit-50000.bin	1	50000	ee4f0b14379eb4af9fd3a04e7656668d049a451f752ec89c733bc3c7a5d69a6f	runs of length 10: symbol = floor(i/10) mod 2^1
+runs10-1bit-999999.bin	1	999999	a2192b478ca70600341f8be7977d8a44779beb9397154852a515955ff237945c	runs of length 10: symbol = floor(i/10) mod 2^1
+runs10-8bit-1000000.bin	8	1000000	22aeaa8f2ec19346dc356554ce5dded0f3d8d0dea2029cc526bacba0c314b573	runs of length 10: symbol = floor(i/10) mod 2^8
+runs10-8bit-50000.bin	8	50000	803cc27be2ba5bdad4dc3e13ea4067368a89a6ad6604904c7bfbcce108dc54cc	runs of length 10: symbol = floor(i/10) mod 2^8
+runs10-8bit-999999.bin	8	999999	e49f73243ccb4ad8ee6792363eefc1d51db51c673e62cb68e90514ed4ce66a00	runs of length 10: symbol = floor(i/10) mod 2^8
+runs100-1bit-1000000.bin	1	1000000	4d2c254e0e7614688554f038d3bd9daf60fbf7b0e872bb2b15117ed0aca055db	runs of length 100: symbol = floor(i/100) mod 2^1
+runs100-1bit-50000.bin	1	50000	25b32e56201a895489bac469e751cef2bce786c98cfb566c4149a40d7aaf0229	runs of length 100: symbol = floor(i/100) mod 2^1
+runs100-1bit-999999.bin	1	999999	ce1ba2f6e1ca495fb7522c37cf2748e556922f43265cf888eb13e26105411c23	runs of length 100: symbol = floor(i/100) mod 2^1
+runs100-8bit-1000000.bin	8	1000000	74fc7220fd658299c36218dfbc7b224ad0792e171f7a9d3ea408c877475ca5aa	runs of length 100: symbol = floor(i/100) mod 2^8
+runs100-8bit-50000.bin	8	50000	d359d84d2ee0fd7edd07e11b685578afa6d8bec4657cc51a375eb06b0e7fe644	runs of length 100: symbol = floor(i/100) mod 2^8
+runs100-8bit-999999.bin	8	999999	a70facc8ae4912473d4245d536d723d051557f16cb6d36062497ef3b424b149c	runs of length 100: symbol = floor(i/100) mod 2^8
+runs10000-1bit-1000000.bin	1	1000000	8650318c4e9c623965e95ffdebd5d7bbf82921ec95279919fe6bfc3a03cbf2c9	runs of length 10000: symbol = floor(i/10000) mod 2^1
+runs10000-1bit-50000.bin	1	50000	8992371a74df85129dfc95b389b9b09c25559e268b20eb9c414e55a72e1f9d93	runs of length 10000: symbol = floor(i/10000) mod 2^1
+runs10000-1bit-999999.bin	1	999999	6fa41ab7f9b5ec0e469b4212f8027fb8cbde0827d1897dd80913d137e24ffafe	runs of length 10000: symbol = floor(i/10000) mod 2^1
+runs10000-8bit-1000000.bin	8	1000000	032cc073903466704f243bb72f1d7fead18a0b902775b61f3341d16b4b84302b	runs of length 10000: symbol = floor(i/10000) mod 2^8
+runs10000-8bit-50000.bin	8	50000	fe12ac81a3fbae7ace7ab429c91e5c1d26337026faeee0312de9ed869d408833	runs of length 10000: symbol = floor(i/10000) mod 2^8
+runs10000-8bit-999999.bin	8	999999	96dbf2df2928e3e939a4be0cb9cee990715c43c5c61787611a044f5564338244	runs of length 10000: symbol = floor(i/10000) mod 2^8
+two5050-1bit-1000000.bin	1	1000000	50cdaac398ebb490e5b832c90b1a776a71b5e7a1fd8490696a815754de8b76ba	two symbols {0, 1}, P(0) = 0.5: keystream 'two5050-1bit' bits
+two5050-1bit-50000.bin	1	50000	9cbc4e21333c0a9b6d45eb574270a96513028a242cd1bb0812eaf611752de9c8	two symbols {0, 1}, P(0) = 0.5: keystream 'two5050-1bit' bits
+two5050-1bit-999999.bin	1	999999	c129676c25b0b4eda398e420bbbbd142a1fb77e9e07e86d425ca8a604ee77449	two symbols {0, 1}, P(0) = 0.5: keystream 'two5050-1bit' bits
+two5050-8bit-1000000.bin	8	1000000	d6c4045d4ada44721c94f648e7cf104397fdf10fc7dafdd660003f10c6ecf50a	two symbols {0, 255}, P(0) = 0.5: keystream 'two5050-8bit' bits
+two5050-8bit-50000.bin	8	50000	aab76e9cf6ce02431e26fd57d84ff1982fc87381cfab41535321aab6ce3f6e08	two symbols {0, 255}, P(0) = 0.5: keystream 'two5050-8bit' bits
+two5050-8bit-999999.bin	8	999999	1b547a4273834b9f2651863da63406c219b54b1d512b64bd31af29d81f09709b	two symbols {0, 255}, P(0) = 0.5: keystream 'two5050-8bit' bits
+two9010-1bit-1000000.bin	1	1000000	a16d09179c86dc9face9edb217a1a7a279e2dc49cfc761f181664b98bc670e47	two symbols {0, 1}, P(0) = 225/250 = 0.9 exactly: keystream 'two9010-1bit' bytes >= 250 rejected, byte < 225 -> 0
+two9010-1bit-50000.bin	1	50000	a11dbca366e5ea228e94caef4c789acf1a31c1a51cb231e566dbab5823d56198	two symbols {0, 1}, P(0) = 225/250 = 0.9 exactly: keystream 'two9010-1bit' bytes >= 250 rejected, byte < 225 -> 0
+two9010-1bit-999999.bin	1	999999	ae7644660e4b7d5865e84c5be0308f33ac9d73eaffb9ae0bcfb7c2cba114608e	two symbols {0, 1}, P(0) = 225/250 = 0.9 exactly: keystream 'two9010-1bit' bytes >= 250 rejected, byte < 225 -> 0
+two9010-8bit-1000000.bin	8	1000000	d6f58132e5804e02c7bfff9ef983a1690f3f91d33bc4570e30e00ade201ba3f4	two symbols {0, 255}, P(0) = 225/250 = 0.9 exactly: keystream 'two9010-8bit' bytes >= 250 rejected, byte < 225 -> 0
+two9010-8bit-50000.bin	8	50000	a8da206a5fa9142f3f2687fbc34e82606c4bfdaf6738e95c679c995c84c50da3	two symbols {0, 255}, P(0) = 225/250 = 0.9 exactly: keystream 'two9010-8bit' bytes >= 250 rejected, byte < 225 -> 0
+two9010-8bit-999999.bin	8	999999	7049de87019bf274fa9770cb1672142174061e0a097156c2be494ff580ba9fa3	two symbols {0, 255}, P(0) = 225/250 = 0.9 exactly: keystream 'two9010-8bit' bytes >= 250 rejected, byte < 225 -> 0

@@ -1,0 +1,17 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 3000,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -o logs/analysis-collision-probe-allzero.json corpus/collision-allzero-L3000.bin 1",
+   "dateTimeStamp" : "20261107194311",
+   "errorLevel" : -1,
+   "errorMessage" : "Symbol alphabet consists of 1 symbol. No entropy awarded...",
+   "filename" : "corpus/collision-allzero-L3000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "c81ca5eda5947c7826ad046fdbdc2a25a846b835a6c34c237cc8b3afbe9ec6cc",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

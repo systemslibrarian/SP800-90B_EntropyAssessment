@@ -1,0 +1,17 @@
+python 3.14.7 numpy 2.5.4 arm64
+random_bits_n20000                         method=suffix L=20000 u=10 v=26 p-hat=0.499640 min_entropy=0.974978 path='suffix' time=0.018s
+random_bits_n20000                         method=auto   L=20000 u=10 v=26 p-hat=0.499640 min_entropy=0.974978 path='suffix+direct (agree)' time=0.116s
+    components: suffix_array=0.009s kasai=0.020s pairs_stack=0.024s max_lcp=26
+all_zero_bits_n20000                       method=suffix L=20000 u=19967 v=19999 p-hat=1.000000 min_entropy=-0.000000 path='suffix' time=0.039s
+all_zero_bits_n20000                       method=auto   L=20000 u=19967 v=19999 p-hat=1.000000 min_entropy=-0.000000 path='suffix' time=0.017s
+    components: suffix_array=0.004s kasai=0.009s pairs_stack=0.004s max_lcp=19999
+random_bytes_n20000                        method=suffix L=20000 u=2 v=3 p-hat=0.004218 min_entropy=7.533365 path='suffix' time=0.017s
+random_bytes_n20000                        method=auto   L=20000 u=2 v=3 p-hat=0.004218 min_entropy=7.533365 path='suffix+direct (agree)' time=0.024s
+    components: suffix_array=0.004s kasai=0.006s pairs_stack=0.005s max_lcp=3
+bitstring_of_2500_random_bytes_n20000      method=suffix L=20000 u=10 v=26 p-hat=0.502572 min_entropy=0.966687 path='suffix' time=0.017s
+bitstring_of_2500_random_bytes_n20000      method=auto   L=20000 u=10 v=26 p-hat=0.502572 min_entropy=0.966687 path='suffix+direct (agree)' time=0.115s
+    components: suffix_array=0.037s kasai=0.016s pairs_stack=0.005s max_lcp=26
+biased_bits_p0.9_n20000                    method=suffix L=20000 u=57 v=84 p-hat=0.816127 min_entropy=0.280714 path='suffix' time=0.040s
+biased_bits_p0.9_n20000                    method=auto   L=20000 u=57 v=84 p-hat=0.816127 min_entropy=0.280714 path='suffix+direct (agree)' time=0.554s
+    components: suffix_array=0.007s kasai=0.007s pairs_stack=0.006s max_lcp=84
+exit=0

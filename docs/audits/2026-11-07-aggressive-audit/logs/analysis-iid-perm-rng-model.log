@@ -1,0 +1,12 @@
+Q1: xoshiro_jump(k) vs k canonical jumps
+  k=0: code==canonical? True; code state nonzero? True; code=['9e3779b97f4a7c15', 'bf58476d1ce4e5b9', '94d049bb133111eb', '2545f4914f6cdd1d']
+  k=1: code==canonical? True; code state nonzero? True; code=['a31f424ab964aa69', '9d2059196ba8dcc0', 'cca63cabe69b9d06', '8781afe425481cb0']
+  k=2: code==canonical? False; code state nonzero? True; code=['73a66397ed801cfb', '25644198feb91ef4', '9c554775b135498e', 'd44bcce43e30da58']
+  k=3: code==canonical? False; code state nonzero? True; code=['7f6c2e12a025fcc9', '348580b4d2c8eba1', 'b59f906e2db4a870', 'b65c08fa1ea2461a']
+  k=4: code==canonical? False; code state nonzero? True; code=['a525d837e95ed502', 'e1b2196fa75a0673', 'b00b65de2cbe9b4a', 'b26155028ae83412']
+  k=2 equals S1 xor S2 (predicted from the un-reset accumulators)? True
+Q2: randomRange64 acceptance rule, exhaustive at L=8
+  non-uniform s values: 0 of 255  -> UNBIASED
+Q3: FYshuffle loop shape (i from n-1 down to 1, r uniform in [0,i]) on n=4
+  distinct permutations reached: 24 of 24; each exactly once? True
+exit=0

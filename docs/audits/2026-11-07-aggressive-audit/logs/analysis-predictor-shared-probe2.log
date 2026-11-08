@@ -1,0 +1,51 @@
+# predictor-shared-probe2.py -- dense P_local bisection-error sweep, overstating direction vs C22a
+# dH > 0  ==>  tool reports MORE entropy than the exact root of the spec equation
+
+N=999937  rows=116  rows_overstating=39  C22a(N)=8.079e-09 bit
+   worst OVERSTATING dH = 1.341e-09 bit at r=7   (ratio to C22a: 0.17)
+   worst understating dH = 7.567e-09 bit at r=2   (ratio to C22a: 0.94)
+   rows where OVERSTATING dH > C22a: 0  []
+   rows where |dH| > C22a (either direction): 0  []
+
+N=999999  rows=107  rows_overstating=47  C22a(N)=8.080e-09 bit
+   worst OVERSTATING dH = 2.368e-09 bit at r=3   (ratio to C22a: 0.29)
+   worst understating dH = 3.194e-09 bit at r=8   (ratio to C22a: 0.40)
+   rows where OVERSTATING dH > C22a: 0  []
+   rows where |dH| > C22a (either direction): 0  []
+
+N=4033  rows=110  rows_overstating=37  C22a(N)=3.259e-11 bit
+   worst OVERSTATING dH = 1.149e-11 bit at r=2   (ratio to C22a: 0.35)
+   worst understating dH = 5.605e-11 bit at r=3   (ratio to C22a: 1.72)
+   rows where OVERSTATING dH > C22a: 0  []
+   rows where |dH| > C22a (either direction): 1  [(3, -5.604757145260175e-11, 'non-monotone')]
+
+N=7999937  rows=71  rows_overstating=19  C22a(N)=6.464e-08 bit
+   worst OVERSTATING dH = 7.582e-09 bit at r=7   (ratio to C22a: 0.12)
+   worst understating dH = 5.659e-08 bit at r=6   (ratio to C22a: 0.88)
+   rows where OVERSTATING dH > C22a: 0  []
+   rows where |dH| > C22a (either direction): 0  []
+
+## summary: N, worst overstating dH, at r, C22a(N), #over>C22a, #|dH|>C22a
+   (999937, 1.3405269432728666e-09, 7, 8.07949904e-09, 0, 0)
+   (999999, 2.3682553134857303e-09, 3, 8.08e-09, 0, 0)
+   (4033, 1.1489337400596817e-11, 2, 3.259472e-11, 0, 1)
+   (7999937, 7.582126648871219e-09, 7, 6.463949904e-08, 0, 0)
+
+## degenerate states (transliteration of predictionEstimate): C==0, C==N, r==N, N==1, N==2
+   C=0 N=1000000 max_run=0 k=2 -> Pglobal'=4.6051595822271807e-06 P_local=n/a H=1 exit=not-computed assert1105=False
+   C=0 N=1000000 max_run=0 k=256 -> Pglobal'=4.6051595822271807e-06 P_local=n/a H=8 exit=not-computed assert1105=False
+   C=0 N=2 max_run=0 k=2 -> Pglobal'=0.90000000000000002 P_local=n/a H=0.15200309344504995 exit=not-computed assert1105=False
+   C=1000000 N=1000000 max_run=1000000 k=2 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=999999 N=1000000 max_run=999999 k=2 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=999998 N=1000000 max_run=999998 k=256 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=0 N=1 max_run=0 k=3 -> Pglobal'=0.98999999999999999 P_local=n/a H=0.014499569695115089 exit=not-computed assert1105=False
+   C=1 N=1 max_run=1 k=3 -> EXCEPTION ZeroDivisionError('division by zero')
+   C=1 N=2 max_run=1 k=3 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=2 N=2 max_run=2 k=3 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=0 N=2 max_run=0 k=3 -> Pglobal'=0.90000000000000002 P_local=n/a H=0.15200309344504995 exit=not-computed assert1105=False
+   C=1 N=2 max_run=1 k=2 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=999930 N=999937 max_run=999930 k=2 -> Pglobal'=0.9999998149716538 P_local=n/a H=2.6693950218253886e-07 exit=not-computed assert1105=False
+   C=999931 N=999937 max_run=999931 k=2 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+   C=999932 N=999937 max_run=999932 k=2 -> Pglobal'=1 P_local=n/a H=-0 exit=not-computed assert1105=False
+
+# end of probe2

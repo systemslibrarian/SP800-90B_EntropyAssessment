@@ -1,0 +1,34 @@
+test_cutoff_two_always_gives_u_equal_v_plus_one (__main__.CannotRun.test_cutoff_two_always_gives_u_equal_v_plus_one) ... ok
+test_no_repeat_at_all (__main__.CannotRun.test_no_repeat_at_all) ... ok
+test_single_symbol_sequence (__main__.CannotRun.test_single_symbol_sequence) ... ok
+test_two_symbols (__main__.CannotRun.test_two_symbols) ... ok
+test_bitstring_mode (__main__.CommandLine.test_bitstring_mode) ... ok
+test_literal_matches_estimate (__main__.CommandLine.test_literal_matches_estimate) ... ok
+test_low_bits_are_the_symbol (__main__.CommandLine.test_low_bits_are_the_symbol) ... ok
+test_nan_round_trips_for_cannot_run (__main__.CommandLine.test_nan_round_trips_for_cannot_run) ... ok
+test_all_one_symbol_width_eight (__main__.HandDerivedExamples.test_all_one_symbol_width_eight) ... ok
+test_clamp_to_one (__main__.HandDerivedExamples.test_clamp_to_one) ... ok
+test_degenerate_all_one_symbol (__main__.HandDerivedExamples.test_degenerate_all_one_symbol) ... ok
+test_no_clamp_sparse_alphabet (__main__.HandDerivedExamples.test_no_clamp_sparse_alphabet) ... ok
+test_input_validation (__main__.Internals.test_input_validation) ... ok
+test_pairs_by_exact_lcp_counts_every_pair_once (__main__.Internals.test_pairs_by_exact_lcp_counts_every_pair_once) ... ok
+test_suffix_array_is_sorted_and_a_permutation (__main__.Internals.test_suffix_array_is_sorted_and_a_permutation) ... ok
+test_to_bitstring_is_msb_first (__main__.Internals.test_to_bitstring_is_msb_first) ... ok
+test_auto_cross_checks_both (__main__.SpecWorkedExample.test_auto_cross_checks_both) ... ok
+test_direct_path_alone (__main__.SpecWorkedExample.test_direct_path_alone) ... ok
+test_most_common_tuple_counts_match_the_t_tuple_example (__main__.SpecWorkedExample.test_most_common_tuple_counts_match_the_t_tuple_example) ... ok
+test_spec_cutoff_35_on_the_example_cannot_run (__main__.SpecWorkedExample.test_spec_cutoff_35_on_the_example_cannot_run) ... ok
+test_suffix_path_alone (__main__.SpecWorkedExample.test_suffix_path_alone) ... ok
+test_biased_bits (__main__.SuffixAgainstDirect.test_biased_bits) ... ok
+test_bitstring_of_bytes (__main__.SuffixAgainstDirect.test_bitstring_of_bytes) ... ok
+test_long_repeated_block (__main__.SuffixAgainstDirect.test_long_repeated_block) ... ok
+test_periodic_with_a_flaw (__main__.SuffixAgainstDirect.test_periodic_with_a_flaw) ... ok
+test_random_bits (__main__.SuffixAgainstDirect.test_random_bits) ... ok
+test_random_bytes (__main__.SuffixAgainstDirect.test_random_bytes) ... ok
+test_small_alphabet (__main__.SuffixAgainstDirect.test_small_alphabet) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.839s
+
+OK
+exit=0

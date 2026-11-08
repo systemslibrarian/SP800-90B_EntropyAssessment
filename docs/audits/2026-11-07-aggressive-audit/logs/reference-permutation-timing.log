@@ -1,0 +1,38 @@
+python 3.14.7 numpy 2.5.4 macOS-26.6.2-arm64-arm-64bit-Mach-O arm64
+
+=== bits_per_symbol=8, n=20000 (uniform random) ===
+shuffle (numpy Generator.shuffle)                    0.150 ms/call
+excursion (raw)                                      0.056 ms/call
+num/len directional runs + inc/dec (3 stats)         0.048 ms/call
+num/len runs based on median (2 stats)               0.053 ms/call
+collision_list (shared by 5.1.7/5.1.8)               0.301 ms/call
+periodicity x5 lags                                  0.009 ms/call
+covariance x5 lags                                   0.056 ms/call
+encode_for_compression (raw)                         0.178 ms/call
+compression = bz2 of encoded string                  2.824 ms/call
+encoded string length: 71562 bytes (3.58 per sample)
+_statistics(all 19) on one permutation               3.473 ms/call
+_statistics(18, without compression)                 0.534 ms/call
+per-shuffle cost at n=20000: 3.6 ms  (of which bz2 2.8 ms)
+EXTRAPOLATED per shuffle at n=1,000,000 (x50, linear): 0.18 s; x10,000 shuffles = 30 min single process; without compression: 6 min; with 8 workers: 4 min
+permutation_test(n=20000, shuffles=20): 0.08 s total = 3.9 ms/shuffle; iid=False failed=['periodicity(2)']
+
+=== bits_per_symbol=1, n=20000 (uniform random) ===
+shuffle (numpy Generator.shuffle)                    0.145 ms/call
+conversion_I                                         0.015 ms/call
+conversion_II                                        0.017 ms/call
+excursion (raw)                                      0.055 ms/call
+num/len directional runs + inc/dec (3 stats)         0.014 ms/call
+num/len runs based on median (2 stats)               0.051 ms/call
+collision_list (shared by 5.1.7/5.1.8)               0.043 ms/call
+periodicity x5 lags                                  0.005 ms/call
+covariance x5 lags                                   0.013 ms/call
+encode_for_compression (raw)                         0.789 ms/call
+compression = bz2 of encoded string                  3.726 ms/call
+encoded string length: 39999 bytes (2.00 per sample)
+_statistics(all 19) on one permutation               3.294 ms/call
+_statistics(18, without compression)                 0.224 ms/call
+per-shuffle cost at n=20000: 3.4 ms  (of which bz2 3.7 ms)
+EXTRAPOLATED per shuffle at n=1,000,000 (x50, linear): 0.17 s; x10,000 shuffles = 29 min single process; without compression: 3 min; with 8 workers: 4 min
+permutation_test(n=20000, shuffles=20): 0.07 s total = 3.7 ms/shuffle; iid=False failed=['periodicity(2)']
+exit=0

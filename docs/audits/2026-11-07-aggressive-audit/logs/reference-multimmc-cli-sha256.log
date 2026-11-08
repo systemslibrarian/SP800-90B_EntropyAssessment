@@ -1,0 +1,6 @@
+52b6f5b32e289d53f9e6fb917ab36113e39a9f53989aee3390754435059ae5aa  corpus/mmc-worked-example-6-3-9.bin
+53d68756a56bc3501f8c0684c10c2951dcd3c6ec23b1c10c45227a2b68603f92  corpus/lag-rand1-20000.bin
+de1af1f80541a45daffdb8c4e5a597b52649ceee24fb19970adbb1d920792c45  corpus/lag-rand8-5000.bin
+021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb  reference/py90b/multimmc.py
+dfd2305f127be701bafce47999e00b18bdf6df881decbfc15e788ba7610a551b  reference/py90b/tests/test_multimmc.py
+00000000: 0201 0302 0103 0103 01                   .........

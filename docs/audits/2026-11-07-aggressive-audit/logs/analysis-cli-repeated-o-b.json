@@ -1,0 +1,66 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 2000,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o a.json -o b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/cli-rand1-2000.bin 1",
+   "dateTimeStamp" : "20261107201926",
+   "errorLevel" : 0,
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/cli-rand1-2000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "7d10245244e73146c5e5958e09b05f41df75da2256ccb9b092bdbd069010ff20",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hOriginal" : 0.84745617647216132,
+         "mcvEstimateMode" : 1054.0,
+         "mcvEstimatePHat" : 0.52700000000000002,
+         "mcvEstimatePU" : 0.55576381987816592,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 0.79068579433268094,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.93170557572237078,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "literalEstimateNotRun" : true,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : 0.81637631765512497,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : 0.91128408580345854,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "literalEstimateNotRun" : true,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 0.90491520322347085,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 0.91098259180795138,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 0.90176802438522796,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : 0.79068579433268094,
+         "hOriginal" : 0.79068579433268094,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

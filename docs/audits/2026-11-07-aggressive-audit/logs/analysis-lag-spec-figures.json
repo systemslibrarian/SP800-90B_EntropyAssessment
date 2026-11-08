@@ -1,0 +1,422 @@
+{
+ "worked_example_D3": {
+  "correct": [
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "C": 2,
+  "r": 3,
+  "N": 9,
+  "P_global": 0.2222222222222222,
+  "P_global_prime_text": 0.6008586320723548,
+  "P_local_x10": 0.11670072674349267,
+  "min_entropy": 0.7349024962948139,
+  "expected_from_text": {
+   "correct": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "P_global": 0.2222,
+   "P_global_prime": 0.6008,
+   "P_local": 0.1167,
+   "min_entropy": 0.735
+  },
+  "selfcheck_pass": true
+ },
+ "worked_example_D128": {
+  "correct": [
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "C": 2,
+  "r": 3,
+  "N": 9
+ },
+ "inputs": {
+  "lag-rand8-5000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand8-5000.bin",
+   "bits": 8,
+   "L": 5000,
+   "sha256": "de1af1f80541a45daffdb8c4e5a597b52649ceee24fb19970adbb1d920792c45",
+   "spec": {
+    "C": 17,
+    "r": 2,
+    "N": 4999,
+    "P_global": 0.0034006801360272052,
+    "P_global_prime_text": 0.005521925559405776,
+    "P_local_x10": 0.0014190554672574888,
+    "P_local_converged": 0.0014190554672574888,
+    "min_entropy_text_x10": 7.500612845450342,
+    "min_entropy_text_conv": 7.500612845450342,
+    "P_global_prime_exact": 0.005521784996880278,
+    "min_entropy_exact_x10": 7.50064957021915,
+    "min_entropy_exact_conv": 7.50064957021915,
+    "k": 256
+   },
+   "spec_bitstring": {
+    "C": 20042,
+    "r": 17,
+    "N": 39999,
+    "P_global": 0.5010625265631641,
+    "P_global_prime_text": 0.5075026730277823,
+    "P_local_x10": 0.422481416392963,
+    "P_local_converged": 0.422481416392963,
+    "min_entropy_text_x10": 0.9785126738629083,
+    "min_entropy_text_conv": 0.9785126738629083,
+    "P_global_prime_exact": 0.5075022462769492,
+    "min_entropy_exact_x10": 0.9785138870024683,
+    "min_entropy_exact_conv": 0.9785138870024683
+   }
+  },
+  "lag-k3-tieheavy-5000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-k3-tieheavy-5000.bin",
+   "bits": 8,
+   "L": 5000,
+   "sha256": "be80251463b4fb3b16b0b8c9a5369d1a2e25c68728df8e760a3dee65f61b8a85",
+   "spec": {
+    "C": 1970,
+    "r": 8,
+    "N": 4999,
+    "P_global": 0.3940788157631526,
+    "P_global_prime_text": 0.411884035830095,
+    "P_local_x10": 0.19955763680309754,
+    "P_local_converged": 0.19955763680309754,
+    "min_entropy_text_x10": 1.2796898848625096,
+    "min_entropy_text_conv": 1.2796898848625096,
+    "P_global_prime_exact": 0.41188285598231683,
+    "min_entropy_exact_x10": 1.2796940174892404,
+    "min_entropy_exact_conv": 1.2796940174892404,
+    "k": 3
+   },
+   "spec_bitstring": {
+    "C": 36403,
+    "r": 80,
+    "N": 39999,
+    "P_global": 0.9100977524438111,
+    "P_global_prime_text": 0.913782061182674,
+    "P_local_x10": 0.846621847084471,
+    "P_local_converged": 0.846621847084471,
+    "min_entropy_text_x10": 0.13007797418038222,
+    "min_entropy_text_conv": 0.13007797418038222,
+    "P_global_prime_exact": 0.9137818170450861,
+    "min_entropy_exact_x10": 0.13007835962911166,
+    "min_entropy_exact_conv": 0.13007835962911166
+   }
+  },
+  "lag-period128-8bit-5000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-period128-8bit-5000.bin",
+   "bits": 8,
+   "L": 5000,
+   "sha256": "9b4af4ead0be1d66adb8307761634fe1b94c9fd2b8373331eddbd542e02d7ebe",
+   "spec": {
+    "C": 4871,
+    "r": 4871,
+    "N": 4999,
+    "P_global": 0.9743948789757951,
+    "P_global_prime_text": 0.9801503204979292,
+    "P_local_x10": 0.9990432153777512,
+    "P_local_converged": 0.9990432153777512,
+    "min_entropy_text_x10": 0.001381009199302349,
+    "min_entropy_text_conv": 0.001381009199302349,
+    "P_global_prime_exact": 0.9801499391184872,
+    "min_entropy_exact_x10": 0.001381009199302349,
+    "min_entropy_exact_conv": 0.001381009199302349,
+    "k": 112
+   },
+   "spec_bitstring": {
+    "C": 21666,
+    "r": 11,
+    "N": 39999,
+    "P_global": 0.5416635415885397,
+    "P_global_prime_text": 0.5480813053326011,
+    "P_local_x10": 0.258112362382273,
+    "P_local_converged": 0.258112362382273,
+    "min_entropy_text_x10": 0.8675381686735615,
+    "min_entropy_text_conv": 0.8675381686735615,
+    "P_global_prime_exact": 0.5480808800649399,
+    "min_entropy_exact_x10": 0.8675392880910237,
+    "min_entropy_exact_conv": 0.8675392880910237
+   }
+  },
+  "lag-period129-8bit-5000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-period129-8bit-5000.bin",
+   "bits": 8,
+   "L": 5000,
+   "sha256": "67d54da7855625791d3b3f563155f409abf930e0b8a20726f04c3bf22024e7dc",
+   "spec": {
+    "C": 115,
+    "r": 2,
+    "N": 4999,
+    "P_global": 0.023004600920184037,
+    "P_global_prime_text": 0.028467225365482154,
+    "P_local_x10": 0.0014190554672574888,
+    "P_local_converged": 0.0014190554672574888,
+    "min_entropy_text_x10": 5.1345543059861525,
+    "min_entropy_text_conv": 5.1345543059861525,
+    "P_global_prime_exact": 0.028466863389315034,
+    "min_entropy_exact_x10": 5.134572650750516,
+    "min_entropy_exact_conv": 5.134572650750516,
+    "k": 107
+   },
+   "spec_bitstring": {
+    "C": 21380,
+    "r": 12,
+    "N": 39999,
+    "P_global": 0.5345133628340708,
+    "P_global_prime_text": 0.5409381628389734,
+    "P_local_x10": 0.2900121418590137,
+    "P_local_converged": 0.2900121418590137,
+    "min_entropy_text_x10": 0.8864644125995795,
+    "min_entropy_text_conv": 0.8864644125995795,
+    "P_global_prime_exact": 0.5409377371050605,
+    "min_entropy_exact_x10": 0.8864655480425724,
+    "min_entropy_exact_conv": 0.8864655480425724
+   }
+  },
+  "lag-period127-8bit-5000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-period127-8bit-5000.bin",
+   "bits": 8,
+   "L": 5000,
+   "sha256": "666f1096aaa7f3c78fbd82bc3986232e5cfba47a03735ae22835a914592ceb09",
+   "spec": {
+    "C": 4871,
+    "r": 4872,
+    "N": 4999,
+    "P_global": 0.9743948789757951,
+    "P_global_prime_text": 0.9801503204979292,
+    "P_local_x10": 0.9990436206283023,
+    "P_local_converged": 0.9990436206283023,
+    "min_entropy_text_x10": 0.0013804239865379407,
+    "min_entropy_text_conv": 0.0013804239865379407,
+    "P_global_prime_exact": 0.9801499391184872,
+    "min_entropy_exact_x10": 0.0013804239865379407,
+    "min_entropy_exact_conv": 0.0013804239865379407,
+    "k": 104
+   },
+   "spec_bitstring": {
+    "C": 21365,
+    "r": 14,
+    "N": 39999,
+    "P_global": 0.5341383534588364,
+    "P_global_prime_text": 0.5405634858523409,
+    "P_local_x10": 0.3482326379779932,
+    "P_local_converged": 0.3482326379779932,
+    "min_entropy_text_x10": 0.8874640313293886,
+    "min_entropy_text_conv": 0.8874640313293886,
+    "P_global_prime_exact": 0.5405630600964025,
+    "min_entropy_exact_x10": 0.8874651676181667,
+    "min_entropy_exact_conv": 0.8874651676181667
+   }
+  },
+  "lag-period128-1bit-20000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-period128-1bit-20000.bin",
+   "bits": 1,
+   "L": 20000,
+   "sha256": "09742bd5a18416b370f99e0eb672e66e90ce7dd0ec1cf532fbcbcd6295a2e29a",
+   "spec": {
+    "C": 19865,
+    "r": 19711,
+    "N": 19999,
+    "P_global": 0.9932996649832492,
+    "P_global_prime_text": 0.9947857408454477,
+    "P_local_x10": 0.9997663951832798,
+    "P_local_converged": 0.9997663951832798,
+    "min_entropy_text_x10": 0.00033705988154891244,
+    "min_entropy_text_conv": 0.00033705988154891244,
+    "P_global_prime_exact": 0.9947856423718934,
+    "min_entropy_exact_x10": 0.00033705988154891244,
+    "min_entropy_exact_conv": 0.00033705988154891244,
+    "k": 2
+   }
+  },
+  "lag-period129-1bit-20000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-period129-1bit-20000.bin",
+   "bits": 1,
+   "L": 20000,
+   "sha256": "f4cd3d9cca82cfc43896345c8f2907c62f30a8aadd13a5517f979893451a70ce",
+   "spec": {
+    "C": 12234,
+    "r": 9,
+    "N": 19999,
+    "P_global": 0.6117305865293264,
+    "P_global_prime_text": 0.6206082619862171,
+    "P_local_x10": 0.20474026744086546,
+    "P_local_converged": 0.20474026744086546,
+    "min_entropy_text_x10": 0.6882451916926571,
+    "min_entropy_text_conv": 0.6882451916926571,
+    "P_global_prime_exact": 0.6206076737145966,
+    "min_entropy_exact_x10": 0.6882465592170743,
+    "min_entropy_exact_conv": 0.6882465592170743,
+    "k": 2
+   }
+  },
+  "lag-rand1-20000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand1-20000.bin",
+   "bits": 1,
+   "L": 20000,
+   "sha256": "53d68756a56bc3501f8c0684c10c2951dcd3c6ec23b1c10c45227a2b68603f92",
+   "spec": {
+    "C": 9896,
+    "r": 13,
+    "N": 19999,
+    "P_global": 0.4948247412370618,
+    "P_global_prime_text": 0.503932244092443,
+    "P_local_x10": 0.338289509040945,
+    "P_local_converged": 0.338289509040945,
+    "min_entropy_text_x10": 0.9886983248190406,
+    "min_entropy_text_conv": 0.9886983248190406,
+    "P_global_prime_exact": 0.5039316405915052,
+    "min_entropy_exact_x10": 0.9887000525678434,
+    "min_entropy_exact_conv": 0.9887000525678434,
+    "k": 2
+   }
+  },
+  "lag-tie-0011-1bit-20000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-tie-0011-1bit-20000.bin",
+   "bits": 1,
+   "L": 20000,
+   "sha256": "7736e0097b5b30462dc542bf73a1652770bca4de7b95e1ea27c2ddbfdf29f44d",
+   "spec": {
+    "C": 19996,
+    "r": 19994,
+    "N": 19999,
+    "P_global": 0.999849992499625,
+    "P_global_prime_text": 1.0,
+    "P_local_x10": 0.9997734149524775,
+    "P_local_converged": 0.9997734149524775,
+    "min_entropy_text_x10": -0.0,
+    "min_entropy_text_conv": -0.0,
+    "P_global_prime_exact": 1.0,
+    "min_entropy_exact_x10": -0.0,
+    "min_entropy_exact_conv": -0.0,
+    "k": 2
+   }
+  },
+  "lag-alt-0101-1bit-20000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-alt-0101-1bit-20000.bin",
+   "bits": 1,
+   "L": 20000,
+   "sha256": "591b5aacb79a54af7ee32e185d747d19235aaa2c5c256887aad977c03484bf50",
+   "spec": {
+    "C": 19997,
+    "r": 19998,
+    "N": 19999,
+    "P_global": 0.99989999499975,
+    "P_global_prime_text": 1.0,
+    "P_local_x10": 0.99977351337816,
+    "P_local_converged": 0.99977351337816,
+    "min_entropy_text_x10": -0.0,
+    "min_entropy_text_conv": -0.0,
+    "P_global_prime_exact": 1.0,
+    "min_entropy_exact_x10": -0.0,
+    "min_entropy_exact_conv": -0.0,
+    "k": 2
+   }
+  },
+  "lag-counter8-5000.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-counter8-5000.bin",
+   "bits": 8,
+   "L": 5000,
+   "sha256": "8026e5c96cf1e502c8deb3e89f8b8bc342f5039b871911a92eb10edf9c6542d3",
+   "spec": {
+    "C": 0,
+    "r": 1,
+    "N": 4999,
+    "P_global": 0.0,
+    "P_global_prime_text": 0.0009207940895609168,
+    "P_local_x10": 2.0104672435762017e-06,
+    "P_local_converged": 2.0104672435762017e-06,
+    "min_entropy_text_x10": 8.0,
+    "min_entropy_text_conv": 8.0,
+    "P_global_prime_exact": 0.0009207940895609168,
+    "min_entropy_exact_x10": 8.0,
+    "min_entropy_exact_conv": 8.0,
+    "k": 256
+   },
+   "spec_bitstring": {
+    "C": 30367,
+    "r": 15,
+    "N": 39999,
+    "P_global": 0.7591939798494962,
+    "P_global_prime_text": 0.7647012549186011,
+    "P_local_x10": 0.3746359869421571,
+    "P_local_converged": 0.3746359869421571,
+    "min_entropy_text_x10": 0.3870318532588743,
+    "min_entropy_text_conv": 0.3870318532588743,
+    "P_global_prime_exact": 0.7647008899836983,
+    "min_entropy_exact_x10": 0.3870325417498329,
+    "min_entropy_exact_conv": 0.3870325417498329
+   }
+  },
+  "lag-L3-1bit.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-L3-1bit.bin",
+   "bits": 1,
+   "L": 3,
+   "sha256": "faee935763044f124d7526755a5058a33f9402a595994d59eddd4be8546ff201",
+   "spec": {
+    "C": 0,
+    "r": 1,
+    "N": 2,
+    "P_global": 0.0,
+    "P_global_prime_text": 0.9,
+    "P_local_x10": 0.0050125628933799585,
+    "P_local_converged": 0.0050125628933799585,
+    "min_entropy_text_x10": 0.15200309344504995,
+    "min_entropy_text_conv": 0.15200309344504995,
+    "P_global_prime_exact": 0.9,
+    "min_entropy_exact_x10": 0.15200309344504995,
+    "min_entropy_exact_conv": 0.15200309344504995,
+    "k": 2
+   }
+  },
+  "lag-L2-1bit.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-L2-1bit.bin",
+   "bits": 1,
+   "L": 2,
+   "sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+   "spec": "L < 3: N = L-1 < 2, step 5 divides by N-1 = 0; no estimate"
+  },
+  "lag-L3-8bit.bin": {
+   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-L3-8bit.bin",
+   "bits": 8,
+   "L": 3,
+   "sha256": "67270fd3dd7e832cafeff814edb3fac8cfc47f888a8969520dd5a2a5c249d64b",
+   "spec": {
+    "C": 0,
+    "r": 1,
+    "N": 2,
+    "P_global": 0.0,
+    "P_global_prime_text": 0.9,
+    "P_local_x10": 0.0050125628933799585,
+    "P_local_converged": 0.0050125628933799585,
+    "min_entropy_text_x10": 0.15200309344504995,
+    "min_entropy_text_conv": 0.15200309344504995,
+    "P_global_prime_exact": 0.9,
+    "min_entropy_exact_x10": 0.15200309344504995,
+    "min_entropy_exact_conv": 0.15200309344504995,
+    "k": 2
+   }
+  }
+ }
+}

@@ -1,0 +1,219 @@
+date: 2026-11-08T02:00:32Z
+OMP_NUM_THREADS=2; no C++ tool run; module sha256: b5bdce76f62c88d19e82023fea58cf4d012cf0c62b8d71e337f3b49fc6947e0c
+inputs:
+3032af69d8aeea8daaf9148c6b15d1acfb304cd9b9e12b190cceeb4eadb2feda  cli_smoke/correct40.bin
+f32e12b0b4fd8faa90486bc8d584fa00dabe63dcec44adb33cc4d10653f8fef5  cli_smoke/notbool.bin
+464a2fc792e829cd0abf0ec5b008d0429f6a61fbebae84199b8e03a2f0764e46  cli_smoke/rand8_30.bin
+note: an earlier version of this log recorded exit=2 on every case because the zsh probe loop did not word-split its argument string; this run uses ${=args}
+== cli_smoke/correct40.bin 8 ==
+{
+  "C": 17,
+  "r": 4,
+  "N": 40,
+  "k": 256,
+  "P_global": 0.425,
+  "P_global'": 0.628911604780362,
+  "P_local": 0.13286163736483453,
+  "min_entropy": 0.6690708382068774,
+  "binding": "P_global'",
+  "P_local_changes_result": false,
+  "z": 2.576,
+  "recurrence_steps": 10,
+  "confidence": 0.99,
+  "mode": "correct-array",
+  "bitstring": false,
+  "predictor": null,
+  "input": {
+    "file": "cli_smoke/correct40.bin",
+    "samples": 40,
+    "bits_per_symbol": 8,
+    "bytes_exceeding_width": 0
+  }
+}
+exit=0
+== cli_smoke/correct40.bin 8 --bitstring --exact ==
+{
+  "C": 17,
+  "r": 4,
+  "N": 40,
+  "k": 2,
+  "P_global": 0.425,
+  "P_global'": 0.628911604780362,
+  "P_local": 0.13286163736483453,
+  "min_entropy": 0.6690708382068774,
+  "binding": "P_global'",
+  "P_local_changes_result": false,
+  "z": 2.576,
+  "recurrence_steps": 10,
+  "confidence": 0.99,
+  "P_local_exact": "0.1328616373648334849716182401303943269933403806852734064",
+  "P_local_ulp_error": 37.59174070913051,
+  "min_entropy_exact": "0.6690708382068774112305555732403318223176965740175784503",
+  "mode": "correct-array",
+  "bitstring": true,
+  "predictor": null,
+  "input": {
+    "file": "cli_smoke/correct40.bin",
+    "samples": 40,
+    "bits_per_symbol": 8,
+    "bytes_exceeding_width": 0
+  }
+}
+exit=0
+== cli_smoke/notbool.bin 2 ==
+Traceback (most recent call last):
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/predictor_common.py", line 565, in <module>
+    sys.exit(_main(sys.argv[1:]))
+             ~~~~~^^^^^^^^^^^^^^
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/predictor_common.py", line 555, in _main
+    result = estimate(symbols, args.bits_per_symbol, predictor=args.predictor,
+                      bitstring=bool(args.bitstring), k=args.k, z=args.z, steps=args.steps,
+                      exact=args.exact, exact_digits=args.digits, tol=args.tol)
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/predictor_common.py", line 478, in estimate
+    raise ValueError("without predictor=, symbols must be the `correct` array of 0/1 "
+                     "values; pass predictor='lag' etc. for raw samples")
+ValueError: without predictor=, symbols must be the `correct` array of 0/1 values; pass predictor='lag' etc. for raw samples
+exit=1
+== cli_smoke/rand8_30.bin 8 --predictor=lag --bitstring ==
+{
+  "C": 119,
+  "r": 8,
+  "N": 239,
+  "k": 2,
+  "P_global": 0.497907949790795,
+  "P_global'": 0.5813958585759859,
+  "P_local": 0.29760863687582806,
+  "min_entropy": 0.782407300044047,
+  "binding": "P_global'",
+  "P_local_changes_result": false,
+  "z": 2.576,
+  "recurrence_steps": 10,
+  "confidence": 0.99,
+  "mode": "predictor",
+  "bitstring": true,
+  "predictor": "lag",
+  "sibling": {
+    "P_global": 0.497907949790795,
+    "P_global'": 0.5813958585759859,
+    "P_local": 0.29760863687575656,
+    "min_entropy": 0.782407300044047
+  },
+  "sibling_max_rel_dev": 2.402429026805815e-13,
+  "finish_matches_sibling": true,
+  "match_rel_tol": 1e-09,
+  "input": {
+    "file": "cli_smoke/rand8_30.bin",
+    "samples": 30,
+    "bits_per_symbol": 8,
+    "bytes_exceeding_width": 0
+  }
+}
+exit=0
+== cli_smoke/rand8_30.bin 8 --predictor=multimcw --literal --z=exact --steps=converge ==
+{
+  "C": 0,
+  "r": 1,
+  "N": 0,
+  "k": 256,
+  "P_global": NaN,
+  "P_global'": NaN,
+  "P_local": NaN,
+  "min_entropy": NaN,
+  "binding": null,
+  "P_local_changes_result": null,
+  "z": 2.575829303548901,
+  "recurrence_steps": "converge",
+  "confidence": 0.99,
+  "mode": "predictor",
+  "bitstring": false,
+  "predictor": "multimcw",
+  "sibling": {
+    "P_global": NaN,
+    "P_global'": NaN,
+    "P_local": NaN,
+    "min_entropy": NaN
+  },
+  "sibling_max_rel_dev": 0.0,
+  "finish_matches_sibling": true,
+  "match_rel_tol": 1e-09,
+  "input": {
+    "file": "cli_smoke/rand8_30.bin",
+    "samples": 30,
+    "bits_per_symbol": 8,
+    "bytes_exceeding_width": 0
+  }
+}
+exit=0
+== cli_smoke/rand8_30.bin 8 --predictor=lz78y ==
+{
+  "C": 0,
+  "r": 1,
+  "N": 13,
+  "k": 256,
+  "P_global": 0.0,
+  "P_global'": 0.29829617132961717,
+  "P_local": 0.0007728039910219408,
+  "min_entropy": 1.7451826342749894,
+  "binding": "P_global'",
+  "P_local_changes_result": false,
+  "z": 2.576,
+  "recurrence_steps": 10,
+  "confidence": 0.99,
+  "mode": "predictor",
+  "bitstring": false,
+  "predictor": "lz78y",
+  "sibling": {
+    "P_global": 0.0,
+    "P_global'": 0.29829617132961717,
+    "P_local": 0.0007728039910219415,
+    "min_entropy": 1.7451826342749894
+  },
+  "sibling_max_rel_dev": 8.41767525852274e-16,
+  "finish_matches_sibling": true,
+  "match_rel_tol": 1e-09,
+  "input": {
+    "file": "cli_smoke/rand8_30.bin",
+    "samples": 30,
+    "bits_per_symbol": 8,
+    "bytes_exceeding_width": 0
+  }
+}
+exit=0
+== cli_smoke/rand8_30.bin 8 --predictor=multimmc --bitstring --exact --digits=30 ==
+{
+  "C": 105,
+  "r": 6,
+  "N": 238,
+  "k": 2,
+  "P_global": 0.4411764705882353,
+  "P_global'": 0.5242600500148499,
+  "P_local": 0.19408616120198663,
+  "min_entropy": 0.9316454819749161,
+  "binding": "P_global'",
+  "P_local_changes_result": false,
+  "z": 2.576,
+  "recurrence_steps": 10,
+  "confidence": 0.99,
+  "P_local_exact": "0.194086161201988027083853668267762267050141018",
+  "P_local_ulp_error": -50.374512008273726,
+  "min_entropy_exact": "0.931645481974916192152073579444273121176082627",
+  "mode": "predictor",
+  "bitstring": true,
+  "predictor": "multimmc",
+  "sibling": {
+    "P_global": 0.4411764705882353,
+    "P_global'": 0.5242600500148499,
+    "P_local": 0.19408616120198663,
+    "min_entropy": 0.9316454819749161
+  },
+  "sibling_max_rel_dev": 0.0,
+  "finish_matches_sibling": true,
+  "match_rel_tol": 1e-09,
+  "input": {
+    "file": "cli_smoke/rand8_30.bin",
+    "samples": 30,
+    "bits_per_symbol": 8,
+    "bytes_exceeding_width": 0
+  }
+}
+exit=0

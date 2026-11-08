@@ -1,0 +1,13 @@
+Python 3.14.7
+numpy 2.5.4
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import mpmath; print('mpmath', mpmath.__version__)
+    ^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'mpmath'
+Package Version
+------- -------
+numpy   2.5.4
+pip     26.2.1
+pypdf   7.0.0
+exit=0

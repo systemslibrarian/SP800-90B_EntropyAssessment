@@ -1,0 +1,118 @@
+binary: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+input: 38e39cdd6957db17098ad1427819d97f4cf1f245d84af95b6312d20b1d6408ba  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_rand8_2000.bin  (python random.Random(20261107), 2000 bytes)
+cmd A (text): EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_non_iid -c -a -v <rand8_2000.bin> 8
+Loaded file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_rand8_2000.bin' (SHA-256 hash 38e39cdd6957db17098ad1427819d97f4cf1f245d84af95b6312d20b1d6408ba of assessed bytes)
+Loaded 2000 samples of 256 distinct 8-bit-wide symbols
+
+*** Warning: dataset contains 2000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary Symbols: 16000
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+Bitstring MCV Estimate: mode = 8075, p-hat = 0.50468749999999996, p_u = 0.51486923005798868
+	Most Common Value Estimate (bit string) = 0.957722 / 1 bit(s)
+
+Running Entropic Statistic Estimates (bit strings only)...
+Bitstring Collision Estimate: X-bar = 2.4922118380062304, sigma-hat = 0.49997828148816204, p = 0.60922751750633808
+	Collision Test Estimate (bit string) = 0.714947 / 1 bit(s)
+Bitstring Markov Estimate: P_0 = 0.50468749999999996, P_1 = 0.49531250000000004, P_0,0 = 0.50569729997522916, P_0,1 = 0.49430270002477084, P_1,0 = 0.50372239747634073, P_1,1 = 0.49627760252365927, p_max = 1.2506424744003613e-38
+	Markov Test Estimate (bit string) = 0.983677 / 1 bit(s)
+Bitstring Compression Estimate: X-bar = 5.2224046998003768, sigma-hat = 1.0108328788252963, p = 0.064644471014468019
+	Compression Test Estimate (bit string) = 0.658555 / 1 bit(s)
+
+Running Tuple Estimates...
+Bitstring t-Tuple Estimate: t = 9, p-hat_max = 0.5279948792477472396811, p_u = 0.5381610844318087671923
+Bitstring LRS Estimate: u = 10, v = 28, p-hat = 0.52174398069446348, p_u = 0.53191652538343814
+	T-Tuple Test Estimate (bit string) = 0.893890 / 1 bit(s)
+	LRS Test Estimate (bit string) = 0.910728 / 1 bit(s)
+
+Running Predictor Estimates...
+Bitstring MultiMCW Prediction Estimate: N = 15937, Pglobal' = 0.50515062486815654 (C = 7888) Plocal can't affect result (r = 11)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (bit string) = 0.985214 / 1 bit(s)
+Bitstring Lag Prediction Estimate: N = 15999, Pglobal' = 0.52046223521304757 (C = 8164) Plocal can't affect result (r = 16)
+	Lag Prediction Test Estimate (bit string) = 0.942135 / 1 bit(s)
+Bitstring MultiMMC Prediction Estimate: N = 15998, Pglobal' = 0.51493294821181745 (C = 8075) Plocal can't affect result (r = 13)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (bit string) = 0.957544 / 1 bit(s)
+Bitstring LZ78Y Prediction Estimate: N = 15983, Pglobal' = 0.51003117477088389 (C = 7989) Plocal can't affect result (r = 13)
+	LZ78Y Prediction Test Estimate (bit string) = 0.971343 / 1 bit(s)
+
+h': 0.658555
+exit_status=0
+cmd B (json): EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_non_iid -c -a -q -o <scratch>/mcv_c_unit.json <rand8_2000.bin> 8
+
+*** Warning: dataset contains 2000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+exit_status=0
+--- JSON ---
+{
+   "IID" : false,
+   "assessedSampleCount" : 2000,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "cpp/ea_non_iid -c -a -q -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_c_unit.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_rand8_2000.bin 8",
+   "dateTimeStamp" : "20261107194304",
+   "errorLevel" : 0,
+   "filename" : "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_rand8_2000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "38e39cdd6957db17098ad1427819d97f4cf1f245d84af95b6312d20b1d6408ba",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.95772204143329454,
+         "mcvEstimateMode" : 8075.0,
+         "mcvEstimatePHat" : 0.50468749999999996,
+         "mcvEstimatePU" : 0.51486923005798868,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.71494698813544966,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.98367654832518781,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.65855486781968275,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 0.8938900244722322,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 0.91072823612402432,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 0.98521446276710345,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.94213460964788986,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.95754351032003726,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.97134266287617699,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : 5.268438942557462,
+         "hBitstring" : 0.65855486781968275,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

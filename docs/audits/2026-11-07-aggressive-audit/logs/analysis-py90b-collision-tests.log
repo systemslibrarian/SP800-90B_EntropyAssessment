@@ -1,0 +1,38 @@
+# py90b collision reference tests -- 2026-11-08T01:41:20Z
+# python: Python 3.14.7
+# cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b
+# collision.py sha256: ed9b87f8504f154f74bd1431ecf4a3bc8ff848d003ed31570bcdc0508dcba1ab
+# tests/test_collision.py sha256: a5ec72cae8e499909521de3c0bc4992391312eb5d7bf34e2a7c50b1e63531a98
+test_bitstring_mode_equals_estimate_on_the_unpacked_bits (tests.test_collision.BitstringConstruction.test_bitstring_mode_equals_estimate_on_the_unpacked_bits) ... ok
+test_msb_first_unpacking (tests.test_collision.BitstringConstruction.test_msb_first_unpacking) ... ok
+test_main_prints_json_for_the_worked_example (tests.test_collision.CommandLine.test_main_prints_json_for_the_worked_example) ... ok
+test_usage_error_exit_code (tests.test_collision.CommandLine.test_usage_error_exit_code) ... usage: python collision.py <rawfile> <bits_per_symbol> [--literal|--bitstring] [--variant spec|clamp] [--equation spec|simplified] [--z-alpha Z] [--allow-nonbinary]
+  rawfile: one symbol per byte; the low bits_per_symbol bits are the symbol
+  --literal   : run on the symbols as read (default when bits_per_symbol == 1)
+  --bitstring : convert each symbol to bits_per_symbol bits MSB-first and run on
+                the 1-bit sequence (section 3.1.3; default when bits_per_symbol > 1)
+ok
+test_F_closed_form_equals_the_definition (tests.test_collision.EquationAndSearch.test_F_closed_form_equals_the_definition) ... ok
+test_bisection_matches_the_closed_form_solution (tests.test_collision.EquationAndSearch.test_bisection_matches_the_closed_form_solution) ... ok
+test_incomplete_gamma_3_closed_form_against_quadrature (tests.test_collision.EquationAndSearch.test_incomplete_gamma_3_closed_form_against_quadrature) ... ok
+test_printed_rhs_equals_2_plus_2pq_and_is_monotone (tests.test_collision.EquationAndSearch.test_printed_rhs_equals_2_plus_2pq_and_is_monotone) ... ok
+test_alternating_sequence_has_no_solution_above_2_5 (tests.test_collision.HandDerivedInputs.test_alternating_sequence_has_no_solution_above_2_5) ... ok
+test_degenerate_constant_sequence_gives_zero_bits (tests.test_collision.HandDerivedInputs.test_degenerate_constant_sequence_gives_zero_bits) ... ok
+test_fewer_than_two_collisions_gives_nan_not_one (tests.test_collision.HandDerivedInputs.test_fewer_than_two_collisions_gives_nan_not_one) ... ok
+test_lower_bound_below_2_exposes_the_two_readings (tests.test_collision.HandDerivedInputs.test_lower_bound_below_2_exposes_the_two_readings) ... ok
+test_non_binary_input_is_not_applied_unless_asked (tests.test_collision.HandDerivedInputs.test_non_binary_input_is_not_applied_unless_asked) ... ok
+test_out_of_range_symbol_is_refused (tests.test_collision.HandDerivedInputs.test_out_of_range_symbol_is_refused) ... ok
+test_two_valued_wide_symbols_are_a_binary_alphabet (tests.test_collision.HandDerivedInputs.test_two_valued_wide_symbols_are_a_binary_alphabet) ... ok
+test_20000_byte_symbols_as_a_bitstring_is_fast (tests.test_collision.Performance.test_20000_byte_symbols_as_a_bitstring_is_fast) ... 
+[perf] 20,000 x 8-bit symbols -> 160,000 bits in 0.037 s (linear extrapolation to 1,000,000 symbols: 1.9 s)
+ok
+test_all_printed_intermediates (tests.test_collision.WorkedExample.test_all_printed_intermediates) ... ok
+test_collision_times_match_the_listed_collisions (tests.test_collision.WorkedExample.test_collision_times_match_the_listed_collisions) ... ok
+test_exact_quantile_option_moves_x_bar_prime_only_slightly (tests.test_collision.WorkedExample.test_exact_quantile_option_moves_x_bar_prime_only_slightly) ... ok
+test_variants_and_equations_agree_inside_the_solvable_window (tests.test_collision.WorkedExample.test_variants_and_equations_agree_inside_the_solvable_window) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.518s
+
+OK
+# unittest exit status: 0

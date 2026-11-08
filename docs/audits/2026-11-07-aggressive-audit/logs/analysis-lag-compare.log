@@ -1,0 +1,167 @@
+== lag-rand8-5000.bin  (L=5000, bits=8, sha256=de1af1f80541a45d)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=17                       spec=17                        MATCH
+   Literal   r          cpp=2                        spec=2                         MATCH
+   Literal   N          cpp=4999                     spec=4999                      MATCH
+   Literal   P_global   cpp=0.0034006801360272052    spec(exactZ)=0.0034006801360272052    |d|=0  text-Z would be 0.0055219255594057756
+   Literal   P_global'  cpp=0.005521784996880278     spec(exactZ)=0.005521784996880278     |d|=0  text-Z would be 0.0055219255594057756
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.0014190554672574888 conv=0.0014190554672574888  curMax=0.005521784996880278  -> consistent
+   Literal   minH       cpp=7.5006495702191502       spec(exactZ,conv)=7.5006495702191502 (cpp-spec=+0)  spec(textZ,x10)=7.500612845450342
+   Bitstring C          cpp=20042                    spec=20042                     MATCH
+   Bitstring r          cpp=17                       spec=17                        MATCH
+   Bitstring N          cpp=39999                    spec=39999                     MATCH
+   Bitstring P_global   cpp=0.50106252656316408      spec(exactZ)=0.50106252656316408      |d|=0  text-Z would be 0.50750267302778229
+   Bitstring P_global'  cpp=0.50750224627694918      spec(exactZ)=0.50750224627694918      |d|=0  text-Z would be 0.50750267302778229
+   Bitstring P_local    cpp=can't change   spec P_local(x10)=0.42248141639296299 conv=0.42248141639296299  curMax=0.50750224627694918  -> consistent
+   Bitstring minH       cpp=0.97851388700246833      spec(exactZ,conv)=0.97851388700246833 (cpp-spec=+0)  spec(textZ,x10)=0.9785126738629083
+== lag-k3-tieheavy-5000.bin  (L=5000, bits=8, sha256=be80251463b4fb3b)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=1970                     spec=1970                      MATCH
+   Literal   r          cpp=8                        spec=8                         MATCH
+   Literal   N          cpp=4999                     spec=4999                      MATCH
+   Literal   P_global   cpp=0.39407881576315262      spec(exactZ)=0.39407881576315262      |d|=0  text-Z would be 0.41188403583009497
+   Literal   P_global'  cpp=0.41188285598231683      spec(exactZ)=0.41188285598231683      |d|=0  text-Z would be 0.41188403583009497
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.19955763680309754 conv=0.19955763680309754  curMax=0.41188285598231683  -> consistent
+   Literal   minH       cpp=1.2796940174892404       spec(exactZ,conv)=1.2796940174892404 (cpp-spec=+0)  spec(textZ,x10)=1.2796898848625096
+   Bitstring C          cpp=36403                    spec=36403                     MATCH
+   Bitstring r          cpp=80                       spec=80                        MATCH
+   Bitstring N          cpp=39999                    spec=39999                     MATCH
+   Bitstring P_global   cpp=0.91009775244381108      spec(exactZ)=0.91009775244381108      |d|=0  text-Z would be 0.91378206118267402
+   Bitstring P_global'  cpp=0.9137818170450861       spec(exactZ)=0.9137818170450861       |d|=0  text-Z would be 0.91378206118267402
+   Bitstring P_local    cpp=can't change   spec P_local(x10)=0.84662184708447097 conv=0.84662184708447097  curMax=0.9137818170450861  -> consistent
+   Bitstring minH       cpp=0.13007835962911166      spec(exactZ,conv)=0.13007835962911166 (cpp-spec=+0)  spec(textZ,x10)=0.13007797418038222
+== lag-period128-8bit-5000.bin  (L=5000, bits=8, sha256=9b4af4ead0be1d66)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=4871                     spec=4871                      MATCH
+   Literal   r          cpp=4871                     spec=4871                      MATCH
+   Literal   N          cpp=4999                     spec=4999                      MATCH
+   Literal   P_global   cpp=0.97439487897579513      spec(exactZ)=0.97439487897579513      |d|=0  text-Z would be 0.98015032049792916
+   Literal   P_global'  cpp=0.98014993911848725      spec(exactZ)=0.98014993911848725      |d|=0  text-Z would be 0.98015032049792916
+   Literal   P_local    cpp=0.99904321537774132      spec x10=0.9990432153777512 (cpp-spec=-9.88e-15)  conv=0.9990432153777512 (cpp-spec=-9.88e-15)
+   Literal   minH       cpp=0.0013810091993166178    spec(exactZ,conv)=0.001381009199302349 (cpp-spec=+1.43e-14)  spec(textZ,x10)=0.001381009199302349
+   Bitstring C          cpp=21666                    spec=21666                     MATCH
+   Bitstring r          cpp=11                       spec=11                        MATCH
+   Bitstring N          cpp=39999                    spec=39999                     MATCH
+   Bitstring P_global   cpp=0.54166354158853969      spec(exactZ)=0.54166354158853969      |d|=0  text-Z would be 0.54808130533260113
+   Bitstring P_global'  cpp=0.54808088006493993      spec(exactZ)=0.54808088006493993      |d|=0  text-Z would be 0.54808130533260113
+   Bitstring P_local    cpp=can't change   spec P_local(x10)=0.25811236238227298 conv=0.25811236238227298  curMax=0.54808088006493993  -> consistent
+   Bitstring minH       cpp=0.86753928809102365      spec(exactZ,conv)=0.86753928809102365 (cpp-spec=+0)  spec(textZ,x10)=0.86753816867356148
+== lag-period129-8bit-5000.bin  (L=5000, bits=8, sha256=67d54da785562579)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=115                      spec=115                       MATCH
+   Literal   r          cpp=2                        spec=2                         MATCH
+   Literal   N          cpp=4999                     spec=4999                      MATCH
+   Literal   P_global   cpp=0.023004600920184037     spec(exactZ)=0.023004600920184037     |d|=0  text-Z would be 0.028467225365482154
+   Literal   P_global'  cpp=0.028466863389315034     spec(exactZ)=0.028466863389315034     |d|=0  text-Z would be 0.028467225365482154
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.0014190554672574888 conv=0.0014190554672574888  curMax=0.028466863389315034  -> consistent
+   Literal   minH       cpp=5.1345726507505161       spec(exactZ,conv)=5.1345726507505161 (cpp-spec=+0)  spec(textZ,x10)=5.1345543059861525
+   Bitstring C          cpp=21380                    spec=21380                     MATCH
+   Bitstring r          cpp=12                       spec=12                        MATCH
+   Bitstring N          cpp=39999                    spec=39999                     MATCH
+   Bitstring P_global   cpp=0.5345133628340708       spec(exactZ)=0.5345133628340708       |d|=0  text-Z would be 0.54093816283897345
+   Bitstring P_global'  cpp=0.54093773710506055      spec(exactZ)=0.54093773710506055      |d|=0  text-Z would be 0.54093816283897345
+   Bitstring P_local    cpp=can't change   spec P_local(x10)=0.29001214185901369 conv=0.29001214185901369  curMax=0.54093773710506055  -> consistent
+   Bitstring minH       cpp=0.88646554804257238      spec(exactZ,conv)=0.88646554804257238 (cpp-spec=+0)  spec(textZ,x10)=0.88646441259957953
+== lag-period127-8bit-5000.bin  (L=5000, bits=8, sha256=666f1096aaa7f3c7)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=4871                     spec=4871                      MATCH
+   Literal   r          cpp=4872                     spec=4872                      MATCH
+   Literal   N          cpp=4999                     spec=4999                      MATCH
+   Literal   P_global   cpp=0.97439487897579513      spec(exactZ)=0.97439487897579513      |d|=0  text-Z would be 0.98015032049792916
+   Literal   P_global'  cpp=0.98014993911848725      spec(exactZ)=0.98014993911848725      |d|=0  text-Z would be 0.98015032049792916
+   Literal   P_local    cpp=0.9990436206283082       spec x10=0.99904362062830232 (cpp-spec=+5.88e-15)  conv=0.99904362062830232 (cpp-spec=+5.88e-15)
+   Literal   minH       cpp=0.0013804239865294436    spec(exactZ,conv)=0.0013804239865379407 (cpp-spec=-8.5e-15)  spec(textZ,x10)=0.0013804239865379407
+   Bitstring C          cpp=21365                    spec=21365                     MATCH
+   Bitstring r          cpp=14                       spec=14                        MATCH
+   Bitstring N          cpp=39999                    spec=39999                     MATCH
+   Bitstring P_global   cpp=0.53413835345883642      spec(exactZ)=0.53413835345883642      |d|=0  text-Z would be 0.54056348585234093
+   Bitstring P_global'  cpp=0.54056306009640254      spec(exactZ)=0.54056306009640254      |d|=0  text-Z would be 0.54056348585234093
+   Bitstring P_local    cpp=can't change   spec P_local(x10)=0.3482326379779932 conv=0.3482326379779932  curMax=0.54056306009640254  -> consistent
+   Bitstring minH       cpp=0.88746516761816674      spec(exactZ,conv)=0.88746516761816674 (cpp-spec=+0)  spec(textZ,x10)=0.88746403132938856
+== lag-period128-1bit-20000.bin  (L=20000, bits=1, sha256=09742bd5a18416b3)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=19865                    spec=19865                     MATCH
+   Literal   r          cpp=19711                    spec=19711                     MATCH
+   Literal   N          cpp=19999                    spec=19999                     MATCH
+   Literal   P_global   cpp=0.99329966498324918      spec(exactZ)=0.99329966498324918      |d|=0  text-Z would be 0.99478574084544769
+   Literal   P_global'  cpp=0.99478564237189337      spec(exactZ)=0.99478564237189337      |d|=0  text-Z would be 0.99478574084544769
+   Literal   P_local    cpp=0.99976639518327415      spec x10=0.99976639518327981 (cpp-spec=-5.66e-15)  conv=0.99976639518327981 (cpp-spec=-5.66e-15)
+   Literal   minH       cpp=0.0003370598815570831    spec(exactZ,conv)=0.00033705988154891244 (cpp-spec=+8.17e-15)  spec(textZ,x10)=0.00033705988154891244
+== lag-period129-1bit-20000.bin  (L=20000, bits=1, sha256=f4cd3d9cca82cfc4)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=12234                    spec=12234                     MATCH
+   Literal   r          cpp=9                        spec=9                         MATCH
+   Literal   N          cpp=19999                    spec=19999                     MATCH
+   Literal   P_global   cpp=0.61173058652932644      spec(exactZ)=0.61173058652932644      |d|=0  text-Z would be 0.6206082619862171
+   Literal   P_global'  cpp=0.62060767371459657      spec(exactZ)=0.62060767371459657      |d|=0  text-Z would be 0.6206082619862171
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.20474026744086546 conv=0.20474026744086546  curMax=0.62060767371459657  -> consistent
+   Literal   minH       cpp=0.68824655921707434      spec(exactZ,conv)=0.68824655921707434 (cpp-spec=+0)  spec(textZ,x10)=0.68824519169265708
+== lag-rand1-20000.bin  (L=20000, bits=1, sha256=53d68756a56bc350)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=9896                     spec=9896                      MATCH
+   Literal   r          cpp=13                       spec=13                        MATCH
+   Literal   N          cpp=19999                    spec=19999                     MATCH
+   Literal   P_global   cpp=0.49482474123706183      spec(exactZ)=0.49482474123706183      |d|=0  text-Z would be 0.50393224409244297
+   Literal   P_global'  cpp=0.50393164059150519      spec(exactZ)=0.50393164059150519      |d|=0  text-Z would be 0.50393224409244297
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.33828950904094501 conv=0.33828950904094501  curMax=0.50393164059150519  -> consistent
+   Literal   minH       cpp=0.98870005256784343      spec(exactZ,conv)=0.98870005256784343 (cpp-spec=+0)  spec(textZ,x10)=0.98869832481904063
+== lag-tie-0011-1bit-20000.bin  (L=20000, bits=1, sha256=7736e0097b5b3046)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=19996                    spec=19996                     MATCH
+   Literal   r          cpp=19994                    spec=19994                     MATCH
+   Literal   N          cpp=19999                    spec=19999                     MATCH
+   Literal   P_global   cpp=0.99984999249962503      spec(exactZ)=0.99984999249962503      |d|=0  text-Z would be 1
+   Literal   P_global'  cpp=1                        spec(exactZ)=1                        |d|=0  text-Z would be 1
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.99977341495247751 conv=0.99977341495247751  curMax=1  -> consistent
+   Literal   minH       cpp=-0                       spec(exactZ,conv)=-0 (cpp-spec=+0)  spec(textZ,x10)=-0
+== lag-alt-0101-1bit-20000.bin  (L=20000, bits=1, sha256=591b5aacb79a54af)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=19997                    spec=19997                     MATCH
+   Literal   r          cpp=19998                    spec=19998                     MATCH
+   Literal   N          cpp=19999                    spec=19999                     MATCH
+   Literal   P_global   cpp=0.99989999499975002      spec(exactZ)=0.99989999499975002      |d|=0  text-Z would be 1
+   Literal   P_global'  cpp=1                        spec(exactZ)=1                        |d|=0  text-Z would be 1
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.99977351337816001 conv=0.99977351337816001  curMax=1  -> consistent
+   Literal   minH       cpp=-0                       spec(exactZ,conv)=-0 (cpp-spec=+0)  spec(textZ,x10)=-0
+== lag-counter8-5000.bin  (L=5000, bits=8, sha256=8026e5c96cf1e502)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=0                        spec=0                         MATCH
+   Literal   r          cpp=1                        spec=1                         MATCH
+   Literal   N          cpp=4999                     spec=4999                      MATCH
+   Literal   P_global   cpp=0                        spec(exactZ)=0                        |d|=0  text-Z would be 0.0009207940895609168
+   Literal   P_global'  cpp=0.0009207940895609168    spec(exactZ)=0.0009207940895609168    |d|=0  text-Z would be 0.0009207940895609168
+   Literal   P_local    cpp=can't change   spec P_local(x10)=2.0104672435762017e-06 conv=2.0104672435762017e-06  curMax=0.00390625  -> consistent
+   Literal   minH       cpp=8                        spec(exactZ,conv)=8 (cpp-spec=+0)  spec(textZ,x10)=8
+   Bitstring C          cpp=30367                    spec=30367                     MATCH
+   Bitstring r          cpp=15                       spec=15                        MATCH
+   Bitstring N          cpp=39999                    spec=39999                     MATCH
+   Bitstring P_global   cpp=0.75919397984949621      spec(exactZ)=0.75919397984949621      |d|=0  text-Z would be 0.76470125491860108
+   Bitstring P_global'  cpp=0.76470088998369834      spec(exactZ)=0.76470088998369834      |d|=0  text-Z would be 0.76470125491860108
+   Bitstring P_local    cpp=can't change   spec P_local(x10)=0.37463598694215711 conv=0.37463598694215711  curMax=0.76470088998369834  -> consistent
+   Bitstring minH       cpp=0.38703254174983293      spec(exactZ,conv)=0.38703254174983293 (cpp-spec=+0)  spec(textZ,x10)=0.38703185325887429
+== lag-L3-1bit.bin  (L=3, bits=1, sha256=faee935763044f12)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=0                        spec=0                         MATCH
+   Literal   r          cpp=1                        spec=1                         MATCH
+   Literal   N          cpp=2                        spec=2                         MATCH
+   Literal   P_global   cpp=0                        spec(exactZ)=0                        |d|=0  text-Z would be 0.90000000000000002
+   Literal   P_global'  cpp=0.90000000000000002      spec(exactZ)=0.90000000000000002      |d|=0  text-Z would be 0.90000000000000002
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.0050125628933799585 conv=0.0050125628933799585  curMax=0.90000000000000002  -> consistent
+   Literal   minH       cpp=0.15200309344504995      spec(exactZ,conv)=0.15200309344504995 (cpp-spec=+0)  spec(textZ,x10)=0.15200309344504995
+== lag-L2-1bit.bin  (L=2, bits=1, sha256=b413f47d13ee2fe6)
+   lag_test 'not enough samples' warning present: True
+   spec: L < 3: N = L-1 < 2, step 5 divides by N-1 = 0; no estimate
+   C++ Literal labels: none
+   C++ Bitstring labels: none
+== lag-L3-8bit.bin  (L=3, bits=8, sha256=67270fd3dd7e832c)
+   lag_test 'not enough samples' warning present: False
+   Literal   C          cpp=0                        spec=0                         MATCH
+   Literal   r          cpp=1                        spec=1                         MATCH
+   Literal   N          cpp=2                        spec=2                         MATCH
+   Literal   P_global   cpp=0                        spec(exactZ)=0                        |d|=0  text-Z would be 0.90000000000000002
+   Literal   P_global'  cpp=0.90000000000000002      spec(exactZ)=0.90000000000000002      |d|=0  text-Z would be 0.90000000000000002
+   Literal   P_local    cpp=can't change   spec P_local(x10)=0.0050125628933799585 conv=0.0050125628933799585  curMax=0.90000000000000002  -> consistent
+   Literal   minH       cpp=0.15200309344504995      spec(exactZ,conv)=0.15200309344504995 (cpp-spec=+0)  spec(textZ,x10)=0.15200309344504995
+
+worked example D=3 selfcheck_pass=True
+largest |P_global or P_global'| difference over all inputs: 0

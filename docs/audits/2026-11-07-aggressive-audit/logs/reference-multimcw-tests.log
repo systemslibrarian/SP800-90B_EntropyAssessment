@@ -1,0 +1,30 @@
+python: Python 3.14.7
+module sha256: a54674a93aef82c7b43cc9820a22664ef4ac7258ac7a42b2bfdaa657a8c35079  py90b/multimcw.py
+tests sha256:  bf6d2d665ee28d203547fd3623c5500cf3f95c00b9e138f37f4e06eabfe549ba  py90b/tests/test_multimcw.py
+test_binary_twenty_predictions (py90b.tests.test_multimcw.HandDerived.test_binary_twenty_predictions) ... ok
+test_bitstring_is_msb_first (py90b.tests.test_multimcw.HandDerived.test_bitstring_is_msb_first) ... ok
+test_degenerate_all_one_symbol (py90b.tests.test_multimcw.HandDerived.test_degenerate_all_one_symbol) ... ok
+test_k_floor_alphabet_vs_observed (py90b.tests.test_multimcw.HandDerived.test_k_floor_alphabet_vs_observed) ... ok
+test_n_equals_one_divides_by_zero (py90b.tests.test_multimcw.HandDerived.test_n_equals_one_divides_by_zero) ... ok
+test_short_input_is_nan (py90b.tests.test_multimcw.HandDerived.test_short_input_is_nan) ... ok
+test_tie_rule_with_real_window (py90b.tests.test_multimcw.HandDerived.test_tie_rule_with_real_window) ... ok
+test_z_variant (py90b.tests.test_multimcw.HandDerived.test_z_variant) ... ok
+test_chunking_does_not_change_the_answer (py90b.tests.test_multimcw.InternalConsistency.test_chunking_does_not_change_the_answer) ... ok
+test_fast_scoreboard_matches_literal (py90b.tests.test_multimcw.InternalConsistency.test_fast_scoreboard_matches_literal) ... ok
+test_longest_run (py90b.tests.test_multimcw.InternalConsistency.test_longest_run) ... ok
+test_vectorised_frequent_matches_naive (py90b.tests.test_multimcw.InternalConsistency.test_vectorised_frequent_matches_naive) ... ok
+test_mp_variant_agrees_if_available (py90b.tests.test_multimcw.PLocalAgainstTheStandard.test_mp_variant_agrees_if_available) ... skipped 'mpmath not installed in this venv'
+test_r_equals_one_is_q_to_the_N (py90b.tests.test_multimcw.PLocalAgainstTheStandard.test_r_equals_one_is_q_to_the_N) ... ok
+test_solution_satisfies_the_equation (py90b.tests.test_multimcw.PLocalAgainstTheStandard.test_solution_satisfies_the_equation)
+Evaluate step 6's right-hand side (direct form, not the log form the solver uses) ... ok
+test_table3_correctly_labelled_rows (py90b.tests.test_multimcw.PLocalAgainstTheStandard.test_table3_correctly_labelled_rows) ... ok
+test_table3_mislabelled_block_is_shifted_by_five (py90b.tests.test_multimcw.PLocalAgainstTheStandard.test_table3_mislabelled_block_is_shifted_by_five) ... ok
+test_worked_examples_of_all_four_predictors (py90b.tests.test_multimcw.PLocalAgainstTheStandard.test_worked_examples_of_all_four_predictors) ... ok
+test_results (py90b.tests.test_multimcw.WorkedExample637.test_results) ... ok
+test_step3_table_every_row (py90b.tests.test_multimcw.WorkedExample637.test_step3_table_every_row) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.298s
+
+OK (skipped=1)
+unittest exit=0

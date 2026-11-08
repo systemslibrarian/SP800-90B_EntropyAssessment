@@ -1,0 +1,68 @@
+=== PROBE 1: spec worked example (PDF p. 55), d=4, L=48 ===
+blocks (int, MSB-first): [35, 37, 23, 12, 28, 42, 59, 35]  as bits: ['100011', '100101', '010111', '001100', '011100', '101010', '111011', '100011']
+D = [5, 6, 7, 7] (spec: 5,6,7,7)
+dict nonzero after step3: {'001100': 4, '010111': 3, '100011': 1, '100101': 2}
+t_upper=blocks sigma=printed : X-bar=2.630400 sigma-hat=0.907377 X-bar'=1.461699 status=found p=0.571485 H=0.134536 iters=40 rhs(2^-b)=2.576002
+t_upper=blocks sigma=unbiased: X-bar=2.630400 sigma-hat=0.136350 X-bar'=2.454781 status=found p=0.165952 H=0.431860 iters=40 rhs(2^-b)=2.576002
+t_upper=L      sigma=printed : X-bar=2.630400 sigma-hat=0.907377 X-bar'=1.461699 status=found p=0.975773 H=0.005897 iters=40 rhs(2^-b)=44.298682
+t_upper=L      sigma=unbiased: X-bar=2.630400 sigma-hat=0.136350 X-bar'=2.454781 status=found p=0.959193 H=0.010018 iters=40 rhs(2^-b)=44.298682
+spec says: X-bar=2.6304 sigma-hat=0.9074 X-bar'=1.4617 p=0.5715 min-entropy=0.1345
+rhs(p=0.5715) with t_max=8: 1.461652   (target X-bar' = 1.4617)
+rhs(p=0.5715) with t_max=48: 23.875203   (target X-bar' = 1.4617)
+
+=== PROBE 2: G vs G_literal on small parameters ===
+z=0.015625 v=4 d=4 t_max=None: G=0.0402500301836286 G_literal=0.0402500301836286 rel=0.00e+00
+z=0.015625 v=4 d=4 t_max=48: G=0.692166913196951 G_literal=0.692166913196951 rel=1.12e-15
+z=0.015625 v=10 d=3 t_max=None: G=0.0445682893147183 G_literal=0.0445682893147183 rel=1.56e-16
+z=0.015625 v=1 d=1 t_max=None: G=0.015380859375 G_literal=0.015380859375 rel=0.00e+00
+z=0.015625 v=7 d=0 t_max=None: G=0.0266056115219681 G_literal=0.0266056115219681 rel=0.00e+00
+z=0.01 v=4 d=4 t_max=None: G=0.0261246086340372 G_literal=0.0261246086340372 rel=2.66e-16
+z=0.01 v=4 d=4 t_max=48: G=0.460623563499608 G_literal=0.46062356349961 rel=4.22e-15
+z=0.01 v=10 d=3 t_max=None: G=0.0290272721320288 G_literal=0.0290272721320288 rel=0.00e+00
+z=0.01 v=1 d=1 t_max=None: G=0.0099 G_literal=0.0099 rel=0.00e+00
+z=0.01 v=7 d=0 t_max=None: G=0.0172212048610375 G_literal=0.0172212048610375 rel=2.01e-16
+z=0.1 v=4 d=4 t_max=None: G=0.208621798662837 G_literal=0.208621798662837 rel=1.33e-16
+z=0.1 v=4 d=4 t_max=48: G=2.83657869930569 G_literal=2.83657869930569 rel=1.25e-15
+z=0.1 v=10 d=3 t_max=None: G=0.221440204594194 G_literal=0.221440204594194 rel=1.25e-16
+z=0.1 v=1 d=1 t_max=None: G=0.09 G_literal=0.09 rel=0.00e+00
+z=0.1 v=7 d=0 t_max=None: G=0.143454648119623 G_literal=0.143454648119623 rel=0.00e+00
+z=0.5715 v=4 d=4 t_max=None: G=0.33323011270376 G_literal=0.33323011270376 rel=0.00e+00
+z=0.5715 v=4 d=4 t_max=48: G=3.67885284013554 G_literal=3.67885284013555 rel=1.57e-15
+z=0.5715 v=10 d=3 t_max=None: G=0.333056557471913 G_literal=0.333056557471913 rel=6.67e-16
+z=0.5715 v=1 d=1 t_max=None: G=0.24488775 G_literal=0.24488775 rel=0.00e+00
+z=0.5715 v=7 d=0 t_max=None: G=0.267803652698955 G_literal=0.267803652698955 rel=0.00e+00
+z=0.9 v=4 d=4 t_max=None: G=0.0956690496777244 G_literal=0.0956690496777245 rel=2.90e-16
+z=0.9 v=4 d=4 t_max=48: G=1.05236661228654 G_literal=1.05236661228654 rel=2.74e-15
+z=0.9 v=10 d=3 t_max=None: G=0.0956663176126414 G_literal=0.0956663176126414 rel=8.70e-16
+z=0.9 v=1 d=1 t_max=None: G=0.09 G_literal=0.09 rel=0.00e+00
+z=0.9 v=7 d=0 t_max=None: G=0.0811299004125657 G_literal=0.0811299004125657 rel=1.71e-16
+z=0.999 v=4 d=4 t_max=None: G=0.000999584792482487 G_literal=0.000999584792482487 rel=0.00e+00
+z=0.999 v=4 d=4 t_max=48: G=0.010995432717308 G_literal=0.010995432717308 rel=1.58e-16
+z=0.999 v=10 d=3 t_max=None: G=0.000999584792450339 G_literal=0.000999584792450339 rel=2.17e-16
+z=0.999 v=1 d=1 t_max=None: G=0.000999000000000001 G_literal=0.000999000000000001 rel=2.17e-16
+z=0.999 v=7 d=0 t_max=None: G=0.000856703363878043 G_literal=0.000856703363878043 rel=1.27e-16
+z=0.00680159 v=4 d=4 t_max=None: G=0.0179114513519791 G_literal=0.0179114513519791 rel=1.94e-16
+z=0.00680159 v=4 d=4 t_max=48: G=0.320576991357628 G_literal=0.320576991357629 rel=8.66e-16
+z=0.00680159 v=10 d=3 t_max=None: G=0.019941355595679 G_literal=0.019941355595679 rel=0.00e+00
+z=0.00680159 v=1 d=1 t_max=None: G=0.00675532571176619 G_literal=0.00675532571176619 rel=0.00e+00
+z=0.00680159 v=7 d=0 t_max=None: G=0.0117886294407712 G_literal=0.0117886294407712 rel=2.94e-16
+worst relative difference: 4.217956802584785e-15
+G(0)= 0.0  G(1)= 0.0  G_literal(1)= 0.0
+
+=== PROBE 3: exact z ===
+exact_z_0995 = 2.5758293035489013  printed 2.576; diff = -0.00017069645109879517
+
+=== PROBE 4: uniform value rhs(2^-6) for d=1000, several v (Maurer L=6 expectation ~5.2177052) ===
+v=      2: rhs(1/64) = 5.2177052376   (0.0 ms)
+v=    100: rhs(1/64) = 5.2177052438   (0.0 ms)
+v=   1000: rhs(1/64) = 5.2177052491   (0.0 ms)
+v=  12333: rhs(1/64) = 5.2177052498   (0.3 ms)
+v= 165666: rhs(1/64) = 5.2177052499   (4.2 ms)
+
+=== PROBE 5: monotonicity of rhs(p) on a grid, d=1000, v=1000 ===
+decreasing everywhere: True  f(first)= 5.217705249110262  f(last)= 0.0
+
+=== PROBE 6: G timing at large t_max (synthetic, no input data) ===
+t_max=166666: one rhs evaluation = 2.5 ms  (value 4.384156)
+t_max=1333333: one rhs evaluation = 30.6 ms  (value 4.384156)
+exit=0

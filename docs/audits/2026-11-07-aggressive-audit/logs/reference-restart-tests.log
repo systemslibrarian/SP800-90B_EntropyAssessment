@@ -1,0 +1,46 @@
+test_expansion (reference.py90b.tests.test_restart.Bitstring.test_expansion) ... ok
+test_full_mode_is_non_square_and_tests_both_axes (reference.py90b.tests.test_restart.Bitstring.test_full_mode_is_non_square_and_tests_both_axes) ... ok
+test_one_bit_symbols_bitstring_is_literal (reference.py90b.tests.test_restart.Bitstring.test_one_bit_symbols_bitstring_is_literal) ... ok
+test_truncate_rows_mode (reference.py90b.tests.test_restart.Bitstring.test_truncate_rows_mode) ... ok
+test_cli_iid_on_hand_example (reference.py90b.tests.test_restart.CommandLine.test_cli_iid_on_hand_example) ... ok
+test_cli_masks_high_bits_and_warns (reference.py90b.tests.test_restart.CommandLine.test_cli_masks_high_bits_and_warns) ... ok
+test_cli_rejects_wrong_length_and_bad_options (reference.py90b.tests.test_restart.CommandLine.test_cli_rejects_wrong_length_and_bad_options) ... ok
+test_skewed_matrix_hits_both_axes (reference.py90b.tests.test_restart.Counting.test_skewed_matrix_hits_both_axes) ... ok
+test_three_methods_agree_on_random_matrices (reference.py90b.tests.test_restart.Counting.test_three_methods_agree_on_random_matrices) ... ok
+test_2x3 (reference.py90b.tests.test_restart.DatasetConstruction.test_2x3) ... ok
+test_as_matrix_shapes_and_refusals (reference.py90b.tests.test_restart.DatasetConstruction.test_as_matrix_shapes_and_refusals) ... ok
+test_4x4_zeros_sanity_passes_but_validation_fails (reference.py90b.tests.test_restart.DegenerateAllOneSymbol.test_4x4_zeros_sanity_passes_but_validation_fails) ... ok
+test_8x8_zeros_4bit_sanity_fails_and_estimators_are_not_run (reference.py90b.tests.test_restart.DegenerateAllOneSymbol.test_8x8_zeros_4bit_sanity_fails_and_estimators_are_not_run) ... ok
+test_cutoff_threshold_matches_tail_verdict_on_degenerate (reference.py90b.tests.test_restart.DegenerateAllOneSymbol.test_cutoff_threshold_matches_tail_verdict_on_degenerate) ... ok
+test_non_iid_composite_bookkeeping (reference.py90b.tests.test_restart.EstimateWrapper.test_non_iid_composite_bookkeeping) ... 
+[composite] used=['Most Common Value', 'Collision', 'Markov', 't-Tuple', 'LRS', 'MultiMCW Prediction', 'Lag Prediction', 'MultiMMC Prediction', 'LZ78Y Prediction'] missing=[] failed=[]
+ok
+test_without_H_I_no_verdict (reference.py90b.tests.test_restart.EstimateWrapper.test_without_H_I_no_verdict) ... ok
+test_flat_row_major_input_equals_matrix_input (reference.py90b.tests.test_restart.HandDerivedTwoBitMatrix.test_flat_row_major_input_equals_matrix_input) ... ok
+test_iid_track_estimates_and_HI_over_2_rule (reference.py90b.tests.test_restart.HandDerivedTwoBitMatrix.test_iid_track_estimates_and_HI_over_2_rule) ... ok
+test_row_and_column_datasets_follow_3_1_4_1 (reference.py90b.tests.test_restart.HandDerivedTwoBitMatrix.test_row_and_column_datasets_follow_3_1_4_1) ... ok
+test_step_5_tail_HI_1 (reference.py90b.tests.test_restart.HandDerivedTwoBitMatrix.test_step_5_tail_HI_1) ... ok
+test_step_5_tail_HI_2 (reference.py90b.tests.test_restart.HandDerivedTwoBitMatrix.test_step_5_tail_HI_2) ... ok
+test_steps_2_to_4_counts (reference.py90b.tests.test_restart.HandDerivedTwoBitMatrix.test_steps_2_to_4_counts) ... ok
+test_alpha_printed_equals_alpha_derived (reference.py90b.tests.test_restart.PrintedBinomialTail.test_alpha_printed_equals_alpha_derived) ... ok
+test_exact_matches_naive_float_closely_at_n_1000 (reference.py90b.tests.test_restart.PrintedBinomialTail.test_exact_matches_naive_float_closely_at_n_1000) ... ok
+test_p_from_H_I_and_refusals (reference.py90b.tests.test_restart.PrintedBinomialTail.test_p_from_H_I_and_refusals) ... ok
+test_small_tails_by_hand (reference.py90b.tests.test_restart.PrintedBinomialTail.test_small_tails_by_hand) ... ok
+test_tail_is_non_increasing_in_x (reference.py90b.tests.test_restart.PrintedBinomialTail.test_tail_is_non_increasing_in_x) ... ok
+test_terms_sum_to_one_and_tail_is_suffix_sum (reference.py90b.tests.test_restart.PrintedBinomialTail.test_terms_sum_to_one_and_tail_is_suffix_sum) ... ok
+test_alpha_as_decimal_string (reference.py90b.tests.test_restart.SanityCutoff.test_alpha_as_decimal_string) ... ok
+test_n_1000_at_the_forks_documented_point (reference.py90b.tests.test_restart.SanityCutoff.test_n_1000_at_the_forks_documented_point) ... 
+[timing] sanity_cutoff + two tails at n=1000: 905.7 ms
+ok
+test_n_1000_p_half (reference.py90b.tests.test_restart.SanityCutoff.test_n_1000_p_half) ... ok
+test_properties_small (reference.py90b.tests.test_restart.SanityCutoff.test_properties_small) ... ok
+test_H_I_scale_strings (reference.py90b.tests.test_restart.ValidationRule.test_H_I_scale_strings) ... ok
+test_equal_to_half_passes_strictly_less_fails (reference.py90b.tests.test_restart.ValidationRule.test_equal_to_half_passes_strictly_less_fails) ... ok
+test_iid_track_row_and_column_estimates_coincide (reference.py90b.tests.test_restart.ValidationRule.test_iid_track_row_and_column_estimates_coincide) ... ok
+test_result_is_min_of_row_column_and_initial (reference.py90b.tests.test_restart.ValidationRule.test_result_is_min_of_row_column_and_initial) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 3.415s
+
+OK
+rc=0

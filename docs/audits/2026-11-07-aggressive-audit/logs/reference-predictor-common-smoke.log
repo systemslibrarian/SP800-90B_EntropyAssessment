@@ -1,0 +1,32 @@
+date: 2026-11-08T01:54:10Z
+== worked examples through estimate(correct, 2, k=3, exact=True) ==
+6.3.7 {"C": 3, "r": 2, "N": 9, "k": 3, "P_global": 0.3333333333333333, "P_global'": 0.7626666666666667, "P_local": 0.035967558716322165, "min_entropy": 0.39087544860485374, "binding": "P_global'", "P_local_exact": "0.03596755871632220687028998865070296085618015938535701674", "P_local_ulp_error": -6.041824554964024, "min_entropy_exact": "0.3908754486048537171820669646797290125670251003485827920"}
+6.3.8 {"C": 2, "r": 3, "N": 9, "k": 3, "P_global": 0.2222222222222222, "P_global'": 0.6008586320723548, "P_local": 0.1167007267434946, "min_entropy": 0.7349024962948139, "binding": "P_global'", "P_local_exact": "0.1167007267434940666876022151056822840913901811408199284", "P_local_ulp_error": 38.70613510337271, "min_entropy_exact": "0.7349024962948138162348720810112094020651353231483561660"}
+6.3.9 {"C": 3, "r": 3, "N": 7, "k": 3, "P_global": 0.42857142857142855, "P_global'": 0.9490020195247275, "P_local": 0.1307371019274901, "min_entropy": 0.07551693750903958, "binding": "P_global'", "P_local_exact": "0.1307371019274899548512473238849176027620399490821035364", "P_local_ulp_error": 5.4797595871468365, "min_entropy_exact": "0.07551693750903957747851939322200897687025516588799921944"}
+6.3.10 {"C": 4, "r": 3, "N": 8, "k": 3, "P_global": 0.5, "P_global'": 0.9868182412358846, "P_local": 0.12294871238518748, "min_entropy": 0.019143710930194215, "binding": "P_global'", "P_local_exact": "0.1229487123851883034131813093715962647571038333434020414", "P_local_ulp_error": -59.27552366235889, "min_entropy_exact": "0.01914371093019421415898913255365645624850855767733749065"}
+
+== degenerate through finish ==
+C=0 N=9 r=1: {"P_global": 0.0, "P_global'": 0.40051574968105896, "P_local": 0.001116080701857447, "min_entropy": 1.0, "binding": "1/k"}
+C=9 N=9 r=10: {"P_global": 1.0, "P_global'": 1.0, "P_local": 0.6653276987223049, "min_entropy": 0.0, "binding": "P_global'"}
+C=1 N=1 r=2: {"P_global": 1.0, "P_global'": NaN, "P_local": 0.2602654245350535, "min_entropy": NaN, "binding": null}
+C=0 N=1 r=1: {"P_global": 0.0, "P_global'": 0.99, "P_local": 0.010000000000000009, "min_entropy": 0.014499569695115089, "binding": "P_global'"}
+C=0 N=0 r=1: {"P_global": NaN, "P_global'": NaN, "P_local": NaN, "min_entropy": NaN, "binding": null}
+
+== sibling solver copies vs mine (max |diff|, count of exact matches) ==
+lag: candidate names ['GLOBAL_ALPHA', 'LOCAL_CONFIDENCE', 'min_entropy_from', 'p_global_prime', 'solve_p_local']
+lag.solve_p_local: exact matches 13/72, max |diff| 1.705e-10 at (15, 999937, 0.300014075339329, 0.3000140755098214)
+lag.p_global_prime: exact matches 20, max |diff| 0.000e+00
+multimcw: candidate names ['p_global_prime', 'p_local', 'p_local_mp']
+multimcw.p_local: exact matches 54/72, max |diff| 2.220e-16 at (15, 100, 0.5785732351870263, 0.5785732351870261)
+multimcw.p_global_prime: exact matches 20, max |diff| 0.000e+00
+multimmc: candidate names ['p_global_prime', 'p_local']
+multimmc.p_local: exact matches 54/72, max |diff| 2.220e-16 at (15, 100, 0.5785732351870263, 0.5785732351870261)
+multimmc.p_global_prime: exact matches 20, max |diff| 0.000e+00
+lz78y: candidate names ['p_global_prime', 'p_local']
+lz78y.p_local: exact matches 54/72, max |diff| 2.220e-16 at (15, 100, 0.5785732351870263, 0.5785732351870261)
+lz78y.p_global_prime: exact matches 20, max |diff| 0.000e+00
+
+== timing: estimate() on a 1e6 correct array ==
+  0.006s  C=500371 r=17 N=1000000 P_local=0.3470811760898027 H=0.9952210609034652
+  with exact: 0.204s  P_local_exact=0.3470811760898027829485714050514875702677163144957030232 ulp_err=-1.2768292628473763
+exit=0

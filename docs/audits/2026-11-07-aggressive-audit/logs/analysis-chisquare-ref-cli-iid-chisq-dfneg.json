@@ -1,0 +1,147 @@
+{
+ "min_entropy": NaN,
+ "L": 2000,
+ "bits_per_symbol": 2,
+ "track": "literal",
+ "binary": false,
+ "alphabet": "observed",
+ "variant": "literal",
+ "gof_df_zero": "not_applied",
+ "bit_order": null,
+ "bitstring_limit": null,
+ "chi_square_independence": {
+  "L": 2000,
+  "k": 3,
+  "T": 0.1705922824141697,
+  "df": -1,
+  "P-value": NaN,
+  "critical_value": NaN,
+  "applied": false,
+  "fail_by_pvalue": false,
+  "fail_by_critical_value": false,
+  "failed": false,
+  "nbin": 2,
+  "npairs": 1000,
+  "exact_boundary": false,
+  "merged_last_two": false,
+  "bins": [
+   {
+    "pairs": [
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      2,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      0
+     ]
+    ],
+    "E": 5.992,
+    "o": 7
+   },
+   {
+    "pairs": [
+     [
+      2,
+      0
+     ],
+     [
+      0,
+      0
+     ]
+    ],
+    "E": 994.008,
+    "o": 993
+   }
+  ]
+ },
+ "chi_square_goodness_of_fit": {
+  "L": 2000,
+  "k": 3,
+  "T": 0.0,
+  "df": 0,
+  "P-value": NaN,
+  "critical_value": NaN,
+  "applied": false,
+  "fail_by_pvalue": false,
+  "fail_by_critical_value": false,
+  "failed": false,
+  "failed_if_df_zero_degenerate": false,
+  "nbin": 1,
+  "subset_length": 200,
+  "exact_boundary": false,
+  "merged_last_two": false,
+  "bins": [
+   {
+    "values": [
+     1,
+     2,
+     0
+    ],
+    "E": 200.0,
+    "o": [
+     200,
+     200,
+     200,
+     200,
+     200,
+     200,
+     200,
+     200,
+     200,
+     200
+    ]
+   }
+  ]
+ },
+ "chi_square_tests_failed": false,
+ "lrs_length_test": {
+  "L": 2000,
+  "k": 3,
+  "P_col": 0.992024,
+  "W": 815,
+  "N": 702705,
+  "p_col^W": 0.0014641177595129523,
+  "log(p_col^W)": -6.526502429852099,
+  "p_col^W underflowed": false,
+  "Pr(X >= 1)": 1.0,
+  "applied": true,
+  "passed": true,
+  "W_suffix": 815,
+  "W_direct": 815
+ },
+ "lrs_length_test_passed": true,
+ "section_5_2_passed": true,
+ "Chi square independence: T": 0.1705922824141697,
+ "Chi square independence: df": -1,
+ "Chi square independence: P-value": NaN,
+ "Chi square goodness of fit: T": 0.0,
+ "Chi square goodness of fit: df": 0,
+ "Chi square goodness of fit: P-value": NaN,
+ "Chi square tests": "Passed",
+ "Literal Longest Repeated Substring results: P_col": 0.992024,
+ "Literal Longest Repeated Substring results: W": 815,
+ "Literal Longest Repeated Substring results: Pr(X >= 1)": 1.0,
+ "Length of longest repeated substring test": "Passed",
+ "rawfile": "corpus/iid-chisq-dfneg.bin"
+}

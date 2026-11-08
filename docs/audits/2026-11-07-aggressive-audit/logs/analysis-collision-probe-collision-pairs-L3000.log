@@ -1,0 +1,61 @@
+Loaded file: 'corpus/collision-pairs-L3000.bin' (SHA-256 hash 5eb1c055ede8daf8981f7148c4410b653c19e2438060473bfc8941665c417b48 of assessed bytes)
+Loaded 3000 samples of 2 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 3000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Literal Most Common Value Estimate: Mode count = 1500
+Literal Most Common Value Estimate: p-hat = 0.5
+Literal Most Common Value Estimate: p_u = 0.52351791687678084
+Literal Most Common Value Estimate: min entropy = 0.93368918209239837
+Literal Collision Estimate: v = 1500
+Literal Collision Estimate: Sum t_i = 3000
+Literal Collision Estimate: X-bar = 2
+Literal Collision Estimate: sigma-hat = 0
+Literal Collision Estimate: X-bar' = 2
+Literal Collision Estimate: Found p.
+Literal Collision Estimate: p = 1
+Literal Collision Estimate: min entropy = -0
+Literal Markov Estimate: P_0 = 0.5
+Literal Markov Estimate: P_1 = 0.5
+Literal Markov Estimate: P_{0,0} = 0.5
+Literal Markov Estimate: P_{0,1} = 0.5
+Literal Markov Estimate: P_{1,0} = 0.49966644429619744
+Literal Markov Estimate: P_{1,1} = 0.50033355570380256
+Literal Markov Estimate: p-hat_max = 3.1984759045911633e-39
+Literal Markov Estimate: min entropy = 0.99904539910708023
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+Literal t-Tuple Estimate: t = 2864
+Literal t-Tuple Estimate: p-hat_max = 0.9995236355421683871469
+Literal t-Tuple Estimate: p_u = 1
+Literal t-Tuple Estimate: min entropy = -0
+Literal LRS Estimate: u = 2865
+Literal LRS Estimate: v = 2996
+Literal LRS Estimate: p-hat = 0.9995124890639873749265
+Literal LRS Estimate: p_u = 1
+Literal LRS Estimate: min entropy = -0
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+Literal Lag Prediction Estimate: C = 2996
+Literal Lag Prediction Estimate: r = 2994
+Literal Lag Prediction Estimate: N = 2999
+Literal Lag Prediction Estimate: P_global = 0.99899966655551853
+Literal Lag Prediction Estimate: P_global' = 1
+Literal Lag Prediction Estimate: P_local can't change the result.
+Literal Lag Prediction Estimate: min entropy = -0
+Literal MultiMMC Prediction Estimate: C = 2993
+Literal MultiMMC Prediction Estimate: r = 2994
+Literal MultiMMC Prediction Estimate: N = 2998
+Literal MultiMMC Prediction Estimate: P_global = 0.99833222148098733
+Literal MultiMMC Prediction Estimate: P_global' = 1
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = -0
+Literal LZ78Y Prediction Estimate: C = 1490
+Literal LZ78Y Prediction Estimate: r = 3
+Literal LZ78Y Prediction Estimate: N = 2983
+Literal LZ78Y Prediction Estimate: P_global = 0.49949715051961113
+Literal LZ78Y Prediction Estimate: P_global' = 0.52308199651488563
+Literal LZ78Y Prediction Estimate: P_local can't change the result.
+Literal LZ78Y Prediction Estimate: min entropy = 0.93489097882990846
+H_original = -0
+Assessed min entropy: -0

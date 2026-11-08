@@ -1,0 +1,37 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/cli-rand1-2000.bin' (SHA-256 hash 7d10245244e73146c5e5958e09b05f41df75da2256ccb9b092bdbd069010ff20 of assessed bytes)
+Loaded 2000 samples of 2 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 2000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+Literal MCV Estimate: mode = 1054, p-hat = 0.52700000000000002, p_u = 0.55576381987816592
+	Most Common Value Estimate = 0.847456 / 1 bit(s)
+
+Running Entropic Statistic Estimates (bit strings only)...
+Literal Collision Estimate: X-bar = 2.5335868187579216, sigma-hat = 0.49918709210323203, p = 0.57806923771446039
+	Collision Test Estimate = 0.790686 / 1 bit(s)
+Literal Markov Estimate: P_0 = 0.52700000000000002, P_1 = 0.47299999999999998, P_0,0 = 0.5242165242165242, P_0,1 = 0.4757834757834758, P_1,0 = 0.53065539112050741, P_1,1 = 0.46934460887949259, p_max = 1.2579701797689195e-36
+	Markov Test Estimate = 0.931706 / 1 bit(s)
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+
+Running Tuple Estimates...
+Literal t-Tuple Estimate: t = 6, p-hat_max = 0.5391490736252682047791, p_u = 0.5678664887782749470801
+Literal LRS Estimate: u = 7, v = 19, p-hat = 0.50290626220527079, p_u = 0.5317116250606424
+	T-Tuple Test Estimate = 0.816376 / 1 bit(s)
+	LRS Test Estimate = 0.911284 / 1 bit(s)
+
+Running Predictor Estimates...
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+Literal Lag Prediction Estimate: N = 1999, Pglobal' = 0.53406409359790585 (C = 1010) Plocal can't affect result (r = 11)
+	Lag Prediction Test Estimate = 0.904915 / 1 bit(s)
+Literal MultiMMC Prediction Estimate: N = 1998, Pglobal' = 0.53182275361481746 (C = 1005) Plocal can't affect result (r = 11)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate = 0.910983 / 1 bit(s)
+Literal LZ78Y Prediction Estimate: N = 1983, Pglobal' = 0.53523040372718278 (C = 1004) Plocal can't affect result (r = 13)
+	LZ78Y Prediction Test Estimate = 0.901768 / 1 bit(s)
+
+H_original: 0.790686

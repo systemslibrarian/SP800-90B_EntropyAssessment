@@ -1,0 +1,16 @@
+target (C++ capture): nbin 991, T = 1026.2423761301056
+row-major stable, exact key, exact boundary (module default): nbin=991 T=1057.3373111061478
+row-major stable, exact key, float boundary: nbin=991 T=1040.1572657703416
+column-major ties, exact boundary: nbin=991 T=1012.3462143087713
+column-major ties, float boundary: nbin=991 T=1017.4709986852126
+reverse-lexicographic ties, exact boundary: nbin=991 T=1018.0030014947962
+reverse column-major ties, exact boundary: nbin=991 T=1021.7770139384265
+float asymmetric key (p_i L/2) p_j, stable row-major, float boundary: nbin=991 T=1002.3743968084107
+ties by observed count asc, exact boundary: nbin=991 T=16422.45955130277
+ties by observed count desc, exact boundary: nbin=991 T=16177.349340219618
+symbols pre-sorted by count; ties row-major in that order: nbin=991 T=1025.3512036391528
+symbols pre-sorted by count; ties column-major in that order: nbin=991 T=991.7676278551793
+numpy quicksort (unstable) on exact key: nbin=991 T=1009.7394960428524
+numpy heapsort (unstable) on exact key: nbin=991 T=1009.7394960428524
+distinct weights 529 largest tie class 870 pairs with tie class >1: 65529 of 65536
+counts range 23 58

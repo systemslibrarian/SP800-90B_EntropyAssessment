@@ -1,0 +1,5 @@
+py90b modules loaded by importing predictor_common: none
+import-safe (no sibling imported at module import time): True
+public names importable: True
+script-mode import works: True
+script-mode estimate 6.3.9 min_entropy: 0.07551693750903958

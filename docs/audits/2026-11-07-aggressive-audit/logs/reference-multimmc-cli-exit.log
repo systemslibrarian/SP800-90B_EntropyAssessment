@@ -1,0 +1,5 @@
+worked-example-D3 exit=0
+worked-example-D16 exit=0
+lag-rand1-20000 literal exit=0
+lag-rand8-5000 literal exit=0
+lag-rand8-5000 bitstring exit=0

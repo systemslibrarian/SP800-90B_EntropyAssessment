@@ -1,0 +1,23 @@
+6.3.7 MultiMCW p59     r=2 N=9 P_local=0.0359675587 printed=0.036 diff=3.24e-05
+6.3.8 Lag p60          r=3 N=9 P_local=0.1167007267 printed=0.1167 diff=7.27e-07
+6.3.9 MultiMMC p63     r=3 N=7 P_local=0.1307371019 printed=0.1307 diff=3.71e-05
+6.3.10 LZ78Y p65       r=3 N=8 P_local=0.1229487124 printed=0.1229 diff=4.87e-05
+Table3 r=    1 P_local=0.00000001 printed=0.0000 diff=1.01e-08 OK
+Table3 r=    2 P_local=0.00010026 printed=0.0001 diff=2.56e-07 OK
+Table3 r=    3 P_local=0.00215960 printed=0.0022 diff=4.04e-05 OK
+Table3 r=    4 P_local=0.01003785 printed=0.0100 diff=3.79e-05 OK
+Table3 r=    5 P_local=0.02527318 printed=0.0253 diff=2.68e-05 OK
+Table3 r=   10 P_local=0.16138462 printed=0.1614 diff=1.54e-05 OK
+Table3 r=   20 P_local=0.40881152 printed=0.4088 diff=1.15e-05 OK
+Table3 r=   35 P_local=0.60684118 printed=0.6068 diff=4.12e-05 OK
+Table3 r=   49 P_local=0.70399472 printed=0.7040 diff=5.28e-06 OK
+Table3 r=  100 P_local=0.84760291 printed=0.8398 diff=7.80e-03 DIFF
+Table3 r=  200 P_local=0.92385338 printed=0.9239 diff=4.66e-05 OK
+Table3 r=  500 P_local=0.97066648 printed=0.9707 diff=3.35e-05 OK
+Table3 r= 1000 P_local=0.98595003 printed=0.9860 diff=5.00e-05 OK
+Table3 r= 5000 P_local=0.99752082 printed=0.9975 diff=2.08e-05 OK
+Table3 r=10000 P_local=0.99883557 printed=0.9988 diff=3.56e-05 OK
+Table3 worst |diff| = 0.007802912828848929
+P_global' example: (0.5, 0.9868182412358846)
+min-entropy example (k=3): 0.019143710930194215
+p_local(24,23) = 0.8348747025553234  p_local(1, 10) = 0.0010045287082499636  p_local(2,4)= 0.05890322562621275  p_local(2,6)= 0.04558759556224043

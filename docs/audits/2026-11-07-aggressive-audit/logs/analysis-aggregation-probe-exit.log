@@ -1,0 +1,11 @@
+probe1-i-vvv rc=0 :: -i -a -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-aggregation-probe1-i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand8-5000.bin 8
+probe1-i-vv rc=0 :: -i -a -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand8-5000.bin 8
+probe1-c-vvv rc=0 :: -c -a -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-aggregation-probe1-c.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand8-5000.bin 8
+probe1-c-vv rc=0 :: -c -a -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand8-5000.bin 8
+probe3-i-t-vvv rc=0 :: -i -t -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lag-rand8-5000.bin 8
+probe4-i-inferred-vvv rc=0 :: -i -a -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-aggregation-probe4-inferred.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/intake-lsb0-shifted-7bit-20000.bin
+probe4-c-inferred-vvv rc=0 :: -c -a -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-aggregation-probe4-c-inferred.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/intake-lsb0-shifted-7bit-20000.bin
+diff rc=0 (0 = identical)
+probe5-i-declared8-vvv rc=0 :: -i -a -vvv -o ... corpus/intake-lsb0-shifted-7bit-20000.bin 8
+probe6-i-v rc=0 :: -i -a -v corpus/lag-rand8-5000.bin 8
+probe6-c-v rc=0 :: -c -a -v corpus/lag-rand8-5000.bin 8

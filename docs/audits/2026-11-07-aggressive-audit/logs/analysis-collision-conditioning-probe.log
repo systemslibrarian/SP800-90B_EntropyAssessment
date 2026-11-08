@@ -1,0 +1,38 @@
+binary sha256: b7a55528a8270672a89bd26265feb529293718a83d2a19a350cd035289d83460  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning
+stat: cannot read file system information for '%Sm': No such file or directory
+binary mtime:   File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 7191879    Available: 7191879
+Inodes: Total: 294745284  Free: 287675160
+=== TEST ARM: v=1 input; collision_test declines; conditioning_main.cpp:389 folds the return without a >=0 guard ===
+	*** Warning: not enough collisions to run collision test (need at least 2, found 1) ***
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+	*** Warning: not enough samples to run multiMMC test (need more than 16) ***
+	*** Warning: not enough samples to run LZ78Y test (need at least 19) ***
+n_in = 8
+n_out = 8
+nw = 8
+h_in = 1
+h' = -1
+Attempting to compute entropy with 106 bits of precision.
+Output_Entropy(*) = 0.9943534368588579086534
+0.999 * n_out = 7.991999999999999992894
+h' * n_out = -8
+(Non-vetted) h_out = -8
+exit=0
+=== NEGATIVE CONTROL: L=40 spec example; collision runs (v=14) ===
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+n_in = 8
+n_out = 8
+nw = 8
+h_in = 1
+h' = 0.08779849548710680351426
+Attempting to compute entropy with 106 bits of precision.
+Output_Entropy(*) = 0.9943534368588579086534
+0.999 * n_out = 7.991999999999999992894
+h' * n_out = 0.7023879638968544281141
+(Non-vetted) h_out = 0.7023879638968544281141
+exit=0

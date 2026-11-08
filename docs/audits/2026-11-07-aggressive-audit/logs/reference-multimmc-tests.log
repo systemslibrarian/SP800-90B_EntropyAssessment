@@ -1,0 +1,49 @@
+test_bitstring_mode (reference.py90b.tests.test_multimmc.TestCommandLine.test_bitstring_mode) ... ok
+test_nan_round_trips_through_json (reference.py90b.tests.test_multimmc.TestCommandLine.test_nan_round_trips_through_json) ... ok
+test_options_reach_estimate (reference.py90b.tests.test_multimmc.TestCommandLine.test_options_reach_estimate) ... ok
+test_usage_errors (reference.py90b.tests.test_multimmc.TestCommandLine.test_usage_errors) ... ok
+test_worked_example_through_the_cli (reference.py90b.tests.test_multimmc.TestCommandLine.test_worked_example_through_the_cli) ... ok
+test_L3_single_prediction (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_L3_single_prediction) ... ok
+test_L4 (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_L4) ... ok
+test_input_validation (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_input_validation) ... ok
+test_longest_run_of_ones (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_longest_run_of_ones) ... ok
+test_result_carries_the_labels_and_ambiguities (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_result_carries_the_labels_and_ambiguities) ... ok
+test_to_bitstring_msb_first (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_to_bitstring_msb_first) ... ok
+test_too_short_for_the_text (reference.py90b.tests.test_multimmc.TestEdgesAndApi.test_too_short_for_the_text) ... ok
+test_8bit_random_with_default_cap (reference.py90b.tests.test_multimmc.TestFastEqualsLiteral.test_8bit_random_with_default_cap) ... ok
+test_entries_readings_differ_materially_when_the_cap_binds (reference.py90b.tests.test_multimmc.TestFastEqualsLiteral.test_entries_readings_differ_materially_when_the_cap_binds) ... ok
+test_random_small_inputs (reference.py90b.tests.test_multimmc.TestFastEqualsLiteral.test_random_small_inputs) ... ok
+test_alternating_bits (reference.py90b.tests.test_multimmc.TestHandDerived.test_alternating_bits) ... ok
+test_degenerate_all_one_symbol_1bit (reference.py90b.tests.test_multimmc.TestHandDerived.test_degenerate_all_one_symbol_1bit) ... ok
+test_degenerate_all_one_symbol_8bit (reference.py90b.tests.test_multimmc.TestHandDerived.test_degenerate_all_one_symbol_8bit) ... ok
+test_dictionary_cap_pairs_contexts_and_uncapped (reference.py90b.tests.test_multimmc.TestHandDerived.test_dictionary_cap_pairs_contexts_and_uncapped) ... ok
+test_null_prediction_ends_the_run (reference.py90b.tests.test_multimmc.TestHandDerived.test_null_prediction_ends_the_run) ... ok
+test_scoreboard_tie_goes_to_the_larger_d (reference.py90b.tests.test_multimmc.TestHandDerived.test_scoreboard_tie_goes_to_the_larger_d) ... ok
+test_tie_rule_prediction_in_the_cap_example (reference.py90b.tests.test_multimmc.TestHandDerived.test_tie_rule_prediction_in_the_cap_example) ... ok
+test_all_correct_is_exactly_one (reference.py90b.tests.test_multimmc.TestPGlobalPrime.test_all_correct_is_exactly_one) ... ok
+test_capped_at_one (reference.py90b.tests.test_multimmc.TestPGlobalPrime.test_capped_at_one) ... ok
+test_general_branch_matches_the_formula (reference.py90b.tests.test_multimmc.TestPGlobalPrime.test_general_branch_matches_the_formula) ... ok
+test_z_variant (reference.py90b.tests.test_multimmc.TestPGlobalPrime.test_z_variant) ... ok
+test_zero_correct_branch (reference.py90b.tests.test_multimmc.TestPGlobalPrime.test_zero_correct_branch) ... ok
+test_lag_example_r3_N9 (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_lag_example_r3_N9) ... ok
+test_log_run_probability_at_p_zero_is_log_one (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_log_run_probability_at_p_zero_is_log_one) ... ok
+test_multimmc_example_r3_N7 (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_multimmc_example_r3_N7) ... ok
+test_p_local_is_monotone_in_r_and_in_unit_interval (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_p_local_is_monotone_in_r_and_in_unit_interval) ... ok
+test_r_equal_N_plus_one_all_correct (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_r_equal_N_plus_one_all_correct) ... ok
+test_table3_consistent_rows (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_table3_consistent_rows) ... ok
+test_table3_misprinted_block_is_shifted_one_row (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_table3_misprinted_block_is_shifted_one_row) ... ok
+test_undefined_inputs_give_nan (reference.py90b.tests.test_multimmc.TestPLocalSolver.test_undefined_inputs_give_nan) ... ok
+test_random_tables (reference.py90b.tests.test_multimmc.TestScoreboardLoopAgainstTranscription.test_random_tables) ... ok
+test_final_figures_fast_method (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_final_figures_fast_method) ... ok
+test_final_figures_literal_method (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_final_figures_literal_method) ... ok
+test_k_does_not_bind_in_the_example (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_k_does_not_bind_in_the_example) ... ok
+test_models_match_the_table_on_p63 (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_models_match_the_table_on_p63) ... ok
+test_subpredict_arrays_align_between_methods (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_subpredict_arrays_align_between_methods) ... ok
+test_tie_rule_at_i_9 (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_tie_rule_at_i_9) ... ok
+test_trace_rows_match_the_table_on_p62 (reference.py90b.tests.test_multimmc.TestSpecWorkedExample.test_trace_rows_match_the_table_on_p62) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 1.223s
+
+OK
+exit=0

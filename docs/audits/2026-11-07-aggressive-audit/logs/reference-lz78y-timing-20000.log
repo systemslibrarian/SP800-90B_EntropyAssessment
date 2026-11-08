@@ -1,0 +1,8 @@
+input: 20000 bytes (analysis-phase cap), seeded; sha256 in logs/reference-lz78y-cli-input-sha256.log
+8-bit literal, L=20000                       vectorized best-of-3 0.050s  L=20000 N=19983 C=68 r=2 dict=65536 sat=True
+8-bit literal, L=20000                       literal    best-of-3 0.108s  L=20000 N=19983 C=68 r=2 dict=65536 sat=True
+1-bit (low bit), L=20000                     vectorized best-of-3 0.046s  L=20000 N=19983 C=9962 r=16 dict=58898 sat=False
+1-bit (low bit), L=20000                     literal    best-of-3 0.187s  L=20000 N=19983 C=9962 r=16 dict=58898 sat=False
+bitstring of the 8-bit file, L=160000 bits   vectorized best-of-3 0.395s  L=160000 N=159983 C=80258 r=17 dict=65536 sat=True
+maxrss MB: 130.7
+scaling note: vectorized path is O(L log L) sorts (16 np.unique + 32 argsorts); literal is O(L*B) dict ops.

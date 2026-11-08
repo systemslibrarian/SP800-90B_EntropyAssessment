@@ -1,0 +1,84 @@
+== monotonicity of ln RHS in p (x10 form), grid of 2000 points ==
+r=    1 N=       2: non-monotone increases=10
+r=    1 N=       7: non-monotone increases=10
+r=    1 N=       9: non-monotone increases=10
+r=    1 N=     100: non-monotone increases=812
+r=    1 N= 1000000: non-monotone increases=970
+r=    2 N=       2: non-monotone increases=7
+r=    2 N=       7: non-monotone increases=7
+r=    2 N=       9: non-monotone increases=7
+r=    2 N=     100: non-monotone increases=466
+r=    2 N= 1000000: non-monotone increases=647
+r=    3 N=       2: non-monotone increases=6
+r=    3 N=       7: non-monotone increases=6
+r=    3 N=       9: non-monotone increases=6
+r=    3 N=     100: non-monotone increases=289
+r=    3 N= 1000000: non-monotone increases=485
+r=    5 N=       2: non-monotone increases=1534
+r=    5 N=       7: non-monotone increases=5
+r=    5 N=       9: non-monotone increases=5
+r=    5 N=     100: non-monotone increases=94
+r=    5 N= 1000000: non-monotone increases=323
+r=   10 N=       2: non-monotone increases=1627
+r=   10 N=       7: non-monotone increases=1168
+r=   10 N=       9: non-monotone increases=1
+r=   10 N=     100: non-monotone increases=1
+r=   10 N= 1000000: non-monotone increases=175
+r=   36 N=       2: non-monotone increases=992
+r=   36 N=       7: non-monotone increases=986
+r=   36 N=       9: non-monotone increases=983
+r=   36 N=     100: non-monotone increases=1
+r=   36 N= 1000000: non-monotone increases=52
+r=  100 N=       2: non-monotone increases=464
+r=  100 N=       7: non-monotone increases=463
+r=  100 N=       9: non-monotone increases=462
+r=  100 N=     100: non-monotone increases=0
+r=  100 N= 1000000: non-monotone increases=19
+r= 1000 N=       2: non-monotone increases=56
+r= 1000 N=       7: non-monotone increases=56
+r= 1000 N=       9: non-monotone increases=56
+r= 1000 N=     100: non-monotone increases=56
+r= 1000 N= 1000000: non-monotone increases=1
+
+== worked examples (steps 5-7) ==
+6.3.7 MultiMCW: N=9 C=3 r=2 P_global=0.333333 (spec 0.3333) P'=0.762667 (spec 0.7627) P_local=0.0359675587 (spec 0.036) exact=0.035967558716 converged=0.0359675587 iters=57 H=0.390875 (spec 0.3908)
+6.3.8 Lag: N=9 C=2 r=3 P_global=0.222222 (spec 0.2222) P'=0.600859 (spec 0.6008) P_local=0.1167007267 (spec 0.1167) exact=0.116700726743 converged=0.1167007267 iters=56 H=0.734902 (spec 0.735)
+6.3.9 MultiMMC: N=7 C=3 r=3 P_global=0.428571 (spec 0.4286) P'=0.949002 (spec 0.949) P_local=0.1307371019 (spec 0.1307) exact=0.130737101927 converged=0.1307371019 iters=55 H=0.075517 (spec 0.0755)
+6.3.10 LZ78Y: N=8 C=4 r=3 P_global=0.500000 (spec 0.5) P'=0.986818 (spec 0.9868) P_local=0.1229487124 (spec 0.1229) exact=0.122948712385 converged=0.1229487124 iters=56 H=0.019144 (spec 0.0191)
+
+== Table 3 (Appendix G.2, L = 1 000 000) ==
+N=1000000: rows=136 mismatches at 4 dp=21: [(55, 0.7092, 0.732838), (60, 0.7328, 0.753055), (65, 0.7531, 0.770535), (70, 0.7705, 0.785788), (75, 0.7858, 0.799207), (80, 0.7992, 0.811101), (85, 0.8111, 0.82171), (90, 0.8217, 0.83123), (95, 0.8312, 0.839818), (100, 0.8398, 0.847603), (105, 0.8476, 0.85469), (110, 0.8547, 0.861169), (115, 0.8612, 0.867114), (120, 0.8671, 0.872586), (125, 0.8726, 0.877641), (130, 0.8776, 0.882322), (135, 0.8823, 0.88667), (140, 0.8867, 0.890719), (145, 0.8907, 0.894498), (150, 0.8945, 0.898032), (155, 0.898, 0.901345)]
+N=999999: rows=136 mismatches at 4 dp=21: [(55, 0.7092, 0.732838), (60, 0.7328, 0.753055), (65, 0.7531, 0.770535), (70, 0.7705, 0.785788), (75, 0.7858, 0.799207), (80, 0.7992, 0.811101), (85, 0.8111, 0.82171), (90, 0.8217, 0.83123), (95, 0.8312, 0.839818), (100, 0.8398, 0.847603), (105, 0.8476, 0.85469), (110, 0.8547, 0.861169), (115, 0.8612, 0.867114), (120, 0.8671, 0.872586), (125, 0.8726, 0.877641), (130, 0.8776, 0.882322), (135, 0.8823, 0.88667), (140, 0.8867, 0.890719), (145, 0.8907, 0.894498), (150, 0.8945, 0.898032), (155, 0.898, 0.901345)]
+N=999998: rows=136 mismatches at 4 dp=21: [(55, 0.7092, 0.732838), (60, 0.7328, 0.753055), (65, 0.7531, 0.770535), (70, 0.7705, 0.785788), (75, 0.7858, 0.799207), (80, 0.7992, 0.811101), (85, 0.8111, 0.82171), (90, 0.8217, 0.83123), (95, 0.8312, 0.839818), (100, 0.8398, 0.847603), (105, 0.8476, 0.85469), (110, 0.8547, 0.861169), (115, 0.8612, 0.867114), (120, 0.8671, 0.872586), (125, 0.8726, 0.877641), (130, 0.8776, 0.882322), (135, 0.8823, 0.88667), (140, 0.8867, 0.890719), (145, 0.8907, 0.894498), (150, 0.8945, 0.898032), (155, 0.898, 0.901345)]
+N=999983: rows=136 mismatches at 4 dp=22: [(55, 0.7092, 0.732838), (60, 0.7328, 0.753055), (65, 0.7531, 0.770535), (70, 0.7705, 0.785788), (75, 0.7858, 0.799208), (80, 0.7992, 0.811101), (85, 0.8111, 0.82171), (90, 0.8217, 0.83123), (95, 0.8312, 0.839818), (100, 0.8398, 0.847603), (105, 0.8476, 0.854691), (110, 0.8547, 0.861169), (115, 0.8612, 0.867114), (120, 0.8671, 0.872587), (125, 0.8726, 0.877641), (130, 0.8776, 0.882322), (135, 0.8823, 0.88667), (140, 0.8867, 0.890719), (145, 0.8907, 0.894498), (150, 0.8945, 0.898032), (155, 0.898, 0.901345), (320, 0.9531, 0.95315)]
+N=999937: rows=136 mismatches at 4 dp=22: [(55, 0.7092, 0.732839), (60, 0.7328, 0.753056), (65, 0.7531, 0.770535), (70, 0.7705, 0.785788), (75, 0.7858, 0.799208), (80, 0.7992, 0.811101), (85, 0.8111, 0.821711), (90, 0.8217, 0.831231), (95, 0.8312, 0.839819), (100, 0.8398, 0.847603), (105, 0.8476, 0.854691), (110, 0.8547, 0.86117), (115, 0.8612, 0.867114), (120, 0.8671, 0.872587), (125, 0.8726, 0.877641), (130, 0.8776, 0.882323), (135, 0.8823, 0.886671), (140, 0.8867, 0.890719), (145, 0.8907, 0.894498), (150, 0.8945, 0.898032), (155, 0.898, 0.901346), (320, 0.9531, 0.95315)]
+r=50 at N=1e6: 0.7092058309824216  r=55: 0.732837643623979
+
+== x10 vs converged and float vs exact on the Table 3 grid at N = 1e6 ==
+  r=     1: float=1.0050335802996804e-08 exact=0.0000000100503358029968160 abs_err=1.158e-23 rel=1.152e-15
+  r=     2: float=0.0001002564380137332 exact=0.0001002564380137341474520 abs_err=9.430e-19 rel=9.406e-15
+  r=     3: float=0.002159600642642333 exact=0.0021596006426423707515666 abs_err=3.794e-17 rel=1.757e-14
+  r=     4: float=0.010037852649462373 exact=0.0100378526494624395873458 abs_err=6.693e-17 rel=6.668e-15
+  r=    10: float=0.16138462346443005 exact=0.1613846234644288407051225 abs_err=1.214e-15 rel=7.523e-15
+  r=    36: float=0.6157096858355844 exact=0.6157096858355827001261862 abs_err=1.686e-15 rel=2.738e-15
+  r=   100: float=0.8476029128288489 exact=0.8476029128288425073580810 abs_err=6.413e-15 rel=7.566e-15
+  r=  1000: float=0.9859500295843655 exact=0.9859500295843757084353626 abs_err=1.020e-14 rel=1.035e-14
+  r= 10000: float=0.9988355733725904 exact=0.9988355733725839660324627 abs_err=6.469e-15 rel=6.477e-15
+worst |x10 - converged| on Table 3 grid: 0.000e+00
+worst float/exact rel error: 1.757e-14 at r=3; elapsed 0.32s
+
+== degenerate cases ==
+  r=1 N=1: P_local=0.010000000000000009 iters=59  (r>N means the run cannot occur)
+  r=2 N=1: P_local=0.2602654245350535 iters=54  (r>N means the run cannot occur)
+  r=1 N=2: P_local=0.005012562893380033 iters=60  (r>N means the run cannot occur)
+  r=3 N=2: P_local=0.3422959885518899 iters=54  (r>N means the run cannot occur)
+  r=10 N=9: P_local=0.6653276987223049 iters=53  (r>N means the run cannot occur)
+  r=11 N=9: P_local=0.7292054852730192 iters=53  (r>N means the run cannot occur)
+  r=1 N=1000000: P_local=1.0050335802996804e-08 iters=79  (r>N means the run cannot occur)
+  r=1000001 N=1000000: P_local=0.99999547051249 iters=53  (r>N means the run cannot occur)
+  P_global'=... N=1 C=0: (0.0, 0.99)  N=2 C=2: (1.0, 1.0)
+  N=1 C=1 raw expression: ZeroDivisionError: division by zero
+  min(1.0, nan) = 1.0  min(nan, 1.0) = nan
+
+== timing: 1000 solves at N=1e6 ==
+  0.03s

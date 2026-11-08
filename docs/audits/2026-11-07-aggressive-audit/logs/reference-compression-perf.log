@@ -1,0 +1,16 @@
+Brief ground rule 4 / task text: no runs on inputs over 20,000 samples in the analysis phase.
+So: end-to-end timing at 20,000 symbols (both widths), component timing of the O(n) D loop,
+and the per-evaluation cost of rhs() at the 1M x 8-bit block count (synthetic, from the probe log).
+
+estimate(): n=20000 symbols, bps=8: L=160000 blocks=26666 v=25666 status=found iters=40 H=0.787594  wall=0.066s
+estimate(): n=20000 symbols, bps=1: L=20000 blocks=3333 v=2333 status=found iters=40 H=0.662586  wall=0.008s
+
+compression_distances(): 26666 blocks in 0.005s -> 0.19 us/block (pure-Python loop, O(n))
+sample_statistics(): 25666 values in 0.011s (math.fsum, O(n))
+rhs(): t_max=1333333 one evaluation 72.8 ms (numpy, O(t_max)); the bisection used 40 iterations above
+
+ESTIMATE for n = 1,000,000 symbols at 8 bits/symbol (8,000,000 bits, 1333333 blocks):
+  D loop ~0.3s + statistics ~0.6s + 43 rhs evaluations ~3.1s + bit expansion <0.5s  ~= 4s
+  at 1 bit/symbol (1,000,000 bits, 166,666 blocks) everything is 8x smaller: ~1s
+  Peak memory: a few arrays of 1.33M float64 (~10 MB each) plus the Python block list (~50 MB).
+exit=0

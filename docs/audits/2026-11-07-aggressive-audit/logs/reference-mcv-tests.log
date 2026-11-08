@@ -1,0 +1,83 @@
+date: 2026-11-08T01:40:02Z
+python: 3.14.7 numpy 2.5.4
+env: OMP_NUM_THREADS=2 (no EA_ALLOW_SHORT_DATASET needed: no C++ tool was run)
+== python -m unittest reference/py90b/tests/test_mcv.py -v ==
+test_bitstring_equals_literal_on_expanded_bits (reference.py90b.tests.test_mcv.TestBitstringTrack.test_bitstring_equals_literal_on_expanded_bits) ... ok
+test_bitstring_estimate (reference.py90b.tests.test_mcv.TestBitstringTrack.test_bitstring_estimate) ... ok
+test_bitstring_limit (reference.py90b.tests.test_mcv.TestBitstringTrack.test_bitstring_limit) ... ok
+test_lsb_first_option_changes_order_not_counts (reference.py90b.tests.test_mcv.TestBitstringTrack.test_lsb_first_option_changes_order_not_counts) ... ok
+test_to_bitstring_msb_and_lsb (reference.py90b.tests.test_mcv.TestBitstringTrack.test_to_bitstring_msb_and_lsb) ... ok
+test_literal_and_bitstring_match_the_api (reference.py90b.tests.test_mcv.TestCommandLine.test_literal_and_bitstring_match_the_api) ... ok
+test_low_bits_are_the_symbol (reference.py90b.tests.test_mcv.TestCommandLine.test_low_bits_are_the_symbol) ... ok
+test_nan_round_trips_through_json (reference.py90b.tests.test_mcv.TestCommandLine.test_nan_round_trips_through_json) ... ok
+test_usage_errors (reference.py90b.tests.test_mcv.TestCommandLine.test_usage_errors) ... ok
+test_exact_quantile_constant (reference.py90b.tests.test_mcv.TestConstantVariants.test_exact_quantile_constant) ... ok
+test_exact_quantile_is_the_permissive_direction (reference.py90b.tests.test_mcv.TestConstantVariants.test_exact_quantile_is_the_permissive_direction) ... ok
+test_z_override (reference.py90b.tests.test_mcv.TestConstantVariants.test_z_override) ... ok
+test_L_equals_one_gives_no_value (reference.py90b.tests.test_mcv.TestDegenerateInputs.test_L_equals_one_gives_no_value) ... ok
+test_all_one_symbol (reference.py90b.tests.test_mcv.TestDegenerateInputs.test_all_one_symbol) ... ok
+test_clamp_binds_one_deviant_in_a_thousand (reference.py90b.tests.test_mcv.TestDegenerateInputs.test_clamp_binds_one_deviant_in_a_thousand) ... ok
+test_clamp_negative_control_ten_deviants (reference.py90b.tests.test_mcv.TestDegenerateInputs.test_clamp_negative_control_ten_deviants) ... ok
+test_empty_input_gives_no_value (reference.py90b.tests.test_mcv.TestDegenerateInputs.test_empty_input_gives_no_value) ... ok
+test_two_samples_fair_coin_clamps_to_zero (reference.py90b.tests.test_mcv.TestDegenerateInputs.test_two_samples_fair_coin_clamps_to_zero) ... ok
+test_population_limit_and_finite_sample_conservatism (reference.py90b.tests.test_mcv.TestFootnote11.test_population_limit_and_finite_sample_conservatism) ... ok
+test_tie_reports_smallest_value_but_same_estimate (reference.py90b.tests.test_mcv.TestHandDerivedTwoBit.test_tie_reports_smallest_value_but_same_estimate) ... ok
+test_two_bit_eight_samples (reference.py90b.tests.test_mcv.TestHandDerivedTwoBit.test_two_bit_eight_samples) ... ok
+test_deterministic (reference.py90b.tests.test_mcv.TestProperties.test_deterministic) ... ok
+test_estimate_never_exceeds_the_symbol_width (reference.py90b.tests.test_mcv.TestProperties.test_estimate_never_exceeds_the_symbol_width) ... ok
+test_input_types_agree (reference.py90b.tests.test_mcv.TestProperties.test_input_types_agree) ... ok
+test_matches_plain_python_transcription_bit_for_bit (reference.py90b.tests.test_mcv.TestProperties.test_matches_plain_python_transcription_bit_for_bit) ... ok
+test_example_intermediates_are_an_erratum (reference.py90b.tests.test_mcv.TestSpecWorkedExample.test_example_intermediates_are_an_erratum)
+The example's intermediate text is internally inconsistent with its own ... ok
+test_final_figures_match_the_formula (reference.py90b.tests.test_mcv.TestSpecWorkedExample.test_final_figures_match_the_formula) ... ok
+test_bad_options_rejected (reference.py90b.tests.test_mcv.TestValidation.test_bad_options_rejected) ... ok
+test_bools_and_bytes_accepted (reference.py90b.tests.test_mcv.TestValidation.test_bools_and_bytes_accepted) ... ok
+test_non_integer_rejected (reference.py90b.tests.test_mcv.TestValidation.test_non_integer_rejected) ... ok
+test_out_of_range_rejected (reference.py90b.tests.test_mcv.TestValidation.test_out_of_range_rejected) ... ok
+test_validate_false_skips_the_range_check (reference.py90b.tests.test_mcv.TestValidation.test_validate_false_skips_the_range_check) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 1.599s
+
+OK
+exit=0
+== python reference/py90b/tests/test_mcv.py ==
+test_bitstring_equals_literal_on_expanded_bits (__main__.TestBitstringTrack.test_bitstring_equals_literal_on_expanded_bits) ... ok
+test_bitstring_estimate (__main__.TestBitstringTrack.test_bitstring_estimate) ... ok
+test_bitstring_limit (__main__.TestBitstringTrack.test_bitstring_limit) ... ok
+test_lsb_first_option_changes_order_not_counts (__main__.TestBitstringTrack.test_lsb_first_option_changes_order_not_counts) ... ok
+test_to_bitstring_msb_and_lsb (__main__.TestBitstringTrack.test_to_bitstring_msb_and_lsb) ... ok
+test_literal_and_bitstring_match_the_api (__main__.TestCommandLine.test_literal_and_bitstring_match_the_api) ... ok
+test_low_bits_are_the_symbol (__main__.TestCommandLine.test_low_bits_are_the_symbol) ... ok
+test_nan_round_trips_through_json (__main__.TestCommandLine.test_nan_round_trips_through_json) ... ok
+test_usage_errors (__main__.TestCommandLine.test_usage_errors) ... ok
+test_exact_quantile_constant (__main__.TestConstantVariants.test_exact_quantile_constant) ... ok
+test_exact_quantile_is_the_permissive_direction (__main__.TestConstantVariants.test_exact_quantile_is_the_permissive_direction) ... ok
+test_z_override (__main__.TestConstantVariants.test_z_override) ... ok
+test_L_equals_one_gives_no_value (__main__.TestDegenerateInputs.test_L_equals_one_gives_no_value) ... ok
+test_all_one_symbol (__main__.TestDegenerateInputs.test_all_one_symbol) ... ok
+test_clamp_binds_one_deviant_in_a_thousand (__main__.TestDegenerateInputs.test_clamp_binds_one_deviant_in_a_thousand) ... ok
+test_clamp_negative_control_ten_deviants (__main__.TestDegenerateInputs.test_clamp_negative_control_ten_deviants) ... ok
+test_empty_input_gives_no_value (__main__.TestDegenerateInputs.test_empty_input_gives_no_value) ... ok
+test_two_samples_fair_coin_clamps_to_zero (__main__.TestDegenerateInputs.test_two_samples_fair_coin_clamps_to_zero) ... ok
+test_population_limit_and_finite_sample_conservatism (__main__.TestFootnote11.test_population_limit_and_finite_sample_conservatism) ... ok
+test_tie_reports_smallest_value_but_same_estimate (__main__.TestHandDerivedTwoBit.test_tie_reports_smallest_value_but_same_estimate) ... ok
+test_two_bit_eight_samples (__main__.TestHandDerivedTwoBit.test_two_bit_eight_samples) ... ok
+test_deterministic (__main__.TestProperties.test_deterministic) ... ok
+test_estimate_never_exceeds_the_symbol_width (__main__.TestProperties.test_estimate_never_exceeds_the_symbol_width) ... ok
+test_input_types_agree (__main__.TestProperties.test_input_types_agree) ... ok
+test_matches_plain_python_transcription_bit_for_bit (__main__.TestProperties.test_matches_plain_python_transcription_bit_for_bit) ... ok
+test_example_intermediates_are_an_erratum (__main__.TestSpecWorkedExample.test_example_intermediates_are_an_erratum)
+The example's intermediate text is internally inconsistent with its own ... ok
+test_final_figures_match_the_formula (__main__.TestSpecWorkedExample.test_final_figures_match_the_formula) ... ok
+test_bad_options_rejected (__main__.TestValidation.test_bad_options_rejected) ... ok
+test_bools_and_bytes_accepted (__main__.TestValidation.test_bools_and_bytes_accepted) ... ok
+test_non_integer_rejected (__main__.TestValidation.test_non_integer_rejected) ... ok
+test_out_of_range_rejected (__main__.TestValidation.test_out_of_range_rejected) ... ok
+test_validate_false_skips_the_range_check (__main__.TestValidation.test_validate_false_skips_the_range_check) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 1.393s
+
+OK
+exit=0

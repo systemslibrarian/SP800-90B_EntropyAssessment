@@ -1,0 +1,11 @@
+EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 on every run (non-compliant by construction)
+6b61e7efaef8273960187ea1e850139cdf48a403d2fec302b74bec8086114975  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin  L=100 width=2
+f60445e794b20c39a93b256968eef6b74f1f6328bb333f3272333fe1bca85dcd  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-bin140.bin  L=1000 width=1
+3c91620051357b15437d3c1f46b3d212a4359e37a1a915930d710b88cbb943d4  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex12.bin  L=160 width=2
+7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-dfneg.bin  L=2000 width=2
+22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (binary, instrument rule 4)
+
+ex11 rc=1 cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin 2 out=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-iid-chisq-ex11.out
+bin140 rc=0 cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-bin140.bin 1 out=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-iid-chisq-bin140.out
+ex12 rc=0 cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex12.bin 2 out=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-iid-chisq-ex12.out
+dfneg rc=0 cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-dfneg.bin 2 out=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-iid-chisq-dfneg.out

@@ -1,0 +1,17 @@
+PASS  test_Q_is_non_increasing_in_tuple_length
+PASS  test_auto_switches_to_suffix_array_and_cross_checks
+PASS  test_bitstring_conversion_msb_first
+PASS  test_command_line_json_matches_estimate
+PASS  test_degenerate_all_one_symbol
+PASS  test_hand_derived_binary_example
+PASS  test_hand_derived_binary_example_twenty_symbols
+PASS  test_methods_agree_on_random_inputs
+PASS  test_rejects_bad_input
+PASS  test_spec_example_counts_by_hand
+PASS  test_spec_example_default_cutoff_gives_no_estimate
+PASS  test_spec_worked_example_all_methods
+PASS  test_step3_arithmetic_recomputed_independently
+PASS  test_suffix_array_and_lcp_against_brute_force
+PASS  test_z_constants
+15 passed, 0 failed, 15 total
+exit=0

@@ -1,0 +1,7 @@
+Warning: Symbols appear to be narrower than described.
+
+*** Warning: dataset contains 3000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Symbol alphabet consists of 1 symbol. No entropy awarded...

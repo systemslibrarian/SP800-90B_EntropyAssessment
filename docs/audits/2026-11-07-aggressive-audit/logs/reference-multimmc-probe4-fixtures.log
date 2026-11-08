@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "<stdin>", line 18, in <module>
+TypeError: cannot unpack non-iterable NoneType object
+exit=1

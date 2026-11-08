@@ -1,0 +1,5 @@
+period63_blocks correct-rule: {'C': 18987, 'N': 19937, 'r': 21, 'Pglobal': 0.95235, 'Pprime': 0.956236, 'H_from_Pprime_and_1k': 0.0646}
+period63_blocks lowest-value-tie mutant: {'C': 17865, 'N': 19937, 'r': 22, 'Pglobal': 0.896073, 'Pprime': 0.90164, 'H_from_Pprime_and_1k': 0.1494}
+period3 correct-rule: {'C': 0, 'N': 19937, 'r': 1, 'Pglobal': 0.0, 'Pprime': 0.000231, 'H_from_Pprime_and_1k': 1.585}
+period3 lowest-value-tie mutant: {'C': 6646, 'N': 19937, 'r': 2, 'Pglobal': 0.33335, 'Pprime': 0.34195, 'H_from_Pprime_and_1k': 1.5481}
+exit=0

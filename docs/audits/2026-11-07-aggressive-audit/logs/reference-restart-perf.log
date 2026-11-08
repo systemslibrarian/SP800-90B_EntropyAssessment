@@ -1,0 +1,15 @@
+macOS-26.6.2-arm64-arm-64bit-Mach-O 3.14.7 numpy 2.5.4
+count rows+cols bps=1 shape=(100, 100) (10000 samples): 0.05 ms  -> extrapolated 1e6 samples: 5 ms
+count rows+cols bps=1 shape=(141, 141) (19881 samples): 0.10 ms  -> extrapolated 1e6 samples: 5 ms
+count rows+cols bps=1 shape=(20, 1000) (20000 samples): 0.11 ms  -> extrapolated 1e6 samples: 5 ms
+count rows+cols bps=1 shape=(1000, 20) (20000 samples): 0.10 ms  -> extrapolated 1e6 samples: 5 ms
+count rows+cols bps=8 shape=(100, 100) (10000 samples): 0.04 ms  -> extrapolated 1e6 samples: 4 ms
+count rows+cols bps=8 shape=(141, 141) (19881 samples): 0.08 ms  -> extrapolated 1e6 samples: 4 ms
+count rows+cols bps=8 shape=(20, 1000) (20000 samples): 0.11 ms  -> extrapolated 1e6 samples: 5 ms
+count rows+cols bps=8 shape=(1000, 20) (20000 samples): 0.11 ms  -> extrapolated 1e6 samples: 5 ms
+n=1000 H_I=0.696: table 177 ms, three tails 5 ms, cutoff 1 ms, denominator bits=50001
+n=1000 H_I=1.0: table 8 ms, three tails 0 ms, cutoff 0 ms, denominator bits=1001
+n=1000 H_I=7.0: table 11 ms, three tails 0 ms, cutoff 0 ms, denominator bits=7001
+n=1000 H_I=7.9: table 204 ms, three tails 7 ms, cutoff 3 ms, denominator bits=60001
+sanity_check 1000x20 bps=1 (two tables: n=20 and n=1000): 177 ms
+mcv_estimate_literal 20000 x 8-bit: 0.02 ms -> 1e6: 1 ms

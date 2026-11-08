@@ -1,0 +1,96 @@
+=== lz78y_w8_L18_C1.bin width 8 -> logs/analysis-lz78y-cpp-lz78y_w8_L18_C1.log (exit 0) ===
+1:Warning: Symbols appear to be narrower than described.
+5:*** Warning: dataset contains 18 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+6:*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+36:	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+52:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+53:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+82:Bitstring LZ78Y Prediction Estimate: C = 110
+83:Bitstring LZ78Y Prediction Estimate: r = 9
+84:Bitstring LZ78Y Prediction Estimate: N = 127
+85:Bitstring LZ78Y Prediction Estimate: P_global = 0.86614173228346458
+86:Bitstring LZ78Y Prediction Estimate: P_global' = 0.9442773211112877
+87:Bitstring LZ78Y Prediction Estimate: P_local can't change the result.
+88:Bitstring LZ78Y Prediction Estimate: min entropy = 0.082717473609744019
+89:Literal LZ78Y Prediction Estimate: C = 1
+90:Literal LZ78Y Prediction Estimate: r = 2
+91:Literal LZ78Y Prediction Estimate: N = 1
+92:Literal LZ78Y Prediction Estimate: P_global = 1
+93:Literal LZ78Y Prediction Estimate: P_global' = 1
+94:Literal LZ78Y Prediction Estimate: P_local can't change the result.
+95:Literal LZ78Y Prediction Estimate: min entropy = -0
+96:H_bitstring = -0
+97:H_bitstring Per Symbol = -0
+98:H_original = -0
+99:Assessed min entropy: -0
+100:exit=0
+=== lz78y_w8_L18_C0.bin width 8 -> logs/analysis-lz78y-cpp-lz78y_w8_L18_C0.log (exit 0) ===
+1:Warning: Symbols appear to be narrower than described.
+5:*** Warning: dataset contains 18 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+6:*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+36:	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+52:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+53:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+82:Bitstring LZ78Y Prediction Estimate: C = 111
+83:Bitstring LZ78Y Prediction Estimate: r = 9
+84:Bitstring LZ78Y Prediction Estimate: N = 127
+85:Bitstring LZ78Y Prediction Estimate: P_global = 0.87401574803149606
+86:Bitstring LZ78Y Prediction Estimate: P_global' = 0.95016218150632681
+87:Bitstring LZ78Y Prediction Estimate: P_local can't change the result.
+88:Bitstring LZ78Y Prediction Estimate: min entropy = 0.073754309354218395
+89:Literal LZ78Y Prediction Estimate: C = 0
+90:Literal LZ78Y Prediction Estimate: r = 1
+91:Literal LZ78Y Prediction Estimate: N = 1
+92:Literal LZ78Y Prediction Estimate: P_global = 0
+93:Literal LZ78Y Prediction Estimate: P_global' = 0.98999999999999999
+94:Literal LZ78Y Prediction Estimate: P_local can't change the result.
+95:Literal LZ78Y Prediction Estimate: min entropy = 0.014499569695115089
+96:H_bitstring = -0
+97:H_bitstring Per Symbol = -0
+98:H_original = -0
+99:Assessed min entropy: -0
+100:exit=0
+=== lz78y_w8_L17.bin width 8 -> logs/analysis-lz78y-cpp-lz78y_w8_L17.log (exit 0) ===
+1:Warning: Symbols appear to be narrower than described.
+5:*** Warning: dataset contains 17 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+6:*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+36:	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+52:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+53:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+82:Bitstring LZ78Y Prediction Estimate: C = 103
+83:Bitstring LZ78Y Prediction Estimate: r = 9
+84:Bitstring LZ78Y Prediction Estimate: N = 119
+85:Bitstring LZ78Y Prediction Estimate: P_global = 0.86554621848739499
+86:Bitstring LZ78Y Prediction Estimate: P_global' = 0.94643861802282336
+87:Bitstring LZ78Y Prediction Estimate: P_local can't change the result.
+88:Bitstring LZ78Y Prediction Estimate: min entropy = 0.079419152979170057
+89:	*** Warning: not enough samples to run LZ78Y test (need at least 18) ***
+90:H_bitstring = -0
+91:H_bitstring Per Symbol = -0
+92:H_original = -0
+93:Assessed min entropy: -0
+94:exit=0
+=== lz78y_w1_L19.bin width 1 -> logs/analysis-lz78y-cpp-lz78y_w1_L19.log (exit 0) ===
+4:*** Warning: dataset contains 19 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+5:*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+28:	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+35:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+50:Literal LZ78Y Prediction Estimate: C = 1
+51:Literal LZ78Y Prediction Estimate: r = 2
+52:Literal LZ78Y Prediction Estimate: N = 2
+53:Literal LZ78Y Prediction Estimate: P_global = 0.5
+54:Literal LZ78Y Prediction Estimate: P_global' = 1
+55:Literal LZ78Y Prediction Estimate: P_local can't change the result.
+56:Literal LZ78Y Prediction Estimate: min entropy = -0
+57:H_original = -0
+58:Assessed min entropy: -0
+59:exit=0
+=== lz78y_w1_L18.bin width 1 -> logs/analysis-lz78y-cpp-lz78y_w1_L18.log (exit 0) ===
+4:*** Warning: dataset contains 18 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+5:*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+28:	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+35:	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+50:	*** Warning: not enough samples to run LZ78Y test (need at least 19) ***
+51:H_original = -0
+52:Assessed min entropy: -0
+53:exit=0

@@ -1,0 +1,37 @@
+date: 2026-11-08T01:58:12Z
+python: 3.14.7 numpy 2.5.4
+env: OMP_NUM_THREADS=2 (no EA_ALLOW_SHORT_DATASET needed: no C++ tool was run)
+== python -m unittest reference/py90b/tests/test_lz78y.py -v ==
+test_cli_literal_and_bitstring (reference.py90b.tests.test_lz78y.TestBitstringAndCli.test_cli_literal_and_bitstring) ... ok
+test_cli_low_bits_mask (reference.py90b.tests.test_lz78y.TestBitstringAndCli.test_cli_low_bits_mask) ... ok
+test_cli_usage (reference.py90b.tests.test_lz78y.TestBitstringAndCli.test_cli_usage) ... ok
+test_to_bitstring_msb_first (reference.py90b.tests.test_lz78y.TestBitstringAndCli.test_to_bitstring_msb_first) ... ok
+test_literal_equals_vectorized_full_parameters (reference.py90b.tests.test_lz78y.TestEquivalence.test_literal_equals_vectorized_full_parameters) ... ok
+test_literal_equals_vectorized_random (reference.py90b.tests.test_lz78y.TestEquivalence.test_literal_equals_vectorized_random) ... ok
+test_degenerate_constant_input (reference.py90b.tests.test_lz78y.TestHandDerived.test_degenerate_constant_input) ... ok
+test_dictionary_cap_worked_example_with_max_six (reference.py90b.tests.test_lz78y.TestHandDerived.test_dictionary_cap_worked_example_with_max_six) ... ok
+test_first_prediction_index_and_count (reference.py90b.tests.test_lz78y.TestHandDerived.test_first_prediction_index_and_count) ... ok
+test_strict_greater_keeps_longer_context_on_count_tie (reference.py90b.tests.test_lz78y.TestHandDerived.test_strict_greater_keeps_longer_context_on_count_tie) ... ok
+test_tie_goes_to_higher_symbol_value (reference.py90b.tests.test_lz78y.TestHandDerived.test_tie_goes_to_higher_symbol_value) ... ok
+test_too_short_is_nan (reference.py90b.tests.test_lz78y.TestHandDerived.test_too_short_is_nan) ... ok
+test_bad_inputs (reference.py90b.tests.test_lz78y.TestOptionsAndKeys.test_bad_inputs) ... ok
+test_k_mode_observed (reference.py90b.tests.test_lz78y.TestOptionsAndKeys.test_k_mode_observed) ... ok
+test_required_keys_present (reference.py90b.tests.test_lz78y.TestOptionsAndKeys.test_required_keys_present) ... ok
+test_z_variant (reference.py90b.tests.test_lz78y.TestOptionsAndKeys.test_z_variant) ... ok
+test_longest_run (reference.py90b.tests.test_lz78y.TestStatistics.test_longest_run) ... ok
+test_p_global_prime_branches (reference.py90b.tests.test_lz78y.TestStatistics.test_p_global_prime_branches) ... ok
+test_p_local_against_table_3_as_printed (reference.py90b.tests.test_lz78y.TestStatistics.test_p_local_against_table_3_as_printed) ... ok
+test_p_local_monotone_in_r (reference.py90b.tests.test_lz78y.TestStatistics.test_p_local_monotone_in_r) ... ok
+test_p_local_solves_the_equation (reference.py90b.tests.test_lz78y.TestStatistics.test_p_local_solves_the_equation) ... ok
+test_p_local_spec_examples (reference.py90b.tests.test_lz78y.TestStatistics.test_p_local_spec_examples) ... ok
+test_p_local_table_3_mislabelled_block (reference.py90b.tests.test_lz78y.TestStatistics.test_p_local_table_3_mislabelled_block) ... ok
+test_correct_array_both_methods (reference.py90b.tests.test_lz78y.TestWorkedExample.test_correct_array_both_methods) ... ok
+test_dictionary_bookkeeping (reference.py90b.tests.test_lz78y.TestWorkedExample.test_dictionary_bookkeeping) ... ok
+test_statistics (reference.py90b.tests.test_lz78y.TestWorkedExample.test_statistics) ... ok
+test_trace_matches_table (reference.py90b.tests.test_lz78y.TestWorkedExample.test_trace_matches_table) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.538s
+
+OK
+unittest exit=0

@@ -1,0 +1,15 @@
+ok  label-capture: baseline self-comparison: expected AGREE, observed AGREE
+ok  label-capture: mcv: reference min_entropy - 1e-6: expected CPP_HIGHER, observed CPP_HIGHER
+ok  label-capture: mcv: reference min_entropy + 1e-6: expected CPP_LOWER, observed CPP_LOWER
+ok  label-capture: mcv: reference min_entropy - 1e-10 (inside tolerance): expected AGREE, observed AGREE
+ok  label-capture: mcv: reference p_hat + 1e-6: expected INTERMEDIATE_DIFF, observed INTERMEDIATE_DIFF
+ok  label-capture: mcv: reference mode_count + 1 (integer, exact): expected INTERMEDIATE_DIFF, observed INTERMEDIATE_DIFF
+ok  label-capture: mcv: reference module missing: expected NOT_RUN, observed NOT_RUN
+ok  label-capture: mcv: reference min_entropy = nan: expected NOT_RUN, observed NOT_RUN
+ok  label-capture: 'Assessed min entropy' line removed, exit 0: expected TOOL_REFUSED, observed TOOL_REFUSED
+ok  label-capture: exit status 255 with full text: expected TOOL_REFUSED, observed TOOL_REFUSED
+ok  label-capture: assessed: C++ + 1e-6 vs reference: expected CPP_HIGHER, observed CPP_HIGHER
+ok  label-capture: assessed: reference incomplete and C++ lower: expected NOT_RUN, observed NOT_RUN
+ok  label-capture: assessed: reference incomplete and C++ HIGHER: expected CPP_HIGHER, observed CPP_HIGHER
+ok  label-capture: lines shuffled: parse identical (by label, not position): expected identical, observed identical
+SELF-CHECK PASS: 14/14 rows; record at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/SELF-CHECK.md

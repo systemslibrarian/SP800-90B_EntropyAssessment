@@ -1,0 +1,32 @@
+# 2026-11-08T01:38:51Z python: 3.14.7 cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b
+# cmd: python tests/test_markov.py
+test_cli_bitstring_and_masking (__main__.CommandLine.test_cli_bitstring_and_masking) ... ok
+test_cli_nan_is_emitted_for_undetermined (__main__.CommandLine.test_cli_nan_is_emitted_for_undetermined) ... ok
+test_cli_worked_example_literal (__main__.CommandLine.test_cli_worked_example_literal) ... ok
+test_all_one_is_symmetric (__main__.HandDerivedCases.test_all_one_is_symmetric) ... ok
+test_all_zero_is_degenerate_and_determined (__main__.HandDerivedCases.test_all_zero_is_degenerate_and_determined) ... ok
+test_alternating (__main__.HandDerivedCases.test_alternating) ... ok
+test_five_samples_all_transitions_seen (__main__.HandDerivedCases.test_five_samples_all_transitions_seen) ... ok
+test_single_sample_and_empty_input (__main__.HandDerivedCases.test_single_sample_and_empty_input) ... ok
+test_undetermined_tiny_case_reports_bounds_and_nan (__main__.HandDerivedCases.test_undetermined_tiny_case_reports_bounds_and_nan) ... ok
+test_bitstring_limit (__main__.InputHandling.test_bitstring_limit) ... ok
+test_bitstring_mode_equals_estimate_on_the_bits (__main__.InputHandling.test_bitstring_mode_equals_estimate_on_the_bits) ... ok
+test_non_binary_literal_is_not_applicable (__main__.InputHandling.test_non_binary_literal_is_not_applicable) ... ok
+test_out_of_range_rejected (__main__.InputHandling.test_out_of_range_rejected) ... ok
+test_random_data_invariants (__main__.InputHandling.test_random_data_invariants) ... ok
+test_relabelling_invariance (__main__.InputHandling.test_relabelling_invariance) ... ok
+test_to_bitstring_is_msb_first (__main__.InputHandling.test_to_bitstring_is_msb_first) ... ok
+test_two_valued_alphabet_is_binary_by_alphabet_not_by_values (__main__.InputHandling.test_two_valued_alphabet_is_binary_by_alphabet_not_by_values) ... ok
+test_counts_by_hand (__main__.WorkedExample.test_counts_by_hand) ... ok
+test_overlapping_pairs_is_the_reading_the_example_fixes (__main__.WorkedExample.test_overlapping_pairs_is_the_reading_the_example_fixes) ... ok
+test_step1_initial_probabilities (__main__.WorkedExample.test_step1_initial_probabilities) ... ok
+test_step2_transition_matrix (__main__.WorkedExample.test_step2_transition_matrix) ... ok
+test_step3_table_matches_spec_loosely_and_the_reason_is_rounding (__main__.WorkedExample.test_step3_table_matches_spec_loosely_and_the_reason_is_rounding) ... ok
+test_step4_min_entropy (__main__.WorkedExample.test_step4_min_entropy) ... ok
+test_table_exponents_cover_128_symbols (__main__.WorkedExample.test_table_exponents_cover_128_symbols) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.262s
+
+OK
+# exit status: 0

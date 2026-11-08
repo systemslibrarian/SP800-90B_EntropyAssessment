@@ -1,0 +1,258 @@
+{
+ "min_entropy": NaN,
+ "L": 160,
+ "bits_per_symbol": 2,
+ "track": "literal",
+ "binary": false,
+ "alphabet": "observed",
+ "variant": "literal",
+ "gof_df_zero": "not_applied",
+ "bit_order": null,
+ "bitstring_limit": null,
+ "chi_square_independence": {
+  "L": 160,
+  "k": 4,
+  "T": 13.933218985677973,
+  "df": 6,
+  "P-value": 0.030391106143930636,
+  "critical_value": 22.457744484825326,
+  "applied": true,
+  "fail_by_pvalue": false,
+  "fail_by_critical_value": false,
+  "failed": false,
+  "nbin": 10,
+  "npairs": 80,
+  "exact_boundary": false,
+  "merged_last_two": false,
+  "bins": [
+   {
+    "pairs": [
+     [
+      3,
+      3
+     ],
+     [
+      0,
+      3
+     ],
+     [
+      3,
+      0
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      3,
+      2
+     ]
+    ],
+    "E": 6.25,
+    "o": 5
+   },
+   {
+    "pairs": [
+     [
+      1,
+      3
+     ],
+     [
+      3,
+      1
+     ],
+     [
+      0,
+      0
+     ]
+    ],
+    "E": 9.215625,
+    "o": 11
+   },
+   {
+    "pairs": [
+     [
+      0,
+      2
+     ]
+    ],
+    "E": 6.9875,
+    "o": 7
+   },
+   {
+    "pairs": [
+     [
+      2,
+      0
+     ]
+    ],
+    "E": 6.9875,
+    "o": 5
+   },
+   {
+    "pairs": [
+     [
+      0,
+      1
+     ]
+    ],
+    "E": 7.390625,
+    "o": 10
+   },
+   {
+    "pairs": [
+     [
+      1,
+      0
+     ]
+    ],
+    "E": 7.390625,
+    "o": 8
+   },
+   {
+    "pairs": [
+     [
+      2,
+      2
+     ]
+    ],
+    "E": 8.45,
+    "o": 14
+   },
+   {
+    "pairs": [
+     [
+      1,
+      2
+     ]
+    ],
+    "E": 8.9375,
+    "o": 1
+   },
+   {
+    "pairs": [
+     [
+      2,
+      1
+     ]
+    ],
+    "E": 8.9375,
+    "o": 7
+   },
+   {
+    "pairs": [
+     [
+      1,
+      1
+     ]
+    ],
+    "E": 9.453125,
+    "o": 12
+   }
+  ]
+ },
+ "chi_square_goodness_of_fit": {
+  "L": 160,
+  "k": 4,
+  "T": 19.490697981264017,
+  "df": 18,
+  "P-value": 0.36220979215068194,
+  "critical_value": 42.31239633167997,
+  "applied": true,
+  "fail_by_pvalue": false,
+  "fail_by_critical_value": false,
+  "failed": false,
+  "failed_if_df_zero_degenerate": false,
+  "nbin": 3,
+  "subset_length": 16,
+  "exact_boundary": false,
+  "merged_last_two": false,
+  "bins": [
+   {
+    "values": [
+     3,
+     0
+    ],
+    "E": 5.3,
+    "o": [
+     6,
+     3,
+     3,
+     4,
+     5,
+     5,
+     6,
+     6,
+     6,
+     9
+    ]
+   },
+   {
+    "values": [
+     2
+    ],
+    "E": 5.2,
+    "o": [
+     6,
+     6,
+     3,
+     9,
+     6,
+     4,
+     4,
+     4,
+     7,
+     3
+    ]
+   },
+   {
+    "values": [
+     1
+    ],
+    "E": 5.5,
+    "o": [
+     4,
+     7,
+     10,
+     3,
+     5,
+     7,
+     6,
+     6,
+     3,
+     4
+    ]
+   }
+  ]
+ },
+ "chi_square_tests_failed": false,
+ "lrs_length_test": {
+  "L": 160,
+  "k": 4,
+  "P_col": 0.299921875,
+  "W": 9,
+  "N": 11476,
+  "p_col^W": 1.9636915993761025e-05,
+  "log(p_col^W)": -10.838099294162197,
+  "p_col^W underflowed": false,
+  "Pr(X >= 1)": 0.20176757184949715,
+  "applied": true,
+  "passed": true,
+  "W_suffix": 9,
+  "W_direct": 9
+ },
+ "lrs_length_test_passed": true,
+ "section_5_2_passed": true,
+ "Chi square independence: T": 13.933218985677973,
+ "Chi square independence: df": 6,
+ "Chi square independence: P-value": 0.030391106143930636,
+ "Chi square goodness of fit: T": 19.490697981264017,
+ "Chi square goodness of fit: df": 18,
+ "Chi square goodness of fit: P-value": 0.36220979215068194,
+ "Chi square tests": "Passed",
+ "Literal Longest Repeated Substring results: P_col": 0.299921875,
+ "Literal Longest Repeated Substring results: W": 9,
+ "Literal Longest Repeated Substring results: Pr(X >= 1)": 0.20176757184949715,
+ "Length of longest repeated substring test": "Passed",
+ "rawfile": "corpus/iid-chisq-ex12.bin"
+}

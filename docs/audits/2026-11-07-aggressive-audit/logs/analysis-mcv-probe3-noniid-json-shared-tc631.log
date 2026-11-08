@@ -1,0 +1,87 @@
+binary: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+input: 088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_spec_example_L20.bin
+cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_non_iid -i -a -q -o <scratch>/mcv_L20_noniid.json <L20.bin>
+
+*** Warning: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+exit_status=0
+--- JSON ---
+{
+   "IID" : false,
+   "assessedSampleCount" : 20,
+   "bitsPerSymbol" : 2,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "cpp/ea_non_iid -i -a -q -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_L20_noniid.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_spec_example_L20.bin",
+   "dateTimeStamp" : "20261107194255",
+   "errorLevel" : 0,
+   "filename" : "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_spec_example_L20.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.24002231957233899,
+         "hOriginal" : 0.53638126455028012,
+         "mcvEstimateMode" : 8.0,
+         "mcvEstimatePHat" : 0.40000000000000002,
+         "mcvEstimatePU" : 0.68949822145123085,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.084729079759518475,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.68121516062782228,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "bitstringEstimateNotRun" : true,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "bitstringEstimateNotRun" : true,
+         "literalEstimateNotRun" : true,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 0.43082985235469745,
+         "lrsRes" : 0.79235651817975794,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "bitstringEstimateNotRun" : true,
+         "literalEstimateNotRun" : true,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.76634880281680628,
+         "hOriginal" : 0.59665450925846464,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.43878787938257136,
+         "hOriginal" : 1.0530522619464591,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.18982317970852261,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 2.0,
+         "hAssessed" : -0.0,
+         "hBitstring" : 0.084729079759518475,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

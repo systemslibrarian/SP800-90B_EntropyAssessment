@@ -1,0 +1,46 @@
+== 1. spec worked example, section 6.3.8 (PDF p. 60), D = 3 ==
+stepwise {'C': 2, 'r': 3, 'N': 9, 'P_global': 0.2222222222222222, "P_global'": 0.6008586320723548, 'P_local': 0.11670072674349266, 'min_entropy': 0.7349024962948139, 'k': 4, 'correct': [0, 0, 0, 1, 1, 0, 0, 0, 0]}
+   i= 2 lag=(2, None, None) winner=1 prediction=2 s_i=1 correct=0 scoreboard=(0, 0, 0)
+   i= 3 lag=(1, 2, None) winner=1 prediction=1 s_i=3 correct=0 scoreboard=(0, 0, 0)
+   i= 4 lag=(3, 1, 2) winner=1 prediction=3 s_i=2 correct=0 scoreboard=(0, 0, 1)
+   i= 5 lag=(2, 3, 1) winner=3 prediction=1 s_i=1 correct=1 scoreboard=(0, 0, 2)
+   i= 6 lag=(1, 2, 3) winner=3 prediction=3 s_i=3 correct=1 scoreboard=(0, 0, 3)
+   i= 7 lag=(3, 1, 2) winner=3 prediction=2 s_i=1 correct=0 scoreboard=(0, 1, 3)
+   i= 8 lag=(1, 3, 1) winner=3 prediction=1 s_i=3 correct=0 scoreboard=(0, 2, 3)
+   i= 9 lag=(3, 1, 3) winner=3 prediction=3 s_i=1 correct=0 scoreboard=(0, 3, 3)
+   i=10 lag=(1, 3, 1) winner=2 prediction=3 s_i=2 correct=0 scoreboard=(0, 3, 3)
+vectorised {'C': 2, 'r': 3, 'N': 9, 'P_global': 0.2222222222222222, "P_global'": 0.6008586320723548, 'P_local': 0.11670072674349266, 'min_entropy': 0.7349024962948139, 'k': 4, 'correct': [0, 0, 0, 1, 1, 0, 0, 0, 0]}
+spec says: correct=(0,0,0,1,1,0,0,0,0) P_global=0.2222 P_global'=0.6008 P_local=0.1167 min-entropy=0.735
+
+== 2. P_local oracles from the four worked examples (same formula in 6.3.7-6.3.10) ==
+  6.3.7 MultiMCW  r=2 N=9  got=0.0359675587  spec=0.036  diff=-3.24e-05
+  6.3.8 Lag       r=3 N=9  got=0.1167007267  spec=0.1167  diff=+7.27e-07
+  6.3.9 MultiMMC  r=3 N=7  got=0.1307371019  spec=0.1307  diff=+3.71e-05
+  6.3.10 LZ78Y    r=3 N=8  got=0.1229487124  spec=0.1229  diff=+4.87e-05
+
+== 3. Table 3 (Appendix G.2, PDF p. 84), L = 1 000 000 -> N = 999 999 for Lag ==
+  N=999999: 115/136 entries match to 4 dp after rounding; mismatches: [(55, 0.7092, 0.7328376576648634), (60, 0.7328, 0.7530550919032848), (65, 0.7531, 0.7705346123129602), (70, 0.7705, 0.7857876677265598), (75, 0.7858, 0.7992074298068568), (80, 0.7992, 0.8111007161317412), (85, 0.8111, 0.8217102234458533), (90, 0.8217, 0.8312302941127236), (95, 0.8312, 0.8398182898573752), (100, 0.8398, 0.8476029217127126), (105, 0.8476, 0.8546904422856649), (110, 0.8547, 0.8611693066712403), (115, 0.8612, 0.8671137269175835), (120, 0.8671, 0.8725864111295605), (125, 0.8726, 0.8776406969307102), (130, 0.8776, 0.8823222300631792), (135, 0.8823, 0.886670294801984), (140, 0.8867, 0.8907188797671055), (145, 0.8907, 0.894497537343119), (150, 0.8945, 0.8980320803108415), (155, 0.898, 0.9013451535495385)]
+  N=1000000: 115/136 entries match to 4 dp after rounding; mismatches: [(55, 0.7092, 0.7328376437232482), (60, 0.7328, 0.7530550787578039), (65, 0.7531, 0.7705345998861282), (70, 0.7705, 0.785787655949765), (75, 0.7858, 0.7992074186196503), (80, 0.7992, 0.8111007054809314), (85, 0.8111, 0.8217102130587888), (90, 0.8217, 0.8312302841838279), (95, 0.8312, 0.8398182803492507), (100, 0.8398, 0.8476029127904356), (105, 0.8476, 0.8546904337136174), (110, 0.8547, 0.8611692984235826), (115, 0.8612, 0.8671137189711531), (120, 0.8671, 0.8725864032931716), (125, 0.8726, 0.8776406895262858), (130, 0.8776, 0.8823222229033632), (135, 0.8823, 0.8866702877173369), (140, 0.8867, 0.8907188730516209), (145, 0.8907, 0.894497530685243), (150, 0.8945, 0.8980320739883378), (155, 0.898, 0.9013451472704339)]
+
+== 4. monotonicity of the step-6 right-hand side in p (should be decreasing) ==
+  r=1 N=9: increasing steps=10 of 2000; f(0)=0.9999999909999993 f(1-)=0.0  P_local=0.001116080702  rhs(P_local)=0.990000000000
+  r=2 N=9: increasing steps=4 of 2000; f(0)=1.0 f(1-)=0.0  P_local=0.03596755872  rhs(P_local)=0.990000000000
+  r=3 N=9: increasing steps=4 of 2000; f(0)=1.0 f(1-)=0.0  P_local=0.1167007267  rhs(P_local)=0.990000000000
+  r=10 N=999999: increasing steps=175 of 2000; f(0)=1.0 f(1-)=0.0  P_local=0.1613846398  rhs(P_local)=0.989999999990
+  r=1 N=999999: increasing steps=969 of 2000; f(0)=0.9990005007502174 f(1-)=0.0  P_local=1.00503459e-08  rhs(P_local)=0.990000000065
+  r=1000 N=999999: increasing steps=1 of 2000; f(0)=1.0 f(1-)=0.0  P_local=0.9859500306  rhs(P_local)=0.989999999963
+  r=10 N=10: increasing steps=1 of 2000; f(0)=1.0 f(1-)=0.0  P_local=0.6338484499  rhs(P_local)=0.990000000000
+  r=11 N=10: increasing steps=1 of 2000; f(0)=1.0 f(1-)=0.0  P_local=0.6880200028  rhs(P_local)=0.990000000000
+
+== 5. vectorised vs stepwise on random / sticky inputs ==
+  cases=432 disagreements=0
+
+== 6. timing of the vectorised scan (D=128) ==
+  bps=1 L=  5000: 0.005 s   (min_entropy=0.950317 C=2496 r=15)
+  bps=1 L= 10000: 0.011 s   (min_entropy=0.946663 C=5059 r=12)
+  bps=1 L= 20000: 0.028 s   (min_entropy=0.962314 C=10082 r=15)
+  bps=8 L=  5000: 0.004 s   (min_entropy=7.809957 C=13 r=2)
+  bps=8 L= 10000: 0.011 s   (min_entropy=7.171739 C=51 r=2)
+  bps=8 L= 20000: 0.017 s   (min_entropy=7.666835 C=76 r=2)
+  stepwise bps=1 L=20000: 0.531 s
+  stepwise bps=8 L=20000: 0.292 s

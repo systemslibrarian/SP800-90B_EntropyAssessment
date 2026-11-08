@@ -1,0 +1,6 @@
+5065e301cf75af47d553b7665c158f47b72e653f791a6c263f519233e391e699  corpus/collision-spec-example-L40.bin  (40 bytes)
+c81ca5eda5947c7826ad046fdbdc2a25a846b835a6c34c237cc8b3afbe9ec6cc  corpus/collision-allzero-L3000.bin  (3000 bytes)
+b5c3195fc7d6a712ff89c77f4f0d5a8568e6dd7e24c960c38b9f88a05d63763a  corpus/collision-alt-L3000.bin  (3000 bytes)
+876fd516bc6ff62b036e3a86a335c0b3e3b380db82793c6e365162c16e6bdf2f  corpus/collision-clamp-L3001.bin  (3001 bytes)
+abc55ef8f1d293376e9dcfaa041fac6b193e352ebaa466a5f7f53b8f54316f18  corpus/collision-v1-L5.bin  (5 bytes)
+5eb1c055ede8daf8981f7148c4410b653c19e2438060473bfc8941665c417b48  corpus/collision-pairs-L3000.bin  (3000 bytes)

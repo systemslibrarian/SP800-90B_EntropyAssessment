@@ -1,0 +1,63 @@
+date: 2026-11-08T01:59:48Z
+python: 3.14.7 numpy 2.5.4
+env: OMP_NUM_THREADS=2 (no EA_ALLOW_SHORT_DATASET needed: no C++ tool was run)
+module sha256: b5bdce76f62c88d19e82023fea58cf4d012cf0c62b8d71e337f3b49fc6947e0c  reference/py90b/predictor_common.py
+tests sha256:  f82fbed4d64dd7a0326e499d0b195883e364000a449603b24b2858af3ab61bec  reference/py90b/tests/test_predictor_common.py
+== python -m unittest reference/py90b/tests/test_predictor_common.py -v ==
+test_correctly_labelled_rows (reference.py90b.tests.test_predictor_common.AppendixTable3.test_correctly_labelled_rows)
+115 rows reproduce at four decimals with N = 1 000 000 (ambiguity A5). ... ok
+test_mislabelled_block_holds_values_for_r_minus_5 (reference.py90b.tests.test_predictor_common.AppendixTable3.test_mislabelled_block_holds_values_for_r_minus_5)
+Ambiguity A6: printed "55: 0.7092" is P_local(50), ..., "155: 0.8980" is P_local(150). ... ok
+test_table_does_not_distinguish_N_from_L_minus_2 (reference.py90b.tests.test_predictor_common.AppendixTable3.test_table_does_not_distinguish_N_from_L_minus_2)
+A5: at four decimals the table also matches N = L - 1 and N = L - 2 on every ... ok
+test_correct_array_file (reference.py90b.tests.test_predictor_common.CommandLine.test_correct_array_file) ... ok
+test_non_boolean_file_is_refused_without_predictor (reference.py90b.tests.test_predictor_common.CommandLine.test_non_boolean_file_is_refused_without_predictor) ... ok
+test_predictor_flag (reference.py90b.tests.test_predictor_common.CommandLine.test_predictor_flag) ... ok
+test_N0_all_nan (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_N0_all_nan) ... ok
+test_N1 (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_N1) ... ok
+test_every_prediction_correct (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_every_prediction_correct) ... ok
+test_no_correct_prediction_N9_k2_and_k256 (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_no_correct_prediction_N9_k2_and_k256) ... ok
+test_p_global_prime_clamp_to_one (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_p_global_prime_clamp_to_one) ... ok
+test_r1_closed_form_across_N (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_r1_closed_form_across_N)
+r = 1 -> P_local = 1 - 0.99^(1/N) (derivation in the first test); at N = 1e6 that ... ok
+test_z_variant_is_smaller_than_text (reference.py90b.tests.test_predictor_common.DegenerateInputs.test_z_variant_is_smaller_than_text)
+Z_EXACT < 2.576, so the variant gives a smaller P' and a LARGER min-entropy ... ok
+test_estimate_equals_finish (reference.py90b.tests.test_predictor_common.Helpers.test_estimate_equals_finish) ... ok
+test_estimate_k_handling (reference.py90b.tests.test_predictor_common.Helpers.test_estimate_k_handling) ... ok
+test_estimate_rejects_non_boolean_without_predictor (reference.py90b.tests.test_predictor_common.Helpers.test_estimate_rejects_non_boolean_without_predictor) ... ok
+test_longest_run (reference.py90b.tests.test_predictor_common.Helpers.test_longest_run) ... ok
+test_one_million_correct_array_is_fast (reference.py90b.tests.test_predictor_common.Helpers.test_one_million_correct_array_is_fast) ... ok
+test_to_bitstring_msb_first (reference.py90b.tests.test_predictor_common.Helpers.test_to_bitstring_msb_first) ... ok
+test_lag_copy (reference.py90b.tests.test_predictor_common.SiblingFallbackCopies.test_lag_copy) ... ok
+test_lag_deviation_is_on_lags_side (reference.py90b.tests.test_predictor_common.SiblingFallbackCopies.test_lag_deviation_is_on_lags_side)
+Wherever lag's copy and this module differ by more than 1e-13 relative, THIS ... ok
+test_lz78y_copy (reference.py90b.tests.test_predictor_common.SiblingFallbackCopies.test_lz78y_copy) ... ok
+test_multimcw_copy (reference.py90b.tests.test_predictor_common.SiblingFallbackCopies.test_multimcw_copy) ... ok
+test_multimmc_copy (reference.py90b.tests.test_predictor_common.SiblingFallbackCopies.test_multimmc_copy) ... ok
+test_predictor_mode_matches_each_available_sibling (reference.py90b.tests.test_predictor_common.SiblingFallbackCopies.test_predictor_mode_matches_each_available_sibling) ... ok
+test_binary64_solve_against_decimal_solve (reference.py90b.tests.test_predictor_common.Solver.test_binary64_solve_against_decimal_solve)
+Relative error <= 2e-12 for N >= 100 (measured ~1e-14); at tiny N the equation is ... ok
+test_exact_solver_matches_table_3 (reference.py90b.tests.test_predictor_common.Solver.test_exact_solver_matches_table_3) ... ok
+test_finish_exact_fields (reference.py90b.tests.test_predictor_common.Solver.test_finish_exact_fields) ... ok
+test_returned_root_is_bracketed (reference.py90b.tests.test_predictor_common.Solver.test_returned_root_is_bracketed)
+rhs(P_local (1 - 1e-6)) > 0.99 >= rhs(P_local (1 + 1e-6)) -- the root the bisection ... ok
+test_rhs_is_one_at_zero_and_undefined_at_one (reference.py90b.tests.test_predictor_common.Solver.test_rhs_is_one_at_zero_and_undefined_at_one) ... ok
+test_single_crossing_on_a_grid (reference.py90b.tests.test_predictor_common.Solver.test_single_crossing_on_a_grid)
+The right-hand side crosses 0.99 exactly once on a 4 000-point sweep of (0, 1) ... ok
+test_tol_variant (reference.py90b.tests.test_predictor_common.Solver.test_tol_variant) ... ok
+test_underflow_of_p_to_the_r_is_harmless (reference.py90b.tests.test_predictor_common.Solver.test_underflow_of_p_to_the_r_is_harmless)
+0.5**1100 underflows to 0 in binary64; the bisection must still find Table 3's ... ok
+test_x10_versus_converged_recurrence (reference.py90b.tests.test_predictor_common.Solver.test_x10_versus_converged_recurrence)
+Tracker F08: x_10 against the fixed point.  On Table 3's grid and the worked ... ok
+test_example_6_3_8_arithmetic_by_hand (reference.py90b.tests.test_predictor_common.SpecWorkedExamples.test_example_6_3_8_arithmetic_by_hand) ... ok
+test_example_r_values (reference.py90b.tests.test_predictor_common.SpecWorkedExamples.test_example_r_values) ... ok
+test_examples_exact_solve_agrees (reference.py90b.tests.test_predictor_common.SpecWorkedExamples.test_examples_exact_solve_agrees)
+The decimal-arithmetic solve prints the same four decimals as the standard. ... ok
+test_examples_via_estimate_correct_array (reference.py90b.tests.test_predictor_common.SpecWorkedExamples.test_examples_via_estimate_correct_array) ... ok
+test_examples_via_finish (reference.py90b.tests.test_predictor_common.SpecWorkedExamples.test_examples_via_finish) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 2.724s
+
+OK
+exit=0

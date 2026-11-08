@@ -1,0 +1,92 @@
+restart-cutoff-xcheck: independent GF recomputation of the 3.1.4.3 cutoffs
+alpha = 0.000005, N = 1000, Decimal prec = 60
+
+H_I     kflr  rem?  prn   | pinP  dec   pinD  | cdf(d-1)  cdf(d)    | verdict
+0.25    1     yes   890   | 890   890   890   | 5.567e-06 3.569e-06 | MATCH
+0.5     1     yes   769   | 769   769   769   | 6.495e-06 4.641e-06 | MATCH
+0.75    1     yes   662   | 662   662   662   | 6.746e-06 4.984e-06 | MATCH
+1       2     no    570   | 570   572   572   | 5.914e-06 4.369e-06 | MATCH
+1.25    2     yes   490   | 490   492   492   | 6.010e-06 4.445e-06 | MATCH
+1.5     2     yes   421   | 421   423   423   | 6.610e-06 4.866e-06 | MATCH
+1.75    3     yes   362   | 362   366   366   | 5.443e-06 3.936e-06 | MATCH
+2       4     no    312   | 312   316   316   | 6.120e-06 4.354e-06 | MATCH
+2.25    4     yes   269   | 269   273   273   | 5.551e-06 3.877e-06 | MATCH
+2.5     5     yes   232   | 232   236   236   | 6.757e-06 4.624e-06 | MATCH
+2.75    6     yes   200   | 200   205   205   | 5.994e-06 3.992e-06 | MATCH
+3       8     no    173   | 173   178   178   | 7.180e-06 4.654e-06 | MATCH
+3.25    9     yes   150   | 150   155   155   | 6.787e-06 4.266e-06 | MATCH
+3.5     11    yes   130   | 130   135   135   | 7.962e-06 4.849e-06 | MATCH
+3.75    13    yes   113   | 113   118   118   | 8.233e-06 4.837e-06 | MATCH
+4       16    no    99    | 99    104   104   | 6.258e-06 3.515e-06 | MATCH
+4.25    19    yes   86    | 86    91    91    | 8.221e-06 4.446e-06 | MATCH
+4.5     22    yes   76    | 76    80    80    | 9.199e-06 4.765e-06 | MATCH
+4.75    26    yes   66    | 66    71    71    | 7.448e-06 3.658e-06 | MATCH
+5       32    no    58    | 58    63    63    | 7.409e-06 3.451e-06 | MATCH
+5.25    38    yes   51    | 51    56    56    | 7.561e-06 3.333e-06 | MATCH
+5.5     45    yes   45    | 45    50    50    | 7.241e-06 3.006e-06 | MATCH
+5.75    53    yes   40    | 40    45    45    | 5.655e-06 2.193e-06 | MATCH
+6       64    no    36    | 36    40    40    | 8.639e-06 3.167e-06 | MATCH
+6.25    76    yes   32    | 32    36    36    | 8.836e-06 3.024e-06 | MATCH
+6.5     90    yes   28    | 28    33    33    | 5.134e-06 1.610e-06 | MATCH
+6.75    107   yes   25    | 25    29    29    | 1.572e-05 4.707e-06 | MATCH
+7       128   no    23    | 23    27    27    | 6.986e-06 1.887e-06 | MATCH
+7.25    152   yes   21    | 21    24    24    | 1.671e-05 4.259e-06 | MATCH
+7.5     181   yes   19    | 19    22    22    | 1.579e-05 3.683e-06 | MATCH
+7.75    215   yes   17    | 17    20    20    | 2.124e-05 4.569e-06 | MATCH
+8       256   no    15    | 15    19    19    | 8.241e-06 1.568e-06 | MATCH
+
+pins: 32 checked, 0 mismatches
+
+Band of X_max values the fork ACCEPTS and 3.1.4.3 step 5 as printed REJECTS (the documented C23 divergence):
+  H_I=0.25   none (cutoffs coincide at 890)
+  H_I=0.5    none (cutoffs coincide at 769)
+  H_I=0.75   none (cutoffs coincide at 662)
+  H_I=1      X_max in [571, 572]  (2 values)
+  H_I=1.25   X_max in [491, 492]  (2 values)
+  H_I=1.5    X_max in [422, 423]  (2 values)
+  H_I=1.75   X_max in [363, 366]  (4 values)
+  H_I=2      X_max in [313, 316]  (4 values)
+  H_I=2.25   X_max in [270, 273]  (4 values)
+  H_I=2.5    X_max in [233, 236]  (4 values)
+  H_I=2.75   X_max in [201, 205]  (5 values)
+  H_I=3      X_max in [174, 178]  (5 values)
+  H_I=3.25   X_max in [151, 155]  (5 values)
+  H_I=3.5    X_max in [131, 135]  (5 values)
+  H_I=3.75   X_max in [114, 118]  (5 values)
+  H_I=4      X_max in [100, 104]  (5 values)
+  H_I=4.25   X_max in [87, 91]  (5 values)
+  H_I=4.5    X_max in [77, 80]  (4 values)
+  H_I=4.75   X_max in [67, 71]  (5 values)
+  H_I=5      X_max in [59, 63]  (5 values)
+  H_I=5.25   X_max in [52, 56]  (5 values)
+  H_I=5.5    X_max in [46, 50]  (5 values)
+  H_I=5.75   X_max in [41, 45]  (5 values)
+  H_I=6      X_max in [37, 40]  (4 values)
+  H_I=6.25   X_max in [33, 36]  (4 values)
+  H_I=6.5    X_max in [29, 33]  (5 values)
+  H_I=6.75   X_max in [26, 29]  (4 values)
+  H_I=7      X_max in [24, 27]  (4 values)
+  H_I=7.25   X_max in [22, 24]  (3 values)
+  H_I=7.5    X_max in [20, 22]  (3 values)
+  H_I=7.75   X_max in [18, 20]  (3 values)
+  H_I=8      X_max in [16, 19]  (4 values)
+
+Record points (not in the pin list):
+  H_I=0.696                kfloor=1 rem=0.383  printed=684 deciding=684  expected printed 684 deciding 684 -> MATCH  [device operating point, width 1 (CLOSING-INVENTORY: both 684)]
+  H_I=0.9661822653793894   kfloor=1 rem=0.488  printed=581 deciding=582  expected printed 581 deciding 582 -> MATCH  [OC-49 counterexample (printed 581, exact 582)]
+  H_I=0.888                kfloor=1 rem=0.46  printed=610 deciding=610  [lowest H_I with any disagreement per CLOSING-INVENTORY (~0.888)]
+  H_I=0.887                kfloor=1 rem=0.459  printed=610 deciding=610  [just below it]
+  H_I=1.584962500721156    kfloor=2 rem=0.333  printed=400 deciding=404  [log2(3): kfloor boundary robustness (3 cells at 1/3 or 2 cells + remainder)]
+
+binary64 (= long double on Darwin arm64) rounding of p = 2^-H_I to exactly 1.0 (restart_main.cpp:77,118 return n / 0):
+  H_I=1e-300    2^-H_I == 1.0 in binary64: True   (p = 1)
+  H_I=1e-20     2^-H_I == 1.0 in binary64: True   (p = 1)
+  H_I=1e-17     2^-H_I == 1.0 in binary64: True   (p = 1)
+  H_I=1.0e-16   2^-H_I == 1.0 in binary64: False   (p = 0.99999999999999989)
+  H_I=1.6e-16   2^-H_I == 1.0 in binary64: False   (p = 0.99999999999999989)
+  H_I=2e-16     2^-H_I == 1.0 in binary64: False   (p = 0.99999999999999989)
+  H_I=1e-15     2^-H_I == 1.0 in binary64: False   (p = 0.99999999999999933)
+  H_I below which P(X >= 1000) = p^1000 >= alpha, i.e. cutoff 1000 by the statistic itself: H_I < 0.0176096
+
+elapsed 83.5 s
+exit 0

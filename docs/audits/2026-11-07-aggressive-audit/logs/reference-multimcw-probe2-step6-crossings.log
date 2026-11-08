@@ -1,0 +1,32 @@
+Step 6 right-hand side: where is log(RHS) > log(0.99)?  (grid of 400001 points on (0,1))
+A well-posed bisection needs the set {p : RHS > 0.99} to be a single initial interval [0, p*).
+r=     1 N=       9: bisection P_local=0.001116080702  r/(r+1)=0.500000  above-target regions: [0.000003,0.001115]  -> single initial interval
+r=     2 N=       9: bisection P_local=0.03596755872  r/(r+1)=0.666667  above-target regions: [0.000003,0.035968]  -> single initial interval
+r=     3 N=       8: bisection P_local=0.1229487124  r/(r+1)=0.750000  above-target regions: [0.000003,0.122948]  -> single initial interval
+r=     4 N=      20: bisection P_local=0.1624420309  r/(r+1)=0.800000  above-target regions: [0.000003,0.162440]  -> single initial interval
+r=     3 N=      10: bisection P_local=0.1115320309  r/(r+1)=0.750000  above-target regions: [0.000003,0.111530]  -> single initial interval
+r=    38 N=      37: bisection P_local=0.8905970014  r/(r+1)=0.974359  above-target regions: [0.000003,0.890595]  -> single initial interval
+r=    30 N=      37: bisection P_local=0.83639623  r/(r+1)=0.967742  above-target regions: [0.000003,0.836395]  -> single initial interval
+r=    20 N=      37: bisection P_local=0.7286862745  r/(r+1)=0.952381  above-target regions: [0.000003,0.728685]  -> single initial interval
+r=    60 N=     100: bisection P_local=0.9018294136  r/(r+1)=0.983607  above-target regions: [0.000003,0.901828]  -> single initial interval
+r=    90 N=     100: bisection P_local=0.9458271637  r/(r+1)=0.989011  above-target regions: [0.000003,0.945825]  -> single initial interval
+r=   500 N=    1000: bisection P_local=0.9868241244  r/(r+1)=0.998004  above-target regions: [0.000003,0.986823]  -> single initial interval
+r=    20 N=  999937: bisection P_local=0.4088128523  r/(r+1)=0.952381  above-target regions: [0.000003,0.408813]  -> single initial interval
+r=     1 N=  999937: bisection P_local=1.005096901e-08  r/(r+1)=0.500000  above-target regions: none  -> NOT a single initial interval
+r=   100 N= 1000000: bisection P_local=0.8476029128  r/(r+1)=0.990099  above-target regions: [0.000003,0.847603]  -> single initial interval
+r=  1000 N= 1000000: bisection P_local=0.9859500296  r/(r+1)=0.999001  above-target regions: [0.000003,0.985950]  -> single initial interval
+r= 10000 N= 1000000: bisection P_local=0.9988355734  r/(r+1)=0.999900  above-target regions: [0.000003,0.998835]  -> single initial interval
+r=100000 N= 1000000: bisection P_local=0.9999099157  r/(r+1)=0.999990  above-target regions: [0.000003,0.999908]  -> single initial interval
+
+Reading: for N >> r the only region is [0, p*) and the bisection is well-posed.  For r comparable to N
+(very long runs of correct predictions, where P'_global is already ~1) a second region appears near the
+pole r+1-rx=0, and a [0,1] bisection may land in it; the text gives no bounds, so this is a property of
+the equation as written, not of this implementation.
+
+CORRECTION (written after reading the measurement above, 2026-11-07): the last paragraph was drafted
+before the numbers and is NOT supported by them.  Measured: all 17 (r, N) pairs, including r = N+1
+(38, 37), (90, 100) and (500, 1000), show a SINGLE initial above-target interval ending at the
+bisection's P_local; no second region appeared at a grid spacing of 2.5e-6.  The r=1, N=999937 row
+reports "none" only because its root (1.005e-8) lies below the first grid point.  The pole at
+r + 1 - r x = 0 therefore remains a SUSPICION about widths below grid resolution, not a measured
+effect, and the bisection on [0, 1] is well-posed on everything measured here.

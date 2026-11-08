@@ -1,0 +1,31 @@
+test_F_as_printed (py90b.tests.test_compression.TestG.test_F_as_printed) ... ok
+test_G_terms_match_inner_sums_term_by_term (py90b.tests.test_compression.TestG.test_G_terms_match_inner_sums_term_by_term) ... ok
+test_endpoints (py90b.tests.test_compression.TestG.test_endpoints) ... ok
+test_rhs_is_decreasing_in_p (py90b.tests.test_compression.TestG.test_rhs_is_decreasing_in_p) ... ok
+test_uniform_value_matches_maurer_L6_expectation (py90b.tests.test_compression.TestG.test_uniform_value_matches_maurer_L6_expectation) ... ok
+test_vectorised_G_matches_the_printed_double_loop (py90b.tests.test_compression.TestG.test_vectorised_G_matches_the_printed_double_loop) ... ok
+test_degenerate_all_one_symbol_gives_zero (py90b.tests.test_compression.TestHandDerivedInputs.test_degenerate_all_one_symbol_gives_zero) ... ok
+test_four_symbols_repeated_once (py90b.tests.test_compression.TestHandDerivedInputs.test_four_symbols_repeated_once) ... ok
+test_near_constant_stream_drives_X_bar_prime_below_zero (py90b.tests.test_compression.TestHandDerivedInputs.test_near_constant_stream_drives_X_bar_prime_below_zero) ... ok
+test_period_64_cycle_has_no_solution_and_step8_gives_one (py90b.tests.test_compression.TestHandDerivedInputs.test_period_64_cycle_has_no_solution_and_step8_gives_one) ... ok
+test_v_equal_one_and_v_below_one_give_no_value (py90b.tests.test_compression.TestHandDerivedInputs.test_v_equal_one_and_v_below_one_give_no_value) ... ok
+test_bitstring_expansion_is_msb_first (py90b.tests.test_compression.TestInputHandlingAndOptions.test_bitstring_expansion_is_msb_first) ... ok
+test_bitstring_mode_on_8bit_symbols_equals_the_bits_run_directly (py90b.tests.test_compression.TestInputHandlingAndOptions.test_bitstring_mode_on_8bit_symbols_equals_the_bits_run_directly) ... ok
+test_cli_prints_json_with_the_example_figures (py90b.tests.test_compression.TestInputHandlingAndOptions.test_cli_prints_json_with_the_example_figures) ... ok
+test_exact_quantile_option (py90b.tests.test_compression.TestInputHandlingAndOptions.test_exact_quantile_option) ... ok
+test_literal_mode_on_non_binary_symbols_gives_no_value (py90b.tests.test_compression.TestInputHandlingAndOptions.test_literal_mode_on_non_binary_symbols_gives_no_value) ... ok
+test_out_of_alphabet_symbol_is_refused (py90b.tests.test_compression.TestInputHandlingAndOptions.test_out_of_alphabet_symbol_is_refused) ... ok
+test_unknown_option_is_refused (py90b.tests.test_compression.TestInputHandlingAndOptions.test_unknown_option_is_refused) ... ok
+test_step1_blocks (py90b.tests.test_compression.TestSpecWorkedExample.test_step1_blocks) ... ok
+test_step3_dictionary_and_step4_D (py90b.tests.test_compression.TestSpecWorkedExample.test_step3_dictionary_and_step4_D) ... ok
+test_step5_by_hand (py90b.tests.test_compression.TestSpecWorkedExample.test_step5_by_hand) ... ok
+test_steps5_to_8_match_the_printed_figures (py90b.tests.test_compression.TestSpecWorkedExample.test_steps5_to_8_match_the_printed_figures) ... ok
+test_the_literal_upper_limit_L_does_NOT_reproduce_the_example (py90b.tests.test_compression.TestSpecWorkedExample.test_the_literal_upper_limit_L_does_NOT_reproduce_the_example) ... ok
+test_the_textbook_unbiased_sigma_does_NOT_reproduce_the_example (py90b.tests.test_compression.TestSpecWorkedExample.test_the_textbook_unbiased_sigma_does_NOT_reproduce_the_example) ... ok
+test_trailing_bits_are_discarded (py90b.tests.test_compression.TestSpecWorkedExample.test_trailing_bits_are_discarded) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.345s
+
+OK
+exit=0

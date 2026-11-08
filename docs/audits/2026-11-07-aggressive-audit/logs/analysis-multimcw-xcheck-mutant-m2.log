@@ -1,0 +1,10 @@
+P1 worked example  cpp: {'C': 2, 'N': 9, 'r': 2, 'correct': [0, 0, 0, 1, 0, 0, 0, 0, 1]}
+P1 worked example  spec: {'C': 3, 'N': 9, 'r': 2, 'correct': [0, 0, 0, 1, 0, 1, 0, 0, 1]}
+P1 expected correct=(0,0,0,1,0,1,0,0,1) C=3 N=9 r=2 -> MISMATCH
+P2-MUTANT-M2(caseB tie -> least recent) random/adversarial: 8000 cases, 6099 mismatches (C, r or correct[])
+  mismatch: ('uniform', [3, 5, 7, 9], 6, 204, 27, 32, 3, 4)
+  mismatch: ('drift', [3, 5, 7, 9], 6, 204, 118, 117, 14, 14)
+  mismatch: ('ties', [3, 5, 7, 9], 6, 204, 34, 12, 3, 3)
+  mismatch: ('vanish', [3, 5, 7, 9], 6, 204, 99, 97, 66, 66)
+  mismatch: ('uniform', [2, 4, 6, 8], 5, 99, 19, 18, 4, 3)
+exit=0

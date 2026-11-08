@@ -1,0 +1,11 @@
+macOS-26.6.2-arm64-arm-64bit-Mach-O 3.14.7 numpy 2.5.4
+fast  bps=1 L= 5000: 0.017 s   C=2574 r=13
+fast  bps=8 L= 5000: 0.013 s   C=19 r=2
+fast  bps=1 L=10000: 0.030 s   C=5000 r=11
+fast  bps=8 L=10000: 0.026 s   C=33 r=2
+fast  bps=1 L=20000: 0.061 s   C=10061 r=14
+fast  bps=8 L=20000: 0.059 s   C=81 r=2
+literal bps=1 L=20000: 0.198 s   C=10023 r=12
+fast  bps=8 L=20000 max_entries=50 (cap binds at every order): 0.061 s   refused=[19937, 19947, 19946, 19945, 19944, 19943, 19942, 19941, 19940, 19939, 19938, 19937, 19936, 19935, 19934, 19933]
+extrapolation to L=1,000,000 (linear in L): fast ~ 4 s
+exit=0

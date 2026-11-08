@@ -1,0 +1,243 @@
+{
+ "a_rand1_12012.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/a_rand1_12012.bin",
+  "sha256": "8ac0f870fbd646e65652556d7b8d299ffccbd63d0ddc51ac662a7cf0760b6edf",
+  "n_samples": 12012,
+  "bits_per_symbol": 1,
+  "n_bits": 12012,
+  "label": "Literal",
+  "ref": {
+   "N": 2002,
+   "v": 1002,
+   "declined": false,
+   "Xbar": 5.212986445658423,
+   "sigma": 1.027624931998703,
+   "Xprime": 5.129364965366913,
+   "D_head": [
+    16,
+    24,
+    21,
+    86,
+    15,
+    13,
+    38,
+    34
+   ],
+   "D_min": 1,
+   "D_max": 524,
+   "found": true,
+   "p": 0.07861969012787656,
+   "H": 0.6114942520414158,
+   "uniform_expectation": 5.217705249111766
+  },
+  "H_spec2576": 0.6114866247759329,
+  "p_spec2576": 0.07862218405518345
+ },
+ "b_v2_6012.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/b_v2_6012.bin",
+  "sha256": "6731b74d0c06dfadc1b0c8f5addbc5664fff31cfc1cf5b2bf30a6603c3111fb7",
+  "n_samples": 6012,
+  "bits_per_symbol": 1,
+  "n_bits": 6012,
+  "label": "Literal",
+  "ref": {
+   "N": 1002,
+   "v": 2,
+   "declined": false,
+   "Xbar": 6.060604858204642,
+   "sigma": 3.6792739374501178,
+   "Xprime": -0.6407745345687861,
+   "D_head": [
+    33,
+    135
+   ],
+   "D_min": 33,
+   "D_max": 135,
+   "found": true,
+   "p": 1.0,
+   "H": -0.0,
+   "uniform_expectation": 5.217705237566208
+  },
+  "H_spec2576": -0.0,
+  "p_spec2576": 1.0
+ },
+ "c_v1_6006.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/c_v1_6006.bin",
+  "sha256": "3f260a3f3b3d4f9abede7acf0f695776e3db37da54011cf39da47989d056ecda",
+  "n_samples": 6006,
+  "bits_per_symbol": 1,
+  "n_bits": 6006,
+  "label": "Literal",
+  "ref": {
+   "N": 1001,
+   "v": 1,
+   "declined": true
+  },
+  "H_spec2576": null,
+  "p_spec2576": null
+ },
+ "d_rand8_2000.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/d_rand8_2000.bin",
+  "sha256": "8ab59719b64d31cda0290162fa62e0bfd1d532074ab62ff2549b7e0f737bd8b2",
+  "n_samples": 2000,
+  "bits_per_symbol": 8,
+  "n_bits": 16000,
+  "label": "Bitstring",
+  "ref": {
+   "N": 2666,
+   "v": 1666,
+   "declined": false,
+   "Xbar": 5.234235149594221,
+   "sigma": 1.0008609544086797,
+   "Xprime": 5.171073519784495,
+   "D_head": [
+    209,
+    162,
+    54,
+    255,
+    27,
+    11,
+    6,
+    6
+   ],
+   "D_min": 1,
+   "D_max": 432,
+   "found": true,
+   "p": 0.058027172734010764,
+   "H": 0.6845212586336245,
+   "uniform_expectation": 5.21770524941051
+  },
+  "H_spec2576": 0.6845116658234386,
+  "p_spec2576": 0.05802948779606527
+ },
+ "e_novel_6012.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/e_novel_6012.bin",
+  "sha256": "942b177441629c55a1c232869f8657697b6fd31c8e0bcdba891b58bbf67963cc",
+  "n_samples": 6012,
+  "bits_per_symbol": 1,
+  "n_bits": 6012,
+  "label": "Literal",
+  "ref": {
+   "N": 1002,
+   "v": 2,
+   "declined": false,
+   "Xbar": 9.9679465260156,
+   "sigma": 5.888066043660576,
+   "Xprime": -0.7564966981336774,
+   "D_head": [
+    1001,
+    1002
+   ],
+   "D_min": 1001,
+   "D_max": 1002,
+   "found": true,
+   "p": 1.0,
+   "H": -0.0,
+   "uniform_expectation": 5.217705237566208
+  },
+  "H_spec2576": -0.0,
+  "p_spec2576": 1.0
+ },
+ "f_const_12000.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/f_const_12000.bin",
+  "sha256": "ff6698a6e831ffcf47af2fed388ffc262f319e72b26cd140929d1e19b1246ad4",
+  "n_samples": 12000,
+  "bits_per_symbol": 1,
+  "n_bits": 12000,
+  "label": "Literal",
+  "ref": {
+   "N": 2000,
+   "v": 1000,
+   "declined": false,
+   "Xbar": 0.0,
+   "sigma": 0.0,
+   "Xprime": 0.0,
+   "D_head": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "D_min": 1,
+   "D_max": 1,
+   "found": true,
+   "p": 1.0,
+   "H": -0.0,
+   "uniform_expectation": 5.217705249110267
+  },
+  "H_spec2576": -0.0,
+  "p_spec2576": 1.0
+ },
+ "g_cycle64_12012.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/g_cycle64_12012.bin",
+  "sha256": "7d72143703dc5d4a6d8ed8bc17a203f4813dc19939346753576f1c43de4b9b6b",
+  "n_samples": 12012,
+  "bits_per_symbol": 1,
+  "n_bits": 12012,
+  "label": "Literal",
+  "ref": {
+   "N": 2002,
+   "v": 1002,
+   "declined": false,
+   "Xbar": 6.0,
+   "sigma": 0.11202144810331889,
+   "Xprime": 5.990884418017594,
+   "D_head": [
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64
+   ],
+   "D_min": 64,
+   "D_max": 64,
+   "found": false,
+   "p": 0.015625,
+   "H": 1.0,
+   "uniform_expectation": 5.217705249111766
+  },
+  "H_spec2576": 1.0,
+  "p_spec2576": 0.015625
+ },
+ "h_zerodict_12012.bin": {
+  "file": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/comp-inputs/h_zerodict_12012.bin",
+  "sha256": "9a0518399c7cbc15e4ecb7db604f410154808d20bc992da86f49a3b4584e3930",
+  "n_samples": 12012,
+  "bits_per_symbol": 1,
+  "n_bits": 12012,
+  "label": "Literal",
+  "ref": {
+   "N": 2002,
+   "v": 1002,
+   "declined": false,
+   "Xbar": 5.425676874139318,
+   "sigma": 1.2165990481990037,
+   "Xprime": 5.326677900716425,
+   "D_head": [
+    1001,
+    1,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008
+   ],
+   "D_min": 1,
+   "D_max": 1260,
+   "found": false,
+   "p": 0.015625,
+   "H": 1.0,
+   "uniform_expectation": 5.217705249111766
+  },
+  "H_spec2576": 1.0,
+  "p_spec2576": 0.015625
+ }
+}

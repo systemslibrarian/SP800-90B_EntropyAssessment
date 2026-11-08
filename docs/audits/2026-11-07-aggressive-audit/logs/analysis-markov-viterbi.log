@@ -1,0 +1,62 @@
+=== 1. spec worked example, 6.3.3 (PDF p.52-53) ===
+L = 40 #0 = 19 pair counts = {(0, 0): 7, (0, 1): 11, (1, 0): 12, (1, 1): 9}
+P0 = 0.475 P1 = 0.525 T = [[0.3888888888888889, 0.6111111111111112], [0.5714285714285714, 0.42857142857142855]]
+  row 00..0     log2 p = -174.120401  p = 3.8418e-53
+  row 0101..01  log2 p = -97.408937  p = 4.7532e-30
+  row 011..1    log2 p = -155.805939  p = 1.2524e-47
+  row 100..0    log2 p = -173.420796  p = 6.2393e-53
+  row 1010..10  log2 p = -97.361409  p = 4.9124e-30
+  row 11..1     log2 p = -156.173448  p = 9.7075e-48
+six-table p_max row = 1010..10  min-entropy = min(-log2/128,1) = 0.7606360062539939
+spec says 0.761 (with 3-digit rounded transitions); exact from counts: 0.7606360062539939
+Viterbi max log2 p = -97.36140880051101  path RLE = 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1  equal to six-table: True
+
+=== 2. D-3 construction: chain where 0(10)^63 0 beats all six rows ===
+P00=0.51 P01=0.490 P10=0.9 P11=0.100 P0=pi0=0.6475
+  six-table best row 0101..01  log2 p = -76.0686  -> spec min-entropy 0.594286
+  Viterbi   best path 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x2 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 log2 p = -76.0109 -> model min-entropy 0.593835
+  gap (bits over 128 steps) = 0.0577  -> per-bit overstatement by the six-table = 0.000451
+P00=0.6 P01=0.400 P10=0.95 P11=0.050 P0=pi0=0.7037
+  six-table best row 0101..01  log2 p = -89.7724  -> spec min-entropy 0.701347
+  Viterbi   best path 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x2 log2 p = -89.1874 -> model min-entropy 0.696777
+  gap (bits over 128 steps) = 0.5850  -> per-bit overstatement by the six-table = 0.004570
+P00=0.61 P01=0.390 P10=0.99 P11=0.010 P0=pi0=0.7174
+  six-table best row 0101..01  log2 p = -88.3337  -> spec min-entropy 0.690107
+  Viterbi   best path 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x2 log2 p = -87.6884 -> model min-entropy 0.685065
+  gap (bits over 128 steps) = 0.6453  -> per-bit overstatement by the six-table = 0.005042
+P00=0.617 P01=0.383 P10=0.999 P11=0.001 P0=pi0=0.7229
+  six-table best row 00..0     log2 p = -88.9437  -> spec min-entropy 0.694873
+  Viterbi   best path 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x2 log2 p = -88.4846 -> model min-entropy 0.691286
+  gap (bits over 128 steps) = 0.4591  -> per-bit overstatement by the six-table = 0.003587
+
+=== 2b. grid search for the largest six-table-vs-Viterbi gap over the transition simplex (P0 = stationary) ===
+grid 400x400: max gap = 0.67573 bits/128 = 0.0052791 bit/bit at P00,P10,pi0,row = (0.0025, 0.385, 0.27848101265822783, '0101..01')
+analytic bound log2(golden ratio) = 0.69424 bits/128 = 0.0054238 bit/bit
+NOTE rule 9: a grid extremum is a lower bound on the supremum; the analytic bound above is the ceiling.
+
+=== 2c. P0 free (not stationary): can the gap exceed the log2(phi) bound? sweep P0 too ===
+P0 free: max gap = 0.67573 bits/128 = 0.0052791 bit/bit at P00,P10,P0,row = (0.005, 0.385, 0.01, '1010..10')
+
+=== 3. floating point: P_01 = 1.0 - P_00 (code) vs #01/(#00+#01) (spec) ===
+C0=1000000 C00=999999: code P01=1.0000000000287557e-06 spec P01=1e-06 diff=2.876e-17 rel=2.876e-11  64*dlog2=2.655e-09 bits/128 -> 2.074e-11 bit/bit
+C0=1000000 C00=1: code P01=0.999999 spec P01=0.999999 diff=0.000e+00 rel=0.000e+00  64*dlog2=0.000e+00 bits/128 -> 0.000e+00 bit/bit
+C0=999999 C00=500000: code P01=0.4999994999995 spec P01=0.4999994999995 diff=0.000e+00 rel=0.000e+00  64*dlog2=0.000e+00 bits/128 -> 0.000e+00 bit/bit
+C0=1000000000 C00=999999999: code P01=9.999999717180685e-10 spec P01=1e-09 diff=-2.828e-17 rel=-2.828e-08  64*dlog2=-2.611e-06 bits/128 -> -2.040e-08 bit/bit
+C0=7 C00=3: code P01=0.5714285714285714 spec P01=0.5714285714285714 diff=0.000e+00 rel=0.000e+00  64*dlog2=0.000e+00 bits/128 -> 0.000e+00 bit/bit
+
+=== 4. corpus files ===
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/markov-spec-example-40-1bit.bin (40 bytes) sha256 5065e301cf75af47d553b7665c158f47b72e653f791a6c263f519233e391e699
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/markov-len2-01-1bit.bin (2 bytes) sha256 b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/markov-len2-10-1bit.bin (2 bytes) sha256 47dc540c94ceb704a23875c11273e16bb0b8a87aed84de911f2133568115f254
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/markov-len3-010-1bit.bin (3 bytes) sha256 faee935763044f124d7526755a5058a33f9402a595994d59eddd4be8546ff201
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/markov-d3-chain-20k-1bit.bin (20000 bytes) sha256 fb4c30985e64f9d97239d3ea6153f631c7c1ae70d1a63e7adede6bfd4230c605
+fitted from the 20k file: P0 = 0.72055 P1 = 0.27945 T = [[0.6156141568355309, 0.3843858431644691], [0.9910538557881553, 0.008946144211844694]] counts = {(0, 0): 8871, (0, 1): 5539, (1, 0): 5539, (1, 1): 50}
+six-table (= what a conforming tool must print): p_max row 00..0, p-hat_max = 1.258508413704293e-27, min entropy = 0.6981276851589963
+Viterbi over all 128-paths on the same fitted chain: path 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x1 1x1 0x2, min entropy = 0.6944530900440837
+gap = 0.47035 bits/128 = 0.0036746 bit/bit (spec-as-written is HIGHER than the model's true max-path value by this)
+
+=== 5. appendix: worked-example sensitivity to exponent mistakes (derived, Python) ===
+correct 127/64+63/1+126           : ('1010..10', 0.7606360062539939)
+64/63 swapped in alternating rows : ('1010..10', 0.759879275478583)
+128 transitions (128/64+64/1+127) : ('1010..10', 0.766186735807158)
+divide by 127 instead of 128      : ('1010..10', 0.7666252661457575)

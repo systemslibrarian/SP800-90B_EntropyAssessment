@@ -1,0 +1,25 @@
+ALPHA_PRINTED 5e-06 ALPHA_DERIVED 5e-06 True
+alpha exact: 1/200000 1/200000
+H_I=0.696: p=0.6172813034467692 X_cutoff_fail=685 X_cutoff_pass=684  tail(fail)=4.757131e-06 tail(pass)=6.472471e-06  cutoff time 193.3 ms
+H_I=0.888: p=0.5403627010196758 X_cutoff_fail=611 X_cutoff_pass=610  tail(fail)=3.841901e-06 tail(pass)=5.179192e-06  cutoff time 202.8 ms
+H_I=0.5: p=0.7071067811865476 X_cutoff_fail=770 X_cutoff_pass=769  tail(fail)=4.640849e-06 tail(pass)=6.494677e-06  cutoff time 204.0 ms
+H_I=1.0: p=0.5 X_cutoff_fail=571 X_cutoff_pass=570  tail(fail)=3.987053e-06 tail(pass)=5.354869e-06  cutoff time 9.3 ms
+680 exact 2.1218400118296625e-05 float 2.1218400118296625e-05
+684 exact 6.47247096419993e-06 float 6.47247096419993e-06
+685 exact 4.757130988436008e-06 float 4.757130988436008e-06
+690 exact 9.54055293412905e-07 float 9.54055293412905e-07
+XR 3 XC 2 Xmax 3 P 0.05078125 pass True
+H_r 0.5207694387936638 H_c 0.5207694387936638 validation False min(Hr, Hc) < HI/2 (3.1.4.2) H nan
+H_I=1: P 0.3125 H_r 0.5207694387936638 validation True H 0.5207694387936638
+expected H_r 0.5207694387936638
+zeros 4x4 bps1 H_I=1: 4 0.0625 True 0.0 False nan
+zeros 8x8 bps4 H_I=4: 8 2.3283064365386962890625E-10 False nan False nan
+bits full: [[0, 1, 1, 0], [1, 1, 0, 0]]
+bitstring full: shape 2 4 XR 2 XC 2 H_I used 0.5 square False
+bitstring trunc: shape 2 2 XR 2 XC 2
+1 (37, 53) sorted==python True bincount==python True
+2 (20, 20) sorted==python True bincount==python True
+8 (100, 100) sorted==python True bincount==python True
+16 (30, 40) sorted==python True bincount==python n/a
+sanity_check 141x141 bps8: 0.2697079908102751 ms
+rc=0

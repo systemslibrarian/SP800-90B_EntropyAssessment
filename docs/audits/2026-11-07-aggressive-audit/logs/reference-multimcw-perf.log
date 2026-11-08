@@ -1,0 +1,14 @@
+Timing of py90b.multimcw.estimate on this host (Darwin arm64), OMP_NUM_THREADS=2.
+Inputs capped at 20,000 samples (analysis-phase rule); 1,000,000 is EXTRAPOLATED linearly.
+8-bit literal n=10000                        0.247 s   C=35 r=2 N=9937 min_entropy=7.628585
+8-bit bitstring n=10000 (80000 bits)         0.059 s   C=40008 r=16 N=79937 min_entropy=0.985503
+1-bit literal n=10000                        0.004 s   C=4978 r=14 N=9937 min_entropy=0.960504
+8-bit literal n=20000                        0.434 s   C=96 r=2 N=19937 min_entropy=7.362161
+8-bit bitstring n=20000 (160000 bits)        0.298 s   C=80105 r=16 N=159937 min_entropy=0.988292
+1-bit literal n=20000                        0.031 s   C=10014 r=14 N=19937 min_entropy=0.967464
+
+Linear extrapolation to n = 1,000,000 samples (x50 from the n=20,000 rows):
+  8-bit literal n=20000                      -> ~   21.7 s
+  8-bit bitstring n=20000 (160000 bits)      -> ~   14.9 s
+  1-bit literal n=20000                      -> ~    1.5 s
+max RSS: 559.7 MB (macOS reports bytes)

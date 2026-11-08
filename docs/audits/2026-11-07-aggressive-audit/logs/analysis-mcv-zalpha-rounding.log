@@ -1,0 +1,16 @@
+NormalDist.inv_cdf(0.995)  repr: 2.5758293035489  hex: 0x1.49b4c64d6915fp+1
+ZALPHA literal              repr: 2.575829303548901  hex: 0x1.49b4c64d69161p+1
+same double? False
+Traceback (most recent call last):
+  File "<stdin>", line 12, in <module>
+ModuleNotFoundError: No module named 'numpy'. Did you mean: 'runpy'?
+exact value of ZALPHA double : 2.575829303548900828246814853628166019916534423828125
+next lower double            : 2.5758293035489003841576050035655498504638671875
+next upper double            : 2.57582930354890127233602470369078218936920166015625
+|ZALPHA - true|              : 4.44088814853628166019916534423828125E-16
+|lower  - true|              : 3.949964344501495361328125E-22
+half ulp                     : 2.220446049250313080847263336181640625E-16
+ZALPHA is the correctly rounded double of the long-double literal? False
+p=0.5 L=1e+06: sd=5.000e-04; dp_u from 2.576 vs ZALPHA = 8.535e-08; dH ~ 2.456e-07 bits
+p=0.00390625 L=1e+06: sd=6.238e-05; dp_u from 2.576 vs ZALPHA = 1.065e-08; dH ~ 3.777e-06 bits
+p=0.5 L=8e+06: sd=1.768e-04; dp_u from 2.576 vs ZALPHA = 3.018e-08; dH ~ 8.699e-08 bits

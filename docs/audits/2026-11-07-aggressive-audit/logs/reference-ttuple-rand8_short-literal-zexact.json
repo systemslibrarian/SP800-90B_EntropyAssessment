@@ -1,0 +1,28 @@
+{
+ "min_entropy": 7.010454037736041,
+ "t": 1,
+ "p-hat_max": 0.0058,
+ "p_u": 0.007756093777586632,
+ "Q": [
+  58
+ ],
+ "P": [
+  0.0058
+ ],
+ "P_max": [
+  0.0058
+ ],
+ "Q_next": 4,
+ "argmax_i": 1,
+ "L": 10000,
+ "k": 256,
+ "cutoff": 35,
+ "z": 2.575829303548901,
+ "z_variant": "exact",
+ "method": "direct",
+ "mode": "literal",
+ "file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin",
+ "bits_per_symbol": 8,
+ "symbols_in_file": 10000,
+ "bytes_exceeding_width": 0
+}

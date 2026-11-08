@@ -1,0 +1,61 @@
+test_binary_input_table_matches_the_handling_paragraphs (reference.py90b.tests.test_permutation.TestBinaryHandling.test_binary_input_table_matches_the_handling_paragraphs) ... ok
+test_binary_statistics_are_computed_on_the_converted_data (reference.py90b.tests.test_permutation.TestBinaryHandling.test_binary_statistics_are_computed_on_the_converted_data) ... ok
+test_bitstring_track (reference.py90b.tests.test_permutation.TestBinaryHandling.test_bitstring_track) ... ok
+test_conversion_timing_readings (reference.py90b.tests.test_permutation.TestBinaryHandling.test_conversion_timing_readings) ... ok
+test_two_valued_eight_bit_data_under_each_binary_mode (reference.py90b.tests.test_permutation.TestBinaryHandling.test_two_valued_eight_bit_data_under_each_binary_mode) ... ok
+test_cli_matches_the_api_and_survives_the_compression_py_shadow (reference.py90b.tests.test_permutation.TestCommandLine.test_cli_matches_the_api_and_survives_the_compression_py_shadow) ... ok
+test_low_bits_are_the_symbol (reference.py90b.tests.test_permutation.TestCommandLine.test_low_bits_are_the_symbol) ... ok
+test_usage_errors (reference.py90b.tests.test_permutation.TestCommandLine.test_usage_errors) ... ok
+test_against_plain_transcription (reference.py90b.tests.test_permutation.TestConversions.test_against_plain_transcription) ... ok
+test_conversion_II_spec_example (reference.py90b.tests.test_permutation.TestConversions.test_conversion_II_spec_example) ... ok
+test_conversion_I_spec_example (reference.py90b.tests.test_permutation.TestConversions.test_conversion_I_spec_example) ... ok
+test_only_bits_accepted (reference.py90b.tests.test_permutation.TestConversions.test_only_bits_accepted) ... ok
+test_padding_and_edges (reference.py90b.tests.test_permutation.TestConversions.test_padding_and_edges) ... ok
+test_binary_twelve_bits_all_distinct_arrangements (reference.py90b.tests.test_permutation.TestCountersExhaustive.test_binary_twelve_bits_all_distinct_arrangements) ... ok
+test_four_distinct_symbols_all_24_permutations (reference.py90b.tests.test_permutation.TestCountersExhaustive.test_four_distinct_symbols_all_24_permutations) ... ok
+test_counter_update (reference.py90b.tests.test_permutation.TestCountingRule.test_counter_update) ... ok
+test_cutoffs (reference.py90b.tests.test_permutation.TestCountingRule.test_cutoffs) ... ok
+test_figure4_rule_at_the_boundaries (reference.py90b.tests.test_permutation.TestCountingRule.test_figure4_rule_at_the_boundaries) ... ok
+test_iid_decision_any_test_rejects (reference.py90b.tests.test_permutation.TestCountingRule.test_iid_decision_any_test_rejects) ... ok
+test_prose_rule_differs_only_at_equality (reference.py90b.tests.test_permutation.TestCountingRule.test_prose_rule_differs_only_at_equality) ... ok
+test_all_ones_bits_under_both_binary_readings (reference.py90b.tests.test_permutation.TestDegenerateAllOneSymbol.test_all_ones_bits_under_both_binary_readings) ... ok
+test_constant_sequence_passes_the_battery_by_ties (reference.py90b.tests.test_permutation.TestDegenerateAllOneSymbol.test_constant_sequence_passes_the_battery_by_ties) ... ok
+test_short_constant_sequence_has_undefined_lags_and_is_rejected (reference.py90b.tests.test_permutation.TestDegenerateAllOneSymbol.test_short_constant_sequence_has_undefined_lags_and_is_rejected) ... ok
+test_statistics_of_a_constant_sequence (reference.py90b.tests.test_permutation.TestDegenerateAllOneSymbol.test_statistics_of_a_constant_sequence) ... ok
+test_figure5_rejects_an_out_of_range_j (reference.py90b.tests.test_permutation.TestFisherYates.test_figure5_rejects_an_out_of_range_j) ... ok
+test_figure5_transcription_is_a_bijection_onto_the_permutations (reference.py90b.tests.test_permutation.TestFisherYates.test_figure5_transcription_is_a_bijection_onto_the_permutations) ... ok
+test_numpy_generator_shuffle_is_uniform_over_S4 (reference.py90b.tests.test_permutation.TestFisherYates.test_numpy_generator_shuffle_is_uniform_over_S4) ... ok
+test_per_shuffle_streams_are_deterministic_and_distinct (reference.py90b.tests.test_permutation.TestFisherYates.test_per_shuffle_streams_are_deterministic_and_distinct) ... ok
+test_python_fisher_yates_is_a_permutation_and_is_seeded (reference.py90b.tests.test_permutation.TestFisherYates.test_python_fisher_yates_is_a_permutation_and_is_seeded) ... ok
+test_empty_and_single_sample (reference.py90b.tests.test_permutation.TestHandDerivedSmallInputs.test_empty_and_single_sample) ... ok
+test_even_length_median_rules_differ_materially (reference.py90b.tests.test_permutation.TestHandDerivedSmallInputs.test_even_length_median_rules_differ_materially) ... ok
+test_no_collision_gives_no_value (reference.py90b.tests.test_permutation.TestHandDerivedSmallInputs.test_no_collision_gives_no_value) ... ok
+test_two_bit_sequence (reference.py90b.tests.test_permutation.TestHandDerivedSmallInputs.test_two_bit_sequence) ... ok
+test_alternating_bits_are_rejected (reference.py90b.tests.test_permutation.TestProcedure.test_alternating_bits_are_rejected) ... ok
+test_injected_literal_fisher_yates (reference.py90b.tests.test_permutation.TestProcedure.test_injected_literal_fisher_yates) ... ok
+test_negative_control_the_same_bits_in_a_random_order_pass (reference.py90b.tests.test_permutation.TestProcedure.test_negative_control_the_same_bits_in_a_random_order_pass) ... ok
+test_result_structure_and_determinism (reference.py90b.tests.test_permutation.TestProcedure.test_result_structure_and_determinism) ... ok
+test_tests_subset_and_validation (reference.py90b.tests.test_permutation.TestProcedure.test_tests_subset_and_validation) ... ok
+test_workers_do_not_change_the_result (reference.py90b.tests.test_permutation.TestProcedure.test_workers_do_not_change_the_result) ... ok
+test_bz2_level_changes_only_the_compression_statistic (reference.py90b.tests.test_permutation.TestVectorisedAgainstPlain.test_bz2_level_changes_only_the_compression_statistic) ... ok
+test_encoding_fast_path_equals_generic_path (reference.py90b.tests.test_permutation.TestVectorisedAgainstPlain.test_encoding_fast_path_equals_generic_path) ... ok
+test_input_types_agree (reference.py90b.tests.test_permutation.TestVectorisedAgainstPlain.test_input_types_agree) ... ok
+test_statistics_match_plain_transcriptions (reference.py90b.tests.test_permutation.TestVectorisedAgainstPlain.test_statistics_match_plain_transcriptions) ... ok
+test_compression_encoding_example (reference.py90b.tests.test_permutation.TestWorkedExamples.test_compression_encoding_example) ... ok
+test_directional_sequence_of_examples_2_to_4 (reference.py90b.tests.test_permutation.TestWorkedExamples.test_directional_sequence_of_examples_2_to_4) ... ok
+test_example_10_covariance (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_10_covariance) ... ok
+test_example_1_excursion (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_1_excursion) ... ok
+test_example_2_number_of_directional_runs (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_2_number_of_directional_runs) ... ok
+test_example_3_length_of_directional_runs (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_3_length_of_directional_runs) ... ok
+test_example_4_increases_and_decreases (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_4_increases_and_decreases) ... ok
+test_example_5_number_of_runs_based_on_median (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_5_number_of_runs_based_on_median) ... ok
+test_example_6_length_of_runs_based_on_median (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_6_length_of_runs_based_on_median) ... ok
+test_example_7_average_collision (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_7_average_collision) ... ok
+test_example_8_maximum_collision (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_8_maximum_collision) ... ok
+test_example_9_periodicity (reference.py90b.tests.test_permutation.TestWorkedExamples.test_example_9_periodicity) ... ok
+
+----------------------------------------------------------------------
+Ran 55 tests in 2.465s
+
+OK
+exit=0

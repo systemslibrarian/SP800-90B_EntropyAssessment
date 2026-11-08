@@ -1,0 +1,5 @@
+P1 worked example  cpp: {'C': 3, 'N': 9, 'r': 2, 'correct': [0, 0, 0, 1, 0, 1, 0, 0, 1]}
+P1 worked example  spec: {'C': 3, 'N': 9, 'r': 2, 'correct': [0, 0, 0, 1, 0, 1, 0, 0, 1]}
+P1 expected correct=(0,0,0,1,0,1,0,0,1) C=3 N=9 r=2 -> MATCH
+P2-MUTANT(tie-break <= -> <) random/adversarial: 8000 cases, 0 mismatches (C, r or correct[])
+exit=0

@@ -1,0 +1,11 @@
+# H sensitivity to the 4-ULP termination tolerance of compression_test.h:187 (relEpsilonEqual(pVal, X, DBL_MIN, DBL_EPSILON, 4))
+# pure Python, G = transliteration of the C++ loop; N = 166666 (1e6 bits), d = 1000
+com_exp(1/64) [uniform expectation] = 5.2177052498567909 ; ULP = 8.88e-16
+X' = cap - 4 ULP -> p = 0.015625006350758645  H = 0.99999990226980107  (1 - H = 9.77e-08)
+X' = cap - 1e-12 -> p = 0.015625149664719121  H = 0.99999769685851758  (1 - H = 2.3e-06)
+X' = cap - 1e-9 -> p = 0.01562973231283921  H = 0.99992718666036551  (1 - H = 7.28e-05)
+X' = cap - 1e-6 -> p = 0.015774884754291285  H = 0.99770445405771413  (1 - H = 0.0023)
+H0=0.95 p0=0.0192366 X'=5.2171637967146234 : H(X'-4ULP)-H0 = -1.01e-12 ; H(X'+4ULP)-H0 = -8.27e-13
+H0=0.85 p0=0.0291573 X'=5.2112340989607624 : H(X'-4ULP)-H0 = -1.61e-13 ; H(X'+4ULP)-H0 = -1.54e-13
+H0=0.70 p0=0.0544094 X'=5.1774572315492406 : H(X'-4ULP)-H0 = 4.74e-14 ; H(X'+4ULP)-H0 = 5.13e-14
+H0=0.61 p0=0.0791098 X'=5.1282739099432542 : H(X'-4ULP)-H0 = -1.67e-15 ; H(X'+4ULP)-H0 = 6.66e-16

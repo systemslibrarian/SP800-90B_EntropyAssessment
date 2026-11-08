@@ -1,0 +1,66 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 3001,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -o logs/analysis-collision-probe-clamp.json corpus/collision-clamp-L3001.bin 1",
+   "dateTimeStamp" : "20261107194550",
+   "errorLevel" : 0,
+   "filename" : "corpus/collision-clamp-L3001.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "876fd516bc6ff62b036e3a86a335c0b3e3b380db82793c6e365162c16e6bdf2f",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hOriginal" : -0.0,
+         "mcvEstimateMode" : 2999.0,
+         "mcvEstimatePHat" : 0.99933355548150615,
+         "mcvEstimatePU" : 1.0,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.00096243334246551976,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "literalEstimateNotRun" : true,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : -0.0,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : -0.0,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "literalEstimateNotRun" : true,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : -0.0,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

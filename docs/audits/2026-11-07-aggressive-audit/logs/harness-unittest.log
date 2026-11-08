@@ -1,0 +1,18 @@
+........................................
+----------------------------------------------------------------------
+Ran 40 tests in 0.745s
+
+OK
+csprng-1bit-5000.bin	1	5000	4c4cdd7856420f2283ce9bfdba5cd7e16a19d680a838b30984eac7916fcbee99
+csprng-8bit-5000.bin	8	5000	310f10bc65c25c99ffe9171b950b05846934f10cccb17607f3c93bfce693b469
+# wrote 2 files and /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T/tmpp49vbb9q/MANIFEST.txt (2 rows) in 0.0s
+OK       csprng-1bit-5000.bin
+OK       csprng-8bit-5000.bin
+CHECK: 2 ok, 0 bad, of 2 manifest rows
+csprng-1bit-5000.bin	1	5000	4c4cdd7856420f2283ce9bfdba5cd7e16a19d680a838b30984eac7916fcbee99
+csprng-8bit-5000.bin	8	5000	310f10bc65c25c99ffe9171b950b05846934f10cccb17607f3c93bfce693b469
+# wrote 2 files and /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T/tmpp49vbb9q/MANIFEST.txt (3 rows) in 0.2s
+MISMATCH csprng-1bit-5000.bin: size 5000 (manifest 5000), sha256 3d6807af80b20f94c018531708ad90841335b66f1bbb03a513b95af30ba082c3 (manifest 4c4cdd7856420f2283ce9bfdba5cd7e16a19d680a838b30984eac7916fcbee99)
+OK       csprng-8bit-5000.bin
+MISSING  foreign.bin
+CHECK: 1 ok, 2 bad, of 3 manifest rows

@@ -1,0 +1,20 @@
+L = 20000; python 3.14.7; numpy 2.5.4
+uniform bits (bps=1)               direct           0.007 s   t=    10  H=0.887252  used=direct
+uniform bits (bps=1)               suffix_array     0.018 s   t=    10  H=0.887252  used=suffix_array
+uniform bits (bps=1)               auto             0.008 s   t=    10  H=0.887252  used=direct
+biased bits p0=0.9 (bps=1)         direct           0.039 s   t=    57  H=0.140969  used=direct
+biased bits p0=0.9 (bps=1)         suffix_array     0.009 s   t=    57  H=0.140969  used=suffix_array
+biased bits p0=0.9 (bps=1)         auto             0.035 s   t=    57  H=0.140969  used=direct
+biased bits p0=0.99 (bps=1)        direct           0.194 s   t=   376  H=0.013191  used=direct
+biased bits p0=0.99 (bps=1)        suffix_array     0.009 s   t=   376  H=0.013191  used=suffix_array
+biased bits p0=0.99 (bps=1)        auto             0.051 s   t=   376  H=0.013191  used=suffix_array (after direct reached 128)
+all-zero bits (bps=1)              direct        skipped (t = L-34 makes the per-length method O(L^2))
+all-zero bits (bps=1)              suffix_array     0.010 s   t= 19966  H=0.000000  used=suffix_array
+all-zero bits (bps=1)              auto             0.026 s   t= 19966  H=0.000000  used=suffix_array (after direct reached 128)
+uniform bytes (bps=8)              direct           0.002 s   t=     1  H=7.250688  used=direct
+uniform bytes (bps=8)              suffix_array     0.007 s   t=     1  H=7.250688  used=suffix_array
+uniform bytes (bps=8)              auto             0.001 s   t=     1  H=7.250688  used=direct
+biased bytes p(0)=0.9 (bps=8)      direct           0.044 s   t=    63  H=0.136604  used=direct
+biased bytes p(0)=0.9 (bps=8)      suffix_array     0.009 s   t=    63  H=0.136604  used=suffix_array
+biased bytes p(0)=0.9 (bps=8)      auto             0.043 s   t=    63  H=0.136604  used=direct
+exit=0

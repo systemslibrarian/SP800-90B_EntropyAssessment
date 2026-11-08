@@ -1,0 +1,47 @@
+{
+  "binary_sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f",
+  "cases": {
+    "A_spec_example_w2": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/A_spec_example_w2.bin",
+      "sha256": "9a0e378d966138a4a210d3ec1ed941d63b424b65f95e05a6171ef4371daf56af",
+      "n": 21,
+      "w": 2
+    },
+    "B_bits_p03_n4000_w1": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/B_bits_p03_n4000_w1.bin",
+      "sha256": "cce8fc155fc4d3569dced3993116b9cb28bc2f8bfa2382111cd6e66aad7c843c",
+      "n": 4000,
+      "w": 1
+    },
+    "C_k4_biased_n1200_w8": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/C_k4_biased_n1200_w8.bin",
+      "sha256": "f765bea6f0f64fdec5331bba66feb171af2ea339b977e5f778a2b0a60b7ea053",
+      "n": 1200,
+      "w": 8
+    },
+    "D_cutoff35_boundary_w8": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/D_cutoff35_boundary_w8.bin",
+      "sha256": "c949619ace8d5c6b065cd92a771f6e1ba1cb944b1ead871f90967b4ff5aff48c",
+      "n": 824,
+      "w": 8
+    },
+    "E_period7_n300_w3": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/E_period7_n300_w3.bin",
+      "sha256": "f730ed9da0a92a39ed45ee6f2e55637e04b0a7a07c5a9c6081f16bcbb7272762",
+      "n": 300,
+      "w": 3
+    },
+    "F_const0_n500_w1": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/F_const0_n500_w1.bin",
+      "sha256": "e6304a473c65ecd0ccffbd2f5925a8f51c44b11f59b66cfcc055e4bb911b8fa0",
+      "n": 500,
+      "w": 1
+    },
+    "G_rand8_n2000_w8": {
+      "path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/ttuple-probe/G_rand8_n2000_w8.bin",
+      "sha256": "8198ed9c1d517ba3b0360daa6a0ec0fdf25e6c3eba9eefe654e957eb106b4b0e",
+      "n": 2000,
+      "w": 8
+    }
+  }
+}

@@ -1,0 +1,10 @@
+# 2026-11-08T01:39:08Z timing probe, n = 20000 symbols (analysis phase cap), OMP_NUM_THREADS=2
+bps=1 mode=literal n=20000 bits_assessed=20000 file=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/markov/rand1_20000.bin sha256=8a6791cfa8cca448e504cb93cd7cb9d52c907cd2a9383a8969971ab8d8fbf99b
+  estimate() median of 5: 0.08 ms   CLI wall (incl. startup): 0.046 s   exit=0
+  min_entropy=0.9835511135558812 P_0=0.49385 p-hat_max=1.264638521575003e-38
+  linear extrapolation to n=1,000,000 symbols: ~0.004 s for estimate() (O(n) bincount; memory ~1 MB of uint8 bits + a transient uint32 expansion)
+bps=8 mode=bitstring n=20000 bits_assessed=160000 file=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/markov/rand8_20000.bin sha256=7a0d34a82d182d9e2db6009c8270584c2d0698d8da907d0db99459288c324c91
+  estimate() median of 5: 0.59 ms   CLI wall (incl. startup): 0.046 s   exit=0
+  min_entropy=0.9975417431213633 P_0=0.5000875 p-hat_max=3.654952307793231e-39
+  linear extrapolation to n=1,000,000 symbols: ~0.030 s for estimate() (O(n) bincount; memory ~8 MB of uint8 bits + a transient uint32 expansion)
+# exit status: 0

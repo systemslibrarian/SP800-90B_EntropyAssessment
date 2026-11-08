@@ -1,0 +1,9 @@
+binary sha256: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+collision-spec-example-L40 exit=0
+collision-allzero-L3000 exit=255
+collision-alt-L3000 exit=0
+collision-clamp-L3001 exit=0
+collision-v1-L5 exit=0
+allzero-json exit=255
+collision-pairs-L3000 exit=0
+clamp-json exit=0

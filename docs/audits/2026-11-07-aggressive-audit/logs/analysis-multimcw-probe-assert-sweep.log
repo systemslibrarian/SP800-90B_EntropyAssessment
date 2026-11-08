@@ -1,0 +1,14 @@
+binary sha256: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ; cmd: cpp/ea_non_iid -i -a -v -v <file> 1 ; data: n zero bits with a 1 every M positions
+n=20000 M=500 exit=0 r=500 Pglobal'=0.99881000313155144 (r+1)(1-P')=0.5962 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=700 exit=0 r=700 Pglobal'=0.99927876684537853 (r+1)(1-P')=0.5056 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=1500 exit=0 r=1500 Pglobal'=0.99981363741185936 (r+1)(1-P')=0.2797 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=2000 exit=0 r=2000 Pglobal'=0.99990688913262815 (r+1)(1-P')=0.1863 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=2500 exit=0 r=2500 Pglobal'=0.99996410023048188 (r+1)(1-P')=0.0898 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=3300 exit=0 r=3300 Pglobal'=1 (r+1)(1-P')=0.0000 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=5000 exit=0 r=5000 Pglobal'=1 (r+1)(1-P')=0.0000 assert_lines=0 plocal='P_local can't change the result.'
+n=17000 M=1000 exit=0 r=1000 Pglobal'=0.99962303822266008 (r+1)(1-P')=0.3773 assert_lines=0 plocal='P_local can't change the result.'
+n=13000 M=1000 exit=0 r=1000 Pglobal'=0.99971268269192259 (r+1)(1-P')=0.2876 assert_lines=0 plocal='P_local can't change the result.'
+n=9000 M=1000 exit=0 r=1000 Pglobal'=0.9998572259258649 (r+1)(1-P')=0.1429 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=6600 exit=0 r=6600 Pglobal'=1 (r+1)(1-P')=0.0000 assert_lines=0 plocal='P_local can't change the result.'
+n=20000 M=9999 exit=0 r=9999 Pglobal'=1 (r+1)(1-P')=0.0000 assert_lines=0 plocal='P_local can't change the result.'

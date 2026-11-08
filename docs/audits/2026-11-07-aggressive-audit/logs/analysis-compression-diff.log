@@ -1,0 +1,108 @@
+# binary cpp/ea_non_iid sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+# fields: case | rc | tool value | reference value | tool-ref | note
+
+## a_rand1_12012  (rc=0, Literal label, short-dataset warning printed: True, 72 lines)
+Xbar    tool=5.212986445658423 ref=5.212986445658423 diff=0
+sigma   tool=1.027624931998703 ref=1.027624931998703 diff=0
+Xprime  tool=5.1293649653669133 ref=5.1293649653669133 diff=0
+found: tool Found p=True / Could-Not-Find=False ; reference found=True
+p       tool=0.078619690127871067 ref=0.078619690127876563 rel=-6.99e-14
+        com_exp(p_tool)-X'=2.66e-15 (3.00 ULP of X')   com_exp(p_ref)-X'=0 (0.00 ULP)
+H       tool=0.6114942520414326 ref=0.61149425204141583 diff=1.68e-14  (tool HIGHER)
+        for information: H with the printed 2.576 would be 0.61148662477593285 (tool - that = 7.63e-06 bit)
+uniform expectation com_exp(1/64) at N=2002: 5.2177052491117664 ; tool X'=5.129364965366913
+Assessed min entropy printed: 0.6114942520414326 ; H_original: None
+
+## a_rand1_12012-c  (rc=0, Bitstring label, short-dataset warning printed: True, 74 lines)
+Xbar    tool=5.212986445658423 ref=5.212986445658423 diff=0
+sigma   tool=1.027624931998703 ref=1.027624931998703 diff=0
+Xprime  tool=5.1293649653669133 ref=5.1293649653669133 diff=0
+found: tool Found p=True / Could-Not-Find=False ; reference found=True
+p       tool=0.078619690127871067 ref=0.078619690127876563 rel=-6.99e-14
+        com_exp(p_tool)-X'=2.66e-15 (3.00 ULP of X')   com_exp(p_ref)-X'=0 (0.00 ULP)
+H       tool=0.6114942520414326 ref=0.61149425204141583 diff=1.68e-14  (tool HIGHER)
+        for information: H with the printed 2.576 would be 0.61148662477593285 (tool - that = 7.63e-06 bit)
+uniform expectation com_exp(1/64) at N=2002: 5.2177052491117664 ; tool X'=5.129364965366913
+Assessed min entropy printed: 0.6114942520414326 ; H_original: None
+
+## b_v2_6012  (rc=0, Literal label, short-dataset warning printed: True, 72 lines)
+Xbar    tool=6.0606048582046421 ref=6.0606048582046421 diff=0
+sigma   tool=3.6792739374501178 ref=3.6792739374501178 diff=0
+Xprime  tool=-0.64077453456878608 ref=-0.64077453456878608 diff=0
+found: tool Found p=True / Could-Not-Find=False ; reference found=True
+p       tool=1 ref=1 rel=0
+        com_exp(p_tool)-X'=0.641 (5771583910224976.00 ULP of X')   com_exp(p_ref)-X'=0.641 (5771583910224976.00 ULP)
+H       tool=-0 ref=-0 diff=0  (tool lower or equal)
+        for information: H with the printed 2.576 would be -0 (tool - that = 0 bit)
+uniform expectation com_exp(1/64) at N=1002: 5.2177052375662081 ; tool X'=-0.6407745345687861
+Assessed min entropy printed: -0.0 ; H_original: None
+
+## c_v1_6006  (rc=0, Literal label, short-dataset warning printed: True, 67 lines)
+reference: DECLINES (v=1 < 2);  tool declined: True;  tool printed any Literal compression value: False
+Assessed min entropy printed: 0.689812414757645
+
+## d_rand8_2000  (rc=0, Bitstring label, short-dataset warning printed: True, 107 lines)
+Xbar    tool=5.2342351495942214 ref=5.2342351495942214 diff=0
+sigma   tool=1.0008609544086799 ref=1.0008609544086797 diff=2.22e-16
+Xprime  tool=5.1710735197844953 ref=5.1710735197844953 diff=0
+found: tool Found p=True / Could-Not-Find=False ; reference found=True
+p       tool=0.058027172734016697 ref=0.058027172734010764 rel=1.02e-13
+        com_exp(p_tool)-X'=-1.78e-15 (-2.00 ULP of X')   com_exp(p_ref)-X'=0 (0.00 ULP)
+H       tool=0.68452125863359969 ref=0.68452125863362445 diff=-2.48e-14  (tool lower or equal)
+        for information: H with the printed 2.576 would be 0.68451166582343859 (tool - that = 9.59e-06 bit)
+uniform expectation com_exp(1/64) at N=2666: 5.2177052494105096 ; tool X'=5.171073519784495
+Assessed min entropy printed: 5.4761700690687976 ; H_original: None
+
+## d_rand8_2000-c  (rc=0, Bitstring label, short-dataset warning printed: True, 74 lines)
+Xbar    tool=5.2342351495942214 ref=5.2342351495942214 diff=0
+sigma   tool=1.0008609544086799 ref=1.0008609544086797 diff=2.22e-16
+Xprime  tool=5.1710735197844953 ref=5.1710735197844953 diff=0
+found: tool Found p=True / Could-Not-Find=False ; reference found=True
+p       tool=0.058027172734016697 ref=0.058027172734010764 rel=1.02e-13
+        com_exp(p_tool)-X'=-1.78e-15 (-2.00 ULP of X')   com_exp(p_ref)-X'=0 (0.00 ULP)
+H       tool=0.68452125863359969 ref=0.68452125863362445 diff=-2.48e-14  (tool lower or equal)
+        for information: H with the printed 2.576 would be 0.68451166582343859 (tool - that = 9.59e-06 bit)
+uniform expectation com_exp(1/64) at N=2666: 5.2177052494105096 ; tool X'=5.171073519784495
+Assessed min entropy printed: 5.4761700690687976 ; H_original: None
+
+## e_novel_6012  (rc=0, Literal label, short-dataset warning printed: True, 72 lines)
+Xbar    tool=9.9679465260156004 ref=9.9679465260156004 diff=0
+sigma   tool=5.8880660436605758 ref=5.8880660436605758 diff=0
+Xprime  tool=-0.75649669813367737 ref=-0.75649669813367737 diff=0
+found: tool Found p=True / Could-Not-Find=False ; reference found=True
+p       tool=1 ref=1 rel=0
+        com_exp(p_tool)-X'=0.756 (6813916495643680.00 ULP of X')   com_exp(p_ref)-X'=0.756 (6813916495643680.00 ULP)
+H       tool=-0 ref=-0 diff=0  (tool lower or equal)
+        for information: H with the printed 2.576 would be -0 (tool - that = 0 bit)
+uniform expectation com_exp(1/64) at N=1002: 5.2177052375662081 ; tool X'=-0.7564966981336774
+Assessed min entropy printed: -0.0 ; H_original: None
+
+## f_const_12000  (rc=255, Literal label, short-dataset warning printed: True, 9 lines)
+Xbar    MISSING in tool output (ref=0)
+sigma   MISSING in tool output (ref=0)
+Xprime  MISSING in tool output (ref=0)
+found: tool Found p=False / Could-Not-Find=False ; reference found=True
+uniform expectation com_exp(1/64) at N=2000: 5.2177052491102671 ; tool X'=None
+Assessed min entropy printed: None ; H_original: None
+
+## g_cycle64_12012  (rc=0, Literal label, short-dataset warning printed: True, 72 lines)
+Xbar    tool=6 ref=6 diff=0
+sigma   tool=0.11202144810331889 ref=0.11202144810331889 diff=0
+Xprime  tool=5.9908844180175942 ref=5.9908844180175942 diff=0
+found: tool Found p=False / Could-Not-Find=True ; reference found=False
+p       tool=0.015625 ref=0.015625 rel=0
+H       tool=1 ref=1 diff=0  (tool lower or equal)
+        for information: H with the printed 2.576 would be 1 (tool - that = 0 bit)
+uniform expectation com_exp(1/64) at N=2002: 5.2177052491117664 ; tool X'=5.990884418017594
+Assessed min entropy printed: 1.9246638196331138e-05 ; H_original: None
+
+## h_zerodict_12012  (rc=0, Literal label, short-dataset warning printed: True, 72 lines)
+Xbar    tool=5.4256768741393184 ref=5.4256768741393184 diff=0
+sigma   tool=1.2165990481990034 ref=1.2165990481990037 diff=-2.22e-16
+Xprime  tool=5.3266779007164251 ref=5.3266779007164251 diff=0
+found: tool Found p=False / Could-Not-Find=True ; reference found=False
+p       tool=0.015625 ref=0.015625 rel=0
+H       tool=1 ref=1 diff=0  (tool lower or equal)
+        for information: H with the printed 2.576 would be 1 (tool - that = 0 bit)
+uniform expectation com_exp(1/64) at N=2002: 5.2177052491117664 ; tool X'=5.326677900716425
+Assessed min entropy printed: -0.0 ; H_original: None

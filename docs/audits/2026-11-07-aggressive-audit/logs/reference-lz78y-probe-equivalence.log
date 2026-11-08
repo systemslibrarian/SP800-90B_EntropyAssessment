@@ -1,0 +1,17 @@
+literal correct= [0, 0, 1, 1, 0, 1, 1, 0] pred= [-1, -1, 3, 1, 3, 1, 3, 1] C= 4 N= 8 P_global= 0.5 P_global'= 0.9868182412358846 r= 3 P_local= 0.12294871238518748 min_entropy= 0.019143710930194215 dict= 23 sat= False None
+vectorized correct= [0, 0, 1, 1, 0, 1, 1, 0] pred= [-1, -1, 3, 1, 3, 1, 3, 1] C= 4 N= 8 P_global= 0.5 P_global'= 0.9868182412358846 r= 3 P_local= 0.12294871238518748 min_entropy= 0.019143710930194215 dict= 23 sat= False None
+  trace i=6 prediction=-1 s_i=3 correct=0
+  trace i=7 prediction=-1 s_i=1 correct=0
+  trace i=8 prediction=3 s_i=3 correct=1
+  trace i=9 prediction=1 s_i=1 correct=1
+  trace i=10 prediction=3 s_i=2 correct=0
+  trace i=11 prediction=1 s_i=1 correct=1
+  trace i=12 prediction=3 s_i=3 correct=1
+  trace i=13 prediction=1 s_i=2 correct=0
+random equivalence: 400/400 trials agree
+timing vectorized bits=8 n=20000: 0.054s  C=78 N=19983 dict=65536 sat=True sat_i=4379 min_entropy=7.632469
+timing literal    bits=8 n=20000: 0.120s  C=78 N=19983 dict=65536 sat=True sat_i=4379 min_entropy=7.632469
+  agree: True
+timing vectorized bits=1 n=20000: 0.047s  C=10123 N=19983 dict=59300 sat=False sat_i=None min_entropy=0.955420
+timing literal    bits=1 n=20000: 0.201s  C=10123 N=19983 dict=59300 sat=False sat_i=None min_entropy=0.955420
+  agree: True

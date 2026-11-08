@@ -1,0 +1,41 @@
+worked example D=3 selfcheck_pass=True
+{
+ "correct": [
+  0,
+  0,
+  0,
+  1,
+  1,
+  0,
+  0,
+  0,
+  0
+ ],
+ "C": 2,
+ "r": 3,
+ "N": 9,
+ "P_global": 0.2222222222222222,
+ "P_global_prime_text": 0.6008586320723548,
+ "P_local_x10": 0.11670072674349267,
+ "min_entropy": 0.7349024962948139,
+ "expected_from_text": {
+  "correct": [
+   0,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "P_global": 0.2222,
+  "P_global_prime": 0.6008,
+  "P_local": 0.1167,
+  "min_entropy": 0.735
+ },
+ "selfcheck_pass": true
+}
+wrote 14 inputs to /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus
+figures in /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/analysis-lag-spec-figures.json

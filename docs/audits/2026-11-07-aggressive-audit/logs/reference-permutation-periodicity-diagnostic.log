@@ -1,0 +1,76 @@
+dataset  bps  stat             T_orig   C0   C1  below  pass   perm_min perm_max
+      0    8  periodicity(1)     76.000  108   10     82  True     56.000  103.000
+      0    8  periodicity(2)     78.000   93    8     99  True     59.000  105.000
+      0    8  periodicity(8)     77.000   99    9     92  True     57.000   99.000
+      0    8  excursion        5978.491  182    0     18  True   3654.582 15700.684
+      0    8  avgCollision       20.511  149    0     51  True     19.755   21.537
+         failed: []
+      1    8  periodicity(1)     71.000  150    9     41  True     52.000  105.000
+      1    8  periodicity(2)     68.000  168    4     28  True     50.000  103.000
+      1    8  periodicity(8)     91.000   19    5    176  True     58.000  114.000
+      1    8  excursion        6656.661  156    0     44  True   4436.077 17877.618
+      1    8  avgCollision       20.850   71    0    129  True     19.966   21.561
+         failed: []
+      2    8  periodicity(1)     74.000  130    7     63  True     55.000  104.000
+      2    8  periodicity(2)     71.000  160    4     36  True     56.000  100.000
+      2    8  periodicity(8)     86.000   32    2    166  True     60.000  101.000
+      2    8  excursion        12461.723   26    0    174  True   4079.537 19402.046
+      2    8  avgCollision       21.036   33    0    167  True     19.977   21.608
+         failed: []
+      3    8  periodicity(1)     94.000   10    2    188  True     53.000  110.000
+      3    8  periodicity(2)     76.000  109    7     84  True     54.000  101.000
+      3    8  periodicity(8)     66.000  186    2     12  True     58.000  103.000
+      3    8  excursion        6731.964  162    0     38  True   3729.893 16633.641
+      3    8  avgCollision       20.876   64    0    136  True     19.743   21.649
+         failed: []
+      4    8  periodicity(1)     81.000   71    4    125  True     51.000  102.000
+      4    8  periodicity(2)     70.000  165    4     31  True     53.000  105.000
+      4    8  periodicity(8)     86.000   37    2    161  True     55.000  103.000
+      4    8  excursion        4500.975  199    0      1  True   4381.453 19664.964
+      4    8  avgCollision       20.715  101    0     99  True     19.901   21.578
+         failed: ['covariance(1)']
+      5    8  periodicity(1)     86.000   39    5    156  True     53.000  104.000
+      5    8  periodicity(2)     96.000    1    3    196  True     55.000   99.000
+      5    8  periodicity(8)     68.000  168    2     30  True     54.000  101.000
+      5    8  excursion        5759.150  180    0     20  True   4555.121 17161.141
+      5    8  avgCollision       20.035  196    0      4  True     19.830   21.572
+         failed: []
+      0    1  periodicity(1)    485.000  118    3     79  True    448.000  548.000
+      0    1  periodicity(2)    499.000   64    5    131  True    435.000  545.000
+      0    1  periodicity(8)    471.000  164    4     32  True    450.000  541.000
+      0    1  excursion          45.622  158    0     42  True     27.531  143.832
+      0    1  avgCollision       20.725   86    1    113  True     18.368   23.415
+         failed: []
+      1    1  periodicity(1)    539.000    5    0    195  True    440.000  558.000
+      1    1  periodicity(2)    493.000   83    5    112  True    436.000  548.000
+      1    1  periodicity(8)    489.000   98    4     98  True    433.000  566.000
+      1    1  excursion          30.367  197    0      3  True     27.370  125.559
+      1    1  avgCollision       20.385  118    1     81  True     18.301   23.243
+         failed: []
+      2    1  periodicity(1)    482.000  123    6     71  True    434.000  546.000
+      2    1  periodicity(2)    466.000  176    2     22  True    427.000  547.000
+      2    1  periodicity(8)    505.000   45    5    150  True    437.000  551.000
+      2    1  excursion          82.168   30    0    170  True     31.160  143.856
+      2    1  avgCollision       22.125   12    0    188  True     18.212   24.752
+         failed: []
+      3    1  periodicity(1)    521.000   17    1    182  True    433.000  550.000
+      3    1  periodicity(2)    488.000  114    4     82  True    428.000  573.000
+      3    1  periodicity(8)    491.000  100    4     96  True    439.000  541.000
+      3    1  excursion          52.591  125    0     75  True     27.677  130.100
+      3    1  avgCollision       19.138  189    0     11  True     18.241   24.653
+         failed: []
+      4    1  periodicity(1)    486.000  113    4     83  True    435.000  543.000
+      4    1  periodicity(2)    514.000   26    2    172  True    442.000  544.000
+      4    1  periodicity(8)    470.000  164    0     36  True    443.000  546.000
+      4    1  excursion          36.935  190    0     10  True     30.577  135.391
+      4    1  avgCollision       20.941   77    2    121  True     18.744   23.028
+         failed: []
+      5    1  periodicity(1)    432.000  200    0      0  False   434.000  554.000
+      5    1  periodicity(2)    486.000  117    2     81  True    433.000  555.000
+      5    1  periodicity(8)    499.000   69    6    125  True    427.000  546.000
+      5    1  excursion          46.028  156    0     44  True     25.753  120.155
+      5    1  avgCollision       20.800   99    1    100  True     18.722   22.870
+         failed: ['periodicity(1)', 'covariance(1)']
+
+periodicity(2), 40 datasets x 200 shuffles: mean fraction below = 0.456 (expect ~0.5), min 0.035, max 1.000, #datasets with C0+C1==0: 1
+exit=0

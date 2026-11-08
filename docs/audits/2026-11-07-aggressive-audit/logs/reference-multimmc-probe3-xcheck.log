@@ -1,0 +1,770 @@
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 1 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 2 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 3 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 7 k_bits 2 L 1 D 16 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 100000 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 100000 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 1 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 1 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 2 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 2 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 5 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 1 max_entries 5 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 100000 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 100000 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 1 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 1 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 2 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 2 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 5 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 2 max_entries 5 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 100000 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 100000 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 1 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 1 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 2 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 2 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 5 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 3 max_entries 5 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 100000 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 100000 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 1 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 1 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 2 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 2 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 5 mode pairs
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 28 k_bits 3 L 2 D 16 max_entries 5 mode contexts
+  s = [0, 0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 1 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 2 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 3 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 43 k_bits 2 L 1 D 16 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 1 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 2 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 3 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 75 k_bits 1 L 1 D 16 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 100000 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 100000 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 1 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 1 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 2 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 2 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 5 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 1 max_entries 5 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 100000 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 100000 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 1 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 1 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 2 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 2 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 5 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 2 max_entries 5 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 100000 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 100000 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 1 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 1 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 2 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 2 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 5 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 3 max_entries 5 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 100000 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 100000 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 1 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 1 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 2 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 2 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 5 mode pairs
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 80 k_bits 1 L 2 D 16 max_entries 5 mode contexts
+  s = [1, 1]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 1 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+  literal C,r,sb,w,entries,refused: nan nan [0] 1 [0] [0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 2 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0] 1 [0, 0] [0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 3 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0] 1 [0, 0, 0] [0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 100000 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 100000 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 1 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 1 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 2 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 2 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 5 mode pairs
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+MISMATCH trial 103 k_bits 1 L 1 D 16 max_entries 5 mode contexts
+  s = [0]
+  fast   C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  literal C,r,sb,w,entries,refused: nan nan [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] 1 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+cases: 3840 mismatches: 192 cases where the cap bound: 2079 pairs-vs-contexts C/r differed: 533
+exit=0

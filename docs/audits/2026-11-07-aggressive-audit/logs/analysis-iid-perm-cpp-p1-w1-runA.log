@@ -1,0 +1,69 @@
+Loaded file: 'corpus/perm-p1-bits20000.bin' (SHA-256 hash c7fd41f1de6d95351c01028813f992c6c227b5ee87776ad15009af68859c1d61 of assessed bytes)
+Loaded 20000 samples of 2 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 20000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Raw Mean = 0.496
+Translated Symbol Index Median = 0.5
+Binary = true
+Chi square independence: T = 266.59898063884191
+Chi square independence: df = 254
+Chi square independence: P-value = 0.2811362615464354
+Chi square goodness of fit: T = 9.5326100870455726
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.38962910943498136
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.5000320000000000320028
+Literal Longest Repeated Substring results: W = 26
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.949084502878051017305
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 61.35999999999994969357
+Permutation testing: Unpermuted result numDirectionalRuns = 1579
+Permutation testing: Unpermuted result lenDirectionalRuns = 7
+Permutation testing: Unpermuted result numIncreasesDecreases = 1492
+Permutation testing: Unpermuted result numRunsMedian = 10052
+Permutation testing: Unpermuted result lenRunsMedian = 20
+Permutation testing: Unpermuted result avgCollision = 21.91150442477876225666
+Permutation testing: Unpermuted result maxCollision = 47
+Permutation testing: Unpermuted result periodicity(1) = 494
+Permutation testing: Unpermuted result periodicity(2) = 493
+Permutation testing: Unpermuted result periodicity(8) = 490
+Permutation testing: Unpermuted result periodicity(16) = 526
+Permutation testing: Unpermuted result periodicity(32) = 525
+Permutation testing: Unpermuted result covariance(1) = 39222
+Permutation testing: Unpermuted result covariance(2) = 39253
+Permutation testing: Unpermuted result covariance(8) = 39318
+Permutation testing: Unpermuted result covariance(16) = 39085
+Permutation testing: Unpermuted result covariance(32) = 39128
+Permutation testing: Unpermuted result compression = 3163
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       6       0      17
+       numDirectionalRuns      22       0       6
+       lenDirectionalRuns       4       6       0
+    numIncreasesDecreases       5       1       5
+            numRunsMedian       6       0      16
+            lenRunsMedian       4       2     243
+             avgCollision       6       0      39
+             maxCollision      30       4       2
+           periodicity(1)       6       0      20
+           periodicity(2)       5       1       5
+           periodicity(8)       8       1       5
+          periodicity(16)       6       0     115
+          periodicity(32)       6       0     201
+            covariance(1)      13       0       6
+            covariance(2)      21       0       6
+            covariance(8)       6       0      23
+           covariance(16)       6       0       6
+           covariance(32)       6       0     822
+              compression      20       2       4
+(* denotes failed test)
+
+IID permutation tests: Passed
+H_original = 0.96266875833045984
+Assessed min entropy: 0.96266875833045984
+exit=0

@@ -1,0 +1,17 @@
+PASS Conversion I example (p38): got [4, 6, 2] want [4, 6, 2]
+PASS Conversion II example (p38): got [142, 219, 48] want [142, 219, 48]
+PASS Ex1 excursion (p39): got 6.0 want 6
+PASS Ex2 numDirectionalRuns (p39): got 3 want 3
+PASS Ex3 lenDirectionalRuns (p40): got 6 want 6
+PASS Ex4 numIncreasesDecreases (p40): got 8 want 8
+PASS Ex5 median (p41): got 9 want 9
+PASS Ex5 numRunsMedian (p41): got 5 want 5
+PASS Ex6 lenRunsMedian (p41): got 2 want 2
+PASS Ex7 collision list C (p41-42): got [3, 4, 2] want [3, 4, 2]
+PASS Ex7 avgCollision (p42): got 3.0 want 3
+PASS Ex8 maxCollision (p42): got 4 want 4
+PASS Ex9 periodicity p=2 (p42): got 5 want 5
+PASS Ex10 covariance p=2 (p43): got 164 want 164
+PASS 5.1.11 encoding (p43): got '144 21 139 0 0 15' want '144 21 139 0 0 15'
+SELFTEST PASS
+exit=0

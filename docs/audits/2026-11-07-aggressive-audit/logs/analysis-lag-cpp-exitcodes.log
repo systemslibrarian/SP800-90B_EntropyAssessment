@@ -1,0 +1,18 @@
+binary: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+command: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ea_non_iid -i -a -vv <file> <bits>   (verbose starts at 1, so -vv == level 3 == labelled intermediates; -vvv == level 4 prints NO estimator lines)
+lag-L2-1bit bits=1 exit=0
+lag-L3-1bit bits=1 exit=0
+lag-L3-8bit bits=8 exit=0
+lag-alt-0101-1bit-20000 bits=1 exit=0
+lag-counter8-5000 bits=8 exit=0
+lag-k3-tieheavy-5000 bits=8 exit=0
+lag-period127-8bit-5000 bits=8 exit=0
+lag-period128-1bit-20000 bits=1 exit=0
+lag-period128-8bit-5000 bits=8 exit=0
+lag-period129-1bit-20000 bits=1 exit=0
+lag-period129-8bit-5000 bits=8 exit=0
+lag-rand1-20000 bits=1 exit=0
+lag-rand8-5000 bits=8 exit=0
+lag-tie-0011-1bit-20000 bits=1 exit=0
+lag-assert-control-1bit-20000 bits=1 exit=0
+lag-assert-px1-1bit-20000 bits=1 exit=0

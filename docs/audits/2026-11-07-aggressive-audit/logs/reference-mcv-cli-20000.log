@@ -1,0 +1,55 @@
+input: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_probe_rand8_20000.bin  n=20000  seed=20261107  sha256=d24edfe3706808fc36003c78827055b5c1f31ea2fcc03584984aed7bb36458fa
+== python mcv.py <file> 8 --literal  (OMP_NUM_THREADS=2; wall time via time) ==
+{
+  "min_entropy": 7.238388423112183,
+  "Mode count": 106,
+  "p-hat": 0.0053,
+  "p_u": 0.0066225914543107224,
+  "min entropy": 7.238388423112183,
+  "L": 20000,
+  "mode value": 78,
+  "k observed": 256,
+  "z": 2.576,
+  "variant": "literal",
+  "track": "literal",
+  "bits_per_symbol": 8,
+  "bit_order": null,
+  "bitstring_limit": null,
+  "p_u unclamped": 0.0066225914543107224,
+  "p_u clamped": false,
+  "input_path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_probe_rand8_20000.bin",
+  "input_bytes": 20000,
+  "input_sha256": "d24edfe3706808fc36003c78827055b5c1f31ea2fcc03584984aed7bb36458fa",
+  "out_of_width_bytes_masked": 0
+}
+OMP_NUM_THREADS=2 "$PY" reference/py90b/mcv.py  8 $mode >> "$LOG" 2>&1  0.04s user 0.01s system 96% cpu 0.050 total
+exit=0
+== python mcv.py <file> 8 --bitstring  (OMP_NUM_THREADS=2; wall time via time) ==
+{
+  "min_entropy": 0.9876244068488625,
+  "Mode count": 80174,
+  "p-hat": 0.5010875,
+  "p_u": 0.5043075024462081,
+  "min entropy": 0.9876244068488625,
+  "L": 160000,
+  "mode value": 0,
+  "k observed": 2,
+  "z": 2.576,
+  "variant": "literal",
+  "track": "bitstring",
+  "bits_per_symbol": 8,
+  "bit_order": "msb",
+  "bitstring_limit": null,
+  "p_u unclamped": 0.5043075024462081,
+  "p_u clamped": false,
+  "input_path": "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/mcv_probe_rand8_20000.bin",
+  "input_bytes": 20000,
+  "input_sha256": "d24edfe3706808fc36003c78827055b5c1f31ea2fcc03584984aed7bb36458fa",
+  "out_of_width_bytes_masked": 0
+}
+OMP_NUM_THREADS=2 "$PY" reference/py90b/mcv.py  8 $mode >> "$LOG" 2>&1  0.04s user 0.01s system 96% cpu 0.048 total
+exit=0
+== in-process timing, estimate() only, excluding interpreter start ==
+track=literal   L= 20000 wall=   0.074 ms  min_entropy=7.238388423112183
+track=bitstring L=160000 wall=   0.572 ms  min_entropy=0.9876244068488625
+exit=0

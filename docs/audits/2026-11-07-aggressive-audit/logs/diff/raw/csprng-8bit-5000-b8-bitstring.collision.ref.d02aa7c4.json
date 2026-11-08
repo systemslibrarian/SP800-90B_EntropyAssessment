@@ -1,0 +1,39 @@
+{
+ "status": "error",
+ "values": null,
+ "error": "TypeError: unknown options: ['z']",
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "collision",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/csprng-8bit-5000.bin",
+  "8",
+  "bitstring",
+  "0",
+  "msb",
+  "0",
+  "{\"z\": 2.575829303548901}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-8bit-5000-b8-bitstring.collision.ref.d02aa7c4.json"
+ ],
+ "duration_s": 0.206,
+ "options_used": {
+  "z": 2.575829303548901
+ },
+ "module": "collision",
+ "mode": "bitstring",
+ "translated": false,
+ "reused": false,
+ "traceback": [
+  "Traceback (most recent call last):",
+  "  File \"/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py\", line 915, in ref_child_main",
+  "    rec = ref_child(module, file_path, int(bps), mode, translate == \"1\", bit_order, int(truncate),",
+  "                    json.loads(options_json))",
+  "  File \"/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py\", line 847, in ref_child",
+  "    vals = mod.estimate(data, bps_eff, **options)",
+  "  File \"/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/collision.py\", line 404, in estimate",
+  "    raise TypeError(f\"unknown options: {sorted(options)}\")",
+  "TypeError: unknown options: ['z']"
+ ],
+ "stderr_tail": []
+}

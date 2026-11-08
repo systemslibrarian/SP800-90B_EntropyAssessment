@@ -1,0 +1,4 @@
+# generated, deterministic (harness/gen_corpus.py); the 1,000,000- and 999,999-sample files are
+# regenerated with `gen_corpus.py --check` and are NOT committed (103 MB); MANIFEST.txt carries every sha256
+*-1000000.bin
+*-999999.bin
