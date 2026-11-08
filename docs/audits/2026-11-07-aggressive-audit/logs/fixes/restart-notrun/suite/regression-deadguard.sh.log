@@ -1,0 +1,4 @@
+  [provenance] provenance: fork @ fix/restart-notrun 745b396 (DIRTY)
+  flags now                                    40
+  flags in the pinned baseline                 40
+regression-deadguard: PASS (flag set unchanged)

@@ -1,0 +1,6 @@
+  [provenance] provenance: fork @ fix/openssl-pin b62336b (DIRTY)
+  flags now                                    41
+  flags in the pinned baseline                 40
+  NEW FLAGS (a guard has acquired the pattern; read each by hand):
+    + cpp/selftest/regression-openssl-pin.sh|D|verification command upstream of a pipe, no pipefail, no set -e
+regression-deadguard: FAIL (the flag set moved; rebase deliberately if correct)

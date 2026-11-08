@@ -1,0 +1,5 @@
+regression-restart.sh rc=0 regression-restart: PASS
+regression-selftest-inventory.sh rc=0 regression-selftest-inventory: PASS
+regression-subset.sh rc=0 regression-subset: PASS
+regression-width.sh rc=0 regression-width: PASS
+regression-constants.sh rc=0 regression-constants: PASS (10 constants, the C22c digest, the sweep, 

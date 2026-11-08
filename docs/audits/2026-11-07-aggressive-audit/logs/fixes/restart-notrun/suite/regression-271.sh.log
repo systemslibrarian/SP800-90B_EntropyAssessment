@@ -1,0 +1,6 @@
+-c (bitstring) chi square tests:           Failed (as required)
+-c (bitstring) length of longest repeated substring test: Failed (as required)
+-i (8-bit symbols) chi square tests:       Passed (as required)
+-i (8-bit symbols) length of longest repeated substring test: Passed (as required)
+
+regression-271: PASS

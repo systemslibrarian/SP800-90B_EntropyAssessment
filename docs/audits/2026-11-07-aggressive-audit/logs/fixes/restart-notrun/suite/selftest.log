@@ -1,0 +1,33 @@
+fixture-inventory: PASS (11 inputs, 11 references; manifest SHA-256 bd5adacfe42a866148780ac952273a44eadad89d0188a9bbf34b1f810a71d49c)
+biased-random-bits.bin: Maximum delta: 8.22131945854565e-12
+biased-random-bits.res: 60 value(s) compared; identity biased-random-bits.bin / 1000000 samples / 1-bit matched
+biased-random-bytes.bin: biased-random-bytes.res: Significant difference for Bitstring Lag Prediction Estimate: min entropy (reference: 0.042001643639251546 new: 0.042001643772653606 delta: 1.33402060231713e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMCW Prediction Estimate: min entropy (reference: 0.041925133646315872 new: 0.04192513346055822 delta: 1.85757652315655e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMCW Prediction Estimate: P_local (reference: 0.9713579012997926 new: 0.97135790142486211 delta: 1.25069510303888e-10)
+biased-random-bytes.res: Significant difference for Literal Lag Prediction Estimate: P_local (reference: 0.72383949597417785 new: 0.72383949613215592 delta: 1.57978075066012e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMMC Prediction Estimate: min entropy (reference: 0.041925153682126653 new: 0.041925153316192523 delta: 3.65934130219792e-10)
+biased-random-bytes.res: Significant difference for Literal Lag Prediction Estimate: min entropy (reference: 0.46625826502784795 new: 0.46625826471297949 delta: 3.14868464634799e-10)
+biased-random-bytes.res: Significant difference for Bitstring MultiMMC Prediction Estimate: P_local (reference: 0.9713578878098017 new: 0.97135788805618295 delta: 2.46381248736327e-10)
+Maximum delta: 3.65934130219792e-10
+biased-random-bytes.res: 103 value(s) compared; identity biased-random-bytes.bin / 1000000 samples / 8-bit matched
+data.pi.bin: Maximum delta: 4.32986979603811e-15
+data.pi.res: 59 value(s) compared; identity data.pi.bin / 1165666 samples / 1-bit matched
+normal.bin: Maximum delta: 6.93196230865696e-15
+normal.res: 98 value(s) compared; identity normal.bin / 1000000 samples / 8-bit matched
+rand1_short.bin: Maximum delta: 4.77395900588817e-15
+rand1_short.res: 59 value(s) compared; identity rand1_short.bin / 10000 samples / 1-bit matched
+rand4_short.bin: Maximum delta: 2.44249065417534e-15
+rand4_short.res: 98 value(s) compared; identity rand4_short.bin / 10000 samples / 4-bit matched
+rand8_short.bin: Maximum delta: 3.4173055689894e-12
+rand8_short.res: 99 value(s) compared; identity rand8_short.bin / 10000 samples / 8-bit matched
+ringOsc-nist.bin: ringOsc-nist.res: Significant difference for Literal MultiMCW Prediction Estimate: min entropy (reference: 0.29051922736594488 new: 0.290519227211259 delta: 1.5468587521994e-10)
+Maximum delta: 1.5468587521994e-10
+ringOsc-nist.res: 60 value(s) compared; identity ringOsc-nist.bin / 1000000 samples / 1-bit matched
+truerand_1bit.bin: Maximum delta: 5.30686605770825e-14
+truerand_1bit.res: 59 value(s) compared; identity truerand_1bit.bin / 1000000 samples / 1-bit matched
+truerand_4bit.bin: Maximum delta: 3.47499806707674e-14
+truerand_4bit.res: 98 value(s) compared; identity truerand_4bit.bin / 1000000 samples / 4-bit matched
+truerand_8bit.bin: Maximum delta: 1.59737663098659e-13
+truerand_8bit.res: 98 value(s) compared; identity truerand_8bit.bin / 1000000 samples / 8-bit matched
+
+selftest: FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin

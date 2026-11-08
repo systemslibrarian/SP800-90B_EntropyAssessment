@@ -1,0 +1,14 @@
+selftest rc=1 selftest: FAIL (2 of 11 files): biased-random-bytes.bin ringOsc-nist.bin
+platform-delta checker rc=0
+regression-271.sh rc=0 regression-271: PASS
+regression-272.sh rc=0 regression-272: PASS
+regression-chisquare.sh rc=0 regression-chisquare: PASS
+regression-deadguard.sh rc=1 regression-deadguard: FAIL (the flag set moved; rebase deliberately if
+regression-docs.sh rc=1 regression-docs: FAIL (4 checks)
+regression-estimator-guards.sh rc=0 regression-estimator-guards: PASS
+regression-iid-failclosed.sh rc=0 regression-iid-failclosed: PASS
+regression-iid-json.sh rc=0 regression-iid-json: PASS
+regression-input-identity.sh rc=0 regression-input-identity: PASS (replacement rejected as result identi
+regression-minsize.sh rc=0 regression-minsize: PASS
+regression-multimmc.sh rc=0 regression-multimmc: PASS
+regression-nonregular.sh rc=0 regression-nonregular: PASS (0 skipped)

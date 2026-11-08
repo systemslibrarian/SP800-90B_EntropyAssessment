@@ -100,7 +100,7 @@ binaries were rebuilt; `BUILDING.md` and `NOTICE:464` assert the openssl@3 pin. 
 sha256 change from the suite-blessed binaries (`b61cf8c7…` → `1ad1568c…`); builds are otherwise byte-reproducible at a
 fixed output path. libcrypto is used only for the report's input SHA-256 (`TestRunUtils.h:658-721`), so no figure
 depends on it (the self-test on the relinked binaries matches every reference figure) — hence LOW, not MEDIUM.
-**Disclosure: this audit changed the build environment of this machine.** Lens-verified (3/3). Fix offered:
+**Disclosure: this audit changed the build environment of this machine — twice.** The same `brew install afl++` (19:28) also installed `python@3.15` and repointed `/opt/homebrew/bin/python3` from 3.14.7 (which has PyYAML) to 3.15.2 (which does not), so `cpp/selftest/regression-workflows.sh` now exits 2 "PyYAML is not available" on the production tree and in every fix worktree; with `python3.14` first on `PATH` it passes (`logs/fixes/regression-workflows-with-python3.14.log`). Neither change was reverted here: `brew unlink python@3.15` (or `brew link --overwrite python@3.14`) and rebuilding from the fixed Makefile restore the pre-audit state — Paul's call, since AFL++ depends on both. Lens-verified (3/3). Fix offered:
 `fix/openssl-pin` `b62336b` (pinned prefix first on `-I` and `-L`; the new check abstains on Linux, so the x86-64 gate expects two
 named abstentions): `regression-openssl-pin.sh` **FAILS against master's Makefile/binaries, PASSES on the fixed build, whose three
 binaries link `/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib`** (`logs/fixes/openssl-pin/`).

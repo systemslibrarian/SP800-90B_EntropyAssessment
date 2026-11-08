@@ -1,0 +1,11 @@
+binary -i omits hBitstring:                            absent
+N-10 JSON uses explicit statistic names:               rawMean and translatedSymbolMedian
+-c omits hOriginal:                                    absent
+hAssessed at -q matches the -vvv figure:               0.9950430151312257
+N-10 stdout labels the translated median:              explicit
+N-10 sparse-alphabet domains are distinguishable:      raw 127.5, translated 0.5
+hAssessed is not the word-size placeholder:            ok
+bin.json still reports hOriginal:                      0.9950430151312257
+cond.json still reports hBitstring:                    0.9986867452731383
+
+regression-iid-json: PASS
