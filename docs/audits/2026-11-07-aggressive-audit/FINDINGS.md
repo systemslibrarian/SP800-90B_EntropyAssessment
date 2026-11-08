@@ -127,7 +127,7 @@ known) · the OC-104 refusal fires after a pre-operand `--` with a false reason 
 (PROV-22, model-level; the streams are distinct and the verdict is unaffected) · `permutationTestResults` carry
 partial counters with no field for the permutations evaluated (PROV-23) · `utils.h:1023` claims an INT_MAX refusal
 `non_iid_main.cpp` does not have (PROV-25) · three `uint8_t` ring-buffer truncations in `lag_test.h:86/108/111` that
-UBSan's `implicit-conversion` group flags on every input (benign modular arithmetic; no memory effect).
+UBSan's `implicit-conversion` group flags on every input (benign modular arithmetic; no memory effect). · **AA-21** formal data races in `permutation_tests.h` (`test_status[]` read outside `critical(resultUpdate)`, `completed` mixed atomic/plain) — verdict-safe by construction, §4.5 TSan.
 
 ### 1.3 Observations confirmed but NOT defects (verifier-refuted as findings)
 
@@ -266,9 +266,26 @@ zero entropy, fail-closed) and `utils.h:1084` (`divide(a, 0)`) — **all only on
 `EA_ALLOW_SHORT_DATASET=1`**; at the 1,000,000 gate with k ≤ 256 every expected bin count is ≥ 5 by the §5.2 binning
 and `N` is in the millions, so none is reachable in production; the chi-square NaN→PASS mechanism the analysis
 suspected is thereby confirmed real and confined to the escape (PROV-13); (iii) three `SIGABRT`s on 17- to
-20-sample `ea_iid` runs — `assert(n>=p)` in `periodicity`, the PROV-24 escape-only class. Cannot see: inputs the
-corpus does not contain; LeakSanitizer; stage e (`ea_restart` at 1,000,000 under ASan), TSan and the
-thread-count determinism runs, which complete after this draft — their results replace this paragraph.
+20-sample `ea_iid` runs — `assert(n>=p)` in `periodicity`, the PROV-24 escape-only class. Stage e (`ea_restart` at 1,000,000 under ASan, `-n` and `-i`, widths 1 and 8): completed, no memory report.
+Cannot see: inputs the corpus does not contain; LeakSanitizer.
+
+**Threading (TSan) — formal data races in the permutation battery, verdict-safe by construction.** 9 runs with
+the TSan builds at `OMP_NUM_THREADS=10` (`logs/sanitizers/tsan/`, triage in `RESULTS.md`): the six controls
+(`ea_non_iid`, which has no OpenMP site, and `ea_restart -n`, whose only parallel region is dead in production)
+carry **no report**; the three `ea_iid` runs and `ea_restart -i` (the live region, `permutation_tests.h:625-729`)
+carry 59 reports: 29 `SAME_CRITICAL` (both accesses inside `critical(resultUpdate)` — the uninstrumented Homebrew
+libomp hides the lock from TSan; platform artefact), 9 `PARALLEL_PLAIN` at the region entry `:625` (per-thread
+set-up TSan cannot see synchronised; artefact), and **21 genuine formal races**: 12 `CROSSES_CRITICAL` — `test_status[j]`
+is written under the lock (`:673`) and read outside it by `run_tests` (`:658` → `excursion_test:344` etc.) to skip
+finished statistics — and 9 `ATOMIC_VS_PLAIN` — `completed` is incremented both under the lock (`:679`) and by a
+lock-free `#pragma omp atomic` (`:722`). By the C++11 memory model these are data races and therefore undefined
+behaviour (the letter of the brief's HIGH row); by the code's structure they cannot reach the verdict: every counter
+that decides a statistic (`C[j][0..2]`) is updated only inside the critical section, which re-checks `test_status[j]`
+before counting, so a stale read outside costs one wasted statistic computation, and `completed` drives only the
+`-v` progress line. Filed as **AA-21 (LOW)** with the recommendation (`std::atomic<bool>` for `test_status`,
+one access discipline for `completed`); not fixed here, because the only honest regression test is a TSan build in
+the suite. `passed_count` is thread-private (`:630`) and is not a race. Cannot see: libomp's own synchronisation
+(no OMPT/Archer), and `ea_restart`'s dead `simulateBound` region.
 
 **4.6 Fuzzing, determinism, SAalgs32 scaling, fix-branch verification** — _(CHAIN-6; filled in when complete)_
 
