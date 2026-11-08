@@ -168,5 +168,53 @@ each with its coverage statement and what it cannot see)_
 
 ## 5. Method, instruments, and their known blind spots
 
-_(reference implementation independence, corpus construction, harness self-checks, the accidents of
-this audit and what they cost)_
+**Independence.** `reference/py90b/` (15 modules) was written from the standard's text by agents forbidden to open
+any file under `cpp/` or the analysis notes; the only thing taken from the C++ is the NAMES of the printed
+intermediates (`reference/cpp-verbose-labels-*.txt`) so the driver can match them. Every module carries the
+standard's own worked examples as unit tests (all pass; the two Compression "failures" are deliberate variant
+readings that document where the printed formula and the worked example disagree — L-07). The one shared piece
+is `predictor_common.py` (the `P_global'`/`P_local` finish), imported by the four prediction modules.
+
+**Differential.** `harness/gen_corpus.py` writes a deterministic corpus (SHA-256 counter mode under a fixed key; no
+library RNG; sha256 per file in `corpus/MANIFEST.txt`): 26 families × widths 1 and 8 × sizes 1,000,000 /
+999,999 / 50,000. `harness/diff_driver.py` runs the production `ea_non_iid -i -a -vv -o`, parses by LABEL (never
+position), records the binary's sha256, runs every reference module, compares every shared key (abs 1e-9;
+integer counts exact), classifies `AGREE / CPP_HIGHER / CPP_LOWER / INTERMEDIATE_DIFF / NOT_RUN /
+TOOL_REFUSED`, and re-runs any D-1-shaped disagreement with the exact quantile before tagging it explained.
+`--self-check` mutates a passing comparison fourteen ways and asserts each is reported (rule 7). Blind spots
+(rule 18): it compares only what the C++ prints; a "binary" source has no bitstring term, so 27 cases are
+NOT_RUN by construction; the Lag/LZ78Y/MultiMMC references at 8 million bits are pure Python and were not run
+at compliant size except where named; the 999,999-sample sweep was accidental and partial (22 records).
+
+**Experiments** (`harness/experiments/`): deterministic 1,000,000-sample generators with manifests, every run
+through `run_one.sh` (stdout/stderr/rc/meta with binary and input sha256), decisions by labelled reads. The X3
+construction was validated against the reference and two behavioural models BEFORE the heavy run, and the
+analysis phase's prediction for it (+14 correct per period) was refuted by those models — recorded as such.
+
+**Sanitizers** (`harness/sanitizers/`): out-of-tree ASan+UBSan (`-fsanitize=address,undefined,float-divide-by-zero,
+implicit-conversion,nullability`, `-O1 -g`) and TSan builds of the three tools, sha256-recorded; the
+`implicit-conversion` group fires on three deliberate `uint8_t` ring-buffer wraps in `lag_test.h` on every input,
+so the harness runs a `halt_on_error=0` continue pass whenever the halt pass stops there; ASan still aborts in that
+pass, so memory errors are not masked. LeakSanitizer is unavailable on this ASan runtime (probed). TSan on Homebrew
+libomp (not TSan-instrumented, no OMPT) cannot see libomp's own synchronisation, so a `SAME_CRITICAL` report is a
+platform artefact; the summariser classifies each report against the source's critical-section line ranges.
+
+**Fuzzing** (`harness/fuzz/`): AFL++ 5.03c (`afl-clang-fast++`, which wraps Homebrew clang, not Apple clang), plain
+and ASan variants, 216 seeds, eight targets, every run under `EA_ALLOW_SHORT_DATASET=1` (without it every input is
+refused at the 1,000,000 gate and nothing is exercised); crashes are triaged under the ASan build and re-tiled to
+1,000,000 bytes to check reachability without the escape. libFuzzer is not shipped with Apple clang 21.
+
+**Determinism** (`harness/determinism/`): thread counts 1/2/10 and repeated runs, byte-compared after dropping
+timestamps; `EA_TEST_RANDOM_SOURCE` does NOT seed the permutation tests (`utils.h` `seed()` opens `/dev/urandom` by a
+literal string — it only names the report's temp file), so `ea_iid` has no reproducibility hook and its arm is
+reported as such; the Linux side is the refdata the strict CI suite matches to `compareresults.pl`'s 1e-10, against
+the eight known macOS deltas.
+
+**Accidents of this audit, recorded because they cost evidence.** (i) `brew install afl++` pulled in OpenSSL 4
+and relinked the production binaries (AA-05) — an environment change on the host, disclosed. (ii) The first
+differential records embedded the LRS reference's per-W tables (up to 89 MB each, a 2 GB commit); the driver now
+elides any table over 512 entries to a count/digest/range and the unpushed commit was rewritten
+(`harness/compact_records.py`). (iii) zsh does not word-split an unquoted variable, so a two-option variable
+reached argparse as one argument and a run died; (iv) a `pkill -f` pattern matched the orchestrator's own chain
+shell and killed the sweep it was waiting on; (v) the 999,999-sample "refusal pass" was a full assessment pass
+because the driver sets the escape for n < 1,000,000 — it is reported as the partial sweep it was.
