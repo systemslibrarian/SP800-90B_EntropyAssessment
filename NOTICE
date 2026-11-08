@@ -329,6 +329,20 @@ A second repair pass on the same date, working the remaining queue:
             cpp/iid_main.cpp and cpp/restart_main.cpp: label permutation
             results by assessed layout (`input`, `rows`, or `columns`) so
             restart row and column results are not ambiguous. Commit 25fbb54.
+2026-11-08  cpp/Makefile: on macOS the pinned openssl@3 prefix now comes
+            BEFORE the generic Homebrew prefix on both -I and -L. It had been
+            second since the 2026-09-30 entry above, so whichever `openssl`
+            formula Homebrew linked into the generic prefix won: on
+            2026-11-07 that became openssl@4, and the three tools built that
+            day load libcrypto.4.dylib while this file and BUILDING.md's pin
+            table say openssl@3 (PROV-15, audit of 2026-11-07; otool -L on
+            3 of 3 binaries, against a 2026-10-20 build from the same
+            Makefile that loads the pinned library). No reported figure
+            moves: OpenSSL computes only the SHA-256 of the input. Non-Darwin
+            command lines are unchanged. Regression: cpp/selftest/
+            regression-openssl-pin.sh, which reads the order from `make -n`
+            and the load command from the built binaries, and abstains
+            (exit 2) off macOS. Self-authored and unreviewed.
 
 The scope statement at the head of this section covers these too: no
 unintended numerical change was observed on the datasets tested, with

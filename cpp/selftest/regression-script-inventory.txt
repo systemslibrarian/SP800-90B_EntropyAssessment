@@ -11,6 +11,7 @@ regression-minsize.sh
 regression-multimmc.sh
 regression-nonregular.sh
 regression-notrun.sh
+regression-openssl-pin.sh
 regression-option-order.sh
 regression-output-aliasing.sh
 regression-output.sh

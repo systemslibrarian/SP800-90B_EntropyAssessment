@@ -68,8 +68,25 @@ ifeq ($(UNAME_S),Darwin)
 #   brew install libdivsufsort jsoncpp openssl@3
 BREW_PREFIX ?= $(shell brew --prefix 2>/dev/null || echo /opt/homebrew)
 OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
-INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
-LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+# THE PINNED PREFIX GOES FIRST, OR IT IS NOT A PIN (PROV-15, audit of
+# 2026-11-07).
+#
+# These two lines had the generic prefix first for the life of this fork, and
+# the generic prefix is where Homebrew links the UNVERSIONED `openssl` formula:
+# $(BREW_PREFIX)/include/openssl and $(BREW_PREFIX)/lib/libcrypto.dylib point
+# at whatever that formula is today. Installing afl++ on 2026-11-07 pulled in
+# openssl@4 and re-pointed both at 4.1.0, and the three tools built that minute
+# compiled against OpenSSL 4 headers and load libcrypto.4.dylib (otool -L),
+# while this file, BUILDING.md's pin table and the 2026-10-20 build all say
+# openssl@3. The compiler and the linker each take the FIRST directory that has
+# the file, so a pinned -I/-L placed second can only win when the generic prefix
+# has nothing -- it pinned nothing. Reordering is the whole fix: the Homebrew
+# dylib's install name is already the absolute openssl@3 path, so no -rpath is
+# needed, and -lcrypto stays as it is because SHARED_LIB is shared with the
+# non-Darwin line. selftest/regression-openssl-pin.sh reads this order from
+# `make -n` and the load command from the built binaries.
+INC += -I$(OPENSSL_PREFIX)/include -I$(BREW_PREFIX)/include
+LDFLAGS += -L$(OPENSSL_PREFIX)/lib -L$(BREW_PREFIX)/lib
 endif
 
 ######
