@@ -1,0 +1,25 @@
+Spec: SP 800-90B 3.1.5.2 (PDF p. 25): "Let the obtained entropy estimate per bit
+be h'. The output of the conditioning component (nout) shall be treated as a
+binary string, for purposes of the entropy estimation. ...
+h_out = min(Output_Entropy(n_in, n_out, nw, h_in), 0.999 n_out, h' x n_out)."
+
+The only unit the standard defines for the conditioned dataset is PER BIT.
+The multiplication by n_out belongs to h_out and uses the conditioner's output
+width, which this tool does not know. Nothing in 3.1.5.2 multiplies h' by the
+packing width of the file.
+
+Correct report for `ea_non_iid -c ... file 8`:
+  stdout        h': <v>                  (per bit; this is what the tool prints)
+  JSON          either hAssessed == <v> (per bit, matching the text), or a field
+                that names the unit / the mode (e.g. "hAssessedUnit": "per 8-bit
+                packed symbol" or "hPrime": <v>).
+
+Observed: JSON Overall.hAssessed = dataWordSize x hBitstring = 8 x h' exactly
+(bit-identical to H_bitstring*word_size at non_iid_main.cpp:636), under the same
+key the -i report uses for its per-sample figure, with dataWordSize 8.0 beside it
+and no unit/mode field. Arithmetic on this fixture (output.md Q2 and this run):
+  h' (text, %f)       0.732612
+  hBitstring (JSON)   0.73261171806065617
+  hAssessed  (JSON)   5.860893744485249  = 8 x 0.73261171806065617
+A consumer reading hAssessed from a -c report as the standard's h' overstates by
+a factor of 8. Same code in ea_iid (iid_main.cpp:455-458).

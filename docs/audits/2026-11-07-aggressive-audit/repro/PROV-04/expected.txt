@@ -1,0 +1,20 @@
+n/a (report integrity). No spec clause governs the report format.
+
+Expected: a condition the tool considers worth printing to the operator is
+also visible to a JSON consumer, and -q suppresses stdout. Concretely, for
+`ea_non_iid -q -o w8.json rand4_short.bin 8`:
+  stdout:   nothing but the EA_ALLOW_SHORT_DATASET banner (the escape's own,
+            deliberate marker)
+  JSON:     a warning field, e.g. "warnings": ["Symbols appear to be narrower
+            than described."] or errorMessage populated with the text the code
+            already stores.
+
+Observed: cpp/shared/utils.h:483-485 does
+    printf("Warning: Symbols appear to be narrower than described.\n");
+    testRun->errorMsg = "Warning: ...";
+with errorLevel untouched (0), and cpp/shared/test_run_base.h:69-72 writes
+errorMessage only `if (errorLevel != 0)`. So the warning goes to stdout under
+-q (printf is unconditional) and is dropped from the report. The figure is
+conservative on this fixture (declared 8 lowers n x H_bitstring because four
+constant zero bits enter the bitstring), so direction is neutral/conservative;
+the defect is the lost signal and the -q leak.

@@ -1,0 +1,13 @@
+# PROV-14 observed.txt  2026-11-07 21:56:17 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+Makefile sha256 c89066a2c73afee3aabf8877ade4ec36813f1770bb00e359b005c0f8fac18d0e
+Makefile lines carrying the probe path (grep -n 'ea_fs_\$\$\|ea_wf_\$\$'):
+  Makefile:45:FLOAT_STORE := $(shell printf 'int main(void){return 0;}' > /tmp/.ea_fs_$$.c 2>/dev/null;     if $(CXX) -x c++ -ffloat-store -c /tmp/.ea_fs_$$.c -o /dev/null
+  Makefile:49:IGNORED_FLAG_IS_ERROR := $(shell printf 'int main(void){return 0;}' > /tmp/.ea_wf_$$.c 2>/dev/null;     if $(CXX) -x c++ -Werror=ignored-optimization-argumen
+occurrences of the fixed /tmp/.ea_*_$$.c path in the Makefile: 2
+GNU make, 'Variables in Recipes'/'The shell Function': a double dollar sign '$$' is passed to the shell as a single '$'.
+what the shell receives and expands, twice: '/tmp/.ea_fs_$.c' and '/tmp/.ea_fs_$.c'  (identical: '$.' is not a parameter expansion in sh)
+(scratch make step skipped: EA_REPRO_ALLOW_MAKE not set; the cli-build analysis measured shell-expanded=/tmp/.ea_fs_$.c recipe-expanded=/tmp/.ea_fs_$.c the same way)
+a planted file at that path right now: ls: cannot access '/tmp/.ea_fs_$.c': No such file or directory
+RESULT: PASS -- both flag probes use the literal path /tmp/.ea_fs_$.c (and .ea_wf_$.c): fixed, world-writable directory, predictable; concurrent builds race and a planted file/symlink is compiled by the probe (denial of build; on GCC the sabotage can only ADD -ffloat-store)

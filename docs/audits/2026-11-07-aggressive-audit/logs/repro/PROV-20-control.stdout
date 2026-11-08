@@ -1,0 +1,9 @@
+# PROV-20 control.txt  2026-11-07 21:56:23 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c_only]=0  stdout=c_c.out stderr=c_c.err
+  -c alone: rc=0 h'=0.732612
+  run.sh's -i -c gave h'=0.732612
+RESULT: CONTROL-OK -- -c alone and -i -c print the same h' (0.732612): the earlier -i was silently discarded

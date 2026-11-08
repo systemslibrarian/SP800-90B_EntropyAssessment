@@ -1,0 +1,17 @@
+tool=iid
+binary=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+binary_sha256=22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+binary_sha256_after=22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+input=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/smoke-csprng-1bit-20000.bin
+input_sha256=17917b5af1e8d08d2923432307ad7ba22f100ddb45b050cda55443fe86316514
+threads=2
+rep=2
+arm=a
+OMP_NUM_THREADS=2
+EA_ALLOW_SHORT_DATASET=1
+EA_TEST_RANDOM_SOURCE=
+start_epoch=1794106347
+end_epoch=1794106348
+wall_seconds=1
+rc=0
+cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/iid/smoke-csprng-1bit-20000/a-t2-r2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/smoke-csprng-1bit-20000.bin

@@ -1,0 +1,15 @@
+
+*** Warning: dataset contains 64 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Calculating baseline statistics...
+** Passed chi square tests
+
+** Passed length of longest repeated substring test
+
+** Passed IID permutation tests
+
+H_original: 2.246999
+H_bitstring: 0.708998
+min(H_original, 4 X H_bitstring): 2.246999

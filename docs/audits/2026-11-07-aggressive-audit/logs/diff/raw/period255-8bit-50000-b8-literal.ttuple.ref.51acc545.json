@@ -1,0 +1,72 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 4.935156235775793e-07,
+  "t": 41330,
+  "p-hat_max": 0.9998666338313462,
+  "p_u": 0.9999996579210955,
+  "Q": {
+   "_elided": true,
+   "entries": 41330,
+   "sha256": "37e25d21ba16b4efcf7997e507835ae5530e2c98b900b81fffaa5c92bd70cd4d",
+   "min": 35,
+   "max": 197
+  },
+  "P": {
+   "_elided": true,
+   "entries": 41330,
+   "sha256": "2c20aad441a7aee214b067e1f8ce32d41f3a711952a9be2ac3b42b0a45ebfc1d",
+   "min": 0.00392156862745098,
+   "max": 0.0040364433168031365
+  },
+  "P_max": {
+   "_elided": true,
+   "entries": 41330,
+   "sha256": "67336ede987499e71b285a68fc75503211d5c834be28db28e3092ffaa2fc2f29",
+   "min": 0.00394,
+   "max": 0.9998666338313462
+  },
+  "Q_next": 34,
+  "argmax_i": 41330,
+  "L": 50000,
+  "k": 256,
+  "cutoff": 35,
+  "z": 2.575829303548901,
+  "z_variant": "exact",
+  "method": "suffix_array (after direct reached 128)"
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "ttuple",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period255-8bit-50000.bin",
+  "8",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{\"z_variant\": \"exact\"}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period255-8bit-50000-b8-literal.ttuple.ref.51acc545.json"
+ ],
+ "duration_s": 0.611,
+ "options_used": {
+  "z_variant": "exact"
+ },
+ "module": "ttuple",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 254,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 8,
+ "estimate_seconds": 0.301,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+ "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+}

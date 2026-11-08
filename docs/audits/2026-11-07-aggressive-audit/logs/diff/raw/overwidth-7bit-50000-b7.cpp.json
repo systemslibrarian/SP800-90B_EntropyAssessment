@@ -1,0 +1,15 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 50000,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/overwidth-7bit-50000-b7.cpp.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/overwidth-7bit-50000.bin 7",
+   "dateTimeStamp" : "20261107213730",
+   "errorClass" : "input",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: Incorrect bit width specification: Data (8) does not fit within described bit width: 7.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/overwidth-7bit-50000.bin",
+   "sha256" : "0503da1e9a7627a43221bd0ce7d7ffd8d70c9a6ffb94ecf311eb854896c1a87f",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

@@ -1,0 +1,168 @@
+x3-probe-prefix20000: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.{stdout,stderr,rc,meta})
+x3-probe-scaled-naive: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-naive.{stdout,stderr,rc,meta})
+x3-probe-scaled-gadget: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-gadget.{stdout,stderr,rc,meta})
+x2a-probe-packed7-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-probe-packed7-inferred.{stdout,stderr,rc,meta})
+x2a-probe-packed7-declared8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-probe-packed7-declared8.{stdout,stderr,rc,meta})
+x2a-probe-lsbpad-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-probe-lsbpad-inferred.{stdout,stderr,rc,meta})
+x2b-probe-packed7-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-probe-packed7-inferred.{stdout,stderr,rc,meta})
+x2b-probe-packed7-declared8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-probe-packed7-declared8.{stdout,stderr,rc,meta})
+x2b-probe-lsbpad-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-probe-lsbpad-inferred.{stdout,stderr,rc,meta})
+---- checks
+x3-probe-prefix20000: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=240 width=8  Assessed=5.9268003656693411  H_original=6.5361821470437356  nxH_bitstring=5.9268003656693411  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x3-probe-scaled-naive: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=248 width=8  Assessed=-0  H_original=-0  nxH_bitstring=7.272411716584009e-05  DEGENERATE:-0(3)  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x3-probe-scaled-gadget: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=248 width=8  Assessed=-0  H_original=-0  nxH_bitstring=7.2576413268323172e-05  DEGENERATE:-0(3)  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x2a-probe-packed7-inferred: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=103 width=7  Assessed=0.53867351123424556  H_original=1.0613353447799332  nxH_bitstring=0.53867351123424556  json errorLevel=0 bps=7 inferred=True  fold-consistency OK
+x2a-probe-packed7-declared8: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=103 width=8  Assessed=1.0613353447799332  H_original=1.0613353447799332  nxH_bitstring=1.0798689660142335  narrower-warning  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x2a-probe-lsbpad-inferred: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=103 width=8  Assessed=1.0613353447799332  H_original=1.0613353447799332  nxH_bitstring=1.0798689660142335  json errorLevel=0 bps=8 inferred=True  fold-consistency OK
+x2b-probe-packed7-inferred: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=128 width=7  Assessed=1.0422288338118075  H_original=4.4744979384040837  nxH_bitstring=1.0422288338118075  json errorLevel=0 bps=7 inferred=True  fold-consistency OK
+x2b-probe-packed7-declared8: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=128 width=8  Assessed=2.5424560015679054  H_original=4.4744979384040837  nxH_bitstring=2.5424560015679054  narrower-warning  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x2b-probe-lsbpad-inferred: rc=0  well_formed  accepted  non-compliant  loaded n=20000 k=128 width=8  Assessed=2.5426349593949746  H_original=4.4744979384040837  nxH_bitstring=2.5426349593949746  json errorLevel=0 bps=8 inferred=True  fold-consistency OK
+---- X3: Literal MultiMMC C and r as printed (labelled grep of the stdout files)
+x3-probe-prefix20000:
+Literal MultiMMC Prediction Estimate: C = 96
+Literal MultiMMC Prediction Estimate: r = 2
+Literal MultiMMC Prediction Estimate: N = 19998
+Literal MultiMMC Prediction Estimate: min entropy = 7.3665859047888329
+x3-probe-scaled-naive:
+Literal MultiMMC Prediction Estimate: C = 16982
+Literal MultiMMC Prediction Estimate: r = 16969
+Literal MultiMMC Prediction Estimate: N = 19998
+Literal MultiMMC Prediction Estimate: min entropy = 0.00044646046254409144
+x3-probe-scaled-gadget:
+Literal MultiMMC Prediction Estimate: C = 16985
+Literal MultiMMC Prediction Estimate: r = 16971
+Literal MultiMMC Prediction Estimate: N = 19998
+Literal MultiMMC Prediction Estimate: min entropy = 0.00044637100035770062
+---- X2: the binding bitstring estimator per run
+x2a-probe-packed7-inferred:
+Bitstring Most Common Value Estimate: min entropy = 0.98768889293135209
+Literal Most Common Value Estimate: min entropy = 1.8550620280307994
+Bitstring Collision Estimate: min entropy = 0.076953358747749362
+Bitstring Markov Estimate: min entropy = 0.15820765087687
+Bitstring Compression Estimate: min entropy = 0.10387946055518303
+Bitstring t-Tuple Estimate: min entropy = 0.15412314925463039
+Bitstring LRS Estimate: min entropy = 0.27980948627388802
+Literal t-Tuple Estimate: min entropy = 1.1015437537386912
+Literal LRS Estimate: min entropy = 1.9937962650902059
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.25422162032013002
+Literal MultiMCW Prediction Estimate: min entropy = 1.7636716409878008
+Bitstring Lag Prediction Estimate: min entropy = 0.14856157622804608
+Literal Lag Prediction Estimate: min entropy = 1.5636696575738054
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.14857401325484013
+Literal MultiMMC Prediction Estimate: min entropy = 1.0613353447799332
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.14856816365720971
+Literal LZ78Y Prediction Estimate: min entropy = 1.0622225570277204
+H_bitstring = 0.076953358747749362
+H_bitstring Per Symbol = 0.53867351123424556
+H_original = 1.0613353447799332
+Assessed min entropy: 0.53867351123424556
+x2a-probe-packed7-declared8:
+Bitstring Most Common Value Estimate: min entropy = 0.82378540098294184
+Literal Most Common Value Estimate: min entropy = 1.8550620280307994
+Bitstring Collision Estimate: min entropy = 0.17508532726377285
+Bitstring Markov Estimate: min entropy = 0.28729336422749802
+Bitstring Compression Estimate: min entropy = 0.14989895496067887
+Bitstring t-Tuple Estimate: min entropy = 0.13498362075177919
+Bitstring LRS Estimate: min entropy = 0.27028015667300098
+Literal t-Tuple Estimate: min entropy = 1.1015437537386912
+Literal LRS Estimate: min entropy = 1.9937962650902059
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.21041547029998509
+Literal MultiMCW Prediction Estimate: min entropy = 1.7636716409878008
+Bitstring Lag Prediction Estimate: min entropy = 0.21269222991794037
+Literal Lag Prediction Estimate: min entropy = 1.5636696575738054
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.18884452985426645
+Literal MultiMMC Prediction Estimate: min entropy = 1.0613353447799332
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.21269067277486806
+Literal LZ78Y Prediction Estimate: min entropy = 1.0622225570277204
+H_bitstring = 0.13498362075177919
+H_bitstring Per Symbol = 1.0798689660142335
+H_original = 1.0613353447799332
+Assessed min entropy: 1.0613353447799332
+x2a-probe-lsbpad-inferred:
+Bitstring Most Common Value Estimate: min entropy = 0.82378540098294184
+Literal Most Common Value Estimate: min entropy = 1.8550620280307994
+Bitstring Collision Estimate: min entropy = 0.17507087055702461
+Bitstring Markov Estimate: min entropy = 0.28727743854773191
+Bitstring Compression Estimate: min entropy = 0.14953273274312434
+Bitstring t-Tuple Estimate: min entropy = 0.13498362075177919
+Bitstring LRS Estimate: min entropy = 0.27028015667300098
+Literal t-Tuple Estimate: min entropy = 1.1015437537386912
+Literal LRS Estimate: min entropy = 1.9937962650902059
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.21041547029998509
+Literal MultiMCW Prediction Estimate: min entropy = 1.7636716409878008
+Bitstring Lag Prediction Estimate: min entropy = 0.2126922299280376
+Literal Lag Prediction Estimate: min entropy = 1.5636696575738054
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.18880371904895024
+Literal MultiMMC Prediction Estimate: min entropy = 1.0613353447799332
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.21269067277713979
+Literal LZ78Y Prediction Estimate: min entropy = 1.0622225570277204
+H_bitstring = 0.13498362075177919
+H_bitstring Per Symbol = 1.0798689660142335
+H_original = 1.0613353447799332
+Assessed min entropy: 1.0613353447799332
+x2b-probe-packed7-inferred:
+Bitstring Most Common Value Estimate: min entropy = 0.98952918536326329
+Literal Most Common Value Estimate: min entropy = 6.4787806198176447
+Bitstring Collision Estimate: min entropy = 0.82113240795707754
+Bitstring Markov Estimate: min entropy = 0.98648678610099372
+Bitstring Compression Estimate: min entropy = 0.46924391947349192
+Bitstring t-Tuple Estimate: min entropy = 0.89915514744251857
+Bitstring LRS Estimate: min entropy = 0.34918134011074992
+Literal t-Tuple Estimate: min entropy = 6.4787806198176447
+Literal LRS Estimate: min entropy = 4.4744979384040837
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.8223885950713018
+Literal MultiMCW Prediction Estimate: min entropy = 6.5763125506921671
+Bitstring Lag Prediction Estimate: min entropy = 0.14888983340168679
+Literal Lag Prediction Estimate: min entropy = 4.9750446547891372
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.94457268106297732
+Literal MultiMMC Prediction Estimate: min entropy = 6.7755515751742355
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.97857149445185143
+Literal LZ78Y Prediction Estimate: min entropy = 6.7744697466429917
+H_bitstring = 0.14888983340168679
+H_bitstring Per Symbol = 1.0422288338118075
+H_original = 4.4744979384040837
+Assessed min entropy: 1.0422288338118075
+x2b-probe-packed7-declared8:
+Bitstring Most Common Value Estimate: min entropy = 0.82235085205442526
+Literal Most Common Value Estimate: min entropy = 6.4787806198176447
+Bitstring Collision Estimate: min entropy = 0.8119913277555465
+Bitstring Markov Estimate: min entropy = 0.8400034497622092
+Bitstring Compression Estimate: min entropy = 0.54146756415675501
+Bitstring t-Tuple Estimate: min entropy = 0.82235085205442526
+Bitstring LRS Estimate: min entropy = 0.5269578211866115
+Literal t-Tuple Estimate: min entropy = 6.4787806198176447
+Literal LRS Estimate: min entropy = 4.4744979384040837
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.81699739405255656
+Literal MultiMCW Prediction Estimate: min entropy = 6.5763125506921671
+Bitstring Lag Prediction Estimate: min entropy = 0.31780700019598818
+Literal Lag Prediction Estimate: min entropy = 4.9750446547891372
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.822476273931813
+Literal MultiMMC Prediction Estimate: min entropy = 6.7755515751742355
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.8224689740793566
+Literal LZ78Y Prediction Estimate: min entropy = 6.7744697466429917
+H_bitstring = 0.31780700019598818
+H_bitstring Per Symbol = 2.5424560015679054
+H_original = 4.4744979384040837
+Assessed min entropy: 2.5424560015679054
+x2b-probe-lsbpad-inferred:
+Bitstring Most Common Value Estimate: min entropy = 0.82235085205442526
+Literal Most Common Value Estimate: min entropy = 6.4787806198176447
+Bitstring Collision Estimate: min entropy = 0.81220329402005775
+Bitstring Markov Estimate: min entropy = 0.8400034497622092
+Bitstring Compression Estimate: min entropy = 0.54335156183525057
+Bitstring t-Tuple Estimate: min entropy = 0.82235085205442526
+Bitstring LRS Estimate: min entropy = 0.5269578211866115
+Literal t-Tuple Estimate: min entropy = 6.4787806198176447
+Literal LRS Estimate: min entropy = 4.4744979384040837
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.81699739405255656
+Literal MultiMCW Prediction Estimate: min entropy = 6.5763125506921671
+Bitstring Lag Prediction Estimate: min entropy = 0.31782936992437183
+Literal Lag Prediction Estimate: min entropy = 4.9750446547891372
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.82255594137704435
+Literal MultiMMC Prediction Estimate: min entropy = 6.7755515751742355
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.8224689740793566
+Literal LZ78Y Prediction Estimate: min entropy = 6.7744697466429917
+H_bitstring = 0.31782936992437183
+H_bitstring Per Symbol = 2.5426349593949746
+H_original = 4.4744979384040837
+Assessed min entropy: 2.5426349593949746

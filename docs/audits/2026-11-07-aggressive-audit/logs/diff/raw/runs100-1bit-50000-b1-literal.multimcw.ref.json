@@ -1,0 +1,79 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 0.20551643768666078,
+  "C": 43109,
+  "r": 89,
+  "N": 49937,
+  "P_global": 0.863267717323828,
+  "P_global'": 0.8672281922244767,
+  "P_local": 0.8597126303189195,
+  "L": 50000,
+  "k": 2,
+  "k_alphabet": 2,
+  "k_observed": 2,
+  "k_mode": "alphabet",
+  "windows": [
+   63,
+   255,
+   1023,
+   4095
+  ],
+  "z": 2.576,
+  "confidence": 0.99,
+  "scoreboard": [
+   33969,
+   35829,
+   43109,
+   23873
+  ],
+  "winner": 3,
+  "longest_run": 88,
+  "binding": "P_global'",
+  "P_local_changes_result": false,
+  "plocal_mode": "float",
+  "ambiguities": [
+   "step 7 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed'); materially different when the data uses a strict subset of the alphabet and the predictor does worse than 1/k",
+   "step 5 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default here (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+   "step 6 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here, arbitrary precision optional (plocal_mode='mp')",
+   "step 1 with L <= w1 gives N <= 0: undefined, returned as NaN",
+   "step 5 with N = 1 and P_global != 0 divides by zero: undefined, returned as NaN",
+   "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 6 uses N; the table is reproduced here to its printed 4 decimals with N = 1 000 000",
+   "Appendix G.2 Table 3 (PDF p. 76), second column, rows r = 55..155: each printed value is the value for r - 5 (0.7092 is r=50's, ..., 0.8980 is r=150's); r = 160 onward is labelled correctly.  MEASURED 2026-11-07, logs/reference-multimcw-probe1-worked-example-table3.log; the test suite asserts the shift",
+   "step 6's right-hand side is not monotone in P_local over (0, 1) (it has sub-target wiggles and a pole where r + 1 - r x = 0); but on all 17 (r, N) pairs measured, including r = N+1, the set where it exceeds 0.99 is a single initial interval, so a [0,1] bisection is well-posed there (logs/reference-multimcw-probe2-step6-crossings.log).  Narrower regions below the 2.5e-6 grid remain a SUSPICION only",
+   "the worked example prints min-entropy 0.3908 = -log2(0.7627), i.e. computed from the ROUNDED P'_global; the unrounded value gives 0.39088.  A rounding artefact of the example, not a reading of the algorithm"
+  ]
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "multimcw",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/runs100-1bit-50000.bin",
+  "1",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/runs100-1bit-50000-b1-literal.multimcw.ref.json"
+ ],
+ "duration_s": 0.149,
+ "options_used": {},
+ "module": "multimcw",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 1,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 1,
+ "estimate_seconds": 0.017,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimcw.py",
+ "module_sha256": "a54674a93aef82c7b43cc9820a22664ef4ac7258ac7a42b2bfdaa657a8c35079"
+}

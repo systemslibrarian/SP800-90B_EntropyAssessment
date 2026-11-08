@@ -1,0 +1,25 @@
+# PROV-01 observed.txt  2026-11-07 21:56:05 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/good.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[baseline]=0  stdout=baseline.out stderr=baseline.err
+good.json errorLevel=0 testCases=11
+good.json sha256 ab05dc8eef4ab840c555ddc5603f637b746154e61760d55e3d1c874177c2a19e
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/stale_noniid_Z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[noniid_Z]=255  stdout=noniid_Z.out stderr=noniid_Z.err
+  noniid_Z: STALE SUCCESS SURVIVED -- stale_noniid_Z.json is byte-identical to good.json (errorLevel 0), tool rc=255
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -l 5x,10 -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/stale_noniid_l.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[noniid_l]=255  stdout=noniid_l.out stderr=noniid_l.err
+  noniid_l: STALE SUCCESS SURVIVED -- stale_noniid_l.json is byte-identical to good.json (errorLevel 0), tool rc=255
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/stale_iid_Z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid_Z]=255  stdout=iid_Z.out stderr=iid_Z.err
+  iid_Z: STALE SUCCESS SURVIVED -- stale_iid_Z.json is byte-identical to good.json (errorLevel 0), tool rc=255
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/stale_restart_Z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[restart_Z]=255  stdout=restart_Z.out stderr=restart_Z.err
+  restart_Z: STALE SUCCESS SURVIVED -- stale_restart_Z.json is byte-identical to good.json (errorLevel 0), tool rc=255
+stale-success survivals: 4 of 4 probes
+RESULT: PASS -- an option error parsed BEFORE -o exits 255 without claiming the target; the previous success report survives byte-identical (ea_non_iid x2, ea_iid, ea_restart)

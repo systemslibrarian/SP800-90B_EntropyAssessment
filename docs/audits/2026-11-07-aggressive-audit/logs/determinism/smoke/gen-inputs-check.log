@@ -1,0 +1,7 @@
+OK       fixed-random-source-1MiB.bin
+OK       restart-csprng-1bit-1000x1000.bin
+OK       restart-csprng-8bit-1000x1000.bin
+OK       smoke-csprng-1bit-20000.bin
+OK       smoke-csprng-8bit-20000.bin
+CHECK: 5 ok, 0 bad, of 5 manifest rows
+exit=0

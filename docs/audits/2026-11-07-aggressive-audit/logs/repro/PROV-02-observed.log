@@ -1,0 +1,22 @@
+# PROV-02 observed.txt  2026-11-07 21:56:06 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_default]=0  stdout=c8.out stderr=c8.err
+stdout line:            h': 0.732612        (printf "\nh': %f\n", H_bitstring -- per bit)
+JSON Overall.hAssessed   = 5.860893744485249
+JSON Overall.hBitstring  = 0.7326117180606562
+JSON Overall.dataWordSize= 8.0
+JSON Overall.hOriginal   = <absent>
+JSON keys naming a unit/mode/h-prime anywhere in the document: bitsPerSymbol,bitsPerSymbolInferred
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8v.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_vvv]=0  stdout=c8v.out stderr=c8v.err
+  -vvv text: H_bitstring = 0.73261171806065617
+  -vvv text: H_bitstring Per Symbol = 5.8608937444852494
+  -vvv text: Assessed min entropy: 5.8608937444852494
+  -vvv text has an h' line: 0 (0 expected -- only the 'Assessed' label exists at this level)
+ratio hAssessed/hBitstring = 8 ; hAssessed == dataWordSize*hBitstring: True ; hAssessed equals the text h': False
+DEFECT
+RESULT: PASS -- stdout h' is per bit; JSON hAssessed = dataWordSize x h' (x8 here) under the same key name as the -i per-sample figure; no unit or mode field in the report

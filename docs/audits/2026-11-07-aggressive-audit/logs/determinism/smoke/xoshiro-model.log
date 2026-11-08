@@ -1,0 +1,29 @@
+Q1: code_jump(k) vs canonical J^k, k = 0..5
+  k=0: equal=True  expected_equal=True  ok
+  k=1: equal=True  expected_equal=True  ok
+  k=2: equal=False  expected_equal=False  ok
+  k=3: equal=False  expected_equal=False  ok
+  k=4: equal=False  expected_equal=False  ok
+  k=5: equal=False  expected_equal=False  ok
+Q2: code_jump(k) == J (I+J)^(k-1) S0, k = 2..9  (closed form derived here)
+  k=2: True
+  k=3: True
+  k=4: True
+  k=5: True
+  k=6: True
+  k=7: True
+  k=8: True
+  k=9: True
+Q3: 10 thread states, 16 seeds: pairwise distinct and non-zero
+  zero states: 0; colliding thread states: 0
+Q4: first output of each of the 10 thread streams distinct, 16 seeds
+  colliding first outputs: 0
+CONSEQUENCE (not a defect in this phase's sense): threads 0 and 1 use J^0 S0 and J^1 S0 as the
+  comment promises; thread t >= 2 uses J (I+J)^(t-1) S0, a non-zero state at an unknown offset
+  in the single 2^256-1 cycle, so 'non-overlapping' is probabilistic rather than guaranteed.
+  Only OMP_NUM_THREADS >= 3 is affected.  The permutation SET already depends on the thread
+  count with a fixed seed because `omp for` partitions the 10,000 iterations and each thread
+  advances its own stream, so counter differences across thread counts are expected whatever
+  the jump does; a VERDICT that depends on thread count would not be.
+RESULT: all checks hold
+exit=0

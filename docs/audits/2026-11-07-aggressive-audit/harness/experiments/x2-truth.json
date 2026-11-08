@@ -1,0 +1,14 @@
+{
+ "P_same": 0.9,
+ "h_bit_conditional": 0.15200309344504995,
+ "H_true_conditional_per_sample": 1.0640216541153495,
+ "H_marginal_per_sample_A_lag1": 1.9120185606702997,
+ "H_marginal_per_sample_B_lag20": 7.0,
+ "ideal_phase_aware_predictor_on_padded_x8": 1.0568282880587612,
+ "jensen_check_ideal_padded_le_truth": true,
+ "B_padded_best_single_lag": 23,
+ "B_padded_lag23_accuracy": 0.8,
+ "B_padded_lag23_entropy_x8_DERIVED": 2.5754247590988983,
+ "B_packed7_lag20_entropy_x7_DERIVED": 1.0640216541153495,
+ "note": "DERIVED expectations, not measurements; the decision is the measured 'Assessed min entropy' of each run against H_true_conditional_per_sample and against the packed7 run."
+}

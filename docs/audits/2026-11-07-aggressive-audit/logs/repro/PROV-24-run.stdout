@@ -1,0 +1,13 @@
+# PROV-24 observed.txt  2026-11-07 21:56:28 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  (the 20 samples of SP 800-90B 6.3.1's worked example, PDF p. 50; width inferred 2)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex20.bin
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/_lib.sh: line 31: 15604 Abort trap: 6              "$@" > "$so" 2> "$se"
+rc[iid]=134  stdout=ab.out stderr=ab.err
+stderr (verbatim):
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+rc=134 assertion lines=1 ; ab.json errorLevel=-1 reportComplete=false
+code: permutation_tests.h:256:	assert(n>=p); 
+RESULT: PASS -- SIGABRT (exit 134) from assert(n>=p) in periodicity() on a 20-sample input under the escape; the C14 placeholder is what remains at -o

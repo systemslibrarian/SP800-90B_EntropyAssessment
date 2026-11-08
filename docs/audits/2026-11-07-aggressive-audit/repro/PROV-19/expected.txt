@@ -1,0 +1,14 @@
+n/a (report integrity). A key that one writer of the same file format sets
+to false should be set to true by the writers of the complete artefact, or
+not exist at all.
+
+Expected: every report written by TestRunBase::GetBaseJson() carries
+"reportComplete": true (success) or false (error/placeholder); or the
+placeholder does not introduce a key the schema never otherwise writes.
+
+Observed: claimReportTarget() (non_iid_main.cpp:86, iid_main.cpp:83,
+restart_main.cpp) writes "reportComplete": false; GetBaseJson()
+(test_run_base.h:61-103) never writes the key, so success reports, input-error
+reports and statistical-failure reports all lack it. A consumer that requires
+reportComplete == true rejects every valid report (fail-closed but wrong); one
+that tests "!= false" works. Direction: neutral. LOW.

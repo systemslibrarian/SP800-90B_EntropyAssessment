@@ -1,0 +1,70 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 4.9686028423689405e-06,
+  "t": 330640,
+  "p-hat_max": 0.9999770395450875,
+  "p_u": 0.999996556032879,
+  "Q": {
+   "_elided": true,
+   "entries": 330640,
+   "sha256": "6aba69acf1872c82f69b6a214bfc695a1f1378deffbf3237f26fdb8fc2f5fd0a",
+   "min": 35,
+   "max": 200824
+  },
+  "P": {
+   "_elided": true,
+   "entries": 330640,
+   "sha256": "59eb718e9b74b48901c09e3d5509d53abfec5cc774ff919183008d62163d4d52",
+   "min": 0.0004901960784313725,
+   "max": 0.50206
+  },
+  "P_max": {
+   "_elided": true,
+   "entries": 330640,
+   "sha256": "d514e09f13cb54dd3ee43b4e77f213ca88a30b98ff0bf55e80d98254696be8bd",
+   "min": 0.5014698488919486,
+   "max": 0.9999770395450875
+  },
+  "Q_next": 34,
+  "argmax_i": 330640,
+  "L": 400000,
+  "k": 2,
+  "cutoff": 35,
+  "z": 2.576,
+  "z_variant": "literal",
+  "method": "suffix_array (after direct reached 128)"
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "ttuple",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period255-8bit-50000.bin",
+  "8",
+  "bitstring",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period255-8bit-50000-b8-bitstring.ttuple.ref.json"
+ ],
+ "duration_s": 5.951,
+ "options_used": {},
+ "module": "ttuple",
+ "mode": "bitstring",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 254,
+  "masked": false
+ },
+ "n_symbols_fed": 400000,
+ "bps_fed": 1,
+ "estimate_seconds": 4.48,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+ "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+}

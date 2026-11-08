@@ -1,0 +1,142 @@
+{
+ "case": "onesym0-1bit-50000-b1-literal",
+ "name": "onesym0-1bit-50000.bin",
+ "file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin",
+ "bps": 1,
+ "mode": "literal",
+ "n": 50000,
+ "input_sha256": "5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d",
+ "binary": {
+  "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+  "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
+ },
+ "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
+ "timestamp": "2026-11-07T21:37:19-0500",
+ "env": {
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "1"
+ },
+ "non_compliant_short_dataset": true,
+ "settings": {
+  "binary_rule": "observed",
+  "bit_order": "msb",
+  "bitstring_truncate": 0,
+  "tolerance_abs": 1e-09,
+  "integer_labels": [
+   "C",
+   "Mode count",
+   "N",
+   "Sum t_i",
+   "r",
+   "t",
+   "u",
+   "v"
+  ],
+  "ref_options": {},
+  "d1_recheck": true,
+  "d1_option": [
+   "z",
+   2.575829303548901
+  ],
+  "d1_options_by_module": {
+   "ttuple": [
+    "z_variant",
+    "exact"
+   ],
+   "collision": [
+    "z_alpha",
+    2.575829303548901
+   ]
+  }
+ },
+ "cpp": {
+  "cmd": [
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+   "-i",
+   "-a",
+   "-v",
+   "-v",
+   "-o",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/onesym0-1bit-50000-b1.cpp.json",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin",
+   "1"
+  ],
+  "exit": 255,
+  "signal": null,
+  "outcome": "nonzero_exit_255",
+  "duration_s": 0.015,
+  "stdout_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/onesym0-1bit-50000-b1.cpp.stdout.txt",
+  "stderr_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/onesym0-1bit-50000-b1.cpp.stderr.txt",
+  "json_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/onesym0-1bit-50000-b1.cpp.json",
+  "well_formed": false,
+  "refusal_message": "Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin' (SHA-256 hash 5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d of assessed bytes)\nLoaded 50000 samples of 1 distinct 1-bit-wide symbols\n*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.\n*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.\n*** Its result is NOT a compliant SP 800-90B assessment. ***\nSymbol alphabet consists of 1 symbol. No entropy awarded...",
+  "warnings": [
+   "*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.",
+   "*** Its result is NOT a compliant SP 800-90B assessment. ***"
+  ],
+  "loaded": {
+   "loaded_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin",
+   "loaded_sha256": "5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d",
+   "n": 50000,
+   "k": 1,
+   "width": 1,
+   "n_binary": null
+  },
+  "summary": {
+   "H_original": null,
+   "H_bitstring": null,
+   "H_bitstring Per Symbol": null,
+   "assessed": null
+  },
+  "json_summary": {
+   "bitsPerSymbol": [
+    {
+     "path": "/bitsPerSymbol",
+     "value": 1
+    }
+   ],
+   "bitsPerSymbolInferred": [
+    {
+     "path": "/bitsPerSymbolInferred",
+     "value": false
+    }
+   ],
+   "errorLevel": [
+    {
+     "path": "/errorLevel",
+     "value": -1
+    }
+   ],
+   "errorMessage": [
+    {
+     "path": "/errorMessage",
+     "value": "Symbol alphabet consists of 1 symbol. No entropy awarded..."
+    }
+   ],
+   "sha256": [
+    {
+     "path": "/sha256",
+     "value": "5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d"
+    }
+   ]
+  },
+  "json_error": null,
+  "notes": {
+   "Literal": {},
+   "Bitstring": {}
+  },
+  "unparsed_estimate_lines": []
+ },
+ "k_observed": 1,
+ "is_binary": true,
+ "translation": null,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 0,
+  "masked": false
+ },
+ "class": "TOOL_REFUSED",
+ "verdict": "onesym0-1bit-50000-b1-literal: TOOL_REFUSED (nonzero_exit_255) -- Symbol alphabet consists of 1 symbol. No entropy awarded... [EA_ALLOW_SHORT_DATASET=1]"
+}

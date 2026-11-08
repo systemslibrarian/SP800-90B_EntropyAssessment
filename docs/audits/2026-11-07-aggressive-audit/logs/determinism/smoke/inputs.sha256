@@ -1,0 +1,21 @@
+# sha256  bytes  path   (every input this phase reads)
+481cdac6e2d65d45656c21234125eaf26df18a49037f15ffd40002b35e547586  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/biased-random-bits.bin
+146bd7497d8e2d61a6e8559c9342ee79f6005a390ee4d776ba43500d00eb508d  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/biased-random-bytes.bin
+d9a7de4e1f170f363bcb2a85570e4b6ed2320d5500abc5795bc4bfadcb93b928  1165666  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/data.pi.bin
+a70ce92a71b9b0c6dee80335ef570dea618631ee64cc735b033e9f402f14bc7d  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/normal.bin
+3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  10000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin
+a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  10000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin
+17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  10000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+7d37dc3795e9b2927beb779008d7f4b4630dd7f2c058a2b14cee9d41a658dd68  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/ringOsc-nist.bin
+f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_1bit.bin
+489bc841bb364ba86da70b1617138aef76b25dd9196ad669eef40c1441b6cb88  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_4bit.bin
+c7e56911d2657fa9b6e86c03d4477474d6ec698691c5f32d3918ec513713e3c3  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_8bit.bin
+f5a2bbe8db53c7c877e35c7a45f0217b89e04aa90af007cb582e851a222c9632  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/csprng-1bit-1000000.bin
+c98c420474bd9a41c9d186ce3fb31bcc3aaa7f7a97f067695de087634363624a  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/csprng-8bit-1000000.bin
+d6f58132e5804e02c7bfff9ef983a1690f3f91d33bc4570e30e00ade201ba3f4  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two9010-8bit-1000000.bin
+c596f5438f65a47180533148f2200a7cc53c75e3d155988ee8a7ebbf4c5d97af  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period255-8bit-1000000.bin
+3fe5e7eb79c9e0b32c7ba681a2ff15bddcbe85bc65dad00047ab2d717f8bc71e  1048576  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/fixed-random-source-1MiB.bin
+e9936cbf43ea7d4c1b76154d743b1fa3d86d1874b4a464b00bb8197439c863a1  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/restart-csprng-1bit-1000x1000.bin
+47311ae5a22774892aa267c0f4220b1eecb79f487aabf720824d9b33d8b48db0  1000000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/restart-csprng-8bit-1000x1000.bin
+17917b5af1e8d08d2923432307ad7ba22f100ddb45b050cda55443fe86316514  20000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/smoke-csprng-1bit-20000.bin
+8e5441d8de225b55a71ee7c5ab41b8031546f30923df5c7a26d9afb10a6f2317  20000  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/smoke-csprng-8bit-20000.bin

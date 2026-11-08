@@ -1,0 +1,13 @@
+name: x3-probe-scaled-gadget
+start: 2026-11-07T22:17:07-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: 1
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-gadget.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-gadget-scaled-cap3000-8bit-20000.bin 8
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 b7701d6daa5388ba9637c73bc30083dfad8dc38430831d68438df606a5536438  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-gadget.json  (2752 bytes)
+sha256 b9f7213eaecd7ee57f7fcda773eb78d8716f116ab1048648dd2c7aa1a1ff0819  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-gadget-scaled-cap3000-8bit-20000.bin  (20000 bytes)
+end: 2026-11-07T22:17:07-0500
+rc: 0
+report sha256 9ecba1bb67270d750b5e52f605b9ae64ca530b8d2b5ba1d4055f45f58c0486f5  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-gadget.json

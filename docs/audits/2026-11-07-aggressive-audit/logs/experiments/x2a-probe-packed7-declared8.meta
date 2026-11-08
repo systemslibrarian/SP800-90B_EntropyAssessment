@@ -1,0 +1,13 @@
+name: x2a-probe-packed7-declared8
+start: 2026-11-07T22:17:08-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: 1
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-probe-packed7-declared8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2a-chain-lag1-p09-packed7-prefix20000.bin 8
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 b41bf02a1214cee8777ff1fa9685acfb5c6cc8a1f47ece6bfbf48c8de3b0835b  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-probe-packed7-declared8.json  (2777 bytes)
+sha256 4b5297a211564de284533fb18c5d4d80989a16bb553286f2beab79ac28d3599f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2a-chain-lag1-p09-packed7-prefix20000.bin  (20000 bytes)
+end: 2026-11-07T22:17:08-0500
+rc: 0
+report sha256 bf0fbe9e9e7ba5dad8c836899c0f00a62b47cd3a2e754635fdc758624d6092b7  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-probe-packed7-declared8.json

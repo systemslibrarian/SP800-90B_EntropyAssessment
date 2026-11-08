@@ -1,0 +1,14 @@
+n/a (report integrity).
+
+Expected: "type" identifies the producing tool in every report it writes,
+consistently with the values the same binaries already use elsewhere:
+  ea_non_iid -> "non-IID"   (the C14 placeholder, non_iid_main.cpp:82)
+  ea_iid     -> "IID"       (iid_main.cpp:79)
+  ea_restart -> "Restart"   (restart_main.cpp testRun*.type)
+
+Observed: every completed ea_non_iid and ea_iid report -- success, statistical
+failure and input-error alike -- carries "type": "" because TestRunBase::type
+is never assigned in those two mains (grep testRun.type: 0 hits in each).
+A consumer cannot use "type" to tell which tool wrote the file; ea_iid adds
+"assessmentMode": "IID" and ea_non_iid adds only the constant "IID": false.
+Direction: neutral. LOW.

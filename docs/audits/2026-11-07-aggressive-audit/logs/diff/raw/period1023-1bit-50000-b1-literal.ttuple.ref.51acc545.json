@@ -1,0 +1,72 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 0.0003003619305983851,
+  "t": 15218,
+  "p-hat_max": 0.999546591453988,
+  "p_u": 0.9997918266457385,
+  "Q": {
+   "_elided": true,
+   "entries": 15218,
+   "sha256": "120192ec0f96946b55d201c8d440132506091c9a77ad9ab316ae2347b19837b7",
+   "min": 35,
+   "max": 25161
+  },
+  "P": {
+   "_elided": true,
+   "entries": 15218,
+   "sha256": "ec7f4226cd99b6cf6f4d4b09bddf2372bd8595958806aebbb3e5ce22ccfb9588",
+   "min": 0.0009775171065493646,
+   "max": 0.50322
+  },
+  "P_max": {
+   "_elided": true,
+   "entries": 15218,
+   "sha256": "be6646aee70c99e55676a7c1a4b039359f9ab9c19f14dab590eebaf6770f5548",
+   "min": 0.50322,
+   "max": 0.999546591453988
+  },
+  "Q_next": 34,
+  "argmax_i": 15218,
+  "L": 50000,
+  "k": 2,
+  "cutoff": 35,
+  "z": 2.575829303548901,
+  "z_variant": "exact",
+  "method": "suffix_array (after direct reached 128)"
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "ttuple",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period1023-1bit-50000.bin",
+  "1",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{\"z_variant\": \"exact\"}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period1023-1bit-50000-b1-literal.ttuple.ref.51acc545.json"
+ ],
+ "duration_s": 0.439,
+ "options_used": {
+  "z_variant": "exact"
+ },
+ "module": "ttuple",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 1,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 1,
+ "estimate_seconds": 0.311,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+ "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+}

@@ -1,0 +1,20 @@
+n/a (code-vs-comment; SP 800-90B 5.1 names no randomness source).
+
+The code's own comment (utils.h:762-764): "This is the jump function for the
+generator. It is equivalent to 2^128 calls to xoshiro256starstar(); it can be
+used to generate 2^128 non-overlapping subsequences for parallel
+computations." and permutation_tests.h:648: "Cause the RNG to jump
+omp_get_thread_num() * 2^128 calls".
+
+Expected: xoshiro_jump(k, S0) == J^k(S0), where J is the Blackman/Vigna jump
+(accumulators zeroed per jump).
+
+Observed (model of utils.h:765-789): s0..s3 are declared once and never
+re-zeroed, so iteration j computes acc_{j+1} = acc_j XOR J(s_j). k = 0 and 1
+agree with J^k; k = 2 equals S1 XOR S2 exactly; k = 3, 4 disagree. Thread k's
+stream therefore starts at a nonzero J-linear image of the seed at an
+effectively random offset in xoshiro256's single 2^256-1 cycle rather than at
+k x 2^128; the "non-overlapping" guarantee becomes probabilistic (overlap
+probability ~threads x 2^44 / 2^256, nil). Each thread's shuffle is still
+uniform. Only OMP_NUM_THREADS >= 3 is affected (this audit's 2-thread probes
+are not). Direction: neutral. LOW. Upstream-inherited.

@@ -1,0 +1,25 @@
+# PROV-16 observed.txt  2026-11-07 21:56:18 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+input sha256 8b99602a725b160f22343284ffef6125ae2c042407a8e14a13f3ef3e8ecd95ea  (20,000 samples: 19,999 x 0x00, one 0x01 at index 12345; declared width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/one-in-20000.bin 1
+rc[vvv]=0  stdout=z.out stderr=z.err
+  | Assessed min entropy: -0
+raw JSON text lines containing '-0': 
+  | 6:   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/one-in-20000.bin 1",
+  | 9:   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/one-in-20000.bin",
+  | 15:         "hOriginal" : -0.0,
+  | 22:         "hOriginal" : -0.0,
+  | 26:         "hOriginal" : 7.2143713666945002e-05,
+  | 30:         "hOriginal" : -0.0,
+  | 34:         "tTupleRes" : -0.0,
+  | 42:         "hOriginal" : -0.0,
+  | 46:         "hOriginal" : -0.0,
+  | 50:         "hOriginal" : -0.0,
+  | 54:         "hOriginal" : -0.0,
+  | 59:         "hAssessed" : -0.0,
+  | 60:         "hOriginal" : -0.0,
+MCV hOriginal = -0.0 (negative zero: True) ; Overall hAssessed = -0.0 (negative zero: True) ; str compare to '0': False
+DEFECT
+RESULT: PASS -- p_u clamps to 1 -> -log2(1.0) = -0.0: text 'min entropy = -0', JSON hOriginal -0.0 on the MCV element (and hAssessed -0.0)

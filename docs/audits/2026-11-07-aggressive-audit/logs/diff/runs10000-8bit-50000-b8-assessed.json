@@ -1,0 +1,418 @@
+{
+ "case": "runs10000-8bit-50000-b8-assessed",
+ "name": "runs10000-8bit-50000.bin",
+ "file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/runs10000-8bit-50000.bin",
+ "bps": 8,
+ "mode": "assessed",
+ "n": 50000,
+ "input_sha256": "fe12ac81a3fbae7ace7ab429c91e5c1d26337026faeee0312de9ed869d408833",
+ "binary": {
+  "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+  "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
+ },
+ "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
+ "timestamp": "2026-11-07T21:48:58-0500",
+ "env": {
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "1"
+ },
+ "non_compliant_short_dataset": true,
+ "settings": {
+  "binary_rule": "observed",
+  "bit_order": "msb",
+  "bitstring_truncate": 0,
+  "tolerance_abs": 1e-09,
+  "integer_labels": [
+   "C",
+   "Mode count",
+   "N",
+   "Sum t_i",
+   "r",
+   "t",
+   "u",
+   "v"
+  ],
+  "ref_options": {},
+  "d1_recheck": true,
+  "d1_option": [
+   "z",
+   2.575829303548901
+  ],
+  "d1_options_by_module": {
+   "ttuple": [
+    "z_variant",
+    "exact"
+   ],
+   "collision": [
+    "z_alpha",
+    2.575829303548901
+   ]
+  }
+ },
+ "cpp": {
+  "cmd": [
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+   "-i",
+   "-a",
+   "-v",
+   "-v",
+   "-o",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/runs10000-8bit-50000-b8.cpp.json",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/runs10000-8bit-50000.bin",
+   "8"
+  ],
+  "exit": 0,
+  "signal": null,
+  "outcome": "exit_0",
+  "duration_s": 0.139,
+  "stdout_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/runs10000-8bit-50000-b8.cpp.stdout.txt",
+  "stderr_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/runs10000-8bit-50000-b8.cpp.stderr.txt",
+  "json_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/runs10000-8bit-50000-b8.cpp.json",
+  "well_formed": true,
+  "refusal_message": null,
+  "warnings": [
+   "*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.",
+   "*** Its result is NOT a compliant SP 800-90B assessment. ***"
+  ],
+  "loaded": {
+   "loaded_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/runs10000-8bit-50000.bin",
+   "loaded_sha256": "fe12ac81a3fbae7ace7ab429c91e5c1d26337026faeee0312de9ed869d408833",
+   "n": 50000,
+   "k": 5,
+   "width": 8,
+   "n_binary": 400000
+  },
+  "summary": {
+   "H_original": 0,
+   "H_bitstring": 2.3010491587933414e-05,
+   "H_bitstring Per Symbol": 0.0001840839327034673,
+   "assessed": 0
+  },
+  "json_summary": {
+   "bitsPerSymbol": [
+    {
+     "path": "/bitsPerSymbol",
+     "value": 8
+    }
+   ],
+   "bitsPerSymbolInferred": [
+    {
+     "path": "/bitsPerSymbolInferred",
+     "value": false
+    }
+   ],
+   "errorLevel": [
+    {
+     "path": "/errorLevel",
+     "value": 0
+    }
+   ],
+   "sha256": [
+    {
+     "path": "/sha256",
+     "value": "fe12ac81a3fbae7ace7ab429c91e5c1d26337026faeee0312de9ed869d408833"
+    }
+   ],
+   "hBitstring": [
+    {
+     "path": "/testCases[0]/hBitstring",
+     "value": 0.190425966599123
+    },
+    {
+     "path": "/testCases[1]/hBitstring",
+     "value": 0.13235967084781228
+    },
+    {
+     "path": "/testCases[2]/hBitstring",
+     "value": 0.17522440905004796
+    },
+    {
+     "path": "/testCases[3]/hBitstring",
+     "value": 0.051224291125822295
+    },
+    {
+     "path": "/testCases[6]/hBitstring",
+     "value": 0.00014640796252209505
+    },
+    {
+     "path": "/testCases[7]/hBitstring",
+     "value": 2.3010491587933414e-05
+    },
+    {
+     "path": "/testCases[8]/hBitstring",
+     "value": 5.7320107913105216e-05
+    },
+    {
+     "path": "/testCases[9]/hBitstring",
+     "value": 0.00014631235863320335
+    },
+    {
+     "path": "/testCases[10]/hBitstring",
+     "value": 2.3010491587933414e-05
+    }
+   ],
+   "hOriginal": [
+    {
+     "path": "/testCases[0]/hOriginal",
+     "value": 2.2890667419288784
+    },
+    {
+     "path": "/testCases[6]/hOriginal",
+     "value": 0.0011743026857143502
+    },
+    {
+     "path": "/testCases[7]/hOriginal",
+     "value": -0.0
+    },
+    {
+     "path": "/testCases[8]/hOriginal",
+     "value": 2.063048938939063e-05
+    },
+    {
+     "path": "/testCases[9]/hOriginal",
+     "value": 2.063668510379297e-05
+    },
+    {
+     "path": "/testCases[10]/hOriginal",
+     "value": -0.0
+    }
+   ],
+   "hAssessed": [
+    {
+     "path": "/testCases[10]/hAssessed",
+     "value": -0.0
+    }
+   ]
+  },
+  "json_error": null,
+  "notes": {
+   "Literal": {
+    "Lag Prediction": [
+     "P_local can't change the result."
+    ],
+    "MultiMMC Prediction": [
+     "P_local can't change the result."
+    ],
+    "LZ78Y Prediction": [
+     "P_local can't change the result."
+    ]
+   },
+   "Bitstring": {
+    "Collision": [
+     "Found p."
+    ],
+    "Compression": [
+     "Found p."
+    ],
+    "Lag Prediction": [
+     "P_local can't change the result."
+    ],
+    "MultiMMC Prediction": [
+     "P_local can't change the result."
+    ]
+   }
+  },
+  "unparsed_estimate_lines": []
+ },
+ "k_observed": 5,
+ "is_binary": false,
+ "translation": null,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 4,
+  "masked": false
+ },
+ "cpp_internal_checks": [
+  {
+   "check": "loaded_sha256_matches_input",
+   "ok": true,
+   "detail": "tool fe12ac81a3fbae7ace7ab429c91e5c1d26337026faeee0312de9ed869d408833 vs file fe12ac81a3fbae7ace7ab429c91e5c1d26337026faeee0312de9ed869d408833"
+  },
+  {
+   "check": "loaded_n_matches_file_size",
+   "ok": true,
+   "detail": "tool n 50000 vs file bytes 50000"
+  },
+  {
+   "check": "loaded_width_matches_declared",
+   "ok": true,
+   "detail": "tool width 8 vs declared 8"
+  },
+  {
+   "check": "n_binary_equals_n_times_width",
+   "ok": true,
+   "detail": "400000 vs 50000*8"
+  },
+  {
+   "check": "H_original_equals_min_printed_literal",
+   "ok": true,
+   "detail": "H_original 0 vs min(Literal min entropies) 0.0"
+  },
+  {
+   "check": "H_bitstring_equals_min_printed_bitstring",
+   "ok": true,
+   "detail": "H_bitstring 2.3010491587933414e-05 vs min(Bitstring min entropies) 2.3010491587933414e-05"
+  },
+  {
+   "check": "per_symbol_equals_bps_times_H_bitstring",
+   "ok": true,
+   "detail": "0.0001840839327034673 vs 8 x 2.3010491587933414e-05"
+  },
+  {
+   "check": "assessed_equals_min_of_summary_terms",
+   "ok": true,
+   "detail": "Assessed 0 vs min[0.0, 0.0001840839327034673]"
+  },
+  {
+   "check": "assessed_not_above_printed_min",
+   "ok": true,
+   "detail": "Assessed 0 vs min of all printed (bitstring scaled by 8) 0.0"
+  }
+ ],
+ "reference_combination": {
+  "literal": {
+   "min": 0.0,
+   "binding": "lag",
+   "values": {
+    "mcv": 2.289064588870575,
+    "ttuple": 0.00022191455010518813,
+    "lrs": 0.001228278609424053,
+    "multimcw": 0.001174302685746731,
+    "lag": 0.0,
+    "multimmc": 2.0616558873710115e-05,
+    "lz78y": 2.0622750407681455e-05
+   },
+   "missing": [],
+   "declined": [],
+   "complete": true
+  },
+  "bitstring": {
+   "min": 2.3007953171828384e-05,
+   "binding": "lag",
+   "values": {
+    "mcv": 0.19042581965489994,
+    "collision": 0.13235953059877473,
+    "markov": 0.17522440905004796,
+    "compression": 0.0512242775942044,
+    "ttuple": 2.773870514087716e-05,
+    "lrs": 0.00023097124807348394,
+    "multimcw": 0.00014640796254099717,
+    "lag": 2.3007953171828384e-05,
+    "multimmc": 5.7316735790569055e-05,
+    "lz78y": 0.00014631235866636219
+   },
+   "missing": [],
+   "declined": [],
+   "complete": true
+  },
+  "combined": {
+   "H_original": 0.0,
+   "H_bitstring": 2.3007953171828384e-05,
+   "H_bitstring Per Symbol": 0.00018406362537462707,
+   "assessed": 0.0,
+   "binary": false,
+   "complete": true
+  },
+  "rule": "3.1.3: H_I = min(H_original, n x H_bitstring) if not binary else H_original"
+ },
+ "comparisons": {
+  "H_original": {
+   "label": "H_original",
+   "cpp": 0,
+   "ref": 0.0,
+   "class": "AGREE",
+   "reason": "H_original 0 vs 0.0 within 1e-09",
+   "delta": 0.0,
+   "tol": 1e-09
+  },
+  "H_bitstring": {
+   "label": "H_bitstring",
+   "cpp": 2.3010491587933414e-05,
+   "ref": 2.3007953171828384e-05,
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ H_bitstring 2.3010491587933414e-05 exceeds reference 2.3007953171828384e-05 by 2.53842e-09",
+   "delta": 2.5384161050295373e-09,
+   "tol": 1e-09
+  },
+  "H_bitstring Per Symbol": {
+   "label": "H_bitstring Per Symbol",
+   "cpp": 0.0001840839327034673,
+   "ref": 0.00018406362537462707,
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ H_bitstring Per Symbol 0.0001840839327034673 exceeds reference 0.00018406362537462707 by 2.03073e-08",
+   "delta": 2.03073288402363e-08,
+   "tol": 1e-09
+  },
+  "Assessed min entropy": {
+   "label": "Assessed min entropy",
+   "cpp": 0,
+   "ref": 0.0,
+   "class": "AGREE",
+   "reason": "Assessed min entropy 0 vs 0.0 within 1e-09",
+   "delta": 0.0,
+   "tol": 1e-09
+  },
+  "Assessed min entropy [z exact]": {
+   "label": "Assessed min entropy",
+   "cpp": 0,
+   "ref": 0.0,
+   "class": "AGREE",
+   "reason": "Assessed min entropy 0 vs 0.0 within 1e-09",
+   "delta": 0.0,
+   "tol": 1e-09
+  }
+ },
+ "class": "CPP_HIGHER",
+ "d1_explained": true,
+ "reference_combination_d1": {
+  "literal": {
+   "min": 0.0,
+   "binding": "lag",
+   "values": {
+    "mcv": 2.2890667419288784,
+    "ttuple": 0.00022193595148827463,
+    "lrs": 0.0012283177057354265,
+    "multimcw": 0.001174302685746731,
+    "lag": 0.0,
+    "multimmc": 2.063048938939063e-05,
+    "lz78y": 2.063668510379297e-05
+   },
+   "missing": [],
+   "declined": [],
+   "complete": true
+  },
+  "bitstring": {
+   "min": 2.3010491587933414e-05,
+   "binding": "lag",
+   "values": {
+    "mcv": 0.190425966599123,
+    "collision": 0.13235967084781228,
+    "markov": 0.17522440905004796,
+    "compression": 0.05122429112585975,
+    "ttuple": 2.774138058361767e-05,
+    "lrs": 0.00023097703119917838,
+    "multimcw": 0.00014640796254099717,
+    "lag": 2.3010491587933414e-05,
+    "multimmc": 5.7320107913105216e-05,
+    "lz78y": 0.00014631235866636219
+   },
+   "missing": [],
+   "declined": [],
+   "complete": true
+  },
+  "combined": {
+   "H_original": 0.0,
+   "H_bitstring": 2.3010491587933414e-05,
+   "H_bitstring Per Symbol": 0.0001840839327034673,
+   "assessed": 0.0,
+   "binary": false,
+   "complete": true
+  },
+  "option": {
+   "z": 2.575829303548901
+  }
+ },
+ "verdict": "runs10000-8bit-50000-b8-assessed: !!! CPP_HIGHER -- Assessed cpp=0 ref=0.0 [AGREE: Assessed min entropy 0 vs 0.0 within 1e-09]; D-1 recheck with z = 2.575829303548901: AGREE -- the assessed difference IS documented divergence D-1 [EA_ALLOW_SHORT_DATASET=1]"
+}

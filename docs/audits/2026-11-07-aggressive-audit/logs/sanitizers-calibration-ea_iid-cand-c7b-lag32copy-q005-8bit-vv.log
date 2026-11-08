@@ -1,0 +1,39 @@
+# cmd: cpp/ea_iid -i -a -vv /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/sancand/c7b-lag32copy-q005-8bit-20000.bin 8
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2
+# input sha256: 0ee522b1801e4d8ff7374cdda93d7925f1df3659d94230fdb4a19683e3d98ad1
+# start: 1794105835
+Loaded file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/sancand/c7b-lag32copy-q005-8bit-20000.bin' (SHA-256 hash 0ee522b1801e4d8ff7374cdda93d7925f1df3659d94230fdb4a19683e3d98ad1 of assessed bytes)
+Loaded 20000 samples of 256 distinct 8-bit-wide symbols
+
+*** Warning: dataset contains 20000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary samples: 160000
+Raw Mean = 128.17585
+Translated Symbol Index Median = 129
+Binary = false
+Literal Most Common Value Estimate: Mode count = 98
+Literal Most Common Value Estimate: p-hat = 0.0048999999999999998
+Literal Most Common Value Estimate: p_u = 0.0061718747411394449
+Literal Most Common Value Estimate: min entropy = 7.3400755021070854
+Bitstring Most Common Value Estimate: Mode count = 80069
+Bitstring Most Common Value Estimate: p-hat = 0.50043124999999999
+Bitstring Most Common Value Estimate: p_u = 0.50365104549370288
+Bitstring Most Common Value Estimate: min entropy = 0.9895035859594995
+Chi square independence: T = 2050.4096588434645
+Chi square independence: df = 1712
+Chi square independence: P-value = 2.4883347043393342e-08
+Chi square goodness of fit: T = 2530.0827251388559
+Chi square goodness of fit: df = 2295
+Chi square goodness of fit: P-value = 0.00037888922198091736
+Chi square tests: Failed
+Literal Longest Repeated Substring results: P_col = 0.003959809999999999372
+Literal Longest Repeated Substring results: W = 3
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.9999959424679765174204
+Length of longest repeated substring test: Passed
+** Skipped IID permutation tests after an earlier required IID test failure
+
+IID test suite failed: no IID min-entropy estimate was awarded.
+# exit: 1
+# wall_seconds: 0.03

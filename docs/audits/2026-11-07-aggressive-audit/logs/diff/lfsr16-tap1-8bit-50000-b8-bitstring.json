@@ -1,0 +1,2676 @@
+{
+ "case": "lfsr16-tap1-8bit-50000-b8-bitstring",
+ "name": "lfsr16-tap1-8bit-50000.bin",
+ "file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lfsr16-tap1-8bit-50000.bin",
+ "bps": 8,
+ "mode": "bitstring",
+ "n": 50000,
+ "input_sha256": "b2cbc89f255fda90513942d4696a758c1d4d093cc18079767774bed845d7962e",
+ "binary": {
+  "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+  "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
+ },
+ "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
+ "timestamp": "2026-11-07T21:31:45-0500",
+ "env": {
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "1"
+ },
+ "non_compliant_short_dataset": true,
+ "settings": {
+  "binary_rule": "observed",
+  "bit_order": "msb",
+  "bitstring_truncate": 0,
+  "tolerance_abs": 1e-09,
+  "integer_labels": [
+   "C",
+   "Mode count",
+   "N",
+   "Sum t_i",
+   "r",
+   "t",
+   "u",
+   "v"
+  ],
+  "ref_options": {},
+  "d1_recheck": true,
+  "d1_option": [
+   "z",
+   2.575829303548901
+  ],
+  "d1_options_by_module": {
+   "ttuple": [
+    "z_variant",
+    "exact"
+   ],
+   "collision": [
+    "z_alpha",
+    2.575829303548901
+   ]
+  }
+ },
+ "cpp": {
+  "cmd": [
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+   "-i",
+   "-a",
+   "-v",
+   "-v",
+   "-o",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/lfsr16-tap1-8bit-50000-b8.cpp.json",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lfsr16-tap1-8bit-50000.bin",
+   "8"
+  ],
+  "exit": 0,
+  "signal": null,
+  "outcome": "exit_0",
+  "duration_s": 15.66,
+  "stdout_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/lfsr16-tap1-8bit-50000-b8.cpp.stdout.txt",
+  "stderr_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/lfsr16-tap1-8bit-50000-b8.cpp.stderr.txt",
+  "json_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/lfsr16-tap1-8bit-50000-b8.cpp.json",
+  "well_formed": true,
+  "refusal_message": null,
+  "warnings": [
+   "*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.",
+   "*** Its result is NOT a compliant SP 800-90B assessment. ***"
+  ],
+  "loaded": {
+   "loaded_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lfsr16-tap1-8bit-50000.bin",
+   "loaded_sha256": "b2cbc89f255fda90513942d4696a758c1d4d093cc18079767774bed845d7962e",
+   "n": 50000,
+   "k": 256,
+   "width": 8,
+   "n_binary": 400000
+  },
+  "summary": {
+   "H_original": 7.628426232273832,
+   "H_bitstring": 1.9034469082752246e-05,
+   "H_bitstring Per Symbol": 0.00015227575266201797,
+   "assessed": 0.00015227575266201797
+  },
+  "json_summary": {
+   "bitsPerSymbol": [
+    {
+     "path": "/bitsPerSymbol",
+     "value": 8
+    }
+   ],
+   "bitsPerSymbolInferred": [
+    {
+     "path": "/bitsPerSymbolInferred",
+     "value": false
+    }
+   ],
+   "errorLevel": [
+    {
+     "path": "/errorLevel",
+     "value": 0
+    }
+   ],
+   "sha256": [
+    {
+     "path": "/sha256",
+     "value": "b2cbc89f255fda90513942d4696a758c1d4d093cc18079767774bed845d7962e"
+    }
+   ],
+   "hBitstring": [
+    {
+     "path": "/testCases[0]/hBitstring",
+     "value": 0.9939422375463467
+    },
+    {
+     "path": "/testCases[1]/hBitstring",
+     "value": 0.9247035281783246
+    },
+    {
+     "path": "/testCases[2]/hBitstring",
+     "value": 0.9997888384275048
+    },
+    {
+     "path": "/testCases[3]/hBitstring",
+     "value": 0.8273492275391723
+    },
+    {
+     "path": "/testCases[6]/hBitstring",
+     "value": 0.9978733813598943
+    },
+    {
+     "path": "/testCases[7]/hBitstring",
+     "value": 1.0
+    },
+    {
+     "path": "/testCases[8]/hBitstring",
+     "value": 3.180750894152084e-05
+    },
+    {
+     "path": "/testCases[9]/hBitstring",
+     "value": 1.0
+    },
+    {
+     "path": "/testCases[10]/hBitstring",
+     "value": 1.9034469082752246e-05
+    }
+   ],
+   "hOriginal": [
+    {
+     "path": "/testCases[0]/hOriginal",
+     "value": 7.628426232273832
+    },
+    {
+     "path": "/testCases[6]/hOriginal",
+     "value": 7.812377467320473
+    },
+    {
+     "path": "/testCases[7]/hOriginal",
+     "value": 8.0
+    },
+    {
+     "path": "/testCases[8]/hOriginal",
+     "value": 8.0
+    },
+    {
+     "path": "/testCases[9]/hOriginal",
+     "value": 8.0
+    },
+    {
+     "path": "/testCases[10]/hOriginal",
+     "value": 7.628426232273832
+    }
+   ],
+   "hAssessed": [
+    {
+     "path": "/testCases[10]/hAssessed",
+     "value": 0.00015227575266201797
+    }
+   ]
+  },
+  "json_error": null,
+  "notes": {
+   "Literal": {
+    "MultiMCW Prediction": [
+     "P_local can't change the result."
+    ],
+    "Lag Prediction": [
+     "P_local can't change the result."
+    ],
+    "MultiMMC Prediction": [
+     "P_local can't change the result."
+    ],
+    "LZ78Y Prediction": [
+     "P_local can't change the result."
+    ]
+   },
+   "Bitstring": {
+    "Collision": [
+     "Found p."
+    ],
+    "Compression": [
+     "Found p."
+    ],
+    "MultiMCW Prediction": [
+     "P_local can't change the result."
+    ],
+    "Lag Prediction": [
+     "P_local can't change the result."
+    ],
+    "LZ78Y Prediction": [
+     "P_local can't change the result."
+    ]
+   }
+  },
+  "unparsed_estimate_lines": []
+ },
+ "k_observed": 256,
+ "is_binary": false,
+ "translation": null,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 255,
+  "masked": false
+ },
+ "reference": {
+  "mcv": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 0.9939418498015777,
+    "Mode count": 200027,
+    "p-hat": 0.5000675,
+    "p_u": 0.502104009340229,
+    "min entropy": 0.9939418498015777,
+    "L": 400000,
+    "mode value": 1,
+    "k observed": 2,
+    "z": 2.576,
+    "variant": "literal",
+    "track": "literal",
+    "bits_per_symbol": 1,
+    "bit_order": null,
+    "bitstring_limit": null,
+    "p_u unclamped": 0.502104009340229,
+    "p_u clamped": false
+   },
+   "error": null,
+   "duration_s": 0.083,
+   "options_used": {},
+   "module": "mcv",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.001,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/mcv.py",
+   "module_sha256": "aa075588a826cf1f35dd6bfe5fa557ecca83bcf47308ee5469d9ea55342ae698"
+  },
+  "collision": {
+   "status": "ok",
+   "values": {
+    "estimator": "Collision Estimate",
+    "mode": "literal",
+    "L": 400000,
+    "k": 2,
+    "width": 1,
+    "variant": "spec",
+    "equation": "spec",
+    "z_alpha": 2.576,
+    "v": 159885,
+    "Sum t_i": 399998,
+    "discarded_tail": 2,
+    "X-bar": 2.5017856584420053,
+    "sigma-hat": 0.4999983750349793,
+    "X-bar'": 2.4985645110988726,
+    "found_p": true,
+    "p": 0.5267907530794436,
+    "min entropy": 0.9246980731416716,
+    "min_entropy": 0.9246980731416716,
+    "min_entropy_spec_fallback": 0.9246980731416716,
+    "min_entropy_clamp": 0.9246980731416716,
+    "note": ""
+   },
+   "error": null,
+   "duration_s": 0.138,
+   "options_used": {},
+   "module": "collision",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.033,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/collision.py",
+   "module_sha256": "ed9b87f8504f154f74bd1431ecf4a3bc8ff848d003ed31570bcdc0508dcba1ab"
+  },
+  "markov": {
+   "status": "ok",
+   "values": {
+    "estimator": "Markov",
+    "spec": "SP 800-90B section 6.3.3 (PDF p. 51-53)",
+    "input_symbols": 400000,
+    "bits_per_symbol": 1,
+    "mode": "literal",
+    "bitstring_limit": null,
+    "undefined_transition": "bounds",
+    "sequence_length": 128,
+    "distinct_values": [
+     0,
+     1
+    ],
+    "binary_by": "alphabet",
+    "translated": false,
+    "translation": null,
+    "applicable": true,
+    "L": 400000,
+    "#{0 in S}": 199973,
+    "#{1 in S}": 200027,
+    "#{00 in S}": 99958,
+    "#{01 in S}": 100014,
+    "#{10 in S}": 100015,
+    "#{11 in S}": 100012,
+    "P_0": 0.4999325,
+    "P_1": 0.5000675,
+    "P_{0,0}": 0.4998599803972556,
+    "P_{0,1}": 0.5001400196027443,
+    "P_{1,0}": 0.5000074989876366,
+    "P_{1,1}": 0.4999925010123633,
+    "sequence_log2_probabilities": {
+     "00...0": -128.05151138161696,
+     "0101...01": -127.97297852911223,
+     "011...1": -128.00251716838238,
+     "100...0": -128.0506961488582,
+     "1010...10": -127.97297131872061,
+     "11...1": -128.00255323299987
+    },
+    "sequence_probabilities": {
+     "00...0": 2.835659523162312e-39,
+     "0101...01": 2.994296676558544e-39,
+     "011...1": 2.9336129347184643e-39,
+     "100...0": 2.837262339934572e-39,
+     "1010...10": 2.99431164167937e-39,
+     "11...1": 2.933539600920973e-39
+    },
+    "sequence_log2_probabilities_lower": {
+     "00...0": -128.05151138161696,
+     "0101...01": -127.97297852911223,
+     "011...1": -128.00251716838238,
+     "100...0": -128.0506961488582,
+     "1010...10": -127.97297131872061,
+     "11...1": -128.00255323299987
+    },
+    "sequence_log2_probabilities_upper": {
+     "00...0": -128.05151138161696,
+     "0101...01": -127.97297852911223,
+     "011...1": -128.00251716838238,
+     "100...0": -128.0506961488582,
+     "1010...10": -127.97297131872061,
+     "11...1": -128.00255323299987
+    },
+    "undefined_transitions_present": false,
+    "log2 p-hat_max": -127.97297131872061,
+    "p-hat_max": 2.99431164167937e-39,
+    "min_entropy": 0.9997888384275048,
+    "p-hat_max_lower": 2.99431164167937e-39,
+    "p-hat_max_upper": 2.99431164167937e-39,
+    "min_entropy_lower": 0.9997888384275048,
+    "min_entropy_upper": 0.9997888384275048
+   },
+   "error": null,
+   "duration_s": 0.085,
+   "options_used": {},
+   "module": "markov",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.005,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/markov.py",
+   "module_sha256": "b50f05e0ac2810236108bdedb0d5d9057ff94ef2e38e5ce749cc0d09ff8996e1"
+  },
+  "compression": {
+   "status": "ok",
+   "values": {
+    "estimator": "Compression Estimate",
+    "spec": "SP 800-90B 6.3.4 (PDF pp. 53-55)",
+    "mode": "bitstring",
+    "bits_per_symbol": 1,
+    "n_symbols": 400000,
+    "b": 6,
+    "d": 1000,
+    "c": 0.5907,
+    "z": 2.576,
+    "t_upper": "blocks",
+    "sigma_variant": "printed",
+    "no_solution_low": "literal",
+    "L": 400000,
+    "n_blocks": 66666,
+    "v": 65666,
+    "X-bar": 5.218763626149846,
+    "sigma-hat": 1.0158626745285737,
+    "X-bar'": 5.208551631443314,
+    "radicand": 2.9575770343499777,
+    "sum_log2_D": 342695.33227475575,
+    "sum_log2_D_sq": 1982627.9953936364,
+    "found_p": true,
+    "p": 0.03203816349667221,
+    "search_status": "found",
+    "search_iterations": 40,
+    "search_lo": 0.03203816349622457,
+    "search_hi": 0.032038163497119854,
+    "rhs_at_lower_bound": 5.217705249849865,
+    "rhs_at_upper_bound": 0.0,
+    "residual": 7.638334409421077e-14,
+    "min_entropy": 0.8273441230584723,
+    "min_entropy_step8_literal": 0.8273441230584723,
+    "min_entropy_conservative": 0.8273441230584723,
+    "note": "",
+    "t_max": 66666
+   },
+   "error": null,
+   "duration_s": 0.186,
+   "options_used": {},
+   "module": "compression",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.06,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/compression.py",
+   "module_sha256": "9847dba436069655ff6ca12e8839f282f467e95711d19e99afeba8b0fa6f7c2b"
+  },
+  "ttuple": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 0.9850709432206146,
+    "t": 13,
+    "p-hat_max": 0.5031644112641249,
+    "p_u": 0.5052008798373359,
+    "Q": [
+     200027,
+     100015,
+     50015,
+     25019,
+     12522,
+     6269,
+     3141,
+     1577,
+     790,
+     399,
+     202,
+     102,
+     53
+    ],
+    "P": [
+     0.5000675,
+     0.25003812509531276,
+     0.12503812519062596,
+     0.06254796910976833,
+     0.03130531305313053,
+     0.01567269590869886,
+     0.007852617789266839,
+     0.003942568994957412,
+     0.001975039500790016,
+     0.0009975224442549957,
+     0.0005050126253156329,
+     0.00025500701269284907,
+     0.0001325039751192536
+    ],
+    "P_max": [
+     0.5000675,
+     0.5000381236419007,
+     0.5000508284202696,
+     0.5000959106194667,
+     0.5001768765844362,
+     0.5002540552406806,
+     0.5003659865580222,
+     0.5005787537918002,
+     0.5006202591040637,
+     0.5010629230393576,
+     0.5015337958106086,
+     0.5018177401215539,
+     0.5031644112641249
+    ],
+    "Q_next": 28,
+    "argmax_i": 13,
+    "L": 400000,
+    "k": 2,
+    "cutoff": 35,
+    "z": 2.576,
+    "z_variant": "literal",
+    "method": "direct"
+   },
+   "error": null,
+   "duration_s": 0.305,
+   "options_used": {},
+   "module": "ttuple",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.198,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+   "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+  },
+  "lrs": {
+   "status": "ok",
+   "values": {
+    "u": 14,
+    "v": 334465,
+    "can_run": true,
+    "reason": null,
+    "pair_sum_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "aaf118158988b56e6b0d9216aa76a964d9bd458e8fa6bef32317c99fe16de05c",
+     "min": 1,
+     "max": 4685498
+    },
+    "positions_choose2_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "c10b4cd2c7b120da947c830942c6bfc5a35190dde4e14c34d9d1dab105663e0b",
+     "min": 2147450880,
+     "max": 79994600091
+    },
+    "P_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "5f0a2fdb87bb3e16f52a7c4caa4301dfb34652dc504e51cb36d1ad3327c23d69",
+     "min": 4.656683928435187e-10,
+     "max": 5.8572678589178346e-05
+    },
+    "Pmax_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "880c7b5331f88940c2131bf5039744547e2292f07efdef36bbe39db4d4d7fb5f",
+     "min": 0.4945316715134938,
+     "max": 0.9999615538073165
+    },
+    "argmax_W": 318597,
+    "p-hat": 0.9999615538073165,
+    "p_u": 0.9999868080719105,
+    "min_entropy": 1.903205476945579e-05,
+    "p_u_z_exact": 0.9999868063984582,
+    "min_entropy_z_exact": 1.9034469082752246e-05,
+    "L": 400000,
+    "cutoff": 35,
+    "z": 2.576,
+    "method": "suffix",
+    "Q": {
+     "13": 53,
+     "14": 28,
+     "334465": 2,
+     "334466": 1
+    }
+   },
+   "error": null,
+   "duration_s": 2.843,
+   "options_used": {},
+   "module": "lrs",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.909,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
+   "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
+  },
+  "multimcw": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 0.9978729925278208,
+    "C": 199449,
+    "r": 17,
+    "N": 399937,
+    "P_global": 0.4987010454146528,
+    "P_global'": 0.5007377082950112,
+    "P_local": 0.3669731750799665,
+    "L": 400000,
+    "k": 2,
+    "k_alphabet": 2,
+    "k_observed": 2,
+    "k_mode": "alphabet",
+    "windows": [
+     63,
+     255,
+     1023,
+     4095
+    ],
+    "z": 2.576,
+    "confidence": 0.99,
+    "scoreboard": [
+     199482,
+     199263,
+     199233,
+     197853
+    ],
+    "winner": 1,
+    "longest_run": 16,
+    "binding": "P_global'",
+    "P_local_changes_result": false,
+    "plocal_mode": "float",
+    "ambiguities": [
+     "step 7 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed'); materially different when the data uses a strict subset of the alphabet and the predictor does worse than 1/k",
+     "step 5 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default here (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+     "step 6 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here, arbitrary precision optional (plocal_mode='mp')",
+     "step 1 with L <= w1 gives N <= 0: undefined, returned as NaN",
+     "step 5 with N = 1 and P_global != 0 divides by zero: undefined, returned as NaN",
+     "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 6 uses N; the table is reproduced here to its printed 4 decimals with N = 1 000 000",
+     "Appendix G.2 Table 3 (PDF p. 76), second column, rows r = 55..155: each printed value is the value for r - 5 (0.7092 is r=50's, ..., 0.8980 is r=150's); r = 160 onward is labelled correctly.  MEASURED 2026-11-07, logs/reference-multimcw-probe1-worked-example-table3.log; the test suite asserts the shift",
+     "step 6's right-hand side is not monotone in P_local over (0, 1) (it has sub-target wiggles and a pole where r + 1 - r x = 0); but on all 17 (r, N) pairs measured, including r = N+1, the set where it exceeds 0.99 is a single initial interval, so a [0,1] bisection is well-posed there (logs/reference-multimcw-probe2-step6-crossings.log).  Narrower regions below the 2.5e-6 grid remain a SUSPICION only",
+     "the worked example prints min-entropy 0.3908 = -log2(0.7627), i.e. computed from the ROUNDED P'_global; the unrounded value gives 0.39088.  A rounding artefact of the example, not a reading of the algorithm"
+    ]
+   },
+   "error": null,
+   "duration_s": 0.254,
+   "options_used": {},
+   "module": "multimcw",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.12,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimcw.py",
+   "module_sha256": "a54674a93aef82c7b43cc9820a22664ef4ac7258ac7a42b2bfdaa657a8c35079"
+  },
+  "lag": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 1.0,
+    "C": 194180,
+    "r": 12,
+    "N": 399999,
+    "P_global": 0.48545121362803406,
+    "P_global'": 0.487486863224424,
+    "P_local": 0.2379650558135712,
+    "L": 400000,
+    "k": 2,
+    "D": 128,
+    "longest_run": 11,
+    "z": 2.576,
+    "k_mode": "alphabet",
+    "bits_per_symbol": 1,
+    "bitstring": false,
+    "method": "vectorised",
+    "P_local_binds": false,
+    "scoreboard_final": [
+     199970,
+     199976,
+     199940,
+     199952,
+     199997,
+     200002,
+     199992,
+     199983,
+     199962,
+     200017,
+     200012,
+     199981,
+     199953,
+     200000,
+     200009,
+     199961,
+     199958,
+     199954,
+     200007,
+     199981,
+     199936,
+     200074,
+     199962,
+     199956,
+     199992,
+     200012,
+     199962,
+     199991,
+     199972,
+     200000,
+     200010,
+     200004,
+     199951,
+     200000,
+     199949,
+     199977,
+     199994,
+     199967,
+     200054,
+     199951,
+     199946,
+     200018,
+     199945,
+     199979,
+     200042,
+     199928,
+     199948,
+     199939,
+     199974,
+     199917,
+     199967,
+     199947,
+     199939,
+     199936,
+     199953,
+     199941,
+     200049,
+     199940,
+     199982,
+     199993,
+     199940,
+     199918,
+     199917,
+     199985,
+     199951,
+     199951,
+     199929,
+     199986,
+     199953,
+     199970,
+     200047,
+     199945,
+     199976,
+     199958,
+     199977,
+     199930,
+     199921,
+     199975,
+     199979,
+     199966,
+     199970,
+     199921,
+     199941,
+     199935,
+     199975,
+     199965,
+     200047,
+     199987,
+     199961,
+     199923,
+     199917,
+     199928,
+     200048,
+     199922,
+     199929,
+     199919,
+     200055,
+     199906,
+     200024,
+     199917,
+     199936,
+     199961,
+     199934,
+     199887,
+     199906,
+     199907,
+     199913,
+     199943,
+     199905,
+     199917,
+     199942,
+     199917,
+     199914,
+     199946,
+     199934,
+     199943,
+     200047,
+     199899,
+     199934,
+     199902,
+     199896,
+     199924,
+     199882,
+     199946,
+     199924,
+     199917,
+     200061,
+     199954
+    ],
+    "winner_final": 22
+   },
+   "error": null,
+   "duration_s": 0.424,
+   "options_used": {},
+   "module": "lag",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.348,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py",
+   "module_sha256": "badcca9ddde16551eba813180c9c07b79bbb5dbd85a68428b02d94810e157c67"
+  },
+  "multimmc": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 3.180750897115319e-05,
+    "min entropy": 3.180750897115319e-05,
+    "C": 334325,
+    "r": 270121,
+    "N": 399998,
+    "P_global": 0.8358166790833954,
+    "P_global'": 0.8373254994102971,
+    "P_local": 0.9999779529578756,
+    "L": 400000,
+    "k": 2,
+    "k_alphabet": 2,
+    "k_observed": 2,
+    "k_mode": "alphabet",
+    "D": 16,
+    "max_entries": 100000,
+    "entries_mode": "pairs",
+    "z": 2.576,
+    "confidence": 0.99,
+    "scoreboard": [
+     198111,
+     197549,
+     196076,
+     195724,
+     193750,
+     191795,
+     188313,
+     185311,
+     178785,
+     170655,
+     161954,
+     147357,
+     130794,
+     110133,
+     85316,
+     334449
+    ],
+    "winner": 16,
+    "entries": [
+     4,
+     8,
+     16,
+     32,
+     64,
+     128,
+     256,
+     512,
+     1024,
+     2048,
+     4096,
+     8192,
+     16384,
+     32768,
+     65535,
+     65535
+    ],
+    "refused": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "cap_bound": false,
+    "longest_run": 270120,
+    "binding": "P_local",
+    "P_local_changes_result": true,
+    "method": "fast",
+    "ambiguities": [
+     "step 1/4.a.i.2 'entries'/'maxEntries': counts distinct [context, next-symbol] pairs (literal, default entries_mode='pairs'); a non-literal variant counting distinct contexts is exposed as entries_mode='contexts' for differential diagnosis only",
+     "step 4.b.i tie rule 'the greatest y': the numerically greatest symbol value",
+     "step 4.d: a Null prediction is not equal to s_i, so it leaves correct = 0 and ends a run (the worked example shows this at i = 3, 4); D-4 records that NIST's code differed",
+     "step 4.e.i.2: 'scoreboard_winner' is read live inside the d loop, so a tie goes to the larger d and winner can change several times in one step; 6.3.7's worked example requires this reading of the identical wording, 6.3.9's example cannot distinguish it",
+     "step 8 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed')",
+     "step 6 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+     "step 7 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here",
+     "step 1 with L <= 2 gives N <= 0: undefined, returned as NaN",
+     "step 6 with N = 1 and P_global = 1 (L = 3, s1 = s2 = s3) divides 0 by N - 1 = 0: undefined, returned as NaN; any other L = 3 input has P_global = 0 and P'_global = 0.99",
+     "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 7 uses N = L - 2; at the table's 4 printed decimals the two are indistinguishable"
+    ]
+   },
+   "error": null,
+   "duration_s": 1.594,
+   "options_used": {},
+   "module": "multimmc",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 1.506,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimmc.py",
+   "module_sha256": "021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb"
+  },
+  "lz78y": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 1.0,
+    "C": 198221,
+    "r": 16,
+    "N": 399983,
+    "P_global": 0.49557356187637974,
+    "P_global'": 0.49761003470511894,
+    "P_local": 0.34391380159699136,
+    "L": 400000,
+    "k": 2,
+    "k_alphabet": 2,
+    "k_observed": 2,
+    "k_mode": "alphabet",
+    "B": 16,
+    "max_dictionary_size": 65536,
+    "dictionary_size": 65536,
+    "saturated": true,
+    "saturation_i": 19993,
+    "z": 2.576,
+    "confidence": 0.99,
+    "longest_run": 15,
+    "binding": "1/k",
+    "P_local_changes_result": false,
+    "method": "vectorized",
+    "ambiguities": [
+     "step 3.a.i/ii are independent Ifs: a newly added context is counted 1 at once (settled by the worked example, i = 7 -> 8); an 'else if' reading would leave it at 0",
+     "step 3.b.iii strict '>' hands a count tie between a longer and a shorter context to the longer (first examined) one; a '>=' reading would hand it to the shorter",
+     "step 6 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed'); materially different when the data uses a strict subset of the alphabet and the predictor does worse than 1/k",
+     "step 4 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default here (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+     "step 5 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here",
+     "step 1 with L <= B + 1 gives N <= 0: undefined, returned as NaN",
+     "step 4 with N = 1 and P_global != 0 divides by zero: undefined, returned as NaN",
+     "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 5 uses N; this file's solver reproduces 115 of its 136 rows to the printed 4 decimals with N = 1 000 000; the 21 rows labelled r = 55, 60, ..., 155 hold the values of r = 50, 55, ..., 150 (the label column skips 50), read as a misprint of the table's labels, not a property of step 5"
+    ]
+   },
+   "error": null,
+   "duration_s": 1.285,
+   "options_used": {},
+   "module": "lz78y",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 1.202,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
+   "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
+  }
+ },
+ "reference_d1_recheck": {
+  "mcv": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 0.9939422375463467,
+    "Mode count": 200027,
+    "p-hat": 0.5000675,
+    "p_u": 0.5021038743926681,
+    "min entropy": 0.9939422375463467,
+    "L": 400000,
+    "mode value": 1,
+    "k observed": 2,
+    "z": 2.575829303548901,
+    "variant": "custom",
+    "track": "literal",
+    "bits_per_symbol": 1,
+    "bit_order": null,
+    "bitstring_limit": null,
+    "p_u unclamped": 0.5021038743926681,
+    "p_u clamped": false
+   },
+   "error": null,
+   "duration_s": 0.08,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "mcv",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.001,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/mcv.py",
+   "module_sha256": "aa075588a826cf1f35dd6bfe5fa557ecca83bcf47308ee5469d9ea55342ae698"
+  },
+  "collision": {
+   "status": "ok",
+   "values": {
+    "estimator": "Collision Estimate",
+    "mode": "literal",
+    "L": 400000,
+    "k": 2,
+    "width": 1,
+    "variant": "spec",
+    "equation": "spec",
+    "z_alpha": 2.575829303548901,
+    "v": 159885,
+    "Sum t_i": 399998,
+    "discarded_tail": 2,
+    "X-bar": 2.5017856584420053,
+    "sigma-hat": 0.4999983750349793,
+    "X-bar'": 2.498564724545464,
+    "found_p": true,
+    "p": 0.5267887612118956,
+    "min entropy": 0.9247035281783246,
+    "min_entropy": 0.9247035281783246,
+    "min_entropy_spec_fallback": 0.9247035281783246,
+    "min_entropy_clamp": 0.9247035281783246,
+    "note": ""
+   },
+   "error": null,
+   "duration_s": 0.136,
+   "options_used": {
+    "z_alpha": 2.575829303548901
+   },
+   "module": "collision",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.03,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/collision.py",
+   "module_sha256": "ed9b87f8504f154f74bd1431ecf4a3bc8ff848d003ed31570bcdc0508dcba1ab"
+  },
+  "compression": {
+   "status": "ok",
+   "values": {
+    "estimator": "Compression Estimate",
+    "spec": "SP 800-90B 6.3.4 (PDF pp. 53-55)",
+    "mode": "bitstring",
+    "bits_per_symbol": 1,
+    "n_symbols": 400000,
+    "b": 6,
+    "d": 1000,
+    "c": 0.5907,
+    "z": 2.575829303548901,
+    "t_upper": "blocks",
+    "sigma_variant": "printed",
+    "no_solution_low": "literal",
+    "L": 400000,
+    "n_blocks": 66666,
+    "v": 65666,
+    "X-bar": 5.218763626149846,
+    "sigma-hat": 1.0158626745285737,
+    "X-bar'": 5.208552308132465,
+    "radicand": 2.9575770343499777,
+    "sum_log2_D": 342695.33227475575,
+    "sum_log2_D_sq": 1982627.9953936364,
+    "found_p": true,
+    "p": 0.03203748336743928,
+    "search_status": "found",
+    "search_iterations": 40,
+    "search_lo": 0.03203748336699164,
+    "search_hi": 0.03203748336788692,
+    "rhs_at_lower_bound": 5.217705249849865,
+    "rhs_at_upper_bound": 0.0,
+    "residual": 2.078337502098293e-13,
+    "min_entropy": 0.8273492275410622,
+    "min_entropy_step8_literal": 0.8273492275410622,
+    "min_entropy_conservative": 0.8273492275410622,
+    "note": "",
+    "t_max": 66666
+   },
+   "error": null,
+   "duration_s": 0.141,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "compression",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.055,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/compression.py",
+   "module_sha256": "9847dba436069655ff6ca12e8839f282f467e95711d19e99afeba8b0fa6f7c2b"
+  },
+  "ttuple": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 0.9850713285808022,
+    "t": 13,
+    "p-hat_max": 0.5031644112641249,
+    "p_u": 0.5052007448924762,
+    "Q": [
+     200027,
+     100015,
+     50015,
+     25019,
+     12522,
+     6269,
+     3141,
+     1577,
+     790,
+     399,
+     202,
+     102,
+     53
+    ],
+    "P": [
+     0.5000675,
+     0.25003812509531276,
+     0.12503812519062596,
+     0.06254796910976833,
+     0.03130531305313053,
+     0.01567269590869886,
+     0.007852617789266839,
+     0.003942568994957412,
+     0.001975039500790016,
+     0.0009975224442549957,
+     0.0005050126253156329,
+     0.00025500701269284907,
+     0.0001325039751192536
+    ],
+    "P_max": [
+     0.5000675,
+     0.5000381236419007,
+     0.5000508284202696,
+     0.5000959106194667,
+     0.5001768765844362,
+     0.5002540552406806,
+     0.5003659865580222,
+     0.5005787537918002,
+     0.5006202591040637,
+     0.5010629230393576,
+     0.5015337958106086,
+     0.5018177401215539,
+     0.5031644112641249
+    ],
+    "Q_next": 28,
+    "argmax_i": 13,
+    "L": 400000,
+    "k": 2,
+    "cutoff": 35,
+    "z": 2.575829303548901,
+    "z_variant": "exact",
+    "method": "direct"
+   },
+   "error": null,
+   "duration_s": 0.313,
+   "options_used": {
+    "z_variant": "exact"
+   },
+   "module": "ttuple",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.19,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+   "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+  },
+  "lrs": {
+   "status": "ok",
+   "values": {
+    "u": 14,
+    "v": 334465,
+    "can_run": true,
+    "reason": null,
+    "pair_sum_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "aaf118158988b56e6b0d9216aa76a964d9bd458e8fa6bef32317c99fe16de05c",
+     "min": 1,
+     "max": 4685498
+    },
+    "positions_choose2_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "c10b4cd2c7b120da947c830942c6bfc5a35190dde4e14c34d9d1dab105663e0b",
+     "min": 2147450880,
+     "max": 79994600091
+    },
+    "P_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "5f0a2fdb87bb3e16f52a7c4caa4301dfb34652dc504e51cb36d1ad3327c23d69",
+     "min": 4.656683928435187e-10,
+     "max": 5.8572678589178346e-05
+    },
+    "Pmax_W": {
+     "_elided": true,
+     "entries": 334452,
+     "sha256": "880c7b5331f88940c2131bf5039744547e2292f07efdef36bbe39db4d4d7fb5f",
+     "min": 0.4945316715134938,
+     "max": 0.9999615538073165
+    },
+    "argmax_W": 318597,
+    "p-hat": 0.9999615538073165,
+    "p_u": 0.9999868063984582,
+    "min_entropy": 1.9034469082752246e-05,
+    "p_u_z_exact": 0.9999868063984582,
+    "min_entropy_z_exact": 1.9034469082752246e-05,
+    "L": 400000,
+    "cutoff": 35,
+    "z": 2.575829303548901,
+    "method": "suffix",
+    "Q": {
+     "13": 53,
+     "14": 28,
+     "334465": 2,
+     "334466": 1
+    }
+   },
+   "error": null,
+   "duration_s": 2.337,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "lrs",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.819,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
+   "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
+  },
+  "multimcw": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 0.9978733813598943,
+    "C": 199449,
+    "r": 17,
+    "N": 399937,
+    "P_global": 0.4987010454146528,
+    "P_global'": 0.5007375733372761,
+    "P_local": 0.3669731750799665,
+    "L": 400000,
+    "k": 2,
+    "k_alphabet": 2,
+    "k_observed": 2,
+    "k_mode": "alphabet",
+    "windows": [
+     63,
+     255,
+     1023,
+     4095
+    ],
+    "z": 2.575829303548901,
+    "confidence": 0.99,
+    "scoreboard": [
+     199482,
+     199263,
+     199233,
+     197853
+    ],
+    "winner": 1,
+    "longest_run": 16,
+    "binding": "P_global'",
+    "P_local_changes_result": false,
+    "plocal_mode": "float",
+    "ambiguities": [
+     "step 7 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed'); materially different when the data uses a strict subset of the alphabet and the predictor does worse than 1/k",
+     "step 5 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default here (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+     "step 6 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here, arbitrary precision optional (plocal_mode='mp')",
+     "step 1 with L <= w1 gives N <= 0: undefined, returned as NaN",
+     "step 5 with N = 1 and P_global != 0 divides by zero: undefined, returned as NaN",
+     "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 6 uses N; the table is reproduced here to its printed 4 decimals with N = 1 000 000",
+     "Appendix G.2 Table 3 (PDF p. 76), second column, rows r = 55..155: each printed value is the value for r - 5 (0.7092 is r=50's, ..., 0.8980 is r=150's); r = 160 onward is labelled correctly.  MEASURED 2026-11-07, logs/reference-multimcw-probe1-worked-example-table3.log; the test suite asserts the shift",
+     "step 6's right-hand side is not monotone in P_local over (0, 1) (it has sub-target wiggles and a pole where r + 1 - r x = 0); but on all 17 (r, N) pairs measured, including r = N+1, the set where it exceeds 0.99 is a single initial interval, so a [0,1] bisection is well-posed there (logs/reference-multimcw-probe2-step6-crossings.log).  Narrower regions below the 2.5e-6 grid remain a SUSPICION only",
+     "the worked example prints min-entropy 0.3908 = -log2(0.7627), i.e. computed from the ROUNDED P'_global; the unrounded value gives 0.39088.  A rounding artefact of the example, not a reading of the algorithm"
+    ]
+   },
+   "error": null,
+   "duration_s": 0.202,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "multimcw",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.101,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimcw.py",
+   "module_sha256": "a54674a93aef82c7b43cc9820a22664ef4ac7258ac7a42b2bfdaa657a8c35079"
+  },
+  "lag": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 1.0,
+    "C": 194180,
+    "r": 12,
+    "N": 399999,
+    "P_global": 0.48545121362803406,
+    "P_global'": 0.4874867283338333,
+    "P_local": 0.2379650558135712,
+    "L": 400000,
+    "k": 2,
+    "D": 128,
+    "longest_run": 11,
+    "z": 2.575829303548901,
+    "k_mode": "alphabet",
+    "bits_per_symbol": 1,
+    "bitstring": false,
+    "method": "vectorised",
+    "P_local_binds": false,
+    "scoreboard_final": [
+     199970,
+     199976,
+     199940,
+     199952,
+     199997,
+     200002,
+     199992,
+     199983,
+     199962,
+     200017,
+     200012,
+     199981,
+     199953,
+     200000,
+     200009,
+     199961,
+     199958,
+     199954,
+     200007,
+     199981,
+     199936,
+     200074,
+     199962,
+     199956,
+     199992,
+     200012,
+     199962,
+     199991,
+     199972,
+     200000,
+     200010,
+     200004,
+     199951,
+     200000,
+     199949,
+     199977,
+     199994,
+     199967,
+     200054,
+     199951,
+     199946,
+     200018,
+     199945,
+     199979,
+     200042,
+     199928,
+     199948,
+     199939,
+     199974,
+     199917,
+     199967,
+     199947,
+     199939,
+     199936,
+     199953,
+     199941,
+     200049,
+     199940,
+     199982,
+     199993,
+     199940,
+     199918,
+     199917,
+     199985,
+     199951,
+     199951,
+     199929,
+     199986,
+     199953,
+     199970,
+     200047,
+     199945,
+     199976,
+     199958,
+     199977,
+     199930,
+     199921,
+     199975,
+     199979,
+     199966,
+     199970,
+     199921,
+     199941,
+     199935,
+     199975,
+     199965,
+     200047,
+     199987,
+     199961,
+     199923,
+     199917,
+     199928,
+     200048,
+     199922,
+     199929,
+     199919,
+     200055,
+     199906,
+     200024,
+     199917,
+     199936,
+     199961,
+     199934,
+     199887,
+     199906,
+     199907,
+     199913,
+     199943,
+     199905,
+     199917,
+     199942,
+     199917,
+     199914,
+     199946,
+     199934,
+     199943,
+     200047,
+     199899,
+     199934,
+     199902,
+     199896,
+     199924,
+     199882,
+     199946,
+     199924,
+     199917,
+     200061,
+     199954
+    ],
+    "winner_final": 22
+   },
+   "error": null,
+   "duration_s": 0.37,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "lag",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 0.281,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py",
+   "module_sha256": "badcca9ddde16551eba813180c9c07b79bbb5dbd85a68428b02d94810e157c67"
+  },
+  "multimmc": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 3.180750897115319e-05,
+    "min entropy": 3.180750897115319e-05,
+    "C": 334325,
+    "r": 270121,
+    "N": 399998,
+    "P_global": 0.8358166790833954,
+    "P_global'": 0.8373253994296003,
+    "P_local": 0.9999779529578756,
+    "L": 400000,
+    "k": 2,
+    "k_alphabet": 2,
+    "k_observed": 2,
+    "k_mode": "alphabet",
+    "D": 16,
+    "max_entries": 100000,
+    "entries_mode": "pairs",
+    "z": 2.575829303548901,
+    "confidence": 0.99,
+    "scoreboard": [
+     198111,
+     197549,
+     196076,
+     195724,
+     193750,
+     191795,
+     188313,
+     185311,
+     178785,
+     170655,
+     161954,
+     147357,
+     130794,
+     110133,
+     85316,
+     334449
+    ],
+    "winner": 16,
+    "entries": [
+     4,
+     8,
+     16,
+     32,
+     64,
+     128,
+     256,
+     512,
+     1024,
+     2048,
+     4096,
+     8192,
+     16384,
+     32768,
+     65535,
+     65535
+    ],
+    "refused": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "cap_bound": false,
+    "longest_run": 270120,
+    "binding": "P_local",
+    "P_local_changes_result": true,
+    "method": "fast",
+    "ambiguities": [
+     "step 1/4.a.i.2 'entries'/'maxEntries': counts distinct [context, next-symbol] pairs (literal, default entries_mode='pairs'); a non-literal variant counting distinct contexts is exposed as entries_mode='contexts' for differential diagnosis only",
+     "step 4.b.i tie rule 'the greatest y': the numerically greatest symbol value",
+     "step 4.d: a Null prediction is not equal to s_i, so it leaves correct = 0 and ends a run (the worked example shows this at i = 3, 4); D-4 records that NIST's code differed",
+     "step 4.e.i.2: 'scoreboard_winner' is read live inside the d loop, so a tie goes to the larger d and winner can change several times in one step; 6.3.7's worked example requires this reading of the identical wording, 6.3.9's example cannot distinguish it",
+     "step 8 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed')",
+     "step 6 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+     "step 7 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here",
+     "step 1 with L <= 2 gives N <= 0: undefined, returned as NaN",
+     "step 6 with N = 1 and P_global = 1 (L = 3, s1 = s2 = s3) divides 0 by N - 1 = 0: undefined, returned as NaN; any other L = 3 input has P_global = 0 and P'_global = 0.99",
+     "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 7 uses N = L - 2; at the table's 4 printed decimals the two are indistinguishable"
+    ]
+   },
+   "error": null,
+   "duration_s": 1.498,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "multimmc",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 1.378,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimmc.py",
+   "module_sha256": "021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb"
+  },
+  "lz78y": {
+   "status": "ok",
+   "values": {
+    "min_entropy": 1.0,
+    "C": 198221,
+    "r": 16,
+    "N": 399983,
+    "P_global": 0.49557356187637974,
+    "P_global'": 0.4976098997599774,
+    "P_local": 0.34391380159699136,
+    "L": 400000,
+    "k": 2,
+    "k_alphabet": 2,
+    "k_observed": 2,
+    "k_mode": "alphabet",
+    "B": 16,
+    "max_dictionary_size": 65536,
+    "dictionary_size": 65536,
+    "saturated": true,
+    "saturation_i": 19993,
+    "z": 2.575829303548901,
+    "confidence": 0.99,
+    "longest_run": 15,
+    "binding": "1/k",
+    "P_local_changes_result": false,
+    "method": "vectorized",
+    "ambiguities": [
+     "step 3.a.i/ii are independent Ifs: a newly added context is counted 1 at once (settled by the worked example, i = 7 -> 8); an 'else if' reading would leave it at 0",
+     "step 3.b.iii strict '>' hands a count tie between a longer and a shorter context to the longer (first examined) one; a '>=' reading would hand it to the shorter",
+     "step 6 'k': 2**bits_per_symbol (the submitter-specified output space, default) vs the number of distinct symbols observed (k_mode='observed'); materially different when the data uses a strict subset of the alphabet and the predictor does worse than 1/k",
+     "step 4 '2.576' is a printed rounding of the 0.995 normal quantile; the text's constant is the default here (z=2.576), the exact binary64 quantile is a variant (z=Z_BINARY64)",
+     "step 5 'binary search': bounds and tolerance unstated; [0,1] to binary64 resolution here",
+     "step 1 with L <= B + 1 gives N <= 0: undefined, returned as NaN",
+     "step 4 with N = 1 and P_global != 0 divides by zero: undefined, returned as NaN",
+     "Appendix G.2 Table 3 is labelled 'L = 1 000 000' but step 5 uses N; this file's solver reproduces 115 of its 136 rows to the printed 4 decimals with N = 1 000 000; the 21 rows labelled r = 55, 60, ..., 155 hold the values of r = 50, 55, ..., 150 (the label column skips 50), read as a misprint of the table's labels, not a property of step 5"
+    ]
+   },
+   "error": null,
+   "duration_s": 1.172,
+   "options_used": {
+    "z": 2.575829303548901
+   },
+   "module": "lz78y",
+   "mode": "bitstring",
+   "translated": false,
+   "reused": false,
+   "input_info": {
+    "n": 50000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 400000,
+   "bps_fed": 1,
+   "estimate_seconds": 1.089,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
+   "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
+  }
+ },
+ "comparisons": {
+  "mcv": {
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ min entropy 0.9939422375463467 exceeds reference 0.9939418498015777 by 3.87745e-07 (tol 1e-09); intermediates differing: p_u",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 0.9939422375463467,
+    "ref": 0.9939418498015777,
+    "delta": 3.877447689593083e-07,
+    "tol": 1e-09,
+    "status": "differ",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "mode_count",
+     "cpp": 200027,
+     "ref": 200027,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "p_hat",
+     "cpp": 0.5000675,
+     "ref": 0.5000675,
+     "delta": 0.0,
+     "tol": 5e-08,
+     "status": "agree",
+     "kind": "float-abs",
+     "tol_widened_to_printed_precision": true
+    },
+    {
+     "key": "p_u",
+     "cpp": 0.5021038743926681,
+     "ref": 0.502104009340229,
+     "delta": -1.3494756090359772e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "bit_order",
+     "bits_per_symbol",
+     "bitstring_limit",
+     "k_observed",
+     "l",
+     "mode_value",
+     "p_u_clamped",
+     "p_u_unclamped",
+     "track",
+     "variant",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant and |delta| < 1e-3: candidate documented divergence D-1 (binary64 quantile 2.5758293035489008 vs the printed 2.576); the D-1 recheck decides",
+   "estimator": "Most Common Value",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "collision": {
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ min entropy 0.9247035281783246 exceeds reference 0.9246980731416716 by 5.45504e-06 (tol 1e-09); intermediates differing: p, x_bar'",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 0.9247035281783246,
+    "ref": 0.9246980731416716,
+    "delta": 5.455036652945999e-06,
+    "tol": 1e-09,
+    "status": "differ",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "p",
+     "cpp": 0.5267887612118956,
+     "ref": 0.5267907530794436,
+     "delta": -1.9918675480123937e-06,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "sigma_hat",
+     "cpp": 0.499998375034979,
+     "ref": 0.4999983750349793,
+     "delta": -2.7755575615628914e-16,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "sum_t_i",
+     "cpp": 399998,
+     "ref": 399998,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "v",
+     "cpp": 159885,
+     "ref": 159885,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "x_bar",
+     "cpp": 2.5017856584420053,
+     "ref": 2.5017856584420053,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "x_bar'",
+     "cpp": 2.498564724545464,
+     "ref": 2.4985645110988726,
+     "delta": 2.134465915126782e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "discarded_tail",
+     "equation",
+     "estimator",
+     "found_p",
+     "k",
+     "l",
+     "min_entropy_clamp",
+     "min_entropy_spec_fallback",
+     "mode",
+     "note",
+     "variant",
+     "width",
+     "z_alpha"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant and |delta| < 1e-3: candidate documented divergence D-1 (binary64 quantile 2.5758293035489008 vs the printed 2.576); the D-1 recheck decides",
+   "estimator": "Collision",
+   "d1_recheck": {
+    "option": {
+     "z_alpha": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "markov": {
+   "class": "AGREE",
+   "reason": "min entropy 0.9997888384275048 and 7 shared intermediates within tolerance",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 0.9997888384275048,
+    "ref": 0.9997888384275048,
+    "delta": 0.0,
+    "tol": 1e-09,
+    "status": "agree",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "p_0",
+     "cpp": 0.4999325,
+     "ref": 0.4999325,
+     "delta": 0.0,
+     "tol": 5e-08,
+     "status": "agree",
+     "kind": "float-abs",
+     "tol_widened_to_printed_precision": true
+    },
+    {
+     "key": "p_1",
+     "cpp": 0.5000675,
+     "ref": 0.5000675,
+     "delta": 0.0,
+     "tol": 5e-08,
+     "status": "agree",
+     "kind": "float-abs",
+     "tol_widened_to_printed_precision": true
+    },
+    {
+     "key": "p_hat_max",
+     "cpp": 2.99431164167937e-39,
+     "ref": 2.99431164167937e-39,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_{0,0}",
+     "cpp": 0.4998599803972556,
+     "ref": 0.4998599803972556,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_{0,1}",
+     "cpp": 0.5001400196027443,
+     "ref": 0.5001400196027443,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_{1,0}",
+     "cpp": 0.5000074989876366,
+     "ref": 0.5000074989876366,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_{1,1}",
+     "cpp": 0.49999250101236337,
+     "ref": 0.4999925010123633,
+     "delta": 5.551115123125783e-17,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "#{00_in_s}",
+     "#{01_in_s}",
+     "#{0_in_s}",
+     "#{10_in_s}",
+     "#{11_in_s}",
+     "#{1_in_s}",
+     "applicable",
+     "binary_by",
+     "bits_per_symbol",
+     "bitstring_limit",
+     "distinct_values",
+     "estimator",
+     "input_symbols",
+     "l",
+     "log2_p_hat_max",
+     "min_entropy_lower",
+     "min_entropy_upper",
+     "mode",
+     "p_hat_max_lower",
+     "p_hat_max_upper",
+     "sequence_length",
+     "sequence_log2_probabilities",
+     "sequence_log2_probabilities_lower",
+     "sequence_log2_probabilities_upper",
+     "sequence_probabilities",
+     "spec",
+     "translated",
+     "translation",
+     "undefined_transition",
+     "undefined_transitions_present"
+    ]
+   },
+   "estimator": "Markov"
+  },
+  "compression": {
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ min entropy 0.8273492275391723 exceeds reference 0.8273441230584723 by 5.10448e-06 (tol 1e-09); intermediates differing: p, x_bar'",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 0.8273492275391723,
+    "ref": 0.8273441230584723,
+    "delta": 5.104480700013347e-06,
+    "tol": 1e-09,
+    "status": "differ",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "p",
+     "cpp": 0.03203748336769108,
+     "ref": 0.03203816349667221,
+     "delta": -6.801289811342315e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "sigma_hat",
+     "cpp": 1.0158626745285737,
+     "ref": 1.0158626745285737,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "x_bar",
+     "cpp": 5.218763626149846,
+     "ref": 5.218763626149846,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "x_bar'",
+     "cpp": 5.208552308132465,
+     "ref": 5.208551631443314,
+     "delta": 6.766891518239504e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "b",
+     "bits_per_symbol",
+     "c",
+     "d",
+     "estimator",
+     "found_p",
+     "l",
+     "min_entropy_conservative",
+     "min_entropy_step8_literal",
+     "mode",
+     "n_blocks",
+     "n_symbols",
+     "no_solution_low",
+     "note",
+     "radicand",
+     "residual",
+     "rhs_at_lower_bound",
+     "rhs_at_upper_bound",
+     "search_hi",
+     "search_iterations",
+     "search_lo",
+     "search_status",
+     "sigma_variant",
+     "spec",
+     "sum_log2_d",
+     "sum_log2_d_sq",
+     "t_max",
+     "t_upper",
+     "v",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant and |delta| < 1e-3: candidate documented divergence D-1 (binary64 quantile 2.5758293035489008 vs the printed 2.576); the D-1 recheck decides",
+   "estimator": "Compression",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": -1.889932654819404e-12,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "ttuple": {
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ min entropy 0.9850713285808022 exceeds reference 0.9850709432206146 by 3.8536e-07 (tol 1e-09); intermediates differing: p_u",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 0.9850713285808022,
+    "ref": 0.9850709432206146,
+    "delta": 3.853601875380974e-07,
+    "tol": 1e-09,
+    "status": "differ",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "p_hat_max",
+     "cpp": 0.5031644112641249,
+     "ref": 0.5031644112641249,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_u",
+     "cpp": 0.5052007448924762,
+     "ref": 0.5052008798373359,
+     "delta": -1.349448596199565e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "t",
+     "cpp": 13,
+     "ref": 13,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "argmax_i",
+     "cutoff",
+     "k",
+     "l",
+     "method",
+     "p",
+     "p_max",
+     "q",
+     "q_next",
+     "z",
+     "z_variant"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant and |delta| < 1e-3: candidate documented divergence D-1 (binary64 quantile 2.5758293035489008 vs the printed 2.576); the D-1 recheck decides",
+   "estimator": "t-Tuple",
+   "d1_recheck": {
+    "option": {
+     "z_variant": "exact"
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "lrs": {
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ min entropy 1.9034469082752246e-05 exceeds reference 1.903205476945579e-05 by 2.41431e-09 (tol 1e-09); intermediates differing: p_u",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 1.9034469082752246e-05,
+    "ref": 1.903205476945579e-05,
+    "delta": 2.4143132964571986e-09,
+    "tol": 1e-09,
+    "status": "differ",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "p_hat",
+     "cpp": 0.9999615538073165,
+     "ref": 0.9999615538073165,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_u",
+     "cpp": 0.9999868063984582,
+     "ref": 0.9999868080719105,
+     "delta": -1.6734523766714915e-09,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "u",
+     "cpp": 14,
+     "ref": 14,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "v",
+     "cpp": 334465,
+     "ref": 334465,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "argmax_w",
+     "can_run",
+     "cutoff",
+     "l",
+     "method",
+     "min_entropy_z_exact",
+     "p_u_z_exact",
+     "p_w",
+     "pair_sum_w",
+     "pmax_w",
+     "positions_choose2_w",
+     "q",
+     "reason",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant and |delta| < 1e-3: candidate documented divergence D-1 (binary64 quantile 2.5758293035489008 vs the printed 2.576); the D-1 recheck decides",
+   "estimator": "LRS",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "multimcw": {
+   "class": "CPP_HIGHER",
+   "reason": "!!! C++ min entropy 0.9978733813598943 exceeds reference 0.9978729925278208 by 3.88832e-07 (tol 1e-09); intermediates differing: p_global'",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 0.9978733813598943,
+    "ref": 0.9978729925278208,
+    "delta": 3.8883207353901383e-07,
+    "tol": 1e-09,
+    "status": "differ",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "c",
+     "cpp": 199449,
+     "ref": 199449,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "n",
+     "cpp": 399937,
+     "ref": 399937,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "p_global",
+     "cpp": 0.4987010454146528,
+     "ref": 0.4987010454146528,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_global'",
+     "cpp": 0.5007375733372761,
+     "ref": 0.5007377082950112,
+     "delta": -1.3495773509841769e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "r",
+     "cpp": 17,
+     "ref": 17,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "ambiguities",
+     "binding",
+     "confidence",
+     "k",
+     "k_alphabet",
+     "k_mode",
+     "k_observed",
+     "l",
+     "longest_run",
+     "p_local",
+     "p_local_changes_result",
+     "plocal_mode",
+     "scoreboard",
+     "windows",
+     "winner",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant and |delta| < 1e-3: candidate documented divergence D-1 (binary64 quantile 2.5758293035489008 vs the printed 2.576); the D-1 recheck decides",
+   "estimator": "MultiMCW Prediction",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "lag": {
+   "class": "INTERMEDIATE_DIFF",
+   "reason": "min entropy agrees (1); intermediates differ: p_global'",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 1,
+    "ref": 1.0,
+    "delta": 0.0,
+    "tol": 1e-09,
+    "status": "agree",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "c",
+     "cpp": 194180,
+     "ref": 194180,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "n",
+     "cpp": 399999,
+     "ref": 399999,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "p_global",
+     "cpp": 0.48545121362803406,
+     "ref": 0.48545121362803406,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_global'",
+     "cpp": 0.4874867283338333,
+     "ref": 0.487486863224424,
+     "delta": -1.3489059075277865e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "r",
+     "cpp": 12,
+     "ref": 12,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "bits_per_symbol",
+     "bitstring",
+     "d",
+     "k",
+     "k_mode",
+     "l",
+     "longest_run",
+     "method",
+     "p_local",
+     "p_local_binds",
+     "scoreboard_final",
+     "winner_final",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant: candidate D-1",
+   "estimator": "Lag Prediction",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "multimmc": {
+   "class": "INTERMEDIATE_DIFF",
+   "reason": "min entropy agrees (3.180750894152084e-05); intermediates differ: p_global'",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 3.180750894152084e-05,
+    "ref": 3.180750897115319e-05,
+    "delta": -2.9632349904992056e-14,
+    "tol": 1e-09,
+    "status": "agree",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "c",
+     "cpp": 334325,
+     "ref": 334325,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "n",
+     "cpp": 399998,
+     "ref": 399998,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "p_global",
+     "cpp": 0.8358166790833954,
+     "ref": 0.8358166790833954,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_global'",
+     "cpp": 0.8373253994296003,
+     "ref": 0.8373254994102971,
+     "delta": -9.998069683270217e-08,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_local",
+     "cpp": 0.9999779529578962,
+     "ref": 0.9999779529578756,
+     "delta": 2.0539125955565396e-14,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "r",
+     "cpp": 270121,
+     "ref": 270121,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "ambiguities",
+     "binding",
+     "cap_bound",
+     "confidence",
+     "d",
+     "entries",
+     "entries_mode",
+     "k",
+     "k_alphabet",
+     "k_mode",
+     "k_observed",
+     "l",
+     "longest_run",
+     "max_entries",
+     "method",
+     "p_local_changes_result",
+     "refused",
+     "scoreboard",
+     "winner",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant: candidate D-1",
+   "estimator": "MultiMMC Prediction",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": -2.9632349904992056e-14,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  },
+  "lz78y": {
+   "class": "INTERMEDIATE_DIFF",
+   "reason": "min entropy agrees (1); intermediates differ: p_global'",
+   "min_entropy": {
+    "key": "min_entropy",
+    "cpp": 1,
+    "ref": 1.0,
+    "delta": 0.0,
+    "tol": 1e-09,
+    "status": "agree",
+    "kind": "float-abs"
+   },
+   "intermediates": [
+    {
+     "key": "c",
+     "cpp": 198221,
+     "ref": 198221,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "n",
+     "cpp": 399983,
+     "ref": 399983,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    },
+    {
+     "key": "p_global",
+     "cpp": 0.49557356187637974,
+     "ref": 0.49557356187637974,
+     "delta": 0.0,
+     "tol": 1e-09,
+     "status": "agree",
+     "kind": "float-abs"
+    },
+    {
+     "key": "p_global'",
+     "cpp": 0.4976098997599774,
+     "ref": 0.49761003470511894,
+     "delta": -1.349451415610936e-07,
+     "tol": 1e-09,
+     "status": "differ",
+     "kind": "float-abs"
+    },
+    {
+     "key": "r",
+     "cpp": 16,
+     "ref": 16,
+     "delta": 0.0,
+     "tol": 0.0,
+     "status": "agree",
+     "kind": "integer-exact"
+    }
+   ],
+   "unmatched": {
+    "cpp_only": [],
+    "ref_only": [
+     "ambiguities",
+     "b",
+     "binding",
+     "confidence",
+     "dictionary_size",
+     "k",
+     "k_alphabet",
+     "k_mode",
+     "k_observed",
+     "l",
+     "longest_run",
+     "max_dictionary_size",
+     "method",
+     "p_local",
+     "p_local_changes_result",
+     "saturated",
+     "saturation_i",
+     "z"
+    ]
+   },
+   "hint": "differing intermediates are all downstream of the 2.576 constant: candidate D-1",
+   "estimator": "LZ78Y Prediction",
+   "d1_recheck": {
+    "option": {
+     "z": 2.575829303548901
+    },
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
+   }
+  }
+ },
+ "unmapped_cpp_estimators": [],
+ "class": "CPP_HIGHER",
+ "d1_explained": true,
+ "verdict": "lfsr16-tap1-8bit-50000-b8-bitstring: !!! CPP_HIGHER (cpp_higher 6, intermediate_diff 3, agree 1); cpp_higher in: mcv (+3.88e-07; p_u D-1), collision (+5.46e-06; p,x_bar' D-1), compression (+5.1e-06; p,x_bar' D-1), ttuple (+3.85e-07; p_u D-1), lrs (+2.41e-09; p_u D-1), multimcw (+3.89e-07; p_global' D-1); ALL explained by documented divergence D-1 (vanish with z = 2.575829303548901) [EA_ALLOW_SHORT_DATASET=1]"
+}

@@ -1,0 +1,7 @@
+# PROV-15 control.txt  2026-11-07 21:56:18 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 b7a55528a8270672a89bd26265feb529293718a83d2a19a350cd035289d83460  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning  (mtime 2026-10-20 21:06:00)
+ea_conditioning -> /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib
+openssl@4 Cellar mtime: 2026-11-07 19:28:41 ; ea_conditioning mtime: 2026-10-20 21:06:00
+RESULT: CONTROL-OK -- the October build from the same Makefile links the pinned openssl@3; the 2026-11-07 builds link openssl@4 because the generic prefix moved under them

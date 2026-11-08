@@ -1,0 +1,50 @@
+{
+ "all_match": true,
+ "probes": {
+  "x3-probe-prefix20000": {
+   "rc": "0",
+   "binary_sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f",
+   "tool": {
+    "C": 96,
+    "r": 2,
+    "N": 19998
+   },
+   "cpp_model": {
+    "C": 96,
+    "r": 2
+   },
+   "match": true,
+   "note": "EA_ALLOW_SHORT_DATASET=1 run, non-compliant; no saturation at cap 100,000"
+  },
+  "x3-probe-scaled-naive": {
+   "rc": "0",
+   "binary_sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f",
+   "tool": {
+    "C": 16982,
+    "r": 16969,
+    "N": 19998
+   },
+   "cpp_model": {
+    "C": 16982,
+    "r": 16969
+   },
+   "match": true,
+   "note": "EA_ALLOW_SHORT_DATASET=1 run, non-compliant; no saturation at cap 100,000"
+  },
+  "x3-probe-scaled-gadget": {
+   "rc": "0",
+   "binary_sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f",
+   "tool": {
+    "C": 16985,
+    "r": 16971,
+    "N": 19998
+   },
+   "cpp_model": {
+    "C": 16985,
+    "r": 16971
+   },
+   "match": true,
+   "note": "EA_ALLOW_SHORT_DATASET=1 run, non-compliant; no saturation at cap 100,000"
+  }
+ }
+}

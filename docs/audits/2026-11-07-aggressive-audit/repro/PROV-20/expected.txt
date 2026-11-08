@@ -1,0 +1,14 @@
+n/a (CLI contract). -i and -c select mutually exclusive assessments (3.1.3
+initial estimate vs 3.1.5.2 conditioned h'); -a and -t select mutually
+exclusive bitstring lengths.
+
+Expected for `ea_non_iid -i -c file 8`: a refusal ("-i and -c are mutually
+exclusive") or at least a diagnostic naming the flag that was discarded.
+
+Observed: getopt's case 'i' / case 'c' each assign initial_entropy
+(non_iid_main.cpp:163-168), and case 'a' / 't' assign all_bits (:169-174);
+the last assignment wins and nothing is printed. `-i -c` prints h' (conditioned
+mode), `-c -i` prints H_original (initial mode), both exit 0. Direction:
+neutral (operator error is silent; the two figures differ in unit -- see
+PROV-02 -- so a harness that builds its command line from two sources could
+read the wrong one). LOW.

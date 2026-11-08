@@ -1,0 +1,14 @@
+n/a (documentation of a sufficiency argument). cpp/shared/utils.h:1023-1025:
+  "SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+   INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and n*n <=
+   4.61e18, comfortably inside INT64_MAX = 9.22e18."
+
+Expected: the comment names only callers that actually refuse (iid_main.cpp:
+393-408 does), or says that ea_non_iid never reaches n_choose_2 (true: the
+only caller is lrs_test.h len_LRS_test, the IID 5.2.5 test).
+
+Observed: `grep -c INT_MAX cpp/non_iid_main.cpp` = 0. The argument the comment
+makes is sound for a different reason than the one it states; a future repair
+that made ea_non_iid call an int-length helper would be licensed by a false
+premise. Direction: neutral. LOW (documentation). Also noted independently in
+logs/analysis/aggregation.md (headline item 5) and intake.md (S5).

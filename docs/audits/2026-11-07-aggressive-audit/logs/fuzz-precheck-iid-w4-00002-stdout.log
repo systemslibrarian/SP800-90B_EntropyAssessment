@@ -1,0 +1,13 @@
+
+*** Warning: dataset contains 2 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Calculating baseline statistics...
+** Failed chi square tests
+
+** Passed length of longest repeated substring test
+
+** Skipped IID permutation tests after an earlier required IID test failure
+
+IID test suite failed: no IID min-entropy estimate was awarded.

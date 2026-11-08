@@ -1,0 +1,6 @@
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/RESULTS.md; exit 0
+  iid      smoke-csprng-1bit-20000                  DETERMINISTIC (RNG-independent fields); RNG-dependent fields vary
+  iid      smoke-csprng-8bit-20000                  DETERMINISTIC (RNG-independent fields)
+  non_iid  smoke-csprng-1bit-20000                  DETERMINISTIC
+  non_iid  smoke-csprng-8bit-20000                  DETERMINISTIC
+exit=0

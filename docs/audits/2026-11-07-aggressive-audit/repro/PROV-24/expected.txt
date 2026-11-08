@@ -1,0 +1,15 @@
+Spec: SP 800-90B 5.1.9 (PDF p. 42): "lag parameter p ... p < L ... For i = 1
+to L - p: If (si = si+p), increment T", with p in {1, 2, 8, 16, 32}. The
+standard assumes L > p; for L <= p the statistic is undefined.
+
+Expected under EA_ALLOW_SHORT_DATASET=1 for a 20-sample file (the brief's own
+test escape; ground rule 5): a clean refusal ("input too short for the
+permutation tests, need > 32 samples") with errorLevel -1 in the report, exit
+255 -- the pattern the fork applied to the F15 sites (#261: asserts turned into
+declines).
+
+Observed: `Assertion failed: (n>=p), function periodicity, file
+permutation_tests.h, line 256.` SIGABRT, exit 134; the -o file is the C14
+placeholder (errorLevel -1). Not reachable without the escape (intake refuses
+< 1,000,000 samples). Fail-closed; direction crash; LOW (the brief's HIGH is
+for memory-unsafety/UB reachable from an input file -- an assert is neither).

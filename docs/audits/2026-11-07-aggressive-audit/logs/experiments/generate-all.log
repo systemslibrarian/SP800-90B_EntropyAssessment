@@ -1,0 +1,126 @@
+START 2026-11-07T21:57:29-0500  python=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python
+== x1_f02_pair
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x1-uniform7-msbdead-8bit-1000000.bin  n=1000000  sha256=6c49635a8af86806bcf60dd482be68c37f830c9be2db9eb84f740c5b49096a39
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x1-uniform7-lsbdead-8bit-1000000.bin  n=1000000  sha256=d5048d32d74b75bb78563e27348c1e8ab0c354663ea847b3ef65dd8ecb1104ec
+rc=0
+== x2_stuck_lsb_chain
+truth: {
+ "P_same": 0.9,
+ "h_bit_conditional": 0.15200309344504995,
+ "H_true_conditional_per_sample": 1.0640216541153495,
+ "H_marginal_per_sample_A_lag1": 1.9120185606702997,
+ "H_marginal_per_sample_B_lag20": 7.0,
+ "ideal_phase_aware_predictor_on_padded_x8": 1.0568282880587612,
+ "jensen_check_ideal_padded_le_truth": true,
+ "B_padded_best_single_lag": 23,
+ "B_padded_lag23_accuracy": 0.8,
+ "B_padded_lag23_entropy_x8_DERIVED": 2.5754247590988983,
+ "B_packed7_lag20_entropy_x7_DERIVED": 1.0640216541153495,
+ "note": "DERIVED expectations, not measurements; the decision is the measured 'Assessed min entropy' of each run against H_true_conditional_per_sample and against the packed7 run."
+}
+a-chain-lag1: measured P(same at its lag) = 0.899917
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2a-chain-lag1-p09-packed7-1000000.bin  n=1000000  sha256=641cffc77e1a608a9a069ff5652152cc0cbff8e35542e6a5cb6b34969db60574
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2a-chain-lag1-p09-lsbpad-8bit-1000000.bin  n=1000000  sha256=2a1ec87cb49e10f6139721ee60eb6f13ceb7b68d0755ae22692ece456217fec9
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2a-chain-lag1-p09-packed7-prefix20000.bin  n=20000  sha256=4b5297a211564de284533fb18c5d4d80989a16bb553286f2beab79ac28d3599f
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2a-chain-lag1-p09-lsbpad-8bit-prefix20000.bin  n=20000  sha256=6d73219774791b53e5bea946912fe613be7c6c1d380881b31cf7157ca9450cad
+b-chain-lag20: measured P(same at its lag) = 0.899829
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-packed7-1000000.bin  n=1000000  sha256=33f11d85ba4c4ef84a11fcfdc1d66ade4f4a591fe573d3a1415a9305b3b620f4
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-lsbpad-8bit-1000000.bin  n=1000000  sha256=19d8865d73a5b5123d16b87df6c0c5c25ab17d1eb416002d9b50c8737c79e1db
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-packed7-prefix20000.bin  n=20000  sha256=de75e000800fd71bd93df29b8f87ea18d23c479c3c966694089647193ed46ca7
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-lsbpad-8bit-prefix20000.bin  n=20000  sha256=fe53b9ebdf1aaf3c05f26c19bc85aee6daf831876fe50143fdd512baa7e858a7
+rc=0
+== x3_multimmc_orphans
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-period32-8bit-1000000.bin  n=1000000  sha256=cf6e4f28c0c592dce6d53275452428cd350e61d5c55bd6923e7a9b18033652f7
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-period32-8bit-prefix20000.bin  n=20000  sha256=5948b4706fc8961d0598eea1812a9ab3b83e38e8cd43ef9df2a8e2eff54f4489
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-period32-8bit-scaled-cap3000-20000.bin  n=20000  sha256=1384c0e76ad574f77f2232458ca67009cdb7bb54c14c28ac460f93adc73502ce
+{
+ "all_agree": true,
+ "text_model_equals_py90b": {
+  "C": true,
+  "r": true,
+  "N": true,
+  "scoreboard": true,
+  "winner": true,
+  "entries": true
+ },
+ "delta_C_text_minus_cpp": -530,
+ "delta_r_text_minus_cpp": -1
+}
+py90b   : {'C': 7966, 'r': 16, 'N': 19998, 'winner': 8, 'min_entropy': 1.258912683758613}
+text    : {'C': 7966, 'r': 16, 'N': 19998, 'winner': 8, 'min_entropy': 1.258912683758613}
+cpp     : {'C': 8496, 'r': 17, 'N': 19998, 'winner': 2, 'min_entropy': 1.1814254947486775}
+per-period offsets (periods 2..4):
+  {'period_index': 2, 'text_correct_offsets': [9, 16, 17], 'cpp_correct_offsets': [9, 16, 17], 'text_count': 3, 'cpp_count': 3}
+  {'period_index': 3, 'text_correct_offsets': [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 'cpp_correct_offsets': [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 'text_count': 15, 'cpp_count': 16}
+  {'period_index': 4, 'text_correct_offsets': [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 'cpp_correct_offsets': [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 'text_count': 15, 'cpp_count': 16}
+scaled file @ real cap (no saturation): {'text': {'C': 16982, 'r': 16969, 'winner': 2}, 'cpp': {'C': 16982, 'r': 16969, 'winner': 2}, 'equal': True, 'note': 'what the production binary must print on this file (C, r) -- see PLAN.md X3 light probe'}
+prefix 20000 @ real cap: {'text': {'C': 96, 'r': 2, 'winner': 1}, 'cpp': {'C': 96, 'r': 2, 'winner': 1}, 'equal': True, 'note': 'what the production binary must print on the prefix file (C, r)'}
+rc=0
+== x4_degenerate
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-alternating-1bit-1000000.bin  n=1000000  sha256=2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-alternating-0-255-8bit-1000000.bin  n=1000000  sha256=1154f32145a447f97d232dd0a72efe4f860ff546940a8aaef7a78d8daeb9a3c5
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-two-symbol-0-255-random-8bit-1000000.bin  n=1000000  sha256=f6a4699dd0a42d43277fd27432d6be8ac1a3bda64c74597e2d6725efc59b4263
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-one-symbol-once-1bit-1000000.bin  n=1000000  sha256=3db5c15a6e80a18fcfba28bec3529430a5260c8006166708635f7593e2f69241
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-one-symbol-once-8bit-1000000.bin  n=1000000  sha256=9e8789bfa6336d40e39c26a7f4db4226ead2072ebe321557e481929db476e0fc
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-counter-mod256-8bit-1000000.bin  n=1000000  sha256=67870dfc9c64e7aa270a3f7e8051ae65d207f93fc3df04d7572e6365af69cd0d
+rc=0
+== x5_c_gate
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-1000000.bin  n=1000000  sha256=bb73f19465d5b20f3f3e4f1321770bcf75b0bfe751218d7677a5042d3178c146
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin  n=999999  sha256=98a8f905d5bf969ff9a363ea0e5d43cd07e3e2164e1dfd42bb66a4d3c704fecb
+rc=0
+== x6_restart_decline
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x6-debruijn-k100-seed11-1000000.bin  n=1000000  sha256=4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8
+gen_debruijn.py said: ok 1000000 max symbol 99
+rc=0
+== x7_boundary
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-1bit-999999.bin  n=999999  sha256=0fb1061c67b194d8dfdc35ecce9c8df62a7a5973b7783e4d0225eee2354e32c9
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-1bit-1000000.bin  n=1000000  sha256=144bd75529d7ebd6a9e7a53a01105cc470ff7a447b22e669f3ff05fbad2456bb
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-1bit-1000001.bin  n=1000001  sha256=78f65869bd2e987c162b68a24024680fcb2f6df1b99bf6b1bb9cd9095639acb3
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-8bit-999999.bin  n=999999  sha256=3ae46276a92653d575168e6fd5cd8282663de8280d8e004986980a3061f8e804
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-8bit-1000000.bin  n=1000000  sha256=0e60994a18238dfd827a69440e6de4769cb78549bbed63cd5ceb0dbb5d4488e1
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-8bit-1000001.bin  n=1000001  sha256=a72bdda1dc00c4cca8d66f8cbf81d6362ef4f9c165e0e63e01f3db34cc51892c
+rc=0
+== check
+ok       x1-uniform7-lsbdead-8bit-1000000.bin  n=1000000  sha256=d5048d32d74b75bb78563e27348c1e8ab0c354663ea847b3ef65dd8ecb1104ec
+ok       x1-uniform7-msbdead-8bit-1000000.bin  n=1000000  sha256=6c49635a8af86806bcf60dd482be68c37f830c9be2db9eb84f740c5b49096a39
+X1: OK
+rc=0
+ok       x2a-chain-lag1-p09-lsbpad-8bit-1000000.bin  n=1000000  sha256=2a1ec87cb49e10f6139721ee60eb6f13ceb7b68d0755ae22692ece456217fec9
+ok       x2a-chain-lag1-p09-lsbpad-8bit-prefix20000.bin  n=20000  sha256=6d73219774791b53e5bea946912fe613be7c6c1d380881b31cf7157ca9450cad
+ok       x2a-chain-lag1-p09-packed7-1000000.bin  n=1000000  sha256=641cffc77e1a608a9a069ff5652152cc0cbff8e35542e6a5cb6b34969db60574
+ok       x2a-chain-lag1-p09-packed7-prefix20000.bin  n=20000  sha256=4b5297a211564de284533fb18c5d4d80989a16bb553286f2beab79ac28d3599f
+ok       x2b-chain-lag20-p09-lsbpad-8bit-1000000.bin  n=1000000  sha256=19d8865d73a5b5123d16b87df6c0c5c25ab17d1eb416002d9b50c8737c79e1db
+ok       x2b-chain-lag20-p09-lsbpad-8bit-prefix20000.bin  n=20000  sha256=fe53b9ebdf1aaf3c05f26c19bc85aee6daf831876fe50143fdd512baa7e858a7
+ok       x2b-chain-lag20-p09-packed7-1000000.bin  n=1000000  sha256=33f11d85ba4c4ef84a11fcfdc1d66ade4f4a591fe573d3a1415a9305b3b620f4
+ok       x2b-chain-lag20-p09-packed7-prefix20000.bin  n=20000  sha256=de75e000800fd71bd93df29b8f87ea18d23c479c3c966694089647193ed46ca7
+X2: OK
+rc=0
+ok       x3-mmc-orphan-period32-8bit-1000000.bin  n=1000000  sha256=cf6e4f28c0c592dce6d53275452428cd350e61d5c55bd6923e7a9b18033652f7
+ok       x3-mmc-orphan-period32-8bit-prefix20000.bin  n=20000  sha256=5948b4706fc8961d0598eea1812a9ab3b83e38e8cd43ef9df2a8e2eff54f4489
+ok       x3-mmc-orphan-period32-8bit-scaled-cap3000-20000.bin  n=20000  sha256=1384c0e76ad574f77f2232458ca67009cdb7bb54c14c28ac460f93adc73502ce
+X3: OK
+rc=0
+ok       x4-alternating-0-255-8bit-1000000.bin  n=1000000  sha256=1154f32145a447f97d232dd0a72efe4f860ff546940a8aaef7a78d8daeb9a3c5
+ok       x4-alternating-1bit-1000000.bin  n=1000000  sha256=2ba607832cf7dd10179fb3b0f1dbf99393e5d3a1f12c1752b07dd62c8ca2ebc3
+ok       x4-counter-mod256-8bit-1000000.bin  n=1000000  sha256=67870dfc9c64e7aa270a3f7e8051ae65d207f93fc3df04d7572e6365af69cd0d
+ok       x4-one-symbol-once-1bit-1000000.bin  n=1000000  sha256=3db5c15a6e80a18fcfba28bec3529430a5260c8006166708635f7593e2f69241
+ok       x4-one-symbol-once-8bit-1000000.bin  n=1000000  sha256=9e8789bfa6336d40e39c26a7f4db4226ead2072ebe321557e481929db476e0fc
+ok       x4-two-symbol-0-255-random-8bit-1000000.bin  n=1000000  sha256=f6a4699dd0a42d43277fd27432d6be8ac1a3bda64c74597e2d6725efc59b4263
+X4: OK
+rc=0
+ok       x5-sha256-outputs-31250-1000000.bin  n=1000000  sha256=bb73f19465d5b20f3f3e4f1321770bcf75b0bfe751218d7677a5042d3178c146
+ok       x5-sha256-outputs-31250-999999.bin  n=999999  sha256=98a8f905d5bf969ff9a363ea0e5d43cd07e3e2164e1dfd42bb66a4d3c704fecb
+X5: OK
+rc=0
+ok       x6-debruijn-k100-seed11-1000000.bin  n=1000000  sha256=4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8
+X6: OK
+rc=0
+ok       x7-csprng-1bit-1000000.bin  n=1000000  sha256=144bd75529d7ebd6a9e7a53a01105cc470ff7a447b22e669f3ff05fbad2456bb
+ok       x7-csprng-1bit-1000001.bin  n=1000001  sha256=78f65869bd2e987c162b68a24024680fcb2f6df1b99bf6b1bb9cd9095639acb3
+ok       x7-csprng-1bit-999999.bin  n=999999  sha256=0fb1061c67b194d8dfdc35ecce9c8df62a7a5973b7783e4d0225eee2354e32c9
+ok       x7-csprng-8bit-1000000.bin  n=1000000  sha256=0e60994a18238dfd827a69440e6de4769cb78549bbed63cd5ceb0dbb5d4488e1
+ok       x7-csprng-8bit-1000001.bin  n=1000001  sha256=a72bdda1dc00c4cca8d66f8cbf81d6362ef4f9c165e0e63e01f3db34cc51892c
+ok       x7-csprng-8bit-999999.bin  n=999999  sha256=3ae46276a92653d575168e6fd5cd8282663de8280d8e004986980a3061f8e804
+X7: OK
+rc=0
+END 2026-11-07T21:57:43-0500

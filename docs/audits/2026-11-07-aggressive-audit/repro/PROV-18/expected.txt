@@ -1,0 +1,25 @@
+EXCLUDED-SCOPE: ea_conditioning is not a supported target (cpp/Makefile
+SUPPORTED_TARGETS := iid non_iid restart; tracker N-03). Recorded, not run.
+
+Spec: SP 800-90B 6.3.2 step 5 (PDF p. 50) needs v >= 2 collisions for the
+sample standard deviation; the fork's collision_test() returns the sentinel
+-1.0 when v < 2 (collision_test.h:47-50, F12 repair), and every supported
+caller folds it only `if (ret >= 0)` (non_iid_main.cpp:391/402,
+restart_main.cpp:897/904). 3.1.5.2 (PDF p. 25): "Let the obtained entropy
+estimate per bit be h'" -- h' is an entropy, in [0, 1].
+
+Expected for `ea_conditioning -n -i tiny.bin 8 8 8 7.0` on a 3-sample file:
+either an intake refusal (the supported tools refuse < 1,000,000 samples) or,
+if assessed, the declined collision estimate is skipped and h' in [0, 1].
+
+Predicted (NOT measured) on the current source, conditioning_main.cpp:388-389:
+    ret_min_entropy = collision_test(data.bsymbols, data.blen, verbose, "Bitstring");
+    h_bitstring = min(ret_min_entropy, h_bitstring);        // no >= 0 guard
+With bitstring 0,1,1 (one collision, v = 1): collision_test prints the
+"not enough collisions" warning and returns -1.0; h_bitstring becomes -1;
+every later guarded estimator either declines or cannot lower it; the tool
+prints "h' = -1" and h_out = min(Output_Entropy(...), 0.999*8, -1*8) = -8.
+ea_conditioning has no dataset_meets_minimum() call and no alph_size <= 1
+refusal (grep: 0 each), so the tiny input reaches the estimators. Direction:
+understates (garbage, conservative). LOW in scope terms; a one-line fix is the
+same `if (ret >= 0)` guard the other folds in that function already have.

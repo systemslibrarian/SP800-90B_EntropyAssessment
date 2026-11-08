@@ -1,0 +1,14 @@
+n/a (report integrity / CLI contract). The usage text (cpp/non_iid_main.cpp
+print_usage) says "-v: Optional verbosity flag for more output. Can be used
+multiple times." so -vvv is expected to print AT LEAST what -vv prints.
+
+Expected for `ea_non_iid -vvv rand8_short.bin 8`: the 17 per-estimator
+"<label> <Estimator>: min entropy = <%.17g>" lines that -vv prints, plus the
+summary (H_bitstring = ..., H_bitstring Per Symbol = ..., H_original = ...,
+Assessed min entropy: ...).
+
+Observed: 0 per-estimator lines and the 4 summary lines. Cause: every estimator
+tests `verbose == 3` exactly (cpp/shared/most_common.h:33, cpp/non_iid/
+markov_test.h:55, cpp/shared/utils.h:1243, ...) while the main's summary tests
+`verbose > 2` (non_iid_main.cpp:653). verbose starts at 1 and -v increments, so
+-vvv is 4. Text only; JSON is unaffected. Direction: neutral.

@@ -1,0 +1,51 @@
+pack run (second pass, after script fixes) 2026-11-07 21:56:05 -0500
+PROV-01  run     rc=0     1s  RESULT: PASS -- an option error parsed BEFORE -o exits 255 without claiming the target; the previous
+PROV-01  control rc=0     0s  RESULT: CONTROL-OK -- with -o parsed FIRST the same -Z error replaces the stale report with the fail
+PROV-02  run     rc=0     1s  RESULT: PASS -- stdout h' is per bit; JSON hAssessed = dataWordSize x h' (x8 here) under the same ke
+PROV-02  control rc=0     0s  RESULT: CONTROL-OK -- at word_size 1 the text h' and JSON hAssessed agree to the printed precision; 
+PROV-03  run     rc=0     1s  RESULT: PASS -- under -i the single JSON MCV triple is the Literal one; the Bitstring triple (printe
+PROV-03  control rc=0     0s  RESULT: CONTROL-OK -- one MCV estimate ran, one triple in the JSON, and it matches the only triple p
+PROV-04  run     rc=0     1s  RESULT: PASS -- the width-mismatch warning is printed on stdout despite -q, exit 0, and the JSON (er
+PROV-04  control rc=0     0s  RESULT: CONTROL-OK -- declared at the true width: no warning, identical JSON shape -- the declared-8
+PROV-05  run     rc=0     0s  RESULT: PASS -- -vvv prints the summary but zero per-estimator lines: more -v flags give LESS output
+PROV-05  control rc=0     1s  RESULT: CONTROL-OK -- -vv prints 17 per-estimator lines; adding a third -v (run.sh) removes all of t
+PROV-06  run     rc=0     0s  RESULT: PASS -- exit 0, b.json is the full report, a.json is left as a permanent placeholder (errorL
+PROV-06  control rc=0     1s  RESULT: CONTROL-OK -- one -o: the path holds the complete report; the placeholder in run.sh is the s
+PROV-07  run     rc=0     1s  RESULT: PASS -- -s 1000 / -s 4999999 / -s 0 are refused with a bare usage dump (no reason line) alth
+PROV-07  control rc=0     0s  RESULT: CONTROL-OK -- -s 5000000 is accepted (the run reaches the data-size refusal, no usage dump);
+PROV-08  run     rc=3     0s  RESULT: NOT-RUN -- HEAVY: ea_restart requires a 1,000,000-sample matrix (restart_main.cpp:694), no t
+PROV-08  control rc=3     1s  RESULT: NOT-RUN -- HEAVY: ea_restart requires a 1,000,000-sample matrix. Not run in this phase (brie
+PROV-09  run     rc=3     0s  RESULT: NOT-RUN -- HEAVY: ea_restart -i on a 1,000,000-sample matrix (chi-square + LRS on rows and c
+PROV-09  control rc=0     0s  RESULT: CONTROL-OK -- ea_iid encodes the same statistical rejection as errorLevel 2 + errorClass 'st
+PROV-10  run     rc=3     1s  RESULT: NOT-RUN -- HEAVY: ea_restart -n on a 1,000,000-sample 8-bit de Bruijn B(100,3) matrix (ten e
+PROV-10  control rc=3     0s  RESULT: NOT-RUN -- HEAVY: ea_non_iid on the 1,000,000-sample de Bruijn file. Not run in this phase (
+PROV-11  run     rc=0     0s  RESULT: PASS -- type is the empty string in the ea_non_iid success report, the ea_iid report and the
+PROV-11  control rc=0     1s  RESULT: CONTROL-OK -- the placeholders name the tool ('non-IID', 'IID'); the completed reports in ru
+PROV-12  run     rc=0     1s  RESULT: PASS -- a stray 0x80 continuation byte in argv swallows the following ASCII 'Z' in the JSON 
+PROV-12  control rc=0     0s  RESULT: CONTROL-OK -- valid ASCII argv[0] round-trips exactly; the lost 'Z' in run.sh is the transco
+PROV-13  run     rc=0     0s  RESULT: PASS -- df = -1 (< 1) printed with P-value = 1 and 'Chi square tests: Passed'; JSON passedCh
+PROV-13  control rc=0     1s  RESULT: CONTROL-OK -- with nbin > k the test is applied: df = 6, P-value = 0.7747356989584685 in (0,
+PROV-14  run     rc=0     0s  RESULT: PASS -- both flag probes use the literal path /tmp/.ea_fs_$.c (and .ea_wf_$.c): fixed, world
+PROV-14  control rc=0     1s  RESULT: CONTROL-OK -- mktemp yields a fresh, unpredictable path per probe; the Makefile's $$ form yi
+PROV-15  run     rc=0     0s  RESULT: PASS -- all three production binaries link /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib
+PROV-15  control rc=0     0s  RESULT: CONTROL-OK -- the October build from the same Makefile links the pinned openssl@3; the 2026-
+PROV-16  run     rc=0     1s  RESULT: PASS -- p_u clamps to 1 -> -log2(1.0) = -0.0: text 'min entropy = -0', JSON hOriginal -0.0 o
+PROV-16  control rc=0     0s  RESULT: CONTROL-OK -- with p_u < 1 the MCV estimate is positive (0.00013391324219584911); the negati
+PROV-17  run     rc=0     0s  RESULT: PASS -- '-i -- file 1 -q' is refused with the C-library-dependence reason and told to add a 
+PROV-17  control rc=0     1s  RESULT: CONTROL-OK -- '--' is honoured when nothing option-shaped follows the operands (exit 0); the
+PROV-18  run     rc=3     0s  RESULT: NOT-RUN -- EXCLUDED-SCOPE and STALE: cpp/ea_conditioning predates cpp/shared/TestRunUtils.h 
+PROV-18  control rc=3     1s  RESULT: NOT-RUN -- EXCLUDED-SCOPE and STALE: 1 source files are newer than cpp/ea_conditioning
+PROV-19  run     rc=0     0s  RESULT: PASS -- no completed report carries reportComplete; only the placeholder does (false)
+PROV-19  control rc=0     1s  RESULT: CONTROL-OK -- the placeholder writes reportComplete: false; the completed reports in run.sh 
+PROV-20  run     rc=0     1s  RESULT: PASS -- -i -c assesses in -c mode, -c -i in -i mode, -a -t truncates; all exit 0 with no wor
+PROV-20  control rc=0     0s  RESULT: CONTROL-OK -- -c alone and -i -c print the same h' (0.732612): the earlier -i was silently d
+PROV-21  run     rc=0     1s  RESULT: PASS -- all three tools exit 0 with a banner on '--version -Z'; the unknown option after --v
+PROV-21  control rc=0     0s  RESULT: CONTROL-OK -- -Z before --version is refused (exit 255, 'illegal option -- Z'); the same two
+PROV-22  run     rc=0     0s  RESULT: PASS -- k >= 2 diverges from k canonical jumps and k = 2 equals S1 xor S2 exactly as the un-
+PROV-22  control rc=0     1s  RESULT: CONTROL-OK -- k = 0 and k = 1 equal the canonical jump; only threads >= 2 are affected
+PROV-23  run     rc=0     0s  RESULT: PASS -- the counters are partial (early termination) and nothing in the report states the nu
+PROV-23  control rc=0     3s  RESULT: CONTROL-OK -- a failing statistic runs the full 10,000 permutations and its C-sum is 10,000;
+PROV-24  run     rc=0     0s  RESULT: PASS -- SIGABRT (exit 134) from assert(n>=p) in periodicity() on a 20-sample input under the
+PROV-24  control rc=0     0s  RESULT: CONTROL-OK -- at L = 100 the battery completes (rc 1, a verdict); the abort in run.sh is L =
+PROV-25  run     rc=0     1s  RESULT: PASS -- the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp c
+PROV-25  control rc=0     0s  RESULT: CONTROL-OK -- iid_main.cpp carries the INT_MAX refusal the comment describes (3 references);

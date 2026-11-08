@@ -1,0 +1,23 @@
+n/a (build determinism). BUILDING.md:55 pins "openssl@3 | 3.6.4 | SHA-256 of
+the input file" and :40 says `brew install ... openssl@3`; cpp/Makefile:69-72
+sets OPENSSL_PREFIX to `brew --prefix openssl@3`.
+
+Expected: `otool -L cpp/ea_non_iid | grep crypto` names
+/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib, on every build, regardless
+of what else Homebrew installs.
+
+Observed: all three production binaries built 2026-11-07 19:28-19:29 name
+/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib. Cause (Makefile:71-72):
+    INC     += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+    LDFLAGS += -L$(BREW_PREFIX)/lib     -L$(OPENSSL_PREFIX)/lib
+The generic prefix comes FIRST on both search paths, and Homebrew links the
+unversioned `openssl` formula there: /opt/homebrew/include/openssl ->
+../Cellar/openssl@4/4.1.0/include/openssl and /opt/homebrew/lib/libcrypto.dylib
+-> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib, both created 2026-11-07 19:28
+when AFL++ (this audit's fuzzer) pulled openssl@4 in as a dependency. OpenSSL
+is used only for the SHA-256 of the assessed bytes (EVP), so no estimator
+figure moves, but the binary's dependency differs from the documented, pinned
+one and the sha256 of the binaries changed with no source change. Direction:
+nondeterministic (build input). MEDIUM. Fix: put the pinned -I/-L first, or
+link $(OPENSSL_PREFIX)/lib/libcrypto.dylib by path, and have pin-check.sh print
+`otool -L | grep crypto`.

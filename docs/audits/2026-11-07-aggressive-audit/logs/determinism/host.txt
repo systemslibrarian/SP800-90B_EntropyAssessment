@@ -1,0 +1,16 @@
+date=2026-11-07T21:52:31-0500
+mode=full
+threads=1 2 10
+uname_a=Darwin MacBook-Air.local 25.6.0 Darwin Kernel Version 25.6.0: Fri Jul 31 19:16:20 PDT 2026; root:xnu-12377.161.14~5/RELEASE_ARM64_T8142 arm64 arm Darwin
+uname_s=Darwin
+uname_m=arm64
+compiler=Apple clang version 21.0.0 (clang-2100.4.1.1)
+hw.ncpu=10
+hw.memsize=17179869184
+cpu=Apple M5
+sw_vers=ProductName:		macOS ProductVersion:		26.6.2 BuildVersion:		25G83 
+git_head=1151b2224594acec4267c4f17deabdf53e206721
+git_branch=audit/2026-11-07
+git_dirty=1184 paths modified or untracked
+omp_runtime=	/opt/homebrew/opt/libomp/lib/libomp.dylib
+python=Python 3.14.7

@@ -1,0 +1,202 @@
+{
+ "case": "two5050-1bit-50000-b1-bitstring",
+ "name": "two5050-1bit-50000.bin",
+ "file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two5050-1bit-50000.bin",
+ "bps": 1,
+ "mode": "bitstring",
+ "n": 50000,
+ "input_sha256": "9cbc4e21333c0a9b6d45eb574270a96513028a242cd1bb0812eaf611752de9c8",
+ "binary": {
+  "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+  "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
+ },
+ "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
+ "timestamp": "2026-11-07T21:49:12-0500",
+ "env": {
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "1"
+ },
+ "non_compliant_short_dataset": true,
+ "settings": {
+  "binary_rule": "observed",
+  "bit_order": "msb",
+  "bitstring_truncate": 0,
+  "tolerance_abs": 1e-09,
+  "integer_labels": [
+   "C",
+   "Mode count",
+   "N",
+   "Sum t_i",
+   "r",
+   "t",
+   "u",
+   "v"
+  ],
+  "ref_options": {},
+  "d1_recheck": true,
+  "d1_option": [
+   "z",
+   2.575829303548901
+  ],
+  "d1_options_by_module": {
+   "ttuple": [
+    "z_variant",
+    "exact"
+   ],
+   "collision": [
+    "z_alpha",
+    2.575829303548901
+   ]
+  }
+ },
+ "cpp": {
+  "cmd": [
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+   "-i",
+   "-a",
+   "-v",
+   "-v",
+   "-o",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/two5050-1bit-50000-b1.cpp.json",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two5050-1bit-50000.bin",
+   "1"
+  ],
+  "exit": 0,
+  "signal": null,
+  "outcome": "exit_0",
+  "duration_s": 0.045,
+  "stdout_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/two5050-1bit-50000-b1.cpp.stdout.txt",
+  "stderr_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/two5050-1bit-50000-b1.cpp.stderr.txt",
+  "json_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/two5050-1bit-50000-b1.cpp.json",
+  "well_formed": true,
+  "refusal_message": null,
+  "warnings": [
+   "*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.",
+   "*** Its result is NOT a compliant SP 800-90B assessment. ***"
+  ],
+  "loaded": {
+   "loaded_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two5050-1bit-50000.bin",
+   "loaded_sha256": "9cbc4e21333c0a9b6d45eb574270a96513028a242cd1bb0812eaf611752de9c8",
+   "n": 50000,
+   "k": 2,
+   "width": 1,
+   "n_binary": null
+  },
+  "summary": {
+   "H_original": 0.7933882304275719,
+   "H_bitstring": null,
+   "H_bitstring Per Symbol": null,
+   "assessed": 0.7933882304275719
+  },
+  "json_summary": {
+   "bitsPerSymbol": [
+    {
+     "path": "/bitsPerSymbol",
+     "value": 1
+    }
+   ],
+   "bitsPerSymbolInferred": [
+    {
+     "path": "/bitsPerSymbolInferred",
+     "value": false
+    }
+   ],
+   "errorLevel": [
+    {
+     "path": "/errorLevel",
+     "value": 0
+    }
+   ],
+   "sha256": [
+    {
+     "path": "/sha256",
+     "value": "9cbc4e21333c0a9b6d45eb574270a96513028a242cd1bb0812eaf611752de9c8"
+    }
+   ],
+   "hOriginal": [
+    {
+     "path": "/testCases[0]/hOriginal",
+     "value": 0.9742067029042232
+    },
+    {
+     "path": "/testCases[1]/hOriginal",
+     "value": 0.8452649041064636
+    },
+    {
+     "path": "/testCases[2]/hOriginal",
+     "value": 0.9939092550824029
+    },
+    {
+     "path": "/testCases[3]/hOriginal",
+     "value": 0.7933882304275719
+    },
+    {
+     "path": "/testCases[6]/hOriginal",
+     "value": 0.9870972796692417
+    },
+    {
+     "path": "/testCases[7]/hOriginal",
+     "value": 0.9774124951364705
+    },
+    {
+     "path": "/testCases[8]/hOriginal",
+     "value": 0.9864452730091774
+    },
+    {
+     "path": "/testCases[9]/hOriginal",
+     "value": 0.976953390837809
+    },
+    {
+     "path": "/testCases[10]/hOriginal",
+     "value": 0.7933882304275719
+    }
+   ],
+   "hAssessed": [
+    {
+     "path": "/testCases[10]/hAssessed",
+     "value": 0.7933882304275719
+    }
+   ]
+  },
+  "json_error": null,
+  "notes": {
+   "Literal": {
+    "Collision": [
+     "Found p."
+    ],
+    "Compression": [
+     "Found p."
+    ],
+    "MultiMCW Prediction": [
+     "P_local can't change the result."
+    ],
+    "Lag Prediction": [
+     "P_local can't change the result."
+    ],
+    "MultiMMC Prediction": [
+     "P_local can't change the result."
+    ],
+    "LZ78Y Prediction": [
+     "P_local can't change the result."
+    ]
+   },
+   "Bitstring": {}
+  },
+  "unparsed_estimate_lines": []
+ },
+ "k_observed": 2,
+ "is_binary": true,
+ "translation": null,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 1,
+  "masked": false
+ },
+ "reference": {},
+ "comparisons": {},
+ "cpp_bitstring_blocks_for_binary_source": 0,
+ "class": "NOT_RUN",
+ "verdict": "two5050-1bit-50000-b1-bitstring: NOT_RUN -- binary source (k = 2, declared 1 bit, rule observed): 3.1.3 has no bitstring term; C++ printed 0 Bitstring blocks [EA_ALLOW_SHORT_DATASET=1]"
+}

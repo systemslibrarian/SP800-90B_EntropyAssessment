@@ -1,0 +1,21 @@
+n/a (CLI contract). The tool's own usage text (cpp/restart_main.cpp:205-206):
+  "-s <simulation count>: Accepted for compatibility and ignored: the
+   sanity-check cutoff is computed exactly from SP 800-90B 3.1.4.3 step 5,
+   not simulated."
+
+Expected for `ea_restart -n -s 1000 file 8 3/symbol`: the option is accepted
+and ignored; the run proceeds to read the file (and on this 10,000-sample
+fixture fails later with "*** Error: data (len = 10000) does not contain
+1000000 samples ***", exit 255).
+
+Observed: `-s 1000`, `-s 4999999` and `-s 0` exit 255 with the usage block as
+the only output and no reason line. Code (restart_main.cpp:449-458):
+    if (!parse_unsigned_decimal(optarg, inul)) { printf("Simulation count must be ..."); print_usage(); }
+    if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+        print_usage();            // <- no message; simulation_rounds == 5000000UL
+    } else { simulation_rounds = inul; }
+and :753 `(void) simulation_rounds;  // -s is accepted and ignored`.
+Values >= 5,000,000 are accepted and ignored, as documented. Direction:
+wrong refusal (the brief's table puts "wrong refusal" at MEDIUM; the analysis
+ranked it LOW because it only blocks a legacy option). regression-restart.sh
+tests only the N-08 spellings and cannot see it.

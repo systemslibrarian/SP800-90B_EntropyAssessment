@@ -1,0 +1,21 @@
+# PROV-17 observed.txt  2026-11-07 21:56:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -- /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 -q
+rc[dashdash_late_q]=255  stdout=dd.out stderr=dd.err
+stderr (verbatim):
+  | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+  |        Refusing to run: what this command line MEANS depends on the C
+  |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  |        it as another operand and fail on the usage path. One line, two
+  |        supported platforms, two different operations -- and guessing which
+  |        was wanted is worse than refusing. Nothing has been written.
+  | 
+  |        Put every option BEFORE the file:
+  |          ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+  |        If '-q' is meant as an operand and not an option, separate the
+  |        operands with '--'.
+refusal markers: 'depends on the C library'=1 'separate the operands'=1 'Nothing has been written'=1 ; rc=255
+code: scanArgs consumes a pre-operand '--' at TestRunUtils.h:183; the late-option loop stops only at a '--' AFTER the first operand (:217)
+RESULT: PASS -- '-i -- file 1 -q' is refused with the C-library-dependence reason and told to add a '--' it already has; both libcs would have refused this line on the usage path (argc 3) -- a wrong-reason refusal

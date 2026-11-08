@@ -1,0 +1,59 @@
+{
+ "status": "ok",
+ "values": {
+  "u": 2,
+  "v": 1,
+  "can_run": false,
+  "reason": "v < u (1 < 2): the estimate cannot be computed (\u00a76.3.6 step 2)",
+  "pair_sum_W": {},
+  "positions_choose2_W": {},
+  "P_W": {},
+  "Pmax_W": {},
+  "argmax_W": null,
+  "p-hat": "NaN",
+  "p_u": "NaN",
+  "min_entropy": "NaN",
+  "p_u_z_exact": "NaN",
+  "min_entropy_z_exact": "NaN",
+  "L": 50000,
+  "cutoff": 35,
+  "z": 2.576,
+  "method": "suffix+direct (agree)",
+  "Q": {
+   "1": 215,
+   "2": 1
+  }
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "lrs",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lfsr16-tap1-8bit-50000.bin",
+  "8",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/lfsr16-tap1-8bit-50000-b8-literal.lrs.ref.json"
+ ],
+ "duration_s": 0.144,
+ "options_used": {},
+ "module": "lrs",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 255,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 8,
+ "estimate_seconds": 0.031,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
+ "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
+}

@@ -1,0 +1,615 @@
+{
+ "name": "x3-probe-prefix20000",
+ "tool": "non_iid",
+ "files": {
+  "stdout": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.stdout",
+  "stderr": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.stderr",
+  "rc": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.rc",
+  "meta": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.meta"
+ },
+ "rc": 0,
+ "stderr_tail": [],
+ "meta": {
+  "name": "x3-probe-prefix20000",
+  "start": "2026-11-07T22:17:07-0500",
+  "cwd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit",
+  "host": "Darwin 25.6.0 arm64",
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "1",
+  "cmd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-fill-8bit-prefix20000.bin 8",
+  "sha256": {
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.json": "a5522a3b37ef78fbc2ca2e0301323a6afaf3082bc125842fb1ee0e0d5fc2be12",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-fill-8bit-prefix20000.bin": "5948b4706fc8961d0598eea1812a9ab3b83e38e8cd43ef9df2a8e2eff54f4489"
+  },
+  "end": "2026-11-07T22:17:07-0500",
+  "rc": "0"
+ },
+ "text": {
+  "loaded": {
+   "n": 20000,
+   "k": 240,
+   "width": 8
+  },
+  "narrower_warning": false,
+  "refusal": null,
+  "short_escape": true,
+  "estimates": {
+   "Literal": {
+    "Most Common Value": {
+     "Mode count": {
+      "text": "181",
+      "value": 181.0
+     },
+     "p-hat": {
+      "text": "0.0090500000000000008",
+      "value": 0.00905
+     },
+     "p_u": {
+      "text": "0.010774896734432549",
+      "value": 0.010774896734432549
+     },
+     "min entropy": {
+      "text": "6.5361821470437356",
+      "value": 6.536182147043736
+     }
+    },
+    "t-Tuple": {
+     "t": {
+      "text": "1",
+      "value": 1.0
+     },
+     "p-hat_max": {
+      "text": "0.009050000000000000752176",
+      "value": 0.00905
+     },
+     "p_u": {
+      "text": "0.01077489673443254858398",
+      "value": 0.010774896734432549
+     },
+     "min entropy": {
+      "text": "6.5361821470437356",
+      "value": 6.536182147043736
+     }
+    },
+    "LRS": {
+     "u": {
+      "text": "2",
+      "value": 2.0
+     },
+     "v": {
+      "text": "2",
+      "value": 2.0
+     },
+     "p-hat": {
+      "text": "0.00437697082298345047785",
+      "value": 0.0043769708229834505
+     },
+     "p_u": {
+      "text": "0.005579366017585715535609",
+      "value": 0.0055793660175857155
+     },
+     "min entropy": {
+      "text": "7.4856830864872856",
+      "value": 7.485683086487286
+     }
+    },
+    "MultiMCW Prediction": {
+     "C": {
+      "text": "156",
+      "value": 156.0
+     },
+     "r": {
+      "text": "2",
+      "value": 2.0
+     },
+     "N": {
+      "text": "19937",
+      "value": 19937.0
+     },
+     "P_global": {
+      "text": "0.0078246476400662089",
+      "value": 0.007824647640066209
+     },
+     "P_global'": {
+      "text": "0.0094320502859746719",
+      "value": 0.009432050285974672
+     },
+     "min entropy": {
+      "text": "6.7282128747484728",
+      "value": 6.728212874748473
+     }
+    },
+    "Lag Prediction": {
+     "C": {
+      "text": "85",
+      "value": 85.0
+     },
+     "r": {
+      "text": "2",
+      "value": 2.0
+     },
+     "N": {
+      "text": "19999",
+      "value": 19999.0
+     },
+     "P_global": {
+      "text": "0.0042502125106255312",
+      "value": 0.004250212510625531
+     },
+     "P_global'": {
+      "text": "0.0054351739868501942",
+      "value": 0.005435173986850194
+     },
+     "min entropy": {
+      "text": "7.5234580661623385",
+      "value": 7.5234580661623385
+     }
+    },
+    "MultiMMC Prediction": {
+     "C": {
+      "text": "96",
+      "value": 96.0
+     },
+     "r": {
+      "text": "2",
+      "value": 2.0
+     },
+     "N": {
+      "text": "19998",
+      "value": 19998.0
+     },
+     "P_global": {
+      "text": "0.0048004800480048009",
+      "value": 0.004800480048004801
+     },
+     "P_global'": {
+      "text": "0.0060594984263402894",
+      "value": 0.006059498426340289
+     },
+     "min entropy": {
+      "text": "7.3665859047888329",
+      "value": 7.366585904788833
+     }
+    },
+    "LZ78Y Prediction": {
+     "C": {
+      "text": "92",
+      "value": 92.0
+     },
+     "r": {
+      "text": "2",
+      "value": 2.0
+     },
+     "N": {
+      "text": "19983",
+      "value": 19983.0
+     },
+     "P_global": {
+      "text": "0.0046039133263273786",
+      "value": 0.004603913326327379
+     },
+     "P_global'": {
+      "text": "0.0058374700824981281",
+      "value": 0.005837470082498128
+     },
+     "min entropy": {
+      "text": "7.4204410337485136",
+      "value": 7.420441033748514
+     }
+    }
+   },
+   "Bitstring": {
+    "Most Common Value": {
+     "Mode count": {
+      "text": "81118",
+      "value": 81118.0
+     },
+     "p-hat": {
+      "text": "0.50698750000000004",
+      "value": 0.5069875
+     },
+     "p_u": {
+      "text": "0.5102069822618106",
+      "value": 0.5102069822618106
+     },
+     "min entropy": {
+      "text": "0.97084545230612873",
+      "value": 0.9708454523061287
+     }
+    },
+    "Collision": {
+     "v": {
+      "text": "63634",
+      "value": 63634.0
+     },
+     "Sum t_i": {
+      "text": "159999",
+      "value": 159999.0
+     },
+     "X-bar": {
+      "text": "2.5143633906402236",
+      "value": 2.5143633906402236
+     },
+     "sigma-hat": {
+      "text": "0.49979757757143134",
+      "value": 0.49979757757143134
+     },
+     "X-bar'": {
+      "text": "2.5092599083197991",
+      "value": 2.509259908319799
+     },
+     "p": {
+      "text": "0.5",
+      "value": 0.5
+     },
+     "min entropy": {
+      "text": "1",
+      "value": 1.0
+     }
+    },
+    "Markov": {
+     "P_0": {
+      "text": "0.49301250000000002",
+      "value": 0.4930125
+     },
+     "P_1": {
+      "text": "0.50698749999999992",
+      "value": 0.5069874999999999
+     },
+     "P_{0,0}": {
+      "text": "0.48633401790015468",
+      "value": 0.4863340179001547
+     },
+     "P_{0,1}": {
+      "text": "0.51366598209984526",
+      "value": 0.5136659820998453
+     },
+     "P_{1,0}": {
+      "text": "0.49950072118051703",
+      "value": 0.499500721180517
+     },
+     "P_{1,1}": {
+      "text": "0.50049927881948297",
+      "value": 0.500499278819483
+     },
+     "p-hat_max": {
+      "text": "1.5282872813674874e-38",
+      "value": 1.5282872813674874e-38
+     },
+     "min entropy": {
+      "text": "0.98141681128731029",
+      "value": 0.9814168112873103
+     }
+    },
+    "Compression": {
+     "X-bar": {
+      "text": "5.2073645341064214",
+      "value": 5.207364534106421
+     },
+     "sigma-hat": {
+      "text": "1.0101765706637447",
+      "value": 1.0101765706637447
+     },
+     "X-bar'": {
+      "text": "5.1911226923006382",
+      "value": 5.191122692300638
+     },
+     "p": {
+      "text": "0.045908328829149858",
+      "value": 0.04590832882914986
+     },
+     "min entropy": {
+      "text": "0.74085004570866764",
+      "value": 0.7408500457086676
+     }
+    },
+    "t-Tuple": {
+     "t": {
+      "text": "13",
+      "value": 13.0
+     },
+     "p-hat_max": {
+      "text": "0.5283490949757083665617",
+      "value": 0.5283490949757084
+     },
+     "p_u": {
+      "text": "0.531563712185423198342",
+      "value": 0.5315637121854232
+     },
+     "min entropy": {
+      "text": "0.91168547416536971",
+      "value": 0.9116854741653697
+     }
+    },
+    "LRS": {
+     "u": {
+      "text": "14",
+      "value": 14.0
+     },
+     "v": {
+      "text": "36",
+      "value": 36.0
+     },
+     "p-hat": {
+      "text": "0.5246005976460385022975",
+      "value": 0.5246005976460385
+     },
+     "p_u": {
+      "text": "0.5278164948022829872087",
+      "value": 0.527816494802283
+     },
+     "min entropy": {
+      "text": "0.92189165783134608",
+      "value": 0.9218916578313461
+     }
+    },
+    "MultiMCW Prediction": {
+     "C": {
+      "text": "80061",
+      "value": 80061.0
+     },
+     "r": {
+      "text": "14",
+      "value": 14.0
+     },
+     "N": {
+      "text": "159937",
+      "value": 159937.0
+     },
+     "P_global": {
+      "text": "0.50057835272638607",
+      "value": 0.5005783527263861
+     },
+     "P_global'": {
+      "text": "0.50379878135198308",
+      "value": 0.5037987813519831
+     },
+     "min entropy": {
+      "text": "0.98908046257220894",
+      "value": 0.9890804625722089
+     }
+    },
+    "Lag Prediction": {
+     "C": {
+      "text": "80226",
+      "value": 80226.0
+     },
+     "r": {
+      "text": "17",
+      "value": 17.0
+     },
+     "N": {
+      "text": "159999",
+      "value": 159999.0
+     },
+     "P_global": {
+      "text": "0.50141563384771159",
+      "value": 0.5014156338477116
+     },
+     "P_global'": {
+      "text": "0.50463542769586789",
+      "value": 0.5046354276958679
+     },
+     "min entropy": {
+      "text": "0.98668660128228081",
+      "value": 0.9866866012822808
+     }
+    },
+    "MultiMMC Prediction": {
+     "C": {
+      "text": "81118",
+      "value": 81118.0
+     },
+     "r": {
+      "text": "16",
+      "value": 16.0
+     },
+     "N": {
+      "text": "159998",
+      "value": 159998.0
+     },
+     "P_global": {
+      "text": "0.50699383742296777",
+      "value": 0.5069938374229678
+     },
+     "P_global'": {
+      "text": "0.51021333923621326",
+      "value": 0.5102133392362133
+     },
+     "min entropy": {
+      "text": "0.97082747701643157",
+      "value": 0.9708274770164316
+     }
+    },
+    "LZ78Y Prediction": {
+     "C": {
+      "text": "81064",
+      "value": 81064.0
+     },
+     "r": {
+      "text": "15",
+      "value": 15.0
+     },
+     "N": {
+      "text": "159983",
+      "value": 159983.0
+     },
+     "P_global": {
+      "text": "0.50670383728271129",
+      "value": 0.5067038372827113
+     },
+     "P_global'": {
+      "text": "0.50992351560748106",
+      "value": 0.5099235156074811
+     },
+     "min entropy": {
+      "text": "0.97164722413402405",
+      "value": 0.971647224134024
+     }
+    }
+   }
+  },
+  "notes": [
+   "Bitstring Collision Estimate: Could Not Find p. Proceeding with the lower bound for p.",
+   "Bitstring Compression Estimate: Found p.",
+   "Bitstring MultiMCW Prediction Estimate: P_local can't change the result.",
+   "Literal MultiMCW Prediction Estimate: P_local can't change the result.",
+   "Bitstring Lag Prediction Estimate: P_local can't change the result.",
+   "Literal Lag Prediction Estimate: P_local can't change the result.",
+   "Bitstring MultiMMC Prediction Estimate: P_local can't change the result.",
+   "Literal MultiMMC Prediction Estimate: P_local can't change the result.",
+   "Bitstring LZ78Y Prediction Estimate: P_local can't change the result.",
+   "Literal LZ78Y Prediction Estimate: P_local can't change the result."
+  ],
+  "h_original": {
+   "text": "6.5361821470437356",
+   "value": 6.536182147043736
+  },
+  "h_bitstring": {
+   "text": "0.74085004570866764",
+   "value": 0.7408500457086676
+  },
+  "h_bitstring_per_symbol": {
+   "text": "5.9268003656693411",
+   "value": 5.926800365669341
+  },
+  "assessed": {
+   "text": "5.9268003656693411",
+   "value": 5.926800365669341
+  },
+  "h_prime": null,
+  "restart_min": null,
+  "restart_passed": null,
+  "degenerate": [],
+  "lines": 118,
+  "min_of_printed": {
+   "Literal": {
+    "count": 7,
+    "estimators": [
+     "LRS",
+     "LZ78Y Prediction",
+     "Lag Prediction",
+     "Most Common Value",
+     "MultiMCW Prediction",
+     "MultiMMC Prediction",
+     "t-Tuple"
+    ],
+    "min": 6.536182147043736,
+    "binding": "Most Common Value"
+   },
+   "Bitstring": {
+    "count": 10,
+    "estimators": [
+     "Collision",
+     "Compression",
+     "LRS",
+     "LZ78Y Prediction",
+     "Lag Prediction",
+     "Markov",
+     "Most Common Value",
+     "MultiMCW Prediction",
+     "MultiMMC Prediction",
+     "t-Tuple"
+    ],
+    "min": 0.7408500457086676,
+    "binding": "Compression"
+   }
+  }
+ },
+ "json": {
+  "present": true,
+  "top": {
+   "errorLevel": 0,
+   "errorClass": null,
+   "errorMessage": null,
+   "nonCompliantShortDataset": true,
+   "bitsPerSymbol": 8,
+   "bitsPerSymbolInferred": false,
+   "subsetRequested": null,
+   "subsetIndex": null,
+   "subsetRequestedSamples": null,
+   "subsetActualSamples": null,
+   "sha256": "5948b4706fc8961d0598eea1812a9ab3b83e38e8cd43ef9df2a8e2eff54f4489",
+   "sha256Scope": "assessed-sample-bytes",
+   "assessmentComplete": null,
+   "IID": false,
+   "commandline": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-prefix20000.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-fill-8bit-prefix20000.bin 8"
+  },
+  "cases": [
+   {
+    "testCaseDesc": "Most Common Value",
+    "hOriginal": 6.536182147043736,
+    "hBitstring": 0.9708454523061287,
+    "mcvEstimatePU": 0.010774896734432549
+   },
+   {
+    "testCaseDesc": "Collision Test (for bit strings only)",
+    "hBitstring": 1.0
+   },
+   {
+    "testCaseDesc": "Markov Test (for bit strings only)",
+    "hBitstring": 0.9814168112873103
+   },
+   {
+    "testCaseDesc": "Compression Test (for bit strings only)",
+    "hBitstring": 0.7408500457086676
+   },
+   {
+    "testCaseDesc": "T-Tuple Test",
+    "tTupleRes": 6.536182147043736,
+    "binTTupleRes": 0.9116854741653697
+   },
+   {
+    "testCaseDesc": "LRS Test",
+    "lrsRes": 7.485683086487286,
+    "binLrsRes": 0.9218916578313461
+   },
+   {
+    "testCaseDesc": "Multi Most Common in Window Test",
+    "hOriginal": 6.728212874748473,
+    "hBitstring": 0.9890804625722089
+   },
+   {
+    "testCaseDesc": "Lag Prediction Test",
+    "hOriginal": 7.5234580661623385,
+    "hBitstring": 0.9866866012822808
+   },
+   {
+    "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)",
+    "hOriginal": 7.366585904788833,
+    "hBitstring": 0.9708274770164316
+   },
+   {
+    "testCaseDesc": "LZ78Y Test",
+    "hOriginal": 7.420441033748514,
+    "hBitstring": 0.971647224134024
+   },
+   {
+    "testCaseDesc": "Overall",
+    "hOriginal": 6.536182147043736,
+    "hBitstring": 0.7408500457086676,
+    "hAssessed": 5.926800365669341,
+    "dataWordSize": 8.0
+   }
+  ],
+  "overall": {
+   "testCaseDesc": "Overall",
+   "hOriginal": 6.536182147043736,
+   "hBitstring": 0.7408500457086676,
+   "hAssessed": 5.926800365669341,
+   "dataWordSize": 8.0
+  },
+  "not_run_flags": [],
+  "restart_cases_with_h_r": [],
+  "restart_cases_with_h_c": []
+ },
+ "well_formed": true,
+ "accepted": true,
+ "compliant": false,
+ "consistency": {
+  "h_original_equals_min_literal": true,
+  "h_bitstring_equals_min_bitstring": true,
+  "assessed_equals_min_terms": true
+ }
+}

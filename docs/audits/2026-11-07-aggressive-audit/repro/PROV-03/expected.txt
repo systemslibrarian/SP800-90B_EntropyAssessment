@@ -1,0 +1,21 @@
+Spec: SP 800-90B 3.1.3 (PDF p. 20) requires BOTH an H_original (per sample) and,
+for non-binary data, an H_bitstring (per bit) estimate, and 6.3.1 (PDF p. 49)
+defines the MCV estimate by its intermediates p-hat and p_u. Two MCV estimates
+therefore run on an 8-bit file and both have a mode count / p-hat / p_u.
+
+Expected JSON for the "Most Common Value" test case: two triples (or one triple
+per branch), e.g.
+  "literalMcvEstimateMode": 61, "literalMcvEstimatePHat": ..., "literalMcvEstimatePU": ...
+  "bitstringMcvEstimateMode": ..., "bitstringMcvEstimatePHat": ..., "bitstringMcvEstimatePU": ...
+or at least a field saying which branch the single triple belongs to.
+
+Observed: three keys only (mcvEstimateMode/PHat/PU). non_iid_main.cpp:365 calls
+most_common(... "Bitstring", tc631) and :372 calls most_common(... "Literal",
+tc631) with the SAME tc631; most_common.h:41-43 overwrite the three fields each
+time, so the report keeps the LAST caller's triple (Literal under -i, Bitstring
+under -c). The flag that was meant to disambiguate (literal_mcv_estimate) is
+inverted (std::string::compare returns 0 on equality) and its only consumer is
+commented out (test_case_base.h:66-67). The Bitstring mode count printed at
+-vv does not occur anywhere in the JSON.
+Direction: neutral (hAssessed is unaffected); the differential harness must
+take bitstring intermediates from the -vvv text, not the JSON.

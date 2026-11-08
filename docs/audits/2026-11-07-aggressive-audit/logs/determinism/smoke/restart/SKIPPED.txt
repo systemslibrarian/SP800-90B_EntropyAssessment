@@ -1,0 +1,1 @@
+ea_restart NOT RUN in smoke mode: it requires exactly 1,000,000 samples (restart_main.cpp:694 data.len != MIN_SIZE), above the 20,000-sample probe limit.

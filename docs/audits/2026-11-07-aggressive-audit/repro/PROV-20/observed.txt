@@ -1,0 +1,15 @@
+# PROV-20 observed.txt  2026-11-07 21:56:22 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -c /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i_then_c]=0  stdout=ic.out stderr=ic.err
+  -i -c: rc=0  h'=0.732612  H_original lines=0  (conditioned mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -i /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c_then_i]=0  stdout=ci.out stderr=ci.err
+  -c -i: rc=0  H_original=6.636441  h' lines=0  (initial mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -a -t -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[a_then_t]=0  stdout=at.out stderr=at.err
+  -a -t -vv: rc=0  Number of Binary Symbols line: Number of Binary Symbols: 80000
+diagnostic lines about the contradiction in any of the six streams: 0
+RESULT: PASS -- -i -c assesses in -c mode, -c -i in -i mode, -a -t truncates; all exit 0 with no word about the contradiction

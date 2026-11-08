@@ -1,0 +1,17 @@
+Spec: SP 800-90B 6.3.1 (PDF p. 49): "p_u = min(1, p-hat + 2.576 sqrt(p-hat(1 -
+p-hat)/(L - 1)))" ... "The estimated min-entropy is -log2(p_u)."
+
+Input: L = 20,000 with one 0x01: p-hat = 0.99995; the confidence term is
+2.5758 x sqrt(0.99995 x 0.00005 / 19999) = 2.5758 x 5.0e-5 = 1.29e-4, so p-hat
++ term = 1.000079 > 1 and p_u clamps to exactly 1. -log2(1) = 0.
+
+Expected: the estimate is 0 (zero bits), printed as "0" and written to JSON as
+0.0 (or 0).
+
+Observed: `-log2(1.0)` in IEEE-754 is -0.0; the text prints "min entropy = -0"
+and jsoncpp writes "hOriginal" : -0.0 on the "Most Common Value" element.
+Every later fold is min(ret, -0.0) with ret >= 0, and 0.0 < -0.0 is false, so
+-0.0 survives to hAssessed as well. Numerically zero; parses as a float; but a
+string comparison against "0" fails and a consumer may render "-0". Direction:
+neutral (conservative). LOW. Same shape for any clamped p_u (E-10 in mcv.md:
+one symbol at L-1 of L = 1e6).

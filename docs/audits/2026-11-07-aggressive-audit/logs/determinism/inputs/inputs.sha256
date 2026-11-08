@@ -1,0 +1,10 @@
+# determinism-phase inputs -- written by harness/determinism/gen_inputs.py
+# generator sha256: bbb4ab45b652281f78729778fd6ff135a5307f2a42e1cf8209b8e38cfc8dec12
+# key prefix: determinism-2026-11-07/  (SHA-256 counter mode; no library RNG)
+# written: 2026-11-07 21:48:05 -0500
+# columns (tab-separated): name	n	sha256	construction
+fixed-random-source-1MiB.bin	1048576	3fe5e7eb79c9e0b32c7ba681a2ff15bddcbe85bc65dad00047ab2d717f8bc71e	1 MiB keystream 'fixed-random-source'; target of EA_TEST_RANDOM_SOURCE in the ea_iid arm (b); first 32 bytes asserted non-zero
+restart-csprng-1bit-1000x1000.bin	1000000	e9936cbf43ea7d4c1b76154d743b1fa3d86d1874b4a464b00bb8197439c863a1	1000x1000 restart matrix, row-dataset layout; 1-bit symbols (one per byte) = keystream 'restart-1bit' bits MSB-first
+restart-csprng-8bit-1000x1000.bin	1000000	47311ae5a22774892aa267c0f4220b1eecb79f487aabf720824d9b33d8b48db0	1000x1000 restart matrix, row-dataset layout; 8-bit symbols = keystream 'restart-8bit' bytes
+smoke-csprng-1bit-20000.bin	20000	17917b5af1e8d08d2923432307ad7ba22f100ddb45b050cda55443fe86316514	first 20000 bytes of corpus/csprng-1bit-50000.bin (prefix of the same stream; source verified against corpus/MANIFEST.txt); NON-COMPLIANT size, smoke only
+smoke-csprng-8bit-20000.bin	20000	8e5441d8de225b55a71ee7c5ab41b8031546f30923df5c7a26d9afb10a6f2317	first 20000 bytes of corpus/csprng-8bit-50000.bin (prefix of the same stream; source verified against corpus/MANIFEST.txt); NON-COMPLIANT size, smoke only

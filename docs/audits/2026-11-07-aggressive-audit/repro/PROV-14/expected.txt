@@ -1,0 +1,20 @@
+n/a (build hygiene). Expected: a compile probe that writes a scratch source
+file uses a unique, caller-owned path (mktemp, or $(TMPDIR)/... with the make
+PID), so that (a) two concurrent builds cannot race on one file and (b) a
+file or symlink planted at a predictable world-writable path cannot be fed to
+the probe compile.
+
+Observed (cpp/Makefile:45 and :49):
+  FLOAT_STORE := $(shell printf 'int main(void){return 0;}' > /tmp/.ea_fs_$$.c 2>/dev/null; if $(CXX) -x c++ -ffloat-store -c /tmp/.ea_fs_$$.c -o /dev/null 2>&1 | grep -q '...'; then echo ""; else echo "-ffloat-store"; fi; rm -f /tmp/.ea_fs_$$.c)
+  IGNORED_FLAG_IS_ERROR := $(shell printf '...' > /tmp/.ea_wf_$$.c 2>/dev/null; ...)
+GNU make rewrites `$$` to a single `$` before the shell sees the text, and in
+sh `$.` is not a parameter expansion, so the shell receives the literal
+`/tmp/.ea_fs_$.c` -- the same path for every build on the machine (the
+intended `$$` = shell PID never happens because make consumed the doubling).
+Consequences: concurrent builds race; `printf > /tmp/.ea_fs_$.c 2>/dev/null`
+follows a planted symlink and its failure is silenced, after which the probe
+compiles whatever is there -- a non-compiling plant makes clang's output miss
+the grep, FLOAT_STORE becomes -ffloat-store, and the build then FAILS under
+-Werror=ignored-optimization-argument (denial of build). On GCC, which
+honours the flag, a sabotaged probe can only ADD -ffloat-store, never drop
+it, so no numeric effect. Direction: neutral. LOW.

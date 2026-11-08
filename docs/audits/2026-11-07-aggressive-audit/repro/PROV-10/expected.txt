@@ -1,0 +1,28 @@
+Spec: SP 800-90B 3.1.4.2 (PDF p. 21): "If the minimum of Hr and Hc is less
+than half of HI, the validation fails, and no entropy estimate is awarded.
+Otherwise, the entropy assessment of the noise source is taken as the minimum
+of the row, the column and the initial estimates, i.e., min(Hr, Hc, HI)."
+and 6.2 (PDF p. 49): "the minimum of all the estimates is taken as the entropy
+assessment"; 6.3.6 step 2 (PDF p. 56): "If v < u, this estimate cannot be
+computed."
+
+Expected JSON for `ea_restart -n -q -o r.json db100.bin 8 0.5/symbol`:
+  "Overall": h_r, h_c, h_i AND the awarded figure, e.g. "hAssessed":
+             min(h_r, h_c, h_i)   (the quantity 3.1.4.2 names as THE assessment)
+  "LRS Test": when the row LRS estimate cannot be computed (de Bruijn B(100,3):
+             u = 3, v = 2), a marker such as "literalEstimateNotRun": true --
+             the F05 field ea_non_iid already writes (test_case_base.h:37-38).
+
+Observed (source, and measured only with EA_REPRO_HEAVY=1):
+  - restart_main.cpp:1199-1204 writes h_r, h_c, h_i only; the minimum is
+    printed at :1222 under `if (verbose > 0)` and is therefore absent under -q
+    and absent from the JSON in every mode. A consumer reading h_i alone
+    overstates (h_i >= min).
+  - every fallible fold in restart_main.cpp (:972-1001 for t-tuple/LRS and the
+    predictors after) is `if (ret >= 0) {...}` with no else; `grep -c not_run`
+    is 0 there and 16 in non_iid_main.cpp. The minimum is over fewer
+    estimators with nothing in the report saying so -- the direction the F05
+    comment itself names: "which can only make the figure higher".
+Direction: neutral on the number, overstating in visibility. LOW-MEDIUM.
+Prior-fix interaction: R-2 (d892b90) made the decline silent in restart; F05
+(dfe325a) added the flag only to ea_non_iid.

@@ -1,0 +1,11 @@
+# PROV-17 control.txt  2026-11-07 21:56:20 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -- /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[dashdash_only]=0  stdout=c_dd.out stderr=c_dd.err
+  (a) '-i -- file 1': rc=0  Assessed line present: 1
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 -q
+rc[no_dashdash_late_q]=255  stdout=c_nd.out stderr=c_nd.err
+  (b) '-i file 1 -q' (no --): rc=255 ; stderr vs run.sh's stderr: byte-identical
+RESULT: CONTROL-OK -- '--' is honoured when nothing option-shaped follows the operands (exit 0); the refusal text for the with-'--' and without-'--' lines is byte-identical, so the operator cannot tell a true permutation hazard from a line that already disambiguated

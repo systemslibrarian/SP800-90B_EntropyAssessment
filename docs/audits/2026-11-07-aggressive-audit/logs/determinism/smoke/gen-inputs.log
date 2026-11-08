@@ -1,0 +1,7 @@
+restart-csprng-1bit-1000x1000.bin	1000000	e9936cbf43ea7d4c1b76154d743b1fa3d86d1874b4a464b00bb8197439c863a1
+restart-csprng-8bit-1000x1000.bin	1000000	47311ae5a22774892aa267c0f4220b1eecb79f487aabf720824d9b33d8b48db0
+fixed-random-source-1MiB.bin	1048576	3fe5e7eb79c9e0b32c7ba681a2ff15bddcbe85bc65dad00047ab2d717f8bc71e
+smoke-csprng-1bit-20000.bin	20000	17917b5af1e8d08d2923432307ad7ba22f100ddb45b050cda55443fe86316514
+smoke-csprng-8bit-20000.bin	20000	8e5441d8de225b55a71ee7c5ab41b8031546f30923df5c7a26d9afb10a6f2317
+# wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/inputs.sha256 (5 rows)
+exit=0

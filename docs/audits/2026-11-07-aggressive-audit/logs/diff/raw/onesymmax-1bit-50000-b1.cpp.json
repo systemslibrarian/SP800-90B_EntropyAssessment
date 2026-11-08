@@ -1,0 +1,17 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 50000,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/onesymmax-1bit-50000-b1.cpp.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesymmax-1bit-50000.bin 1",
+   "dateTimeStamp" : "20261107213724",
+   "errorLevel" : -1,
+   "errorMessage" : "Symbol alphabet consists of 1 symbol. No entropy awarded...",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesymmax-1bit-50000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "793060f4a877d83552cd30050b734b64b0374e5491ea2cce477a77fe27c61235",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

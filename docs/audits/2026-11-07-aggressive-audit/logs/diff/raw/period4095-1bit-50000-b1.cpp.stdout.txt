@@ -1,0 +1,72 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period4095-1bit-50000.bin' (SHA-256 hash f7d491457ac691deb398d48b01871e07000982cb7d66d1f4119756bccb230632 of assessed bytes)
+Loaded 50000 samples of 2 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Literal Most Common Value Estimate: Mode count = 25116
+Literal Most Common Value Estimate: p-hat = 0.50231999999999999
+Literal Most Common Value Estimate: p_u = 0.50807972501604037
+Literal Most Common Value Estimate: min entropy = 0.97687320052624882
+Literal Collision Estimate: v = 19886
+Literal Collision Estimate: Sum t_i = 49999
+Literal Collision Estimate: X-bar = 2.5142814040028161
+Literal Collision Estimate: sigma-hat = 0.49980856688684061
+Literal Collision Estimate: X-bar' = 2.505151902638727
+Literal Collision Estimate: Could Not Find p. Proceeding with the lower bound for p.
+Literal Collision Estimate: p = 0.5
+Literal Collision Estimate: min entropy = 1
+Literal Markov Estimate: P_0 = 0.50231999999999999
+Literal Markov Estimate: P_1 = 0.49768000000000001
+Literal Markov Estimate: P_{0,0} = 0.49512243679076251
+Literal Markov Estimate: P_{0,1} = 0.50487756320923749
+Literal Markov Estimate: P_{1,0} = 0.50956437871724802
+Literal Markov Estimate: P_{1,1} = 0.49043562128275198
+Literal Markov Estimate: p-hat_max = 1.8131337933218985e-38
+Literal Markov Estimate: min entropy = 0.9794904860820981
+Literal Compression Estimate: X-bar = 5.1729650016955437
+Literal Compression Estimate: sigma-hat = 1.0548110435539435
+Literal Compression Estimate: X-bar' = 5.1412364020210095
+Literal Compression Estimate: Found p.
+Literal Compression Estimate: p = 0.07315769694973373
+Literal Compression Estimate: min entropy = 0.62880775515326526
+Literal t-Tuple Estimate: t = 17
+Literal t-Tuple Estimate: p-hat_max = 0.6533492274930773335839
+Literal t-Tuple Estimate: p_u = 0.6588314315609147264752
+Literal t-Tuple Estimate: min entropy = 0.60201871001836849
+Literal LRS Estimate: u = 18
+Literal LRS Estimate: v = 45905
+Literal LRS Estimate: p-hat = 0.9997920063138167057204
+Literal LRS Estimate: p_u = 0.9999581241732957703761
+Literal LRS Estimate: min entropy = 6.0415312498724743e-05
+Literal MultiMCW Prediction Estimate: C = 24581
+Literal MultiMCW Prediction Estimate: r = 13
+Literal MultiMCW Prediction Estimate: N = 49937
+Literal MultiMCW Prediction Estimate: P_global = 0.49224022268057754
+Literal MultiMCW Prediction Estimate: P_global' = 0.49800294775062998
+Literal MultiMCW Prediction Estimate: P_local can't change the result.
+Literal MultiMCW Prediction Estimate: min entropy = 1
+Literal Lag Prediction Estimate: C = 25594
+Literal Lag Prediction Estimate: r = 13
+Literal Lag Prediction Estimate: N = 49999
+Literal Lag Prediction Estimate: P_global = 0.51189023780475607
+Literal Lag Prediction Estimate: P_global' = 0.51764845356585143
+Literal Lag Prediction Estimate: P_local can't change the result.
+Literal Lag Prediction Estimate: min entropy = 0.9499554303246035
+Literal MultiMMC Prediction Estimate: C = 44748
+Literal MultiMMC Prediction Estimate: r = 177
+Literal MultiMMC Prediction Estimate: N = 49998
+Literal MultiMMC Prediction Estimate: P_global = 0.89499579983199329
+Literal MultiMMC Prediction Estimate: P_global' = 0.89852729763848205
+Literal MultiMMC Prediction Estimate: P_local = 0.93049795183161277
+Literal MultiMMC Prediction Estimate: min entropy = 0.10392512019200298
+Literal LZ78Y Prediction Estimate: C = 25302
+Literal LZ78Y Prediction Estimate: r = 14
+Literal LZ78Y Prediction Estimate: N = 49983
+Literal LZ78Y Prediction Estimate: P_global = 0.50621211211812012
+Literal LZ78Y Prediction Estimate: P_global' = 0.51197243393359748
+Literal LZ78Y Prediction Estimate: P_local can't change the result.
+Literal LZ78Y Prediction Estimate: min entropy = 0.96586196141585001
+H_original = 6.0415312498724743e-05
+Assessed min entropy: 6.0415312498724743e-05

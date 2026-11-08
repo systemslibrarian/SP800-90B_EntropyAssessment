@@ -1,0 +1,2 @@
+# iid/smoke-csprng-8bit-20000: b-t1-r1 vs b-t2-r2
+# channels identical: {'json': True, 'stdout': True, 'stderr': True, 'rc': True}

@@ -1,0 +1,55 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 0.9742067029042232,
+  "Mode count": 25163,
+  "p-hat": 0.50326,
+  "p_u": 0.5090196645926034,
+  "min entropy": 0.9742067029042232,
+  "L": 50000,
+  "mode value": 0,
+  "k observed": 2,
+  "z": 2.575829303548901,
+  "variant": "custom",
+  "track": "literal",
+  "bits_per_symbol": 1,
+  "bit_order": null,
+  "bitstring_limit": null,
+  "p_u unclamped": 0.5090196645926034,
+  "p_u clamped": false
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "mcv",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two5050-1bit-50000.bin",
+  "1",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{\"z\": 2.575829303548901}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/two5050-1bit-50000-b1-literal.mcv.ref.d02aa7c4.json"
+ ],
+ "duration_s": 0.092,
+ "options_used": {
+  "z": 2.575829303548901
+ },
+ "module": "mcv",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 1,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 1,
+ "estimate_seconds": 0.0,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/mcv.py",
+ "module_sha256": "aa075588a826cf1f35dd6bfe5fa557ecca83bcf47308ee5469d9ea55342ae698"
+}

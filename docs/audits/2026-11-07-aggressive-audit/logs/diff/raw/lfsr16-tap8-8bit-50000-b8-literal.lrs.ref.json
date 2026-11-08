@@ -1,0 +1,85 @@
+{
+ "status": "ok",
+ "values": {
+  "u": 4,
+  "v": 8,
+  "can_run": true,
+  "reason": null,
+  "pair_sum_W": {
+   "4": 590696,
+   "5": 285707,
+   "6": 133296,
+   "7": 57123,
+   "8": 19033
+  },
+  "positions_choose2_W": {
+   "4": 1249825006,
+   "5": 1249775010,
+   "6": 1249725015,
+   "7": 1249675021,
+   "8": 1249625028
+  },
+  "P_W": {
+   "4": 0.0004726229649465023,
+   "5": 0.00022860674738567544,
+   "6": 0.00010666026397815203,
+   "7": 4.571028390588276e-05,
+   "8": 1.5230968949511148e-05
+  },
+  "Pmax_W": {
+   "4": 0.14744454346557648,
+   "5": 0.18698975341831944,
+   "6": 0.21777119905430864,
+   "7": 0.23988439019221713,
+   "8": 0.2499429789096912
+  },
+  "argmax_W": 8,
+  "p-hat": 0.2499429789096912,
+  "p_u": 0.2549310520240441,
+  "min_entropy": 1.9718209825212554,
+  "p_u_z_exact": 0.2549307214936177,
+  "min_entropy_z_exact": 1.971822853046295,
+  "L": 50000,
+  "cutoff": 35,
+  "z": 2.576,
+  "method": "suffix+direct (agree)",
+  "Q": {
+   "3": 59,
+   "4": 31,
+   "8": 2,
+   "9": 1
+  }
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "lrs",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lfsr16-tap8-8bit-50000.bin",
+  "8",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/lfsr16-tap8-8bit-50000-b8-literal.lrs.ref.json"
+ ],
+ "duration_s": 0.875,
+ "options_used": {},
+ "module": "lrs",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 255,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 8,
+ "estimate_seconds": 0.597,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
+ "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
+}

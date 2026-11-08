@@ -1,0 +1,14 @@
+# PROV-04 control.txt  2026-11-07 21:56:09 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-04/out/w4.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 4
+rc[declared4_q]=0  stdout=w4.out stderr=w4.err
+stdout under -q (verbatim):
+  | 
+  | *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+  | *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+  | *** Its result is NOT a compliant SP 800-90B assessment. ***
+  | 
+warning lines: 0 ; JSON errorLevel=0 bitsPerSymbol=4 errorMessage=<absent> hAssessed=3.2154882678767365
+RESULT: CONTROL-OK -- declared at the true width: no warning, identical JSON shape -- the declared-8 run differs only by the lost warning

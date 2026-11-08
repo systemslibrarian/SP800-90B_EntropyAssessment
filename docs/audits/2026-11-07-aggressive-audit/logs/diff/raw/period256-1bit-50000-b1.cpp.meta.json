@@ -1,0 +1,40 @@
+{
+ "cmd": [
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+  "-i",
+  "-a",
+  "-v",
+  "-v",
+  "-o",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period256-1bit-50000-b1.cpp.json",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period256-1bit-50000.bin",
+  "1"
+ ],
+ "cwd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw",
+ "env": {
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "1"
+ },
+ "non_compliant_short_dataset": true,
+ "binary": {
+  "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
+  "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
+ },
+ "input": {
+  "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period256-1bit-50000.bin",
+  "sha256": "7fe52dd5546df26ac6ba52ff7771d228582c670c3a7b0c7215a35e979d901f33",
+  "n_bytes": 50000,
+  "bps": 1
+ },
+ "stdout_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period256-1bit-50000-b1.cpp.stdout.txt",
+ "stderr_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period256-1bit-50000-b1.cpp.stderr.txt",
+ "json_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period256-1bit-50000-b1.cpp.json",
+ "started": "2026-11-07T21:40:49-0500",
+ "exit": 0,
+ "signal": null,
+ "outcome": "exit_0",
+ "duration_s": 0.045,
+ "timed_out": false,
+ "complete": true,
+ "reused": false
+}

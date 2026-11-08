@@ -1,0 +1,15 @@
+# PROV-03 observed.txt  2026-11-07 21:56:07 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-03/out/m8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i8_vv]=0  stdout=m8.out stderr=m8.err
+text Bitstring MCV: mode=40099 p-hat=0.5012375 p_u=0.50579098043220405
+text Literal   MCV: mode=58 p-hat=0.0057999999999999996 p_u=0.0077560937775866317
+JSON 'Most Common Value': mcvEstimateMode=58.0 mcvEstimatePHat=0.0058 mcvEstimatePU=0.007756093777586632 hBitstring=0.9833867846591503 hOriginal=7.010454037736041
+number of mcvEstimate* keys on that element: 3 (two estimates ran; 3 keys = one triple)
+occurrences of the Bitstring mode count '40099' anywhere in the JSON text: 0
+json==literal: True json==bitstring: False literal!=bitstring: True
+DEFECT
+RESULT: PASS -- under -i the single JSON MCV triple is the Literal one; the Bitstring triple (printed at -vv) is not in the report because the Literal call overwrote the shared tc631

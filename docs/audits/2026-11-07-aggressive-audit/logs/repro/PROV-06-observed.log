@@ -1,0 +1,11 @@
+# PROV-06 observed.txt  2026-11-07 21:56:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[repeated_o]=0  stdout=rep.out stderr=rep.err
+a.json: errorLevel=-1 reportComplete=false testCases=<absent> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+b.json: errorLevel=0 reportComplete=<absent> Overall.hAssessed=5.860893744485249
+stdout/stderr mention of the discarded first -o: stdout=0 stderr=0 (0 = no diagnostic)
+RESULT: PASS -- exit 0, b.json is the full report, a.json is left as a permanent placeholder (errorLevel -1, 'Refuse this file') with no diagnostic about the second -o

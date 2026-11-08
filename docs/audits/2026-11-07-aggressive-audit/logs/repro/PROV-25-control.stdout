@@ -1,0 +1,8 @@
+# PROV-25 control.txt  2026-11-07 21:56:29 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+grep -n INT_MAX cpp/iid_main.cpp:
+  iid_main.cpp:393:    if (testdata.len > INT_MAX) {
+  iid_main.cpp:397:            std::to_string(INT_MAX) + "-bit limit of the Section 5 test code.";
+  iid_main.cpp:400:               testdata.len, INT_MAX);
+RESULT: CONTROL-OK -- iid_main.cpp carries the INT_MAX refusal the comment describes (3 references); non_iid_main.cpp does not

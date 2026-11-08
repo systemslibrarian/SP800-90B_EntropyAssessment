@@ -1,0 +1,15 @@
+n/a (report integrity). The report schema this fork added (test_run_base.h
+errorClass: "input" | "statistical" | "internal") is used on every other
+failure path of ea_restart (sanity-check failure :810-825 and validation
+failure :1177-1193 both write errorClass "statistical") and on ea_iid's
+IID-suite failure (iid_main.cpp:535-537: errorLevel 2, errorClass
+"statistical").
+
+Expected for `ea_restart -i -q -o cb.json checkerboard.bin 1 0.5`:
+  exit 1, errorLevel 2, errorClass "statistical", errorMessage "IID restart
+  test suite failed; no IID restart entropy estimate was awarded."
+
+Observed (source; measured only with EA_REPRO_HEAVY=1): restart_main.cpp:
+1149-1155 sets errorLevel = 2 and errorMsg and never sets errorClass, so the
+key is absent. A consumer classifying by errorClass cannot file the
+rejection. Direction: neutral (the fail-closed verdict itself is correct). LOW.

@@ -1,0 +1,11 @@
+# PROV-07 control.txt  2026-11-07 21:56:12 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 5000000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_5000000]=255  stdout=c_s_5000000.out stderr=c_s_5000000.err
+  (a) -s 5000000: rc=255 usage-dump=0 size-refusal-line=1
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 1000x /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_1000x]=255  stdout=c_s_1000x.out stderr=c_s_1000x.err
+  (b) -s 1000x: rc=255 reason-line=1
+RESULT: CONTROL-OK -- -s 5000000 is accepted (the run reaches the data-size refusal, no usage dump); a non-decimal -s gets a reason line -- only in-range values below 5e6 get the silent usage dump

@@ -232,6 +232,42 @@ def desanitize(obj):
     return obj
 
 
+# TABLES ARE ELIDED FROM THE RECORD, NOT FROM THE COMPARISON (2026-11-07, orchestrator).
+# The first 50,000-sample pass wrote records of 45-89 MB each: the LRS reference returns
+# per-W tables (P_W, Pmax_W, positions_choose2_W) with one entry per W from u to v, and on
+# periodic data v is nearly the whole file -- 379,433 entries, stored twice (reference and
+# the D-1 recheck). No C++ label is ever compared against such a table (the C++ prints
+# scalars), so the comparison loses nothing; the record keeps a count, a sha256 of the
+# table's canonical JSON, and the numeric range, so a reader can still see what was there
+# and re-derive it from the module. Threshold 512 keeps every per-symbol histogram (<= 256).
+ELIDE_OVER = 512
+
+
+def _elided(obj):
+    import hashlib
+    canon = json.dumps(sanitize(obj), sort_keys=True)
+    out = {"_elided": True, "entries": len(obj), "sha256": hashlib.sha256(canon.encode("utf-8")).hexdigest()}
+    vals = list(obj.values()) if isinstance(obj, dict) else list(obj)
+    nums = [v for v in vals if isinstance(v, (int, float)) and not isinstance(v, bool)]
+    if nums and len(nums) == len(vals):
+        out["min"] = min(nums)
+        out["max"] = max(nums)
+    return out
+
+
+def compact_tables(obj):
+    """Return obj with every dict/list of more than ELIDE_OVER entries replaced by a summary."""
+    if isinstance(obj, dict):
+        if len(obj) > ELIDE_OVER:
+            return _elided(obj)
+        return {k: compact_tables(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        if len(obj) > ELIDE_OVER:
+            return _elided(obj)
+        return [compact_tables(v) for v in obj]
+    return obj
+
+
 def write_json(path: str, obj) -> None:
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
@@ -1128,8 +1164,8 @@ def process_file(file_path: str, bps: int, modes: list[str], settings: dict, for
                                                settings["bit_order"], settings["bitstring_truncate"], opts)
                 comparisons[m]["d1_recheck"] = d1_recheck_record(cv, ct, d1_results[m], d1_opt)
         cls, summary = case_class(comparisons)
-        rec["reference"] = {m: {k2: v for k2, v in r.items() if k2 != "cmd"} for m, r in ref_results.items()}
-        rec["reference_d1_recheck"] = {m: {k2: v for k2, v in r.items() if k2 != "cmd"} for m, r in d1_results.items()}
+        rec["reference"] = compact_tables({m: {k2: v for k2, v in r.items() if k2 != "cmd"} for m, r in ref_results.items()})
+        rec["reference_d1_recheck"] = compact_tables({m: {k2: v for k2, v in r.items() if k2 != "cmd"} for m, r in d1_results.items()})
         rec["comparisons"] = comparisons
         rec["unmapped_cpp_estimators"] = sorted(set(cpp["parsed"]["estimates"][cpp_mode]) - set(MODULE_BY_ESTIMATOR))
         rec["class"] = cls

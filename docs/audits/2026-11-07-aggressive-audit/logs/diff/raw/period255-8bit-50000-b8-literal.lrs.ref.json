@@ -1,0 +1,85 @@
+{
+ "status": "ok",
+ "values": {
+  "u": 41331,
+  "v": 49745,
+  "can_run": true,
+  "reason": null,
+  "pair_sum_W": {
+   "_elided": true,
+   "entries": 8415,
+   "sha256": "0e8b106e2f4f3f52276e43dc8a200e8928b85f733185a16b41536c9ba0c1bb2a",
+   "min": 1,
+   "max": 143055
+  },
+  "positions_choose2_W": {
+   "_elided": true,
+   "entries": 8415,
+   "sha256": "c37085745f127852f3d6a870c47ab6b2994a8929cac1781352415b9f0bfdb0d8",
+   "min": 32640,
+   "max": 37580115
+  },
+  "P_W": {
+   "_elided": true,
+   "entries": 8415,
+   "sha256": "9cb6315504f629dc5e2eec59a675813dbb851174af62c30b156e863861baded6",
+   "min": 3.0637254901960784e-05,
+   "max": 0.003806667435690391
+  },
+  "Pmax_W": {
+   "_elided": true,
+   "entries": 8415,
+   "sha256": "c9df0038ba57dec96ffd98f002510b225412009ee2247bc799df49afc134433a",
+   "min": 0.999791090398194,
+   "max": 0.9998820885437875
+  },
+  "argmax_W": 48361,
+  "p-hat": 0.9998820885437875,
+  "p_u": 1.0,
+  "min_entropy": 0.0,
+  "p_u_z_exact": 1.0,
+  "min_entropy_z_exact": 0.0,
+  "L": 50000,
+  "cutoff": 35,
+  "z": 2.576,
+  "method": "suffix",
+  "Q": {
+   "41330": 35,
+   "41331": 34,
+   "49745": 2,
+   "49746": 1
+  }
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "lrs",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period255-8bit-50000.bin",
+  "8",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period255-8bit-50000-b8-literal.lrs.ref.json"
+ ],
+ "duration_s": 0.271,
+ "options_used": {},
+ "module": "lrs",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 254,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 8,
+ "estimate_seconds": 0.078,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
+ "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
+}

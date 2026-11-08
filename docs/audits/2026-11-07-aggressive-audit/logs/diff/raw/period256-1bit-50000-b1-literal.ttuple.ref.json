@@ -1,0 +1,70 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 6.287938438618494e-07,
+  "t": 41296,
+  "p-hat_max": 0.9998664292819132,
+  "p_u": 0.999999564153415,
+  "Q": {
+   "_elided": true,
+   "entries": 41296,
+   "sha256": "ff55c46defc133937bf63a7d135b42b31c650fea97ee17abbab9c4c3862e5841",
+   "min": 35,
+   "max": 26377
+  },
+  "P": {
+   "_elided": true,
+   "entries": 41296,
+   "sha256": "b4e65554196fb70047bd4f6bbb8093e2040bda741ffac1eb8ea5071ccb744f0b",
+   "min": 0.00390625,
+   "max": 0.52754
+  },
+  "P_max": {
+   "_elided": true,
+   "entries": 41296,
+   "sha256": "be5a8b2ea03420a1c0415ee8e3d26e0382c5c0e2953946159b355fe79867b63d",
+   "min": 0.52754,
+   "max": 0.9998664292819132
+  },
+  "Q_next": 34,
+  "argmax_i": 41296,
+  "L": 50000,
+  "k": 2,
+  "cutoff": 35,
+  "z": 2.576,
+  "z_variant": "literal",
+  "method": "suffix_array (after direct reached 128)"
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "ttuple",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period256-1bit-50000.bin",
+  "1",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/period256-1bit-50000-b1-literal.ttuple.ref.json"
+ ],
+ "duration_s": 0.74,
+ "options_used": {},
+ "module": "ttuple",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 50000,
+  "overwidth_count": 0,
+  "raw_max": 1,
+  "masked": false
+ },
+ "n_symbols_fed": 50000,
+ "bps_fed": 1,
+ "estimate_seconds": 0.444,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+ "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+}

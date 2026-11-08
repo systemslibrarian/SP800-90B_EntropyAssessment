@@ -1,0 +1,898 @@
+case	host_run	estimator	field	reference	host	abs_delta	perl_delta	class
+biased-random-bits	biased-random-bits.res	Assessed min entropy		0.017766579116465196	0.017766579116464187	1.00961e-15	1.00961e-15	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	H_original		0.017766579116465196	0.017766579116464187	1.00961e-15	1.00961e-15	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	Sum t_i	999999	999999	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	X-bar	2.0390873036102075	2.0390873036102075	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	X-bar'	2.0383744580128056	2.0383744580128056	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	min entropy	0.028513792826295892	0.028513792826254068	4.18242e-14	4.18242e-14	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	p	0.98042977738018067	0.98042977738020909	2.84217e-14	2.84217e-14	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	sigma-hat	0.19380289702168033	0.19380289702167994	3.88578e-16	3.88578e-16	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Collision Estimate	v	490415	490415	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Compression Estimate	X-bar	0.71412876245517609	0.71412876245517609	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Compression Estimate	X-bar'	0.70729239203524708	0.70729239203524708	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Compression Estimate	min entropy	0.017766579116465196	0.017766579116464187	1.00961e-15	1.00961e-15	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Compression Estimate	p	0.92877466571109557	0.92877466571109946	3.88578e-15	3.88578e-15	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Compression Estimate	sigma-hat	1.0802523007775686	1.0802523007775686	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LRS Estimate	min entropy	0.055881394003087538	0.055881394003087531	6.93889e-18	6.93889e-18	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal LRS Estimate	p-hat	0.96151101766964431	0.961511017669644307837	0	0	FORMAT
+biased-random-bits	biased-random-bits.res	Literal LRS Estimate	p_u	0.96200653933019453	0.9620065393301945322335	0	0	FORMAT
+biased-random-bits	biased-random-bits.res	Literal LRS Estimate	u	514	514	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LRS Estimate	v	585	585	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LZ78Y Prediction Estimate	C	979970	979970	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LZ78Y Prediction Estimate	P_global	0.9799866597732162	0.9799866597732162	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LZ78Y Prediction Estimate	P_global'	0.98034739691456252	0.98034739691456252	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal LZ78Y Prediction Estimate	min entropy	0.028635020154766919	0.028635020154766915	3.46945e-18	3.46945e-18	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal LZ78Y Prediction Estimate	r	534	534	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	C	959838	959838	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	P_global	0.95983895983895984	0.95983895983895984	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	P_global'	0.96034469037488657	0.96034469037488657	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	P_local	0.97225067522872544	0.97225067522318498	5.54046e-12	5.54046e-12	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	min entropy	0.040599763274887825	0.040599763283109144	8.22132e-12	8.22132e-12	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Lag Prediction Estimate	r	527	527	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	P_0	0.97998799999999997	0.97998799999999997	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	P_1	0.02001200000000003	0.02001200000000003	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	P_{0,0}	0.98001606143754971	0.98001606143754971	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	P_{0,1}	0.019983938562450287	0.019983938562450287	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	P_{1,0}	0.97861283230061957	0.97861283230061957	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	P_{1,1}	0.021387167699380427	0.021387167699380427	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	min entropy	0.029123023940057065	0.029123023940057061	3.46945e-18	3.46945e-18	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Markov Estimate	p-hat_max	0.075480769220803628	0.075480769220803642	1.38778e-17	1.38778e-17	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Most Common Value Estimate	Mode count	979988	979988	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Most Common Value Estimate	min entropy	0.028633069781464748	0.028633069781464744	3.46945e-18	3.46945e-18	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal Most Common Value Estimate	p-hat	0.97998799999999997	0.97998799999999997	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal Most Common Value Estimate	p_u	0.98034872224294312	0.98034872224294312	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMCW Prediction Estimate	C	979925	979925	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMCW Prediction Estimate	P_global	0.97998673916456736	0.97998673916456736	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMCW Prediction Estimate	P_global'	0.9803474839023909	0.9803474839023909	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMCW Prediction Estimate	min entropy	0.028634892142081356	0.028634892142081356	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMCW Prediction Estimate	r	534	534	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMMC Prediction Estimate	C	979985	979985	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMMC Prediction Estimate	P_global	0.97998695997391994	0.97998695997391994	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMMC Prediction Estimate	P_global'	0.98034769175944736	0.98034769175944736	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMMC Prediction Estimate	min entropy	0.02863458625634421	0.02863458625634421	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal MultiMMC Prediction Estimate	r	534	534	0	0	EXACT
+biased-random-bits	biased-random-bits.res	Literal t-Tuple Estimate	min entropy	0.026489257053631029	0.026489257053631025	3.46945e-18	3.46945e-18	SUBTHRESHOLD
+biased-random-bits	biased-random-bits.res	Literal t-Tuple Estimate	p-hat_max	0.98145911043718781	0.981459110437187809417	0	0	FORMAT
+biased-random-bits	biased-random-bits.res	Literal t-Tuple Estimate	p_u	0.98180658153439537	0.9818065815343953728345	0	0	FORMAT
+biased-random-bits	biased-random-bits.res	Literal t-Tuple Estimate	t	513	513	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Assessed min entropy		0.25774087100648113	0.25774087100648113	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	Sum t_i	7999999	7999999	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	X-bar	2.0938475684014284	2.0938475684014284	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	X-bar'	2.0934632803835211	2.0934632803835211	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	min entropy	0.072705888458523521	0.072705888458565959	4.24383e-14	4.24383e-14	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	p	0.95085292480837325	0.95085292480834527	2.79776e-14	2.79776e-14	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	sigma-hat	0.2916165711413341	0.29161657114133382	2.77556e-16	2.77556e-16	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Collision Estimate	v	3820717	3820717	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Compression Estimate	X-bar	1.8903312229913376	1.8903312229913376	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Compression Estimate	X-bar'	1.8863089398618362	1.8863089398618362	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Compression Estimate	min entropy	0.063135493215718444	0.063135493215717362	1.08247e-15	1.08247e-15	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Compression Estimate	p	0.76907011660379809	0.76907011660380153	3.44169e-15	3.44169e-15	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Compression Estimate	sigma-hat	1.8024447045427674	1.8024447045427674	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LRS Estimate	min entropy	0.064801730063926088	0.064801730063926088	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LRS Estimate	p-hat	0.95588970052796496	0.9558897005279649583542	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Bitstring LRS Estimate	p_u	0.95607670242294707	0.9560767024229470667507	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Bitstring LRS Estimate	u	549	549	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LRS Estimate	v	581	581	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	C	7198670	7198670	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	N	7999983	7999983	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	P_global	0.89983566215078203	0.89983566215078203	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	P_global'	0.9001090698482197	0.9001090698482197	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	P_local	0.97135789112696946	0.97135789116665106	3.96816e-11	3.96816e-11	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	min entropy	0.04192514875535195	0.041925148696415449	5.89365e-11	5.89365e-11	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring LZ78Y Prediction Estimate	r	583	583	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	C	7118705	7118705	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	N	7999999	7999999	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	P_global	0.88983823622977953	0.88983823622977953	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	P_global'	0.89012336635998612	0.89012336635998612	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	P_local	0.9713063889472594	0.97130638885744536	8.9814e-11	8.9814e-11	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	min entropy	0.042001643639251546	0.042001643772653606	1.33402e-10	1.33402e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Bitstring Lag Prediction Estimate	r	582	582	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	P_0	0.89983625	0.89983625	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	P_1	0.10016375	0.10016375	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	P_{0,0}	0.93878927121313338	0.93878927121313338	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	P_{0,1}	0.061210728786866619	0.061210728786866619	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	P_{1,0}	0.54989704359111957	0.54989704359111957	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	P_{1,1}	0.45010295640888043	0.45010295640888043	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	min entropy	0.091604387916422433	0.091604387916422433	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Markov Estimate	p-hat_max	0.00029533466971829418	0.00029533466971829418	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Most Common Value Estimate	Mode count	7198690	7198690	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Most Common Value Estimate	min entropy	0.15182732507652347	0.15182732507652344	2.77556e-17	2.77556e-17	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Bitstring Most Common Value Estimate	p-hat	0.89983625	0.89983625	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring Most Common Value Estimate	p_u	0.90010965669395371	0.90010965669395371	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	C	7198538	7198538	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	N	7999937	7999937	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	P_global	0.89982433611664692	0.89982433611664692	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	P_global'	0.90009775833669703	0.90009775833669703	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	P_local	0.9713579012997926	0.97135790142486211	1.2507e-10	1.2507e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	min entropy	0.041925133646315872	0.04192513346055822	1.85758e-10	1.85758e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMCW Prediction Estimate	r	583	583	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	C	7198679	7198679	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	N	7999998	7999998	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	P_global	0.89983509995877498	0.89983509995877498	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	P_global'	0.90010850808175924	0.90010850808175924	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	P_local	0.9713578878098017	0.97135788805618295	2.46381e-10	2.46381e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	min entropy	0.041925153682126653	0.041925153316192523	3.65934e-10	3.65934e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Bitstring MultiMMC Prediction Estimate	r	583	583	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring t-Tuple Estimate	min entropy	0.032217608875810141	0.032217608875810141	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Bitstring t-Tuple Estimate	p-hat_max	0.97778172881816927	0.9777817288181692712001	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Bitstring t-Tuple Estimate	p_u	0.97791595838961776	0.9779159583896177565521	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Bitstring t-Tuple Estimate	t	548	548	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	H_bitstring		0.032217608875810141	0.032217608875810141	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	H_bitstring Per Symbol		0.25774087100648113	0.25774087100648113	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	H_original		0.29115980449860829	0.29115980449860823	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Literal LRS Estimate	min entropy	0.51928137137655883	0.51928137137655883	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LRS Estimate	p-hat	0.69653504227706609	0.6965350422770660854255	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Literal LRS Estimate	p_u	0.69771929135772026	0.6977192913577202615372	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Literal LRS Estimate	u	51	51	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LRS Estimate	v	71	71	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LZ78Y Prediction Estimate	C	799263	799263	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LZ78Y Prediction Estimate	P_global	0.79927658770199095	0.79927658770199095	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LZ78Y Prediction Estimate	P_global'	0.80030832361977911	0.80030832361977911	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LZ78Y Prediction Estimate	min entropy	0.32137218080982766	0.32137218080982766	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal LZ78Y Prediction Estimate	r	73	73	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	C	639881	639881	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	P_global	0.63988163988163993	0.63988163988163993	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	P_global'	0.64111812806505841	0.64111812806505841	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	P_local	0.72383949597417785	0.72383949613215592	1.57978e-10	1.57978e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	min entropy	0.46625826502784795	0.46625826471297949	3.14868e-10	3.14868e-10	KNOWN
+biased-random-bytes	biased-random-bytes.res	Literal Lag Prediction Estimate	r	53	53	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Most Common Value Estimate	Mode count	800234	800234	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Most Common Value Estimate	min entropy	0.31965065183818203	0.31965065183818203	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Most Common Value Estimate	p-hat	0.800234	0.800234	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal Most Common Value Estimate	p_u	0.80126387990272308	0.80126387990272308	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMCW Prediction Estimate	C	800186	800186	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMCW Prediction Estimate	P_global	0.80023641489413833	0.80023641489413833	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMCW Prediction Estimate	P_global'	0.80126632256850894	0.80126632256850894	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMCW Prediction Estimate	min entropy	0.3196462537659206	0.31964625376592054	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Literal MultiMCW Prediction Estimate	r	73	73	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMMC Prediction Estimate	C	799884	799884	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMMC Prediction Estimate	P_global	0.79988559977119955	0.79988559977119955	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMMC Prediction Estimate	P_global'	0.80091615397922022	0.80091615397922022	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMMC Prediction Estimate	min entropy	0.32027687668519533	0.32027687668519533	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal MultiMMC Prediction Estimate	r	73	73	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Literal t-Tuple Estimate	min entropy	0.29115980449860829	0.29115980449860823	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+biased-random-bytes	biased-random-bytes.res	Literal t-Tuple Estimate	p-hat_max	0.81624722490067469	0.8162472249006746949362	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Literal t-Tuple Estimate	p_u	0.8172447988718301	0.8172447988718301026267	0	0	FORMAT
+biased-random-bytes	biased-random-bytes.res	Literal t-Tuple Estimate	t	50	50	0	0	EXACT
+biased-random-bytes	biased-random-bytes.res	Number of Binary Symbols		8000000	8000000	0	0	EXACT
+data.pi	data.pi.res	Assessed min entropy		0.56953759345777466	0.56953759345777899	4.32987e-15	4.32987e-15	SUBTHRESHOLD
+data.pi	data.pi.res	H_original		0.56953759345777466	0.56953759345777899	4.32987e-15	4.32987e-15	SUBTHRESHOLD
+data.pi	data.pi.res	Literal Collision Estimate	Sum t_i	1165666	1165666	0	0	EXACT
+data.pi	data.pi.res	Literal Collision Estimate	X-bar	2.4414154213486086	2.4414154213486086	0	0	EXACT
+data.pi	data.pi.res	Literal Collision Estimate	X-bar'	2.4395643654531334	2.4395643654531334	0	0	EXACT
+data.pi	data.pi.res	Literal Collision Estimate	min entropy	0.56953759345777466	0.56953759345777899	4.32987e-15	4.32987e-15	SUBTHRESHOLD
+data.pi	data.pi.res	Literal Collision Estimate	p	0.67383272785477999	0.67383272785477799	1.9984e-15	1.9984e-15	SUBTHRESHOLD
+data.pi	data.pi.res	Literal Collision Estimate	sigma-hat	0.49655650591493028	0.49655650591492989	3.88578e-16	3.88578e-16	SUBTHRESHOLD
+data.pi	data.pi.res	Literal Collision Estimate	v	477455	477455	0	0	EXACT
+data.pi	data.pi.res	Literal Compression Estimate	X-bar	5.1280437523324389	5.1280437523324389	0	0	EXACT
+data.pi	data.pi.res	Literal Compression Estimate	X-bar'	5.1219016843117551	5.1219016843117551	0	0	EXACT
+data.pi	data.pi.res	Literal Compression Estimate	min entropy	0.60155919063219654	0.60155919063219654	0	0	EXACT
+data.pi	data.pi.res	Literal Compression Estimate	p	0.081936203422937059	0.081936203422937059	0	0	EXACT
+data.pi	data.pi.res	Literal Compression Estimate	sigma-hat	1.0483049347003059	1.0483049347003059	0	0	EXACT
+data.pi	data.pi.res	Literal LRS Estimate	min entropy	0.90880365648334804	0.90880365648334804	0	0	EXACT
+data.pi	data.pi.res	Literal LRS Estimate	p-hat	0.53143605510587266	0.5314360551058726622742	0	0	FORMAT
+data.pi	data.pi.res	Literal LRS Estimate	p_u	0.53262658455537204	0.5326265845553720401639	0	0	FORMAT
+data.pi	data.pi.res	Literal LRS Estimate	u	19	19	0	0	EXACT
+data.pi	data.pi.res	Literal LRS Estimate	v	43	43	0	0	EXACT
+data.pi	data.pi.res	Literal LZ78Y Prediction Estimate	C	662954	662954	0	0	EXACT
+data.pi	data.pi.res	Literal LZ78Y Prediction Estimate	N	1165649	1165649	0	0	EXACT
+data.pi	data.pi.res	Literal LZ78Y Prediction Estimate	P_global	0.56874239157756756	0.56874239157756756	0	0	EXACT
+data.pi	data.pi.res	Literal LZ78Y Prediction Estimate	P_global'	0.56992396184264549	0.56992396184264549	0	0	EXACT
+data.pi	data.pi.res	Literal LZ78Y Prediction Estimate	min entropy	0.81115864436468677	0.81115864436468677	0	0	EXACT
+data.pi	data.pi.res	Literal LZ78Y Prediction Estimate	r	23	23	0	0	EXACT
+data.pi	data.pi.res	Literal Lag Prediction Estimate	C	662836	662836	0	0	EXACT
+data.pi	data.pi.res	Literal Lag Prediction Estimate	N	1165665	1165665	0	0	EXACT
+data.pi	data.pi.res	Literal Lag Prediction Estimate	P_global	0.56863335520925828	0.56863335520925828	0	0	EXACT
+data.pi	data.pi.res	Literal Lag Prediction Estimate	P_global'	0.56981495344368849	0.56981495344368849	0	0	EXACT
+data.pi	data.pi.res	Literal Lag Prediction Estimate	min entropy	0.81143461261488992	0.81143461261488992	0	0	EXACT
+data.pi	data.pi.res	Literal Lag Prediction Estimate	r	22	22	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	P_0	0.43125046110978615	0.43125046110978615	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	P_1	0.56874953889021385	0.56874953889021385	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	P_{0,0}	0.48045928537042415	0.48045928537042415	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	P_{0,1}	0.51954071462957585	0.51954071462957585	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	P_{1,0}	0.39393879973633839	0.39393879973633839	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	P_{1,1}	0.60606120026366161	0.60606120026366161	0	0	EXACT
+data.pi	data.pi.res	Literal Markov Estimate	min entropy	0.72318078199004532	0.72318078199004543	1.11022e-16	1.11022e-16	SUBTHRESHOLD
+data.pi	data.pi.res	Literal Markov Estimate	p-hat_max	1.3630576315328927e-28	1.3630576315328792e-28	1.34525e-42	1.34525e-42	SUBTHRESHOLD
+data.pi	data.pi.res	Literal Most Common Value Estimate	Mode count	662972	662972	0	0	EXACT
+data.pi	data.pi.res	Literal Most Common Value Estimate	min entropy	0.81114057970407438	0.81114057970407438	0	0	EXACT
+data.pi	data.pi.res	Literal Most Common Value Estimate	p-hat	0.56874953889021385	0.56874953889021385	0	0	EXACT
+data.pi	data.pi.res	Literal Most Common Value Estimate	p_u	0.56993109817230025	0.56993109817230025	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMCW Prediction Estimate	C	662387	662387	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMCW Prediction Estimate	N	1165603	1165603	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMCW Prediction Estimate	P_global	0.56827839324366869	0.56827839324366869	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMCW Prediction Estimate	P_global'	0.56946013995367961	0.56946013995367961	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMCW Prediction Estimate	min entropy	0.81233323259173817	0.81233323259173817	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMCW Prediction Estimate	r	23	23	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMMC Prediction Estimate	C	662951	662951	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMMC Prediction Estimate	N	1165664	1165664	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMMC Prediction Estimate	P_global	0.56873249924506553	0.56873249924506553	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMMC Prediction Estimate	P_global'	0.56991406518340781	0.56991406518340781	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMMC Prediction Estimate	min entropy	0.81118369680348135	0.81118369680348135	0	0	EXACT
+data.pi	data.pi.res	Literal MultiMMC Prediction Estimate	r	23	23	0	0	EXACT
+data.pi	data.pi.res	Literal t-Tuple Estimate	min entropy	0.70186099415040004	0.70186099415040004	0	0	EXACT
+data.pi	data.pi.res	Literal t-Tuple Estimate	p-hat_max	0.61361698191214176	0.6136169819121417567942	0	0	FORMAT
+data.pi	data.pi.res	Literal t-Tuple Estimate	p_u	0.61477866562812644	0.614778665628126441689	0	0	FORMAT
+data.pi	data.pi.res	Literal t-Tuple Estimate	t	18	18	0	0	EXACT
+normal	normal.res	Assessed min entropy		4.1000957831103086	4.1000957831102802	2.84217e-14	6.93196e-15	SUBTHRESHOLD
+normal	normal.res	Bitstring Collision Estimate	Sum t_i	7999999	7999999	0	0	EXACT
+normal	normal.res	Bitstring Collision Estimate	X-bar	2.523192558094939	2.523192558094939	0	0	EXACT
+normal	normal.res	Bitstring Collision Estimate	X-bar'	2.5224700384317478	2.5224700384317478	0	0	EXACT
+normal	normal.res	Bitstring Collision Estimate	min entropy	1	1	0	0	EXACT
+normal	normal.res	Bitstring Collision Estimate	p	0.5	0.5	0	0	EXACT
+normal	normal.res	Bitstring Collision Estimate	sigma-hat	0.49946189437149541	0.49946189437149574	3.33067e-16	3.33067e-16	SUBTHRESHOLD
+normal	normal.res	Bitstring Collision Estimate	v	3170586	3170586	0	0	EXACT
+normal	normal.res	Bitstring Compression Estimate	X-bar	5.0306901312440173	5.0306901312440173	0	0	EXACT
+normal	normal.res	Bitstring Compression Estimate	X-bar'	5.0283495184921581	5.0283495184921581	0	0	EXACT
+normal	normal.res	Bitstring Compression Estimate	min entropy	0.51251197288878858	0.51251197288878503	3.55271e-15	3.55271e-15	SUBTHRESHOLD
+normal	normal.res	Bitstring Compression Estimate	p	0.11866185634166618	0.11866185634166793	1.7486e-15	1.7486e-15	SUBTHRESHOLD
+normal	normal.res	Bitstring Compression Estimate	sigma-hat	1.0488632759418641	1.0488632759418639	2.22045e-16	2.117e-16	SUBTHRESHOLD
+normal	normal.res	Bitstring LRS Estimate	min entropy	0.82839902057212444	0.82839902057212444	0	0	EXACT
+normal	normal.res	Bitstring LRS Estimate	p-hat	0.56270208363310659	0.5627020836331065867242	0	0	FORMAT
+normal	normal.res	Bitstring LRS Estimate	p_u	0.56315383562784926	0.5631538356278492640783	0	0	FORMAT
+normal	normal.res	Bitstring LRS Estimate	u	24	24	0	0	EXACT
+normal	normal.res	Bitstring LRS Estimate	v	52	52	0	0	EXACT
+normal	normal.res	Bitstring LZ78Y Prediction Estimate	C	4017307	4017307	0	0	EXACT
+normal	normal.res	Bitstring LZ78Y Prediction Estimate	N	7999983	7999983	0	0	EXACT
+normal	normal.res	Bitstring LZ78Y Prediction Estimate	P_global	0.50216444209943945	0.50216444209943945	0	0	EXACT
+normal	normal.res	Bitstring LZ78Y Prediction Estimate	P_global'	0.50261978493718584	0.50261978493718584	0	0	EXACT
+normal	normal.res	Bitstring LZ78Y Prediction Estimate	min entropy	0.99246063284315811	0.99246063284315811	0	0	EXACT
+normal	normal.res	Bitstring LZ78Y Prediction Estimate	r	20	20	0	0	EXACT
+normal	normal.res	Bitstring Lag Prediction Estimate	C	4002718	4002718	0	0	EXACT
+normal	normal.res	Bitstring Lag Prediction Estimate	N	7999999	7999999	0	0	EXACT
+normal	normal.res	Bitstring Lag Prediction Estimate	P_global	0.50033981254247661	0.50033981254247661	0	0	EXACT
+normal	normal.res	Bitstring Lag Prediction Estimate	P_global'	0.50079515908616445	0.50079515908616445	0	0	EXACT
+normal	normal.res	Bitstring Lag Prediction Estimate	min entropy	0.99770747829602213	0.99770747829602213	0	0	EXACT
+normal	normal.res	Bitstring Lag Prediction Estimate	r	27	27	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	P_0	0.49917675	0.49917675	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	P_1	0.50082325000000005	0.50082325000000005	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	P_{0,0}	0.4969995597751698	0.4969995597751698	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	P_{0,1}	0.50300044022483026	0.50300044022483026	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	P_{1,0}	0.50134690765327583	0.50134690765327583	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	P_{1,1}	0.49865309234672417	0.49865309234672417	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	min entropy	0.9937925432957424	0.9937925432957424	0	0	EXACT
+normal	normal.res	Bitstring Markov Estimate	p-hat_max	5.097359688619317e-39	5.097359688619317e-39	0	0	EXACT
+normal	normal.res	Bitstring Most Common Value Estimate	Mode count	4006586	4006586	0	0	EXACT
+normal	normal.res	Bitstring Most Common Value Estimate	min entropy	0.99631546080565159	0.99631546080565159	0	0	EXACT
+normal	normal.res	Bitstring Most Common Value Estimate	p-hat	0.50082325000000005	0.50082325000000005	0	0	EXACT
+normal	normal.res	Bitstring Most Common Value Estimate	p_u	0.5012785960031747	0.5012785960031747	0	0	EXACT
+normal	normal.res	Bitstring MultiMCW Prediction Estimate	C	3996310	3996310	0	0	EXACT
+normal	normal.res	Bitstring MultiMCW Prediction Estimate	N	7999937	7999937	0	0	EXACT
+normal	normal.res	Bitstring MultiMCW Prediction Estimate	P_global	0.49954268389863571	0.49954268389863571	0	0	EXACT
+normal	normal.res	Bitstring MultiMCW Prediction Estimate	P_global'	0.49999803212150123	0.49999803212150123	0	0	EXACT
+normal	normal.res	Bitstring MultiMCW Prediction Estimate	min entropy	1	1	0	0	EXACT
+normal	normal.res	Bitstring MultiMCW Prediction Estimate	r	10	10	0	0	EXACT
+normal	normal.res	Bitstring MultiMMC Prediction Estimate	C	5001029	5001029	0	0	EXACT
+normal	normal.res	Bitstring MultiMMC Prediction Estimate	N	7999998	7999998	0	0	EXACT
+normal	normal.res	Bitstring MultiMMC Prediction Estimate	P_global	0.62512878128219529	0.62512878128219529	0	0	EXACT
+normal	normal.res	Bitstring MultiMMC Prediction Estimate	P_global'	0.62556963850841341	0.62556963850841341	0	0	EXACT
+normal	normal.res	Bitstring MultiMMC Prediction Estimate	min entropy	0.6767576005226027	0.6767576005226027	0	0	EXACT
+normal	normal.res	Bitstring MultiMMC Prediction Estimate	r	41	41	0	0	EXACT
+normal	normal.res	Bitstring t-Tuple Estimate	min entropy	0.77290558077529137	0.77290558077529137	0	0	EXACT
+normal	normal.res	Bitstring t-Tuple Estimate	p-hat_max	0.58478886944022623	0.5847888694402262332872	0	0	FORMAT
+normal	normal.res	Bitstring t-Tuple Estimate	p_u	0.58523762119077116	0.5852376211907711622828	0	0	FORMAT
+normal	normal.res	Bitstring t-Tuple Estimate	t	23	23	0	0	EXACT
+normal	normal.res	H_bitstring		0.51251197288878858	0.51251197288878503	3.55271e-15	3.55271e-15	SUBTHRESHOLD
+normal	normal.res	H_bitstring Per Symbol		4.1000957831103086	4.1000957831102802	2.84217e-14	6.93196e-15	SUBTHRESHOLD
+normal	normal.res	H_original		5.529117785448844	5.529117785448844	0	0	EXACT
+normal	normal.res	Literal LRS Estimate	min entropy	6.1050390795897833	6.1050390795897833	0	0	EXACT
+normal	normal.res	Literal LRS Estimate	p-hat	0.014222809025629462	0.01422280902562946154621	0	0	FORMAT
+normal	normal.res	Literal LRS Estimate	p_u	0.01452780869506292	0.01452780869506292010795	0	0	FORMAT
+normal	normal.res	Literal LRS Estimate	u	3	3	0	0	EXACT
+normal	normal.res	Literal LRS Estimate	v	6	6	0	0	EXACT
+normal	normal.res	Literal LZ78Y Prediction Estimate	C	19163	19163	0	0	EXACT
+normal	normal.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+normal	normal.res	Literal LZ78Y Prediction Estimate	P_global	0.0191633257765382	0.0191633257765382	0	0	EXACT
+normal	normal.res	Literal LZ78Y Prediction Estimate	P_global'	0.019516472171868238	0.019516472171868238	0	0	EXACT
+normal	normal.res	Literal LZ78Y Prediction Estimate	min entropy	5.6791638971261458	5.6791638971261458	0	0	EXACT
+normal	normal.res	Literal LZ78Y Prediction Estimate	r	4	4	0	0	EXACT
+normal	normal.res	Literal Lag Prediction Estimate	C	14211	14211	0	0	EXACT
+normal	normal.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+normal	normal.res	Literal Lag Prediction Estimate	P_global	0.014211014211014211	0.014211014211014211	0	0	EXACT
+normal	normal.res	Literal Lag Prediction Estimate	P_global'	0.014515889364164508	0.014515889364164508	0	0	EXACT
+normal	normal.res	Literal Lag Prediction Estimate	min entropy	6.1062232235998328	6.1062232235998328	0	0	EXACT
+normal	normal.res	Literal Lag Prediction Estimate	r	4	4	0	0	EXACT
+normal	normal.res	Literal Most Common Value Estimate	Mode count	19943	19943	0	0	EXACT
+normal	normal.res	Literal Most Common Value Estimate	min entropy	5.6221552772047749	5.6221552772047749	0	0	EXACT
+normal	normal.res	Literal Most Common Value Estimate	p-hat	0.019942999999999999	0.019942999999999999	0	0	EXACT
+normal	normal.res	Literal Most Common Value Estimate	p_u	0.02030311251014405	0.02030311251014405	0	0	EXACT
+normal	normal.res	Literal MultiMCW Prediction Estimate	C	19310	19310	0	0	EXACT
+normal	normal.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+normal	normal.res	Literal MultiMCW Prediction Estimate	P_global	0.019311216606646218	0.019311216606646218	0	0	EXACT
+normal	normal.res	Literal MultiMCW Prediction Estimate	P_global'	0.019665704493110798	0.019665704493110798	0	0	EXACT
+normal	normal.res	Literal MultiMCW Prediction Estimate	min entropy	5.6681743202743657	5.6681743202743657	0	0	EXACT
+normal	normal.res	Literal MultiMCW Prediction Estimate	r	4	4	0	0	EXACT
+normal	normal.res	Literal MultiMMC Prediction Estimate	C	19209	19209	0	0	EXACT
+normal	normal.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+normal	normal.res	Literal MultiMMC Prediction Estimate	P_global	0.019209038418076835	0.019209038418076835	0	0	EXACT
+normal	normal.res	Literal MultiMMC Prediction Estimate	P_global'	0.019562594873373633	0.019562594873373633	0	0	EXACT
+normal	normal.res	Literal MultiMMC Prediction Estimate	min entropy	5.6757584410258906	5.6757584410258906	0	0	EXACT
+normal	normal.res	Literal MultiMMC Prediction Estimate	r	4	4	0	0	EXACT
+normal	normal.res	Literal t-Tuple Estimate	min entropy	5.529117785448844	5.529117785448844	0	0	EXACT
+normal	normal.res	Literal t-Tuple Estimate	p-hat_max	0.021283807295699071	0.0212838072956990712048	0	0	FORMAT
+normal	normal.res	Literal t-Tuple Estimate	p_u	0.021655573872636183	0.0216555738726361829416	0	0	FORMAT
+normal	normal.res	Literal t-Tuple Estimate	t	2	2	0	0	EXACT
+normal	normal.res	Number of Binary Symbols		8000000	8000000	0	0	EXACT
+rand1_short	rand1_short.res	Assessed min entropy		0.61171620479394506	0.61171620479394506	0	0	EXACT
+rand1_short	rand1_short.res	H_original		0.61171620479394506	0.61171620479394506	0	0	EXACT
+rand1_short	rand1_short.res	Literal Collision Estimate	Sum t_i	10000	10000	0	0	EXACT
+rand1_short	rand1_short.res	Literal Collision Estimate	X-bar	2.4919013207076999	2.4919013207076999	0	0	EXACT
+rand1_short	rand1_short.res	Literal Collision Estimate	X-bar'	2.47157074650488	2.47157074650488	0	0	EXACT
+rand1_short	rand1_short.res	Literal Collision Estimate	min entropy	0.69146412099724186	0.69146412099724663	4.77396e-15	4.77396e-15	SUBTHRESHOLD
+rand1_short	rand1_short.res	Literal Collision Estimate	p	0.61922510955147203	0.61922510955147003	1.9984e-15	1.9984e-15	SUBTHRESHOLD
+rand1_short	rand1_short.res	Literal Collision Estimate	sigma-hat	0.49999670809559466	0.49999670809559443	2.22045e-16	2.22045e-16	SUBTHRESHOLD
+rand1_short	rand1_short.res	Literal Collision Estimate	v	4013	4013	0	0	EXACT
+rand1_short	rand1_short.res	Literal Compression Estimate	X-bar	5.2322840424169268	5.2322840424169268	0	0	EXACT
+rand1_short	rand1_short.res	Literal Compression Estimate	X-bar'	5.1295260964851117	5.1295260964851117	0	0	EXACT
+rand1_short	rand1_short.res	Literal Compression Estimate	min entropy	0.61171620479394506	0.61171620479394506	0	0	EXACT
+rand1_short	rand1_short.res	Literal Compression Estimate	p	0.07854715169871973	0.07854715169871973	0	0	EXACT
+rand1_short	rand1_short.res	Literal Compression Estimate	sigma-hat	1.0295215682119498	1.0295215682119498	0	0	EXACT
+rand1_short	rand1_short.res	Literal LRS Estimate	min entropy	0.96262580383278706	0.96262580383278706	0	0	EXACT
+rand1_short	rand1_short.res	Literal LRS Estimate	p-hat	0.50024235643935155	0.5002423564393515542648	0	0	FORMAT
+rand1_short	rand1_short.res	Literal LRS Estimate	p_u	0.51312214544969137	0.5131221454496913692012	0	0	FORMAT
+rand1_short	rand1_short.res	Literal LRS Estimate	u	10	10	0	0	EXACT
+rand1_short	rand1_short.res	Literal LRS Estimate	v	25	25	0	0	EXACT
+rand1_short	rand1_short.res	Literal LZ78Y Prediction Estimate	C	4998	4998	0	0	EXACT
+rand1_short	rand1_short.res	Literal LZ78Y Prediction Estimate	N	9983	9983	0	0	EXACT
+rand1_short	rand1_short.res	Literal LZ78Y Prediction Estimate	P_global	0.50065110688169889	0.50065110688169889	0	0	EXACT
+rand1_short	rand1_short.res	Literal LZ78Y Prediction Estimate	P_global'	0.51354184937316061	0.51354184937316061	0	0	EXACT
+rand1_short	rand1_short.res	Literal LZ78Y Prediction Estimate	min entropy	0.96144624595247796	0.96144624595247796	0	0	EXACT
+rand1_short	rand1_short.res	Literal LZ78Y Prediction Estimate	r	19	19	0	0	EXACT
+rand1_short	rand1_short.res	Literal Lag Prediction Estimate	C	5071	5071	0	0	EXACT
+rand1_short	rand1_short.res	Literal Lag Prediction Estimate	N	9999	9999	0	0	EXACT
+rand1_short	rand1_short.res	Literal Lag Prediction Estimate	P_global	0.50715071507150711	0.50715071507150711	0	0	EXACT
+rand1_short	rand1_short.res	Literal Lag Prediction Estimate	P_global'	0.52002983240629286	0.52002983240629286	0	0	EXACT
+rand1_short	rand1_short.res	Literal Lag Prediction Estimate	min entropy	0.9433337065757712	0.9433337065757712	0	0	EXACT
+rand1_short	rand1_short.res	Literal Lag Prediction Estimate	r	18	18	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	P_0	0.49919999999999998	0.49919999999999998	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	P_1	0.50080000000000002	0.50080000000000002	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	P_{0,0}	0.49489080344620318	0.49489080344620318	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	P_{0,1}	0.50510919655379682	0.50510919655379682	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	P_{1,0}	0.50359424920127793	0.50359424920127793	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	P_{1,1}	0.49640575079872207	0.49640575079872207	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	min entropy	0.98759610445940904	0.98759610445940904	0	0	EXACT
+rand1_short	rand1_short.res	Literal Markov Estimate	p-hat_max	8.8329437846494303e-39	8.8329437846494303e-39	0	0	EXACT
+rand1_short	rand1_short.res	Literal Most Common Value Estimate	Mode count	5008	5008	0	0	EXACT
+rand1_short	rand1_short.res	Literal Most Common Value Estimate	min entropy	0.96105882570055079	0.96105882570055079	0	0	EXACT
+rand1_short	rand1_short.res	Literal Most Common Value Estimate	p-hat	0.50080000000000002	0.50080000000000002	0	0	EXACT
+rand1_short	rand1_short.res	Literal Most Common Value Estimate	p_u	0.51367977403722886	0.51367977403722886	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMCW Prediction Estimate	C	5006	5006	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMCW Prediction Estimate	N	9937	9937	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMCW Prediction Estimate	P_global	0.50377377478112106	0.50377377478112106	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMCW Prediction Estimate	P_global'	0.51669396543410306	0.51669396543410306	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMCW Prediction Estimate	min entropy	0.95261806053262654	0.95261806053262654	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMCW Prediction Estimate	r	13	13	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMMC Prediction Estimate	C	5005	5005	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMMC Prediction Estimate	N	9998	9998	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMMC Prediction Estimate	P_global	0.50060012002400478	0.50060012002400478	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMMC Prediction Estimate	P_global'	0.51348118957041589	0.51348118957041589	0	0	EXACT
+rand1_short	rand1_short.res	Literal MultiMMC Prediction Estimate	min entropy	0.96161666782888089	0.96161666782888078	1.11022e-16	1.11022e-16	SUBTHRESHOLD
+rand1_short	rand1_short.res	Literal MultiMMC Prediction Estimate	r	19	19	0	0	EXACT
+rand1_short	rand1_short.res	Literal t-Tuple Estimate	min entropy	0.86762443081707374	0.86762443081707374	0	0	EXACT
+rand1_short	rand1_short.res	Literal t-Tuple Estimate	p-hat_max	0.5352007027872665	0.5352007027872665023693	0	0	FORMAT
+rand1_short	rand1_short.res	Literal t-Tuple Estimate	p_u	0.54804853523673636	0.5480485352367363560688	0	0	FORMAT
+rand1_short	rand1_short.res	Literal t-Tuple Estimate	t	9	9	0	0	EXACT
+rand4_short	rand4_short.res	Assessed min entropy		3.2154882678767365	3.2154882678767365	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Collision Estimate	Sum t_i	40000	40000	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Collision Estimate	X-bar	2.5075225677031092	2.5075225677031092	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Collision Estimate	X-bar'	2.4973262356970052	2.4973262356970052	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Collision Estimate	min entropy	0.89817944838102126	0.89817944838101882	2.44249e-15	2.44249e-15	SUBTHRESHOLD
+rand4_short	rand4_short.res	Bitstring Collision Estimate	p	0.53656339906925155	0.53656339906925243	8.88178e-16	8.88178e-16	SUBTHRESHOLD
+rand4_short	rand4_short.res	Bitstring Collision Estimate	sigma-hat	0.49995907875148304	0.4999590787514831	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+rand4_short	rand4_short.res	Bitstring Collision Estimate	v	15952	15952	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Compression Estimate	X-bar	5.239445781335264	5.239445781335264	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Compression Estimate	X-bar'	5.205058947116413	5.205058947116413	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Compression Estimate	min entropy	0.80387206696918412	0.80387206696918412	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Compression Estimate	p	0.035323389566711438	0.035323389566711438	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Compression Estimate	sigma-hat	1.0048781438323628	1.0048781438323628	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LRS Estimate	min entropy	0.93296931449533627	0.93296931449533627	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LRS Estimate	p-hat	0.5173434254249959	0.5173434254249958952343	0	0	FORMAT
+rand4_short	rand4_short.res	Bitstring LRS Estimate	p_u	0.52377920399041156	0.5237792039904115570792	0	0	FORMAT
+rand4_short	rand4_short.res	Bitstring LRS Estimate	u	12	12	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LRS Estimate	v	31	31	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LZ78Y Prediction Estimate	C	20011	20011	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LZ78Y Prediction Estimate	N	39983	39983	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LZ78Y Prediction Estimate	P_global	0.50048770727559211	0.50048770727559211	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LZ78Y Prediction Estimate	P_global'	0.50692872686353296	0.50692872686353296	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LZ78Y Prediction Estimate	min entropy	0.98014517335640094	0.98014517335640094	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring LZ78Y Prediction Estimate	r	18	18	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Lag Prediction Estimate	C	19984	19984	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Lag Prediction Estimate	N	39999	39999	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Lag Prediction Estimate	P_global	0.4996124903122578	0.4996124903122578	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Lag Prediction Estimate	P_global'	0.50605222263246918	0.50605222263246918	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Lag Prediction Estimate	min entropy	0.98264182173598913	0.98264182173598913	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Lag Prediction Estimate	r	13	13	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	P_0	0.50082499999999996	0.50082499999999996	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	P_1	0.49917500000000004	0.49917500000000004	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	P_{0,0}	0.49755391373801916	0.49755391373801916	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	P_{0,1}	0.50244608626198084	0.50244608626198084	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	P_{1,0}	0.50413181749887315	0.50413181749887315	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	P_{1,1}	0.49586818250112685	0.49586818250112685	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	min entropy	0.99061680777094752	0.99061680777094752	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Markov Estimate	p-hat_max	6.7563511227769347e-39	6.7563511227769347e-39	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Most Common Value Estimate	Mode count	20033	20033	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Most Common Value Estimate	min entropy	0.97918948296240216	0.97918948296240216	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Most Common Value Estimate	p-hat	0.50082499999999996	0.50082499999999996	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring Most Common Value Estimate	p_u	0.50726464498906265	0.50726464498906265	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMCW Prediction Estimate	C	19898	19898	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMCW Prediction Estimate	N	39937	39937	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMCW Prediction Estimate	P_global	0.49823471968350153	0.49823471968350153	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMCW Prediction Estimate	P_global'	0.50467941062476995	0.50467941062476995	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMCW Prediction Estimate	min entropy	0.98656086459231696	0.98656086459231696	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMCW Prediction Estimate	r	15	15	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMMC Prediction Estimate	C	20053	20053	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMMC Prediction Estimate	N	39998	39998	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMMC Prediction Estimate	P_global	0.50135006750337519	0.50135006750337519	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMMC Prediction Estimate	P_global'	0.50778985878431393	0.50778985878431393	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMMC Prediction Estimate	min entropy	0.97769651208720298	0.97769651208720298	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring MultiMMC Prediction Estimate	r	16	16	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring t-Tuple Estimate	min entropy	0.8987772293903773	0.8987772293903773	0	0	EXACT
+rand4_short	rand4_short.res	Bitstring t-Tuple Estimate	p-hat_max	0.52991300078008163	0.529913000780081633323	0	0	FORMAT
+rand4_short	rand4_short.res	Bitstring t-Tuple Estimate	p_u	0.53634111996002387	0.5363411199600238710161	0	0	FORMAT
+rand4_short	rand4_short.res	Bitstring t-Tuple Estimate	t	11	11	0	0	EXACT
+rand4_short	rand4_short.res	H_bitstring		0.80387206696918412	0.80387206696918412	0	0	EXACT
+rand4_short	rand4_short.res	H_bitstring Per Symbol		3.2154882678767365	3.2154882678767365	0	0	EXACT
+rand4_short	rand4_short.res	H_original		3.5674726723995995	3.5674726723995991	4.44089e-16	1.24483e-16	SUBTHRESHOLD
+rand4_short	rand4_short.res	Literal LRS Estimate	min entropy	3.8335255222329829	3.8335255222329829	0	0	EXACT
+rand4_short	rand4_short.res	Literal LRS Estimate	p-hat	0.063846833600463726	0.0638468336004637260217	0	0	FORMAT
+rand4_short	rand4_short.res	Literal LRS Estimate	p_u	0.070144533079328539	0.0701445330793285387605	0	0	FORMAT
+rand4_short	rand4_short.res	Literal LRS Estimate	u	3	3	0	0	EXACT
+rand4_short	rand4_short.res	Literal LRS Estimate	v	6	6	0	0	EXACT
+rand4_short	rand4_short.res	Literal LZ78Y Prediction Estimate	C	615	615	0	0	EXACT
+rand4_short	rand4_short.res	Literal LZ78Y Prediction Estimate	N	9983	9983	0	0	EXACT
+rand4_short	rand4_short.res	Literal LZ78Y Prediction Estimate	P_global	0.061604728037664029	0.061604728037664029	0	0	EXACT
+rand4_short	rand4_short.res	Literal LZ78Y Prediction Estimate	P_global'	0.067803536605268208	0.067803536605268208	0	0	EXACT
+rand4_short	rand4_short.res	Literal LZ78Y Prediction Estimate	min entropy	3.8824956640559631	3.8824956640559631	0	0	EXACT
+rand4_short	rand4_short.res	Literal LZ78Y Prediction Estimate	r	4	4	0	0	EXACT
+rand4_short	rand4_short.res	Literal Lag Prediction Estimate	C	662	662	0	0	EXACT
+rand4_short	rand4_short.res	Literal Lag Prediction Estimate	N	9999	9999	0	0	EXACT
+rand4_short	rand4_short.res	Literal Lag Prediction Estimate	P_global	0.066206620662066201	0.066206620662066201	0	0	EXACT
+rand4_short	rand4_short.res	Literal Lag Prediction Estimate	P_global'	0.07261187853753763	0.07261187853753763	0	0	EXACT
+rand4_short	rand4_short.res	Literal Lag Prediction Estimate	min entropy	3.7836506125537386	3.7836506125537386	0	0	EXACT
+rand4_short	rand4_short.res	Literal Lag Prediction Estimate	r	4	4	0	0	EXACT
+rand4_short	rand4_short.res	Literal Most Common Value Estimate	Mode count	659	659	0	0	EXACT
+rand4_short	rand4_short.res	Literal Most Common Value Estimate	min entropy	3.7900373902139739	3.7900373902139739	0	0	EXACT
+rand4_short	rand4_short.res	Literal Most Common Value Estimate	p-hat	0.0659	0.0659	0	0	EXACT
+rand4_short	rand4_short.res	Literal Most Common Value Estimate	p_u	0.07229113790606298	0.07229113790606298	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMCW Prediction Estimate	C	619	619	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMCW Prediction Estimate	N	9937	9937	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMCW Prediction Estimate	P_global	0.062292442387038342	0.062292442387038342	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMCW Prediction Estimate	P_global'	0.068537877144807954	0.068537877144807954	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMCW Prediction Estimate	min entropy	3.8669546824826764	3.8669546824826764	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMCW Prediction Estimate	r	3	3	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMMC Prediction Estimate	C	615	615	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMMC Prediction Estimate	N	9998	9998	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMMC Prediction Estimate	P_global	0.061512302460492101	0.061512302460492101	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMMC Prediction Estimate	P_global'	0.067702115294887164	0.067702115294887164	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMMC Prediction Estimate	min entropy	3.8846552794933751	3.8846552794933751	0	0	EXACT
+rand4_short	rand4_short.res	Literal MultiMMC Prediction Estimate	r	4	4	0	0	EXACT
+rand4_short	rand4_short.res	Literal t-Tuple Estimate	min entropy	3.5674726723995995	3.5674726723995991	4.44089e-16	1.24483e-16	SUBTHRESHOLD
+rand4_short	rand4_short.res	Literal t-Tuple Estimate	p-hat_max	0.077463540197992509	0.07746354019799250867351	0	0	FORMAT
+rand4_short	rand4_short.res	Literal t-Tuple Estimate	p_u	0.084349733909211633	0.08434973390921163272083	0	0	FORMAT
+rand4_short	rand4_short.res	Literal t-Tuple Estimate	t	2	2	0	0	EXACT
+rand4_short	rand4_short.res	Number of Binary Symbols		40000	40000	0	0	EXACT
+rand8_short	rand8_short.res	Assessed min entropy		5.8608937444852494	5.8608937444852494	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Collision Estimate	Sum t_i	79999	79999	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Collision Estimate	X-bar	2.4995781909076706	2.4995781909076706	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Collision Estimate	X-bar'	2.4923789816296962	2.4923789816296962	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Collision Estimate	min entropy	0.83205298221524882	0.83205298221524804	7.77156e-16	7.77156e-16	SUBTHRESHOLD
+rand8_short	rand8_short.res	Bitstring Collision Estimate	p	0.56172932192363589	0.56172932192363623	3.33067e-16	3.33067e-16	SUBTHRESHOLD
+rand8_short	rand8_short.res	Bitstring Collision Estimate	sigma-hat	0.50000763353681865	0.50000763353681899	3.33067e-16	3.33067e-16	SUBTHRESHOLD
+rand8_short	rand8_short.res	Bitstring Collision Estimate	v	32005	32005	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Compression Estimate	X-bar	5.212412765159554	5.212412765159554	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Compression Estimate	X-bar'	5.1887036615688391	5.1887036615688391	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Compression Estimate	min entropy	0.73261171806065617	0.73261171806065617	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Compression Estimate	p	0.047508507395589983	0.047508507395589983	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Compression Estimate	sigma-hat	1.0221918650488744	1.0221918650488746	2.22045e-16	2.17224e-16	SUBTHRESHOLD
+rand8_short	rand8_short.res	Bitstring LRS Estimate	min entropy	0.98193035773637416	0.98193035773637416	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LRS Estimate	p-hat	0.50174837691922314	0.5017483769192231379819	0	0	FORMAT
+rand8_short	rand8_short.res	Bitstring LRS Estimate	p_u	0.50630184345942075	0.5063018434594207528576	0	0	FORMAT
+rand8_short	rand8_short.res	Bitstring LRS Estimate	u	13	13	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LRS Estimate	v	31	31	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LZ78Y Prediction Estimate	C	39959	39959	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LZ78Y Prediction Estimate	N	79983	79983	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LZ78Y Prediction Estimate	P_global	0.49959366365352637	0.49959366365352637	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LZ78Y Prediction Estimate	P_global'	0.5041476404203914	0.5041476404203914	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LZ78Y Prediction Estimate	min entropy	0.98808180379990307	0.98808180379990307	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring LZ78Y Prediction Estimate	r	15	15	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Lag Prediction Estimate	C	39922	39922	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Lag Prediction Estimate	N	79999	79999	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Lag Prediction Estimate	P_global	0.49903123789047366	0.49903123789047366	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Lag Prediction Estimate	P_global'	0.50358475218219034	0.50358475218219034	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Lag Prediction Estimate	min entropy	0.98969349388795491	0.98969349388795491	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Lag Prediction Estimate	r	14	14	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	P_0	0.5012375	0.5012375	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	P_1	0.4987625	0.4987625	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	P_{0,0}	0.50078555574951988	0.50078555574951988	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	P_{0,1}	0.49921444425048012	0.49921444425048012	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	P_{1,0}	0.5016791979949875	0.5016791979949875	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	P_{1,1}	0.4983208020050125	0.4983208020050125	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	min entropy	0.99772497672796534	0.99772497672796534	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Markov Estimate	p-hat_max	3.5960141043503829e-39	3.5960141043503829e-39	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Most Common Value Estimate	Mode count	40099	40099	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Most Common Value Estimate	min entropy	0.98338678465915019	0.9833867846591503	1.11022e-16	1.11022e-16	SUBTHRESHOLD
+rand8_short	rand8_short.res	Bitstring Most Common Value Estimate	p-hat	0.5012375	0.5012375	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring Most Common Value Estimate	p_u	0.50579098043220405	0.50579098043220405	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMCW Prediction Estimate	C	39756	39756	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMCW Prediction Estimate	N	79937	79937	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMCW Prediction Estimate	P_global	0.49734165655453672	0.49734165655453672	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMCW Prediction Estimate	P_global'	0.50189688057077464	0.50189688057077464	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMCW Prediction Estimate	min entropy	0.99453711551450596	0.99453711551450596	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMCW Prediction Estimate	r	15	15	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMMC Prediction Estimate	C	39974	39974	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMMC Prediction Estimate	N	79998	79998	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMMC Prediction Estimate	P_global	0.49968749218730468	0.49968749218730468	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMMC Prediction Estimate	P_global'	0.50424104259707803	0.50424104259707803	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMMC Prediction Estimate	min entropy	0.98781454404229407	0.98781454404229407	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring MultiMMC Prediction Estimate	r	15	15	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring t-Tuple Estimate	min entropy	0.91078644573541423	0.91078644573541423	0	0	EXACT
+rand8_short	rand8_short.res	Bitstring t-Tuple Estimate	p-hat_max	0.527348386291973	0.5273483862919730036367	0	0	FORMAT
+rand8_short	rand8_short.res	Bitstring t-Tuple Estimate	p_u	0.53189506413991305	0.5318950641399130541132	0	0	FORMAT
+rand8_short	rand8_short.res	Bitstring t-Tuple Estimate	t	12	12	0	0	EXACT
+rand8_short	rand8_short.res	H_bitstring		0.73261171806065617	0.73261171806065617	0	0	EXACT
+rand8_short	rand8_short.res	H_bitstring Per Symbol		5.8608937444852494	5.8608937444852494	0	0	EXACT
+rand8_short	rand8_short.res	H_original		6.6364412870839109	6.6364412870612322	2.26787e-11	3.41731e-12	SUBTHRESHOLD
+rand8_short	rand8_short.res	Literal LRS Estimate	min entropy	7.2891986717206523	7.2891986717206523	0	0	EXACT
+rand8_short	rand8_short.res	Literal LRS Estimate	p-hat	0.0046423625968243882	0.004642362596824388225325	0	0	FORMAT
+rand8_short	rand8_short.res	Literal LRS Estimate	p_u	0.0063934099921003551	0.006393409992100355064559	0	0	FORMAT
+rand8_short	rand8_short.res	Literal LRS Estimate	u	2	2	0	0	EXACT
+rand8_short	rand8_short.res	Literal LRS Estimate	v	3	3	0	0	EXACT
+rand8_short	rand8_short.res	Literal LZ78Y Prediction Estimate	C	44	44	0	0	EXACT
+rand8_short	rand8_short.res	Literal LZ78Y Prediction Estimate	N	9983	9983	0	0	EXACT
+rand8_short	rand8_short.res	Literal LZ78Y Prediction Estimate	P_global	0.0044074927376540115	0.0044074927376540115	0	0	EXACT
+rand8_short	rand8_short.res	Literal LZ78Y Prediction Estimate	P_global'	0.0061153238036365468	0.0061153238036365468	0	0	EXACT
+rand8_short	rand8_short.res	Literal LZ78Y Prediction Estimate	min entropy	7.3533553938353844	7.3533553938353844	0	0	EXACT
+rand8_short	rand8_short.res	Literal LZ78Y Prediction Estimate	r	2	2	0	0	EXACT
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	C	52	52	0	0	EXACT
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	N	9999	9999	0	0	EXACT
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	P_global	0.0052005200520052006	0.0052005200520052006	0	0	EXACT
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	P_global'	0.0070534187484469447	0.0070534187484469447	0	0	EXACT
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	P_local	0.010051528493923144	0.010051528494081152	1.58007e-13	1.58007e-13	SUBTHRESHOLD
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	min entropy	6.6364412870839109	6.6364412870612322	2.26787e-11	3.41731e-12	SUBTHRESHOLD
+rand8_short	rand8_short.res	Literal Lag Prediction Estimate	r	3	3	0	0	EXACT
+rand8_short	rand8_short.res	Literal Most Common Value Estimate	Mode count	58	58	0	0	EXACT
+rand8_short	rand8_short.res	Literal Most Common Value Estimate	min entropy	7.0104540377360411	7.0104540377360411	0	0	EXACT
+rand8_short	rand8_short.res	Literal Most Common Value Estimate	p-hat	0.0057999999999999996	0.0057999999999999996	0	0	EXACT
+rand8_short	rand8_short.res	Literal Most Common Value Estimate	p_u	0.0077560937775866317	0.0077560937775866317	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMCW Prediction Estimate	C	43	43	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMCW Prediction Estimate	N	9937	9937	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMCW Prediction Estimate	P_global	0.004327261749018819	0.004327261749018819	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMCW Prediction Estimate	P_global'	0.0060234583131241991	0.0060234583131241982	8.67362e-19	8.67362e-19	SUBTHRESHOLD
+rand8_short	rand8_short.res	Literal MultiMCW Prediction Estimate	min entropy	7.3751922497299107	7.3751922497299107	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMCW Prediction Estimate	r	2	2	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMMC Prediction Estimate	C	45	45	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMMC Prediction Estimate	N	9998	9998	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMMC Prediction Estimate	P_global	0.0045009001800360073	0.0045009001800360073	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMMC Prediction Estimate	P_global'	0.0062253571422864543	0.0062253571422864543	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMMC Prediction Estimate	min entropy	7.3276276791880877	7.3276276791880877	0	0	EXACT
+rand8_short	rand8_short.res	Literal MultiMMC Prediction Estimate	r	2	2	0	0	EXACT
+rand8_short	rand8_short.res	Literal t-Tuple Estimate	min entropy	7.0104540377360411	7.0104540377360411	0	0	EXACT
+rand8_short	rand8_short.res	Literal t-Tuple Estimate	p-hat_max	0.0057999999999999996	0.00579999999999999960032	0	0	FORMAT
+rand8_short	rand8_short.res	Literal t-Tuple Estimate	p_u	0.0077560937775866317	0.007756093777586630863552	8.67362e-19	8.67362e-19	SUBTHRESHOLD
+rand8_short	rand8_short.res	Literal t-Tuple Estimate	t	1	1	0	0	EXACT
+rand8_short	rand8_short.res	Number of Binary Symbols		80000	80000	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Assessed min entropy		0.12644573619605429	0.12644573619604868	5.60663e-15	5.60663e-15	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	H_original		0.12644573619605429	0.12644573619604868	5.60663e-15	5.60663e-15	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	Sum t_i	999999	999999	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	X-bar	2.1551145229002699	2.1551145229002699	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	X-bar'	2.1537456028181117	2.1537456028181117	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	min entropy	0.12644573619605429	0.12644573619604868	5.60663e-15	5.60663e-15	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	p	0.91608556642948002	0.91608556642948358	3.55271e-15	3.55271e-15	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	sigma-hat	0.36201421259803784	0.36201421259803818	3.33067e-16	3.33067e-16	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Collision Estimate	v	464012	464012	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Compression Estimate	X-bar	3.3831525916191372	3.3831525916191372	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Compression Estimate	X-bar'	3.3730929939843661	3.3730929939843661	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Compression Estimate	min entropy	0.15932269772157898	0.15932269772157773	1.249e-15	1.249e-15	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Compression Estimate	p	0.51550696093402992	0.51550696093403259	2.66454e-15	2.66454e-15	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Compression Estimate	sigma-hat	1.5895720714868642	1.589572071486864	2.22045e-16	1.39688e-16	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal LRS Estimate	min entropy	0.36579863480278091	0.36579863480278091	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LRS Estimate	p-hat	0.77496347966278545	0.7749634796627854482765	0	0	FORMAT
+ringOsc-nist	ringOsc-nist.res	Literal LRS Estimate	p_u	0.77603916293996889	0.776039162939968885091	0	0	FORMAT
+ringOsc-nist	ringOsc-nist.res	Literal LRS Estimate	u	72	72	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LRS Estimate	v	103	103	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LZ78Y Prediction Estimate	C	839311	839311	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LZ78Y Prediction Estimate	P_global	0.83932526852956502	0.83932526852956502	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LZ78Y Prediction Estimate	P_global'	0.84027120055393956	0.84027120055393956	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal LZ78Y Prediction Estimate	min entropy	0.25107305682069808	0.25107305682069803	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal LZ78Y Prediction Estimate	r	84	84	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Lag Prediction Estimate	C	839328	839328	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Lag Prediction Estimate	P_global	0.83932883932883928	0.83932883932883928	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Lag Prediction Estimate	P_global'	0.84027475528677842	0.84027475528677842	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Lag Prediction Estimate	min entropy	0.25106695357142894	0.251066953571429	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Lag Prediction Estimate	r	84	84	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	P_0	0.50096499999999999	0.50096499999999999	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	P_1	0.49903500000000001	0.49903500000000001	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	P_{0,0}	0.83963917566930957	0.83963917566930957	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	P_{0,1}	0.16036082433069043	0.16036082433069043	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	P_{1,0}	0.16098269660444658	0.16098269660444658	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	P_{1,1}	0.83901730339555347	0.83901730339555347	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	min entropy	0.2579793924501087	0.25797939245010865	5.55112e-17	5.55112e-17	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Markov Estimate	p-hat_max	1.1470423954118878e-10	1.1470423954118935e-10	5.68687e-25	5.68687e-25	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal Most Common Value Estimate	Mode count	500965	500965	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Most Common Value Estimate	min entropy	0.99351406876115855	0.99351406876115855	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Most Common Value Estimate	p-hat	0.50096499999999999	0.50096499999999999	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal Most Common Value Estimate	p_u	0.50225291289705221	0.50225291289705221	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	C	561973	561973	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	P_global	0.56200840652961137	0.56200840652961137	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	P_global'	0.56328641952769631	0.56328641952769631	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	P_local	0.81760774776600598	0.81760774785366996	8.7664e-11	8.7664e-11	SUBTHRESHOLD
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	min entropy	0.29051922736594488	0.290519227211259	1.54686e-10	1.54686e-10	KNOWN
+ringOsc-nist	ringOsc-nist.res	Literal MultiMCW Prediction Estimate	r	83	83	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMMC Prediction Estimate	C	839326	839326	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMMC Prediction Estimate	P_global	0.83932767865535729	0.83932767865535729	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMMC Prediction Estimate	P_global'	0.8402735978488185	0.8402735978488185	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMMC Prediction Estimate	min entropy	0.25106894081565412	0.25106894081565412	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal MultiMMC Prediction Estimate	r	84	84	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal t-Tuple Estimate	min entropy	0.20170850817082797	0.20170850817082797	0	0	EXACT
+ringOsc-nist	ringOsc-nist.res	Literal t-Tuple Estimate	p-hat_max	0.86865015539900603	0.8686501553990060298105	0	0	FORMAT
+ringOsc-nist	ringOsc-nist.res	Literal t-Tuple Estimate	p_u	0.86952022606970225	0.8695202260697022511593	0	0	FORMAT
+ringOsc-nist	ringOsc-nist.res	Literal t-Tuple Estimate	t	71	71	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Assessed min entropy		0.82967708323406131	0.82967708323411438	5.30687e-14	5.30687e-14	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	H_original		0.82967708323406131	0.82967708323411438	5.30687e-14	5.30687e-14	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	Sum t_i	999999	999999	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	X-bar	2.4995100955313716	2.4995100955313716	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	X-bar'	2.4974739206155063	2.4974739206155063	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	min entropy	0.90093572690822665	0.90093572690824753	2.08722e-14	2.08722e-14	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	p	0.53553926972023191	0.53553926972022414	7.77156e-15	7.77156e-15	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	sigma-hat	0.50000038487257392	0.5000003848725737	2.22045e-16	2.22045e-16	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	Literal Collision Estimate	v	400078	400078	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Compression Estimate	X-bar	5.2152990022175647	5.2152990022175647	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Compression Estimate	X-bar'	5.2088573575292516	5.2088573575292516	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Compression Estimate	min entropy	0.82967708323406131	0.82967708323411438	5.30687e-14	5.30687e-14	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	Literal Compression Estimate	p	0.03172881608928213	0.031728816089275136	6.99441e-15	6.99441e-15	SUBTHRESHOLD
+truerand_1bit	truerand_1bit.res	Literal Compression Estimate	sigma-hat	1.0178795278641199	1.0178795278641199	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LRS Estimate	min entropy	0.98581833722719769	0.98581833722719769	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LRS Estimate	p-hat	0.50365134530399536	0.5036513453039953569501	0	0	FORMAT
+truerand_1bit	truerand_1bit.res	Literal LRS Estimate	p_u	0.50493922625746557	0.5049392262574655676488	0	0	FORMAT
+truerand_1bit	truerand_1bit.res	Literal LRS Estimate	u	17	17	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LRS Estimate	v	39	39	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LZ78Y Prediction Estimate	C	499727	499727	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LZ78Y Prediction Estimate	P_global	0.49973549550342355	0.49973549550342355	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LZ78Y Prediction Estimate	P_global'	0.50102342156637292	0.50102342156637292	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LZ78Y Prediction Estimate	min entropy	0.99705004757897153	0.99705004757897153	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal LZ78Y Prediction Estimate	r	20	20	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Lag Prediction Estimate	C	499304	499304	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Lag Prediction Estimate	P_global	0.49930449930449933	0.49930449930449933	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Lag Prediction Estimate	P_global'	0.5005924139982052	0.5005924139982052	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Lag Prediction Estimate	min entropy	0.99829166636629973	0.99829166636629973	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Lag Prediction Estimate	r	23	23	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	P_0	0.49956699999999998	0.49956699999999998	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	P_1	0.50043300000000002	0.50043300000000002	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	P_{0,0}	0.49966070617154457	0.49966070617154457	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	P_{0,1}	0.50033929382845543	0.50033929382845543	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	P_{1,0}	0.49947445407168206	0.49947445407168206	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	P_{1,1}	0.50052554592831799	0.50052554592831799	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	min entropy	0.99848647555611059	0.99848647555611059	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Markov Estimate	p-hat_max	3.3610845371993072e-39	3.3610845371993072e-39	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Most Common Value Estimate	Mode count	500433	500433	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Most Common Value Estimate	min entropy	0.99504301513122573	0.99504301513122573	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Most Common Value Estimate	p-hat	0.50043300000000002	0.50043300000000002	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal Most Common Value Estimate	p_u	0.50172091481279224	0.50172091481279224	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMCW Prediction Estimate	C	499731	499731	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMCW Prediction Estimate	P_global	0.49976248503655729	0.49976248503655729	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMCW Prediction Estimate	P_global'	0.5010504407582631	0.5010504407582631	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMCW Prediction Estimate	min entropy	0.99697224801623707	0.99697224801623707	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMCW Prediction Estimate	r	20	20	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMMC Prediction Estimate	C	499870	499870	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMMC Prediction Estimate	P_global	0.4998709997419995	0.4998709997419995	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMMC Prediction Estimate	P_global'	0.50115891628278564	0.50115891628278564	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMMC Prediction Estimate	min entropy	0.99665994380395218	0.99665994380395218	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal MultiMMC Prediction Estimate	r	20	20	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal t-Tuple Estimate	min entropy	0.91422636745977381	0.91422636745977381	0	0	EXACT
+truerand_1bit	truerand_1bit.res	Literal t-Tuple Estimate	p-hat_max	0.52934264357354366	0.5293426435735436585972	0	0	FORMAT
+truerand_1bit	truerand_1bit.res	Literal t-Tuple Estimate	p_u	0.53062833919023844	0.530628339190238440537	0	0	FORMAT
+truerand_1bit	truerand_1bit.res	Literal t-Tuple Estimate	t	16	16	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Assessed min entropy		3.6025063685670382	3.6025063685670382	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	Sum t_i	3999998	3999998	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	X-bar	2.4997222182296084	2.4997222182296084	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	X-bar'	2.4987040884494611	2.4987040884494611	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	min entropy	0.92836094530468272	0.92836094530464797	3.475e-14	3.475e-14	SUBTHRESHOLD
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	p	0.52545497545213493	0.52545497545214759	1.26565e-14	1.26565e-14	SUBTHRESHOLD
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	sigma-hat	0.5000000790700484	0.50000007907004784	5.55112e-16	5.55112e-16	SUBTHRESHOLD
+truerand_4bit	truerand_4bit.res	Bitstring Collision Estimate	v	1600177	1600177	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Compression Estimate	X-bar	5.2184492903182935	5.2184492903182935	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Compression Estimate	X-bar'	5.2152477061344653	5.2152477061344653	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Compression Estimate	min entropy	0.90062659214175955	0.90062659214175955	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Compression Estimate	p	0.023621435424653558	0.023621435424653558	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Compression Estimate	sigma-hat	1.0140889112328864	1.0140889112328864	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LRS Estimate	min entropy	0.98668739517592785	0.98668739517592785	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LRS Estimate	p-hat	0.503991213112713	0.503991213112712999056	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Bitstring LRS Estimate	p_u	0.50463515000256576	0.5046351500025657577098	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Bitstring LRS Estimate	u	19	19	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LRS Estimate	v	42	42	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LZ78Y Prediction Estimate	C	1998310	1998310	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LZ78Y Prediction Estimate	N	3999983	3999983	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LZ78Y Prediction Estimate	P_global	0.49957962321339866	0.49957962321339866	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LZ78Y Prediction Estimate	P_global'	0.50022358176059822	0.50022358176059822	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LZ78Y Prediction Estimate	min entropy	0.99935502359971773	0.99935502359971773	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring LZ78Y Prediction Estimate	r	20	20	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Lag Prediction Estimate	C	1999298	1999298	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Lag Prediction Estimate	N	3999999	3999999	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Lag Prediction Estimate	P_global	0.49982462495615626	0.49982462495615626	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Lag Prediction Estimate	P_global'	0.50046858240342129	0.50046858240342129	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Lag Prediction Estimate	min entropy	0.99864859012869489	0.99864859012869489	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Lag Prediction Estimate	r	22	22	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	P_0	0.49985675000000002	0.49985675000000002	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	P_1	0.50014325000000004	0.50014325000000004	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	P_{0,0}	0.49989797071759595	0.49989797071759595	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	P_{0,1}	0.5001020292824041	0.5001020292824041	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	P_{1,0}	0.4998158027725057	0.4998158027725057	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	P_{1,1}	0.5001841972274943	0.5001841972274943	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	min entropy	0.99946953975472053	0.99946953975472053	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Markov Estimate	p-hat_max	3.0803506998520705e-39	3.0803506998520705e-39	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Most Common Value Estimate	Mode count	2000573	2000573	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Most Common Value Estimate	min entropy	0.99773038582215656	0.99773038582215656	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Most Common Value Estimate	p-hat	0.50014325000000004	0.50014325000000004	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring Most Common Value Estimate	p_u	0.50078720737995319	0.50078720737995319	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMCW Prediction Estimate	C	2000056	2000056	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMCW Prediction Estimate	N	3999937	3999937	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMCW Prediction Estimate	P_global	0.50002187534453668	0.50002187534453668	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMCW Prediction Estimate	P_global'	0.50066583782152807	0.50066583782152807	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMCW Prediction Estimate	min entropy	0.99808007622801453	0.99808007622801453	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMCW Prediction Estimate	r	23	23	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMMC Prediction Estimate	C	1999913	1999913	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMMC Prediction Estimate	N	3999998	3999998	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMMC Prediction Estimate	P_global	0.49997849998924998	0.49997849998924998	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMMC Prediction Estimate	P_global'	0.50062245755602597	0.50062245755602597	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMMC Prediction Estimate	min entropy	0.9982050841687653	0.9982050841687653	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring MultiMMC Prediction Estimate	r	20	20	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring t-Tuple Estimate	min entropy	0.9294337363877716	0.9294337363877716	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Bitstring t-Tuple Estimate	p-hat_max	0.52442120241726853	0.5244212024172685282508	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Bitstring t-Tuple Estimate	p_u	0.52506439125888948	0.5250643912588894846039	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Bitstring t-Tuple Estimate	t	18	18	0	0	EXACT
+truerand_4bit	truerand_4bit.res	H_bitstring		0.90062659214175955	0.90062659214175955	0	0	EXACT
+truerand_4bit	truerand_4bit.res	H_bitstring Per Symbol		3.6025063685670382	3.6025063685670382	0	0	EXACT
+truerand_4bit	truerand_4bit.res	H_original		3.6877536942326419	3.6877536942326419	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LRS Estimate	min entropy	3.934965665764139	3.934965665764139	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LRS Estimate	p-hat	0.06474800258914129	0.06474800258914129025278	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Literal LRS Estimate	p_u	0.06538186472051459	0.06538186472051459030563	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Literal LRS Estimate	u	5	5	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LRS Estimate	v	9	9	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LZ78Y Prediction Estimate	C	62560	62560	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LZ78Y Prediction Estimate	P_global	0.06256106353808015	0.06256106353808015	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LZ78Y Prediction Estimate	P_global'	0.063184862350762594	0.063184862350762594	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LZ78Y Prediction Estimate	min entropy	3.9842772267416611	3.9842772267416611	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal LZ78Y Prediction Estimate	r	6	6	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Lag Prediction Estimate	C	62911	62911	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Lag Prediction Estimate	P_global	0.062911062911062909	0.062911062911062909	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Lag Prediction Estimate	P_global'	0.063536482429323429	0.063536482429323429	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Lag Prediction Estimate	min entropy	3.9762709694470533	3.9762709694470533	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Lag Prediction Estimate	r	6	6	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Most Common Value Estimate	Mode count	63134	63134	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Most Common Value Estimate	min entropy	3.9711943367296096	3.9711943367296096	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Most Common Value Estimate	p-hat	0.063133999999999996	0.063133999999999996	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal Most Common Value Estimate	p_u	0.063760451839418572	0.063760451839418572	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMCW Prediction Estimate	C	62209	62209	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMCW Prediction Estimate	P_global	0.062212919413923075	0.062212919413923075	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMCW Prediction Estimate	P_global'	0.062835109935702432	0.062835109935702432	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMCW Prediction Estimate	min entropy	3.9922852807215925	3.9922852807215925	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMCW Prediction Estimate	r	6	6	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMMC Prediction Estimate	C	62518	62518	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMMC Prediction Estimate	P_global	0.062518125036250066	0.062518125036250066	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMMC Prediction Estimate	P_global'	0.063141719345612912	0.063141719345612912	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMMC Prediction Estimate	min entropy	3.9852626440807923	3.9852626440807923	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal MultiMMC Prediction Estimate	r	6	6	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal t-Tuple Estimate	min entropy	3.6877536942326419	3.6877536942326419	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Literal t-Tuple Estimate	p-hat_max	0.076916114418496578	0.07691611441849657837544	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Literal t-Tuple Estimate	p_u	0.077602465859577668	0.07760246585957766840558	0	0	FORMAT
+truerand_4bit	truerand_4bit.res	Literal t-Tuple Estimate	t	4	4	0	0	EXACT
+truerand_4bit	truerand_4bit.res	Number of Binary Symbols		4000000	4000000	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Assessed min entropy		7.233861455178495	7.2338614551796505	1.15552e-12	1.59738e-13	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	Sum t_i	8000000	8000000	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	X-bar	2.5002922216534058	2.5002922216534058	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	X-bar'	2.4995722134095013	2.4995722134095013	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	min entropy	0.95840629541836875	0.95840629541846956	1.00808e-13	1.00808e-13	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	p	0.51462509129032696	0.51462509129029099	3.59712e-14	3.59712e-14	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	sigma-hat	0.49999999274063417	0.49999999274063472	5.55112e-16	5.55112e-16	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring Collision Estimate	v	3199626	3199626	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Compression Estimate	X-bar	5.2177128660275782	5.2177128660275782	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Compression Estimate	X-bar'	5.2154460395011881	5.2154460395011881	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Compression Estimate	min entropy	0.90423268189731187	0.90423268189745631	1.4444e-13	1.4444e-13	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring Compression Estimate	p	0.023269820763614391	0.023269820763600402	1.39888e-14	1.39888e-14	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring Compression Estimate	sigma-hat	1.0157985743570803	1.0157985743570801	2.22045e-16	2.18591e-16	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	Bitstring LRS Estimate	min entropy	0.99867108796455339	0.99867108796455339	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LRS Estimate	p-hat	0.50000543138094466	0.5000054313809446648875	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Bitstring LRS Estimate	p_u	0.50046077800130662	0.5004607780013066165026	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Bitstring LRS Estimate	u	20	20	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LRS Estimate	v	43	43	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LZ78Y Prediction Estimate	C	4000606	4000606	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LZ78Y Prediction Estimate	N	7999983	7999983	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LZ78Y Prediction Estimate	P_global	0.5000768126632269	0.5000768126632269	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LZ78Y Prediction Estimate	P_global'	0.50053215976204901	0.50053215976204901	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LZ78Y Prediction Estimate	min entropy	0.9984653280465311	0.9984653280465311	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring LZ78Y Prediction Estimate	r	20	20	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Lag Prediction Estimate	C	4000791	4000791	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Lag Prediction Estimate	N	7999999	7999999	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Lag Prediction Estimate	P_global	0.50009893751236723	0.50009893751236723	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Lag Prediction Estimate	P_global'	0.50055428415230074	0.50055428415230074	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Lag Prediction Estimate	min entropy	0.99840155983091283	0.99840155983091283	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Lag Prediction Estimate	r	23	23	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	P_0	0.49983087500000001	0.49983087500000001	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	P_1	0.50016912499999999	0.50016912499999999	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	P_{0,0}	0.49985620132414821	0.49985620132414821	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	P_{0,1}	0.50014379867585179	0.50014379867585179	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	P_{1,0}	0.49980544080964612	0.49980544080964612	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	P_{1,1}	0.50019455919035383	0.50019455919035383	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	min entropy	0.99943930316686191	0.99943930316686191	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Markov Estimate	p-hat_max	3.088625376674869e-39	3.088625376674869e-39	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Most Common Value Estimate	Mode count	4001353	4001353	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Most Common Value Estimate	min entropy	0.9981992801198275	0.9981992801198275	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Most Common Value Estimate	p-hat	0.50016912499999999	0.50016912499999999	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring Most Common Value Estimate	p_u	0.50062447159433998	0.50062447159433998	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMCW Prediction Estimate	C	3997538	3997538	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMCW Prediction Estimate	N	7999937	7999937	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMCW Prediction Estimate	P_global	0.49969618510745772	0.49969618510745772	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMCW Prediction Estimate	P_global'	0.50015153343672414	0.50015153343672414	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMCW Prediction Estimate	min entropy	0.9995628331666655	0.9995628331666655	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMCW Prediction Estimate	r	24	24	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMMC Prediction Estimate	C	3997298	3997298	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMMC Prediction Estimate	N	7999998	7999998	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMMC Prediction Estimate	P_global	0.49966237491559373	0.49966237491559373	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMMC Prediction Estimate	P_global'	0.50011772148909028	0.50011772148909028	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMMC Prediction Estimate	min entropy	0.99966036756343424	0.99966036756343424	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring MultiMMC Prediction Estimate	r	21	21	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring t-Tuple Estimate	min entropy	0.93356924430377786	0.93356924430377786	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Bitstring t-Tuple Estimate	p-hat_max	0.5231065809785963	0.5231065809785963027778	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Bitstring t-Tuple Estimate	p_u	0.52356144110715352	0.5235614411071535245767	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Bitstring t-Tuple Estimate	t	19	19	0	0	EXACT
+truerand_8bit	truerand_8bit.res	H_bitstring		0.90423268189731187	0.90423268189745631	1.4444e-13	1.4444e-13	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	H_bitstring Per Symbol		7.233861455178495	7.2338614551796505	1.15552e-12	1.59738e-13	SUBTHRESHOLD
+truerand_8bit	truerand_8bit.res	H_original		7.8651180028995897	7.8651180028995897	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LRS Estimate	min entropy	7.9391990333699249	7.9391990333699249	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LRS Estimate	p-hat	0.0039135687726790267	0.00391356877267902674572	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Literal LRS Estimate	p_u	0.0040743933037668822	0.004074393303766882246109	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Literal LRS Estimate	u	2	2	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LRS Estimate	v	4	4	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LZ78Y Prediction Estimate	C	3948	3948	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LZ78Y Prediction Estimate	N	999983	999983	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LZ78Y Prediction Estimate	P_global	0.0039480671171409918	0.0039480671171409918	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LZ78Y Prediction Estimate	P_global'	0.004109597507680046	0.004109597507680046	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LZ78Y Prediction Estimate	min entropy	7.9267871808058681	7.9267871808058681	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal LZ78Y Prediction Estimate	r	3	3	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Lag Prediction Estimate	C	3912	3912	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Lag Prediction Estimate	N	999999	999999	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Lag Prediction Estimate	P_global	0.0039120039120039123	0.0039120039120039123	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Lag Prediction Estimate	P_global'	0.0040727964933169767	0.0040727964933169767	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Lag Prediction Estimate	min entropy	7.939764556109469	7.939764556109469	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Lag Prediction Estimate	r	3	3	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Most Common Value Estimate	Mode count	4124	4124	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Most Common Value Estimate	min entropy	7.8651180028995897	7.8651180028995897	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Most Common Value Estimate	p-hat	0.0041240000000000001	0.0041240000000000001	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal Most Common Value Estimate	p_u	0.0042890742216425554	0.0042890742216425554	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMCW Prediction Estimate	C	3779	3779	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMCW Prediction Estimate	N	999937	999937	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMCW Prediction Estimate	P_global	0.0037792380919997961	0.0037792380919997961	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMCW Prediction Estimate	P_global'	0.0039372940597956173	0.0039372940597956173	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMCW Prediction Estimate	min entropy	7.9885798193670183	7.9885798193670183	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMCW Prediction Estimate	r	3	3	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMMC Prediction Estimate	C	3948	3948	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMMC Prediction Estimate	N	999998	999998	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMMC Prediction Estimate	P_global	0.0039480078960157918	0.0039480078960157918	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMMC Prediction Estimate	P_global'	0.0041095358683948232	0.0041095358683948232	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMMC Prediction Estimate	min entropy	7.9268088197517388	7.9268088197517388	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal MultiMMC Prediction Estimate	r	3	3	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal t-Tuple Estimate	min entropy	7.8651180028995897	7.8651180028995897	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Literal t-Tuple Estimate	p-hat_max	0.0041240000000000001	0.004124000000000000061562	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Literal t-Tuple Estimate	p_u	0.0042890742216425554	0.004289074221642555362344	0	0	FORMAT
+truerand_8bit	truerand_8bit.res	Literal t-Tuple Estimate	t	1	1	0	0	EXACT
+truerand_8bit	truerand_8bit.res	Number of Binary Symbols		8000000	8000000	0	0	EXACT

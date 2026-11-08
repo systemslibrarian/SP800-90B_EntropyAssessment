@@ -1,0 +1,23 @@
+Expected (correct) behaviour
+----------------------------
+After ANY run that names -o <path>, including one that exits at option parsing,
+<path> holds either this run's report or a report that says the assessment did
+not complete. It is never the previous run's errorLevel-0 report. That is the
+contract the C14 repair states in its own comment (cpp/non_iid_main.cpp:67-76,
+cpp/iid_main.cpp, cpp/restart_main.cpp): "After any run, including an abort, the
+file is either this run's report or a report saying the assessment did not
+complete. It is never a stale success."
+
+So for every probe in run.sh the expected end state is:
+  stale_<name>.json  ->  errorLevel -1, reportComplete false   (placeholder)
+  tool rc            ->  255
+and the sha256 of stale_<name>.json MUST differ from good.json.
+
+What is observed instead: the stale file is byte-identical to good.json
+(errorLevel 0, 11 test cases, a complete hAssessed) while the tool exits 255.
+The claim is bound to getopt's traversal order (claimReportTarget is called
+inside `case 'o'`), so any print_usage()/exit reached while parsing an EARLIER
+option -- an unknown letter, a malformed -l -- never claims the target.
+
+No spec arithmetic applies: n/a (report integrity). The exit status is
+correct (non-zero) in every probe; only the file channel is wrong.

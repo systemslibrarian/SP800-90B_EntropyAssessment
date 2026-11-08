@@ -1,0 +1,8 @@
+# PROV-19 control.txt  2026-11-07 21:56:21 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/c_p.json
+rc[placeholder]=255  stdout=c_p.out stderr=c_p.err
+placeholder: rc=255 errorLevel=-1 reportComplete=false
+RESULT: CONTROL-OK -- the placeholder writes reportComplete: false; the completed reports in run.sh omit the key instead of writing true

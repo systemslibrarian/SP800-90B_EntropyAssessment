@@ -1,0 +1,28 @@
+Spec: SP 800-90B 5.2.1 (PDF p. 44): "The test fails if T is greater than the
+critical value of the Chi-square test statistic with (nbin - 1) - (k - 1) =
+nbin - k degrees of freedom when the probability of type I error is chosen as
+0.001. If the value of degrees of freedom is less than one, do not apply the
+test."
+
+Input: L = 2000, k = 3, counts 1992/4/4. By hand: p = (0.996, 0.002, 0.002),
+e_{i,j} = p_i p_j floor(L/2) = 1000 p_i p_j -> four pairs at 0.004, four at
+1.992, one at 992.016; bins (ascending, close at >= 5): {0.004x4 + 1.992x3 =
+5.992}, {1.992 + 992.016} -> nbin = 2, df = 2 - 3 = -1 < 1.
+
+Expected output: the independence test is NOT applied; the report says so
+(e.g. "Chi square independence: not applied (df = -1 < 1)" and a JSON marker
+such as "ranChiSquareIndependence": false). The verdict of the battery is then
+decided by the remaining tests, which is also what the tool concludes -- the
+VERDICT is not the defect.
+
+Observed: "Chi square independence: T = 0.17059228241416982", "df = -1",
+"P-value = 1", "Chi square tests: Passed"; JSON passedChiSquareTests true,
+ranChiSquareTests true. Mechanism: chi_square_tests.h:569 `df =
+bin_expectations.size() - alphabet_size` (size_t - int wraps, then stored in
+int as -1); chi_square_pvalue -> cephes_igamc(a = df/2 <= 0, x) returns 1.0 at
+:279-281 (`if ((x <= 0) || (a <= 0)) return 1.0`); `pvalue < 0.001` is false.
+The pass rests on an incidental guard in the gamma routine, not on a decision
+the code makes, and the report misdescribes a non-applicable test as a passed
+one. Direction: neutral. LOW. Also reachable through ea_restart -i (same
+function on rows and columns). At L = 1e6 nbin <= k needs one symbol carrying
+>= 99 % of the mass, where MCV already bounds the figure at ~0.015 bit.

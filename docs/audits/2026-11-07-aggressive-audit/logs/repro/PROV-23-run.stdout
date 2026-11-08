@@ -1,0 +1,30 @@
+# PROV-23 observed.txt  2026-11-07 21:56:25 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 8414daeefef2ee495b135f83d6d210223404b1f5f1dfce303e5019d1e89644d3  (10,000 fair bits, seed 23, width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/fair10k.bin 1
+rc[iid]=0  stdout=p.out stderr=p.err
+rc=0 errorLevel=0 IID=true
+  avgCollision           C0=    6 C1=    0 C2=   17  sum=   23  partial
+  compression            C0=    5 C1=    1 C2=   10  sum=   16  partial
+  covariance1            C0=   13 C1=    0 C2=    6  sum=   19  partial
+  covariance16           C0=    5 C1=    1 C2=   47  sum=   53  partial
+  covariance2            C0=    6 C1=    0 C2=    6  sum=   12  partial
+  covariance32           C0=  110 C1=    0 C2=    6  sum=  116  partial
+  covariance8            C0=    6 C1=    0 C2=    8  sum=   14  partial
+  excursion              C0=   15 C1=    0 C2=    6  sum=   21  partial
+  lenDirectionalRuns     C0=    5 C1=    4 C2=    2  sum=   11  partial
+  lenRunsMedian          C0=    2 C1=    4 C2=   32  sum=   38  partial
+  maxCollision           C0=    5 C1=    1 C2=   12  sum=   18  partial
+  numDirectionalRuns     C0=    5 C1=    1 C2=    6  sum=   12  partial
+  numIncreasesDecreases  C0=    6 C1=    0 C2=    6  sum=   12  partial
+  numRunsMedian          C0=    6 C1=    0 C2=   24  sum=   30  partial
+  periodicity1           C0=    6 C1=    0 C2=    6  sum=   12  partial
+  periodicity16          C0=    6 C1=    0 C2=   15  sum=   21  partial
+  periodicity2           C0=    9 C1=    0 C2=    6  sum=   15  partial
+  periodicity32          C0=    7 C1=    0 C2=    6  sum=   13  partial
+  periodicity8           C0=    6 C1=    0 C2=    6  sum=   12  partial
+statistics with partial counts: 19 of 19 ; keys that could name the number of permutations evaluated: none
+DEFECT
+RESULT: PASS -- the counters are partial (early termination) and nothing in the report states the number of permutations evaluated per statistic

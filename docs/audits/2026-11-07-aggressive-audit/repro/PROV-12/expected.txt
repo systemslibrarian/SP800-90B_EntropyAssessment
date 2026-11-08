@@ -1,0 +1,18 @@
+n/a (report integrity). "commandline" is recreateCommandLine() (cpp/shared/
+utils.h:1293-1302): argv joined by single spaces, no quoting; "filename" is
+argv[optind] verbatim (non_iid_main.cpp:275). Both are written through jsoncpp
+1.9.8's valueToQuotedString(), which transcodes bytes >= 0x80 via
+utf8ToCodepoint().
+
+Expected: a byte sequence that is not valid UTF-8 is either escaped losslessly
+(per-byte, in a form the consumer can decode) or the report says it was
+altered. In no case should a VALID ASCII byte adjacent to the invalid one
+disappear.
+
+Observed: 'ea_' 0x80 'Z' 'q' -> "ea_" U+FFFD "q": the 0x80 is treated as the
+lead of a multi-byte sequence, the following 'Z' (0x5A) is consumed as its
+continuation, and the pair becomes one U+FFFD. 0xFF 0xFE -> two U+FFFD
+(nothing swallowed, because neither byte can lead a sequence). Valid JSON,
+exit 0, no diagnostic. On a filesystem that accepts such names (ext4) the same
+happens to "filename", so a report could name a file that does not exist. The
+sha256 field is the real identity and is unaffected. Direction: neutral. LOW.

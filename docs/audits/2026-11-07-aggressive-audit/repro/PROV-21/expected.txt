@@ -1,0 +1,14 @@
+n/a (CLI contract). The A04/F04 repair's own comment (TestRunUtils.h:
+versionOptionRequested): "An unrecognised option means the operator asked for
+an assessment and made a mistake, so the element goes to getopt, which reports
+it and makes the run fail; returning true there would be exit 0 with nothing
+assessed, which is F04 itself."
+
+Expected for `ea_non_iid --version -Z`: the unknown option is reported and the
+run fails (exit 255), because a malformed line should not exit 0.
+
+Observed: banner, exit 0, no mention of -Z, for all three tools. Code
+(TestRunUtils.h:321-323): `if (s.rejectAt >= 0 && s.rejectAt < s.versionAt)
+return false;` -- the unknown option only wins when it comes FIRST. Harmless in
+intent (the operator did ask for the version) but it is exit 0 on a malformed
+line, the shape F04 closed for the other ordering. Direction: neutral. LOW.

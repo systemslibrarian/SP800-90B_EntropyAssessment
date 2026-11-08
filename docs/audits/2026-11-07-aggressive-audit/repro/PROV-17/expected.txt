@@ -1,0 +1,22 @@
+n/a (CLI contract; OC-104 is a documented fork decision -- the DECISION is
+not re-reported, only the wrong reason on this shape).
+
+Line: ea_non_iid -i -- <file> 1 -q
+What both C libraries do: getopt stops at '--' (glibc does not permute past
+it; BSD never permutes), so the operands are <file>, 1, -q -> argc 3 ->
+"Incorrect usage." exit 255 on BOTH platforms. One line, one meaning.
+
+Expected refusal (either is acceptable):
+  "Incorrect usage." (3 operands) -- the usage path; or
+  an OC-104 refusal that does NOT claim the meaning depends on the C library
+  and does NOT tell the operator to add a '--' that is already present.
+
+Observed (stderr): "Error: '-q' looks like an option but appears after the
+file operand ... what this command line MEANS depends on the C library. glibc
+rearranges it and parses '-q' ... If '-q' is meant as an operand and not an
+option, separate the operands with '--'." Cause: scanArgs (TestRunUtils.h:183)
+consumes a pre-operand '--' and breaks out of the option walk; the late-option
+loop (:214-222) only stops at a '--' that appears AFTER the first operand, so
+dashDashAt is set but not consulted by that loop. Direction: wrong-reason
+refusal; neutral on figures. LOW. regression-option-order.sh tests
+'-- capture.bin 1' without a trailing option-shaped operand and cannot see it.

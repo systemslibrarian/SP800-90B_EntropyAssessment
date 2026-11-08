@@ -1,0 +1,74 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 20000,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-naive.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-naive-scaled-cap3000-8bit-20000.bin 8",
+   "dateTimeStamp" : "20261107221707",
+   "errorLevel" : 0,
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-naive-scaled-cap3000-8bit-20000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "1384c0e76ad574f77f2232458ca67009cdb7bb54c14c28ac460f93adc73502ce",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.41927457875428098,
+         "hOriginal" : 2.5888352533582708,
+         "mcvEstimateMode" : 3191.0,
+         "mcvEstimatePHat" : 0.15955,
+         "mcvEstimatePU" : 0.166219868695856,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.31006215111136576,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.34276291131959102,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.16220635016259269,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 9.0905146457300112e-06,
+         "tTupleRes" : -0.0,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 1.8412498082245044e-05,
+         "lrsRes" : 3.9984152070946447e-05,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 0.41851730937448484,
+         "hOriginal" : 2.5790149842773262,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.39515457951438954,
+         "hOriginal" : 0.00044625247715418477,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.13255284773088963,
+         "hOriginal" : 0.00044646046254409144,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.41973497911412944,
+         "hOriginal" : 2.3676673337469554,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : -0.0,
+         "hBitstring" : 9.0905146457300112e-06,
+         "hOriginal" : -0.0,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

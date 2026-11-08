@@ -1,0 +1,12 @@
+n/a (CLI contract). Usage text (cpp/restart_main.cpp:208): "-q: Quiet mode,
+less output to screen." and the tool's own convention (comment at :367):
+"verbose 0 is for JSON output".
+
+Expected for `ea_restart -n -q -o q.json M.bin 1 0.5`: nothing on stdout
+(the JSON carries restartHI = 0.5).
+
+Observed (predicted from source; measured only when run with EA_REPRO_HEAVY=1):
+stdout contains exactly one line, "H_I: 0.500000", because
+restart_main.cpp:735 prints H_I with no `if (verbose > 0)` guard, while every
+neighbouring line (:1172-1176 reprints H_I under `if (verbose > 0)`) is
+guarded. Text only; direction neutral; LOW.

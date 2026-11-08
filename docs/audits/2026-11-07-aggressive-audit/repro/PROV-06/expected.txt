@@ -1,0 +1,15 @@
+n/a (report integrity / CLI contract).
+
+Expected for `ea_non_iid -q -o a.json -o b.json file 8`: either the second -o
+is refused (exit non-zero, nothing claimed) or the tool does not claim a path
+it will not write; in no case should a run that exits 0 leave a file saying
+"The assessment did not complete ... Refuse this file." at a path the operator
+named.
+
+Observed: exit 0; b.json is the complete report; a.json is the C14 placeholder
+(errorLevel -1, reportComplete false, no testCases) and nothing on stdout or
+stderr says the first -o was superseded. Cause: non_iid_main.cpp:230-234 calls
+claimReportTarget() at every `case 'o'`, and outputfilename is overwritten by
+the last. Fail-closed for the first path (LOW), but a harness that passes -o
+twice reads a refusal where it expected a report. Same shape in ea_iid
+(iid_main.cpp:227-231) and ea_restart (restart_main.cpp:444-448).

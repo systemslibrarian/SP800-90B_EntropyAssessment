@@ -1,0 +1,35 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 20000,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/iid/smoke-csprng-8bit-20000/b-t2-r2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/smoke-csprng-8bit-20000.bin",
+   "dateTimeStamp" : "20261107215230",
+   "errorClass" : "statistical",
+   "errorLevel" : 2,
+   "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/smoke/inputs/smoke-csprng-8bit-20000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "8e5441d8de225b55a71ee7c5ab41b8031546f30923df5c7a26d9afb10a6f2317",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.98894870472753549,
+         "hOriginal" : 7.155293247024888,
+         "passedChiSquareTests" : false,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : true,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "rawMean" : 128.12235000000001,
+         "testCaseDesc" : "",
+         "translatedSymbolMedian" : 128.0
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

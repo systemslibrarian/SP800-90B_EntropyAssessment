@@ -1,0 +1,13 @@
+name: x3-probe-scaled-naive
+start: 2026-11-07T22:17:07-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: 1
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-naive.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-naive-scaled-cap3000-8bit-20000.bin 8
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 1b5963d024a9f9caa9177a310ab7a097dca1ab96e46ba238e351c59ffd32f849  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-naive.json  (2750 bytes)
+sha256 1384c0e76ad574f77f2232458ca67009cdb7bb54c14c28ac460f93adc73502ce  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-naive-scaled-cap3000-8bit-20000.bin  (20000 bytes)
+end: 2026-11-07T22:17:07-0500
+rc: 0
+report sha256 17ef1239b58354afd1293cf7f7f8c74c737e908a4a1789f30561db12426be78a  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-probe-scaled-naive.json

@@ -1,0 +1,55 @@
+# ThreadSanitizer suppressions for the 2026-11-07 sanitizer phase.
+#
+# SCOPE: libomp INTERNALS ONLY.  Nothing here names a function, file or line of the tool's
+# own code (cpp/*.cpp, cpp/**/*.h).  A report whose racing access is in the tool is NEVER
+# suppressed by this file; it is classified by summarize.py instead (README.md, "TSan").
+#
+# WHY A FILE AT ALL.  The OpenMP runtime linked here is Homebrew libomp 23.1.2
+# (/opt/homebrew/opt/libomp/lib/libomp.dylib), built without TSan instrumentation and
+# without the TSan annotations that LLVM's libomp gains from -DLIBOMP_TSAN_SUPPORT=ON.
+# No libarcher (the OMPT tool that teaches TSan about OpenMP barriers/locks) is installed,
+# and `nm` finds no ompt_start_tool in the dylib.  Two consequences:
+#
+#   (1) TSan cannot see libomp's own memory accesses (uninstrumented code is invisible to
+#       it), so a report with its TOP frame inside libomp can only arise through an
+#       intercepted libc call made by libomp (memcpy/memset/strlen...).  On Darwin TSan's
+#       default ignore_noninstrumented_modules=1 already drops those.  The race_top lines
+#       below are therefore belt-and-braces for that one mechanism, and are expected to
+#       match little; TSAN_OPTIONS=print_suppressions=1 (set by run.sh) makes the runtime
+#       print what each line matched, so the log records what was hidden.
+#
+#   (2) THE REAL LIMITATION IS NOT SUPPRESSIBLE AND MUST NOT BE SUPPRESSED.  libomp's
+#       barriers, `omp critical` locks (kmp_lock, queuing/TAS, not pthread_mutex) and
+#       fork/join are implemented with atomics inside the uninstrumented dylib, so TSan
+#       never learns the happens-before they establish.  Accesses in the TOOL's code that
+#       are correctly ordered by an OpenMP barrier or a named critical section therefore
+#       look unsynchronized to TSan, and the reports land on tool lines
+#       (cpp/iid/permutation_tests.h).  Those reports are triaged, not suppressed:
+#       summarize.py derives the critical/atomic/parallel line ranges from the source and
+#       classes each report as SAME_CRITICAL (both accesses inside one named critical:
+#       the platform false-positive class, indistinguishable from a real race by TSan
+#       here), CROSSES_CRITICAL, ATOMIC_VS_PLAIN or PARALLEL_PLAIN (genuinely
+#       unsynchronized by construction: candidates for an owner decision).  A TSan-
+#       instrumented libomp (or Archer) is the only way to a clean signal; neither is
+#       built in this phase.
+#
+# Pattern syntax: sanitizer_common TemplateMatch -- `*` wildcard, `^`/`$` anchors.
+# race_top matches ONLY the top frame of each access stack (function, file or module);
+# `race:` would match any frame and would hide every race in an outlined parallel region,
+# because __kmp_invoke_microtask is always beneath it -- which is exactly why `race:` is
+# not used.
+
+# Intercepted libc calls made by libomp itself (mechanism (1)).
+race_top:libomp.dylib
+race_top:^__kmp_*
+race_top:^__kmpc_*
+race_top:^kmp_*
+
+# libomp keeps its worker pool alive until process exit; TSan would otherwise report every
+# pool thread as a "thread leak" at exit.  Matched against the thread's creation stack.
+thread:libomp.dylib
+thread:^__kmp_create_worker*
+
+# libomp destroys its own internal locks at shutdown while workers may still hold them in
+# its pool teardown; reports of that kind name libomp frames only.
+mutex:libomp.dylib
