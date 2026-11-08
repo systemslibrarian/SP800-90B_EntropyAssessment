@@ -197,3 +197,6 @@ SANITIZER    0s exit=0   ea_non_iid-lfsr16-tap1-1bit-50000.c-w1.ubsan-continue.l
 harness/sanitizers/run.sh: line 377: 97160 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
 SANITIZER  116s exit=134 ea_non_iid-lfsr16-tap1-8bit-50000.ia-w8.log
 SANITIZER   83s exit=0   ea_non_iid-lfsr16-tap1-8bit-50000.ia-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 56904 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER  178s exit=134 ea_non_iid-lfsr16-tap1-8bit-50000.c-w8.log
+NOTE Sun Nov  8 15:58:22 EST 2026: Lag-only reference run concurrently with the ASan 50k stage (ASan runs ~7 MB RSS; this job is chunked/bounded) -- a recorded exception to one-heavy-job

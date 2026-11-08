@@ -116,3 +116,22 @@ JSON top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred
 JSON Overall.hAssessed=1.5157083660394497
 RESULT: PASS -- the width-mismatch warning is printed on stdout despite -q, exit 0, and the JSON (errorLevel 0) carries no errorMessage, no warning field; a JSON-only consumer cannot see that the declared width was wrong
 restored run.sh exit=0 (expected 0 = PASS)
+
+===== VERIFIER SUMMARY (PROV-04, lens REPRODUCE) =====
+(a) observed.txt shows exactly the claimed defect. Lines quoted from the re-run above:
+      |   | Warning: Symbols appear to be narrower than described.     <- on STDOUT under -q (w8.err is 0 bytes)
+      | rc[declared8_q]=0
+      | JSON errorLevel=0 errorMessage=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false
+      | JSON top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+    Independent python read: no key containing 'warn', no substring 'narrower' or 'warning' anywhere in w8.json.
+    Values match the author's 2026-11-07 record exactly (hAssessed 1.5157083660394497; same binary sha256 1ad1568c...; same fixture sha256 a9e2169c...).
+(b) control.sh differs from run.sh only in the declared width operand (4 vs 8; output filename w4/w8 is immaterial): same binary, fixture, flags (-q -o), env.
+    Control: 0 warning lines, rc 0, errorLevel 0, errorMessage absent, IDENTICAL top-level key set, hAssessed 3.2154882678767365. The control does not show the defect because the warning condition is not raised.
+    Supplementary (logs/verify/PROV-04-supp-declared2.log): declared 2 on the same fixture -> rc 255, JSON errorLevel -1, errorMessage "Error: Incorrect bit width specification: Data (4) does not fit within described bit width: 2.", errorClass "input". This shows the test_run_base.h:69-72 gate directly: errorMessage IS emitted when errorLevel != 0, so the warning's loss is exactly the errorLevel-0 path.
+(c) run.sh PASS gate = rc==0 AND nwarn>=1 AND errorLevel=="0" (parsed JSON) AND errorMessage=="<absent>" (sentinel printed only when the JSON parsed and the key is missing; an unparseable/missing JSON yields "" and FAILs). Not vacuous: the grep pattern does not match the short-dataset banner (control counts 0 with the banner present). Instrument rule 2 satisfied (absence asserted on a well-formed report, rc read from the producer).
+    Rule 7 mutation: '-ge 1' -> '-ge 2' => "RESULT: FAIL -- rc=0 warnings=1 errorLevel=0 errorMessage=<absent>", exit 1. Restored via cp (sha256 4e207c55... identical before/after), re-run PASS exit 0.
+    Weakness noted: control.sh's CONTROL-OK gate asserts only rc==0 and nwarn==0; errorLevel/hAssessed are logged, not asserted (the success path exits nonzero if the report cannot be written, so rc 0 does imply a written report).
+Framing caveat: the usage text documents -q as "Quiet mode, less output to screen" and the code implements it as verbose=0 only; the escape banner also prints under -q by design. So "printed despite -q" is accurate but -q never promised silence; the substantive defect is that a condition the code stores in errorMsg never reaches the JSON report.
+Upstream: identical lines in tag unrepaired-reference-2026-10-15 (utils.h:368-369, 534-535; test_run_base.h:52-54 gate). No selftest mentions the warning text.
+Stale-message check (bounded): the later errorLevel setters on the main path (alph_size<=1 at non_iid_main.cpp:333, dataset_meets_minimum utils.h:308, iid INT_MAX and IID-fail) each overwrite errorMsg, so the warning text does not leak as a stale errorMessage on those paths.
+VERDICT: CONFIRMED. Severity LOW (brief: reporting, not a wrong figure; conservative on this fixture, neutral in general). Reachable with compliant input: the datamask check is length-independent; the escape was used here only to keep the probe at 10,000 samples.

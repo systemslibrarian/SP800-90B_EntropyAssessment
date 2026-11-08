@@ -91,3 +91,30 @@ Bitstring mode (text) = '40099'   Literal mode (text) = '58'
     <    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-c8_vv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
     ---
     >    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-c8_q.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
+
+# CORRECTION appended 2026-11-08 15:57:10 -0500: the 'fixture ... size=' line above is garbled because 'stat -f %z' on this host is GNU stat (-f = filesystem). Correct size:
+fixture size bytes = 10000  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin)  => 10,000 samples at 8 bits/sample
+
+# Provenance of the mechanism (git blame, all upstream authors; no fork commit touches these lines):
+  64056aa7 (Joshua E. Hill 2022-02-21 40)     string literal = "Literal";
+  64056aa7 (Joshua E. Hill 2022-02-21 41)     tc.mcv_estimate_mode = mode;
+  64056aa7 (Joshua E. Hill 2022-02-21 42)     tc.mcv_estimate_p_hat = pmax;
+  64056aa7 (Joshua E. Hill 2022-02-21 43)     tc.mcv_estimate_p_u = ubound;
+  64056aa7 (Joshua E. Hill 2022-02-21 44)     tc.literal_mcv_estimate = literal.compare(label);
+  04e8b4f9 (Chris Celi 2022-02-16 65) 
+  04e8b4f9 (Chris Celi 2022-02-16 66)         // not needed in every test case, easier to exclude for now
+  04e8b4f9 (Chris Celi 2022-02-16 67)         //baseJson["mcvEstimate"] = literal_mcv_estimate ? "literal" : "bitstring";
+  b795b2f5 (Chris Celi       2020-07-16 362)     NonIidTestCase tc631;
+  04e8b4f9 (Chris Celi       2022-02-16 363) 
+  8ba6c24e (Andrew McCaffrey 2020-10-08 364)     if (((data.alph_size > 2) || !initial_entropy)) {
+  8ba6c24e (Andrew McCaffrey 2020-10-08 365)         ret_min_entropy = most_common(data.bsymbols, data.blen, 2, verbose, "Bitstring", tc631);
+  8ba6c24e (Andrew McCaffrey 2020-10-08 371)     if (initial_entropy) {
+  8ba6c24e (Andrew McCaffrey 2020-10-08 372)         ret_min_entropy = most_common(data.symbols, data.len, data.alph_size, verbose, "Literal", tc631);
+# Source drift check: git log 1151b22..HEAD -- cpp/  ->  0 commits (0 = binary built at 1151b22 matches HEAD 6634722 for cpp/)
+
+# Note on the 'Overall hAssessed = <absent>' lines above: those reads looked at the top level; the figure lives one level down. Labelled read of the real location, and the direction check:
+  PROV-03-i8_vv.json: top-level keys = ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+    MCV case: -log2(mcvEstimatePU=0.007756093777586632) = 7.01045403773604; hOriginal = 7.010454037736041; hBitstring = 0.9833867846591503
+  PROV-03-c8_vv.json: top-level keys = ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+    MCV case: -log2(mcvEstimatePU=0.505790980432204) = 0.98338678465915; hOriginal = '<absent>'; hBitstring = 0.9833867846591503
+  => In -i the triple's -log2(p_u) equals hOriginal (Literal branch); in -c it equals hBitstring (Bitstring branch). The per-branch entropies hOriginal/hBitstring are each present and correct; only the three intermediate keys are single-valued and mode-dependent. Direction: neutral (no entropy figure changes).

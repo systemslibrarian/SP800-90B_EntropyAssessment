@@ -130,14 +130,65 @@ exit 0). Not built or shipped by this fork; the tracker's `EXCLUDED-UNSUPPORTED`
 See **L-01** in §2: on a compliant 8-bit capture with one stuck (constant) bit line and bit-level structure the
 symbol-level estimators cannot see, the tool — following §3.1.3 literally — reported **2.569 bits/sample against a
 true conditional min-entropy of 1.064 (2.42×)**, while the same bits assessed at their real width gave 1.063.
-Whether the C++ matches the standard's figure there is being established by the spec-only reference (CHAIN-5); if it
-does not, this moves to §1.1 as a code defect.
+**The C++ computes the standard's figure exactly**: the spec-only Lag reference (the binding bitstring estimator)
+reproduces the tool on both files to the last printed digit of every intermediate — `C = 6400390, r = 81,
+N = 7999999, P_global = 0.80004885000610626`, min-entropy `0.321183283` vs the tool's `0.321183326` (the 4e-8 residue
+is the documented D-1 quantile) — and on the unpadded 7-bit file `C = 6298781, r = 161, 0.1518135` both ways
+(`logs/experiments/x2b-ref-lag-*.json` vs `x2b-chain-lag20-*-inferred.stdout`). So this is not a code defect and
+cannot be repaired in the code without departing from the text; it is the limitation an 8-bit consumer must
+defend against operationally (L-01).
 
 ---
 
 ## 2. Limitations (the standard's own design, code follows the text)
 
-_(from `LIMITATIONS-DRAFT.md`, revised against the compliant-size experiments)_
+Full entries, with the standard's text, the code site, the construction, the record paths and the mitigation, are in
+`LIMITATIONS-DRAFT.md` (L-01…L-17), written from the analysis logs and revised here where this audit measured at
+compliant size.
+
+**L-01 — a stuck (constant) non-leading bit line inflates `n × H_bitstring`, and at compliant size the inflated term
+can be the assessed figure, 2.42× the truth.** §3.1.3 (PDF p. 20): *"L samples (each having n bits) is considered as a
+bitstring of size nL … the entropy per sample is estimated to be n × H_bitstring"*; §6.4's bit ranking is the
+submitter's optional step for n above the tool's width and is not implemented. Experiment X2 (1,000,000 samples,
+`harness/experiments/x2_stuck_lsb_chain.py`, truth derived in `x2-truth.json`): seven real bits forming a bit-level
+Markov chain with `P(r_t = r_{t−20}) = 0.9` — true conditional min-entropy `−log2(0.9^7) = 1.0640` bits/sample —
+stored with a constant bit 0 as 8-bit samples.
+
+| run | n | H_original | n × H_bitstring | **Assessed** | vs truth 1.0640 |
+|---|---|---|---|---|---|
+| the 7 real bits, 7 per byte, width inferred 7 | 7 | 3.2278 | 1.0627 | **1.0627** | −0.0013 (≤ truth) |
+| the same bits + constant LSB 0, width 8 | 8 | 3.2278 | 2.5695 | **2.5695** | **+1.5054 (2.42×)** |
+| the 7-bit file DECLARED 8 (pad first) | 8 | 3.2278 | 2.5695 | **2.5695** | **+1.5054** |
+
+Mechanism (derived in `harness/experiments/PLAN.md` X2 and confirmed by the Lag intermediates): the pad bit sits
+between the real bits, so the real lag-20 dependence lands at bitstring lags 22/23; the Lag predictor is right on
+6/8 of positions at 0.9 and guesses the pad and one bit at 0.5 → P ≈ 0.80 → 0.321 bit/bit × 8 = 2.57, while the
+16-bit-context predictors (MultiMMC, LZ78Y) learn only the pad phase; at width 7 the lag is intact and Lag gives
+0.152 × 7 = 1.063. `H_original` (3.23) cannot bind because the dependence is between shifted bit positions of
+samples t−3 and t−2 — no symbol repeats, no tuple repeats, the depth-3 context space exceeds the dictionary cap.
+The lag-1 variant (A) is bound by `H_original` at 1.0616 ≤ truth: the limitation needs structure the symbol-level
+battery misses.
+
+Why a limitation: the C++ is the text (§1.4). Target profile: an Infinite Noise unit at 8 bits with one stuck line is
+a plausible degraded-device state, and the direction is toward overstatement. **Mitigation that touches no
+numerics: assess at the real width.** Measure the eight per-position bit proportions of the capture before
+assessment; a constant or near-constant line means the capture is refused or the line is stripped and the data
+re-packed at the narrower width. **"Always declare 8" is the wrong rule here** (declared-8 on the 7-bit file gives
+2.5695; inferred 7 gives 1.0627); "always declare the width" is right only when every line is live. At width 1 the
+mechanism does not exist.
+
+**L-02 — F02, width inference** (+38.5 % at compliant size, §3): both figures below the truth in every measured case;
+the operational rule is the one above, not "declare 8".
+
+**L-03…L-17** — as drafted: observed-alphabet "binary" (L-03); Collision step 8's 1-bit fallback on anti-correlated
+data (L-04); Compression step 8's 1-bit fallback incl. a stuck-then-live capture (L-05); the Markov six-path table,
++0.0037 bit/bit measured (L-06); Compression's printed outer-sum limit `L` vs the worked example's `⌊L/b⌋` and the
+σ̂ radicand (L-07); errata in the standard's worked examples (L-08); the `-c` byte count (L-09 — **moved to AA-01**,
+because the text is not ambiguous and no decision covers it); C23 (L-10); the standard cannot see a DRBG — the
+record's AES-CTR zero-key stream at 7.145 of 8 bits, `OC-109` (L-11); MultiMMC's cap and the margin being a
+measurement (L-12 — **re-measured ±0.08 bit at width 8, §3**); omitted estimators and the minimum over fewer (L-13);
+single-estimator blind spots (L-14); `-t` truncation (L-15); implementer-chosen numerics (L-16); the nondeterministic
+permutation verdict (L-17).
 
 ---
 

@@ -139,3 +139,30 @@ Traceback (most recent call last):
 ValueError: could not convert string to float: '<absent>'
 7d python exit=1  (nonzero -> FAIL)
 --- 7e: note -- run.sh line 47 'case "$res" in *DEFECT) ;; esac' matches both DEFECT and NODEFECT and does nothing: dead code; the live decision is line 48's grep '^DEFECT$'. Lines 19-32 (unitkeys) are LOGGED but NOT asserted: the PASS message's clause 'no unit or mode field in the report' is the author's reading, not a tested condition; the search itself hit bitsPerSymbol,bitsPerSymbolInferred.
+
+===== STEP 8: prior-documentation check (brief rule 8 / task 'prior knowledge') =====
+The reproducer README cites tracker F23 as 'UNCONFIRMED there; confirmed by this run' and does NOT cite the independent audit's C02, which already reproduced and DISPOSITIONED this exact behaviour:
+  audits/2026-09-30/AUDIT.md:53            F23: 'under -c JSON hAssessed = word_size x h' while text prints h'' -- direction 'neither', status PROVEN
+  audits/2026-09-30/FINDINGS-TRACKER.md:1111  F23 composite UNCONFIRMED ('Partly reproduces'); next action 'Verify each sub-claim; file the unique part'
+  audits/2026-10-11-independent-audit/CLUSTERS.md:53-63   C02-c-mode-hassessed (lead candidate output-automation-contracts-1, same wording as PROV-02)
+  audits/2026-10-11-independent-audit/DISPOSITIONS.md:9    'C02 -- -c reports hAssessed per symbol: not reopened. Prior decision stands.' (:24 'nothing the tool computes is wrong, and the behaviour is not new'; :26-27 promotes F23 sub-claim (b) to confirmed by execution; :29 'No new finding ID is issued. No severity is assigned.')
+  audits/2026-10-11-independent-audit/DISPOSITIONS.md:38-45  the sub-claim 'there is no mode field' is filed REFUTED: hOriginal is emitted iff -i and hBitstring iff bitstring ran, so hOriginal's absence identifies a -c run; 'the fair version of the complaint is that the discriminator is implicit, unnamed and undocumented'
+  audits/2026-10-11-independent-audit/DIRECTION-TRIAGE.md:55  C02 'Prior decision stands (F23); not reopened.'
+  audits/2026-10-11-independent-audit/REPAIR-STRATEGY.md:61,79  C02 Class 1 CONFIGURATION/READING: 'read h', not hAssessed, for a per-bit figure'
+  audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md:3582  C02 'reproduced today: hAssessed 7.2338614551796505 = 8 x 0.9042326818974563 on an 8-bit control; LIVE and correct as recorded; now checked mechanically by entropy_floor.py'
+  audits/2026-10-11-independent-audit/oracles/entropy_floor.py:10-13,413-435  the oracle refuses to use hAssessed as per-bit and checks hAssessed == word_size x h' (C02)
+  FORK-DIVERGENCE-AND-TRUST.md sections A/B/D: no entry for this item (grep hAssessed/dataWordSize: none); C16 (:420-429) is the analogous INPUT-side scale ambiguity for ea_restart H_I, repaired by requiring /symbol or /bit.
+  Upstream inheritance: git show upstream/master:cpp/non_iid_main.cpp lines 491-512 are textually identical to the fork's 635-656 (h_assessed = min(h_assessed, H_bitstring * word_size); printf h' = H_bitstring; 'H_bitstring Per Symbol').
+
+===== STEP 9: this run's (a)(b)(c) summary =====
+(a) observed.txt shows exactly the claimed behaviour: text 'h': 0.732612' ; JSON Overall.hAssessed 5.860893744485249 = 8 x hBitstring 0.7326117180606562 (rel 1e-12) ; dataWordSize 8.0 ; -vvv 'H_bitstring Per Symbol = 5.8608937444852494' = 'Assessed min entropy'. Values identical to the author's record; only timestamp/git header lines differ.
+(b) control.sh changes TWO things (fixture rand1_short.bin AND declared width 1). Weaker than a one-variable control, but my probes c1w1 vs c1w8 (same bytes, width only) give ratio 1 vs 8 (logs/verify/PROV-02-verify-probes.log), so the width is the sole cause. The control genuinely shows no gap: hAssessed == h' == 0.6117162047939451 at width 1.
+(c) PASS requires rc 0, four parsed floats, hA == dws*hB (1e-12 rel), dws*h' ~ hA (1e-5*dws), |hA-h'| >= 1e-5, dws > 1. Absent h' line or absent hAssessed -> Python ValueError -> FAIL (7c, 7d). Mutant (expect hA == hB) -> RESULT: FAIL exit 1 (STEP 3). Dead code at line 47; 'unitkeys' (lines 19-32) logged but NOT asserted and its hit list (bitsPerSymbol,bitsPerSymbolInferred) contradicts the PASS message's 'no unit or mode field' clause; the -vvv run's rc is not asserted (informational only).
+
+===== files =====
+0e668b7e120ac55b393bfc9270784576fc91564da4dfe0611bc8004ab8f34937  logs/verify/PROV-02-reproduce.log
+2b4c0f01a125dff43497542504be49edd11371e2a1c7844f98c015c5dde00494  logs/verify/PROV-02-verify-probes.log
+094c59e05512bd05d76eee55044f3968b3f55d987e9735684b0f4d2f431efa2b  repro/PROV-02/run.sh
+f987a1aa1ad8e10414a8bd0967c2e1a60bc52a7f38df04ba3113c5c6bae6f3be  repro/PROV-02/control.sh
+616fa680209f21e8b3b02cee97bb2bcddc98c780121e1589d2827710a8f177f1  repro/PROV-02/observed.txt
+607fe6bffb72313162888b4d8e36b3e8fcac5ad2e7785401fec5cf9309e5e110  repro/PROV-02/control.txt

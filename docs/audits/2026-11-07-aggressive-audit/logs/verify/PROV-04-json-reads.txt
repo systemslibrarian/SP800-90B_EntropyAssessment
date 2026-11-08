@@ -1,0 +1,36 @@
+PROV-04-noniid-w8.json
+  errorLevel                 0
+  errorMessage               <absent>
+  errorClass                 <absent>
+  bitsPerSymbol              8
+  bitsPerSymbolInferred      false
+  nonCompliantShortDataset   true
+  assessedSampleCount        10000
+  sha256                     "a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac"
+  top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+  Overall.hAssessed          1.5157083660394497
+  Overall.hOriginal          3.567472672399599
+  Overall.hBitstring         0.1894635457549312
+  Overall.data_word_size     <absent>
+  Overall.dataWordSize       8.0
+  Overall keys: dataWordSize hAssessed hBitstring hOriginal testCaseDesc
+  substring 'warn' anywhere in JSON: no
+  substring 'narrow' anywhere in JSON: no
+PROV-04-noniid-w4.json
+  errorLevel                 0
+  errorMessage               <absent>
+  errorClass                 <absent>
+  bitsPerSymbol              4
+  bitsPerSymbolInferred      false
+  nonCompliantShortDataset   true
+  assessedSampleCount        10000
+  sha256                     "a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac"
+  top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+  Overall.hAssessed          3.2154882678767365
+  Overall.hOriginal          3.567472672399599
+  Overall.hBitstring         0.8038720669691841
+  Overall.data_word_size     <absent>
+  Overall.dataWordSize       4.0
+  Overall keys: dataWordSize hAssessed hBitstring hOriginal testCaseDesc
+  substring 'warn' anywhere in JSON: no
+  substring 'narrow' anywhere in JSON: no

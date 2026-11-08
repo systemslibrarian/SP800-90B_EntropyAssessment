@@ -1,0 +1,7 @@
+  errorLevel                 2
+  errorMessage               "IID test suite failed; no IID min-entropy estimate was awarded."
+  bitsPerSymbol              8
+  bitsPerSymbolInferred      false
+  nonCompliantShortDataset   true
+  IID                        false
+  'narrow' anywhere: no
