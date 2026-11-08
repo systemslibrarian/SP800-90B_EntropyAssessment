@@ -1,0 +1,21 @@
+== PROV-03-i8.json ==
+top-level keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+MCV element: {"hBitstring": 0.9833867846591503, "hOriginal": 7.010454037736041, "mcvEstimateMode": 58.0, "mcvEstimatePHat": 0.0058, "mcvEstimatePU": 0.007756093777586632, "testCaseDesc": "Most Common Value"}
+mcvEstimate* keys on MCV element: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+Overall element: {"dataWordSize": 8.0, "hAssessed": 5.860893744485249, "hBitstring": 0.7326117180606562, "hOriginal": 6.636441287061232, "testCaseDesc": "Overall"}
+mcvEstimate* keys on Overall element: []
+occurrences of '40099' in JSON text: 0
+occurrences of '58.0' / '"mcvEstimateMode" : 58' in JSON text: 1 1
+elements with any mcvEstimate* key: ['Most Common Value']
+== PROV-03-c8.json ==
+top-level keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+MCV element: {"hBitstring": 0.9833867846591503, "mcvEstimateMode": 40099.0, "mcvEstimatePHat": 0.5012375, "mcvEstimatePU": 0.505790980432204, "testCaseDesc": "Most Common Value"}
+mcvEstimate* keys on MCV element: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+Overall element: {"dataWordSize": 8.0, "hAssessed": 5.860893744485249, "hBitstring": 0.7326117180606562, "testCaseDesc": "Overall"}
+mcvEstimate* keys on Overall element: []
+occurrences of '40099' in JSON text: 1
+occurrences of '58.0' / '"mcvEstimateMode" : 58' in JSON text: 0 0
+elements with any mcvEstimate* key: ['Most Common Value']
+== independent arithmetic (ZALPHA = 2.5758293035489008) ==
+Bitstring: mode=40099 L=80000 p-hat=0.5012375 p_u=0.505790980432204 -log2(p_u)=0.9833867846591503
+Literal: mode=58 L=10000 p-hat=0.0058 p_u=0.007756093777586632 -log2(p_u)=7.010454037736041

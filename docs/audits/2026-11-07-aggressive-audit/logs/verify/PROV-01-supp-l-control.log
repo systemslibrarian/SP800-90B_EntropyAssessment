@@ -1,0 +1,21 @@
+# supplementary control (verifier-added): the -l 5x,10 error placed AFTER -o
+$ cpp/ea_non_iid -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-supp-l-control/stale_l_ctl.json -l 5x,10 bin/rand8_short.bin 8
+rc=255
+sha before=57e349dab20b1f87f13318c9948caa2492c801b5baa643b07d4c00899ae14d84
+sha after =7db0d9485660fc0f8833614cea298f8c4583fc0a41ad90f8b667c17f6e09f42f
+stderr:
+stdout first 2 lines:
+Error: -l requires unsigned decimal <index>,<samples>.
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+file now:
+{
+   "IID" : false,
+   "commandline" : "cpp/ea_non_iid -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-supp-l-control/stale_l_ctl.json -l 5x,10 bin/rand8_short.bin 8",
+   "dateTimeStamp" : "20261108155214",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: -l requires unsigned decimal <index>,<samples>.",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}
+

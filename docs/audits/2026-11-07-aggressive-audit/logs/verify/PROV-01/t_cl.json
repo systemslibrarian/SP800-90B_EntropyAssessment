@@ -1,0 +1,10 @@
+{
+   "IID" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_cl.json -l 5x,10 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
+   "dateTimeStamp" : "20261108155206",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: -l requires unsigned decimal <index>,<samples>.",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

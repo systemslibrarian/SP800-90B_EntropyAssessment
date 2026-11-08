@@ -1,0 +1,21 @@
+# PROV-02 verifier probe 2026-11-08 15:53:06 -0500 host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples)
+# git=f40eadd branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+fixture sha256 a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  rand4_short.bin
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  rand8_short.bin
+rc[c4]=0
+rc[i8]=0
+rc[i8v]=0
+[c4] commandline='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-02-c4.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 4'
+[c4] bitsPerSymbol=4 inferred=False Overall={"dataWordSize": 4.0, "hAssessed": 3.2154882678767365, "hBitstring": 0.8038720669691841, "testCaseDesc": "Overall"}
+[c4] text h' lines=['0.803872'] text min(H_original, n X H_bitstring) lines=[]
+[c4] hAssessed/hBitstring=4  hAssessed==dataWordSize*hBitstring: True
+[c4] text h' == JSON hAssessed to 1e-5: False ; text h' == JSON hBitstring to 1e-5: True
+[i8] commandline='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-02-i8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8'
+[i8] bitsPerSymbol=8 inferred=False Overall={"dataWordSize": 8.0, "hAssessed": 5.860893744485249, "hBitstring": 0.7326117180606562, "hOriginal": 6.636441287061232, "testCaseDesc": "Overall"}
+[i8] text h' lines=[] text min(H_original, n X H_bitstring) lines=[('8', '5.860894')]
+[i8] hAssessed/hBitstring=8  hAssessed==dataWordSize*hBitstring: True
+[i8] hAssessed==min(w, hOriginal, w*hBitstring): True
+[i8] text min(...) == JSON hAssessed to 1e-5: True
+[i8v] text: ['H_bitstring = 0.73261171806065617', 'H_bitstring Per Symbol = 5.8608937444852494', 'H_original = 6.6364412870612322', 'Assessed min entropy: 5.8608937444852494']

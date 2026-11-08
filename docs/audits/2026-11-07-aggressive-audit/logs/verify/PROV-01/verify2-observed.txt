@@ -1,0 +1,15 @@
+# verify2-observed.txt 2026-11-08 15:53:01 -0500 host=Darwin 25.6.0 arm64 git=f40eadd
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f cpp/ea_non_iid
+good.json sha256 a8597ca1d60bd9f550dabda477266a10f224188c0ca610d0b78a7d267dd3c773 (from verify.sh)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_ver1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[ver1]=0
+  ver1: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=0
+  ver1 stdout line1: non_iid 1.1.8
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_ver2.json --version /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[ver2]=0
+  ver2: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=0
+  ver2 stdout line1: non_iid 1.1.8
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_cnt.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 9 10
+rc[cnt]=255
+  cnt: file=REPLACED (errorLevel/reportComplete now: -1 False) rc=255
+DONE

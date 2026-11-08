@@ -1,0 +1,93 @@
+# PROV-03 REFUTE-lens verification  2026-11-08 15:56:18 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent of repro/PROV-03/run.sh; own labelled reads
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every run below is a NON-COMPLIANT short-dataset run (10,000 samples)
+# repo HEAD=f40eadd branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+stat: cannot read file system information for '%z': No such file or directory
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  size=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5975051    Available: 5975051
+Inodes: Total: 246501719  Free: 239002040 bytes
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-i8_vv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i8_vv]=0  stdout=PROV-03-i8_vv.out (116 lines) stderr=PROV-03-i8_vv.err (0 bytes)
+  text lines matching 'Most Common Value Estimate' (labelled grep, full lines):
+    Bitstring Most Common Value Estimate: Mode count = 40099
+    Bitstring Most Common Value Estimate: p-hat = 0.5012375
+    Bitstring Most Common Value Estimate: p_u = 0.50579098043220405
+    Literal Most Common Value Estimate: Mode count = 58
+    Literal Most Common Value Estimate: p-hat = 0.0057999999999999996
+    Literal Most Common Value Estimate: p_u = 0.0077560937775866317
+  JSON 'Most Common Value' test case (read by testCaseDesc, every key):
+    count of testCases with testCaseDesc=='Most Common Value': 1
+    hBitstring = 0.9833867846591503
+    hOriginal = 7.010454037736041
+    mcvEstimateMode = 58.0
+    mcvEstimatePHat = 0.0058
+    mcvEstimatePU = 0.007756093777586632
+    testCaseDesc = 'Most Common Value'
+    Overall hAssessed = <absent>  hOriginal = <absent>  hBitstring = <absent>
+    keys anywhere in JSON containing 'mcv' (case-insensitive): ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i  -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-i8_q.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i8_q]=0  stdout=PROV-03-i8_q.out (19 lines) stderr=PROV-03-i8_q.err (0 bytes)
+  JSON 'Most Common Value' test case (read by testCaseDesc, every key):
+    count of testCases with testCaseDesc=='Most Common Value': 1
+    hBitstring = 0.9833867846591503
+    hOriginal = 7.010454037736041
+    mcvEstimateMode = 58.0
+    mcvEstimatePHat = 0.0058
+    mcvEstimatePU = 0.007756093777586632
+    testCaseDesc = 'Most Common Value'
+    Overall hAssessed = <absent>  hOriginal = <absent>  hBitstring = <absent>
+    keys anywhere in JSON containing 'mcv' (case-insensitive): ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-c8_vv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_vv]=0  stdout=PROV-03-c8_vv.out (74 lines) stderr=PROV-03-c8_vv.err (0 bytes)
+  text lines matching 'Most Common Value Estimate' (labelled grep, full lines):
+    Bitstring Most Common Value Estimate: Mode count = 40099
+    Bitstring Most Common Value Estimate: p-hat = 0.5012375
+    Bitstring Most Common Value Estimate: p_u = 0.50579098043220405
+  JSON 'Most Common Value' test case (read by testCaseDesc, every key):
+    count of testCases with testCaseDesc=='Most Common Value': 1
+    hBitstring = 0.9833867846591503
+    mcvEstimateMode = 40099.0
+    mcvEstimatePHat = 0.5012375
+    mcvEstimatePU = 0.505790980432204
+    testCaseDesc = 'Most Common Value'
+    Overall hAssessed = <absent>  hOriginal = <absent>  hBitstring = <absent>
+    keys anywhere in JSON containing 'mcv' (case-insensitive): ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c  -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-c8_q.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_q]=0  stdout=PROV-03-c8_q.out (17 lines) stderr=PROV-03-c8_q.err (0 bytes)
+  JSON 'Most Common Value' test case (read by testCaseDesc, every key):
+    count of testCases with testCaseDesc=='Most Common Value': 1
+    hBitstring = 0.9833867846591503
+    mcvEstimateMode = 40099.0
+    mcvEstimatePHat = 0.5012375
+    mcvEstimatePU = 0.505790980432204
+    testCaseDesc = 'Most Common Value'
+    Overall hAssessed = <absent>  hOriginal = <absent>  hBitstring = <absent>
+    keys anywhere in JSON containing 'mcv' (case-insensitive): ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+
+# cross-check: Bitstring mode count from -i -vv text vs occurrences in -i JSON texts
+Bitstring mode (text) = '40099'   Literal mode (text) = '58'
+  PROV-03-i8_vv.json: occurrences of '40099' = 0; occurrences of '58' as a value = 1
+  PROV-03-i8_q.json: occurrences of '40099' = 0; occurrences of '58' as a value = 1
+  PROV-03-c8_vv.json: occurrences of '40099' = 1; occurrences of '58' as a value = 0
+  PROV-03-c8_q.json: occurrences of '40099' = 1; occurrences of '58' as a value = 0
+
+# verbosity independence: byte-compare JSON -i -vv vs -i (quiet), ignoring nothing
+  -i JSON identical at -vv and default verbosity: NO
+    6,7c6,7
+    <    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-i8_vv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
+    <    "dateTimeStamp" : "20261108155619",
+    ---
+    >    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-i8_q.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
+    >    "dateTimeStamp" : "20261108155621",
+  -c JSON identical at -vv and default verbosity: NO
+    6c6
+    <    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-c8_vv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
+    ---
+    >    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-c8_q.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",

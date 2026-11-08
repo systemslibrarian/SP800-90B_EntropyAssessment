@@ -13,7 +13,7 @@
 ## note: refdata_inferred_width:1 (extra: not in selftest)
 ## timeout_seconds: 600
 ## threads: 2
-## start: 2026-11-08T03:34:01Z
+## start: 2026-11-08T20:51:01Z
 ## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
 ## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin
 ## --- tool output ---
@@ -65,25 +65,25 @@ Permutation testing: Unpermuted result compression = 1611
 
                 statistic  C[i][0]  C[i][1]  C[i][2]
 ----------------------------------------------------
-                excursion       6       0     120
-       numDirectionalRuns      11       0       6
-       lenDirectionalRuns       4       3       3
-    numIncreasesDecreases       8       0       6
+                excursion       6       0     165
+       numDirectionalRuns       7       0       6
+       lenDirectionalRuns       3       3       3
+    numIncreasesDecreases      10       1       5
             numRunsMedian       6       0      15
-            lenRunsMedian      23       6       0
-             avgCollision       6       0      65
-             maxCollision       5       1      23
-           periodicity(1)     127       1       5
-           periodicity(2)      32       1       5
-           periodicity(8)     151       1       5
-          periodicity(16)      52       0       6
-          periodicity(32)      13       0       6
-            covariance(1)       8       0       6
-            covariance(2)      16       0       6
-            covariance(8)       6       0     483
-           covariance(16)      57       0       6
-           covariance(32)       6       0       6
-              compression       5       1       5
+            lenRunsMedian      17       5       1
+             avgCollision       6       0     111
+             maxCollision       5       1      12
+           periodicity(1)     152       1       5
+           periodicity(2)      22       0       6
+           periodicity(8)      62       0       6
+          periodicity(16)      24       0       6
+          periodicity(32)      10       0       6
+            covariance(1)       9       0       6
+            covariance(2)      23       0       6
+            covariance(8)       5       1     462
+           covariance(16)      60       0       6
+           covariance(32)      14       0       6
+              compression       5       1       6
 (* denotes failed test)
 
 IID permutation tests: Passed
@@ -92,7 +92,7 @@ Assessed min entropy: 0.96105882570055079
 ## --- end of tool output ---
 ## exit: 0
 ## wall_seconds: 0
-## end: 2026-11-08T03:34:01Z
+## end: 2026-11-08T20:51:01Z
 ## sanitizer_report: no
 ## sanitizer_report_count: 0
 ## first_report_line: -

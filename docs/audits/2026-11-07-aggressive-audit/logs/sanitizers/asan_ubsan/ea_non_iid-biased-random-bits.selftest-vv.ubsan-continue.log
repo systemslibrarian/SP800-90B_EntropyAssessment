@@ -13,7 +13,7 @@
 ## note: refdata_inferred_width:1
 ## timeout_seconds: 1800
 ## threads: 2
-## start: 2026-11-08T20:49:38Z
+## start: 2026-11-08T20:50:30Z
 ## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
 ## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/biased-random-bits.bin
 ## rerun_of: ea_non_iid-biased-random-bits.selftest-vv.log
@@ -22,20 +22,20 @@
 ## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/biased-random-bits.bin
 ## --- tool output ---
 non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
-    #0 0x000104257b18 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
-    #1 0x00010425c6a0 in main non_iid_main.cpp:563
+    #0 0x000102813b18 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
+    #1 0x0001028186a0 in main non_iid_main.cpp:563
     #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
 
 SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:111:21 
 non_iid/lag_test.h:86:17: runtime error: implicit conversion from type 'int' of value -1 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 255 (8-bit, unsigned)
-    #0 0x000104257974 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:86
-    #1 0x00010425c6a0 in main non_iid_main.cpp:563
+    #0 0x000102813974 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:86
+    #1 0x0001028186a0 in main non_iid_main.cpp:563
     #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
 
 SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:86:17 
 non_iid/lag_test.h:108:89: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
-    #0 0x000104257b8c in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:108
-    #1 0x00010425c6a0 in main non_iid_main.cpp:563
+    #0 0x000102813b8c in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:108
+    #1 0x0001028186a0 in main non_iid_main.cpp:563
     #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
 
 SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:108:89 
@@ -109,7 +109,7 @@ Assessed min entropy: 0.017766579116464187
 ## --- end of tool output ---
 ## exit: 0
 ## wall_seconds: 0
-## end: 2026-11-08T20:49:38Z
+## end: 2026-11-08T20:50:31Z
 ## sanitizer_report: yes
 ## sanitizer_report_count: 3
 ## first_report_line: non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)

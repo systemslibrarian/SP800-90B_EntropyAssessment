@@ -1,11 +1,13 @@
-# PROV-03 verifier reproduce log  2026-11-07 22:33:35 -0500  verifier=subagent  cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
-# git HEAD=dc9813a branch=audit/2026-11-07
-# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+# PROV-03 verifier reproduction  2026-11-08 15:51:27 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of repro/PROV-03/run.sh and control.sh (bash, cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit)
+# HEAD=f40eadd branch=audit/2026-11-07
+# ea_non_iid sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+# run.sh sha256 (before any mutation) 1a8a17643729db45b909535f775f08f72770050786e6eb5951e7084f8ad9b612
 
-===== run.sh (verifier run #1) =====
-# PROV-03 observed.txt  2026-11-07 22:33:35 -0500  host=Darwin 25.6.0 arm64
+===== [1] bash repro/PROV-03/run.sh =====
+# PROV-03 observed.txt  2026-11-08 15:51:28 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-03/out/m8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
@@ -18,12 +20,12 @@ occurrences of the Bitstring mode count '40099' anywhere in the JSON text: 0
 json==literal: True json==bitstring: False literal!=bitstring: True
 DEFECT
 RESULT: PASS -- under -i the single JSON MCV triple is the Literal one; the Bitstring triple (printed at -vv) is not in the report because the Literal call overwrote the shared tc631
-run.sh exit=0
+exit[run.sh]=0
 
-===== control.sh (verifier run #1) =====
-# PROV-03 control.txt  2026-11-07 22:33:35 -0500  host=Darwin 25.6.0 arm64
+===== [2] bash repro/PROV-03/control.sh =====
+# PROV-03 control.txt  2026-11-08 15:51:28 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin (10,000 samples, 1-bit)
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-03/out/m1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
@@ -31,19 +33,21 @@ rc[i1_vv]=0  stdout=m1.out stderr=m1.err
 Bitstring MCV lines in text: 0 (0 expected)
 text Literal mode=5008 ; JSON mcvEstimateMode=5008.0
 RESULT: CONTROL-OK -- one MCV estimate ran, one triple in the JSON, and it matches the only triple printed; the ambiguity needs two estimates sharing tc631
-control.sh exit=0
+exit[control.sh]=0
 
-===== rule 7: MUTATED run.sh -- expectation inverted (JSON triple must equal the BITSTRING triple, not the Literal) =====
---- diff orig vs mutated (must be non-empty) ---
+===== [3] rule-7 mutation: flip run.sh's expectation (JSON triple == Bitstring instead of == Literal) =====
+backup: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-03-run.sh.orig
+run.sh sha256 before mutation: 1a8a17643729db45b909535f775f08f72770050786e6eb5951e7084f8ad9b612
+--- diff backup vs mutated ---
 29c29
 < print("DEFECT" if eq(j,l) and not eq(j,b) and not eq(l,b) else "NODEFECT")
 ---
 > print("DEFECT" if eq(j,b) and not eq(j,l) and not eq(l,b) else "NODEFECT")
---- diff exit=1 (1 = differs) ---
---- mutated run ---
-# PROV-03 observed.txt  2026-11-07 22:35:43 -0500  host=Darwin 25.6.0 arm64
+diff exit=1 (1 = differs, as intended)
+--- mutated run.sh output ---
+# PROV-03 observed.txt  2026-11-08 15:52:07 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-03/out/m8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
@@ -56,18 +60,15 @@ occurrences of the Bitstring mode count '40099' anywhere in the JSON text: 0
 json==literal: True json==bitstring: False literal!=bitstring: True
 NODEFECT
 RESULT: FAIL -- triples did not separate as predicted
-mutated run.sh exit=1
+exit[mutated run.sh]=1  (expected 1 = FAIL)
+--- restored by cp from backup ---
+run.sh sha256 after restore: 1a8a17643729db45b909535f775f08f72770050786e6eb5951e7084f8ad9b612
+RESTORE-OK: sha256 identical
 
-===== restored run.sh via cp from /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-03-run.sh.orig: sha256 before=1a8a17643729db45b909535f775f08f72770050786e6eb5951e7084f8ad9b612 after=1a8a17643729db45b909535f775f08f72770050786e6eb5951e7084f8ad9b612 match=yes mode=  File: "repro/PROV-03/run.sh"
-    ID: 10000120000001a Namelen: ?       Type: apfs
-Block size: 4096       Fundamental block size: 4096
-Blocks: Total: 120686613  Free: 6833518    Available: 6833518
-Inodes: Total: 280527069  Free: 273340720 =====
-
-===== run.sh (verifier run #2, after restore; leaves observed.txt in its PASS state) =====
-# PROV-03 observed.txt  2026-11-07 22:35:44 -0500  host=Darwin 25.6.0 arm64
+===== [4] re-run of the restored original run.sh (restores observed.txt and logs/repro/PROV-03-observed.log) =====
+# PROV-03 observed.txt  2026-11-08 15:52:07 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-03/out/m8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
@@ -80,4 +81,34 @@ occurrences of the Bitstring mode count '40099' anywhere in the JSON text: 0
 json==literal: True json==bitstring: False literal!=bitstring: True
 DEFECT
 RESULT: PASS -- under -i the single JSON MCV triple is the Literal one; the Bitstring triple (printed at -vv) is not in the report because the Literal call overwrote the shared tc631
-run.sh exit=0
+exit[restored run.sh]=0
+
+===== [5] supplementary probe (verifier): same 8-bit fixture, -c instead of -i  (logs/verify/PROV-03-probe-c8.*) =====
+# PROV-03 verifier supplementary probe: SAME 8-bit fixture, only the mode flag changed (-i -> -c)  2026-11-08 15:52:19 -0500
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (NON-COMPLIANT short-dataset run)
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+$ ./cpp/ea_non_iid -c -vv -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-probe-c8.json bin/rand8_short.bin 8
+rc=0  stderr bytes=0
+--- text MCV lines ---
+9:Bitstring Most Common Value Estimate: Mode count = 40099
+10:Bitstring Most Common Value Estimate: p-hat = 0.5012375
+11:Bitstring Most Common Value Estimate: p_u = 0.50579098043220405
+12:Bitstring Most Common Value Estimate: min entropy = 0.9833867846591503
+--- JSON 'Most Common Value' element ---
+cases named 'Most Common Value': 1
+{"hBitstring": 0.9833867846591503, "mcvEstimateMode": 40099.0, "mcvEstimatePHat": 0.5012375, "mcvEstimatePU": 0.505790980432204, "testCaseDesc": "Most Common Value"}
+mcvEstimate* keys: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+--- the -i JSON (repro/PROV-03/out/m8.json): occurrences of the Bitstring p-hat/p_u strings ---
+0.5012375: 0
+0.50579098043220405: 0
+40099: 0
+--- control command vs run command (the fields that differ) ---
+run:     -i -vv -o <m8.json> bin/rand8_short.bin 8
+control: -i -vv -o <m1.json> bin/rand1_short.bin 1
+probe:   -c -vv -o <c8.json>  bin/rand8_short.bin 8
+
+===== [6] verifier conclusions =====
+(a) observed.txt shows the claimed defect: text Bitstring triple (40099, 0.5012375, 0.50579098043220405) and Literal triple (58, 0.0058, 0.0077560937775866317) both printed at -vv; JSON 'Most Common Value' carries mcvEstimateMode=58.0 PHat=0.0058 PU=0.007756093777586632 = the Literal triple; 3 mcvEstimate* keys; none of 40099 / 0.5012375 / 0.50579098043220405 occurs in the JSON text.
+(b) control (1-bit fixture, same -i -vv -o, same N=10,000) runs one MCV estimate, 0 Bitstring lines, Literal mode 5008 == JSON 5008.0: no ambiguity. Differs in file+width (one logical change: binary vs non-binary data, which is what 3.1.3 keys the second estimate on). Supplementary -c probe on the SAME file: one Bitstring call, JSON triple == Bitstring (40099, 0.5012375, 0.505790980432204) -- confirms the README's unmeasured statement that the triple's meaning flips with the mode.
+(c) PASS requires eq(json,literal) AND NOT eq(json,bitstring) AND NOT eq(literal,bitstring); absent text lines or <absent>/<no-case> JSON keys make float() raise, res is empty, and the script falls through to FAIL -- it cannot pass vacuously; tool rc checked. Mutation of the expectation (eq(j,l) -> eq(j,b)) produced NODEFECT / RESULT: FAIL exit 1; restored by cp, sha256 identical (1a8a1764...9b612); original re-run PASS exit 0.
+Verdict: CONFIRMED. Severity LOW, direction neutral (hAssessed/hBitstring/hOriginal on the element are correct; only the intermediates triple is ambiguous). Already documented as F23 sub-claim (a) in audits/2026-09-30/AUDIT.md:53 and FINDINGS-TRACKER.md:1111 (status UNCONFIRMED); this reproducer confirms that sub-claim. Upstream-inherited: the overwrite is 64056aa (2022-02-21) and the disambiguating key was commented out in 04e8b4f (2022-02-16, 'not needed in every test case'); no fork repair touched tc631.

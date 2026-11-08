@@ -1,0 +1,28 @@
+# PROV-03 CLASSIFY-lens re-run 2026-11-08 15:52:35 -0500 host=Darwin 25.6.0 arm64 git=f40eadd branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples)
+1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  bin/rand8_short.bin
+rc_i8=0
+rc_c8=0
+[-i] text triples: {"Bitstring": {"Mode count": 40099.0, "min entropy": 0.9833867846591503, "p-hat": 0.5012375, "p_u": 0.505790980432204}, "Literal": {"Mode count": 58.0, "min entropy": 7.010454037736041, "p-hat": 0.0058, "p_u": 0.007756093777586632}}
+[-i] JSON MCV element: {"hBitstring": 0.9833867846591503, "hOriginal": 7.010454037736041, "mcvEstimateMode": 58.0, "mcvEstimatePHat": 0.0058, "mcvEstimatePU": 0.007756093777586632, "testCaseDesc": "Most Common Value"}
+[-i] JSON Overall element: {"dataWordSize": 8.0, "hAssessed": 5.860893744485249, "hBitstring": 0.7326117180606562, "hOriginal": 6.636441287061232, "testCaseDesc": "Overall"}
+[-i] JSON triple == text Bitstring triple: False
+[-i] JSON triple == text Literal triple: True
+[-i] recompute Bitstring: p-hat 0.5012375 (printed 0.5012375) p_u 0.505790980432204 (printed 0.505790980432204) -log2 0.9833867846591503 (printed 0.9833867846591503)
+[-i] recompute Literal: p-hat 0.0058 (printed 0.0058) p_u 0.007756093777586632 (printed 0.007756093777586632) -log2 7.010454037736041 (printed 7.010454037736041)
+[-i] '40099' occurrences in JSON text: 0; mcvEstimate* keys on MCV element: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']; on Overall: []
+[-c] text triples: {"Bitstring": {"Mode count": 40099.0, "min entropy": 0.9833867846591503, "p-hat": 0.5012375, "p_u": 0.505790980432204}}
+[-c] JSON MCV element: {"hBitstring": 0.9833867846591503, "mcvEstimateMode": 40099.0, "mcvEstimatePHat": 0.5012375, "mcvEstimatePU": 0.505790980432204, "testCaseDesc": "Most Common Value"}
+[-c] JSON Overall element: {"dataWordSize": 8.0, "hAssessed": 5.860893744485249, "hBitstring": 0.7326117180606562, "testCaseDesc": "Overall"}
+[-c] JSON triple == text Bitstring triple: True
+[-c] recompute Bitstring: p-hat 0.5012375 (printed 0.5012375) p_u 0.505790980432204 (printed 0.505790980432204) -log2 0.9833867846591503 (printed 0.9833867846591503)
+[-c] '40099' occurrences in JSON text: 1; mcvEstimate* keys on MCV element: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']; on Overall: []
+# 1-bit -i control (ShannonPad 1-bit profile) 15:53:33 git=f40eadd
+3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  bin/rand1_short.bin
+rc_i1=0
+[-i 1-bit] MCV text lines: ['Literal Most Common Value Estimate: Mode count = 5008', 'Literal Most Common Value Estimate: p-hat = 0.50080000000000002', 'Literal Most Common Value Estimate: p_u = 0.51367977403722886', 'Literal Most Common Value Estimate: min entropy = 0.96105882570055079']
+[-i 1-bit] JSON MCV element: {"hOriginal": 0.9610588257005508, "mcvEstimateMode": 5008.0, "mcvEstimatePHat": 0.5008, "mcvEstimatePU": 0.5136797740372289, "testCaseDesc": "Most Common Value"}
+[-i 1-bit] JSON Overall element: {"dataWordSize": 1.0, "hAssessed": 0.6117162047939451, "hOriginal": 0.6117162047939451, "testCaseDesc": "Overall"}
+[-i 1-bit] Bitstring MCV lines in text: 0 ; mcvEstimate* keys: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+[-i 1-bit] -log2(mcvEstimatePU) = 0.9610588257005508 vs hOriginal 0.9610588257005508 vs hBitstring None

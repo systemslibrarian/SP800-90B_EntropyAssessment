@@ -1,0 +1,181 @@
+# PROV-02 verifier reproduce log  2026-11-07 22:34:20 -0500  host=Darwin 25.6.0 arm64  verifier=REPRODUCE lens
+# cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit  git=dc9813a branch=audit/2026-11-07
+# prior observed.txt/control.txt saved to /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov02-prior/
+
+########## run.sh (unmodified) ##########
+# PROV-02 observed.txt  2026-11-07 22:34:20 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_default]=0  stdout=c8.out stderr=c8.err
+stdout line:            h': 0.732612        (printf "\nh': %f\n", H_bitstring -- per bit)
+JSON Overall.hAssessed   = 5.860893744485249
+JSON Overall.hBitstring  = 0.7326117180606562
+JSON Overall.dataWordSize= 8.0
+JSON Overall.hOriginal   = <absent>
+JSON keys naming a unit/mode/h-prime anywhere in the document: bitsPerSymbol,bitsPerSymbolInferred
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8v.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_vvv]=0  stdout=c8v.out stderr=c8v.err
+  -vvv text: H_bitstring = 0.73261171806065617
+  -vvv text: H_bitstring Per Symbol = 5.8608937444852494
+  -vvv text: Assessed min entropy: 5.8608937444852494
+  -vvv text has an h' line: 0 (0 expected -- only the 'Assessed' label exists at this level)
+ratio hAssessed/hBitstring = 8 ; hAssessed == dataWordSize*hBitstring: True ; hAssessed equals the text h': False
+DEFECT
+RESULT: PASS -- stdout h' is per bit; JSON hAssessed = dataWordSize x h' (x8 here) under the same key name as the -i per-sample figure; no unit or mode field in the report
+## run.sh exit=0
+
+########## control.sh (unmodified) ##########
+# PROV-02 control.txt  2026-11-07 22:34:21 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin (10,000 samples, 1-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[c1_default]=0  stdout=c1.out stderr=c1.err
+stdout h': 0.611716 ; JSON hAssessed=0.6117162047939451 hBitstring=0.6117162047939451 dataWordSize=1.0
+RESULT: CONTROL-OK -- at word_size 1 the text h' and JSON hAssessed agree to the printed precision; the x8 gap in run.sh is the packing width
+## control.sh exit=0
+
+########## verifier probe V1: one-variable pair -- SAME 1-bit fixture, declared width 8 (only word_size changes vs control.sh) ##########
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-02-v1-c1w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 8
+rc=0  stdout=PROV-02-v1-c1w8.stdout stderr=PROV-02-v1-c1w8.stderr
+--- stdout ---
+Warning: Symbols appear to be narrower than described.
+
+*** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+
+Running Entropic Statistic Estimates (bit strings only)...
+
+Running Tuple Estimates...
+
+Running Predictor Estimates...
+
+h': 0.039232
+--- stderr ---
+--- labelled JSON reads (testCaseDesc==Overall) ---
+Overall cases found: 1
+  Overall.hAssessed = 0.3138569044466053
+  Overall.hBitstring = 0.03923211305582566
+  Overall.hOriginal = <absent>
+  Overall.dataWordSize = 8.0
+  text h' line: 0.039232
+  ratio hAssessed/hBitstring = 8 ; hAssessed == dataWordSize*hBitstring (<=1e-12 rel): True ; |hAssessed - text h'| = 0.274625
+top-level keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+bitsPerSymbol: 8  bitsPerSymbolInferred: False
+
+########## verifier probe V2: run.sh's own decision function applied to control.sh's numbers (hA hB dws hprime from control.txt) ##########
+ratio hAssessed/hBitstring = 1 ; hAssessed == dataWordSize*hBitstring: True ; hAssessed equals the text h': True
+NODEFECT
+
+########## verifier probe V3: run.sh decision function with an ABSENT h' line (empty 4th arg) -- what does the script do? ##########
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+ValueError: could not convert string to float: ''
+## V3 python exit=1 (nonzero means res is empty -> grep '^DEFECT$' fails -> run.sh prints FAIL, not PASS)
+
+########## rule 7 mutation arm: can run.sh FAIL? ##########
+run.sh sha256 before mutation = 094c59e05512bd05d76eee55044f3968b3f55d987e9735684b0f4d2f431efa2b  (saved copy /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov02-prior/run.sh.orig = 094c59e05512bd05d76eee55044f3968b3f55d987e9735684b0f4d2f431efa2b; equal: yes)
+mutation: in the DEFECT test, the expectation 'hAssessed == dataWordSize*hBitstring' becomes 'hAssessed == hBitstring' (i.e. expect the per-bit figure the text prints). One sed on the unique string 'abs(hA - dws*hB)'.
+--- diff run.sh.orig run.sh.mut ---
+41c41
+< is_n_times_hprime = abs(hA - dws*hB) <= 1e-12*max(1.0,abs(hA)) and abs(dws*hp - hA) < 1e-5*dws
+---
+> is_n_times_hprime = abs(hA - hB) <= 1e-12*max(1.0,abs(hA)) and abs(dws*hp - hA) < 1e-5*dws
+--- (diff exit above; 1 = differs as intended) occurrences of mutated string in mutant: 1 ---
+mutant installed at /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/run.sh sha256 = ebb7483dd83fa79c5758bdc566bc5834217155c5ddc7bea8c7d759e8a56d1e13
+
+########## run.sh (MUTANT) ##########
+# PROV-02 observed.txt  2026-11-07 22:37:14 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_default]=0  stdout=c8.out stderr=c8.err
+stdout line:            h': 0.732612        (printf "\nh': %f\n", H_bitstring -- per bit)
+JSON Overall.hAssessed   = 5.860893744485249
+JSON Overall.hBitstring  = 0.7326117180606562
+JSON Overall.dataWordSize= 8.0
+JSON Overall.hOriginal   = <absent>
+JSON keys naming a unit/mode/h-prime anywhere in the document: bitsPerSymbol,bitsPerSymbolInferred
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8v.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_vvv]=0  stdout=c8v.out stderr=c8v.err
+  -vvv text: H_bitstring = 0.73261171806065617
+  -vvv text: H_bitstring Per Symbol = 5.8608937444852494
+  -vvv text: Assessed min entropy: 5.8608937444852494
+  -vvv text has an h' line: 0 (0 expected -- only the 'Assessed' label exists at this level)
+ratio hAssessed/hBitstring = 8 ; hAssessed == dataWordSize*hBitstring: False ; hAssessed equals the text h': False
+NODEFECT
+RESULT: FAIL -- hAssessed did not equal dataWordSize x h' or equalled the text figure
+## run.sh (MUTANT) exit=1  (expected 1 = FAIL on the current binary)
+
+########## restore by cp ##########
+run.sh restored sha256 = 094c59e05512bd05d76eee55044f3968b3f55d987e9735684b0f4d2f431efa2b ; equals original: yes
+cmp: identical
+
+########## run.sh (RESTORED) -- regenerates observed.txt and logs/repro/PROV-02-observed.log ##########
+# PROV-02 observed.txt  2026-11-07 22:37:14 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10,000 samples, 8-bit)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_default]=0  stdout=c8.out stderr=c8.err
+stdout line:            h': 0.732612        (printf "\nh': %f\n", H_bitstring -- per bit)
+JSON Overall.hAssessed   = 5.860893744485249
+JSON Overall.hBitstring  = 0.7326117180606562
+JSON Overall.dataWordSize= 8.0
+JSON Overall.hOriginal   = <absent>
+JSON keys naming a unit/mode/h-prime anywhere in the document: bitsPerSymbol,bitsPerSymbolInferred
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8v.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c8_vvv]=0  stdout=c8v.out stderr=c8v.err
+  -vvv text: H_bitstring = 0.73261171806065617
+  -vvv text: H_bitstring Per Symbol = 5.8608937444852494
+  -vvv text: Assessed min entropy: 5.8608937444852494
+  -vvv text has an h' line: 0 (0 expected -- only the 'Assessed' label exists at this level)
+ratio hAssessed/hBitstring = 8 ; hAssessed == dataWordSize*hBitstring: True ; hAssessed equals the text h': False
+DEFECT
+RESULT: PASS -- stdout h' is per bit; JSON hAssessed = dataWordSize x h' (x8 here) under the same key name as the -i per-sample figure; no unit or mode field in the report
+## run.sh (RESTORED) exit=0  (expected 0 = PASS)
+
+########## determinism: out/c8.json first run vs after restore ##########
+first  00e45247dbea3d2056fe396397fafa944c71e8687dbfc0399bd6f0a31e76e1de
+final  81a4b89c8893702eca5b90e22f02e5b294eb7df43d3f32751ea7823ab355f44f
+identical: NO
+
+########## diff: other agent's observed.txt vs my first run (expect only timestamp/git lines) ##########
+1c1
+< # PROV-02 observed.txt  2026-11-07 21:56:06 -0500  host=Darwin 25.6.0 arm64
+---
+> # PROV-02 observed.txt  2026-11-07 22:34:20 -0500  host=Darwin 25.6.0 arm64
+3c3
+< # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+---
+> # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+(diff exit 1)
+
+########## diff: my first run vs final restored run ##########
+1c1
+< # PROV-02 observed.txt  2026-11-07 22:34:20 -0500  host=Darwin 25.6.0 arm64
+---
+> # PROV-02 observed.txt  2026-11-07 22:37:14 -0500  host=Darwin 25.6.0 arm64
+(diff exit 1)
+
+## git status of repro/PROV-02 and logs/repro after restore:
+ M docs/audits/2026-11-07-aggressive-audit/logs/repro/PROV-02-control.log
+ M docs/audits/2026-11-07-aggressive-audit/logs/repro/PROV-02-observed.log
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/control.txt
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/observed.txt
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c1.json
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8.json
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-02/out/c8v.json

@@ -1,0 +1,46 @@
+# PROV-01 REFUTE-lens verification probe  2026-11-08 15:52:44 -0500  host=Darwin 25.6.0 arm64  git=f40eadd branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples) used only to manufacture the baseline artefact; the probes exit at option parsing before any data is read
+# shell: GNU bash, version 5.3.15(1)-release (aarch64-apple-darwin25.4.0) (script run under bash -c, not zsh)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+stat: cannot read file system information for '%z': No such file or directory
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  bin/rand8_short.bin (  File: "bin/rand8_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 6070093    Available: 6070093
+Inodes: Total: 250293036  Free: 242803720 bytes)
+== step 1: baseline (errorLevel-0 artefact) ==
+$ cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-out/good.json bin/rand8_short.bin 8
+rc=0
+good.json errorLevel=0 reportComplete=<absent> testCases=11 dateTimeStamp=20261108155244 commandline=cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-out/good.json bin/rand8_short.bin 8
+good.json sha256 be3dbdbf2085d7ccbb2d6539c60f5e1d40555765de40428212fcd55c77fc4983
+== step 2 (PROBE, my own): unknown option BEFORE -o, ea_non_iid ==
+$ cpp/ea_non_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-out/stale_Z.json bin/rand8_short.bin 8
+rc=255
+stale_Z.json sha256 be3dbdbf2085d7ccbb2d6539c60f5e1d40555765de40428212fcd55c77fc4983
+PROBE: stale file byte-identical to good.json -- MECHANISM REPRODUCES
+--- stderr (verbatim):
+cpp/ea_non_iid: illegal option -- Z
+--- stdout first line:
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+== step 3 (DIRECTION check): what a consumer following OC-51's rule sees in the stale file ==
+stale_Z.json errorLevel=0 reportComplete=None dateTimeStamp=20261108155244
+stale_Z.json commandline=cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-out/good.json bin/rand8_short.bin 8
+the failing command was: ea_non_iid -Z -o .../stale_Z.json bin/rand8_short.bin 8  (rc above)
+OC-51 rule 1 (exit 0) FAILS; rule 4 (commandline is the one issued) FAILS: the recorded commandline is the baseline run, not the -Z run
+== step 4 (CONTROL, my own): same error AFTER -o ==
+$ cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-out/ctl_Z.json -Z bin/rand8_short.bin 8
+rc=255
+ctl_Z.json errorLevel=-1 reportComplete=False
+== step 5 (REACHABILITY): the probe never reads the data -- the usage exit precedes the open ==
+$ cpp/ea_non_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-out/stale_nofile.json /nonexistent/path.bin 8   (input does not exist; if the exit precedes the open, the message is the same illegal-option usage)
+rc=255
+--- stderr:
+cpp/ea_non_iid: illegal option -- Z
+stdout lines mentioning the input file: 0
+stale_nofile.json byte-identical to good.json: the mechanism does not depend on the input at all (so neither on EA_ALLOW_SHORT_DATASET nor on sample count)
+== correction to the fixture line above: 'stat -f %z' resolved to a GNU stat in PATH and printed filesystem info, not the size. Size via wc -c:
+fixture bytes: 10000  bin/rand8_short.bin (8-bit, so 10,000 samples)
+== record check: OC-51 (audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md:5024) already lists this member as 'argument-parse failures above the claim -- OPEN, and small', with the consumer rule at :5030 as the mitigation; C14 appears 0 times in CLOSING-INVENTORY.md and OC-51 is not carried into FORK-DIVERGENCE-AND-TRUST.md or NOTICE (NOTICE:232 and the code comment at non_iid_main.cpp:76 / iid_main.cpp:74 / restart_main.cpp:347 state the contract absolutely).
+# end of probe 2026-11-08 15:53:14 -0500

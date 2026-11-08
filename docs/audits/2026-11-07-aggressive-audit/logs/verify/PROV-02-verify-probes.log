@@ -1,0 +1,113 @@
+# PROV-02 verifier one-variable probes  2026-11-08 15:53:56 -0500  binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  env EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (NON-COMPLIANT 10,000-sample runs)
+# fixtures: 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 rand1_short.bin ; 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 rand8_short.bin
+
+===== probe c1w1: -c rand1_short.bin declared width 1 =====
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o logs/verify/PROV-02-v2-c1w1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc=0
+stdout h' line: h': 0.611716
+stdout other warnings: 
+stderr: 
+JSON Overall cases: 1
+  Overall.hAssessed=0.6117162047939451 hBitstring=0.6117162047939451 hOriginal=None dataWordSize=1.0
+  hAssessed == dataWordSize*hBitstring (rel<=1e-12): True ; hAssessed/hBitstring=1
+  top-level keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+  ' -c ' in commandline: True | bitsPerSymbol=1 bitsPerSymbolInferred=False errorLevel=0
+
+===== probe c1w8: -c rand1_short.bin declared width 8 =====
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o logs/verify/PROV-02-v2-c1w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 8
+rc=0
+stdout h' line: h': 0.039232
+stdout other warnings: Warning: Symbols appear to be narrower than described.|
+stderr: 
+JSON Overall cases: 1
+  Overall.hAssessed=0.3138569044466053 hBitstring=0.03923211305582566 hOriginal=None dataWordSize=8.0
+  hAssessed == dataWordSize*hBitstring (rel<=1e-12): True ; hAssessed/hBitstring=8
+  top-level keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+  ' -c ' in commandline: True | bitsPerSymbol=8 bitsPerSymbolInferred=False errorLevel=0
+
+===== probe c8w8: -c rand8_short.bin declared width 8 =====
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o logs/verify/PROV-02-v2-c8w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc=0
+stdout h' line: h': 0.732612
+stdout other warnings: 
+stderr: 
+JSON Overall cases: 1
+  Overall.hAssessed=5.860893744485249 hBitstring=0.7326117180606562 hOriginal=None dataWordSize=8.0
+  hAssessed == dataWordSize*hBitstring (rel<=1e-12): True ; hAssessed/hBitstring=8
+  top-level keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+  ' -c ' in commandline: True | bitsPerSymbol=8 bitsPerSymbolInferred=False errorLevel=0
+
+===== probe c8w1: -c rand8_short.bin declared width 1 =====
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o logs/verify/PROV-02-v2-c8w1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 1
+rc=255
+stdout h' line: <absent>
+stdout other warnings: Error reading file.|
+stderr: 
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+TypeError: 'NoneType' object is not iterable
+
+===== c8w1 refusal record (rule 2: what the tool actually wrote) =====
+rc=255
+--- stdout ---
+Incorrect bit width specification: Data (8) does not fit within described bit width: 1.
+Error reading file.
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+	 EVERY OPTION MUST COME BEFORE <file_name>. An option placed after it is
+	 refused, because glibc rearranges such a command line and parses the
+	 option while BSD and macOS treat it as another operand -- one command
+	 line, two different operations on two supported platforms. A negative
+	 number after <file_name> is still read as a value, not an option.
+
+	 <file_name>: Must be relative path to a binary file with at least 1 million entries (samples).
+	 [bits_per_symbol]: Must be between 1-8, inclusive. By default this value is inferred from the data.
+	 [-i|-c]: '-i' for initial entropy estimate, '-c' for conditioned sequential dataset entropy estimate. The initial entropy estimate is the default.
+	 [-a|-t]: '-a' produces the 'H_bitstring' assessment using all read bits, '-t' truncates the bitstring used to produce the `H_bitstring` assessment to 1000000 bits. Test all data by default.
+	 Note: When testing binary data, no `H_bitstring` assessment is produced, so the `-a` and `-t` options produce the same results for the initial assessment of binary data.
+	 -v: Optional verbosity flag for more output. Can be used multiple times.
+	 -q: Quiet mode, less output to screen. This will override any verbose flags.
+	 -l <index>,<samples>	Read the <index> substring of length <samples>.
+
+	 Samples are assumed to be packed into 8-bit values, where the least significant 'bits_per_symbol'
+	 bits constitute the symbol.
+
+	 -i: Initial Entropy Estimate (Section 3.1.3)
+
+		 Computes the initial entropy estimate H_I as described in Section 3.1.3
+		 (not accounting for H_submitter) using the entropy estimators specified in
+		 Section 6.3.  If 'bits_per_symbol' is greater than 1, the samples are also
+		 converted to bitstrings and assessed to create H_bitstring; for multi-bit symbols,
+		 two entropy estimates are computed: H_original and H_bitstring.
+		 Returns min(H_original, bits_per_symbol X H_bitstring). The initial entropy
+		 estimate H_I = min(H_submitter, H_original, bits_per_symbol X H_bitstring).
+
+	 -c: Conditioned Sequential Dataset Entropy Estimate (Section 3.1.5.2)
+
+		 Computes the entropy estimate per bit h' for the conditioned sequential dataset if the
+		 conditioning function is non-vetted. The samples are converted to a bitstring.
+		 Returns h' = min(H_bitstring).
+
+	 -o: Set Output Type to JSON
+
+		 Changes the output format to JSON and sets the file location for the output file.
+
+	 --version: Prints tool version information
+--- stderr ---
+--- json (exists: yes) ---
+{
+    "IID": false,
+    "assessedSampleCount": 10000,
+    "commandline": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -o logs/verify/PROV-02-v2-c8w1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 1",
+    "dateTimeStamp": "20261108155356",
+    "errorClass": "input",
+    "errorLevel": -1,
+    "errorMessage": "Error: Incorrect bit width specification: Data (8) does not fit within described bit width: 1.",
+    "filename": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin",
+    "sha256": "17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803",
+    "sha256Scope": "assessed-sample-bytes",
+    "testCases": null,
+    "toolVersion": "1.1.8",
+    "type": ""
+}
+--- reading: rand8_short.bin declared at width 1 is REFUSED (symbol wider than declared width) with a JSON error record and no Overall case; this arm is a refusal, not a measurement, and is not used for the verdict. The one-variable pair that IS used is c1w1 vs c1w8 (same bytes, only the declared width changes): ratio 1 -> 8. ---

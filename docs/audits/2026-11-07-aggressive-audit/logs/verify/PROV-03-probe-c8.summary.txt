@@ -1,0 +1,22 @@
+# PROV-03 verifier supplementary probe: SAME 8-bit fixture, only the mode flag changed (-i -> -c)  2026-11-08 15:52:19 -0500
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (NON-COMPLIANT short-dataset run)
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+$ ./cpp/ea_non_iid -c -vv -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-03-probe-c8.json bin/rand8_short.bin 8
+rc=0  stderr bytes=0
+--- text MCV lines ---
+9:Bitstring Most Common Value Estimate: Mode count = 40099
+10:Bitstring Most Common Value Estimate: p-hat = 0.5012375
+11:Bitstring Most Common Value Estimate: p_u = 0.50579098043220405
+12:Bitstring Most Common Value Estimate: min entropy = 0.9833867846591503
+--- JSON 'Most Common Value' element ---
+cases named 'Most Common Value': 1
+{"hBitstring": 0.9833867846591503, "mcvEstimateMode": 40099.0, "mcvEstimatePHat": 0.5012375, "mcvEstimatePU": 0.505790980432204, "testCaseDesc": "Most Common Value"}
+mcvEstimate* keys: ['mcvEstimateMode', 'mcvEstimatePHat', 'mcvEstimatePU']
+--- the -i JSON (repro/PROV-03/out/m8.json): occurrences of the Bitstring p-hat/p_u strings ---
+0.5012375: 0
+0.50579098043220405: 0
+40099: 0
+--- control command vs run command (the fields that differ) ---
+run:     -i -vv -o <m8.json> bin/rand8_short.bin 8
+control: -i -vv -o <m1.json> bin/rand1_short.bin 1
+probe:   -c -vv -o <c8.json>  bin/rand8_short.bin 8

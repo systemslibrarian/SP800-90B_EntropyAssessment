@@ -1,0 +1,118 @@
+# PROV-04 verifier reproduce log  2026-11-08 15:55:14 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of repro/PROV-04/run.sh and control.sh from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+# git HEAD=f40eadd branch=audit/2026-11-07
+# binary sha256: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  ../../../cpp/ea_non_iid
+# fixture sha256: a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  ../../../bin/rand4_short.bin
+
+===== run.sh (stdout+stderr) =====
+# PROV-04 observed.txt  2026-11-08 15:55:14 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin (10,000 samples, 4-bit values; declared 8 below)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-04/out/w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 8
+rc[declared8_q]=0  stdout=w8.out stderr=w8.err
+stdout under -q (verbatim):
+  | Warning: Symbols appear to be narrower than described.
+  | 
+  | *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+  | *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+  | *** Its result is NOT a compliant SP 800-90B assessment. ***
+  | 
+warning lines on stdout under -q: 1
+JSON errorLevel=0 errorMessage=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false
+JSON top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+JSON Overall.hAssessed=1.5157083660394497
+RESULT: PASS -- the width-mismatch warning is printed on stdout despite -q, exit 0, and the JSON (errorLevel 0) carries no errorMessage, no warning field; a JSON-only consumer cannot see that the declared width was wrong
+run.sh exit=0
+
+===== control.sh (stdout+stderr) =====
+# PROV-04 control.txt  2026-11-08 15:55:15 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-04/out/w4.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 4
+rc[declared4_q]=0  stdout=w4.out stderr=w4.err
+stdout under -q (verbatim):
+  | 
+  | *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+  | *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+  | *** Its result is NOT a compliant SP 800-90B assessment. ***
+  | 
+warning lines: 0 ; JSON errorLevel=0 bitsPerSymbol=4 errorMessage=<absent> hAssessed=3.2154882678767365
+RESULT: CONTROL-OK -- declared at the true width: no warning, identical JSON shape -- the declared-8 run differs only by the lost warning
+control.sh exit=0
+
+===== verifier independent labelled JSON read (python, not via _lib.sh) =====
+file=repro/PROV-04/out/w8.json
+  errorLevel=0  'errorMessage' in keys=False  'errorClass' in keys=False  bitsPerSymbol=8  bitsPerSymbolInferred=False  nonCompliantShortDataset=True
+  Overall.hAssessed=1.5157083660394497
+  keys containing 'warn': []  ; substring 'narrower' anywhere in JSON: False ; substring 'warning' anywhere in JSON: False
+file=repro/PROV-04/out/w4.json
+  errorLevel=0  'errorMessage' in keys=False  'errorClass' in keys=False  bitsPerSymbol=4  bitsPerSymbolInferred=False  nonCompliantShortDataset=True
+  Overall.hAssessed=3.2154882678767365
+  keys containing 'warn': []  ; substring 'narrower' anywhere in JSON: False ; substring 'warning' anywhere in JSON: False
+top-level key set difference w8-w4: []  w4-w8: []
+
+stderr sizes:
+0 repro/PROV-04/out/w8.err
+0 repro/PROV-04/out/w4.err
+0 total
+rc files:
+w8.out.rc=0 w4.out.rc=0
+
+===== MUTATION (rule 7): can run.sh fail? =====
+backup: cp run.sh -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-04-run.sh.orig
+4e207c55c877c1e08953d5b323003e0cde4ac3cc5531edd126c6c0b2ccd8d8b6  repro/PROV-04/run.sh
+4e207c55c877c1e08953d5b323003e0cde4ac3cc5531edd126c6c0b2ccd8d8b6  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-04-run.sh.orig
+mutation: expectation '[ "$nwarn" -ge 1 ]' -> '[ "$nwarn" -ge 2 ]' (the measured count is 1, so a working gate must now FAIL)
+--- diff orig vs mutated ---
+17c17
+< if [ "$RC" -eq 0 ] && [ "$nwarn" -ge 1 ] && [ "$(jtop "$out/w8.json" errorLevel)" = "0" ] && [ "$(jtop "$out/w8.json" errorMessage)" = "<absent>" ]; then
+---
+> if [ "$RC" -eq 0 ] && [ "$nwarn" -ge 2 ] && [ "$(jtop "$out/w8.json" errorLevel)" = "0" ] && [ "$(jtop "$out/w8.json" errorMessage)" = "<absent>" ]; then
+--- mutated run.sh output ---
+# PROV-04 observed.txt  2026-11-08 15:57:04 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin (10,000 samples, 4-bit values; declared 8 below)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-04/out/w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 8
+rc[declared8_q]=0  stdout=w8.out stderr=w8.err
+stdout under -q (verbatim):
+  | Warning: Symbols appear to be narrower than described.
+  | 
+  | *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+  | *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+  | *** Its result is NOT a compliant SP 800-90B assessment. ***
+  | 
+warning lines on stdout under -q: 1
+JSON errorLevel=0 errorMessage=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false
+JSON top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+JSON Overall.hAssessed=1.5157083660394497
+RESULT: FAIL -- rc=0 warnings=1 errorLevel=0 errorMessage=<absent>
+mutated run.sh exit=1  (expected 1 = FAIL)
+--- restored via cp; diff against backup (empty = restored) ---
+(no diff)
+restored sha256: 4e207c55c877c1e08953d5b323003e0cde4ac3cc5531edd126c6c0b2ccd8d8b6  repro/PROV-04/run.sh
+--- re-run restored run.sh so observed.txt and logs/repro/PROV-04-observed.log carry a genuine PASS record again ---
+# PROV-04 observed.txt  2026-11-08 15:57:05 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin (10,000 samples, 4-bit values; declared 8 below)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-04/out/w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 8
+rc[declared8_q]=0  stdout=w8.out stderr=w8.err
+stdout under -q (verbatim):
+  | Warning: Symbols appear to be narrower than described.
+  | 
+  | *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+  | *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+  | *** Its result is NOT a compliant SP 800-90B assessment. ***
+  | 
+warning lines on stdout under -q: 1
+JSON errorLevel=0 errorMessage=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false
+JSON top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+JSON Overall.hAssessed=1.5157083660394497
+RESULT: PASS -- the width-mismatch warning is printed on stdout despite -q, exit 0, and the JSON (errorLevel 0) carries no errorMessage, no warning field; a JSON-only consumer cannot see that the declared width was wrong
+restored run.sh exit=0 (expected 0 = PASS)

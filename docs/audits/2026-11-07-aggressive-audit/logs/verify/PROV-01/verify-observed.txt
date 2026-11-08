@@ -1,0 +1,53 @@
+# verify-observed.txt 2026-11-08 15:52:05 -0500 host=Darwin 25.6.0 arm64 git=f40eadd branch=audit/2026-11-07
+# env EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f cpp/ea_non_iid
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349 cpp/ea_iid
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c cpp/ea_restart
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/good.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[base]=0
+good.json sha256 a8597ca1d60bd9f550dabda477266a10f224188c0ca610d0b78a7d267dd3c773 errorLevel/reportComplete: 0 <absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_nZ.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[nZ]=255
+  nZ: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=255 expected=STALE AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -l 5x,10 -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_nl.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[nl]=255
+  nl: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=255 expected=STALE AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_iZ.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iZ]=255
+  iZ: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=255 expected=STALE AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_rZ.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[rZ]=255
+  rZ: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=255 expected=STALE AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_n104.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 -v
+rc[n104]=255
+  n104: file=STALE (errorLevel/reportComplete now: 0 <absent>) rc=255 expected=STALE AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_cZ.json -Z /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[cZ]=255
+  cZ: file=REPLACED (errorLevel/reportComplete now: -1 False) rc=255 expected=REPLACED AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_cl.json -l 5x,10 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[cl]=255
+  cl: file=REPLACED (errorLevel/reportComplete now: -1 <absent>) rc=255 expected=REPLACED AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_ciZ.json -Z /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[ciZ]=255
+  ciZ: file=REPLACED (errorLevel/reportComplete now: -1 False) rc=255 expected=REPLACED AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_crZ.json -Z /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[crZ]=255
+  crZ: file=REPLACED (errorLevel/reportComplete now: -1 False) rc=255 expected=REPLACED AS-EXPECTED
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/t_cno.json
+rc[cno]=255
+  cno: file=REPLACED (errorLevel/reportComplete now: -1 False) rc=255 expected=REPLACED AS-EXPECTED
+stderr of nZ: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z
+stdout line1 of n104: 
+stderr of n104: Error: '-v' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin'.
+       Refusing to run: what this command line MEANS depends on the C
+       library. glibc rearranges it and parses '-v'; BSD and macOS treat
+       it as another operand and fail on the usage path. One line, two
+       supported platforms, two different operations -- and guessing which
+       was wanted is worse than refusing. Nothing has been written.
+
+       Put every option BEFORE the file:
+         ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+       If '-v' is meant as an operand and not an option, separate the
+       operands with '--'.
+DONE

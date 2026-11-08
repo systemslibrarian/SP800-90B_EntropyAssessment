@@ -4,7 +4,7 @@
    "bitsPerSymbol" : 8,
    "bitsPerSymbolInferred" : false,
    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01/good.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
-   "dateTimeStamp" : "20261107223526",
+   "dateTimeStamp" : "20261108155205",
    "errorLevel" : 0,
    "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin",
    "nonCompliantShortDataset" : true,

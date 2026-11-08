@@ -1,0 +1,10 @@
+{
+   "IID" : false,
+   "commandline" : "cpp/ea_non_iid -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-01-supp-l-control/stale_l_ctl.json -l 5x,10 bin/rand8_short.bin 8",
+   "dateTimeStamp" : "20261108155214",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: -l requires unsigned decimal <index>,<samples>.",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

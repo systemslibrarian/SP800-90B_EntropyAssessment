@@ -1,6 +1,6 @@
-# PROV-04 control.txt  2026-11-07 21:56:09 -0500  host=Darwin 25.6.0 arm64
+# PROV-04 control.txt  2026-11-08 15:55:15 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=f40eadd branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-04/out/w4.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 4
 rc[declared4_q]=0  stdout=w4.out stderr=w4.err

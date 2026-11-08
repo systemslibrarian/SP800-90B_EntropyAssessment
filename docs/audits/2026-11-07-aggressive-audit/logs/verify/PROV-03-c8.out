@@ -1,4 +1,4 @@
-Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin' (SHA-256 hash 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 of assessed bytes)
+Loaded file: 'bin/rand8_short.bin' (SHA-256 hash 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 of assessed bytes)
 Loaded 10000 samples of 256 distinct 8-bit-wide symbols
 
 *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.

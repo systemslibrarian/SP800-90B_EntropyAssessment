@@ -80,3 +80,120 @@ SANITIZER   10s exit=0   ea_non_iid-biased-random-bytes.selftest-vv.ubsan-contin
 harness/sanitizers/run.sh: line 377: 61697 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
 SANITIZER    1s exit=134 ea_non_iid-data.pi.selftest-vv.log
 SANITIZER    0s exit=0   ea_non_iid-data.pi.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 61815 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    2s exit=134 ea_non_iid-normal.selftest-vv.log
+SANITIZER    9s exit=0   ea_non_iid-normal.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 65893 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-rand1_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand1_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED    0s exit=0   ea_iid-rand1_short.vv.log
+harness/sanitizers/run.sh: line 377: 66208 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-rand4_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand4_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED-IID-BATTERY-FAILED    1s exit=1   ea_iid-rand4_short.vv.log
+harness/sanitizers/run.sh: line 377: 66556 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-rand8_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand8_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-rand8_short.vv.log
+harness/sanitizers/run.sh: line 377: 66662 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-ringOsc-nist.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-ringOsc-nist.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 66893 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-truerand_1bit.selftest-vv.log
+SANITIZER    1s exit=0   ea_non_iid-truerand_1bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 67215 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-truerand_4bit.selftest-vv.log
+SANITIZER    8s exit=0   ea_non_iid-truerand_4bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 69683 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    2s exit=134 ea_non_iid-truerand_8bit.selftest-vv.log
+SANITIZER   10s exit=0   ea_non_iid-truerand_8bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+runs=14 skipped(existing)=0 aliases=0 sanitizer_reports=11 timeouts/signals/unclassified/skipped-input=0
+RESULTS.md: 25 logs, 22 with sanitizer reports, 0 incomplete -> /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+results: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+rc=0
+=== sanitizers: full Sun Nov  8 15:50:27 EST 2026 ===
+harness/sanitizers/run.sh: line 377: 80625 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-biased-random-bits.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-biased-random-bits.selftest-vv.ubsan-continue.log (UBSan continue pass, 3 report lines)
+harness/sanitizers/run.sh: line 377: 80868 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    2s exit=134 ea_non_iid-biased-random-bytes.selftest-vv.log
+SANITIZER   12s exit=0   ea_non_iid-biased-random-bytes.selftest-vv.ubsan-continue.log (UBSan continue pass, 3 report lines)
+harness/sanitizers/run.sh: line 377: 84329 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-data.pi.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-data.pi.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 84625 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    2s exit=134 ea_non_iid-normal.selftest-vv.log
+SANITIZER   12s exit=0   ea_non_iid-normal.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 87720 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-rand1_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand1_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED    0s exit=0   ea_iid-rand1_short.vv.log
+harness/sanitizers/run.sh: line 377: 87929 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-rand4_short.selftest-vv.log
+SANITIZER    1s exit=0   ea_non_iid-rand4_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED    1s exit=0   ea_iid-rand4_short.vv.log
+harness/sanitizers/run.sh: line 377: 88288 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-rand8_short.selftest-vv.log
+SANITIZER    1s exit=0   ea_non_iid-rand8_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-rand8_short.vv.log
+harness/sanitizers/run.sh: line 377: 88590 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-ringOsc-nist.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-ringOsc-nist.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 88783 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-truerand_1bit.selftest-vv.log
+SANITIZER    1s exit=0   ea_non_iid-truerand_1bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 89146 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-truerand_4bit.selftest-vv.log
+SANITIZER    8s exit=0   ea_non_iid-truerand_4bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 90779 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    2s exit=134 ea_non_iid-truerand_8bit.selftest-vv.log
+SANITIZER   12s exit=0   ea_non_iid-truerand_8bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 94012 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-alternating-1bit-50000.ia-w1.log
+SANITIZER    0s exit=0   ea_non_iid-alternating-1bit-50000.ia-w1.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 94147 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-alternating-1bit-50000.c-w1.log
+SANITIZER    1s exit=0   ea_non_iid-alternating-1bit-50000.c-w1.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 94304 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-alternating-8bit-50000.ia-w8.log
+SANITIZER    0s exit=0   ea_non_iid-alternating-8bit-50000.ia-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 94424 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-alternating-8bit-50000.c-w8.log
+SANITIZER    1s exit=0   ea_non_iid-alternating-8bit-50000.c-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+alias ea_non_iid-counter-1bit-50000.ia-w1.log -> alternating-1bit-50000.ia-w1
+alias ea_non_iid-counter-1bit-50000.c-w1.log -> alternating-1bit-50000.c-w1
+harness/sanitizers/run.sh: line 377: 94595 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-counter-8bit-50000.ia-w8.log
+SANITIZER    1s exit=0   ea_non_iid-counter-8bit-50000.ia-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 95029 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-counter-8bit-50000.c-w8.log
+SANITIZER    1s exit=0   ea_non_iid-counter-8bit-50000.c-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+alias ea_non_iid-counter3-1bit-50000.ia-w1.log -> alternating-1bit-50000.ia-w1
+alias ea_non_iid-counter3-1bit-50000.c-w1.log -> alternating-1bit-50000.c-w1
+harness/sanitizers/run.sh: line 377: 95389 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-counter3-8bit-50000.ia-w8.log
+SANITIZER    1s exit=0   ea_non_iid-counter3-8bit-50000.ia-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 95772 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-counter3-8bit-50000.c-w8.log
+SANITIZER    1s exit=0   ea_non_iid-counter3-8bit-50000.c-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 96145 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-csprng-1bit-50000.ia-w1.log
+SANITIZER    1s exit=0   ea_non_iid-csprng-1bit-50000.ia-w1.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 96304 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-csprng-1bit-50000.c-w1.log
+SANITIZER    0s exit=0   ea_non_iid-csprng-1bit-50000.c-w1.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 96404 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-csprng-8bit-50000.ia-w8.log
+SANITIZER    2s exit=0   ea_non_iid-csprng-8bit-50000.ia-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 96837 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-csprng-8bit-50000.c-w8.log
+SANITIZER    0s exit=0   ea_non_iid-csprng-8bit-50000.c-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 97041 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-lfsr16-tap1-1bit-50000.ia-w1.log
+SANITIZER    0s exit=0   ea_non_iid-lfsr16-tap1-1bit-50000.ia-w1.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 97083 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-lfsr16-tap1-1bit-50000.c-w1.log
+SANITIZER    0s exit=0   ea_non_iid-lfsr16-tap1-1bit-50000.c-w1.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 97160 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER  116s exit=134 ea_non_iid-lfsr16-tap1-8bit-50000.ia-w8.log
+SANITIZER   83s exit=0   ea_non_iid-lfsr16-tap1-8bit-50000.ia-w8.ubsan-continue.log (UBSan continue pass, 2 report lines)
