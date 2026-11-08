@@ -341,8 +341,10 @@ int simulateBound(double alpha, int k, double H_I, unsigned long int simulation_
 // checks the exit status and then reads -o could read a complete, errorLevel-0
 // figure belonging to different data. Writing an error report on every failure
 // path cannot close it -- an assert, a signal or an exec failure reaches none of
-// them. Instead the target is claimed the moment -o is parsed, with a
-// fail-closed placeholder that every completing path overwrites. After any run,
+// them. Instead the target is claimed the moment -o is KNOWN -- from the argv
+// prescan in main(), before getopt runs (PROV-01), and again when getopt
+// parses it -- with a fail-closed placeholder that every completing path
+// overwrites. After any run,
 // including an abort, the file is either this run's report or a report saying
 // the assessment did not complete. It is never a stale success.
 static bool claimReportTarget(const string &path, const string &type, const string &commandline) {
@@ -418,6 +420,18 @@ int main(int argc, char* argv[]) {
     // will; writeJsonReport then refuses that target whatever path reaches it,
     // so C14's claim can stay where it was without being able to destroy the
     // capture (TestRunUtils.h).
+    //
+    // PROV-01 (aggressive audit, 2026-11-07): THE CLAIM IS ALSO MADE HERE.
+    // C14 claimed the target inside getopt's `case 'o'`, which bound it to
+    // getopt's traversal order: an option error parsed EARLIER in argv -- an
+    // unknown letter, a malformed -s value -- exited 255 on the usage path
+    // before `-o` was reached, and the previous run's complete errorLevel-0
+    // report survived at the -o path byte-identical. Measured, all three
+    // tools. The prescan already knows the path, so it is claimed the moment
+    // it is known, AFTER the identity refusal above: the input is protected
+    // first, so this write goes through writeJsonReport's choke point like
+    // every other and cannot reach the capture (A05). From here on, whichever
+    // option fails, -o holds the placeholder or this run's own report.
     {
         string preOut, preOperand;
         prescanOutputAndOperand(argc, argv, "invqo:s:", &preOut, &preOperand);
@@ -425,6 +439,7 @@ int main(int argc, char* argv[]) {
         if (!preOut.empty() && !outputTargetIsSafe(preOut, preOperand.empty() ? NULL : preOperand.c_str())) {
             exit(-1);
         }
+        if (!preOut.empty() && !claimReportTarget(preOut, "restart", commandline)) exit(-1);
     }
 
     while ((opt = getopt(argc, argv, "invqo:s:")) != -1) {
@@ -444,6 +459,10 @@ int main(int argc, char* argv[]) {
             case 'o':
                 jsonOutput = true;
                 outputfilename = optarg;
+                // Usually a second placeholder over the prescan's (PROV-01).
+                // Kept because this is the value getopt actually produced -- a
+                // doubled -o reaches here with a path the prescan did not
+                // record -- and re-claiming the same path is harmless.
                 if (!claimReportTarget(outputfilename, "restart", commandline)) exit(-1);
                 break;
             case 's':
