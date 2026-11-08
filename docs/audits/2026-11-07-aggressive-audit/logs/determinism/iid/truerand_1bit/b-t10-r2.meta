@@ -1,0 +1,17 @@
+tool=iid
+binary=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+binary_sha256=22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+binary_sha256_after=22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+input=/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_1bit.bin
+input_sha256=f9ea8832af4c4205f518845b264465800921688fc2c4d566fbc087664aeb2313
+threads=10
+rep=2
+arm=b
+OMP_NUM_THREADS=10
+EA_ALLOW_SHORT_DATASET=
+EA_TEST_RANDOM_SOURCE=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/inputs/fixed-random-source-1MiB.bin
+start_epoch=1794175346
+end_epoch=1794175361
+wall_seconds=15
+rc=0
+cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/iid/truerand_1bit/b-t10-r2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_1bit.bin

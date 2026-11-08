@@ -4,7 +4,7 @@
    "bitsPerSymbol" : 1,
    "bitsPerSymbolInferred" : true,
    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/non_iid/rand1_short/t1-r1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin",
-   "dateTimeStamp" : "20261108165607",
+   "dateTimeStamp" : "20261108165952",
    "errorClass" : "input",
    "errorLevel" : -1,
    "errorMessage" : "Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",

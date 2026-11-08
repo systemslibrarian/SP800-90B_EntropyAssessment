@@ -1,0 +1,17 @@
+tool=restart
+binary=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart
+binary_sha256=4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c
+binary_sha256_after=4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c
+input=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/inputs/restart-csprng-1bit-1000x1000.bin
+input_sha256=e9936cbf43ea7d4c1b76154d743b1fa3d86d1874b4a464b00bb8197439c863a1
+threads=2
+rep=1
+arm=-
+OMP_NUM_THREADS=2
+EA_ALLOW_SHORT_DATASET=
+EA_TEST_RANDOM_SOURCE=
+start_epoch=1794175421
+end_epoch=1794175421
+wall_seconds=0
+rc=0
+cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/restart/restart-csprng-1bit-1000x1000/t2-r1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/inputs/restart-csprng-1bit-1000x1000.bin 1 0.9

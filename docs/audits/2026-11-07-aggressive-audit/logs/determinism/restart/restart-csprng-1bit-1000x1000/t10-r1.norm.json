@@ -1,0 +1,86 @@
+{
+ "IID": false,
+ "assessedSampleCount": 1000000,
+ "bitsPerSymbol": 1,
+ "bitsPerSymbolInferred": false,
+ "errorLevel": 0,
+ "passedRestartSanityCheck": true,
+ "restartAlpha": 5e-06,
+ "restartCutoffMethod": "exact-multinomial-maximum",
+ "restartHI": 0.9,
+ "restartXcutoff": 605,
+ "restartXcutoffPrintedBinomial": 605,
+ "restartXmax": 553,
+ "sha256": "e9936cbf43ea7d4c1b76154d743b1fa3d86d1874b4a464b00bb8197439c863a1",
+ "sha256Scope": "assessed-sample-bytes",
+ "testCases": [
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9944479124545563,
+   "h_r": 0.9944479124545563,
+   "testCaseDesc": "Most Common Value"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.8919680164967334,
+   "h_r": 0.9266489682782227,
+   "testCaseDesc": "Collision Test (for bit strings only)"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9966071458841692,
+   "h_r": 0.9978513562515873,
+   "testCaseDesc": "Markov Test (for bit strings only)"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.8697296086186568,
+   "h_r": 0.8476330580929433,
+   "testCaseDesc": "Compression Test (for bit strings only)"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.941540428622576,
+   "h_r": 0.9363536339238723,
+   "testCaseDesc": "T-Tuple Test"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9768271317967593,
+   "h_r": 0.9961476729801814,
+   "testCaseDesc": "LRS Test"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9993988536756665,
+   "h_r": 0.9956137532675422,
+   "testCaseDesc": "Multi Most Common in Window Test"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9980928228888696,
+   "h_r": 0.9984732431064689,
+   "testCaseDesc": "Lag Prediction Test"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9981605418747965,
+   "h_r": 0.9967088829673778,
+   "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)"
+  },
+  {
+   "dataWordSize": 1.0,
+   "h_c": 0.9967103008980842,
+   "h_r": 0.9953060980398327,
+   "testCaseDesc": "LZ78Y Test"
+  },
+  {
+   "h_c": 0.8697296086186568,
+   "h_i": 0.9,
+   "h_r": 0.8476330580929433,
+   "testCaseDesc": "Overall"
+  }
+ ],
+ "toolVersion": "1.1.8",
+ "type": "Restart"
+}

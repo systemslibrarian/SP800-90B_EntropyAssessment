@@ -1,0 +1,17 @@
+tool=non_iid
+binary=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+binary_sha256=1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+binary_sha256_after=1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+input=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two9010-8bit-1000000.bin
+input_sha256=d6f58132e5804e02c7bfff9ef983a1690f3f91d33bc4570e30e00ade201ba3f4
+threads=10
+rep=1
+arm=-
+OMP_NUM_THREADS=10
+EA_ALLOW_SHORT_DATASET=
+EA_TEST_RANDOM_SOURCE=
+start_epoch=1794175255
+end_epoch=1794175255
+wall_seconds=0
+rc=0
+cmd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/non_iid/two9010-8bit-1000000/t10-r1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two9010-8bit-1000000.bin 8

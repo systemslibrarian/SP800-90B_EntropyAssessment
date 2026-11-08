@@ -1,0 +1,65 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 1000000,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/non_iid/two9010-8bit-1000000/t2-r1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two9010-8bit-1000000.bin 8",
+   "dateTimeStamp" : "20261108170055",
+   "errorLevel" : 0,
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/two9010-8bit-1000000.bin",
+   "sha256" : "d6f58132e5804e02c7bfff9ef983a1690f3f91d33bc4570e30e00ade201ba3f4",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hOriginal" : 0.15042657563303058,
+         "mcvEstimateMode" : 900212.0,
+         "mcvEstimatePHat" : 0.90021200000000001,
+         "mcvEstimatePU" : 0.90098402053952298,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 0.150821423880931,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.15193489291307749,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.085882668954984268,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : 0.1440766957027505,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : 0.28076921439451635,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hOriginal" : 0.15042858996614536,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 0.22652610549357211,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 0.15042848860889046,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 0.15042767640889287,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : 0.085882668954984268,
+         "hOriginal" : 0.085882668954984268,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

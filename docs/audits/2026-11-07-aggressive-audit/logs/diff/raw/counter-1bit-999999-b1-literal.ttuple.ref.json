@@ -1,0 +1,70 @@
+{
+ "status": "ok",
+ "values": {
+  "min_entropy": 0.0,
+  "t": 999931,
+  "p-hat_max": 0.9999993211949497,
+  "p_u": 1.0,
+  "Q": {
+   "_elided": true,
+   "entries": 999931,
+   "sha256": "5dca971754ec830d000b60fe4904baa7b470877fc9ab04e1e58b23867cabae5c",
+   "min": 35,
+   "max": 500000
+  },
+  "P": {
+   "_elided": true,
+   "entries": 999931,
+   "sha256": "351b401e5d72403e4e560255f5571e0742dbd89b266659339843c2a1176c0f21",
+   "min": 0.5,
+   "max": 0.5072463768115942
+  },
+  "P_max": {
+   "_elided": true,
+   "entries": 999931,
+   "sha256": "7a9b9d0b78af6f49d250354bfed8ccfdc21cf0e49d3c09b95b0a999bb78ae892",
+   "min": 0.5000005000005,
+   "max": 0.9999993211949497
+  },
+  "Q_next": 34,
+  "argmax_i": 999931,
+  "L": 999999,
+  "k": 2,
+  "cutoff": 35,
+  "z": 2.576,
+  "z_variant": "literal",
+  "method": "suffix_array (after direct reached 128)"
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "ttuple",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/counter-1bit-999999.bin",
+  "1",
+  "literal",
+  "0",
+  "msb",
+  "0",
+  "{}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/counter-1bit-999999-b1-literal.ttuple.ref.json"
+ ],
+ "duration_s": 5.252,
+ "options_used": {},
+ "module": "ttuple",
+ "mode": "literal",
+ "translated": false,
+ "reused": false,
+ "input_info": {
+  "n": 999999,
+  "overwidth_count": 0,
+  "raw_max": 1,
+  "masked": false
+ },
+ "n_symbols_fed": 999999,
+ "bps_fed": 1,
+ "estimate_seconds": 2.756,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+ "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
+}

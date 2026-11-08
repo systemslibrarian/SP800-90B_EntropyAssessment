@@ -1,0 +1,62 @@
+{
+ "IID": false,
+ "assessedSampleCount": 1000000,
+ "bitsPerSymbol": 1,
+ "bitsPerSymbolInferred": true,
+ "errorLevel": 0,
+ "sha256": "7d37dc3795e9b2927beb779008d7f4b4630dd7f2c058a2b14cee9d41a658dd68",
+ "sha256Scope": "assessed-sample-bytes",
+ "testCases": [
+  {
+   "hOriginal": 0.9935140687611586,
+   "mcvEstimateMode": 500965.0,
+   "mcvEstimatePHat": 0.500965,
+   "mcvEstimatePU": 0.5022529128970522,
+   "testCaseDesc": "Most Common Value"
+  },
+  {
+   "hOriginal": 0.12644573619604868,
+   "testCaseDesc": "Collision Test (for bit strings only)"
+  },
+  {
+   "hOriginal": 0.25797939245010865,
+   "testCaseDesc": "Markov Test (for bit strings only)"
+  },
+  {
+   "hOriginal": 0.15932269772157773,
+   "testCaseDesc": "Compression Test (for bit strings only)"
+  },
+  {
+   "tTupleRes": 0.20170850817082797,
+   "testCaseDesc": "T-Tuple Test"
+  },
+  {
+   "lrsRes": 0.3657986348027809,
+   "testCaseDesc": "LRS Test"
+  },
+  {
+   "hOriginal": 0.290519227211259,
+   "testCaseDesc": "Multi Most Common in Window Test"
+  },
+  {
+   "hOriginal": 0.251066953571429,
+   "testCaseDesc": "Lag Prediction Test"
+  },
+  {
+   "hOriginal": 0.2510689408156541,
+   "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)"
+  },
+  {
+   "hOriginal": 0.251073056820698,
+   "testCaseDesc": "LZ78Y Test"
+  },
+  {
+   "dataWordSize": 1.0,
+   "hAssessed": 0.12644573619604868,
+   "hOriginal": 0.12644573619604868,
+   "testCaseDesc": "Overall"
+  }
+ ],
+ "toolVersion": "1.1.8",
+ "type": ""
+}

@@ -1,0 +1,2 @@
+# non_iid/biased-random-bits: t1-r1 vs t10-r1
+# channels identical: {'json': True, 'stdout': True, 'stderr': True, 'rc': True}

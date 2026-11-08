@@ -1,0 +1,60 @@
+{
+ "status": "ok",
+ "values": {
+  "estimator": "Collision Estimate",
+  "mode": "literal",
+  "L": 999999,
+  "k": 2,
+  "width": 1,
+  "variant": "spec",
+  "equation": "spec",
+  "z_alpha": 2.575829303548901,
+  "v": 333333,
+  "Sum t_i": 999999,
+  "discarded_tail": 0,
+  "X-bar": 3.0,
+  "sigma-hat": 0.0,
+  "X-bar'": 3.0,
+  "found_p": false,
+  "p": "NaN",
+  "min entropy": 1.0,
+  "min_entropy": 1.0,
+  "min_entropy_spec_fallback": 1.0,
+  "min_entropy_clamp": 1.0,
+  "note": "binary search found no solution (X-bar' = 3.0 is above 2.5); step 8 fallback min-entropy = log2(2) = 1"
+ },
+ "error": null,
+ "cmd": [
+  "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py",
+  "--ref-child",
+  "collision",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/alternating-8bit-999999.bin",
+  "8",
+  "literal",
+  "1",
+  "msb",
+  "0",
+  "{\"z_alpha\": 2.575829303548901}",
+  "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/alternating-8bit-999999-b8-literal.collision.ref.10ddafb1.json"
+ ],
+ "duration_s": 0.235,
+ "options_used": {
+  "z_alpha": 2.575829303548901
+ },
+ "module": "collision",
+ "mode": "literal",
+ "translated": true,
+ "reused": false,
+ "input_info": {
+  "n": 999999,
+  "overwidth_count": 0,
+  "raw_max": 255,
+  "masked": false
+ },
+ "n_symbols_fed": 999999,
+ "bps_fed": 1,
+ "estimate_seconds": 0.102,
+ "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/collision.py",
+ "module_sha256": "ed9b87f8504f154f74bd1431ecf4a3bc8ff848d003ed31570bcdc0508dcba1ab"
+}

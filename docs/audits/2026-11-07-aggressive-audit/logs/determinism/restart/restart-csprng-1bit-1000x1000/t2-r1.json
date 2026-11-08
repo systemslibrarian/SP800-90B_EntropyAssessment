@@ -1,0 +1,89 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 1000000,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/restart/restart-csprng-1bit-1000x1000/t2-r1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/inputs/restart-csprng-1bit-1000x1000.bin 1 0.9",
+   "dateTimeStamp" : "20261108170341",
+   "errorLevel" : 0,
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/inputs/restart-csprng-1bit-1000x1000.bin",
+   "passedRestartSanityCheck" : true,
+   "restartAlpha" : 5.0000000000000004e-06,
+   "restartCutoffMethod" : "exact-multinomial-maximum",
+   "restartHI" : 0.90000000000000002,
+   "restartXcutoff" : 605,
+   "restartXcutoffPrintedBinomial" : 605,
+   "restartXmax" : 553,
+   "sha256" : "e9936cbf43ea7d4c1b76154d743b1fa3d86d1874b4a464b00bb8197439c863a1",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99444791245455633,
+         "h_r" : 0.99444791245455633,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.89196801649673341,
+         "h_r" : 0.92664896827822274,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99660714588416921,
+         "h_r" : 0.99785135625158727,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.86972960861865678,
+         "h_r" : 0.84763305809294331,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.94154042862257603,
+         "h_r" : 0.93635363392387227,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.97682713179675928,
+         "h_r" : 0.99614767298018136,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.9993988536756665,
+         "h_r" : 0.9956137532675422,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99809282288886958,
+         "h_r" : 0.9984732431064689,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99816054187479653,
+         "h_r" : 0.99670888296737781,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "h_c" : 0.99671030089808421,
+         "h_r" : 0.99530609803983272,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "h_c" : 0.86972960861865678,
+         "h_i" : 0.90000000000000002,
+         "h_r" : 0.84763305809294331,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

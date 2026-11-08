@@ -69,4 +69,43 @@ Bitstring Lag Prediction Estimate: N = 7999999
 Bitstring Lag Prediction Estimate: P_global = 0.88983823622977953
 Bitstring Lag Prediction Estimate: P_global' = 0.89012336635998612
 Bitstring Lag Prediction Estimate: P_local = 0.97130638885744536
-Bitstring Lag Predi
+Bitstring Lag Prediction Estimate: min entropy = 0.042001643772653606
+Literal Lag Prediction Estimate: C = 639881
+Literal Lag Prediction Estimate: r = 53
+Literal Lag Prediction Estimate: N = 999999
+Literal Lag Prediction Estimate: P_global = 0.63988163988163993
+Literal Lag Prediction Estimate: P_global' = 0.64111812806505841
+Literal Lag Prediction Estimate: P_local = 0.72383949613215592
+Literal Lag Prediction Estimate: min entropy = 0.46625826471297949
+Bitstring MultiMMC Prediction Estimate: C = 7198679
+Bitstring MultiMMC Prediction Estimate: r = 583
+Bitstring MultiMMC Prediction Estimate: N = 7999998
+Bitstring MultiMMC Prediction Estimate: P_global = 0.89983509995877498
+Bitstring MultiMMC Prediction Estimate: P_global' = 0.90010850808175924
+Bitstring MultiMMC Prediction Estimate: P_local = 0.97135788805618295
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.041925153316192523
+Literal MultiMMC Prediction Estimate: C = 799884
+Literal MultiMMC Prediction Estimate: r = 73
+Literal MultiMMC Prediction Estimate: N = 999998
+Literal MultiMMC Prediction Estimate: P_global = 0.79988559977119955
+Literal MultiMMC Prediction Estimate: P_global' = 0.80091615397922022
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = 0.32027687668519533
+Bitstring LZ78Y Prediction Estimate: C = 7198670
+Bitstring LZ78Y Prediction Estimate: r = 583
+Bitstring LZ78Y Prediction Estimate: N = 7999983
+Bitstring LZ78Y Prediction Estimate: P_global = 0.89983566215078203
+Bitstring LZ78Y Prediction Estimate: P_global' = 0.9001090698482197
+Bitstring LZ78Y Prediction Estimate: P_local = 0.97135789116665106
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.041925148696415449
+Literal LZ78Y Prediction Estimate: C = 799263
+Literal LZ78Y Prediction Estimate: r = 73
+Literal LZ78Y Prediction Estimate: N = 999983
+Literal LZ78Y Prediction Estimate: P_global = 0.79927658770199095
+Literal LZ78Y Prediction Estimate: P_global' = 0.80030832361977911
+Literal LZ78Y Prediction Estimate: P_local can't change the result.
+Literal LZ78Y Prediction Estimate: min entropy = 0.32137218080982766
+H_bitstring = 0.032217608875810141
+H_bitstring Per Symbol = 0.25774087100648113
+H_original = 0.29115980449860823
+Assessed min entropy: 0.25774087100648113

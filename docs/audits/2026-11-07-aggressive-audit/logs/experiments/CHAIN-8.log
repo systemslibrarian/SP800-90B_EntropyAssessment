@@ -1,0 +1,3 @@
+CHAIN-8 start Sun Nov  8 17:12:40 EST 2026 (memory-light: no dictionary-based Python references at 8M bits)
+=== SAalgs32 scaling on lfsr16-tap8 8-bit Sun Nov  8 17:12:40 EST 2026 ===
+n=50000 rc=0 wall=1s

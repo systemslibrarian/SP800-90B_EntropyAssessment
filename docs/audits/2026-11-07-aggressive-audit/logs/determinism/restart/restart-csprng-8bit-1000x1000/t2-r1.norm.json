@@ -1,0 +1,68 @@
+{
+ "IID": false,
+ "assessedSampleCount": 1000000,
+ "bitsPerSymbol": 8,
+ "bitsPerSymbolInferred": false,
+ "errorLevel": 0,
+ "passedRestartSanityCheck": true,
+ "restartAlpha": 5e-06,
+ "restartCutoffMethod": "exact-multinomial-maximum",
+ "restartHI": 7.5,
+ "restartXcutoff": 22,
+ "restartXcutoffPrintedBinomial": 19,
+ "restartXmax": 16,
+ "sha256": "47311ae5a22774892aa267c0f4220b1eecb79f487aabf720824d9b33d8b48db0",
+ "sha256Scope": "assessed-sample-bytes",
+ "testCases": [
+  {
+   "dataWordSize": 8.0,
+   "h_c": 7.8837649375616845,
+   "h_r": 7.8837649375616845,
+   "testCaseDesc": "Most Common Value"
+  },
+  {
+   "dataWordSize": 8.0,
+   "h_c": 7.8837649375616845,
+   "h_r": 7.353757733121226,
+   "testCaseDesc": "T-Tuple Test"
+  },
+  {
+   "dataWordSize": 8.0,
+   "h_c": 7.905550728433999,
+   "h_r": 7.522372516431798,
+   "testCaseDesc": "LRS Test"
+  },
+  {
+   "dataWordSize": 8.0,
+   "h_c": 7.9432944832216155,
+   "h_r": 7.94910462591151,
+   "testCaseDesc": "Multi Most Common in Window Test"
+  },
+  {
+   "dataWordSize": 8.0,
+   "h_c": 6.638405155112675,
+   "h_r": 7.939764556109469,
+   "testCaseDesc": "Lag Prediction Test"
+  },
+  {
+   "dataWordSize": 8.0,
+   "h_c": 7.914681181908588,
+   "h_r": 7.957952411600523,
+   "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)"
+  },
+  {
+   "dataWordSize": 8.0,
+   "h_c": 7.913949349861679,
+   "h_r": 7.956832855987867,
+   "testCaseDesc": "LZ78Y Test"
+  },
+  {
+   "h_c": 6.638405155112675,
+   "h_i": 7.5,
+   "h_r": 7.353757733121226,
+   "testCaseDesc": "Overall"
+  }
+ ],
+ "toolVersion": "1.1.8",
+ "type": "Restart"
+}

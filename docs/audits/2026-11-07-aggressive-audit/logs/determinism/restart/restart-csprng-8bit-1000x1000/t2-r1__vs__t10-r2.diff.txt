@@ -1,0 +1,2 @@
+# restart/restart-csprng-8bit-1000x1000: t2-r1 vs t10-r2
+# channels identical: {'json': True, 'stdout': True, 'stderr': True, 'rc': True}

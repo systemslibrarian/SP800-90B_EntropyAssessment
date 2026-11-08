@@ -1,0 +1,21 @@
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/RESULTS.md; exit 1
+  iid      truerand_1bit                            DETERMINISTIC (RNG-independent fields); RNG-dependent fields vary
+  iid      truerand_8bit                            DETERMINISTIC (RNG-independent fields); RNG-dependent fields vary
+  non_iid  biased-random-bits                       DETERMINISTIC
+  non_iid  biased-random-bytes                      DETERMINISTIC
+  non_iid  csprng-1bit-1000000                      DETERMINISTIC
+  non_iid  csprng-8bit-1000000                      DETERMINISTIC
+  non_iid  data.pi                                  DETERMINISTIC
+  non_iid  normal                                   DETERMINISTIC
+  non_iid  period255-8bit-1000000                   DETERMINISTIC
+  non_iid  rand1_short                              INCOMPLETE
+  non_iid  rand4_short                              INCOMPLETE
+  non_iid  rand8_short                              INCOMPLETE
+  non_iid  ringOsc-nist                             DETERMINISTIC
+  non_iid  truerand_1bit                            DETERMINISTIC
+  non_iid  truerand_4bit                            DETERMINISTIC
+  non_iid  truerand_8bit                            DETERMINISTIC
+  non_iid  two9010-8bit-1000000                     DETERMINISTIC
+  restart  restart-csprng-1bit-1000x1000            DETERMINISTIC
+  restart  restart-csprng-8bit-1000x1000            DETERMINISTIC
+exit=1

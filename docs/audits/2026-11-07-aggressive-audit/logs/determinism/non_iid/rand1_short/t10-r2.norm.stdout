@@ -1,0 +1,6 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin' (SHA-256 hash 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 of assessed bytes)
+Loaded 10000 samples of 2 distinct 1-bit-wide symbols
+
+*** Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+*** No assessment was performed. ***
+

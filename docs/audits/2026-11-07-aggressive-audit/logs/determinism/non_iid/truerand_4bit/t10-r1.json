@@ -4,7 +4,7 @@
    "bitsPerSymbol" : 4,
    "bitsPerSymbolInferred" : true,
    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/non_iid/truerand_4bit/t10-r1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_4bit.bin",
-   "dateTimeStamp" : "20261108165634",
+   "dateTimeStamp" : "20261108170003",
    "errorLevel" : 0,
    "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/truerand_4bit.bin",
    "sha256" : "489bc841bb364ba86da70b1617138aef76b25dd9196ad669eef40c1441b6cb88",

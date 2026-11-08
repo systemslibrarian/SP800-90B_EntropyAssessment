@@ -1,0 +1,9 @@
+{
+   "commandline" : "../../../cpp/ea_non_iid -i -a -v -v -o logs/experiments/saalgs-lfsr16-100000.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/lfsr16-100000.bin 8",
+   "dateTimeStamp" : "20261108171241",
+   "errorLevel" : -1,
+   "errorMessage" : "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.",
+   "reportComplete" : false,
+   "toolVersion" : "1.1.8",
+   "type" : "non-IID"
+}

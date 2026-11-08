@@ -1,0 +1,14 @@
+{
+ "IID": false,
+ "assessedSampleCount": 10000,
+ "bitsPerSymbol": 8,
+ "bitsPerSymbolInferred": true,
+ "errorClass": "input",
+ "errorLevel": -1,
+ "errorMessage": "Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+ "sha256": "17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803",
+ "sha256Scope": "assessed-sample-bytes",
+ "testCases": null,
+ "toolVersion": "1.1.8",
+ "type": ""
+}
