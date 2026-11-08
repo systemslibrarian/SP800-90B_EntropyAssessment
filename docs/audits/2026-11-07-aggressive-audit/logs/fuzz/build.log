@@ -1,0 +1,7 @@
+[18:37:42] compiling ea_non_iid (plain) -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/bin/plain/ea_non_iid
+[18:37:45]   sha256 e47978fb678cd059e145b1dee607489c2e0b15ff2bef64c09f1272e372121944  tuples 376  (0, 2 s)
+[18:37:45] compiling ea_iid (plain) -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/bin/plain/ea_iid
+[18:37:46]   sha256 088a58d0b3820fffcd0e35b2cc884e05d0656762906d93eb1f592c583a7cba69  tuples 230  (0, 1 s)
+[18:37:46] compiling ea_restart (plain) -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/bin/plain/ea_restart
+[18:37:48]   sha256 75f4af0f410399ca9352b616308798f5e7829dfc20e1f49fdcb7b7ec0ad4cdf0  tuples 119  (0, 2 s)
+[18:37:48] record: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/BUILD-RECORD.txt (copy: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/fuzz-build-record.log)

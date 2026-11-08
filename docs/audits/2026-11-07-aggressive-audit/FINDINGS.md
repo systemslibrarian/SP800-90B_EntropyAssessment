@@ -310,7 +310,25 @@ rows**. Sub-threshold (< 1e-10) differences exist and are listed, not flagged �
 ≥ 1e-10 tail of a wider arm64/x86-64 long-double difference in the prediction estimators (DET-04). Cannot see:
 Windows (not run this audit; the record's CI measurements stand); a race that needs more than two repeats to show.
 
-**4.7 Fuzzing, SAalgs32 scaling, fix-branch verification** — _(CHAIN-8/9; filled in when complete)_
+**4.7 Fix-branch verification — all four FAIL-before / PASS-after, suites green.** Each fix worktree
+(`harness/fixes/build_and_test.sh`, `logs/fixes/<topic>/`): master's production binaries copied in → the fix's own
+regression FAILS (defect present); `make all` from the branch → the regression PASSES; then every script in the
+branch's `regression-script-inventory.txt` run individually (the host could not hold a 15-minute `run-all-checks.sh`
+in the background without the low-memory killer intervening, so the suite was run in foreground batches; the wrapper's
+own count/inventory checks are covered by `regression-docs.sh`, which passes on every branch):
+
+| branch | fix regression | self-test | other scripts | notes |
+|---|---|---|---|---|
+| `fix/stale-report` `c8b0bc6` | FAIL (9 stale probes) → PASS (29 checks) | known deltas only | 24/24 PASS | `regression-workflows` needs PyYAML (AA-04 side effect); passes with python3.14 |
+| `fix/openssl-pin` `7d647e6` | FAIL → PASS; binaries link `libcrypto.3` | known deltas only | 24/24 PASS | two loose ends repaired on the branch: a dead-guard class-D/C flag on the new script's grep, and the 87→88 instrument count |
+| `fix/restart-notrun` `745b396` | FAIL → PASS (`hAssessed` = min on Overall) | known deltas only | 25/25 PASS | — |
+| `fix/multimmc-lookup` `f46f2ea`+count commit | FAIL (C 2288, r 12) → PASS (C 2409, r 20) | **known deltas only — no reference figure moves** | 24/24 PASS | the 87→88 count repaired on the branch; `regression-restart` needed 212 s |
+
+"Known deltas only" means the self-test differs from the reference data on exactly the eight manifest rows, all
+within tolerance (`check-platform-deltas.py` exit 0 in each worktree). None of the four is merged; none touches
+`master`.
+
+**4.8 Fuzzing (AFL++)** — _(foreground slices; filled in when complete)_
 
 ## 5. Method, instruments, and their known blind spots
 

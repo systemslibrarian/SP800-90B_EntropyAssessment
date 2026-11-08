@@ -1,0 +1,10 @@
+[18:38:04] record: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/fuzz/RUN-RECORD.md
+[18:38:04] preflight T1: ok, tuples=526, seeds=29 assessed=25 refused=4 signal=0
+[18:38:05] preflight T2: ok, tuples=535, seeds=29 assessed=25 refused=4 signal=0
+[18:38:06] preflight T3: ok, tuples=400, seeds=28 assessed=22 refused=6 signal=0
+[18:38:06] preflight T4: ok, tuples=402, seeds=29 assessed=25 refused=4 signal=0
+[18:38:07] preflight T5: ok, tuples=490, seeds=29 assessed=14 refused=15 signal=0
+[18:38:08] preflight T6: ok, tuples=547, seeds=29 assessed=7 refused=5 signal=10
+[18:38:10] preflight T7: ok, tuples=404, seeds=66 assessed=20 refused=46 signal=0
+[18:38:10] preflight T8: ok, tuples=119, seeds=29 assessed=0 refused=29 signal=0
+[18:38:10] preflight-only: no fuzzer started; record /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/fuzz/RUN-RECORD.md

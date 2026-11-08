@@ -23,7 +23,7 @@
 
   every withdrawn verification carries its five fields: yes, over 7 entries
 
-  the inventory's stated live count disagrees with the enumerator: enumerator says 88; no '**88** at <commit>' in the inventory
+  the instrument inventory's live count matches the enumerator: 88
 
   the divergence document's figures match a re-measurement: at 34ceb59
   the divergence document's measurement is current:    25 commit(s) behind HEAD, threshold 40
@@ -35,8 +35,7 @@
   every cited rule number has a definition:            yes
 
   the suite's scope statement matches the tree:        yes
-  inventory vs the instrument enumerator:              the document says 87 (1 occurrence(s)), the script declares 88
-  the inventory's count table:                         8 of 9 rows compared
-  script-count pairs in the inventory:                 12 found, 11 covered by the table above
+  the inventory's counts match the scripts' declarations: yes (9 rows, 12 occurrences)
+  every script-count pair in the inventory is checked: yes (12)
 
-regression-docs: FAIL (4 checks)
+regression-docs: PASS
