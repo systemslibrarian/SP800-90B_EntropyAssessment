@@ -1,0 +1,14 @@
+{
+   "IID" : false,
+   "assessmentComplete" : false,
+   "assessmentMode" : "IID",
+   "commandline" : "cpp/ea_iid -o docs/audits/2026-11-07-aggressive-audit/logs/verify/B_iid_err.json docs/audits/2026-11-07-aggressive-audit/logs/verify/does-not-exist.bin 8",
+   "dateTimeStamp" : "20261108160743",
+   "errorClass" : "input",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: could not stat the input file.",
+   "filename" : "docs/audits/2026-11-07-aggressive-audit/logs/verify/does-not-exist.bin",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

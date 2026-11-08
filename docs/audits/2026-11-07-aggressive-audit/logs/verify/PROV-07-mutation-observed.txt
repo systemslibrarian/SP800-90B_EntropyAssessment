@@ -1,0 +1,17 @@
+# PROV-07 observed.txt  2026-11-08 16:03:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+usage text: restart_main.cpp:205:    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+code:       restart_main.cpp:454:		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_1000]=255  stdout=s_1000.out stderr=s_1000.err
+  -s 1000: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 4999999 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_4999999]=255  stdout=s_4999999.out stderr=s_4999999.err
+  -s 4999999: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 5000000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_5000000]=255  stdout=s_5000000.out stderr=s_5000000.err
+  -s 5000000: rc=255 usage-dump=0 reason-lines=1 first-stdout-line=''
+bare-usage refusals: 2 of 3
+RESULT: FAIL -- only 2 of 3 refused as predicted

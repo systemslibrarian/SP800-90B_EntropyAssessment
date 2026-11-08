@@ -1,0 +1,7 @@
+# PROV-21 stale-report probe 2026-11-08 16:26:28 -0500
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT (8 samples)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+stale.json sha256 before: 5dd7cf913f74df516d1a65959aaadc4ddade700d9b41c50f61085378203c14a6
+$ ea_non_iid --version -o stale.json tiny8.bin 1 -> rc=0 stdout.first='non_iid 1.1.8' stale.json sha256 after: 5dd7cf913f74df516d1a65959aaadc4ddade700d9b41c50f61085378203c14a6 exists=yes
+$ ea_non_iid -Z -o stale.json tiny8.bin 1 -> rc=255 stderr.first='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z' stale.json sha256 after: 5dd7cf913f74df516d1a65959aaadc4ddade700d9b41c50f61085378203c14a6 first-line='{"stale":"previous run report, must not survive an exit-0 run"}'
+$ ea_non_iid -o stale.json -Z tiny8.bin 1 -> rc=255 stderr.first='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z' stale.json sha256 after: 4d65b47ac2b9639b93d106ebaab7896cc9bee833b0bc651909c8a5d5a17b7dc5 first-line='{'

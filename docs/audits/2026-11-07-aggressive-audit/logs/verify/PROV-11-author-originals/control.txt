@@ -1,0 +1,12 @@
+# PROV-11 control.txt  2026-11-07 21:56:14 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/c_p.json
+rc[placeholder_n]=255  stdout=c_p.out stderr=c_p.err
+ea_non_iid placeholder (no operand): rc=255 errorLevel=-1 type="non-IID"
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/c_pi.json
+rc[placeholder_i]=255  stdout=c_pi.out stderr=c_pi.err
+ea_iid placeholder (no operand): rc=255 errorLevel=-1 type="IID"
+RESULT: CONTROL-OK -- the placeholders name the tool ('non-IID', 'IID'); the completed reports in run.sh say the empty string

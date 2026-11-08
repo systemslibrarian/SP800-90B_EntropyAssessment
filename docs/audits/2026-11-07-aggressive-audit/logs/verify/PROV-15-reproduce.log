@@ -1,0 +1,227 @@
+# PROV-15 reproduce log -- verifier run 2026-11-08 16:16:24 -0500 host=Darwin 25.6.0 arm64
+# cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit ; HEAD=834ffeb branch=audit/2026-11-07
+# run.sh sha256 before run: 8c971e243ada5e649c115cb7e1198e505a844df42acd4cf4d325183568cc1fec
+# control.sh sha256: 42b9ba82dbd94886e449f208f6f55f46e540550fa1eac777ddb310f237071d85
+
+===== bash repro/PROV-15/run.sh =====
+# PROV-15 observed.txt  2026-11-08 16:16:24 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+pinned prefix (brew --prefix openssl@3): /opt/homebrew/opt/openssl@3 ; pinned lib present: /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib
+Makefile order:
+  Makefile:70:OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+  Makefile:71:INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+  Makefile:72:LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+BUILDING.md pin:
+  BUILDING.md:55:| openssl@3      | 3.6.4   | SHA-256 of the input file             |
+generic prefix symlinks:
+  lrwxr-xr-x 1 gmcas admin 41 Nov  7 19:28 /opt/homebrew/include/openssl -> ../Cellar/openssl@4/4.1.0/include/openssl
+  lrwxr-xr-x 1 gmcas admin 45 Nov  7 19:28 /opt/homebrew/lib/libcrypto.dylib -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+openssl@4 install receipt: Nov 7 19:28 /opt/homebrew/Cellar/openssl@4/4.1.0/INSTALL_RECEIPT.json
+  ea_non_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (NOT the pinned prefix)
+  ea_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (NOT the pinned prefix)
+  ea_restart -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (NOT the pinned prefix)
+production binaries not linked against the pinned openssl@3: 3 of 3
+RESULT: PASS -- all three production binaries link /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib: the generic prefix precedes the pinned one on -I and -L, so the pin cannot pin
+run.sh exit=0
+
+===== bash repro/PROV-15/control.sh =====
+# PROV-15 control.txt  2026-11-08 16:16:25 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 b7a55528a8270672a89bd26265feb529293718a83d2a19a350cd035289d83460  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning  (mtime 2026-10-20 21:06:00)
+ea_conditioning -> /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib
+openssl@4 Cellar mtime: 2026-11-07 19:28:41 ; ea_conditioning mtime: 2026-10-20 21:06:00
+RESULT: CONTROL-OK -- the October build from the same Makefile links the pinned openssl@3; the 2026-11-07 builds link openssl@4 because the generic prefix moved under them
+control.sh exit=0
+
+===== verifier's own independent reads (not via the script) =====
+--- otool -L ea_non_iid ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/../../../cpp/ea_non_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+--- otool -l ea_non_iid | LC_LOAD_DYLIB crypto ---
+          cmd LC_LOAD_DYLIB
+      cmdsize 80
+         name /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (offset 24)
+--- otool -L ea_iid ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/../../../cpp/ea_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+--- otool -l ea_iid | LC_LOAD_DYLIB crypto ---
+          cmd LC_LOAD_DYLIB
+      cmdsize 80
+         name /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (offset 24)
+--- otool -L ea_restart ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/../../../cpp/ea_restart:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+--- otool -l ea_restart | LC_LOAD_DYLIB crypto ---
+          cmd LC_LOAD_DYLIB
+      cmdsize 80
+         name /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (offset 24)
+--- otool -L ea_conditioning ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/../../../cpp/ea_conditioning:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/mpfr/lib/libmpfr.6.dylib (compatibility version 9.0.0, current version 9.2.0)
+	/opt/homebrew/opt/gmp/lib/libgmp.10.dylib (compatibility version 16.0.0, current version 16.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+--- otool -l ea_conditioning | LC_LOAD_DYLIB crypto ---
+          cmd LC_LOAD_DYLIB
+      cmdsize 80
+         name /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (offset 24)
+
+--- the full otool text files the script wrote ---
+--- /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-15/out/otool_ea_conditioning.txt ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/mpfr/lib/libmpfr.6.dylib (compatibility version 9.0.0, current version 9.2.0)
+	/opt/homebrew/opt/gmp/lib/libgmp.10.dylib (compatibility version 16.0.0, current version 16.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+--- /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-15/out/otool_ea_iid.txt ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+--- /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-15/out/otool_ea_non_iid.txt ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+--- /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-15/out/otool_ea_restart.txt ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+
+===== RULE 7 MUTATION: run.sh with pinned=/opt/homebrew/opt/openssl@4 (expectation inverted; a working script must now FAIL) =====
+# mutated run.sh sha256: 12344870fa3e13cd7ca860cedf39cc7bc385c5ee1103381d7e3010b7a0b3a482
+# mutation diff:
+10c10
+< pinned="$(brew --prefix openssl@3 2>/dev/null || echo /opt/homebrew/opt/openssl@3)"
+---
+> pinned="/opt/homebrew/opt/openssl@4"   # MUTATION (rule 7): expectation inverted -- openssl@4 declared the pin
+# --- output of mutated run ---
+# PROV-15 observed.txt  2026-11-08 16:17:21 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+pinned prefix (brew --prefix openssl@3): /opt/homebrew/opt/openssl@4 ; pinned lib present: ls: cannot access '/opt/homebrew/opt/openssl@4/lib/libcrypto.3.dylib': No such file or directory
+Makefile order:
+  Makefile:70:OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+  Makefile:71:INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+  Makefile:72:LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+BUILDING.md pin:
+  BUILDING.md:55:| openssl@3      | 3.6.4   | SHA-256 of the input file             |
+generic prefix symlinks:
+  lrwxr-xr-x 1 gmcas admin 41 Nov  7 19:28 /opt/homebrew/include/openssl -> ../Cellar/openssl@4/4.1.0/include/openssl
+  lrwxr-xr-x 1 gmcas admin 45 Nov  7 19:28 /opt/homebrew/lib/libcrypto.dylib -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+openssl@4 install receipt: Nov 7 19:28 /opt/homebrew/Cellar/openssl@4/4.1.0/INSTALL_RECEIPT.json
+  ea_non_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (pinned)
+  ea_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (pinned)
+  ea_restart -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (pinned)
+production binaries not linked against the pinned openssl@3: 0 of 3
+RESULT: FAIL -- every production binary links the pinned prefix
+mutated run.sh exit=1
+
+===== RESTORE =====
+# run.sh restored by cp from scratchpad backup; sha256 after restore: 8c971e243ada5e649c115cb7e1198e505a844df42acd4cf4d325183568cc1fec (pre-mutation: 8c971e243ada5e649c115cb7e1198e505a844df42acd4cf4d325183568cc1fec)
+
+===== RE-RUN of restored run.sh (restores observed.txt and logs/repro/PROV-15-observed.log to the unmutated state) =====
+# PROV-15 observed.txt  2026-11-08 16:17:23 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+pinned prefix (brew --prefix openssl@3): /opt/homebrew/opt/openssl@3 ; pinned lib present: /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib
+Makefile order:
+  Makefile:70:OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+  Makefile:71:INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+  Makefile:72:LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+BUILDING.md pin:
+  BUILDING.md:55:| openssl@3      | 3.6.4   | SHA-256 of the input file             |
+generic prefix symlinks:
+  lrwxr-xr-x 1 gmcas admin 41 Nov  7 19:28 /opt/homebrew/include/openssl -> ../Cellar/openssl@4/4.1.0/include/openssl
+  lrwxr-xr-x 1 gmcas admin 45 Nov  7 19:28 /opt/homebrew/lib/libcrypto.dylib -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+openssl@4 install receipt: Nov 7 19:28 /opt/homebrew/Cellar/openssl@4/4.1.0/INSTALL_RECEIPT.json
+  ea_non_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (NOT the pinned prefix)
+  ea_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (NOT the pinned prefix)
+  ea_restart -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (NOT the pinned prefix)
+production binaries not linked against the pinned openssl@3: 3 of 3
+RESULT: PASS -- all three production binaries link /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib: the generic prefix precedes the pinned one on -I and -L, so the pin cannot pin
+restored run.sh exit=0
+
+===== diff author's observed.txt (2026-11-07 21:56) vs verifier's (now) -- expect only timestamp/git lines =====
+1c1
+< # PROV-15 observed.txt  2026-11-07 21:56:18 -0500  host=Darwin 25.6.0 arm64
+---
+> # PROV-15 observed.txt  2026-11-08 16:17:23 -0500  host=Darwin 25.6.0 arm64
+3c3
+< # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+---
+> # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+diff rc=1
+===== diff author's control.txt vs verifier's =====
+1c1
+< # PROV-15 control.txt  2026-11-07 21:56:18 -0500  host=Darwin 25.6.0 arm64
+---
+> # PROV-15 control.txt  2026-11-08 16:16:25 -0500  host=Darwin 25.6.0 arm64
+3c3
+< # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+---
+> # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+diff rc=1
+===== logs/repro copies now =====
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/repro/PROV-15-observed.log:22:RESULT: PASS -- all three production binaries link /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib: the generic prefix precedes the pinned one on -I and -L, so the pin cannot pin
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/repro/PROV-15-control.log:7:RESULT: CONTROL-OK -- the October build from the same Makefile links the pinned openssl@3; the 2026-11-07 builds link openssl@4 because the generic prefix moved under them

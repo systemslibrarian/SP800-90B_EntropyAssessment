@@ -1,0 +1,253 @@
+# PROV-24 verify log  2026-11-08 16:34:17 -0500  host=Darwin 25.6.0 arm64  verifier=REPRODUCE lens
+# cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit  HEAD=e415c0e  branch=audit/2026-11-07
+# binary before run: 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+# run.sh sha256 before: 11b9e350c37e6406b73cade71a7c919253c4a1aafdea258514b14adcc805a543
+
+########## STEP 1: bash repro/PROV-24/run.sh (unmodified) ##########
+# PROV-24 observed.txt  2026-11-08 16:34:17 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  (the 20 samples of SP 800-90B 6.3.1's worked example, PDF p. 50; width inferred 2)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex20.bin
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/_lib.sh: line 31: 80094 Abort trap: 6              "$@" > "$so" 2> "$se"
+rc[iid]=134  stdout=ab.out stderr=ab.err
+stderr (verbatim):
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+rc=134 assertion lines=1 ; ab.json errorLevel=-1 reportComplete=false
+code: permutation_tests.h:256:	assert(n>=p); 
+RESULT: PASS -- SIGABRT (exit 134) from assert(n>=p) in periodicity() on a 20-sample input under the escape; the C14 placeholder is what remains at -o
+run.sh exit=0
+
+########## STEP 2: bash repro/PROV-24/control.sh (unmodified) ##########
+# PROV-24 control.txt  2026-11-08 16:34:17 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 683a02f12d1233e76262550e1ac67b93587c9c06f8e5e43dc578d527715e9edb  (100 samples = the worked example x5; width inferred 2)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/c_ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex100.bin
+rc[iid]=1  stdout=c_ab.out stderr=c_ab.err
+rc=1 assertion lines=0 ; c_ab.json errorLevel=2 assessmentComplete=true
+RESULT: CONTROL-OK -- at L = 100 the battery completes (rc 1, a verdict); the abort in run.sh is L = 20 < p = 32
+control.sh exit=0
+
+########## STEP 3: raw artefacts after step 1/2 ##########
+--- out/ab.out.rc:
+134
+--- out/ab.err:
+Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+--- out/ab.out:
+
+*** Warning: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+--- out/ab.json:
+{
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex20.bin",
+   "dateTimeStamp" : "20261108163417",
+   "errorLevel" : -1,
+   "errorMessage" : "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.",
+   "reportComplete" : false,
+   "toolVersion" : "1.1.8",
+   "type" : "IID"
+}
+
+--- out/c_ab.out.rc:
+1
+--- out/c_ab.err (bytes=0):
+--- out/c_ab.out:
+
+*** Warning: dataset contains 100 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+--- out/c_ab.json:
+{
+   "IID" : false,
+   "assessedSampleCount" : 100,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 2,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/c_ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex100.bin",
+   "dateTimeStamp" : "20261108163417",
+   "errorClass" : "statistical",
+   "errorLevel" : 2,
+   "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex100.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "683a02f12d1233e76262550e1ac67b93587c9c06f8e5e43dc578d527715e9edb",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.44008222574077555,
+         "hOriginal" : 0.92460410024210438,
+         "passedChiSquareTests" : false,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : false,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "rawMean" : 1.0,
+         "testCaseDesc" : "",
+         "translatedSymbolMedian" : 1.0
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}
+
+--- input hashes:
+088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  repro/PROV-24/out/ex20.bin
+683a02f12d1233e76262550e1ac67b93587c9c06f8e5e43dc578d527715e9edb  repro/PROV-24/out/ex100.bin
+--- ex20.bin hexdump:
+00000000: 0001 0102 0001 0202 0001 0001 0100 0202  ................
+00000010: 0100 0201                                ....
+--- ex100.bin = ex20 x5? python check:
+len20=20 len100=100  b==a*5: True
+
+########## STEP 4: rule-7 mutation of run.sh's expectation (cp to temp, mutate, run, restore by cp, verify sha) ##########
+orig sha256: 11b9e350c37e6406b73cade71a7c919253c4a1aafdea258514b14adcc805a543
+--- mutation diff (orig -> mutant):
+16c16
+< [ "$RC" -eq 134 ] && [ "$asr" -ge 1 ] && verdict PASS "SIGABRT (exit 134) from assert(n>=p) in periodicity() on a 20-sample input under the escape; the C14 placeholder is what remains at -o"
+---
+> [ "$RC" -eq 0 ] && [ "$asr" -ge 1 ] && verdict PASS "SIGABRT (exit 134) from assert(n>=p) in periodicity() on a 20-sample input under the escape; the C14 placeholder is what remains at -o"
+diff rc=1 (1 = the mutation landed)
+mutant in place sha256: 905dea3487359022175afc542eaa0090f2701c9d6f5ceda54741d32f9ae055b1
+--- running MUTATED run.sh (expectation now rc==0; real rc is 134, so the script must print FAIL):
+# PROV-24 observed.txt  2026-11-08 16:35:54 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  (the 20 samples of SP 800-90B 6.3.1's worked example, PDF p. 50; width inferred 2)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex20.bin
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/_lib.sh: line 31: 13468 Abort trap: 6              "$@" > "$so" 2> "$se"
+rc[iid]=134  stdout=ab.out stderr=ab.err
+stderr (verbatim):
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+rc=134 assertion lines=1 ; ab.json errorLevel=-1 reportComplete=false
+code: permutation_tests.h:256:	assert(n>=p); 
+RESULT: FAIL -- rc=134 assertion=1
+MUTATED run.sh exit=1
+--- restored; sha256 now: 11b9e350c37e6406b73cade71a7c919253c4a1aafdea258514b14adcc805a543  (must equal 11b9e350c37e6406b73cade71a7c919253c4a1aafdea258514b14adcc805a543)
+cmp: restored file is byte-identical to the original
+--- re-running RESTORED run.sh so observed.txt and logs/repro reflect the genuine script:
+# PROV-24 observed.txt  2026-11-08 16:35:55 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  (the 20 samples of SP 800-90B 6.3.1's worked example, PDF p. 50; width inferred 2)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex20.bin
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/_lib.sh: line 31: 13675 Abort trap: 6              "$@" > "$so" 2> "$se"
+rc[iid]=134  stdout=ab.out stderr=ab.err
+stderr (verbatim):
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+rc=134 assertion lines=1 ; ab.json errorLevel=-1 reportComplete=false
+code: permutation_tests.h:256:	assert(n>=p); 
+RESULT: PASS -- SIGABRT (exit 134) from assert(n>=p) in periodicity() on a 20-sample input under the escape; the C14 placeholder is what remains at -o
+RESTORED run.sh exit=0
+git status of repro/PROV-24 (expect only the records it writes):
+ M logs/repro/PROV-06-control.log
+ M logs/repro/PROV-06-observed.log
+ M logs/repro/PROV-07-control.log
+ M logs/repro/PROV-07-observed.log
+ M logs/repro/PROV-11-control.log
+ M logs/repro/PROV-11-observed.log
+ M logs/repro/PROV-12-control.log
+ M logs/repro/PROV-12-observed.log
+ M logs/repro/PROV-13-control.log
+ M logs/repro/PROV-13-observed.log
+ M logs/repro/PROV-14-control.log
+ M logs/repro/PROV-14-observed.log
+ M logs/repro/PROV-15-control.log
+ M logs/repro/PROV-15-observed.log
+ M logs/repro/PROV-16-control.log
+ M logs/repro/PROV-16-observed.log
+ M logs/repro/PROV-17-control.log
+ M logs/repro/PROV-17-observed.log
+ M logs/repro/PROV-19-control.log
+ M logs/repro/PROV-19-observed.log
+ M logs/repro/PROV-20-control.log
+ M logs/repro/PROV-20-observed.log
+ M logs/repro/PROV-21-control.log
+ M logs/repro/PROV-21-observed.log
+ M logs/repro/PROV-22-control.log
+ M logs/repro/PROV-22-observed.log
+ M logs/repro/PROV-23-control.log
+ M logs/repro/PROV-23-observed.log
+ M logs/repro/PROV-24-control.log
+ M logs/repro/PROV-24-observed.log
+ M repro/PROV-24/control.txt
+ M repro/PROV-24/observed.txt
+ M repro/PROV-24/out/ab.json
+ M repro/PROV-24/out/c_ab.json
+
+########## STEP 5: spec text relied on (reference/sp800-90b.pages.txt, PDF p. 42, 5.1.9) ##########
+5.1.9   Periodicity Test Statistic
+
+The periodicity test aims to determine the number of periodic structures in the data. The test takes
+a lag parameter p as input, where p < L, and the test statistic T is calculated as follows:
+
+1. Initialize T to zero.
+2. For i = 1 to L − p
+If (si = si+p), increment T by one.
+
+Example 9: Let the input data be (2, 1, 2, 1, 0, 1, 0, 1, 1, 2), and let p = 2. Since si = si+p for five
+values of i (1, 2, 4, 5 and 6), T = 5.
+
+Handling binary data: To test binary input data, first apply Conversion I to the input sequence.
+
+########## STEP 6: the SHIPPED control never reaches periodicity() (see logs/verify/PROV-24-ctl/README-ctl.log) ##########
+===== A. shipped control input ex100.bin with -vv: which stage stops the suite? =====
+rc=1
+--- stdout lines matching test verdicts / permutation:
+28:Chi square tests: Failed
+32:Length of longest repeated substring test: Failed
+33:** Skipped IID permutation tests after an earlier required IID test failure
+--- stderr bytes: 0
+--- JSON labelled reads:
+{'ranChiSquareTests': True, 'passedChiSquareTests': False, 'ranLongestRepeatedSubstringTest': True, 'passedLongestRepeatedSubstringTest': False, 'ranIidPermutationTests': False, 'passedIidPermutationTests': False}
+errorLevel 2 assessmentComplete True
+
+=> control.sh's 'the battery completes' is false: the IID suite returned a verdict (errorLevel 2) WITHOUT running the permutation battery; the x5 repetition that lengthened the input also made it fail chi-square and LRS (a 20-symbol repeated substring in 100 samples). The absence of the assertion is for a reason unrelated to L >= 32.
+=> control.sh predicate [ rc -ne 134 ] && [ asr -eq 0 ] is also vacuous: a scratchpad copy with an unresolvable binary path gave rc=127, asr=0 -> 'RESULT: CONTROL-OK' exit 0 (scratchpad/prov24-vacuity). The same copy of run.sh gave 'RESULT: FAIL -- rc=127 assertion=0' exit 1, so run.sh is not vacuous. run.sh's PASS predicate matches any 'Assertion failed' line, not specifically periodicity:256, but it logs stderr verbatim and the logged line names the function and line.
+
+########## STEP 7: REPLACEMENT control -- prefixes of one fixed-seed 2-bit stream (logs/verify/PROV-24-ctl/replacement-control.log) ##########
+===== L=40  (r4_40.bin) =====
+rc=0
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+43:Permutation testing: Unpermuted result periodicity(32) = 2
+75:IID permutation tests: Passed
+===== L=32  (r4_32.bin) =====
+rc=0
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+43:Permutation testing: Unpermuted result periodicity(32) = 0
+75:IID permutation tests: Passed
+===== L=31  (r4_31.bin) =====
+rc=134
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+===== L=20  (r4_20.bin) =====
+rc=134
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+=> L=40 and L=32: chi-square and LRS pass, 'Unpermuted result periodicity(32)' printed, ranIidPermutationTests=true, rc 0, no assertion.  L=31 and L=20: chi-square and LRS pass, then 'Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256', rc 134. The pair (r4_32.bin, r4_31.bin) differs only in the last sample and sits exactly on the n>=p boundary; the baseline (L=32) is asserted to have REACHED periodicity by a positive marker (rule 2 / rule 7).
+
+########## STEP 8: file state after verification ##########
+run.sh sha256: 11b9e350c37e6406b73cade71a7c919253c4a1aafdea258514b14adcc805a543  (original 11b9e350c37e6406b73cade71a7c919253c4a1aafdea258514b14adcc805a543)
+control.sh sha256: fc0aaffce5d1465a057ccff16d05174af22c0221192afb776f87d29b61663dc5  (never modified)
+binary after: 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+modified by this verification (records only): repro/PROV-24/observed.txt control.txt out/ab.json out/c_ab.json, logs/repro/PROV-24-observed.log PROV-24-control.log; new: logs/verify/PROV-24-reproduce.log logs/verify/PROV-24-ctl/
+other logs/repro/PROV-*.log entries shown modified by git were NOT touched here; their mtimes:
+-rw-r--r-- 1 gmcas staff 1603 16:02:38 logs/repro/PROV-06-observed.log
+-rw-r--r-- 1 gmcas staff 2563 16:32:12 logs/repro/PROV-23-observed.log
+regression-estimator-guards.sh exists: yes; mentions ea_iid: 0
+0
+# END 2026-11-08 16:37:31 -0500

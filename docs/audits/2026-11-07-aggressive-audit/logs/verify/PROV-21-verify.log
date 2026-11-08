@@ -1,0 +1,11 @@
+# PROV-21 verify 2026-11-08 16:25:20 -0500 host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (no data read; no assessment)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+$ ea_non_iid --version -Z -> rc=0 stdout.lines=8 stderr.lines=0 stdout.first='non_iid 1.1.8' stderr.first=''
+$ ea_non_iid -Z --version -> rc=255 stdout.lines=41 stderr.lines=1 stdout.first='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]' stderr.first='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z'
+$ ea_non_iid --version -> rc=0 stdout.lines=8 stderr.lines=0 stdout.first='non_iid 1.1.8' stderr.first=''
+$ ea_non_iid --version -Z /nonexistent/data.bin 1 -> rc=0 stdout.lines=8 stderr.lines=0 stdout.first='non_iid 1.1.8' stderr.first=''
+$ ea_non_iid --version -- -Z -> rc=0 stdout.lines=8 stderr.lines=0 stdout.first='non_iid 1.1.8' stderr.first=''
+$ ea_non_iid -- --version -> rc=255 stdout.lines=42 stderr.lines=0 stdout.first='Error reading file.' stderr.first=''
+$ ea_non_iid -o --version -> rc=255 stdout.lines=42 stderr.lines=0 stdout.first='Incorrect usage.' stderr.first=''
+$ ea_non_iid --version --bogus -> rc=0 stdout.lines=8 stderr.lines=0 stdout.first='non_iid 1.1.8' stderr.first=''

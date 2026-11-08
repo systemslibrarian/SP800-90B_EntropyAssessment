@@ -1,0 +1,112 @@
+# PROV-20 verifier reproduction  2026-11-08 16:23:10 -0500  cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit  host=Darwin 25.6.0 arm64
+# git=834ffeb branch=audit/2026-11-07
+# binary sha256: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+stat: cannot read file system information for '%z': No such file or directory
+# input sha256:  17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  size=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4413342    Available: 4413342
+Inodes: Total: 184082566  Free: 176533680 bytes
+
+########## bash repro/PROV-20/run.sh ##########
+# PROV-20 observed.txt  2026-11-08 16:23:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -c /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i_then_c]=0  stdout=ic.out stderr=ic.err
+  -i -c: rc=0  h'=0.732612  H_original lines=0  (conditioned mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -i /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c_then_i]=0  stdout=ci.out stderr=ci.err
+  -c -i: rc=0  H_original=6.636441  h' lines=0  (initial mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -a -t -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[a_then_t]=0  stdout=at.out stderr=at.err
+  -a -t -vv: rc=0  Number of Binary Symbols line: Number of Binary Symbols: 80000
+diagnostic lines about the contradiction in any of the six streams: 0
+RESULT: PASS -- -i -c assesses in -c mode, -c -i in -i mode, -a -t truncates; all exit 0 with no word about the contradiction
+run.sh exit code: 0
+
+########## bash repro/PROV-20/control.sh ##########
+# PROV-20 control.txt  2026-11-08 16:23:11 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c_only]=0  stdout=c_c.out stderr=c_c.err
+  -c alone: rc=0 h'=0.732612
+  run.sh's -i -c gave h'=0.732612
+RESULT: CONTROL-OK -- -c alone and -i -c print the same h' (0.732612): the earlier -i was silently discarded
+control.sh exit code: 0
+
+########## RULE 7 MUTATION: run.sh expectation [ -n "$ic_h" ] -> [ -z "$ic_h" ] (asserts -i -c printed NO h' line, i.e. first flag won) ##########
+--- diff original vs mutated ---
+17c17
+< [ "$ic_rc" -eq 0 ] && [ "$ci_rc" -eq 0 ] && [ "$at_rc" -eq 0 ] && [ "$diag" -eq 0 ] && [ -n "$ic_h" ] && [ -n "$ci_o" ] && verdict PASS "-i -c assesses in -c mode, -c -i in -i mode, -a -t truncates; all exit 0 with no word about the contradiction"
+---
+> [ "$ic_rc" -eq 0 ] && [ "$ci_rc" -eq 0 ] && [ "$at_rc" -eq 0 ] && [ "$diag" -eq 0 ] && [ -z "$ic_h" ] && [ -n "$ci_o" ] && verdict PASS "-i -c assesses in -c mode, -c -i in -i mode, -a -t truncates; all exit 0 with no word about the contradiction"
+--- mutated run.sh output ---
+# PROV-20 observed.txt  2026-11-08 16:24:09 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -c /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i_then_c]=0  stdout=ic.out stderr=ic.err
+  -i -c: rc=0  h'=0.732612  H_original lines=0  (conditioned mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -i /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c_then_i]=0  stdout=ci.out stderr=ci.err
+  -c -i: rc=0  H_original=6.636441  h' lines=0  (initial mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -a -t -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[a_then_t]=0  stdout=at.out stderr=at.err
+  -a -t -vv: rc=0  Number of Binary Symbols line: Number of Binary Symbols: 80000
+diagnostic lines about the contradiction in any of the six streams: 0
+RESULT: FAIL -- rc=0/0/0 diag=0
+MUTATED run.sh exit code: 1
+--- restored run.sh from temp copy; diff vs saved original (empty = identical) ---
+(identical)
+25e11212ee484b2abdaf8a3c2c929e1fda9995728ec9621a22bfd67e2912b416  repro/PROV-20/run.sh
+--- re-run restored run.sh so observed.txt and logs/repro/PROV-20-observed.log hold a PASS record again ---
+# PROV-20 observed.txt  2026-11-08 16:24:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -c /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[i_then_c]=0  stdout=ic.out stderr=ic.err
+  -i -c: rc=0  h'=0.732612  H_original lines=0  (conditioned mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -i /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[c_then_i]=0  stdout=ci.out stderr=ci.err
+  -c -i: rc=0  H_original=6.636441  h' lines=0  (initial mode won)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -a -t -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[a_then_t]=0  stdout=at.out stderr=at.err
+  -a -t -vv: rc=0  Number of Binary Symbols line: Number of Binary Symbols: 80000
+diagnostic lines about the contradiction in any of the six streams: 0
+RESULT: PASS -- -i -c assesses in -c mode, -c -i in -i mode, -a -t truncates; all exit 0 with no word about the contradiction
+restored run.sh exit code: 0
+
+# CORRECTION to header: the 'stat -f %z' call above resolved to GNU stat and printed filesystem info; the input size is: 10000 bytes (/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin)
+
+########## VERIFIER'S INDEPENDENT PROBES (outputs in logs/verify/PROV-20-probes/; EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2; input bin/rand8_short.bin 10000 samples) ##########
+1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+[noniid_i_only] rc=0  h'=  H_original=6.636441  stderr_bytes=0
+[noniid_i_c_i] rc=0  h'=  H_original=6.636441  stderr_bytes=0
+[noniid_c_i_c] rc=0  h'=0.732612  H_original=  stderr_bytes=0
+[noniid_ic_combined] rc=0  h'=0.732612  H_original=  stderr_bytes=0
+[noniid_t_only_vv] rc=0  h'=  H_original=  stderr_bytes=0
+[iid_i_only] rc=1  h'=  H_original=  stderr_bytes=0
+[iid_c_only] rc=0  h'=0.983387  H_original=  stderr_bytes=0
+[iid_i_then_c] rc=0  h'=0.983387  H_original=  stderr_bytes=0
+[iid_c_then_i] rc=1  h'=  H_original=  stderr_bytes=0
+--- byte-identity of stdout (cmp) ---
+ea_non_iid -i          == repro -c -i   (ci.out)
+ea_non_iid -i -c -i    == ea_non_iid -i
+ea_non_iid -c -i -c    == repro -i -c   (ic.out)
+ea_non_iid -ic         == repro -i -c   (ic.out)
+control -c             == repro -i -c   (c_c.out == ic.out)
+ea_non_iid -t -vv      == repro -a -t -vv (at.out)  <-- -a/-t NOT distinguishable at 80000 bits < MIN_SIZE 1000000 (non_iid_main.cpp:344)
+ea_iid -i -c           == ea_iid -c
+ea_iid -c -i           == ea_iid -i   (both rc=1: chi-square fails on 10000 literal 8-bit samples -- short-dataset artefact, same in both, not part of the finding)
+--- diagnostic grep (exclusive|mutual|conflict|overrid|ignor|discard|both -) over every probe stream: 0 matches ---
+--- upstream inheritance: upstream/master:cpp/non_iid_main.cpp:99-111 and tag unrepaired-reference-2026-10-15 carry the identical case 'i'/'c'/'a'/'t' assignments; README.md:90 says 'You may specify either -i or -c, and either -a or -t' and is silent on both being given ---
+--- prior-knowledge docs (FORK-DIVERGENCE-AND-TRUST.md, audits/2026-09-30/FINDINGS-TRACKER.md, CLOSING-INVENTORY.md, ORCHESTRATOR-CHECKS.md, NOTICE): no mention of -i -c / -a -t / mutually-exclusive / last-wins ---
+# end of verifier record 2026-11-08 16:26:04 -0500

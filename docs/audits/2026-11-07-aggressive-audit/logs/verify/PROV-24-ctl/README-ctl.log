@@ -1,0 +1,21 @@
+# PROV-24 control re-examination  2026-11-08 16:36:04 -0500
+# binary: 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (non-compliant short-dataset runs)
+
+===== A. shipped control input ex100.bin with -vv: which stage stops the suite? =====
+rc=1
+--- stdout lines matching test verdicts / permutation:
+28:Chi square tests: Failed
+32:Length of longest repeated substring test: Failed
+33:** Skipped IID permutation tests after an earlier required IID test failure
+--- stderr bytes: 0
+--- JSON labelled reads:
+{'ranChiSquareTests': True, 'passedChiSquareTests': False, 'ranLongestRepeatedSubstringTest': True, 'passedLongestRepeatedSubstringTest': False, 'ranIidPermutationTests': False, 'passedIidPermutationTests': False}
+errorLevel 2 assessmentComplete True
+
+===== B. shipped positive input ex20.bin with -vv: does it reach the permutation battery? =====
+rc=134
+28:Chi square tests: Passed
+32:Length of longest repeated substring test: Passed
+--- stderr:
+Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.

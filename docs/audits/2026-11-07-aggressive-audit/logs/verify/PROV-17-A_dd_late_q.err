@@ -1,0 +1,11 @@
+Error: '-q' looks like an option but appears after the file operand 'bin/rand1_short.bin'.
+       Refusing to run: what this command line MEANS depends on the C
+       library. glibc rearranges it and parses '-q'; BSD and macOS treat
+       it as another operand and fail on the usage path. One line, two
+       supported platforms, two different operations -- and guessing which
+       was wanted is worse than refusing. Nothing has been written.
+
+       Put every option BEFORE the file:
+         ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+       If '-q' is meant as an operand and not an option, separate the
+       operands with '--'.

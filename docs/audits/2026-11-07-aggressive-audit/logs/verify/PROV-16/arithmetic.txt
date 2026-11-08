@@ -1,0 +1,15 @@
+Spec check: -log2(1) = -0.0  (IEEE sign negative: True )
+README arithmetic: L=20000, one 0x01 -> p_u (unclamped) = 1.000078791  clamps: True
+README arithmetic: L=20000, ten 0x01 -> p_u (unclamped) = 0.999907183  clamps: False
+Control expected H = -log2(p_u) = 0.00013391324219584911366
+Clamp condition at general L: m non-mode symbols clamps iff sqrt(m) < z (approx) i.e. m < z^2 = 6.635
+  L=1000000 m=0  p_u(unclamped)=1.000000000000  clamps=False
+  L=1000000 m=1  p_u(unclamped)=1.000001575829  clamps=True
+  L=1000000 m=2  p_u(unclamped)=1.000001642771  clamps=True
+  L=1000000 m=3  p_u(unclamped)=1.000001461463  clamps=True
+  L=1000000 m=4  p_u(unclamped)=1.000001151651  clamps=True
+  L=1000000 m=5  p_u(unclamped)=1.000000759718  clamps=True
+  L=1000000 m=6  p_u(unclamped)=1.000000309452  clamps=True
+  L=1000000 m=7  p_u(unclamped)=0.999999814983  clamps=False
+  L=1000000 m=8  p_u(unclamped)=0.999999285520  clamps=False
+JSON '-0.0' parse: python json.loads -> -0.0 ; == 0: True

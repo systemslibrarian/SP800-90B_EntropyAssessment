@@ -1,0 +1,46 @@
+# PROV-14 refute probe  2026-11-08 16:14:31 -0500  host=Darwin 25.6.0 arm64
+# verifier lens: REFUTE. No build, no compiler invoked, nothing over 20,000 samples, no production binary run.
+# make: GNU Make 3.81  path=/usr/bin/make
+# scratch makefile: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14.mk  sha256=8f210b97bd2513644c14ffe5e4b5dd922ea0420d22a9ed9272d6c0f89c7f09eb
+# project Makefile under test: cpp/Makefile sha256=c89066a2c73afee3aabf8877ade4ec36813f1770bb00e359b005c0f8fac18d0e
+--- make -s -f prov14.mk (exit status follows) ---
+ARM-A shell-function $$ token   -> [/tmp/.ea_fs_$.c]
+ARM-B shell-function $$$$ token -> [/tmp/.ea_fs_19634.c]
+ARM-C recipe $$ token           -> [/tmp/.ea_fs_$.c]
+ARM-D recipe $$$$ token         -> [/tmp/.ea_fs_19638.c]
+make exit=0
+--- /tmp state after the probe (no file should have been created by it) ---
+ls: cannot access '/tmp/.ea_fs_$.c': No such file or directory
+--- GNU make manual, 'The shell Function': the argument is expanded by make before being passed to the shell; '$$' is make's escape for one '$' ---
+
+=== consequence-chain probes 16:16:30 -- single-file compiler invocations in the scratchpad, NOT a build; nothing under /tmp/.ea_* touched ===
+# compiler: Apple clang version 21.0.0 (clang-2100.4.1.1)
+# Makefile grep pattern reproduced verbatim: ignored-optimization-argument\|not supported\|unrecognized
+FLOAT_STORE probe  input=honest  compile_rc=0  grep=MATCH  -> FLOAT_STORE would be ""
+    stderr lines: 1  first: clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+FLOAT_STORE probe  input=garbage  compile_rc=1  grep=MATCH  -> FLOAT_STORE would be ""
+    stderr lines: 5  first: clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+FLOAT_STORE probe  input=dir  compile_rc=1  grep=MATCH  -> FLOAT_STORE would be ""
+    stderr lines: 3  first: clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+IGNORED_FLAG_IS_ERROR probe  input=honest  compile_rc=0  -> IGNORED_FLAG_IS_ERROR would be "-Werror=ignored-optimization-argument"
+IGNORED_FLAG_IS_ERROR probe  input=garbage  compile_rc=1  -> IGNORED_FLAG_IS_ERROR would be "" (guard silently dropped)
+--- sticky-bit / symlink facts on this host (not exercised) ---
+drwxrwxrwt 473 root wheel 15136 Nov  8 16:16 /private/tmp
+sysctl: unknown oid 'fs.protected_symlinks'
+
+=== VERDICT (REFUTE lens) 2026-11-08 16:17:03 -0500 ===
+Mechanism: CONFIRMED. GNU Make 3.81 hands '$$' to the shell as one '$' in both $(shell) and recipe context (arms A, C);
+  '$$$$' is what yields a PID (arms B, D) -- so the probe can distinguish the two and the reproducer's sh model was right.
+  cpp/Makefile sha256 c89066a2... matches the README; lines 45 and 49 carry the token; not stale.
+Documented? NO. OC-121 Item 5 (ORCHESTRATOR-CHECKS.md, commit b53ff5d) and the Makefile comment block describe the probe,
+  not its temp path. NOTICE, FORK-DIVERGENCE-AND-TRUST.md and FINDINGS-TRACKER.md are silent on it.
+Reachability: build-time only; needs neither EA_ALLOW_SHORT_DATASET nor a short dataset; no effect on any estimator figure.
+  Preconditions for harm (a hostile co-tenant on the build host, or two make processes inside the ~100 ms probe window) are
+  absent in the known deployments: a single-developer Mac, and single-tenant GitHub runners that run make SEQUENTIALLY
+  (x86-64-platform-facts.yml lines 113-130).
+Consequence chain as written is WRONG on this compiler: a non-compiling plant does NOT flip FLOAT_STORE (grep MATCHES the
+  driver warning for garbage and for a directory alike -> FLOAT_STORE stays ""). The measured effect of a plant is on the
+  SECOND probe: IGNORED_FLAG_IS_ERROR becomes "" and the -Werror guard OC-121 added is silently dropped. No denial of build.
+  Worse-than-stated branch, NOT exercised: macOS has no fs.protected_symlinks, so a planted symlink would make the probe's
+  printf overwrite the symlink's target as the builder; still requires a hostile local user.
+Severity stays LOW, direction neutral. cli-build.md:273 carries the same unmeasured denial-of-build chain; correct both.

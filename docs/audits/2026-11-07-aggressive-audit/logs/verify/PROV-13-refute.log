@@ -1,0 +1,97 @@
+# PROV-13 REFUTE probe  2026-11-08 16:12:58 -0500  host=Darwin 25.6.0 arm64  git=834ffeb branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is NON-COMPLIANT (short dataset); L = 2000
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (README claims 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349)
+input repro: len 2000 distinct 3 counts {0: 1992, 1: 4, 2: 4} sha256 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e
+$ ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/repro.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/repro.bin 2
+rc=0 stderr_bytes=0
+  | Chi square independence: T = 0.17059228241416982
+  | Chi square independence: df = -1
+  | Chi square independence: P-value = 1
+  | Chi square goodness of fit: T = 0
+  | Chi square goodness of fit: df = 0
+  | Chi square goodness of fit: P-value = 1
+  | Chi square tests: Passed
+  | Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/repro.bin' (SHA-256 hash 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e of assessed bytes)
+  | IID permutation tests: Passed
+  | Assessed min entropy: 0.00052001850873112214
+  json: cases=1 passedChiSquareTests=True ranChiSquareTests=True IID=True errorLevel=0
+input control: len 2000 distinct 3 counts {0: 700, 1: 650, 2: 650} sha256 df0929c16affa55d1140e844aed915244c0799194ae73039a92dba64f3d45d75
+$ ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/control.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/control.bin 2
+rc=0 stderr_bytes=0
+  | Chi square independence: T = 3.2664654027291435
+  | Chi square independence: df = 6
+  | Chi square independence: P-value = 0.7747356989584685
+  | Chi square goodness of fit: T = 18.096703296703296
+  | Chi square goodness of fit: df = 18
+  | Chi square goodness of fit: P-value = 0.44929932758944602
+  | Chi square tests: Passed
+  | Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/control.bin' (SHA-256 hash df0929c16affa55d1140e844aed915244c0799194ae73039a92dba64f3d45d75 of assessed bytes)
+  | IID permutation tests: Passed
+  | Assessed min entropy: 1.053660204334224
+  json: cases=1 passedChiSquareTests=True ranChiSquareTests=True IID=True errorLevel=0
+input df0mut: len 2000 distinct 3 counts {0: 1980, 1: 10, 2: 10} sha256 35c184b00c946d59c9129e31a41c77c7427e78acb752eb4dbd91c5668ea18685
+$ ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/df0mut.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/df0mut.bin 2
+rc=0 stderr_bytes=0
+  | Chi square independence: T = 1.0320680309236954
+  | Chi square independence: df = 0
+  | Chi square independence: P-value = 1
+  | Chi square goodness of fit: T = 0
+  | Chi square goodness of fit: df = 0
+  | Chi square goodness of fit: P-value = 1
+  | Chi square tests: Passed
+  | Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-13-refute/df0mut.bin' (SHA-256 hash 35c184b00c946d59c9129e31a41c77c7427e78acb752eb4dbd91c5668ea18685 of assessed bytes)
+  | IID permutation tests: Passed
+  | Assessed min entropy: 0.0061437170303637574
+  json: cases=1 passedChiSquareTests=True ranChiSquareTests=True IID=True errorLevel=0
+--- what a user sees on the repro input at default verbosity and at -v ---
+rc[v0]=0 lines mentioning chi: 1
+  v0| ** Passed chi square tests
+  v0| ** Passed IID permutation tests
+rc[v1]=0
+  v1| Chi square independence
+  v1| Chi square goodness of fit
+  v1| ** Passed chi square tests
+  v1| ** Passed IID permutation tests
+--- spec-only model of 5.2.1 binning (model_5_2_1.py; written from PDF p. 44, no cpp/ read) ---
+example11 L=100 counts=21/41/38 nbin=6 df=3 (spec: nbin=6, df=3)
+repro    L=2000 counts=1992/4/4 nbin=2 df=-1 applied=NO (df<1) MCV=0.0005 bit
+control  L=2000 counts=700/650/650 nbin=9 df=6 applied=yes MCV=1.4056 bit
+df0-mut  L=2000 counts=1980/10/10 nbin=3 df=0 applied=NO (df<1) MCV=0.0062 bit
+edge4    L=1000000 counts=999992/4/4 nbin=2 df=-1 applied=NO (df<1) MCV=0.0000 bit
+k3-10x   L=1000000 counts=999980/10/10 nbin=3 df=0 applied=NO (df<1) MCV=0.0000 bit
+k3-11x   L=1000000 counts=999978/11/11 nbin=5 df=2 applied=yes MCV=0.0000 bit
+k256 h=12 L=1000000 heavy~83313 singles=244 nbin=192 df=-64 applied=NO (df<1) MCV=3.5730 bit
+k256 h=13 L=1000000 heavy~76904 singles=243 nbin=217 df=-39 applied=NO (df<1) MCV=3.6880 bit
+k256 h=14 L=1000000 heavy~71411 singles=242 nbin=244 df=-12 applied=NO (df<1) MCV=3.7944 bit
+k256 h=15 L=1000000 heavy~66650 singles=241 nbin=272 df=16 applied=yes MCV=3.8934 bit
+k256 h=16 L=1000000 heavy~62485 singles=240 nbin=303 df=47 applied=yes MCV=3.9860 bit
+# end
+
+# ===== VERIFIER VERDICT (lens: REFUTE) =====
+# Objection 1 (harness artefact): FAILED. Binary sha256 matches README; input regenerated with my own
+#   generator, byte-counted independently (1992/4/4), sha identical to the author's (7aed588a...). The
+#   tool itself prints 'df = -1' / 'P-value = 1' / 'Chi square tests: Passed' at -vvv, and
+#   'degrees of freedom = -1' / 'p-value = 1.000000' / '** Passed chi square tests' at -v (verbose=2, the
+#   NIST verbose mode). JSON: passedChiSquareTests true, ranChiSquareTests true (booleans only).
+# Objection 2 (documented/intended): FAILED. chi_square_tests.h:569 and the igamc a<=0 guard (:279-281)
+#   are upstream code (git blame 9fb15e69, Joshua E. Hill 2018-10-08; identical at upstream/master:557).
+#   NOTICE:100-104,203-207 and FINDINGS-TRACKER:555-580 (N-01, c8799f4) cover ONLY the binary 5.2.3
+#   m = 1 case. FORK-DIVERGENCE A/B/D, CLOSING-INVENTORY, ORCHESTRATOR-CHECKS: no entry for chi-square
+#   nbin/df (grep 'chi|nbin|degrees|igamc' returned nothing in the last two).
+# Objection 3 (needs short data / escape): FAILED. The mechanism (df = nbin - k, igamc(a<=0) = 1) has no
+#   length dependence. The spec-only model above reproduces Example 11 (nbin 6, df 3) and the tool's df on
+#   three 2000-sample inputs (-1, 6, 0), and at L = 1e6 gives: k=3 999992/4/4 -> df -1; 999980/10/10 ->
+#   df 0; 999978/11/11 -> df 2 (applied). k=256 with 14 heavy symbols (~71,411 each) + 242 singletons ->
+#   nbin 244, df -12. DERIVED, not measured at 1e6 (heavy slot occupied; brief rule 4).
+# Objection 4 (direction): neutral HOLDS. 5.2.1 'do not apply the test' means no rejection from this test;
+#   5.2 intro / 5 intro: non-IID only if a test FAILS. Tool: p = 1 -> no rejection. Same battery verdict
+#   on every input. (What this cannot see: a reading of 'do not apply' as 'IID may not be claimed'; the
+#   standard does not say so, and 5.2.3 uses 'the test fails' when it means fail.)
+# Sub-claim REFUTED (record accuracy only): expected.txt and iid-chisquare-lrs.md 2.3(d) say nbin <= k
+#   'forces one symbol to carry >= ~99 % of the mass, where MCV <= 0.015 bit'. False for k > 3: the k=256
+#   construction above has p_max ~ 0.0714 and MCV ~ 3.79 bit with df = -12. Harmless (there is no
+#   overstatement to bound) but the sentence must not be carried into FINDINGS as written.
+# Also measured: the df = 0 boundary (1980/10/10) takes the same path (igamc(0,x) = 1 -> pass); the GOF
+#   'df = 0' in the same output is NOT this defect -- 5.2.2 (PDF p. 45) has no 'do not apply' clause.
+# VERDICT: CONFIRMED. Severity LOW (reporting deviation, neutral verdict). Not UB (size_t->int narrowing
+#   is implementation-defined, -1 on every mainstream ABI; igamc returns before any arithmetic on a<=0).

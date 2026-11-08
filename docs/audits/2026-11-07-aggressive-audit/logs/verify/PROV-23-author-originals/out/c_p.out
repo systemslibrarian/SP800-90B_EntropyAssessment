@@ -1,0 +1,71 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/lag64anti.bin' (SHA-256 hash 2fb87448f625ebb60588962d1b5103fade48676d173ba1d6b31e7f7a08b49ae5 of assessed bytes)
+Loaded 10000 samples of 2 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Raw Mean = 0.50080000000000002
+Translated Symbol Index Median = 0.5
+Binary = true
+Literal Most Common Value Estimate: Mode count = 5008
+Literal Most Common Value Estimate: p-hat = 0.50080000000000002
+Literal Most Common Value Estimate: p_u = 0.51367977403722886
+Literal Most Common Value Estimate: min entropy = 0.96105882570055079
+Chi square independence: T = 120.70289346793686
+Chi square independence: df = 126
+Chi square independence: P-value = 0.61650706686345802
+Chi square goodness of fit: T = 1.5824040509543702
+Chi square goodness of fit: df = 9
+Chi square goodness of fit: P-value = 0.99648802908412371
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.5000012799999999923983
+Literal Longest Repeated Substring results: W = 35
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.001444253571366668330994
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 20.81920000000008030838
+Permutation testing: Unpermuted result numDirectionalRuns = 792
+Permutation testing: Unpermuted result lenDirectionalRuns = 6
+Permutation testing: Unpermuted result numIncreasesDecreases = 766
+Permutation testing: Unpermuted result numRunsMedian = 5185
+Permutation testing: Unpermuted result lenRunsMedian = 13
+Permutation testing: Unpermuted result avgCollision = 16.42105263157894867732
+Permutation testing: Unpermuted result maxCollision = 28
+Permutation testing: Unpermuted result periodicity(1) = 286
+Permutation testing: Unpermuted result periodicity(2) = 251
+Permutation testing: Unpermuted result periodicity(8) = 238
+Permutation testing: Unpermuted result periodicity(16) = 414
+Permutation testing: Unpermuted result periodicity(32) = 311
+Permutation testing: Unpermuted result covariance(1) = 20080
+Permutation testing: Unpermuted result covariance(2) = 19999
+Permutation testing: Unpermuted result covariance(8) = 18431
+Permutation testing: Unpermuted result covariance(16) = 20927
+Permutation testing: Unpermuted result covariance(32) = 20206
+Permutation testing: Unpermuted result compression = 1606
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion    1438       0       6
+       numDirectionalRuns      12       0       6
+       lenDirectionalRuns       7       6       0
+    numIncreasesDecreases       4       2     134
+           numRunsMedian*       1       0    9999
+            lenRunsMedian       8       1       5
+            avgCollision*   10000       0       0
+            maxCollision*   10000       0       0
+           periodicity(1)       6       0    1058
+           periodicity(2)       5       1      17
+           periodicity(8)      10       0       6
+         periodicity(16)*       0       0   10000
+         periodicity(32)*       0       0   10000
+            covariance(1)       6       0      20
+            covariance(2)      11       0       6
+           covariance(8)*   10000       0       0
+          covariance(16)*       0       0   10000
+          covariance(32)*       0       0   10000
+              compression      40       2       4
+(* denotes failed test)
+
+IID permutation tests: Failed
+IID test suite failed: no IID min-entropy estimate was awarded.

@@ -1,0 +1,32 @@
+# PROV-06 verify  2026-11-08 16:01:36 -0500  host=Darwin 25.6.0 arm64  git=834ffeb branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every run below is a NON-COMPLIANT short-dataset run (10,000 samples, 8 bits)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin (10000 bytes)
+--- probe 1: ea_non_iid, repeated -o to two paths (the README's reproducer) ---
+$ ea_non_iid -q -o v_a.json -o v_b.json rand8_short.bin 8
+rc[noniid_repeated_o]=0  stdout=241B stderr=0B
+  v_a.json: errorLevel=-1 reportComplete=False testCases=<absent> Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+  v_b.json: errorLevel=0 reportComplete=<absent> testCases=present Overall.hAssessed=5.860893744485249 errorMessage="<absent>"
+  stdout mentions of v_a.json: 0; stderr: 0
+--- probe 2 (control): ea_non_iid, single -o ---
+$ ea_non_iid -q -o v_c.json rand8_short.bin 8
+rc[noniid_single_o]=0
+  v_c.json: errorLevel=0 reportComplete=<absent> testCases=present Overall.hAssessed=5.860893744485249 errorMessage="<absent>"
+--- probe 3: ea_non_iid, -o repeated to the SAME path ---
+$ ea_non_iid -q -o v_same.json -o v_same.json rand8_short.bin 8
+rc[noniid_same_path_twice]=0
+  v_same.json: errorLevel=0 reportComplete=<absent> testCases=present Overall.hAssessed=5.860893744485249 errorMessage="<absent>"
+--- probe 4: ea_non_iid, first -o valid, second -o into a missing directory ---
+$ ea_non_iid -q -o v_d.json -o no_such_dir/x.json rand8_short.bin 8
+rc[noniid_second_o_unwritable]=255
+  v_d.json: errorLevel=-1 reportComplete=False testCases=<absent> Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+  stderr: Error: could not create the temporary output file '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-06/no_such_dir/x.json.tmp.6e03e332420eba45' (No such file or directory).
+Error: the output path '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-06/no_such_dir/x.json' cannot be written; refusing to assess.
+--- probe 5: ea_iid, repeated -o to two paths (README said only ea_non_iid was run) ---
+$ ea_iid -q -o i_a.json -o i_b.json rand8_short.bin 8
+rc[iid_repeated_o]=1  stdout=241B stderr=0B
+  i_a.json: errorLevel=-1 reportComplete=False testCases=<absent> Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+  i_b.json: errorLevel=2 reportComplete=<absent> testCases=present Overall.hAssessed=<no-case> errorMessage="IID test suite failed; no IID min-entropy estimate was awarded."
+  stdout mentions of i_a.json: 0; stderr: 0
+--- ea_restart: NOT RUN (needs a 1000x1000 = 1,000,000-sample matrix; that is a heavy job under brief rule 4) ---

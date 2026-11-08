@@ -1,0 +1,64 @@
+## stage: c
+## variant: asan_ubsan
+## tool: ea_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid
+## binary_sha256: bebaad509b661a68a8a014007fb3818ea5da255cf8e389f436edd62035ddabcf
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin
+## input_sha256: 6b61e7efaef8273960187ea1e850139cdf48a403d2fec302b74bec8086114975
+## input_bytes: 100
+## operands: 2
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: name-declared width 2
+## timeout_seconds: 300
+## threads: 2
+## start: 2026-11-08T21:36:32Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin 2
+## --- tool output ---
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin' (SHA-256 hash 6b61e7efaef8273960187ea1e850139cdf48a403d2fec302b74bec8086114975 of assessed bytes)
+Loaded 100 samples of 3 distinct 2-bit-wide symbols
+
+*** Warning: dataset contains 100 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary samples: 200
+
+Samples have been translated
+Raw Mean = 2.1699999999999999
+Translated Symbol Index Median = 1
+Binary = false
+Literal Most Common Value Estimate: Mode count = 41
+Literal Most Common Value Estimate: p-hat = 0.40999999999999998
+Literal Most Common Value Estimate: p_u = 0.5373260940266017
+Literal Most Common Value Estimate: min entropy = 0.89613019391906645
+Bitstring Most Common Value Estimate: Mode count = 138
+Bitstring Most Common Value Estimate: p-hat = 0.68999999999999995
+Bitstring Most Common Value Estimate: p_u = 0.77444927658881424
+Bitstring Most Common Value Estimate: min entropy = 0.36875734368423307
+Chi square independence: T = 3.4571197058750198
+Chi square independence: df = 3
+Chi square independence: P-value = 0.32636628350523372
+Chi square goodness of fit: T = 0
+Chi square goodness of fit: df = 0
+Chi square goodness of fit: P-value = 1
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.3565999999999999725553
+Literal Longest Repeated Substring results: W = 21
+Literal Longest Repeated Substring results: Pr(X >= 1) = 1.245933685651200319885e-06
+Length of longest repeated substring test: Failed
+** Skipped IID permutation tests after an earlier required IID test failure
+
+IID test suite failed: no IID min-entropy estimate was awarded.
+## --- end of tool output ---
+## exit: 1
+## wall_seconds: 0
+## end: 2026-11-08T21:36:32Z
+## sanitizer_report: no
+## sanitizer_report_count: 0
+## first_report_line: -
+## tool_outcome: COMPLETED-IID-BATTERY-FAILED
+## permutation_battery: skipped-after-required-test-failure
+## permutation_progress_lines: 0

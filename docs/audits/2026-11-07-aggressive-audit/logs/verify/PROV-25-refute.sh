@@ -1,0 +1,57 @@
+#!/bin/bash
+# PROV-25 REFUTE-lens verification probe. Tiny: 10,000-sample fixtures, EA_ALLOW_SHORT_DATASET=1, OMP_NUM_THREADS=2.
+# Every tool run here is NON-COMPLIANT (brief ground rule 5). No build. No pipe-to-head/tail for any verdict (rule 17).
+set -u
+repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment
+V=$repo/docs/audits/2026-11-07-aggressive-audit/logs/verify
+LOG=$V/PROV-25-refute.log; : > "$LOG"
+log(){ printf '%s\n' "$*" >> "$LOG"; }
+sha(){ shasum -a 256 "$1" | awk '{print $1}'; }
+export EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2
+log "# PROV-25-refute.log  $(date '+%Y-%m-%d %H:%M:%S %z')  host=$(uname -srm)  git=$(cd $repo && git rev-parse --short HEAD) branch=$(cd $repo && git branch --show-current)"
+log "# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs"
+log ""
+log "## O1 stale source? sha256 now vs README (a5462f85... utils.h ; b3eb23f7... non_iid_main.cpp)"
+log "now  $(sha $repo/cpp/shared/utils.h)  cpp/shared/utils.h"
+log "now  $(sha $repo/cpp/non_iid_main.cpp)  cpp/non_iid_main.cpp"
+log "now  $(sha $repo/cpp/iid_main.cpp)  cpp/iid_main.cpp"
+log "now  $(sha $repo/cpp/restart_main.cpp)  cpp/restart_main.cpp"
+log ""
+log "## O2 the comment, read now (utils.h 1023-1028)"
+sed -n 1023,1028p $repo/cpp/shared/utils.h | sed 's/^/  | /' >> "$LOG"
+log ""
+log "## O3 guard under another spelling in non_iid_main.cpp? (INT_MAX|INT32_MAX|numeric_limits|2147483647|0x7fffffff|LONG_MAX not preceded by U -- ULONG_MAX at :105 is the -l subset sentinel, not a length guard)"
+grep -nE 'INT_MAX|INT32_MAX|numeric_limits|2147483647|0x7fffffff|(^|[^U])LONG_MAX' $repo/cpp/non_iid_main.cpp >> "$LOG"; log "grep rc=$? (1 = no match)"
+log "## O3b shared intake bound on len in utils.h read_file/read_file_subset? (INT_MAX|too large|exceeds) -- lines 300-740 only"
+sed -n 300,740p $repo/cpp/shared/utils.h | grep -nE 'INT_MAX|INT32_MAX|too large|exceeds' >> "$LOG"; log "grep rc=$? (1 = no match)"
+log ""
+log "## O4 call graph: n_choose_2 call sites, len_LRS_test call sites, what non_iid_main.cpp takes from lrs_test.h"
+grep -rn 'n_choose_2(' $repo/cpp --include='*.h' --include='*.cpp' | grep -v 'int64_t n_choose_2' | sed "s|$repo/||" >> "$LOG"
+grep -rnE 'len_LRS_test\(' $repo/cpp --include='*.cpp' | sed "s|$repo/||" >> "$LOG"
+grep -nE 'SAalgs\(|len_LRS' $repo/cpp/non_iid_main.cpp | sed 's|^|cpp/non_iid_main.cpp:|' >> "$LOG"
+log "len_LRS_test signature: $(grep -n 'bool len_LRS_test' $repo/cpp/shared/lrs_test.h)"
+log ""
+log "## O5 the OTHER real caller, restart_main.cpp: how is n bounded there?"
+grep -nE 'data\.len != MIN_SIZE|int sample_size = data\.len' $repo/cpp/restart_main.cpp | sed 's|^|cpp/restart_main.cpp:|' >> "$LOG"
+log "MIN_SIZE: $(grep -rn 'define MIN_SIZE' $repo/cpp/shared/*.h)"
+log ""
+log "## O6 does the OC-53 record name non_iid_main.cpp? (audits/, NOTICE, FORK-DIVERGENCE)"
+grep -rnE 'non_iid_main.*INT_MAX|INT_MAX.*non_iid_main' $repo/audits $repo/NOTICE $repo/FORK-DIVERGENCE-AND-TRUST.md >> "$LOG"; log "grep rc=$? (1 = no match: the parenthetical exists only in the source comment)"
+log "record's own words: $(sed -n 5128,5129p $repo/audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md | tr '\n' ' ')"
+log "record on reach: $(sed -n 4893,4895p $repo/audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md | tr '\n' ' ')"
+log ""
+log "## O7 runtime corroboration: the s5.2.5 label 'Longest Repeated Substring results' (lrs_test.h:716-722, verbose>1) -- present for ea_iid, absent for ea_non_iid"
+for b in ea_iid ea_non_iid; do log "binary sha256 $(sha $repo/cpp/$b)  cpp/$b  (mtime $(date -r $repo/cpp/$b '+%Y-%m-%d %H:%M:%S'))"; done
+log "fixture sha256 $(sha $repo/bin/rand8_short.bin)  bin/rand8_short.bin  ($(wc -c < $repo/bin/rand8_short.bin) bytes)"
+log "\$ ea_iid -i -v -v -v bin/rand8_short.bin 8"
+$repo/cpp/ea_iid -i -v -v -v $repo/bin/rand8_short.bin 8 > $V/PROV-25-iid.stdout 2> $V/PROV-25-iid.stderr; rc=$?; log "rc[ea_iid]=$rc"
+log "\$ ea_non_iid -i -v -v -v bin/rand8_short.bin 8"
+$repo/cpp/ea_non_iid -i -v -v -v $repo/bin/rand8_short.bin 8 > $V/PROV-25-noniid.stdout 2> $V/PROV-25-noniid.stderr; rc=$?; log "rc[ea_non_iid]=$rc"
+log "lines in ea_iid stdout: $(wc -l < $V/PROV-25-iid.stdout); in ea_non_iid stdout: $(wc -l < $V/PROV-25-noniid.stdout)"
+log "label 'Longest Repeated Substring results' count: ea_iid=$(grep -c 'Longest Repeated Substring results' $V/PROV-25-iid.stdout)  ea_non_iid=$(grep -c 'Longest Repeated Substring results' $V/PROV-25-noniid.stdout)"
+log "label 'LRS Test Estimate' (s6.3.6 estimator) count: ea_iid=$(grep -c 'LRS Test Estimate' $V/PROV-25-iid.stdout)  ea_non_iid=$(grep -c 'LRS Test Estimate' $V/PROV-25-noniid.stdout)"
+log "ea_iid LRS-test lines:"; grep -n 'Longest Repeated Substring' $V/PROV-25-iid.stdout | sed 's/^/  /' >> "$LOG"
+log "ea_non_iid LRS lines:"; grep -n 'LRS' $V/PROV-25-noniid.stdout | sed 's/^/  /' >> "$LOG"
+log "ea_iid stderr bytes: $(wc -c < $V/PROV-25-iid.stderr); ea_non_iid stderr bytes: $(wc -c < $V/PROV-25-noniid.stderr)"
+log ""
+log "## END"

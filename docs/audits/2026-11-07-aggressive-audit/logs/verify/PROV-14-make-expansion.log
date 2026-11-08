@@ -1,0 +1,16 @@
+# PROV-14 verifier probe: make $$ expansion (echo-only scratch makefile, NO project build)  2026-11-08 16:11:43 -0500
+# make: GNU Make 3.81
+## scratch.mk:
+X := $(shell printf '%s' /tmp/.ea_fs_$$.c)
+Y := $(shell printf '%s' /tmp/.ea_fs_$$$$.c)
+all:
+	@printf 'shell-function=%s recipe=%s doubled-shell-function=%s\n' '$(X)' /tmp/.ea_fs_$$.c '$(Y)'
+## make -s -f scratch.mk (exit status follows):
+shell-function=/tmp/.ea_fs_$.c recipe=/tmp/.ea_fs_$.c doubled-shell-function=/tmp/.ea_fs_81773.c
+exit=0
+## sh variants printing /tmp/.ea_fs_$.c unquoted:
+/bin/sh -> /tmp/.ea_fs_$.c
+/bin/bash -> /tmp/.ea_fs_$.c
+/bin/zsh -> /tmp/.ea_fs_$.c
+/bin/dash -> /tmp/.ea_fs_$.c
+## POSIX note: XCU 2.6.2 says an unquoted $ followed by a char that cannot start a parameter name is UNSPECIFIED; every sh above prints it literally.

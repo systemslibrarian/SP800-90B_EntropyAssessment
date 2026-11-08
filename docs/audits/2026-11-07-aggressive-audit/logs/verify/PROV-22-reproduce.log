@@ -1,0 +1,179 @@
+# PROV-22 verifier reproduce log  2026-11-08 16:27:59 -0500  host=Darwin 25.6.0 arm64
+# git=834ffeb branch=audit/2026-11-07
+# verifier env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (set by _lib.sh; no tool binary is executed by this reproducer)
+# pre-run sha256 of the reproducer files:
+77e8c9eb522c8214e3fe354374987acba038989c56491ac8a10cf651ffb74f34  repro/PROV-22/run.sh
+ddf5573f16c471a7d92797a0a5d217788dfcccf5d281c11a312ac44264c280af  repro/PROV-22/control.sh
+3db32277f581e0336d6f29cece790e408d4e639b8415a999d83af90dee55c5e4  repro/PROV-22/model.py
+90c874b68017bbc6a066049bb1544fecee397a8b121abc6cd1556106ba805d77  repro/_lib.sh
+# sha256 of the binary the reproducer records (instrument rule 4):
+22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+
+## STEP 1: bash repro/PROV-22/run.sh  (from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit)
+run.sh exit=0   (0 = PASS = defect present; 1 = FAIL; 3 = NOT-RUN)
+--- run.sh stdout (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-run.stdout) ---
+# PROV-22 observed.txt  2026-11-08 16:28:00 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; xoshiro_jump at lines 765-
+  | void xoshiro_jump(unsigned int jump_count, uint64_t *xoshiro256starstarState) {
+  | 	static const uint64_t JUMP[] = { 0x180ec6d33cfd0aba, 0xd5a61266f0c9392c, 0xa9582618e03fc9aa, 0x39abdc4529b1661c };
+  | 	uint64_t s0 = 0;
+  | 	uint64_t s1 = 0;
+  | 	uint64_t s2 = 0;
+  | 	uint64_t s3 = 0;
+  | 
+  | 	for(unsigned int j=0; j < jump_count; j++) {
+  | 		for(unsigned int i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
+  | 			for(unsigned int b = 0; b < 64; b++) {
+  | 				if (JUMP[i] & ((uint64_t)1) << b) {
+  | 					s0 ^= xoshiro256starstarState[0];
+  | 					s1 ^= xoshiro256starstarState[1];
+  | 					s2 ^= xoshiro256starstarState[2];
+  | 					s3 ^= xoshiro256starstarState[3];
+  | 				}
+  | 				xoshiro256starstar(xoshiro256starstarState);	
+  | 			}
+  | 			
+  | 		xoshiro256starstarState[0] = s0;
+  | 		xoshiro256starstarState[1] = s1;
+  | 		xoshiro256starstarState[2] = s2;
+  | 		xoshiro256starstarState[3] = s3;
+  | 	}
+  | }
+caller: permutation_tests.h:649
+  model: k=0 (thread 0): code==canonical? True ; code state nonzero? True
+  model: k=1 (thread 1): code==canonical? True ; code state nonzero? True
+  model: k=2 (thread 2): code==canonical? False ; code state nonzero? True
+  model: k=3 (thread 3): code==canonical? False ; code state nonzero? True
+  model: k=4 (thread 4): code==canonical? False ; code state nonzero? True
+  model: k=2 equals S1 xor S2 (the un-reset accumulator prediction)? True
+model exit (0 = every k agrees with canonical): 1
+RESULT: PASS -- k >= 2 diverges from k canonical jumps and k = 2 equals S1 xor S2 exactly as the un-reset accumulators predict (model-level reproduction)
+--- run.sh stderr (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-run.stderr) ---
+--- end stderr ---
+
+## STEP 2: bash repro/PROV-22/control.sh  (from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit)
+control.sh exit=0   (0 = CONTROL-OK; 1 = CONTROL-UNEXPECTED)
+--- control.sh stdout (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-control.stdout) ---
+# PROV-22 control.txt  2026-11-08 16:28:00 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+  model: k=0 (thread 0): code==canonical? True ; code state nonzero? True
+  model: k=1 (thread 1): code==canonical? True ; code state nonzero? True
+RESULT: CONTROL-OK -- k = 0 and k = 1 equal the canonical jump; only threads >= 2 are affected
+--- control.sh stderr (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-control.stderr) ---
+--- end stderr ---
+
+## STEP 3: files as written by the two scripts
+--- repro/PROV-22/observed.txt ---
+# PROV-22 observed.txt  2026-11-08 16:28:00 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; xoshiro_jump at lines 765-
+  | void xoshiro_jump(unsigned int jump_count, uint64_t *xoshiro256starstarState) {
+  | 	static const uint64_t JUMP[] = { 0x180ec6d33cfd0aba, 0xd5a61266f0c9392c, 0xa9582618e03fc9aa, 0x39abdc4529b1661c };
+  | 	uint64_t s0 = 0;
+  | 	uint64_t s1 = 0;
+  | 	uint64_t s2 = 0;
+  | 	uint64_t s3 = 0;
+  | 
+  | 	for(unsigned int j=0; j < jump_count; j++) {
+  | 		for(unsigned int i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
+  | 			for(unsigned int b = 0; b < 64; b++) {
+  | 				if (JUMP[i] & ((uint64_t)1) << b) {
+  | 					s0 ^= xoshiro256starstarState[0];
+  | 					s1 ^= xoshiro256starstarState[1];
+  | 					s2 ^= xoshiro256starstarState[2];
+  | 					s3 ^= xoshiro256starstarState[3];
+  | 				}
+  | 				xoshiro256starstar(xoshiro256starstarState);	
+  | 			}
+  | 			
+  | 		xoshiro256starstarState[0] = s0;
+  | 		xoshiro256starstarState[1] = s1;
+  | 		xoshiro256starstarState[2] = s2;
+  | 		xoshiro256starstarState[3] = s3;
+  | 	}
+  | }
+caller: permutation_tests.h:649
+  model: k=0 (thread 0): code==canonical? True ; code state nonzero? True
+  model: k=1 (thread 1): code==canonical? True ; code state nonzero? True
+  model: k=2 (thread 2): code==canonical? False ; code state nonzero? True
+  model: k=3 (thread 3): code==canonical? False ; code state nonzero? True
+  model: k=4 (thread 4): code==canonical? False ; code state nonzero? True
+  model: k=2 equals S1 xor S2 (the un-reset accumulator prediction)? True
+model exit (0 = every k agrees with canonical): 1
+RESULT: PASS -- k >= 2 diverges from k canonical jumps and k = 2 equals S1 xor S2 exactly as the un-reset accumulators predict (model-level reproduction)
+--- repro/PROV-22/control.txt ---
+# PROV-22 control.txt  2026-11-08 16:28:00 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+  model: k=0 (thread 0): code==canonical? True ; code state nonzero? True
+  model: k=1 (thread 1): code==canonical? True ; code state nonzero? True
+RESULT: CONTROL-OK -- k = 0 and k = 1 equal the canonical jump; only threads >= 2 are affected
+--- repro/PROV-22/out/model4.out (raw model output the PASS logic greps) ---
+k=0 (thread 0): code==canonical? True ; code state nonzero? True
+k=1 (thread 1): code==canonical? True ; code state nonzero? True
+k=2 (thread 2): code==canonical? False ; code state nonzero? True
+k=3 (thread 3): code==canonical? False ; code state nonzero? True
+k=4 (thread 4): code==canonical? False ; code state nonzero? True
+k=2 equals S1 xor S2 (the un-reset accumulator prediction)? True
+--- repro/PROV-22/out/model1.out ---
+k=0 (thread 0): code==canonical? True ; code state nonzero? True
+k=1 (thread 1): code==canonical? True ; code state nonzero? True
+
+## STEP 3b: the k2 grep as run.sh runs it (BSD grep BRE: '?' is a literal), against model4.out
+grep -c 'k=2 equals S1 xor S2 .*? True'  -> 1
+grep -c 'k=2 equals S1 xor S2 .*? False' -> 0
+
+## STEP 4: rule 7 -- mutate run.sh's expectation ONCE (k2 grep True -> False), run, restore by cp
+--- diff original vs mutated run.sh ---
+17c17
+< k2=$(grep -c 'k=2 equals S1 xor S2 .*? True' "$out/model4.out" || true)
+---
+> k2=$(grep -c 'k=2 equals S1 xor S2 .*? False' "$out/model4.out" || true)
+(diff exit 1; expect 1 = one hunk)
+mutated run.sh exit=1   (expect 1 = FAIL)
+--- mutated run.sh output (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-run-mutated.stdout), RESULT line and model-exit line ---
+38:model exit (0 = every k agrees with canonical): 1
+39:RESULT: FAIL -- model rc=1 k2=0
+--- restore ---
+post-restore sha256 (must equal pre-run run.sh sha above):
+77e8c9eb522c8214e3fe354374987acba038989c56491ac8a10cf651ffb74f34  repro/PROV-22/run.sh
+observed.txt RESULT after restore: RESULT: PASS -- k >= 2 diverges from k canonical jumps and k = 2 equals S1 xor S2 exactly as the un-reset accumulators predict (model-level reproduction)
+
+## SUMMARY: run.sh exit=0 control.sh exit=0 mutated-run.sh exit=1
+
+## STEP 5 (supplementary, verifier's addition): mutate the DEFECT away in model.py (zeroing moved inside the j loop); run.sh must then FAIL
+--- diff original vs corrected model.py ---
+22d21
+<     s0=s1=s2=s3=0
+23a23
+>         s0=s1=s2=s3=0
+(diff exit 1)
+run.sh with corrected model exit=1   (expect 1 = FAIL: no defect to find)
+--- model lines, model-exit and RESULT (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-run-fixedmodel.stdout) ---
+32:  model: k=0 (thread 0): code==canonical? True ; code state nonzero? True
+33:  model: k=1 (thread 1): code==canonical? True ; code state nonzero? True
+34:  model: k=2 (thread 2): code==canonical? True ; code state nonzero? True
+35:  model: k=3 (thread 3): code==canonical? True ; code state nonzero? True
+36:  model: k=4 (thread 4): code==canonical? True ; code state nonzero? True
+37:  model: k=2 equals S1 xor S2 (the un-reset accumulator prediction)? False
+38:model exit (0 = every k agrees with canonical): 0
+39:RESULT: FAIL -- model rc=0 k2=0
+--- restore ---
+post-restore sha256 (model.py must be 3db32277...; run.sh 77e8c9eb...):
+3db32277f581e0336d6f29cece790e408d4e639b8415a999d83af90dee55c5e4  repro/PROV-22/model.py
+77e8c9eb522c8214e3fe354374987acba038989c56491ac8a10cf651ffb74f34  repro/PROV-22/run.sh
+ddf5573f16c471a7d92797a0a5d217788dfcccf5d281c11a312ac44264c280af  repro/PROV-22/control.sh
+observed.txt RESULT after restore: RESULT: PASS -- k >= 2 diverges from k canonical jumps and k = 2 equals S1 xor S2 exactly as the un-reset accumulators predict (model-level reproduction)
+logs/repro/PROV-22-observed.log RESULT after restore: RESULT: PASS -- k >= 2 diverges from k canonical jumps and k = 2 equals S1 xor S2 exactly as the un-reset accumulators predict (model-level reproduction)
+
+## STEP 6: verifier's independent probe (logs/verify/PROV-22-indep-probe.py -> PROV-22-indep-probe.log)
+c286faa1ef2a3d44d45e023217c35be338436c445d384229d0c74c648b8b4c2c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-22-indep-probe.py
+71:RESULT: all checks hold
+72:probe exit=0
+## FINAL SUMMARY: run.sh=0(PASS) control.sh=0(CONTROL-OK) run.sh[expectation mutated]=1(FAIL) run.sh[defect removed in model]=1 indep-probe=all checks hold

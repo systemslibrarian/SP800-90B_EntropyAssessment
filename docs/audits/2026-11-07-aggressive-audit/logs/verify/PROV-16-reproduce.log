@@ -1,0 +1,50 @@
+# PROV-16 REPRODUCE lens -- verifier run 2026-11-08 16:17:06 -0500 host=Darwin 25.6.0 arm64
+# invoked from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit ; git HEAD 834ffeb branch audit/2026-11-07
+# binary sha256 before run: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+
+===== bash repro/PROV-16/run.sh =====
+# PROV-16 observed.txt  2026-11-08 16:17:06 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+input sha256 8b99602a725b160f22343284ffef6125ae2c042407a8e14a13f3ef3e8ecd95ea  (20,000 samples: 19,999 x 0x00, one 0x01 at index 12345; declared width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/one-in-20000.bin 1
+rc[vvv]=0  stdout=z.out stderr=z.err
+  | Assessed min entropy: -0
+raw JSON text lines containing '-0': 
+  | 6:   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/one-in-20000.bin 1",
+  | 9:   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/one-in-20000.bin",
+  | 15:         "hOriginal" : -0.0,
+  | 22:         "hOriginal" : -0.0,
+  | 26:         "hOriginal" : 7.2143713666945002e-05,
+  | 30:         "hOriginal" : -0.0,
+  | 34:         "tTupleRes" : -0.0,
+  | 42:         "hOriginal" : -0.0,
+  | 46:         "hOriginal" : -0.0,
+  | 50:         "hOriginal" : -0.0,
+  | 54:         "hOriginal" : -0.0,
+  | 59:         "hAssessed" : -0.0,
+  | 60:         "hOriginal" : -0.0,
+MCV hOriginal = -0.0 (negative zero: True) ; Overall hAssessed = -0.0 (negative zero: True) ; str compare to '0': False
+DEFECT
+RESULT: PASS -- p_u clamps to 1 -> -log2(1.0) = -0.0: text 'min entropy = -0', JSON hOriginal -0.0 on the MCV element (and hAssessed -0.0)
+run.sh exit code: 0
+
+===== bash repro/PROV-16/control.sh =====
+# PROV-16 control.txt  2026-11-08 16:17:07 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+input sha256 9da53e09266ff711b1168d2f8a01153c0d0c749ab856552f450d331358aab652  (20,000 samples: 19,990 x 0x00, ten 0x01 at seeded positions; width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/c_z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-16/out/ten-in-20000.bin 1
+rc[vvv]=0  stdout=c_z.out stderr=c_z.err
+JSON MCV hOriginal = 0.00013391324219584911 ; lines with '-0' in the JSON: 5
+RESULT: CONTROL-OK -- with p_u < 1 the MCV estimate is positive (0.00013391324219584911); the negative zero in run.sh is the clamp's -log2(1.0)
+control.sh exit code: 0
+
+===== verifier notes (REPRODUCE lens, 2026-11-08) =====
+Exit codes measured: run.sh 0 (PASS), control.sh 0 (CONTROL-OK). Binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f (unchanged since the author's run).
+Records vs the author's 2026-11-07 records: observed.txt/control.txt differ only in the timestamp and git-hash header lines; z.json differs only in dateTimeStamp.
+Rule-7 mutation: logs/verify/PROV-16-mutation.log -- inverting the sign test (neg(h) -> not neg(h)) made run.sh print NODEFECT and exit 1 (RESULT: FAIL); restored by cp, sha256 back to 159ce39d..., re-run exit 0 (PASS). observed.txt and logs/repro/PROV-16-observed.log were left in the restored PASS state. Mutated record kept at logs/verify/PROV-16-mutation-observed.txt.
+Supplementary probe: logs/verify/PROV-16-vv-probe.log -- run.sh passes -vvv, which is verbose=4 (int verbose = 1 at non_iid_main.cpp:97, one ++ per -v at :176); most_common.h:32-37 prints the per-estimator lines only at verbose==2 or verbose==3, so the "Literal Most Common Value Estimate: min entropy = -0" line the README and the PASS message cite is ABSENT from observed.txt (run.sh's grep '^Literal Most Common Value Estimate' matched nothing and nothing asserts on it: instrument rule 2). At -vv the same binary on the same input (sha256 8b99602a...) prints "Literal Most Common Value Estimate: p_u = 1" and "min entropy = -0". The text defect IS in observed.txt via "Assessed min entropy: -0" (non_iid_main.cpp:663, %.17g).
+Arithmetic: logs/verify/PROV-16-arith.txt -- clamp iff minority count k <= 6 at both L=20,000 and L=1e6 (threshold k < z^2 = 6.635); control's expected H = 0.00013391324219584911 matches the JSON bit-for-bit.

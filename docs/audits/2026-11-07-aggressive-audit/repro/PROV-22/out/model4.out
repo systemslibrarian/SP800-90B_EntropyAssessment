@@ -1,6 +1,6 @@
 k=0 (thread 0): code==canonical? True ; code state nonzero? True
 k=1 (thread 1): code==canonical? True ; code state nonzero? True
-k=2 (thread 2): code==canonical? False ; code state nonzero? True
-k=3 (thread 3): code==canonical? False ; code state nonzero? True
-k=4 (thread 4): code==canonical? False ; code state nonzero? True
-k=2 equals S1 xor S2 (the un-reset accumulator prediction)? True
+k=2 (thread 2): code==canonical? True ; code state nonzero? True
+k=3 (thread 3): code==canonical? True ; code state nonzero? True
+k=4 (thread 4): code==canonical? True ; code state nonzero? True
+k=2 equals S1 xor S2 (the un-reset accumulator prediction)? False

@@ -1,0 +1,112 @@
+# PROV-20 REFUTE-lens verification  2026-11-08 16:26:27 -0500  host=Darwin 25.6.0 arm64  shell=bash-via-zsh-Bash-tool
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run is a NON-COMPLIANT short-dataset run (10000 samples x 8 bits = 80000 bits)
+# repo git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  size=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4668955    Available: 4668955
+Inodes: Total: 194307630  Free: 186758200 bytes
+MIN_SIZE (cpp/shared/utils.h): 42:#define MIN_SIZE 1000000
+
+## Leg A: -i/-c, with BOTH single-flag baselines (the reproducer's control ran only -c alone)
+$ ea_non_iid -i rand8_short.bin 8
+  rc[i_only]=0  stdout_lines=19  stderr_lines=0
+  | H_original: 6.636441
+  | H_bitstring: 0.732612
+  | min(H_original, 8 X H_bitstring): 5.860894
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -c rand8_short.bin 8
+  rc[c_only]=0  stdout_lines=17  stderr_lines=0
+  | h': 0.732612
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -i -c rand8_short.bin 8
+  rc[i_then_c]=0  stdout_lines=17  stderr_lines=0
+  | h': 0.732612
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -c -i rand8_short.bin 8
+  rc[c_then_i]=0  stdout_lines=19  stderr_lines=0
+  | H_original: 6.636441
+  | H_bitstring: 0.732612
+  | min(H_original, 8 X H_bitstring): 5.860894
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -i -c -i rand8_short.bin 8
+  rc[i_c_i]=0  stdout_lines=19  stderr_lines=0
+  | H_original: 6.636441
+  | H_bitstring: 0.732612
+  | min(H_original, 8 X H_bitstring): 5.860894
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+
+## Leg B: -a/-t at 80000 bits -- can the probe discriminate? Truncation is 'if (!all_bits && data.blen > MIN_SIZE)' (non_iid_main.cpp:344)
+$ ea_non_iid -a -vv rand8_short.bin 8
+  rc[a_only]=0  stdout_lines=116  stderr_lines=0
+  | Number of Binary Symbols: 80000
+  | H_bitstring = 0.73261171806065617
+  | H_bitstring Per Symbol = 5.8608937444852494
+  | H_original = 6.6364412870612322
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -t -vv rand8_short.bin 8
+  rc[t_only]=0  stdout_lines=116  stderr_lines=0
+  | Number of Binary Symbols: 80000
+  | H_bitstring = 0.73261171806065617
+  | H_bitstring Per Symbol = 5.8608937444852494
+  | H_original = 6.6364412870612322
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -a -t -vv rand8_short.bin 8
+  rc[a_then_t]=0  stdout_lines=116  stderr_lines=0
+  | Number of Binary Symbols: 80000
+  | H_bitstring = 0.73261171806065617
+  | H_bitstring Per Symbol = 5.8608937444852494
+  | H_original = 6.6364412870612322
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+$ ea_non_iid -t -a -vv rand8_short.bin 8
+  rc[t_then_a]=0  stdout_lines=116  stderr_lines=0
+  | Number of Binary Symbols: 80000
+  | H_bitstring = 0.73261171806065617
+  | H_bitstring Per Symbol = 5.8608937444852494
+  | H_original = 6.6364412870612322
+  diagnostic-looking lines (conflict|mutually|overrid|ignor|both ): 0
+
+## Leg C: does the REPORT channel carry the contradiction verbatim? (-o JSON 'commandline' field)
+$ ea_non_iid -i -c -q -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov20/ic.json rand8_short.bin 8
+  rc[i_then_c_json]=0
+  json[commandline] = "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -c -q -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov20/ic.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8"
+  json[errorLevel] = 0
+  json[reportComplete] = <absent>
+  json[h_r] = <absent>
+  json[h_c] = <absent>
+  json[h_i] = <absent>
+  json[H_original] = <absent>
+  json[H_bitstring] = <absent>
+  json[min_entropy] = <absent>
+  json top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+
+## Comparison summary (labelled reads from the files above)
+  -i -c h' = [0.732612]   -c alone h' = [0.732612]   equal: yes
+  -c -i H_original = [6.636441]   -i alone H_original = [6.636441]   equal: yes
+  -c -i final line = [min(H_original, 8 X H_bitstring): 5.860894]
+  -i alone final line = [min(H_original, 8 X H_bitstring): 5.860894]
+  a_only: Number of Binary Symbols: 80000
+  t_only: Number of Binary Symbols: 80000
+  a_then_t: Number of Binary Symbols: 80000
+  t_then_a: Number of Binary Symbols: 80000
+  Leg B verdict: all four print the same bit count because 80000 < MIN_SIZE=1000000; the -a/-t leg is NON-DISCRIMINATING at probe size. Discriminating it needs > 1,000,000 bits = > 125,000 8-bit samples (over the 20,000 cap; not run).
+
+## CORRECTION to the 'fixture sha256' line above: 'stat -f %z' resolved to GNU stat (Homebrew) and printed filesystem info, not the size. Fixture size by wc -c: 10000 bytes = 10000 samples; at 8 bits/symbol = 80000 bits.
+
+## Source facts checked (no build, no network; local refs only)
+  cpp/non_iid_main.cpp getopt cases: 'i' -> initial_entropy=true, 'c' -> initial_entropy=false, 'a' -> all_bits=true, 't' -> all_bits=false; no conflict check; identical text at tag unrepaired-reference-2026-10-15 (:101-111) and at local ref upstream/master (:101-111) -> INHERITED, not a fork change.
+  usage line (non_iid_main.cpp:22) and README.md:88-90/113 say '[-i|-c] [-a|-t]' and 'You may specify either -i or -c, and either -a or -t'; neither states a last-wins override.
+  cpp/iid_main.cpp:158-168 has the same four cases (not run here).
+  Prior-knowledge grep (NOTICE, 2026-09-30 tracker, FORK-DIVERGENCE A/B/D, CLOSING-INVENTORY, ORCHESTRATOR-CHECKS) for 'mutually exclusive|-i -c|-c -i|-a -t|contradict|last wins': no hit. Nearest entries: tracker F20 (-t truncation under -c = NOT-A-BUG, option semantics) and OC-104 (option AFTER operand refused; does not touch two options before it).
+  Within THIS audit: logs/analysis/cli-build.md 4.3 and section 9 row 12 (LOW, neutral, MEASURED); FINDINGS.md 1.2 provisional list.
+
+## Objections raised and their outcome
+  1 stale binary: FAILED -- sha256 1ad1568c... matches README and current cpp/ea_non_iid.
+  2 harness artefact (zsh splitting / parse): FAILED for legs -i -c and -c -i -- run.sh is #!/bin/bash, reads files, greps labelled lines; my independent re-run reproduces every figure and adds the -i-alone baseline the control lacked.
+  3 documented intended behaviour: FAILED -- no fork or upstream document states last-wins; usage/README say 'either'. (It IS the default getopt idiom and inherited unchanged from upstream.)
+  4 needs the escape / <1e6 samples: FAILED -- mode selection happens before any data is read; -a/-t truncation can ONLY bind at >= 1,000,001 bits, i.e. compliant sizes.
+  5 direction: neutral HOLDS -- each run prints the correct figure for the mode it ended in (h' 0.732612 == -c alone; H_original/min 5.860894 == -i alone); nothing is overstated by the tool.
+  6 the -a -t leg: SUCCEEDED against the reproducer's wording only -- at 80000 bits -a, -t, -a -t, -t -a all print 'Number of Binary Symbols: 80000', so 'a-then-t truncates' in run.sh's PASS message is a source inference (non_iid_main.cpp:344 + last-wins), not a measurement. Measuring it needs > 125,000 8-bit samples (heavy slot).
+
+## Verdict: CONFIRMED (core -i/-c claim), severity LOW, direction neutral; the -a/-t leg should be relabelled SOURCE-CONFIRMED until measured at compliant size.

@@ -1,0 +1,11 @@
+{
+   "IID" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm6c.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1x",
+   "dateTimeStamp" : "20261108161145",
+   "errorLevel" : -1,
+   "errorMessage" : "Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

@@ -1,0 +1,22 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 20,
+   "assessmentComplete" : false,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-p2-l20-noescape.json -l 0,20 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin",
+   "dateTimeStamp" : "20261108163521",
+   "errorClass" : "input",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin",
+   "sha256" : "6f86960c96777c3dc29791fb386227256147d424f973959cef3aae1152e7b01d",
+   "sha256Scope" : "assessed-sample-bytes",
+   "subsetActualSamples" : 20,
+   "subsetIndex" : 0,
+   "subsetRequestedSamples" : 20,
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

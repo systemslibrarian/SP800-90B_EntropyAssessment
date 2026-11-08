@@ -1,0 +1,128 @@
+# PROV-12-refute.log  2026-11-08 16:10:13 -0500  host=Darwin arm64
+# verifier probe; launcher = python subprocess with bytes argv (NO shell); OMP_NUM_THREADS=2
+# every run on the 10,000-sample fixture uses EA_ALLOW_SHORT_DATASET=1 and is NOT a compliant assessment; the error-path run (P2) sets NO escape
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin  (10000 bytes)
+README claims binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f -> MATCH
+
+== P1: README case re-run from python, no shell: argv[0] = ea_ 80 Z q, 10k fixture, escape set ==
+[P1_80Zq] argv[0] bytes = 65615f805a71   env: EA_ALLOW_SHORT_DATASET=1
+[P1_80Zq] argv = ['ea_\x80Zq', '-q', '-o', '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/P1_80Zq.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[P1_80Zq] rc=0  stdout=P1_80Zq.out (241 bytes)  stderr=P1_80Zq.err (0 bytes)
+[P1_80Zq] raw commandline line bytes: 20202022636f6d6d616e646c696e6522203a202265615f5c756666666471202d71202d6f202f707269766174652f746d702f636c617564652d3530312f2d55736572732d676d6361732d7265706f732d53503830302d3930422d456e74726f70794173736573736d656e742f32303462353663322d333634352d343837642d616138362d6663636563396664323730312f736372617463687061642f70726f7631322f50315f38305a712e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c
+[P1_80Zq] errorLevel=0  errorMsg="<absent>"  nonCompliantShortDataset=True
+[P1_80Zq] commandline token[0] = 'ea_�q'  codepoints U+0065 U+0061 U+005F U+FFFD U+0071
+[P1_80Zq] commandline token count = 6 (expected 6 if no separator was swallowed)
+[P1_80Zq] jsoncpp-emulation prediction for argv[0] = 'ea_�q'  codepoints U+0065 U+0061 U+005F U+FFFD U+0071  -> AGREES
+[P1_80Zq] sha256 field = 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  (MATCHES fixture)
+
+== P2: SAME argv[0], NO EA_ALLOW_SHORT_DATASET, bits_per_symbol=9 (argument-error path; no sample is read) ==
+[P2_80Zq_noescape_bps9] argv[0] bytes = 65615f805a71   env: NO EA_ALLOW_SHORT_DATASET
+[P2_80Zq_noescape_bps9] argv = ['ea_\x80Zq', '-q', '-o', '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/P2_80Zq_noescape_bps9.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '9']
+[P2_80Zq_noescape_bps9] rc=255  stdout=P2_80Zq_noescape_bps9.out (2642 bytes)  stderr=P2_80Zq_noescape_bps9.err (0 bytes)
+[P2_80Zq_noescape_bps9] raw commandline line bytes: 20202022636f6d6d616e646c696e6522203a202265615f5c756666666471202d71202d6f202f707269766174652f746d702f636c617564652d3530312f2d55736572732d676d6361732d7265706f732d53503830302d3930422d456e74726f70794173736573736d656e742f32303462353663322d333634352d343837642d616138362d6663636563396664323730312f736372617463687061642f70726f7631322f50325f38305a715f6e6f6573636170655f627073392e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2039222c
+[P2_80Zq_noescape_bps9] errorLevel=-1  errorMsg="<absent>"  nonCompliantShortDataset=<absent>
+[P2_80Zq_noescape_bps9] commandline token[0] = 'ea_�q'  codepoints U+0065 U+0061 U+005F U+FFFD U+0071
+[P2_80Zq_noescape_bps9] commandline token count = 6 (expected 6 if no separator was swallowed)
+[P2_80Zq_noescape_bps9] jsoncpp-emulation prediction for argv[0] = 'ea_�q'  codepoints U+0065 U+0061 U+005F U+FFFD U+0071  -> AGREES
+[P2_80Zq_noescape_bps9] sha256 field = <absent>  (DIFFERS FROM fixture)
+
+== P3: argv[0] = ea_ E9 e s  (Latin-1 e-acute followed by two ASCII letters): prediction is a SILENT valid codepoint, not U+FFFD ==
+[P3_E9es] argv[0] bytes = 65615fe96573   env: EA_ALLOW_SHORT_DATASET=1
+[P3_E9es] argv = ['ea_ées', '-q', '-o', '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/P3_E9es.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[P3_E9es] rc=0  stdout=P3_E9es.out (241 bytes)  stderr=P3_E9es.err (0 bytes)
+[P3_E9es] raw commandline line bytes: 20202022636f6d6d616e646c696e6522203a202265615f5c7539393733202d71202d6f202f707269766174652f746d702f636c617564652d3530312f2d55736572732d676d6361732d7265706f732d53503830302d3930422d456e74726f70794173736573736d656e742f32303462353663322d333634352d343837642d616138362d6663636563396664323730312f736372617463687061642f70726f7631322f50335f453965732e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c
+[P3_E9es] errorLevel=0  errorMsg="<absent>"  nonCompliantShortDataset=True
+[P3_E9es] commandline token[0] = 'ea_饳'  codepoints U+0065 U+0061 U+005F U+9973
+[P3_E9es] commandline token count = 6 (expected 6 if no separator was swallowed)
+[P3_E9es] jsoncpp-emulation prediction for argv[0] = 'ea_饳'  codepoints U+0065 U+0061 U+005F U+9973  -> AGREES
+[P3_E9es] sha256 field = 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  (MATCHES fixture)
+
+== P4: argv[0] = ea_ 80 (trailing continuation byte): prediction is that the JOIN SPACE is swallowed, merging token 0 with -q ==
+[P4_80_trailing] argv[0] bytes = 65615f80   env: EA_ALLOW_SHORT_DATASET=1
+[P4_80_trailing] argv = ['ea_\x80', '-q', '-o', '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/P4_80_trailing.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[P4_80_trailing] rc=0  stdout=P4_80_trailing.out (241 bytes)  stderr=P4_80_trailing.err (0 bytes)
+[P4_80_trailing] raw commandline line bytes: 20202022636f6d6d616e646c696e6522203a202265615f5c75666666642d71202d6f202f707269766174652f746d702f636c617564652d3530312f2d55736572732d676d6361732d7265706f732d53503830302d3930422d456e74726f70794173736573736d656e742f32303462353663322d333634352d343837642d616138362d6663636563396664323730312f736372617463687061642f70726f7631322f50345f38305f747261696c696e672e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c
+[P4_80_trailing] errorLevel=0  errorMsg="<absent>"  nonCompliantShortDataset=True
+[P4_80_trailing] commandline token[0] = 'ea_�-q'  codepoints U+0065 U+0061 U+005F U+FFFD U+002D U+0071
+[P4_80_trailing] commandline token count = 5 (expected 6 if no separator was swallowed)
+[P4_80_trailing] jsoncpp-emulation prediction for argv[0] = 'ea_�'  codepoints U+0065 U+0061 U+005F U+FFFD  -> DISAGREES
+[P4_80_trailing] sha256 field = 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  (MATCHES fixture)
+
+== P5 (control): argv[0] = ea_ C3 A9  (VALID UTF-8 e-acute): prediction is lossless U+00E9 ==
+[P5_valid_e_acute] argv[0] bytes = 65615fc3a9   env: EA_ALLOW_SHORT_DATASET=1
+[P5_valid_e_acute] argv = ['ea_Ã©', '-q', '-o', '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/P5_valid_e_acute.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[P5_valid_e_acute] rc=0  stdout=P5_valid_e_acute.out (241 bytes)  stderr=P5_valid_e_acute.err (0 bytes)
+[P5_valid_e_acute] raw commandline line bytes: 20202022636f6d6d616e646c696e6522203a202265615f5c7530306539202d71202d6f202f707269766174652f746d702f636c617564652d3530312f2d55736572732d676d6361732d7265706f732d53503830302d3930422d456e74726f70794173736573736d656e742f32303462353663322d333634352d343837642d616138362d6663636563396664323730312f736372617463687061642f70726f7631322f50355f76616c69645f655f61637574652e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c
+[P5_valid_e_acute] errorLevel=0  errorMsg="<absent>"  nonCompliantShortDataset=True
+[P5_valid_e_acute] commandline token[0] = 'ea_é'  codepoints U+0065 U+0061 U+005F U+00E9
+[P5_valid_e_acute] commandline token count = 6 (expected 6 if no separator was swallowed)
+[P5_valid_e_acute] jsoncpp-emulation prediction for argv[0] = 'ea_é'  codepoints U+0065 U+0061 U+005F U+00E9  -> AGREES
+[P5_valid_e_acute] sha256 field = 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  (MATCHES fixture)
+
+== P6 (control): argv[0] = ea_Zq (ASCII): prediction is exact round-trip ==
+[P6_ascii] argv[0] bytes = 65615f5a71   env: EA_ALLOW_SHORT_DATASET=1
+[P6_ascii] argv = ['ea_Zq', '-q', '-o', '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/P6_ascii.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[P6_ascii] rc=0  stdout=P6_ascii.out (241 bytes)  stderr=P6_ascii.err (0 bytes)
+[P6_ascii] raw commandline line bytes: 20202022636f6d6d616e646c696e6522203a202265615f5a71202d71202d6f202f707269766174652f746d702f636c617564652d3530312f2d55736572732d676d6361732d7265706f732d53503830302d3930422d456e74726f70794173736573736d656e742f32303462353663322d333634352d343837642d616138362d6663636563396664323730312f736372617463687061642f70726f7631322f50365f61736369692e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c
+[P6_ascii] errorLevel=0  errorMsg="<absent>"  nonCompliantShortDataset=True
+[P6_ascii] commandline token[0] = 'ea_Zq'  codepoints U+0065 U+0061 U+005F U+005A U+0071
+[P6_ascii] commandline token count = 6 (expected 6 if no separator was swallowed)
+[P6_ascii] jsoncpp-emulation prediction for argv[0] = 'ea_Zq'  codepoints U+0065 U+0061 U+005F U+005A U+0071  -> AGREES
+[P6_ascii] sha256 field = 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  (MATCHES fixture)
+
+== P7: can the FILENAME route exist on this host? try to create a copy of the fixture under a name with byte 0x80 (APFS) ==
+[P7] os.open(b'/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov12/rand1_x\x80Zq.bin') -> OSError errno=92 EILSEQ "Illegal byte sequence" -- the filename route is CLOSED on this host
+
+== summary ==
+P1 Z swallowed (token0 == "ea_\ufffdq"): True
+P2 error-path report written without the escape and with the same mangling: True (errorLevel=-1)
+P3 E9 e s became a single silent codepoint U+9973 (no U+FFFD anywhere in token0): True
+P4 trailing 0x80 swallowed the join space (token count 5, token0 == "ea_\ufffd-q"): True
+P5 valid UTF-8 e-acute round-trips: True
+P6 ASCII round-trips: True
+
+== verifier note on the P4 "DISAGREES" line ==
+The emulation in P4 was run on argv[0] alone (65 61 5f 80), where the trailing 0x80 has no following byte and the
+emulation emits U+FFFD and stops. The real transcoder does not see argv[0] alone: recreateCommandLine() joins argv with
+single spaces first (utils.h:1293-1302), so the byte after 0x80 is the join space 0x20. On the joined string the same
+algorithm gives ((0x80&0x1F)<<6)|(0x20&0x3F) = 0x20 < 0x80 -> U+FFFD and consumes the space, which is exactly what was
+observed: token[0] = "ea_�-q", token count 5. So P4 AGREES with the mechanism; the DISAGREES label is an artefact
+of what the emulation was fed, not of the tool. (Left in place rather than edited: this log is append-only.)
+
+== verifier reading of the objections (REFUTE lens) ==
+stale binary?            NO  - sha256 1ad1568c... matches the README and the production binary at run time.
+shell/quoting artefact?  NO  - P1-P6 were launched from python with bytes argv and no shell; same result as the bash exec -a run.
+escape-only behaviour?   NO  - P2 wrote an errorLevel=-1 report with NO EA_ALLOW_SHORT_DATASET and before any sample was read;
+                               the commandline token is mangled identically. The field is captured at non_iid_main.cpp:113 and
+                               serialised by the same Json::StyledWriter in every report (non_iid_test_run.h:26).
+parsing mistake?         NO  - the raw bytes of the "commandline" line are logged: 65 61 5f 5c 75 66 66 66 64 71 = ea_�q; no 5a.
+direction holds?         YES - neutral: sha256 field equals the fixture's sha256 in every data run; no estimator value is touched.
+production reachability: needs a byte >= 0x80 that is not valid UTF-8 somewhere in argv. On this host APFS refuses such a
+                         name for the input (P7: EILSEQ) and would refuse it for -o too, so only argv[0] (exec -a) reaches it
+                         here, which no production invocation does. On ext4 (CI x86-64) the input filename can carry it; not measured.
+
+== mechanism confirmed from jsoncpp 1.9.8 SOURCE (fetched read-only: raw.githubusercontent.com/open-source-parsers/jsoncpp/1.9.8/src/lib_json/json_writer.cpp) ==
+StyledWriter::writeValue, case stringValue:  pushValue(valueToQuotedStringN(str, static_cast<size_t>(end - str)));   // emitUTF8 defaults to false
+valueToQuotedStringN(..., bool emitUTF8 = false) default branch:  unsigned codepoint = utf8ToCodepoint(c, end); ... else if (codepoint < 0x10000) appendHex(result, codepoint);
+utf8ToCodepoint:  if (firstByte < 0x80) return firstByte;
+                  if (firstByte < 0xE0) { if (e - s < 2) return REPLACEMENT_CHARACTER;
+                        unsigned int calculated = ((firstByte & 0x1F) << 6) | (static_cast<unsigned int>(s[1]) & 0x3F);
+                        s += 1;   return calculated < 0x80 ? REPLACEMENT_CHARACTER : calculated; }
+                  if (firstByte < 0xF0) { ... s[1], s[2] ... s += 2; ... return calculated < 0x800 ? REPLACEMENT_CHARACTER : calculated; }
+                  ...
+The `firstByte < 0xE0` branch admits 0x80..0xBF (continuation bytes, which can never lead a sequence) and 0xC0/0xC1 (overlong leads)
+as 2-byte leads and never checks that s[1] is a continuation byte (0x80..0xBF). Arithmetic for the measured cases:
+  80 5A      -> ((0x80&0x1F)<<6)|(0x5A&0x3F) = 0x1A < 0x80 -> U+FFFD, s advanced past 'Z'            (P1, P2: observed �, 'Z' gone)
+  80 20      -> 0x20 < 0x80 -> U+FFFD, s advanced past the join space                                   (P4: observed "ea_�-q", 5 tokens)
+  E9 65 73   -> ((0xE9&0x0F)<<12)|((0x65&0x3F)<<6)|(0x73&0x3F) = 0x9000|0x940|0x33 = 0x9973 -> 饳 (P3: observed 饳, NO U+FFFD, 'e' and 's' gone)
+  C3 A9      -> ((0xC3&0x1F)<<6)|(0xA9&0x3F) = 0xC0|0x29 = 0xE9 -> é                               (P5: lossless, as the reproducer says valid UTF-8 is)
+  FF / FE    -> firstByte >= 0xF8 -> REPLACEMENT_CHARACTER, s not advanced -> two �                 (README u2 case)
+
+== prior knowledge found ==
+audits/2026-09-30/novel-findings/agent-reports/io-cli-report.md:258 (2026-09-30 agent report, NOT a tracked finding; absent from NOTICE,
+FINDINGS-TRACKER, FORK-DIVERGENCE-AND-TRUST, CLOSING-INVENTORY): "Non-UTF-8 filename bytes become U+FFFD in JSON `filename` and
+`commandline` (lossy but harmless; the hash identifies content)." That observation did not notice that the byte AFTER the invalid
+byte is consumed (P1/P4) nor that a 0xE0..0xEF byte absorbs TWO following ASCII bytes into a valid-looking codepoint with no
+U+FFFD at all (P3). recreateCommandLine() dates from upstream commit 0072787 (2022-08-25, "Output commandline options in JSON
+output"); the writer is upstream's Json::StyledWriter. Inherited, not fork-introduced.

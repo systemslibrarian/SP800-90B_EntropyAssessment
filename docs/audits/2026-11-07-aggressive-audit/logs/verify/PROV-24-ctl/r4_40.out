@@ -1,0 +1,79 @@
+Loaded file: 'logs/verify/PROV-24-ctl/r4_40.bin' (SHA-256 hash fead6ba32ed493b7b49e9c8ddc3e304a29cb27fe3e9ece187843458afd913e62 of assessed bytes)
+Loaded 40 samples of 4 distinct 2-bit-wide symbols
+
+*** Warning: dataset contains 40 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary samples: 80
+Raw Mean = 1.1499999999999999
+Translated Symbol Index Median = 1
+Binary = false
+Literal Most Common Value Estimate: Mode count = 14
+Literal Most Common Value Estimate: p-hat = 0.34999999999999998
+Literal Most Common Value Estimate: p_u = 0.5467322126799703
+Literal Most Common Value Estimate: min entropy = 0.87109371531738655
+Bitstring Most Common Value Estimate: Mode count = 48
+Bitstring Most Common Value Estimate: p-hat = 0.59999999999999998
+Bitstring Most Common Value Estimate: p_u = 0.74197410997022162
+Bitstring Most Common Value Estimate: min entropy = 0.43055924775721621
+Chi square independence: T = 0.59546546370613362
+Chi square independence: df = -1
+Chi square independence: P-value = 1
+Chi square goodness of fit: T = 4.9303806576313247e-31
+Chi square goodness of fit: df = 0
+Chi square goodness of fit: P-value = 1
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.2849999999999999755751
+Literal Longest Repeated Substring results: W = 7
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.08211763118590138799124
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 4.300000000000001598721
+Permutation testing: Unpermuted result numDirectionalRuns = 20
+Permutation testing: Unpermuted result lenDirectionalRuns = 8
+Permutation testing: Unpermuted result numIncreasesDecreases = 28
+Permutation testing: Unpermuted result numRunsMedian = 15
+Permutation testing: Unpermuted result lenRunsMedian = 13
+Permutation testing: Unpermuted result avgCollision = 2.857142857142857206298
+Permutation testing: Unpermuted result maxCollision = 4
+Permutation testing: Unpermuted result periodicity(1) = 17
+Permutation testing: Unpermuted result periodicity(2) = 14
+Permutation testing: Unpermuted result periodicity(8) = 7
+Permutation testing: Unpermuted result periodicity(16) = 8
+Permutation testing: Unpermuted result periodicity(32) = 2
+Permutation testing: Unpermuted result covariance(1) = 47
+Permutation testing: Unpermuted result covariance(2) = 46
+Permutation testing: Unpermuted result covariance(8) = 33
+Permutation testing: Unpermuted result covariance(16) = 29
+Permutation testing: Unpermuted result covariance(32) = 11
+Permutation testing: Unpermuted result compression = 55
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion      12       0       6
+       numDirectionalRuns      89       2       4
+       lenDirectionalRuns       3       3     607
+    numIncreasesDecreases       3       3      94
+            numRunsMedian      28       2       4
+            lenRunsMedian       2       4      89
+             avgCollision      28       2       4
+             maxCollision      11       6       0
+           periodicity(1)       3       3     285
+           periodicity(2)       2       4      38
+           periodicity(8)       9       3       3
+          periodicity(16)       3       3      13
+          periodicity(32)       2       4       6
+            covariance(1)      11       5       1
+            covariance(2)      11       1       5
+            covariance(8)      50       2       4
+           covariance(16)       6       0       6
+           covariance(32)       6       0       8
+              compression      13       6       0
+(* denotes failed test)
+
+IID permutation tests: Passed
+H_bitstring = 0.43055924775721621
+H_bitstring Per Symbol = 0.86111849551443242
+H_original = 0.87109371531738655
+Assessed min entropy: 0.86111849551443242

@@ -1,0 +1,42 @@
+# PROV-25 verify (CLASSIFY lens)  2026-11-08 16:38:42 -0500  host=Darwin 25.6.0 arm64
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment git=e415c0e branch=audit/2026-11-07
+# binaries: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid ; 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid
+# env for every tool run: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ; fixtures bin/rand8_short.bin, bin/rand1_short.bin (10,000 samples) -- NON-COMPLIANT runs
+
+## source facts (re-measured)
+utils.h:1023-1025 comment names callers refusing > INT_MAX as "(iid_main.cpp, non_iid_main.cpp)".
+grep -c INT_MAX cpp/non_iid_main.cpp      = 0
+grep -c INT_MAX cpp/restart_main.cpp      = 0
+grep -c INT_MAX cpp/iid_main.cpp          = 3   (lines 393,397,400: the refusal)
+any *_MAX in non_iid_main.cpp:            105:    unsigned long subsetIndex = ULONG_MAX;;
+len_LRS_test( call sites (the only path to n_choose_2, lrs_test.h:713):
+cpp/iid_main.cpp:504:    bool len_LRS_test_pass = len_LRS_test(
+cpp/restart_main.cpp:1118:        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
+cpp/restart_main.cpp:1119:        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
+n_choose_2( call sites: cpp/shared/lrs_test.h:712 cpp/shared/lrs_test.h:713 
+restart bound instead of INT_MAX: restart_main.cpp:694 'if (data.len != MIN_SIZE)' refuses, so len == 1,000,000 exactly before :831 'int sample_size = data.len'.
+non-IID estimator length params are all long: most_common.h:7, collision_test.h:17, markov_test.h:6, compression_test.h:93, lrs_test.h:587 SAalgs(long int n), multi_mcw_test.h:7, lag_test.h:31, multi_mmc_test.h:176, lz78y_test.h:128.
+
+## history
+comment introduced by: 473cd5f fix(C18): n_choose_2 computes in int64_t, every step, with LP64 bit-identity measured
+INT_MAX in non_iid_main.cpp at 473cd5f (comment's own commit): 0  -> the comment was false when written
+iid_main.cpp INT_MAX guard introduced by: 134d377 iid: run the Section 5 IID tests on the conditioned bitstring under -c (#271)
+
+## behavioural probe (tiny; corroborates "never reached from ea_non_iid")
+ea_non_iid -i -v -v -v rand8_short.bin 8 : rc=0 ; count of 5.2.5 marker 'Pr(X >= 1)' = 0
+ea_non_iid -i -v -v -v rand1_short.bin 1 : rc=0 ; count of 5.2.5 marker 'Pr(X >= 1)' = 0
+ea_non_iid -i -v -o json rand8_short.bin 8 : rc=0 ; errorLevel=0 ; testCases=11 incl. 'LRS Test' lrsRes=7.289198671720652  -> full battery ran; absence of the 5.2.5 marker is from a complete run (instrument rule 2)
+CONTROL ea_iid -i -v -v -v rand8_short.bin 8 : rc=1 (IID suite failed on the short fixture, chi-square) ; count of 'Pr(X >= 1)' = 1 -> the marker IS printed at this verbosity when len_LRS_test runs
+Note: -v -v -v gives verbose=4; non_iid_main.cpp gates per-estimator prints on verbose == 2, which is why the text output is short. lrs_test.h:752 prints the marker at verbose > 2.
+
+## prior-record search
+NOTICE: no INT_MAX / n_choose_2.
+audits/2026-09-30/FINDINGS-TRACKER.md:123 -- C18 mechanism only.
+FORK-DIVERGENCE-AND-TRUST.md:297-311 -- C18 REPAIRED (OC-53) "with an assertion bounding n to INT_MAX"; does not name the callers.
+CLOSING-INVENTORY.md:358 -- C18 only.
+ORCHESTRATOR-CHECKS.md:4878-4890 -- correct caller table: len_LRS_test reached from iid_main.cpp and restart_main.cpp; "No 6.3.x estimator reaches it".
+ORCHESTRATOR-CHECKS.md:5129 -- "Callers already refuse a sample count above INT_MAX" (unqualified; the code comment is where non_iid_main.cpp was named).
+The misnaming itself is recorded only in this audit's analysis logs: aggregation.md:27, :320-342; intake.md:343-353, :546, :617 (S5); mcv.md:383-384 (S-7).
+
+## verdict
+CONFIRMED. Documentation defect; LOW; neutral. The comment is wrong in both directions: it names non_iid_main.cpp (never calls len_LRS_test, so never reaches n_choose_2) and omits restart_main.cpp (does reach it at :1118-1119, bounded by :694 len == MIN_SIZE rather than by INT_MAX). The README omits the restart half.

@@ -1,0 +1,157 @@
+# PROV-25 verifier reproduce log  2026-11-08 16:37:19 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of repro/PROV-25/run.sh and control.sh from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+# git HEAD=e415c0e branch=audit/2026-11-07
+# script sha256 BEFORE any mutation:
+5a0d79ac23410ee84bb0643231f48c0277062f43da63da7f4f77a54b49176b1f  repro/PROV-25/run.sh
+190ab306b1a95a93a058eafdd4a7bd407b459c6e1558261ece555230c6474670  repro/PROV-25/control.sh
+
+===== bash repro/PROV-25/run.sh (baseline) =====
+# PROV-25 observed.txt  2026-11-08 16:37:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; b3eb23f72c4d9f5b40faed49be22b6dea6fe6aaa9803e0b2f54d257dccb512ab  cpp/non_iid_main.cpp
+the comment (utils.h:1023-1025):
+  | // SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+  | // INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+  | // n*n <= 4.61e18, comfortably inside INT64_MAX = 9.22e18. The assert states
+grep -c INT_MAX cpp/non_iid_main.cpp = 0
+callers of n_choose_2: cpp/shared/lrs_test.h:712 cpp/shared/lrs_test.h:713 
+RESULT: PASS -- the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all
+exit=0
+
+===== bash repro/PROV-25/control.sh (baseline) =====
+# PROV-25 control.txt  2026-11-08 16:37:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+grep -n INT_MAX cpp/iid_main.cpp:
+  iid_main.cpp:393:    if (testdata.len > INT_MAX) {
+  iid_main.cpp:397:            std::to_string(INT_MAX) + "-bit limit of the Section 5 test code.";
+  iid_main.cpp:400:               testdata.len, INT_MAX);
+RESULT: CONTROL-OK -- iid_main.cpp carries the INT_MAX refusal the comment describes (3 references); non_iid_main.cpp does not
+exit=0
+
+===== observed.txt as written by this run =====
+# PROV-25 observed.txt  2026-11-08 16:37:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; b3eb23f72c4d9f5b40faed49be22b6dea6fe6aaa9803e0b2f54d257dccb512ab  cpp/non_iid_main.cpp
+the comment (utils.h:1023-1025):
+  | // SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+  | // INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+  | // n*n <= 4.61e18, comfortably inside INT64_MAX = 9.22e18. The assert states
+grep -c INT_MAX cpp/non_iid_main.cpp = 0
+callers of n_choose_2: cpp/shared/lrs_test.h:712 cpp/shared/lrs_test.h:713 
+RESULT: PASS -- the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all
+
+===== control.txt as written by this run =====
+# PROV-25 control.txt  2026-11-08 16:37:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+grep -n INT_MAX cpp/iid_main.cpp:
+  iid_main.cpp:393:    if (testdata.len > INT_MAX) {
+  iid_main.cpp:397:            std::to_string(INT_MAX) + "-bit limit of the Section 5 test code.";
+  iid_main.cpp:400:               testdata.len, INT_MAX);
+RESULT: CONTROL-OK -- iid_main.cpp carries the INT_MAX refusal the comment describes (3 references); non_iid_main.cpp does not
+
+===== MUTATION (rule 7): back up run.sh with cp, change the expectation [ "$n" -eq 0 ] -> [ "$n" -eq 3 ] =====
+backup sha256: 5a0d79ac23410ee84bb0643231f48c0277062f43da63da7f4f77a54b49176b1f
+mutated sha256: bac051ad8fe5bce093a801937d781eef9e32b41aa2fe0d73c8951337c9b229a6
+diff orig -> mutated:
+14c14
+< [ "$n" -eq 0 ] && verdict PASS "the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all"
+---
+> [ "$n" -eq 3 ] && verdict PASS "the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all"
+diff rc=1 (1 = differs, as intended)
+
+===== bash repro/PROV-25/run.sh (MUTATED expectation) =====
+# PROV-25 observed.txt  2026-11-08 16:38:06 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; b3eb23f72c4d9f5b40faed49be22b6dea6fe6aaa9803e0b2f54d257dccb512ab  cpp/non_iid_main.cpp
+the comment (utils.h:1023-1025):
+  | // SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+  | // INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+  | // n*n <= 4.61e18, comfortably inside INT64_MAX = 9.22e18. The assert states
+grep -c INT_MAX cpp/non_iid_main.cpp = 0
+callers of n_choose_2: cpp/shared/lrs_test.h:712 cpp/shared/lrs_test.h:713 
+RESULT: FAIL -- non_iid_main.cpp has 0 INT_MAX references
+exit=1
+
+===== RESTORE run.sh with cp from backup =====
+restored sha256: 5a0d79ac23410ee84bb0643231f48c0277062f43da63da7f4f77a54b49176b1f  (must equal 5a0d79ac23410ee84bb0643231f48c0277062f43da63da7f4f77a54b49176b1f)
+
+===== bash repro/PROV-25/run.sh (RESTORED; also regenerates observed.txt and logs/repro/PROV-25-observed.log, which the mutated run overwrote) =====
+# PROV-25 observed.txt  2026-11-08 16:38:06 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; b3eb23f72c4d9f5b40faed49be22b6dea6fe6aaa9803e0b2f54d257dccb512ab  cpp/non_iid_main.cpp
+the comment (utils.h:1023-1025):
+  | // SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+  | // INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+  | // n*n <= 4.61e18, comfortably inside INT64_MAX = 9.22e18. The assert states
+grep -c INT_MAX cpp/non_iid_main.cpp = 0
+callers of n_choose_2: cpp/shared/lrs_test.h:712 cpp/shared/lrs_test.h:713 
+RESULT: PASS -- the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all
+exit=0
+
+===== final state check =====
+run.sh sha256 now: 5a0d79ac23410ee84bb0643231f48c0277062f43da63da7f4f77a54b49176b1f
+RESULT line in observed.txt: RESULT: PASS -- the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all
+RESULT line in logs/repro/PROV-25-observed.log: RESULT: PASS -- the comment names non_iid_main.cpp as refusing > INT_MAX samples; non_iid_main.cpp contains no INT_MAX at all
+git diff --stat for run.sh/control.sh (expect nothing):
+(end)
+
+===== VERIFIER SUPPLEMENTARY CHECKS (closing the gaps the token-grep proxy leaves) =====
+--- alternate spellings of an int-ceiling refusal in cpp/non_iid_main.cpp (expect none) ---
+grep rc=1 (1 = no match)
+--- any sample-count ceiling in the shared intake cpp/shared/utils.h read_file/read_file_subset (expect none; len = ftell, unbounded) ---
+364:		dp->len = fileLen;
+404:		dp->len = min(fileLen - subsetOffset, subsetSize);
+580:	dp->len = ftell(file);
+grep rc=1 (1 = no match)
+--- INT_MAX anywhere under cpp/ (token) ---
+cpp/shared/utils.h:30:#include <climits>   // INT_MAX, for its sufficiency assert
+cpp/shared/utils.h:1024:// INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+cpp/shared/utils.h:1028:	assert(n >= 0 && n <= (int64_t) INT_MAX);
+cpp/iid_main.cpp:393:    if (testdata.len > INT_MAX) {
+cpp/iid_main.cpp:397:            std::to_string(INT_MAX) + "-bit limit of the Section 5 test code.";
+cpp/iid_main.cpp:400:               testdata.len, INT_MAX);
+--- history: has cpp/non_iid_main.cpp EVER contained INT_MAX? (git log -S; expect empty) ---
+(end of list)
+--- history: the iid_main.cpp guard (134d377, 2026-09-30) predates the comment (473cd5f, 2026-10-20) ---
+134d377 2026-09-30 20:00:35 -0400 iid: run the Section 5 IID tests on the conditioned bitstring under -c (#271)
+473cd5f 2026-10-20 18:38:23 -0400 fix(C18): n_choose_2 computes in int64_t, every step, with LP64 bit-identity measured
+134d377 is an ancestor of 473cd5f: the comment was true of iid_main.cpp and false of non_iid_main.cpp on the day it was written
+--- 473cd5f touched only: ---
+ cpp/shared/lrs_test.h |  6 +++++-
+ cpp/shared/utils.h    | 35 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 38 insertions(+), 3 deletions(-)
+--- transitive reach of n_choose_2: len_LRS_test (lrs_test.h:643) is called from ---
+cpp/iid_main.cpp:504:    bool len_LRS_test_pass = len_LRS_test(
+cpp/restart_main.cpp:1118:        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
+cpp/restart_main.cpp:1119:        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
+--- restart_main.cpp has no INT_MAX (rc=1 expected) but refuses any len != MIN_SIZE (=1000000) at :694, so its sample_size (:831) is <= 1e6 ---
+grep rc=1
+42:#define MIN_SIZE 1000000
+    if (data.len != MIN_SIZE) {
+    int sample_size = data.len;
+--- prior record restates the premise without naming files (ORCHESTRATOR-CHECKS.md:5128-5130) and already knew the two reaching callers were iid_main.cpp and restart_main.cpp (:4878-4892) ---
+**Sufficiency is provable.** Callers already refuse a sample count above
+`INT_MAX`, so n ≤ 2³¹−1 and n·n ≤ 4.61e18, inside `INT64_MAX` = 9.22e18. An
+assert states that bound where it is relied on.
+| caller | what it gates |
+|---|---|
+| `cpp/iid_main.cpp:489` | the IID test suite's required LRS test |
+| `cpp/restart_main.cpp:1103-1104` | the restart test suite, rows **and** columns |
+
+--- NOTICE mentions (expect none) ---
+grep rc=1
+
+===== VERIFIER NOTES ON SCRIPT LOGIC (c) =====
+1. run.sh PASS condition is ONLY [ $n -eq 0 ] on grep -c INT_MAX non_iid_main.cpp. The comment text (utils.h:1023-1025) is printed via sed|tee but NOT asserted.
+   Consequence: once the comment is repaired, run.sh will STILL print PASS (defect present) -- it cannot serve as a regression check for its own fix. Line numbers 1023-1025 are hardcoded.
+2. A missing non_iid_main.cpp yields n='' and [ '' -eq 0 ] errors (rc 2) -> falls through to FAIL, so the PASS is not vacuous on a missing file; the source sha256 line also pins the file.
+3. The grep is a token proxy; a refusal spelled numeric_limits<int>::max()/2147483647/INT32_MAX would defeat it. Checked above: none exists, and the shared intake sets len = ftell() unbounded.
+4. control.sh CONTROL-OK fires on n >= 1 (any mention). The printed line iid_main.cpp:393 'if (testdata.len > INT_MAX) {' is a genuine refusal, so the record is sound; the logic alone is a proxy.
+5. Mutation of the expectation (-eq 0 -> -eq 3) produced RESULT: FAIL, exit=1; restored via cp; sha256 5a0d79ac... matches; re-run PASS exit=0; git diff on run.sh/control.sh empty.
+# end of verifier log 2026-11-08 16:39:16 -0500

@@ -1,0 +1,23 @@
+# PROV-15 observed.txt  2026-11-08 16:17:21 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+pinned prefix (brew --prefix openssl@3): /opt/homebrew/opt/openssl@4 ; pinned lib present: ls: cannot access '/opt/homebrew/opt/openssl@4/lib/libcrypto.3.dylib': No such file or directory
+Makefile order:
+  Makefile:70:OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+  Makefile:71:INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+  Makefile:72:LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+BUILDING.md pin:
+  BUILDING.md:55:| openssl@3      | 3.6.4   | SHA-256 of the input file             |
+generic prefix symlinks:
+  lrwxr-xr-x 1 gmcas admin 41 Nov  7 19:28 /opt/homebrew/include/openssl -> ../Cellar/openssl@4/4.1.0/include/openssl
+  lrwxr-xr-x 1 gmcas admin 45 Nov  7 19:28 /opt/homebrew/lib/libcrypto.dylib -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+openssl@4 install receipt: Nov 7 19:28 /opt/homebrew/Cellar/openssl@4/4.1.0/INSTALL_RECEIPT.json
+  ea_non_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (pinned)
+  ea_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (pinned)
+  ea_restart -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (pinned)
+production binaries not linked against the pinned openssl@3: 0 of 3
+RESULT: FAIL -- every production binary links the pinned prefix
+mutated run.sh exit=1

@@ -1,0 +1,248 @@
+# PROV-17 REFUTE probe  2026-11-08 16:22:06 -0500  host=Darwin 25.6.0 arm64  shell-of-record=bash 3.2.57(1)-release
+# repo git=834ffeb branch=audit/2026-11-07
+# EA_ALLOW_SHORT_DATASET is UNSET for P1-P3, P5-P7 (env -u enforced per call); set to 1 only in P4. OMP_NUM_THREADS=2.
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+fixture /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414106    Available: 4414106
+Inodes: Total: 184113044  Free: 176564240 (1-bit symbols -> 10,000 samples) sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583
+
+[P1-unset-nonexistent-dd-late-q] EA_ALLOW_SHORT_DATASET=unset
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</nonexistent/does-not-exist.bin>
+  argv[4]=<1>
+  argv[5]=<-q>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P1-unset-nonexistent-dd-late-q.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414087    Available: 4414087
+Inodes: Total: 184112293  Free: 176563480 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P1-unset-nonexistent-dd-late-q.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414087    Available: 4414087
+Inodes: Total: 184112293  Free: 176563480
+  marker 'appears after the file operand' (OC-104 refusal) count=1
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=0
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=0
+  marker 'H_original' (assessed) count=0
+  stderr first 3 lines (file-read, labelled):
+    | Error: '-q' looks like an option but appears after the file operand '/nonexistent/does-not-exist.bin'.
+    |        Refusing to run: what this command line MEANS depends on the C
+    |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  stdout first 2 lines (file-read, labelled):
+
+[P2-unset-fixture-dd-late-q] EA_ALLOW_SHORT_DATASET=unset
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin>
+  argv[4]=<1>
+  argv[5]=<-q>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P2-unset-fixture-dd-late-q.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414070    Available: 4414070
+Inodes: Total: 184111615  Free: 176562800 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P2-unset-fixture-dd-late-q.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414070    Available: 4414070
+Inodes: Total: 184111615  Free: 176562800
+  marker 'appears after the file operand' (OC-104 refusal) count=1
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=0
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=0
+  marker 'H_original' (assessed) count=0
+  stderr first 3 lines (file-read, labelled):
+    | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+    |        Refusing to run: what this command line MEANS depends on the C
+    |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  stdout first 2 lines (file-read, labelled):
+
+[P3-ctl-unset-fixture-dd-no-late] EA_ALLOW_SHORT_DATASET=unset
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin>
+  argv[4]=<1>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P3-ctl-unset-fixture-dd-no-late.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414066    Available: 4414066
+Inodes: Total: 184111458  Free: 176562640 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P3-ctl-unset-fixture-dd-no-late.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414066    Available: 4414066
+Inodes: Total: 184111458  Free: 176562640
+  marker 'appears after the file operand' (OC-104 refusal) count=0
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=0
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=1
+  marker 'H_original' (assessed) count=0
+  stderr first 3 lines (file-read, labelled):
+  stdout first 2 lines (file-read, labelled):
+    | 
+    | *** Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+
+[P4-escape1-fixture-dd-late-q] EA_ALLOW_SHORT_DATASET=1
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin>
+  argv[4]=<1>
+  argv[5]=<-q>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P4-escape1-fixture-dd-late-q.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414064    Available: 4414064
+Inodes: Total: 184111381  Free: 176562560 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P4-escape1-fixture-dd-late-q.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414064    Available: 4414064
+Inodes: Total: 184111381  Free: 176562560
+  marker 'appears after the file operand' (OC-104 refusal) count=1
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=0
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=0
+  marker 'H_original' (assessed) count=0
+  stderr first 3 lines (file-read, labelled):
+    | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+    |        Refusing to run: what this command line MEANS depends on the C
+    |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  stdout first 2 lines (file-read, labelled):
+
+[P5-usage-three-operands] EA_ALLOW_SHORT_DATASET=unset
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin>
+  argv[4]=<1>
+  argv[5]=<2>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P5-usage-three-operands.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414258    Available: 4414258
+Inodes: Total: 184119147  Free: 176570320 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P5-usage-three-operands.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414258    Available: 4414258
+Inodes: Total: 184119147  Free: 176570320
+  marker 'appears after the file operand' (OC-104 refusal) count=0
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=1
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=1
+  marker 'H_original' (assessed) count=3
+  stderr first 3 lines (file-read, labelled):
+  stdout first 2 lines (file-read, labelled):
+    | Incorrect usage.
+    | Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+[P6-iid-dd-late-q] EA_ALLOW_SHORT_DATASET=unset
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin>
+  argv[4]=<1>
+  argv[5]=<-q>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P6-iid-dd-late-q.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414248    Available: 4414248
+Inodes: Total: 184118750  Free: 176569920 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P6-iid-dd-late-q.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414248    Available: 4414248
+Inodes: Total: 184118750  Free: 176569920
+  marker 'appears after the file operand' (OC-104 refusal) count=1
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=0
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=0
+  marker 'H_original' (assessed) count=0
+  stderr first 3 lines (file-read, labelled):
+    | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+    |        Refusing to run: what this command line MEANS depends on the C
+    |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  stdout first 2 lines (file-read, labelled):
+
+[P7-restart-dd-late-q] EA_ALLOW_SHORT_DATASET=unset
+  argv[0]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart>
+  argv[1]=<-i>
+  argv[2]=<-->
+  argv[3]=</Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin>
+  argv[4]=<1>
+  argv[5]=<0.9>
+  argv[6]=<-q>
+  rc=255  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P7-restart-dd-late-q.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414244    Available: 4414244
+Inodes: Total: 184118593  Free: 176569760 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-17/P7-restart-dd-late-q.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4414244    Available: 4414244
+Inodes: Total: 184118593  Free: 176569760
+  marker 'appears after the file operand' (OC-104 refusal) count=1
+  marker 'separate the operands with' count=0
+  marker 'Incorrect usage' count=0
+  marker '1,000,000|1000000|minimum|too short|EA_ALLOW_SHORT_DATASET' (intake) count=0
+  marker 'H_original' (assessed) count=0
+  stderr first 3 lines (file-read, labelled):
+    | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+    |        Refusing to run: what this command line MEANS depends on the C
+    |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  stdout first 2 lines (file-read, labelled):
+
+# byte-compare: P2 stderr vs P4 stderr (escape unset vs set) -> IDENTICAL
+# byte-compare: P1 stderr vs P2 stderr (nonexistent vs real file; differ only in the operand path printed) -> DIFFERENT-as-expected-operand-path
+# byte-compare: P2 stderr vs repro dd.err (author's run) -> IDENTICAL
+# done
+
+# ===== CORRECTIONS to the probe above (its own two instrument faults, found by reading the record) =====
+# (1) 'stat -f %z' resolved to GNU stat (/opt/homebrew/opt/coreutils/libexec/gnubin/stat) -> the 'cannot read file system information' lines are probe noise; byte counts re-measured with wc -c:
+#     0 bytes  PROV-17/P1-unset-nonexistent-dd-late-q.out
+#     0 bytes  PROV-17/P2-unset-fixture-dd-late-q.out
+#     137 bytes  PROV-17/P3-ctl-unset-fixture-dd-no-late.out
+#     0 bytes  PROV-17/P4-escape1-fixture-dd-late-q.out
+#     2579 bytes  PROV-17/P5-usage-three-operands.out
+#     0 bytes  PROV-17/P6-iid-dd-late-q.out
+#     0 bytes  PROV-17/P7-restart-dd-late-q.out
+#     710 bytes  PROV-17/P1-unset-nonexistent-dd-late-q.err
+#     745 bytes  PROV-17/P2-unset-fixture-dd-late-q.err
+#     0 bytes  PROV-17/P3-ctl-unset-fixture-dd-no-late.err
+#     745 bytes  PROV-17/P4-escape1-fixture-dd-late-q.err
+#     0 bytes  PROV-17/P5-usage-three-operands.err
+#     741 bytes  PROV-17/P6-iid-dd-late-q.err
+#     744 bytes  PROV-17/P7-restart-dd-late-q.err
+# (2) the advice sentence WRAPS across two stderr lines ('... separate the' / 'operands with '--'.'), so the marker 'separate the operands with' could never match; re-counted per fragment:
+#     P1-unset-nonexistent-dd-late-q.err: 'separate the'=1  "operands with '--'"=1  'depends on the C'=1  'glibc rearranges it and parses'=1
+#     P2-unset-fixture-dd-late-q.err: 'separate the'=1  "operands with '--'"=1  'depends on the C'=1  'glibc rearranges it and parses'=1
+#     P3-ctl-unset-fixture-dd-no-late.err: 'separate the'=0  "operands with '--'"=0  'depends on the C'=0  'glibc rearranges it and parses'=0
+#     P4-escape1-fixture-dd-late-q.err: 'separate the'=1  "operands with '--'"=1  'depends on the C'=1  'glibc rearranges it and parses'=1
+#     P5-usage-three-operands.err: 'separate the'=0  "operands with '--'"=0  'depends on the C'=0  'glibc rearranges it and parses'=0
+#     P6-iid-dd-late-q.err: 'separate the'=1  "operands with '--'"=1  'depends on the C'=1  'glibc rearranges it and parses'=1
+#     P7-restart-dd-late-q.err: 'separate the'=1  "operands with '--'"=1  'depends on the C'=1  'glibc rearranges it and parses'=1
+# (3) P5 (usage path) matched 'H_original' x3 and the intake regex x1 in STDOUT: those are lines of the print_usage() text, not an assessment or an intake refusal. The matching lines, labelled:
+#     P5.out:13:	 [-a|-t]: '-a' produces the 'H_bitstring' assessment using all read bits, '-t' truncates the bitstring used to produce the `H_bitstring` assessment to 1000000 bits. Test all data by default.
+#     P5.out:28:		 two entropy estimates are computed: H_original and H_bitstring.
+#     P5.out:29:		 Returns min(H_original, bits_per_symbol X H_bitstring). The initial entropy
+#     P5.out:30:		 estimate H_I = min(H_submitter, H_original, bits_per_symbol X H_bitstring).
+#     What those markers cannot see: whether the text came from an assessment or from a usage dump. P5's verdict rests on 'Incorrect usage.' at stdout line 1 and rc=255.
+# (4) full stderr of P2 (escape UNSET, fixture, '-- file 1 -q'), every line:
+#     | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+#     |        Refusing to run: what this command line MEANS depends on the C
+#     |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+#     |        it as another operand and fail on the usage path. One line, two
+#     |        supported platforms, two different operations -- and guessing which
+#     |        was wanted is worse than refusing. Nothing has been written.
+#     | 
+#     |        Put every option BEFORE the file:
+#     |          ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+#     |        If '-q' is meant as an operand and not an option, separate the
+#     |        operands with '--'.
+# (5) macOS getopt(3) on '--' (man 3 getopt, this host): 'The interpretation of options in the argument list may be cancelled by the option -- (double dash) which causes getopt() to signal the end of argument processing and return -1.' glibc NOT measured here (CI step 5c's C probe has no '--' case); the glibc manual documents '--' as ending option scanning regardless of mode. The finding does not rest on glibc: the advice to add '--' is already satisfied on this host's own line.
+# ===== end corrections =====

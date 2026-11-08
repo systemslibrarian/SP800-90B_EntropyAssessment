@@ -1,0 +1,103 @@
+## stage: b
+## variant: asan_ubsan
+## tool: ea_non_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid
+## binary_sha256: c6350c1d3c9434402122abc54ef242362c285bda0e50c24e957d54f377d52547
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period4096-8bit-50000.bin
+## input_sha256: 7bb5bfba9f4ef5c3314afcd05bb892561a02a014a7713c634b9ccde96ce7c10f
+## input_bytes: 50000
+## operands: 8
+## flags: -i -a -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: 
+## timeout_seconds: 600
+## threads: 2
+## start: 2026-11-08T21:11:30Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -i -a -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period4096-8bit-50000.bin 8
+## --- tool output ---
+non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+    #0 0x000100bcbb18 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
+    #1 0x000100bd0628 in main non_iid_main.cpp:552
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:111:21 
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period4096-8bit-50000.bin' (SHA-256 hash 7bb5bfba9f4ef5c3314afcd05bb892561a02a014a7713c634b9ccde96ce7c10f of assessed bytes)
+Loaded 50000 samples of 256 distinct 8-bit-wide symbols
+
+*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary Symbols: 400000
+Bitstring Most Common Value Estimate: Mode count = 201186
+Bitstring Most Common Value Estimate: p-hat = 0.502965
+Bitstring Most Common Value Estimate: p_u = 0.50500133860645846
+Bitstring Most Common Value Estimate: min entropy = 0.9856408828678016
+Literal Most Common Value Estimate: Mode count = 318
+Literal Most Common Value Estimate: p-hat = 0.0063600000000000002
+Literal Most Common Value Estimate: p_u = 0.0072757554485449027
+Literal Most Common Value Estimate: min entropy = 7.1026872324781847
+Bitstring Collision Estimate: v = 159934
+Bitstring Collision Estimate: Sum t_i = 399998
+Bitstring Collision Estimate: X-bar = 2.5010191704077931
+Bitstring Collision Estimate: sigma-hat = 0.50000052443948151
+Bitstring Collision Estimate: X-bar' = 2.4977987161139805
+Bitstring Collision Estimate: Found p.
+Bitstring Collision Estimate: p = 0.53317592414703374
+Bitstring Collision Estimate: min entropy = 0.90731645868006894
+Bitstring Markov Estimate: P_0 = 0.497035
+Bitstring Markov Estimate: P_1 = 0.502965
+Bitstring Markov Estimate: P_{0,0} = 0.49740460933334674
+Bitstring Markov Estimate: P_{0,1} = 0.50259539066665326
+Bitstring Markov Estimate: P_{1,0} = 0.49667221711360193
+Bitstring Markov Estimate: P_{1,1} = 0.50332778288639801
+Bitstring Markov Estimate: p-hat_max = 6.8643986740811981e-39
+Bitstring Markov Estimate: min entropy = 0.99043798715430353
+Bitstring Compression Estimate: X-bar = 5.2010612574046107
+Bitstring Compression Estimate: sigma-hat = 1.0262952032913426
+Bitstring Compression Estimate: X-bar' = 5.1907450729799951
+Bitstring Compression Estimate: Found p.
+Bitstring Compression Estimate: p = 0.046161435439447507
+Bitstring Compression Estimate: min entropy = 0.73952801715682448
+Bitstring t-Tuple Estimate: t = 21
+Bitstring t-Tuple Estimate: p-hat_max = 0.6417205033256562218824
+Bitstring t-Tuple Estimate: p_u = 0.6436733653593844639573
+Bitstring t-Tuple Estimate: min entropy = 0.63559932226302762
+Bitstring LRS Estimate: u = 22
+Bitstring LRS Estimate: v = 367232
+Bitstring LRS Estimate: p-hat = 0.9999681101280036843448
+Bitstring LRS Estimate: p_u = 0.9999911090293260862438
+Bitstring LRS Estimate: min entropy = 1.2827016322342057e-05
+Literal t-Tuple Estimate: t = 2
+Literal t-Tuple Estimate: p-hat_max = 0.02683308406217976491148
+Literal t-Tuple Estimate: p_u = 0.0286945941070710780485
+Literal t-Tuple Estimate: min entropy = 5.1230772225435199
+Literal LRS Estimate: u = 3
+Literal LRS Estimate: v = 45904
+Literal LRS Estimate: p-hat = 0.9997919939422592605638
+Literal LRS Estimate: p_u = 0.9999581167410193094369
+Literal LRS Estimate: min entropy = 6.0426035456190014e-05
+Bitstring MultiMCW Prediction Estimate: C = 198982
+Bitstring MultiMCW Prediction Estimate: r = 16
+Bitstring MultiMCW Prediction Estimate: N = 399937
+Bitstring MultiMCW Prediction Estimate: P_global = 0.49753336150443694
+Bitstring MultiMCW Prediction Estimate: P_global' = 0.49956987151754256
+Bitstring MultiMCW Prediction Estimate: P_local can't change the result.
+Bitstring MultiMCW Prediction Estimate: min entropy = 1
+Literal MultiMCW Prediction Estimate: C = 60
+Literal MultiMCW Prediction Estimate: r = 2
+Literal MultiMCW Prediction Estimate: N = 49937
+Literal MultiMCW Prediction Estimate: P_global = 0.0012015139075234795
+Literal MultiMCW Prediction Estimate: P_global' = 0.0016008269934073046
+Literal MultiMCW Prediction Estimate: P_local can't change the result.
+Literal MultiMCW Prediction Estimate: min entropy = 8
+## --- end of tool output ---
+## exit: 134
+## wall_seconds: 117
+## end: 2026-11-08T21:13:27Z
+## sanitizer_report: yes
+## sanitizer_report_count: 1
+## first_report_line: non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+## tool_outcome: SANITIZER

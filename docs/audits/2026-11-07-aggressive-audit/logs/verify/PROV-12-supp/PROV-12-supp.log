@@ -1,0 +1,52 @@
+# PROV-12 supplementary mechanism probes  2026-11-08 16:10:27 -0500  host=Darwin 25.6.0 arm64
+# purpose: the author names the MECHANISM (jsoncpp utf8ToCodepoint treats 0x80 as a 2-byte lead and consumes the next byte). No jsoncpp source is on this host, so test three predictions that follow from that mechanism and would NOT follow from a per-byte U+FFFD substitution.
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+# fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin  (10000 bytes = 10,000 samples at 1 bit)
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs
+# PREDICTIONS, written BEFORE running:
+#   P1 argv[0] = 'ea_' C3 'Z' 'q'  -> token0 == 'ea_Úq'   (0xC3 is a valid 2-byte lead; ((0xC3&0x1F)<<6)|(0x5A&0x3F) = 0xDA; Z swallowed and a wrong letter fabricated, NOT U+FFFD)
+#   P2 argv[0] = 'ea_q' 80         -> commandline starts 'ea_q�-q '  (the byte after 0x80 in the space-joined commandline is the SEPARATOR 0x20; it is swallowed, so argv[0] merges with argv[1])
+#   P3 argv[0] = 'ea_' E0 'Z' 'q'  -> token0 == 'ea_�'    (0xE0 is a 3-byte lead; BOTH Z and q swallowed; 0x6B1 < 0x800 -> U+FFFD)
+#   A per-byte substitution would instead give 'ea_�Zq', 'ea_q�', 'ea_�Zq'.
+argv[0] bytes: P1=65615fc35a71 P2=65615f7180 P3=65615fe05a71
+$ ( exec -a <P1 bytes> /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o logs/verify/PROV-12-supp/p1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 )
+rc[P1]=0 stderr_bytes=0
+$ ( exec -a <P2 bytes> /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o logs/verify/PROV-12-supp/p2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 )
+rc[P2]=0 stderr_bytes=0
+$ ( exec -a <P3 bytes> /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o logs/verify/PROV-12-supp/p3.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 )
+rc[P3]=0 stderr_bytes=0
+P1 observed token0='ea_Úq' (U+0065 U+0061 U+005F U+00DA U+0071) errorLevel=0 -> MATCH (predicted 'ea_\u00DAq')
+P2 observed commandline='ea_q�-q -o logs/verify/PROV-12-supp/p2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1'; first 8 codepoints U+0065 U+0061 U+005F U+0071 U+FFFD U+002D U+0071 U+0020 errorLevel=0 -> MATCH (predicted startswith 'ea_q\uFFFD-q ')
+P3 observed token0='ea_�' (U+0065 U+0061 U+005F U+FFFD) errorLevel=0 -> MATCH (predicted 'ea_\uFFFD')
+SUPP-RESULT: ALL 3 PREDICTIONS MATCH -- lead-byte-consumes-following-bytes mechanism confirmed
+--- raw commandline lines:
+[p1]
+00000000: 2020 2022 636f 6d6d 616e 646c 696e 6522     "commandline"
+00000010: 203a 2022 6561 5f5c 7530 3064 6171 202d   : "ea_\u00daq -
+00000020: 7120 2d6f 206c 6f67 732f 7665 7269 6679  q -o logs/verify
+00000030: 2f50 524f 562d 3132 2d73 7570 702f 7031  /PROV-12-supp/p1
+00000040: 2e6a 736f 6e20 2f55 7365 7273 2f67 6d63  .json /Users/gmc
+00000050: 6173 2f72 6570 6f73 2f53 5038 3030 2d39  as/repos/SP800-9
+00000060: 3042 5f45 6e74 726f 7079 4173 7365 7373  0B_EntropyAssess
+00000070: 6d65 6e74 2f62 696e 2f72 616e 6431 5f73  ment/bin/rand1_s
+00000080: 686f 7274 2e62 696e 2031 222c 0a         hort.bin 1",.
+[p2]
+00000000: 2020 2022 636f 6d6d 616e 646c 696e 6522     "commandline"
+00000010: 203a 2022 6561 5f71 5c75 6666 6664 2d71   : "ea_q\ufffd-q
+00000020: 202d 6f20 6c6f 6773 2f76 6572 6966 792f   -o logs/verify/
+00000030: 5052 4f56 2d31 322d 7375 7070 2f70 322e  PROV-12-supp/p2.
+00000040: 6a73 6f6e 202f 5573 6572 732f 676d 6361  json /Users/gmca
+00000050: 732f 7265 706f 732f 5350 3830 302d 3930  s/repos/SP800-90
+00000060: 425f 456e 7472 6f70 7941 7373 6573 736d  B_EntropyAssessm
+00000070: 656e 742f 6269 6e2f 7261 6e64 315f 7368  ent/bin/rand1_sh
+00000080: 6f72 742e 6269 6e20 3122 2c0a            ort.bin 1",.
+[p3]
+00000000: 2020 2022 636f 6d6d 616e 646c 696e 6522     "commandline"
+00000010: 203a 2022 6561 5f5c 7566 6666 6420 2d71   : "ea_\ufffd -q
+00000020: 202d 6f20 6c6f 6773 2f76 6572 6966 792f   -o logs/verify/
+00000030: 5052 4f56 2d31 322d 7375 7070 2f70 332e  PROV-12-supp/p3.
+00000040: 6a73 6f6e 202f 5573 6572 732f 676d 6361  json /Users/gmca
+00000050: 732f 7265 706f 732f 5350 3830 302d 3930  s/repos/SP800-90
+00000060: 425f 456e 7472 6f70 7941 7373 6573 736d  B_EntropyAssessm
+00000070: 656e 742f 6269 6e2f 7261 6e64 315f 7368  ent/bin/rand1_sh
+00000080: 6f72 742e 6269 6e20 3122 2c0a            ort.bin 1",.

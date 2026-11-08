@@ -1,0 +1,32 @@
+# PROV-11 verify probe 2026-11-08 16:06:48 -0500 host=Darwin 25.6.0 arm64 git=834ffeb branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples)
+1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid
+4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart
+3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  bin/rand1_short.bin
+17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  bin/rand8_short.bin
+rc[noniid 1-bit]=0
+rc[iid 8-bit]=1
+rc[noniid 8-bit]=0
+rc[restart usage]=255
+v_n.json: type="" errorLevel=0 IID=False assessmentMode="<absent>" reportComplete="<absent>" keys=14
+v_i.json: type="" errorLevel=2 IID=False assessmentMode="IID" reportComplete="<absent>" keys=18
+v_n8.json: type="" errorLevel=0 IID=False assessmentMode="<absent>" reportComplete="<absent>" keys=14
+
+# source checks (read-only), 2026-11-08 16:07:57 -0500, HEAD=834ffeb
+type declared: 25:    string type;
+type written:  66:        baseJson["type"] = type;
+assignments in mains:
+cpp/iid_main.cpp:230:                if (!claimReportTarget(outputfilename, "IID", commandline)) exit(-1);
+cpp/non_iid_main.cpp:233:                if (!claimReportTarget(outputfilename, "non-IID", commandline)) exit(-1);
+cpp/restart_main.cpp:447:                if (!claimReportTarget(outputfilename, "restart", commandline)) exit(-1);
+cpp/restart_main.cpp:493:    testRunIid.type = "Restart";
+cpp/restart_main.cpp:499:    testRunNonIid.type = "Restart";
+upstream/master (NIST) assignments:
+  cpp/iid_main.cpp: 
+  cpp/non_iid_main.cpp: 
+  cpp/restart_main.cpp: 250:    testRunIid.type = "Restart";;257:    testRunNonIid.type = "Restart";;
+  cpp/conditioning_main.cpp: 511:    testRunNonIid.type = "Conditioning";;
+  cpp/shared/test_run_base.h: 17:    string type;;26:        baseJson["type"] = type;;
+README cites C14 commit 97fbc6c: fatal: Not a valid object name 97fbc6c
+actual C14 commit: 97bfc6c 2026-10-19

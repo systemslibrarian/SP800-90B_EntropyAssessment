@@ -1,0 +1,4 @@
+Error: the output path '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_input.bin' is the same file as the input '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_input.bin'.
+       Refusing to run: claiming the output truncates it, and that would
+       destroy the input capture before any sample was read. Nothing has
+       been written; the input is untouched. Choose a different -o path.

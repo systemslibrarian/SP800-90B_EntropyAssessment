@@ -1,0 +1,35 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 10000,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-19/i8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8",
+   "dateTimeStamp" : "20261108162148",
+   "errorClass" : "statistical",
+   "errorLevel" : 2,
+   "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.9833867846591503,
+         "hOriginal" : 7.0104540377360411,
+         "passedChiSquareTests" : false,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : true,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "rawMean" : 127.648,
+         "testCaseDesc" : "",
+         "translatedSymbolMedian" : 128.0
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

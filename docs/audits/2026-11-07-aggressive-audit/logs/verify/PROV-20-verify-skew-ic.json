@@ -1,0 +1,66 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 20000,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "cpp/ea_non_iid -i -c -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-20-verify-skew-ic.json docs/audits/2026-11-07-aggressive-audit/corpus/intake-skew09-lsb0-8bit-20000.bin 8",
+   "dateTimeStamp" : "20261108162647",
+   "errorLevel" : 0,
+   "filename" : "docs/audits/2026-11-07-aggressive-audit/corpus/intake-skew09-lsb0-8bit-20000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "a0236c550a61e09967051bac8044ee7de2775dd24fa27b211b448959c88a7595",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.33944403476921459,
+         "mcvEstimateMode" : 126034.0,
+         "mcvEstimatePHat" : 0.78771250000000004,
+         "mcvEstimatePU" : 0.79034582538276732,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hBitstring" : 0.40826484984758671,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.37326563805054047,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hBitstring" : 0.17329112096935304,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "binTTupleRes" : 0.16815618845789834,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "binLrsRes" : 0.27723877509950334,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hBitstring" : 0.33948142362420042,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hBitstring" : 0.2481726454207194,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hBitstring" : 0.1999281203626693,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hBitstring" : 0.33947341207395088,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "hAssessed" : 1.3452495076631867,
+         "hBitstring" : 0.16815618845789834,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

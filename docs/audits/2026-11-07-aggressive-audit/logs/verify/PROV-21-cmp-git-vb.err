@@ -1,0 +1,5 @@
+error: unknown option `bogus'
+usage: git version [--build-options]
+
+    --[no-]build-options  also print build options
+

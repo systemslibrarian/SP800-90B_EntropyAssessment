@@ -1,0 +1,9 @@
+{
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-verify-q31.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/q31.bin",
+   "dateTimeStamp" : "20261108163450",
+   "errorLevel" : -1,
+   "errorMessage" : "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.",
+   "reportComplete" : false,
+   "toolVersion" : "1.1.8",
+   "type" : "IID"
+}

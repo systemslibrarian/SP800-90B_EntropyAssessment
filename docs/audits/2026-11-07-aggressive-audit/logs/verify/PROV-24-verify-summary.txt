@@ -1,0 +1,52 @@
+# PROV-24 verifier probe 2026-11-08 16:34:49 -0500 host=Darwin 25.6.0 arm64 git=e415c0e branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every run is a NON-COMPLIANT short-dataset run
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+ex20 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/ex20.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339930    Available: 4339930
+Inodes: Total: 181162084  Free: 173597200 sha=088df27d16a3 rc=134 assert_lines=1 reached_perm_stage=0 chi=[] lrs=[] errorLevel=-1 ranPerm=<absent>
+   stderr: Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+ex31 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/ex31.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339344    Available: 4339344
+Inodes: Total: 181138671  Free: 173573760 sha=61c62519388c rc=134 assert_lines=1 reached_perm_stage=0 chi=[] lrs=[] errorLevel=-1 ranPerm=<absent>
+   stderr: Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+ex32 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/ex32.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339882    Available: 4339882
+Inodes: Total: 181160213  Free: 173595280 sha=02d6f2f4a2c0 rc=1 assert_lines=0 reached_perm_stage=0 chi=[] lrs=[] errorLevel=2 ranPerm=False
+q31 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/q31.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339620    Available: 4339620
+Inodes: Total: 181149734  Free: 173584800 sha=157684f7050e rc=134 assert_lines=1 reached_perm_stage=0 chi=[] lrs=[] errorLevel=-1 ranPerm=<absent>
+   stderr: Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+q32 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/q32.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339059    Available: 4339059
+Inodes: Total: 181127279  Free: 173562360 sha=2c014ada4e76 rc=0 assert_lines=0 reached_perm_stage=0 chi=[] lrs=[] errorLevel=0 ranPerm=True
+b248 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/b248.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339899    Available: 4339899
+Inodes: Total: 181160880  Free: 173595960 sha=dcbc3919894e rc=255 assert_lines=0 reached_perm_stage=0 chi=[] lrs=[] errorLevel=-1 ranPerm=<absent>
+b256 L=  File: "/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov24/b256.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 4339512    Available: 4339512
+Inodes: Total: 181145406  Free: 173580480 sha=8f83d1dfffcf rc=255 assert_lines=0 reached_perm_stage=0 chi=[] lrs=[] errorLevel=-1 ranPerm=<absent>
+# end
+# CORRECTION 2026-11-08 16:35:46 -0500: the b248/b256 rows above were USAGE REFUSALS (rc 255, 'Invalid bits per symbol', JSON filename='1') caused by the verifier placing the width operand before <file_name>; they measured nothing about PROV-24. The L= column above is garbage (GNU stat -f); true sizes: ex20=20 ex31=31 ex32=32 q31=31 q32=32 b248=248 b256=256 bytes. Re-run of the 1-bit pair with the documented operand order follows.
+b248 bytes=248 sha=dcbc3919894e width=1 rc=134 assert_lines=1 [Loaded 248 samples of 2 distinct 1-bit-wide symbols] errorLevel=-1 ranPerm=<absent> passedPerm=<absent> chi=<absent> lrs=<absent>
+   stderr: Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+   Chi square tests: Passed
+   Length of longest repeated substring test: Passed
+b256 bytes=256 sha=8f83d1dfffcf width=1 rc=1 assert_lines=0 [Loaded 256 samples of 2 distinct 1-bit-wide symbols] errorLevel=2 ranPerm=True passedPerm=False chi=True lrs=True
+   Chi square tests: Passed
+   Length of longest repeated substring test: Passed
+   Permutation testing: Unpermuted result periodicity(32) = 0
+# end of correction

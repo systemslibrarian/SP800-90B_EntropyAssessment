@@ -1,0 +1,91 @@
+# PROV-04 REFUTE-lens probe  2026-11-08 16:01:44 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every run below is a NON-COMPLIANT short-dataset run (10,000 samples); the escape is used only to keep probes tiny
+# repo git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin  (max byte 1)
+fixture sha256 a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin  (max byte 15)
+fixture sha256 090dce54d411f322da17b60087cc0afcab5ea28bdba1a4c8d4dc9a474659a7dc  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov04/skew4.bin  (generated above: 10,000 x 4 i.i.d. bits P(1)=0.9, seed 20261108; true H_min/symbol = 0.608)
+
+## A. 1-bit production profile: rand1_short.bin declared at 1 (true) and at 8 (wider)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/A1-rand1-w1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+  rc=0  stdout-warning-lines=0  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=1 bitsPerSymbolInferred=false IID=false hAssessed=0.6117162047939451 hOriginal=0.6117162047939451 hBitstring=<absent> warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/A2-rand1-w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 8
+  rc=0  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false IID=false hAssessed=0.6117162047939451 hOriginal=0.6117162047939451 hBitstring=<absent> warnKeys=[] narrowerInJSON=False
+
+## B. rand4_short.bin declared 4,5,6,7,8 (direction across widths; 4 and 8 re-measure the repro)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/B-rand4-w4.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 4
+  rc=0  stdout-warning-lines=0  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=4 bitsPerSymbolInferred=false IID=false hAssessed=3.2154882678767365 hOriginal=3.567472672399599 hBitstring=0.8038720669691841 warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/B-rand4-w5.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 5
+  rc=0  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=5 bitsPerSymbolInferred=false IID=false hAssessed=2.4365365656548743 hOriginal=3.567472672399599 hBitstring=0.48730731313097486 warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/B-rand4-w6.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 6
+  rc=0  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=6 bitsPerSymbolInferred=false IID=false hAssessed=0.9191076301291774 hOriginal=3.567472672399599 hBitstring=0.15318460502152956 warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/B-rand4-w7.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 7
+  rc=0  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=7 bitsPerSymbolInferred=false IID=false hAssessed=1.7527827342987496 hOriginal=3.567472672399599 hBitstring=0.25039753347124993 warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/B-rand4-w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 8
+  rc=0  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false IID=false hAssessed=1.5157083660394497 hOriginal=3.567472672399599 hBitstring=0.1894635457549312 warnKeys=[] narrowerInJSON=False
+
+## C. skewed 4-bit source declared 4 (true) and 8 (wider): does declared-wider ever RAISE hAssessed?
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/C1-skew4-w4.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov04/skew4.bin 4
+  rc=0  stdout-warning-lines=0  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=4 bitsPerSymbolInferred=false IID=false hAssessed=0.3222664364784145 hOriginal=0.5316591386519378 hBitstring=0.08056660911960363 warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/C2-skew4-w8.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov04/skew4.bin 8
+  rc=0  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=0 errorMessage=<absent> errorClass=<absent> bitsPerSymbol=8 bitsPerSymbolInferred=false IID=false hAssessed=0.5316591386519378 hOriginal=0.5316591386519378 hBitstring=0.08041503408739176 warnKeys=[] narrowerInJSON=False
+
+## D. ea_iid shares read_file_subset/GetBaseJson: rand4_short.bin declared 8 (and 4 as control)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/D1-iid-rand4-w8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 8
+  rc=1  stdout-warning-lines=1  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=2 errorMessage="IID test suite failed; no IID min-entropy estimate was awarded." errorClass="statistical" bitsPerSymbol=8 bitsPerSymbolInferred=false IID=false hAssessed=<absent> hOriginal=<absent> hBitstring=<absent> warnKeys=[] narrowerInJSON=False
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-04-refute/D2-iid-rand4-w4.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 4
+  rc=1  stdout-warning-lines=0  stderr-warning-lines=0  stderr-bytes=0
+  errorLevel=2 errorMessage="IID test suite failed; no IID min-entropy estimate was awarded." errorClass="statistical" bitsPerSymbol=4 bitsPerSymbolInferred=false IID=false hAssessed=<absent> hOriginal=<absent> hBitstring=<absent> warnKeys=[] narrowerInJSON=False
+
+## per-estimator bitstring comparison, C1 vs C2 (does any bitstring estimator, scaled by width, rise under padding?)
+[skew4] estimator: 4*hBs(w4) vs 8*hBs(w8)   (hOriginal w4 == w8 ?)
+   Most Common Value                                  4*0.141829=0.5673  8*0.853979=6.8318  RISES   hOrig eq=True
+   Collision Test (for bit strings only)              4*0.138160=0.5526  8*0.123388=0.9871  RISES   hOrig eq=True
+   Markov Test (for bit strings only)                 4*0.146426=0.5857  8*0.445795=3.5664  RISES   hOrig eq=True
+   Compression Test (for bit strings only)            4*0.080567=0.3223  8*0.131568=1.0525  RISES   hOrig eq=True
+   T-Tuple Test                                       4*0.134442=0.5378  8*0.093798=0.7504  RISES   hOrig eq=True
+   LRS Test                                           4*0.265501=1.0620  8*0.147414=1.1793  RISES   hOrig eq=True
+   Multi Most Common in Window Test                   4*0.141790=0.5672  8*0.857480=6.8598  RISES   hOrig eq=True
+   Lag Prediction Test                                4*0.268977=1.0759  8*0.131411=1.0513  falls   hOrig eq=True
+   Multi Markov Model with Counting Test (MultiMMC)   4*0.141875=0.5675  8*0.080415=0.6433  RISES   hOrig eq=True
+   LZ78Y Test                                         4*0.141892=0.5676  8*0.485558=3.8845  RISES   hOrig eq=True
+   Overall                                            4*0.080567=0.3223  8*0.080415=0.6433  RISES   hOrig eq=True
+[rand4] estimator: 4*hBs(w4) vs 8*hBs(w8)   (hOriginal w4 == w8 ?)
+   Most Common Value                                  4*0.979189=3.9168  8*0.406687=3.2535  falls   hOrig eq=True
+   Collision Test (for bit strings only)              4*0.898179=3.5927  8*0.294015=2.3521  falls   hOrig eq=True
+   Markov Test (for bit strings only)                 4*0.990617=3.9625  8*0.337799=2.7024  falls   hOrig eq=True
+   Compression Test (for bit strings only)            4*0.803872=3.2155  8*0.189464=1.5157  falls   hOrig eq=True
+   T-Tuple Test                                       4*0.898777=3.5951  8*0.357307=2.8585  falls   hOrig eq=True
+   LRS Test                                           4*0.932969=3.7319  8*0.543068=4.3445  RISES   hOrig eq=True
+   Multi Most Common in Window Test                   4*0.986561=3.9462  8*0.406725=3.2538  falls   hOrig eq=True
+   Lag Prediction Test                                4*0.982642=3.9306  8*0.406954=3.2556  falls   hOrig eq=True
+   Multi Markov Model with Counting Test (MultiMMC)   4*0.977697=3.9108  8*0.406818=3.2545  falls   hOrig eq=True
+   LZ78Y Test                                         4*0.980145=3.9206  8*0.406716=3.2537  falls   hOrig eq=True
+   Overall                                            4*0.803872=3.2155  8*0.189464=1.5157  falls   hOrig eq=True
+
+# end 2026-11-08 16:01:49 -0500
+
+===== REFUTE-LENS SUMMARY (PROV-04)  2026-11-08 =====
+Objections raised and their outcome (every tool run above: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2, 10,000 samples, NON-COMPLIANT; the escape only keeps probes tiny):
+1. Stale binary / harness artefact: FAILED. cpp/ea_non_iid sha256 1ad1568c... matches the README; run.sh is bash with labelled JSON reads; the REPRODUCE verifier's rule-7 mutation (logs/verify/PROV-04-reproduce.log) shows its gate can fail; my independent script re-measured hAssessed 1.5157083660394497 (declared 8) and 3.2154882678767365 (declared 4) to the digit.
+2. Documented / intended behaviour: FAILED. All three lines are upstream-inherited (printf: 64056aa7 Hill 2022; dead-store errorMsg: d464972 McCaffrey 2024; errorLevel!=0 gate: 97dc6ab3 Celi 2020) and verbatim in tag unrepaired-reference-2026-10-15 (utils.h:368-369, 534-535; test_run_base.h:52-54). The fork's documented decision (test_run_base.h:38-43; FINDINGS-TRACKER F02: "the existing stdout warning are unchanged, and no new warning was added") is about #254's proposed inferred-width "not a mapping" warning; it acknowledges this stdout warning exists and was left alone, and decides nothing about its absence from the JSON. The fork's C08 repair (5c3353f8) edited the adjacent errorClass lines and left the dead store. audits/2026-09-30/novel-findings/agent-reports/restart.md:100 had already noted the warning "is likewise lost"; R-3's repair covered only the read-failure errorLevel.
+3. Needs < 1e6 samples or the escape: FAILED. The datamask comparison (utils.h:471-483 / 657-669) is length-independent and never consults EA_ALLOW_SHORT_DATASET. Reachable with compliant input.
+4. "-q leak" framing: WEAK, as the REPRODUCE verifier also noted. Usage text: "-q: Quiet mode, less output to screen"; implemented as verbose=0 (non_iid_main.cpp:249-252); the escape banner also prints under -q by design. Accurate but not a breach of a documented promise. The substantive defect is the dead store plus the gate.
+5. Direction "neutral / conservative": REFUTED AS A GENERAL CLAIM (holds on the reproducer's uniform fixture only).
+   - rand1_short.bin declared 1 vs 8: identical hAssessed 0.6117162047939451 (two-symbol alphabet takes the binary path, #253); the warning prints at 8; signal-only loss for the 1-bit production profile.
+   - rand4_short.bin declared 4/5/6/7/8: 3.2155 / 2.4365 / 0.9191 / 1.7528 / 1.5157 -- conservative at every wider width, and non-monotonic in width.
+   - skew4.bin (sha256 090dce54..., 10,000 x 4 i.i.d. bits P(1)=0.9, true H_min/symbol 0.608): declared 4 -> 0.3222664364784145 (Compression binds, 4 x 0.0806); declared 8 -> 0.5316591386519378 (= H_original; 8 x 0.0804 = 0.643 no longer binds). The mis-declared wider width RAISES the figure by 65%. Nine of ten bitstring estimators rose after width scaling; H_original is identical at both widths, so H_original is the ceiling. Still below the true 0.608, so not "more than the data has" in this measurement, but the mis-declaration can neutralise the SP 800-90B 3.1.3 n x H_bitstring term ("HI = min (Horiginal, n x Hbitstring, Hsubmitter)", PDF p. 20), and the only signal that the width was mis-declared is the one this defect keeps out of the JSON.
+6. ea_iid shares the loss (measured, D1/D2): declared 8 prints the warning on stdout under -q; JSON errorLevel 2 with errorMessage = the IID-failure text, i.e. the warning's errorMsg is OVERWRITTEN there rather than gated. ea_restart not run (needs a 1e6-shaped matrix).
+7. Stale-text hazard: the two errorLevel=-1 sites with no errorMsg within 4 lines (utils.h:330, :559) are fopen failures that precede the warning store and set errorMsg after a comment block; no stale path found.
+VERDICT: CONFIRMED. Severity by the brief's scale: LOW (reporting). Correction required to the record: Direction is neutral for the defect itself, conservative on the uniform fixture, and RAISES hAssessed (capped at H_original) on a skewed source.

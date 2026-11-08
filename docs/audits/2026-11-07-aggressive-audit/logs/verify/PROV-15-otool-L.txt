@@ -1,0 +1,43 @@
+# PROV-15 verify: otool -L on the four binaries in cpp/  2026-11-08 16:17:01 -0500  host=Darwin 25.6.0 arm64  git=834ffeb branch=audit/2026-11-07
+== cpp/ea_non_iid sha256=1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f mtime=2026-11-07 19:28:57
+cpp/ea_non_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+== cpp/ea_iid sha256=22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349 mtime=2026-11-07 19:28:52
+cpp/ea_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+== cpp/ea_restart sha256=4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c mtime=2026-11-07 19:29:04
+cpp/ea_restart:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+== cpp/ea_conditioning sha256=b7a55528a8270672a89bd26265feb529293718a83d2a19a350cd035289d83460 mtime=2026-10-20 21:06:00
+cpp/ea_conditioning:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/mpfr/lib/libmpfr.6.dylib (compatibility version 9.0.0, current version 9.2.0)
+	/opt/homebrew/opt/gmp/lib/libgmp.10.dylib (compatibility version 16.0.0, current version 16.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)

@@ -1,0 +1,16 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 10000,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p9_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p9_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8 7.0/symbol",
+   "dateTimeStamp" : "20261108160400",
+   "errorLevel" : -1,
+   "errorMessage" : "*** Error: data (len = 10000) does not contain 1000000 samples ***",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin",
+   "sha256" : "17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

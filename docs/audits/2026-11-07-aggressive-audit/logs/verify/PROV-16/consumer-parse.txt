@@ -1,0 +1,7 @@
+=== consumer-side parsing of -0.0 ===
+python: repr=-0.0 str=-0.0 fmt=-0.000 ==0:True <0:False <=0:True signbit:True json.dumps:-0.0
+node: String= 0  toFixed(3)= 0.000  Object.is(v,-0)= true  v===0: true  v<0: false  JSON.stringify: 0  1/v: -Infinity
+jq: -0.0
+"-0.0"
+true
+false

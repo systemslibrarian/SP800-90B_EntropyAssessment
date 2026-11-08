@@ -1,0 +1,11 @@
+-log2(1.0) in Python on this host: -0.0 ; copysign -> -1.0
+0.0 < -0.0 : False ; min(0.5,-0.0) -> -0.0 ; -0.0 == 0 : True
+L=20000 k=1  p-hat=0.99995000000000001  p-hat+term=1.0000787914651774  clamps=True  H=-0.0
+L=20000 k=6  p-hat=0.99970000000000003  p-hat+term=1.0000154339343015  clamps=True  H=-0.0
+L=20000 k=7  p-hat=0.99965000000000004  p-hat+term=0.99999069906892879  clamps=False  H=1.3418469534311577e-05
+L=20000 k=10  p-hat=0.99950000000000006  p-hat+term=0.99990718272152246  clamps=False  H=0.00013391324219584911
+L=1000000 k=1  p-hat=0.99999899999999997  p-hat+term=1.0000015758293035  clamps=True  H=-0.0
+L=1000000 k=6  p-hat=0.99999400000000005  p-hat+term=1.0000003094516845  clamps=True  H=-0.0
+L=1000000 k=7  p-hat=0.99999300000000002  p-hat+term=0.99999981498331192  clamps=False  H=2.6692268306908263e-07
+L=20000  clamp iff k <= 6.633  (k_min_unclamped=7)
+L=1000000  clamp iff k <= 6.635  (k_min_unclamped=7)

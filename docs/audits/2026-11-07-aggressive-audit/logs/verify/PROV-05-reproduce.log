@@ -1,0 +1,114 @@
+# PROV-05 verifier reproduce log  2026-11-08 15:57:16 -0500  host=Darwin 25.6.0 arm64  verifier=Fable (REPRODUCE lens)
+# repo HEAD=6634722 branch=audit/2026-11-07
+# git tracking state of repro/PROV-05 before my run:
+  (empty above = tracked and clean)
+5b8b5af audit/2026-11-07: execution harnesses written (sanitizers, AFL++ fuzzing, determinism), reproducer pack PROV-01..25, limitations draft, experiment generators; 50k differential records (compacted)
+# production binary identity (instrument rule 4):
+1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  ../../../cpp/ea_non_iid
+  mtime: 2026-11-07 19:28:57
+# fixture identity:
+17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  ../../../bin/rand8_short.bin
+  bytes: 10000
+
+=================== run.sh (bash, cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit) ===================
+# PROV-05 observed.txt  2026-11-08 15:57:16 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=6634722 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[vvv]=0  stdout=vvv.out stderr=vvv.err
+-vvv: per-estimator 'min entropy = ' lines: 0 ; 'Assessed min entropy:' lines: 1 ; total stdout lines: 12
+-vvv stdout (verbatim):
+  | Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin' (SHA-256 hash 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 of assessed bytes)
+  | Loaded 10000 samples of 256 distinct 8-bit-wide symbols
+  | 
+  | *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+  | *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+  | *** Its result is NOT a compliant SP 800-90B assessment. ***
+  | 
+  | Number of Binary Symbols: 80000
+  | H_bitstring = 0.73261171806065617
+  | H_bitstring Per Symbol = 5.8608937444852494
+  | H_original = 6.6364412870612322
+  | Assessed min entropy: 5.8608937444852494
+usage text for -v: non_iid_main.cpp:35:    printf("\t -v: Optional verbosity flag for more output. Can be used multiple times.\n");
+RESULT: PASS -- -vvv prints the summary but zero per-estimator lines: more -v flags give LESS output than -vv
+run.sh exit code: 0
+
+=================== control.sh (bash, cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit) ===================
+# PROV-05 control.txt  2026-11-08 15:57:17 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=6634722 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[vv]=0  stdout=vv.out stderr=vv.err
+-vv: per-estimator 'min entropy = ' lines: 17 ; 'Assessed min entropy:' lines: 1
+  | Bitstring Most Common Value Estimate: min entropy = 0.9833867846591503
+  | Literal Most Common Value Estimate: min entropy = 7.0104540377360411
+  | Bitstring Collision Estimate: min entropy = 0.83205298221524804
+  | Bitstring Markov Estimate: min entropy = 0.99772497672796534
+  | Bitstring Compression Estimate: min entropy = 0.73261171806065617
+  | Bitstring t-Tuple Estimate: min entropy = 0.91078644573541423
+  | Bitstring LRS Estimate: min entropy = 0.98193035773637416
+  | Literal t-Tuple Estimate: min entropy = 7.0104540377360411
+  | Literal LRS Estimate: min entropy = 7.2891986717206523
+  | Bitstring MultiMCW Prediction Estimate: min entropy = 0.99453711551450596
+  | Literal MultiMCW Prediction Estimate: min entropy = 7.3751922497299107
+  | Bitstring Lag Prediction Estimate: min entropy = 0.98969349388795491
+  | Literal Lag Prediction Estimate: min entropy = 6.6364412870612322
+  | Bitstring MultiMMC Prediction Estimate: min entropy = 0.98781454404229407
+  | Literal MultiMMC Prediction Estimate: min entropy = 7.3276276791880877
+  | Bitstring LZ78Y Prediction Estimate: min entropy = 0.98808180379990307
+  | Literal LZ78Y Prediction Estimate: min entropy = 7.3533553938353844
+RESULT: CONTROL-OK -- -vv prints 17 per-estimator lines; adding a third -v (run.sh) removes all of them
+control.sh exit code: 0
+
+=================== rule 7: mutate run.sh's expectation once, confirm it can FAIL, restore by cp ===================
+backup sha256 (orig): 8efab10aa07f21c3a1e2094f6b2198de98b0e83c8e3609d04c8e2debf44cb7c4
+--- diff orig -> mutated:
+14c14
+< [ "$RC" -eq 0 ] && [ "$n_est" -eq 0 ] && [ "$n_sum" -eq 1 ] && verdict PASS "-vvv prints the summary but zero per-estimator lines: more -v flags give LESS output than -vv"
+---
+> [ "$RC" -eq 0 ] && [ "$n_est" -eq 17 ] && [ "$n_sum" -eq 1 ] && verdict PASS "-vvv prints the summary but zero per-estimator lines: more -v flags give LESS output than -vv"
+(diff rc=1 ; 1 = differs, as intended)
+--- running MUTATED run.sh:
+mutated run.sh exit code: 1   (expected 1 = FAIL)
+RESULT: FAIL -- rc=0 est_lines=0 summary_lines=1
+--- restoring run.sh by cp:
+restored sha256: 8efab10aa07f21c3a1e2094f6b2198de98b0e83c8e3609d04c8e2debf44cb7c4
+git status of run.sh after restore (must be empty = unchanged):
+--- re-running the GENUINE run.sh so observed.txt and logs/repro/PROV-05-observed.log reflect the real result, not the mutation:
+genuine run.sh exit code: 0   (expected 0 = PASS)
+RESULT: PASS -- -vvv prints the summary but zero per-estimator lines: more -v flags give LESS output than -vv
+observed.txt last line now: RESULT: PASS -- -vvv prints the summary but zero per-estimator lines: more -v flags give LESS output than -vv
+logs/repro/PROV-05-observed.log last line now: RESULT: PASS -- -vvv prints the summary but zero per-estimator lines: more -v flags give LESS output than -vv
+
+=================== side probe: is the JSON report really unaffected by -vv vs -vvv? (README claims 'Text only; JSON is unaffected') ===================
+env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (NON-COMPLIANT short run); binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+rc[-vv  -o]=0
+rc[-vvv -o]=0
+stdout 'min entropy = ' lines: -vv=17 -vvv=0
+  hAssessed: -vv='<absent>' -vvv='<absent>' same=True
+  hBitstring: -vv='<absent>' -vvv='<absent>' same=True
+  hOriginal: -vv='<absent>' -vvv='<absent>' same=True
+  hBitstringPerSymbol: -vv='<absent>' -vvv='<absent>' same=True
+  testCases count: -vv=11 -vvv=11
+  whole report equal excluding volatile ['commandline', 'dateTimeStamp', 'timestamp']: True
+  top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+
+=================== what my runs changed under repro/PROV-05 (expect only timestamps and the git short hash 1151b22 -> 6634722) ===================
+ M logs/repro/PROV-05-control.log
+ M logs/repro/PROV-05-observed.log
+ M repro/PROV-05/control.txt
+ M repro/PROV-05/observed.txt
+-# PROV-05 control.txt  2026-11-07 21:56:09 -0500  host=Darwin 25.6.0 arm64
++# PROV-05 control.txt  2026-11-08 15:57:17 -0500  host=Darwin 25.6.0 arm64
+-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
++# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=6634722 branch=audit/2026-11-07
+-# PROV-05 observed.txt  2026-11-07 21:56:09 -0500  host=Darwin 25.6.0 arm64
++# PROV-05 observed.txt  2026-11-08 15:57:51 -0500  host=Darwin 25.6.0 arm64
+-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
++# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=6634722 branch=audit/2026-11-07
+
+# verifier verdict: CONFIRMED (a) observed.txt shows 0 'min entropy = ' lines + 1 'Assessed min entropy:' line at -vvv; (b) control differs only in -vv vs -vvv and shows 17 lines; (c) script FAILs when its expectation is mutated (-eq 0 -> -eq 17).

@@ -1,0 +1,66 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 20000,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/B7.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/k7-in-20000.bin 1",
+   "dateTimeStamp" : "20261108161953",
+   "errorLevel" : 0,
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/k7-in-20000.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "b07fa01490324061013c316481ef306f93e5957b1f1978714078daa91b3a57d8",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hOriginal" : 1.3418469534311577e-05,
+         "mcvEstimateMode" : 19993.0,
+         "mcvEstimatePHat" : 0.99965000000000004,
+         "mcvEstimatePU" : 0.99999069906892879,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "hOriginal" : 1.3497822111094531e-05,
+         "testCaseDesc" : "Collision Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.00050523219976262212,
+         "testCaseDesc" : "Markov Test (for bit strings only)"
+      },
+      {
+         "hOriginal" : 0.00018359965880717589,
+         "testCaseDesc" : "Compression Test (for bit strings only)"
+      },
+      {
+         "tTupleRes" : 1.3418469534311577e-05,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "lrsRes" : 0.00015813131599750667,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "hOriginal" : 1.3461105288012611e-05,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "hOriginal" : 0.0006639678714938968,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "hOriginal" : 5.163507926462661e-05,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "hOriginal" : 5.1673908336612962e-05,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "dataWordSize" : 1.0,
+         "hAssessed" : 1.3418469534311577e-05,
+         "hOriginal" : 1.3418469534311577e-05,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

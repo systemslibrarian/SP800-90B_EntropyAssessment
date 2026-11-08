@@ -1,0 +1,9 @@
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)

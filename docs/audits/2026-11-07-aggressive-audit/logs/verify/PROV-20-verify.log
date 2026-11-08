@@ -1,0 +1,49 @@
+# PROV-20 verification record (CLASSIFY lens)  2026-11-08  host=Darwin 25.6.0 arm64
+# repo HEAD at verification: 834ffeb  branch audit/2026-11-07
+# env for every tool run: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (brief ground rule 5)
+# binaries + inputs: PROV-20-verify-sha256.txt (ea_non_iid 1ad1568c..., ea_iid 22f1319a...)
+#
+# 1. ea_non_iid, bin/rand8_short.bin (10,000 x 8-bit), with -o; rc and stderr bytes:
+#    -i -c  rc=0 stderr=0   JSON: Overall.hAssessed=5.860893744485249 hOriginal=<absent> hBitstring=0.7326117180606562  (conditioned mode won)
+#    -c -i  rc=0 stderr=0   JSON: Overall.hAssessed=5.860893744485249 hOriginal=6.636441287061232 hBitstring=0.7326117180606562 (initial mode won)
+#    -c     rc=0 stderr=0   control; -i rc=0 stderr=0 control
+#    Field-level diff (dateTimeStamp, commandline excluded): ic.json vs c.json = 0 fields; ci.json vs i.json = 0 fields;
+#    ic.json vs ci.json = 11 fields (hOriginal/tTupleRes/lrsRes present only in initial mode). PROV-20-verify-json-diff.txt
+#    The only trace of the discarded flag is the JSON `commandline` string.
+#    NOTE: on this fixture hAssessed is numerically identical in both modes because 8 x H_bitstring < H_original -- a coincidence of the data.
+#
+# 2. ea_iid, corpus/cli-rand1-2000.bin (2,000 x 1-bit), -v, no -o (README said ea_iid was not run):
+#    -i -c -v  rc=0 stderr=0  labels "Bitstring ...", headline h': 0.847456         (conditioned mode won)
+#    -c -i -v  rc=0 stderr=0  labels "Literal ...",   headline H_original: 0.847456 (initial mode won)
+#    Same mechanism confirmed in ea_iid (iid_main.cpp:158-168).
+#
+# 3. Direction probe, ea_non_iid, corpus/intake-skew09-lsb0-8bit-20000.bin (20,000 x 8-bit, 7 bits p(1)=0.9 << 1), with -o:
+#    -i     rc=0  Overall.hAssessed=1.0305347188697431 hOriginal=1.0305347188697431 hBitstring=0.16815618845789834
+#    -i -c  rc=0  Overall.hAssessed=1.3452495076631867 hOriginal=<absent>           hBitstring=0.16815618845789834
+#    -c -i  rc=0  Overall.hAssessed=1.0305347188697431 hOriginal=1.0305347188697431
+#    -c     rc=0  Overall.hAssessed=1.3452495076631867 hOriginal=<absent>
+#    => when -c is the LATER flag over an intended -i, the JSON figure is 1.3452/1.0305 = x1.3054 the intended one (8 x h' with the
+#       H_original term dropped). When -i is later over an intended -c the figure is the smaller of the two (conservative).
+#    SHELL ARTEFACT (kept, not a tool result): the first "-i -c" attempt passed ONE argument "-i -c" (zsh does not word-split $m);
+#    getopt printed "illegal option --  " and exited 255 -> PROV-20-verify-skew-ic-SHELLARTEFACT.{out,err,rc}. Rerun with two arguments above.
+#
+# 4. Reproducer-author claims checked:
+#    - non_iid_main.cpp:163-174 cases -- correct at HEAD 834ffeb. getopt loop :161 precedes read_file_subset :291: the resolution does not
+#      depend on sample count, so it is reachable with a compliant >= 1e6 input (EA_ALLOW_SHORT_DATASET was only needed for the tiny probes).
+#    - "-a -t truncates" in observed.txt's RESULT line is NOT measured: 80,000 bits <= MIN_SIZE 1,000,000, so :344 cannot truncate; the printed
+#      "Number of Binary Symbols: 80000" is the same under -a and -t (analysis aggregation.md:449,456 says the same: probe3-t-vs-a.diff is 0 bytes).
+#      Source-confirmed only; measuring it needs > 125,000 8-bit samples (heavy).
+#    - run.sh's diagnostic grep ('conflict|both -i and -c|overrid|ignor') is narrow; widened ('warn|exclusive|discard|superse|both') over
+#      at.out/ic.out/ci.out: the only hit in each is the short-dataset warning; all .err files 0 bytes.
+#    - control.sh is an identity check (-c alone == -i -c), i.e. a POSITIVE confirmation of the discard, not a rule-7 negative control on which
+#      the defect does not appear; a true negative control is a build with a guard, prohibited in this slot.
+#
+# 5. Prior record: no hit for the mechanism in NOTICE, audits/2026-09-30/FINDINGS-TRACKER.md, FORK-DIVERGENCE-AND-TRUST.md, or
+#    audits/2026-10-11-independent-audit/{CLOSING-INVENTORY,ORCHESTRATOR-CHECKS}.md. First appears in this audit's logs/analysis/cli-build.md 4.3
+#    and 9 row 12. Upstream-inherited: identical cases at tag unrepaired-reference-2026-10-15 and upstream/master (non_iid_main.cpp:99-111).
+#    Adjacent decisions only: F20 (-t under -c NOT-A-BUG, tracker:1108), OC-104 (option-order refusal, ORCHESTRATOR-CHECKS.md:9616).
+#
+# 6. Spec: README cites none ("n/a (CLI contract)"); expected.txt cites 3.1.3 and 3.1.5.2 for the two modes -- both verified
+#    (PDF p.20 "HI = min (Horiginal, n x Hbitstring, Hsubmitter)"; PDF p.25 "Let the obtained entropy estimate per bit be h'. The output of the
+#    conditioning component (nout) shall be treated as a binary string"). 3.1.3 PDF p.20 "The bits after the first 1 000 000 bits may be ignored"
+#    makes -a and -t both conformant. No section defines a CLI or requires refusing contradictory options.

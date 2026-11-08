@@ -1,0 +1,5 @@
+error: unknown switch `Z'
+usage: git version [--build-options]
+
+    --[no-]build-options  also print build options
+

@@ -1,0 +1,16 @@
+# PROV-11 observed.txt  2026-11-07 21:56:14 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_n.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[noniid_ok]=0  stdout=t_n.out stderr=t_n.err
+ea_non_iid success report: rc=0 errorLevel=0 type="" IID=false
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid_fail]=1  stdout=t_i.out stderr=t_i.err
+ea_iid report (battery outcome rc=1): errorLevel=2 type="" assessmentMode="IID"
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/does-not-exist.bin 8
+rc[noniid_err]=255  stdout=t_e.out stderr=t_e.err
+ea_non_iid error report (missing input): rc=255 errorLevel=-1 type=""
+assignments of testRun.type in the mains: non_iid_main.cpp=0 iid_main.cpp=0 restart_main.cpp(.type =)=2
+RESULT: PASS -- type is the empty string in the ea_non_iid success report, the ea_iid report and the ea_non_iid error report

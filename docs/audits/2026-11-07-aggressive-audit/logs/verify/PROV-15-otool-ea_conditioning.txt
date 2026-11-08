@@ -1,0 +1,11 @@
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/mpfr/lib/libmpfr.6.dylib (compatibility version 9.0.0, current version 9.2.0)
+	/opt/homebrew/opt/gmp/lib/libgmp.10.dylib (compatibility version 16.0.0, current version 16.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)

@@ -1,0 +1,33 @@
+# PROV-14 verifier: the same two probe conditions on Homebrew GCC (single empty-TU compiles to /dev/null; NO project build; GCC cannot link jsoncpp here, irrelevant to a -c probe)  2026-11-08 16:13:05 -0500
+# compiler: g++-16 (Homebrew GCC 16.2.0) 16.2.0
+## case=good.c
+probe1 (-ffloat-store) exit=0 stderr(first 4 lines):
+    
+probe1 grep NO MATCH -> FLOAT_STORE="-ffloat-store" (flag kept)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (expected on GCC: no such warning name)
+## case=errplant.c
+probe1 (-ffloat-store) exit=1 stderr(first 4 lines):
+    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/errplant.c:1:2: error: #error unrecognized plant
+        1 | #error unrecognized plant
+          |  ^~~~~
+probe1 grep MATCH -> FLOAT_STORE="" (flag DROPPED on GCC)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (expected on GCC: no such warning name)
+## case=garbage.c
+probe1 (-ffloat-store) exit=1 stderr(first 4 lines):
+    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/garbage.c:1:1: error: expected unqualified-id before 'this'
+        1 | this is not C++ ;;; }}}
+          | ^~~~
+    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/garbage.c:1:21: error: expected declaration before '}' token
+probe1 grep NO MATCH -> FLOAT_STORE="-ffloat-store" (flag kept)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (expected on GCC: no such warning name)
+## case=missing.c
+probe1 (-ffloat-store) exit=1 stderr(first 4 lines):
+    cc1plus: fatal error: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/missing.c: No such file or directory
+    compilation terminated.
+probe1 grep NO MATCH -> FLOAT_STORE="-ffloat-store" (flag kept)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (expected on GCC: no such warning name)
+## FLT_EVAL_METHOD on this GCC target (excess precision present only if != 0):
+    #define __FLT_EVAL_METHOD__ 0
+    #define __FLT_EVAL_METHOD_TS_18661_3__ 0
+    #define __FLT_EVAL_METHOD_C99__ 0
+    #define FLT_EVAL_METHOD __FLT_EVAL_METHOD__

@@ -1,0 +1,14 @@
+# PROV-12 verification probe 2 (trailing lead byte; end-of-string lead byte)  2026-11-08 16:11:45 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples, 1 bit)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+--- arm5_trailingC2: argv[0] hex = 65615fc2  (in commandline followed by 0x20 separator)
+rc=0
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a202265615f5c75303061302d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f61726d352e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c0a
+json valid: True; errorLevel=0; token0='ea_\xa0-q' codepoints=U+0065 U+0061 U+005F U+00A0 U+002D U+0071; token count=5 (control has 6)
+--- arm6_endC2: last operand hex = 31c2  (lead byte is the final byte of the commandline string)
+rc=255  stdout: Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.|Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_nam
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a20222f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f6370702f65615f6e6f6e5f696964202d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f61726d362e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e20315c7566666664222c0a
+json valid: True; errorLevel=-1; errorMessage='Invalid bits per symbol: expected an unsigned decimal integer from 1 through 8.'; last token='1�' codepoints=U+0031 U+FFFD
+prediction: bounds-checked end-of-string -> U+FFFD ; terminator read as continuation -> U+0080
+--- arm6 control '1x': rc=255 last token='1x'
+# end

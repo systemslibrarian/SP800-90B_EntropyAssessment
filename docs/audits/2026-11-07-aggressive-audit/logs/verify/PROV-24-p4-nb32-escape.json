@@ -1,0 +1,35 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 32,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 2,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-p4-nb32-escape.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-nb32.bin",
+   "dateTimeStamp" : "20261108163521",
+   "errorClass" : "statistical",
+   "errorLevel" : 2,
+   "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-nb32.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "02d6f2f4a2c0ea30ed8a95ac1f6bec3e00cd417a91f8b6e07a1a2a6e11937076",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.30331964522239269,
+         "hOriginal" : 0.65866588669457404,
+         "passedChiSquareTests" : true,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : false,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "rawMean" : 0.96875,
+         "testCaseDesc" : "",
+         "translatedSymbolMedian" : 1.0
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

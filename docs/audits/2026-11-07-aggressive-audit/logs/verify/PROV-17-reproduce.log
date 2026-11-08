@@ -1,0 +1,102 @@
+# PROV-17 verifier reproduce log  2026-11-08 16:16:24 -0500  host=Darwin 25.6.0 arm64
+# verifier ran run.sh and control.sh from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit; git=834ffeb branch=audit/2026-11-07
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+
+===== run.sh =====
+# PROV-17 observed.txt  2026-11-08 16:16:24 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -- /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 -q
+rc[dashdash_late_q]=255  stdout=dd.out stderr=dd.err
+stderr (verbatim):
+  | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+  |        Refusing to run: what this command line MEANS depends on the C
+  |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  |        it as another operand and fail on the usage path. One line, two
+  |        supported platforms, two different operations -- and guessing which
+  |        was wanted is worse than refusing. Nothing has been written.
+  | 
+  |        Put every option BEFORE the file:
+  |          ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+  |        If '-q' is meant as an operand and not an option, separate the
+  |        operands with '--'.
+refusal markers: 'depends on the C library'=1 'separate the operands'=1 'Nothing has been written'=1 ; rc=255
+code: scanArgs consumes a pre-operand '--' at TestRunUtils.h:183; the late-option loop stops only at a '--' AFTER the first operand (:217)
+RESULT: PASS -- '-i -- file 1 -q' is refused with the C-library-dependence reason and told to add a '--' it already has; both libcs would have refused this line on the usage path (argc 3) -- a wrong-reason refusal
+run.sh exit=0
+
+===== control.sh =====
+# PROV-17 control.txt  2026-11-08 16:16:25 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -- /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[dashdash_only]=0  stdout=c_dd.out stderr=c_dd.err
+  (a) '-i -- file 1': rc=0  Assessed line present: 1
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 -q
+rc[no_dashdash_late_q]=255  stdout=c_nd.out stderr=c_nd.err
+  (b) '-i file 1 -q' (no --): rc=255 ; stderr vs run.sh's stderr: byte-identical
+RESULT: CONTROL-OK -- '--' is honoured when nothing option-shaped follows the operands (exit 0); the refusal text for the with-'--' and without-'--' lines is byte-identical, so the operator cannot tell a true permutation hazard from a line that already disambiguated
+control.sh exit=0
+
+===== verifier probe: compliant env (EA_ALLOW_SHORT_DATASET UNSET), nonexistent file, '--' then -q =====
+$ env -u EA_ALLOW_SHORT_DATASET OMP_NUM_THREADS=2 ../../../cpp/ea_non_iid -i -- /nonexistent/does-not-exist.bin 1 -q
+rc=255  stdout_bytes=0  stderr_bytes=710
+stderr:
+  | Error: '-q' looks like an option but appears after the file operand '/nonexistent/does-not-exist.bin'.
+  |        Refusing to run: what this command line MEANS depends on the C
+  |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  |        it as another operand and fail on the usage path. One line, two
+  |        supported platforms, two different operations -- and guessing which
+  |        was wanted is worse than refusing. Nothing has been written.
+  | 
+  |        Put every option BEFORE the file:
+  |          ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+  |        If '-q' is meant as an operand and not an option, separate the
+  |        operands with '--'.
+markers: depends-on-C=1 separate-the=1
+stderr byte-identical to repro/PROV-17/out/dd.err modulo operand path? (diff after path normalisation):
+  identical after path normalisation
+
+===== rule 7 mutation of run.sh: the marker the PASS gate greps for is changed to a string the tool never prints =====
+backup: cp run.sh -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov17/run.sh.orig  (sha256 068b7ad7ea095055fbb3358edf3c42f5bab5d858083097c8bc77096fe204d6c9)
+mutated line:
+  11:r1=$(grepc 'MUTATED-NEVER-PRINTED' "$out/dd.err"); r2=$(grepc "separate the" "$out/dd.err"); r3=$(grepc 'Nothing has been written' "$out/dd.err")
+--- mutated run.sh output ---
+# PROV-17 observed.txt  2026-11-08 16:17:47 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -- /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 -q
+rc[dashdash_late_q]=255  stdout=dd.out stderr=dd.err
+stderr (verbatim):
+  | Error: '-q' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'.
+  |        Refusing to run: what this command line MEANS depends on the C
+  |        library. glibc rearranges it and parses '-q'; BSD and macOS treat
+  |        it as another operand and fail on the usage path. One line, two
+  |        supported platforms, two different operations -- and guessing which
+  |        was wanted is worse than refusing. Nothing has been written.
+  | 
+  |        Put every option BEFORE the file:
+  |          ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+  |        If '-q' is meant as an operand and not an option, separate the
+  |        operands with '--'.
+refusal markers: 'depends on the C library'=0 'separate the operands'=1 'Nothing has been written'=1 ; rc=255
+code: scanArgs consumes a pre-operand '--' at TestRunUtils.h:183; the late-option loop stops only at a '--' AFTER the first operand (:217)
+RESULT: FAIL -- rc=255 r1=0 r2=1
+mutated run.sh exit=1
+--- restore via cp ---
+restored run.sh sha256 068b7ad7ea095055fbb3358edf3c42f5bab5d858083097c8bc77096fe204d6c9  (orig 068b7ad7ea095055fbb3358edf3c42f5bab5d858083097c8bc77096fe204d6c9)
+run.sh byte-identical to backup
+--- re-run ORIGINAL run.sh so observed.txt and logs/repro carry the real result, not the mutation's ---
+original run.sh re-run exit=0  last line: RESULT: PASS -- '-i -- file 1 -q' is refused with the C-library-dependence reason and told to add a '--' it already has; both libcs would have refused this line on the usage path (argc 3) -- a wrong-reason refusal
+
+===== verifier closing notes  2026-11-08 16:18:24 -0500 =====
+(a) observed.txt shows the claimed defect: rc=255; stderr carries 'what this command line MEANS depends on the C library' and 'separate the operands with '--'' on a line that already has '--' before the operand. Both marker counts = 1.
+(b) control (a) '-i -- file 1' (one token removed: -q) -> rc=0, H_original present (count 1): the '--' is honoured. control (b) '-i file 1 -q' (one token removed: --) -> rc=255, stderr byte-identical to the reproducer's: the message is insensitive to the presence of '--'.
+(c) PASS gate = rc!=0 && grep -c 'depends on the C' >=1 && grep -c 'separate the' >=1, read from a stderr FILE. An absent line or a missing binary gives count 0 -> FAIL (not vacuous).
+rule 7: mutating the marker to a string the tool never prints -> RESULT: FAIL, exit 1. run.sh restored via cp; sha256 equal to backup; original re-run -> PASS exit 0.
+reachability: the refusal fires with EA_ALLOW_SHORT_DATASET UNSET and a nonexistent operand (rc=255, identical text) -- the mechanism is argv-only and needs neither the escape nor any sample count.
+side effect of this verification: observed.txt/control.txt and logs/repro copies were regenerated (timestamp + git short hash 1151b22->834ffeb differ; content otherwise identical). run.sh and control.sh unchanged vs HEAD.
+weakness noted in control.sh gate: CONTROL-OK requires only a_rc==0 && b_rc!=0; the 'H_original' count and the byte-identical comparison are LOGGED but not GATED, so an exit-0-nothing-assessed arm (a) or a 'different' arm (b) would still print CONTROL-OK. Measured values (1, byte-identical) are correct, so this is a script weakness, not a false control.

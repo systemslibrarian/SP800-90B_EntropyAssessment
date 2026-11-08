@@ -1,0 +1,39 @@
+# PROV-22 observed.txt  2026-11-08 16:29:48 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h ; xoshiro_jump at lines 765-
+  | void xoshiro_jump(unsigned int jump_count, uint64_t *xoshiro256starstarState) {
+  | 	static const uint64_t JUMP[] = { 0x180ec6d33cfd0aba, 0xd5a61266f0c9392c, 0xa9582618e03fc9aa, 0x39abdc4529b1661c };
+  | 	uint64_t s0 = 0;
+  | 	uint64_t s1 = 0;
+  | 	uint64_t s2 = 0;
+  | 	uint64_t s3 = 0;
+  | 
+  | 	for(unsigned int j=0; j < jump_count; j++) {
+  | 		for(unsigned int i = 0; i < sizeof JUMP / sizeof *JUMP; i++)
+  | 			for(unsigned int b = 0; b < 64; b++) {
+  | 				if (JUMP[i] & ((uint64_t)1) << b) {
+  | 					s0 ^= xoshiro256starstarState[0];
+  | 					s1 ^= xoshiro256starstarState[1];
+  | 					s2 ^= xoshiro256starstarState[2];
+  | 					s3 ^= xoshiro256starstarState[3];
+  | 				}
+  | 				xoshiro256starstar(xoshiro256starstarState);	
+  | 			}
+  | 			
+  | 		xoshiro256starstarState[0] = s0;
+  | 		xoshiro256starstarState[1] = s1;
+  | 		xoshiro256starstarState[2] = s2;
+  | 		xoshiro256starstarState[3] = s3;
+  | 	}
+  | }
+caller: permutation_tests.h:649
+  model: k=0 (thread 0): code==canonical? True ; code state nonzero? True
+  model: k=1 (thread 1): code==canonical? True ; code state nonzero? True
+  model: k=2 (thread 2): code==canonical? True ; code state nonzero? True
+  model: k=3 (thread 3): code==canonical? True ; code state nonzero? True
+  model: k=4 (thread 4): code==canonical? True ; code state nonzero? True
+  model: k=2 equals S1 xor S2 (the un-reset accumulator prediction)? False
+model exit (0 = every k agrees with canonical): 0
+RESULT: FAIL -- model rc=0 k2=0

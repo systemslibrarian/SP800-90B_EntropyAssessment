@@ -1,0 +1,64 @@
+# PROV-24 REFUTE probe  2026-11-08 16:35:20 -0500  host=Darwin 25.6.0 arm64
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment git=e415c0e branch=audit/2026-11-07
+# EA_ALLOW_SHORT_DATASET in the caller's environment at start: <unset>
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+README (repro/PROV-24) claims ea_iid sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  (10000 bytes)
+
+input sha256 088df27d16a3b5cc53a47049f924a13ac135c668ecc9805aec6f9d683acf1da1  PROV-24-ex20.bin  (20 bytes)
+input sha256 61c62519388cd759c2317337989b931719229ffc0e37eb1fbb6fedce17eb65b1  PROV-24-nb31.bin  (31 bytes)
+input sha256 02d6f2f4a2c0ea30ed8a95ac1f6bec3e00cd417a91f8b6e07a1a2a6e11937076  PROV-24-nb32.bin  (32 bytes)
+input sha256 826e5b705b0b829a53371043b487d8015fe2a61e7ebb04ec608e6d7745e586f6  PROV-24-b248.bin  (248 bytes)
+input sha256 a0663e20930574016221a294fda28d3a7fa0e9b55a2db4e6427aa34177f9fff8  PROV-24-b256.bin  (256 bytes)
+
+== P1: the reproducer's own 20-sample input, NO escape ==
+$ (no EA_ALLOW_SHORT_DATASET) OMP_NUM_THREADS=2 ea_iid -q -o PROV-24-p1-ex20-noescape.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-ex20.bin
+  rc=255  assertion-lines(stderr)=0  json.errorLevel=-1  json.errorMsg=<absent>  json.nonCompliantShortDataset=<absent>  json.assessmentComplete=false
+  stderr (verbatim, every line):
+  stdout lines matching Error|Warning|requires|Assertion (labelled grep, not positional):
+    | 2:*** Error: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+
+== P2: -l 0,20 subset of the 10,000-byte 8-bit fixture, NO escape ==
+$ (no EA_ALLOW_SHORT_DATASET) OMP_NUM_THREADS=2 ea_iid -q -o PROV-24-p2-l20-noescape.json -l 0,20 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+  rc=255  assertion-lines(stderr)=0  json.errorLevel=-1  json.errorMsg=<absent>  json.nonCompliantShortDataset=<absent>  json.assessmentComplete=false
+  stderr (verbatim, every line):
+  stdout lines matching Error|Warning|requires|Assertion (labelled grep, not positional):
+    | 2:*** Error: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+
+== P3: escape, 31 non-binary samples (n < p = 32) ==
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ea_iid -q -o PROV-24-p3-nb31-escape.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-nb31.bin
+  rc=134  assertion-lines(stderr)=1  json.errorLevel=-1  json.errorMsg=<absent>  json.nonCompliantShortDataset=<absent>  json.assessmentComplete=<absent>
+  stderr (verbatim, every line):
+    | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+  stdout lines matching Error|Warning|requires|Assertion (labelled grep, not positional):
+    | 2:*** Warning: dataset contains 31 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+
+== P4: escape, 32 non-binary samples (n = p = 32) ==
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ea_iid -q -o PROV-24-p4-nb32-escape.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-nb32.bin
+  rc=1  assertion-lines(stderr)=0  json.errorLevel=2  json.errorMsg=<absent>  json.nonCompliantShortDataset=true  json.assessmentComplete=true
+  stderr (verbatim, every line):
+  stdout lines matching Error|Warning|requires|Assertion (labelled grep, not positional):
+    | 2:*** Warning: dataset contains 32 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+
+== P5: escape, 248 binary samples (conversion1 -> ceil(248/8) = 31 < 32) ==
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ea_iid -q -o PROV-24-p5-b248-escape.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-b248.bin
+  rc=134  assertion-lines(stderr)=1  json.errorLevel=-1  json.errorMsg=<absent>  json.nonCompliantShortDataset=<absent>  json.assessmentComplete=<absent>
+  stderr (verbatim, every line):
+    | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+  stdout lines matching Error|Warning|requires|Assertion (labelled grep, not positional):
+    | 2:*** Warning: dataset contains 248 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+
+== P6: escape, 256 binary samples (conversion1 -> 32) ==
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 ea_iid -q -o PROV-24-p6-b256-escape.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-24-b256.bin
+  rc=0  assertion-lines(stderr)=0  json.errorLevel=0  json.errorMsg=<absent>  json.nonCompliantShortDataset=true  json.assessmentComplete=true
+  stderr (verbatim, every line):
+  stdout lines matching Error|Warning|requires|Assertion (labelled grep, not positional):
+    | 2:*** Warning: dataset contains 256 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+
+# end of probe
+
+# VERIFIER NOTE (appended 2026-11-08 16:36:01 -0500): the probe's jtop label 'errorMsg' is not the JSON field name; the report's field is 'errorMessage'. Labelled re-read:
+#   P1 errorMessage = Error: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+#   P2 errorMessage = Error: dataset contains 20 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+#   P3 (assert run) errorClass | errorMessage = None | The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.   <- the pre-written C14 placeholder, untouched by the abort
+# The <absent> readings for errorMsg above are therefore a probe labelling artefact, not a missing message. Nothing else in this log is affected.

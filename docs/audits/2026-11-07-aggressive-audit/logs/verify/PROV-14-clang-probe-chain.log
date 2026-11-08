@@ -1,0 +1,39 @@
+# PROV-14 verifier: does the Makefile's FLOAT_STORE/IGNORED_FLAG_IS_ERROR probe logic change under a planted file? tiny single-TU compiles to /dev/null in the scratchpad, NO project build  2026-11-08 16:12:13 -0500
+# compiler: Apple clang version 21.0.0 (clang-2100.4.1.1)
+## case=good.c
+probe1 (-ffloat-store) exit=0 stderr(first 6 lines):
+    clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+probe1 grep MATCH -> FLOAT_STORE="" (flag dropped)
+probe2 exit=0 -> IGNORED_FLAG_IS_ERROR="-Werror=ignored-optimization-argument" (guard ON)
+## case=garbage.c
+probe1 (-ffloat-store) exit=1 stderr(first 6 lines):
+    clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/garbage.c:1:1: error: expected unqualified-id
+        1 | this is not C++ ;;; }}}
+          | ^
+    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/garbage.c:1:21: error: extraneous closing brace ('}')
+        1 | this is not C++ ;;; }}}
+probe1 grep MATCH -> FLOAT_STORE="" (flag dropped)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (guard silently OFF)
+## case=adir.c
+probe1 (-ffloat-store) exit=1 stderr(first 6 lines):
+    clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+    error: error reading '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/adir.c': Is a directory
+    1 error generated.
+probe1 grep MATCH -> FLOAT_STORE="" (flag dropped)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (guard silently OFF)
+## case=missing.c
+probe1 (-ffloat-store) exit=1 stderr(first 6 lines):
+    clang++: error: no such file or directory: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/missing.c'
+    clang++: error: no input files
+probe1 grep NO MATCH -> FLOAT_STORE="-ffloat-store" (flag kept)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (guard silently OFF)
+## case=errplant.c
+probe1 (-ffloat-store) exit=1 stderr(first 6 lines):
+    clang++: warning: optimization flag '-ffloat-store' is not supported [-Wignored-optimization-argument]
+    /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov14/errplant.c:1:2: error: unrecognized plant
+        1 | #error unrecognized plant
+          |  ^
+    1 error generated.
+probe1 grep MATCH -> FLOAT_STORE="" (flag dropped)
+probe2 exit=1 -> IGNORED_FLAG_IS_ERROR="" (guard silently OFF)

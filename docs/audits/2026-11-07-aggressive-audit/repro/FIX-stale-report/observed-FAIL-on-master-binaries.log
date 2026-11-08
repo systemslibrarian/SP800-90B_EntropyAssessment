@@ -1,0 +1,45 @@
+[build-state] ea_non_iid                         asserts=LIVE    sha256=1ad1568c083b2774
+[build-state] ea_iid                             asserts=LIVE    sha256=22f1319ae347ab4e
+[build-state] ea_restart                         asserts=LIVE    sha256=4d7ba82b43ce03d0
+== rule 7: the baseline is a complete errorLevel-0 report ==
+  baseline: ea_non_iid -q -o wrote a complete errorLevel-0 report (11 test cases, rc 0) PASS
+
+== an option error BEFORE -o must still claim the target (the defect) ==
+  ea_non_iid -Z -o p                                                     FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_non_iid -l 5x,10 -o p                                               FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_non_iid -Z -qo p (cluster, A04 pair)                                FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_iid -Z -o p                                                         FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_iid -l 5x,10 -o p                                                   FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_iid -Z -qo p (cluster, A04 pair)                                    FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_restart -Z -o p                                                     FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_restart -s 5x -o p                                                  FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+  ea_restart -Z -qo p (cluster, A04 pair)                                FAIL  STALE -- the previous complete report survived byte-identical (rc 255)
+
+== controls: the orderings the C14 regression already covers still hold ==
+  ea_non_iid -o p -Z (C14 pair: error AFTER -o): replaced by the fail-closed placeholder (rc 255) PASS
+  ea_non_iid -o p (C14 pair: no operand): replaced by the fail-closed placeholder (rc 255) PASS
+  ea_iid -o p -Z (C14 pair: error AFTER -o): replaced by the fail-closed placeholder (rc 255) PASS
+  ea_iid -o p (C14 pair: no operand): replaced by the fail-closed placeholder (rc 255) PASS
+  ea_restart -o p -Z (C14 pair: error AFTER -o): replaced by the fail-closed placeholder (rc 255) PASS
+  ea_restart -o p (C14 pair: no operand): replaced by the fail-closed placeholder (rc 255) PASS
+
+== PAIR TEST, A05: the earlier claim still cannot reach the input ==
+  ea_non_iid -Z -o capture.bin capture.bin: refused by identity, capture byte-identical (rc 255) PASS
+  ea_non_iid -o capture.bin capture.bin: refused by identity, capture byte-identical (rc 255) PASS
+  ea_iid -Z -o capture.bin capture.bin: refused by identity, capture byte-identical (rc 255) PASS
+  ea_iid -o capture.bin capture.bin: refused by identity, capture byte-identical (rc 255) PASS
+  ea_restart -Z -o capture.bin capture.bin: refused by identity, capture byte-identical (rc 255) PASS
+  ea_restart -o capture.bin capture.bin: refused by identity, capture byte-identical (rc 255) PASS
+  ea_non_iid -Z -o alias.bin (symlink to the capture): refused by identity, capture byte-identical (rc 255) PASS
+  the symlink alias is still a symlink (nothing was renamed over it)     PASS
+
+== PAIR TEST, A04/F04: --version as -o's VALUE is a filename, not a banner ==
+  ea_non_iid -o --version: no banner, a report named --version was written (rc 0) PASS
+
+== PAIR TEST, C08: a run that reaches the writer replaces the placeholder ==
+  ea_non_iid -q -o p: -o holds the tool's own report, not the placeholder (rc 0) PASS
+  ea_iid -q -o p: -o holds the tool's own report, not the placeholder (rc 1) PASS
+  ea_restart -q -o p: -o holds the tool's own report, not the placeholder (rc 255) PASS
+  no temporary-file debris beside any report after every arm             PASS
+
+regression-stale-report: FAIL (9 of 29 checks)

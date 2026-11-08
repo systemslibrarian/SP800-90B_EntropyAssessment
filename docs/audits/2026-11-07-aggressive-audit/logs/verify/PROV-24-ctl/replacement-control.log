@@ -1,0 +1,63 @@
+# PROV-24 replacement control: one fixed-seed stream, prefixes of 40/32/31/20 samples  2026-11-08 16:36:15 -0500
+# binary: 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (non-compliant short-dataset runs)
+db9b739cbb014dfbdeaa4f6a25f5648869891654d7453af45dfde21ea8acdd4e  logs/verify/PROV-24-ctl/r4_20.bin
+4fccaa6acd08a432759f5d459d76d90a661d698200fc80bea7c54cb1f57103f3  logs/verify/PROV-24-ctl/r4_31.bin
+bcbdf2635e43804b80209b3cc541dce962004c9b2b8e7aa771870ee87f646eea  logs/verify/PROV-24-ctl/r4_32.bin
+fead6ba32ed493b7b49e9c8ddc3e304a29cb27fe3e9ece187843458afd913e62  logs/verify/PROV-24-ctl/r4_40.bin
+
+===== L=40  (r4_40.bin) =====
+rc=0
+--- stderr (verbatim):
+--- stdout markers:
+1:Loaded file: 'logs/verify/PROV-24-ctl/r4_40.bin' (SHA-256 hash fead6ba32ed493b7b49e9c8ddc3e304a29cb27fe3e9ece187843458afd913e62 of assessed bytes)
+2:Loaded 40 samples of 4 distinct 2-bit-wide symbols
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+43:Permutation testing: Unpermuted result periodicity(32) = 2
+66:          periodicity(32)       2       4       6
+75:IID permutation tests: Passed
+--- JSON labelled reads:
+errorLevel 0 reportComplete None assessmentComplete True
+{'passedChiSquareTests': True, 'passedLongestRepeatedSubstringTest': True, 'ranIidPermutationTests': True, 'passedIidPermutationTests': True}
+
+===== L=32  (r4_32.bin) =====
+rc=0
+--- stderr (verbatim):
+--- stdout markers:
+1:Loaded file: 'logs/verify/PROV-24-ctl/r4_32.bin' (SHA-256 hash bcbdf2635e43804b80209b3cc541dce962004c9b2b8e7aa771870ee87f646eea of assessed bytes)
+2:Loaded 32 samples of 4 distinct 2-bit-wide symbols
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+43:Permutation testing: Unpermuted result periodicity(32) = 0
+66:          periodicity(32)       0       6       0
+75:IID permutation tests: Passed
+--- JSON labelled reads:
+errorLevel 0 reportComplete None assessmentComplete True
+{'passedChiSquareTests': True, 'passedLongestRepeatedSubstringTest': True, 'ranIidPermutationTests': True, 'passedIidPermutationTests': True}
+
+===== L=31  (r4_31.bin) =====
+rc=134
+--- stderr (verbatim):
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+--- stdout markers:
+1:Loaded file: 'logs/verify/PROV-24-ctl/r4_31.bin' (SHA-256 hash 4fccaa6acd08a432759f5d459d76d90a661d698200fc80bea7c54cb1f57103f3 of assessed bytes)
+2:Loaded 31 samples of 4 distinct 2-bit-wide symbols
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+--- JSON labelled reads:
+errorLevel -1 reportComplete False assessmentComplete None
+{'passedChiSquareTests': '<absent>', 'passedLongestRepeatedSubstringTest': '<absent>', 'ranIidPermutationTests': '<absent>', 'passedIidPermutationTests': '<absent>'}
+
+===== L=20  (r4_20.bin) =====
+rc=134
+--- stderr (verbatim):
+  | Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
+--- stdout markers:
+1:Loaded file: 'logs/verify/PROV-24-ctl/r4_20.bin' (SHA-256 hash db9b739cbb014dfbdeaa4f6a25f5648869891654d7453af45dfde21ea8acdd4e of assessed bytes)
+2:Loaded 20 samples of 4 distinct 2-bit-wide symbols
+26:Chi square tests: Passed
+30:Length of longest repeated substring test: Passed
+--- JSON labelled reads:
+errorLevel -1 reportComplete False assessmentComplete None
+{'passedChiSquareTests': '<absent>', 'passedLongestRepeatedSubstringTest': '<absent>', 'ranIidPermutationTests': '<absent>', 'passedIidPermutationTests': '<absent>'}

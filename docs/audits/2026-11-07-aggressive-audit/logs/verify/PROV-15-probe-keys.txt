@@ -1,0 +1,26 @@
+top-level keys: IID assessedSampleCount bitsPerSymbol bitsPerSymbolInferred commandline dateTimeStamp errorLevel filename nonCompliantShortDataset sha256 sha256Scope testCases toolVersion type
+IID = false
+assessedSampleCount = 4000
+bitsPerSymbol = 8
+bitsPerSymbolInferred = false
+commandline = "cpp/ea_non_iid -i -a -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-15-probe.json docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-15-probe-input.bin 8"
+dateTimeStamp = "20261108161603"
+errorLevel = 0
+filename = "docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-15-probe-input.bin"
+nonCompliantShortDataset = true
+sha256 = "d1666217aa60615c6cad36546dccf17bff3269f09f7f23ef6d660c2c4be8827b"
+sha256Scope = "assessed-sample-bytes"
+toolVersion = "1.1.8"
+type = ""
+testCases: 11
+   Most Common Value -> <no min_entropy key>
+   Collision Test (for bit strings only) -> <no min_entropy key>
+   Markov Test (for bit strings only) -> <no min_entropy key>
+   Compression Test (for bit strings only) -> <no min_entropy key>
+   T-Tuple Test -> <no min_entropy key>
+   LRS Test -> <no min_entropy key>
+   Multi Most Common in Window Test -> <no min_entropy key>
+   Lag Prediction Test -> <no min_entropy key>
+   Multi Markov Model with Counting Test (MultiMMC) -> <no min_entropy key>
+   LZ78Y Test -> <no min_entropy key>
+   Overall -> <no min_entropy key>

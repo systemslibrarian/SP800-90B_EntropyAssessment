@@ -1,0 +1,99 @@
+# PROV-07 REFUTE-lens verification  2026-11-08 16:06:16 -0500  host=Darwin 25.6.0 arm64
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment git=834ffeb branch=audit/2026-11-07  cpp/ working tree: 0 modified files
+# binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+# README of the reproducer claims sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c; cpp/ commits since binary mtime: 0
+# fixture /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin bytes=10000  (10,000 samples; NON-compliant size, but see objection 2: the file is never opened on the refused path)
+# env for every run below: EA_ALLOW_SHORT_DATASET UNSET (env -u) unless the line says otherwise; OMP_NUM_THREADS=2; direct invocation, NOT through repro/_lib.sh
+
+== Objection 1: harness artefact? Direct invocation, no _lib.sh, escape UNSET ==
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=0 size-refusal=0 read-error=0 stderr-bytes=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 0 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=0 size-refusal=0 read-error=0 stderr-bytes=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 4999999 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=0 size-refusal=0 read-error=0 stderr-bytes=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+-- controls --
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 5000000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=0 reason-lines=1 size-refusal=1 read-error=0 stderr-bytes=0 first-stdout-line=''
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 1000x /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=1 size-refusal=0 read-error=0 stderr-bytes=0 first-stdout-line='Simulation count must be an unsigned decimal integer.'
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=0 reason-lines=1 size-refusal=1 read-error=0 stderr-bytes=0 first-stdout-line=''
+
+== Objection 2: EA_ALLOW_SHORT_DATASET-only or size-only behaviour? Same command with the escape SET, and with a NONEXISTENT file ==
+$ [EA_ALLOW_SHORT_DATASET=set] ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=0 size-refusal=0 read-error=0 stderr-bytes=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/does-not-exist.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=0 size-refusal=0 read-error=0 stderr-bytes=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ [EA_ALLOW_SHORT_DATASET=unset] ea_restart -n -s 5000000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/does-not-exist.bin 8 3/symbol
+  rc=255 usage-dump=1 reason-lines=1 size-refusal=0 read-error=1 stderr-bytes=0 first-stdout-line='Error reading file.'
+
+== Objection 3: documented / intended? Source lineage and the record ==
+-- upstream/master 87c104d (NIST), cpp/restart_main.cpp: usage line and case 's' --
+  87c104d:30:    printf("Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>\n\n");
+  87c104d:36:    printf("\t -s <simulation count>: Establish cutoff using <simulation count> rounds.\n");
+  87c104d:217:            case 's':
+  87c104d:218-                inul = strtoul(optarg, NULL, 10);
+  87c104d:219-		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+  87c104d:220-                    print_usage();
+  87c104d:221-                } else {
+  87c104d:222-                    simulation_rounds = inul;
+  87c104d:223-                }
+-- fork HEAD cpp/restart_main.cpp: usage lines, case 's', the floor's rationale, the still-live consumer --
+  HEAD:26://Each test has a targeted chance of roughly 0.000005, and we need to witness at least 5 failures, so this should be no less than 1000000
+  HEAD:27:#define DEFAULT_SIMULATION_ROUNDS 5000000UL
+  HEAD:190:    printf("Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>\n\n");
+  HEAD:205:    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+  HEAD:206:    printf("\t        computed exactly from SP 800-90B 3.1.4.3 step 5, not simulated.\n");
+  HEAD:408:            "ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] [-o <file>] <file_name> [bits_per_symbol] <H_I>")) {
+  HEAD:449:            case 's':
+  HEAD:450-                if (!parse_unsigned_decimal(optarg, inul)) {
+  HEAD:451-                    printf("Simulation count must be an unsigned decimal integer.\n");
+  HEAD:452-                    print_usage();
+  HEAD:453-                }
+  HEAD:454-		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+  HEAD:455-                    print_usage();
+  HEAD:62:// EA_RESTART_WITHOUT_C23_FIX    decide on upstream's simulated cutoff.
+  HEAD:293:    results = new uint16_t[simulation_rounds];
+  HEAD:323:    assert((results[simulation_rounds - 1] >= (1000 / k)) && (results[simulation_rounds - 1] <= 1000));
+  HEAD:742:#ifdef EA_RESTART_WITHOUT_C23_FIX
+  HEAD:745:        X_cutoff = simulateBound(alpha_sim, data.alph_size, H_I, simulation_rounds);
+  HEAD:749:    (void) simulation_rounds;
+  HEAD:753:    (void) simulation_rounds;                   // -s is accepted and ignored
+  HEAD:800:#ifdef EA_RESTART_WITHOUT_C23_FIX
+-- a5005bd (C23, 2026-10-18): the only change to the -s contract was the usage TEXT --
+  a5005bd diff:130:-    printf("\t -s <simulation count>: Establish cutoff using <simulation count> rounds.\n");
+  a5005bd diff:131:+    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+  a5005bd diff:244:+    (void) simulation_rounds;
+-- the record's claims --
+  NOTICE:257:            against brute-force enumeration. -s is accepted and ignored.
+  ORCHESTRATOR-CHECKS.md:2861:accepted for compatibility and ignored, and the usage text says so. The report
+  COVERAGE.md:214:| Parameter validation: H_I nan/inf/negative/>word_size, bits_per_symbol mismatch (R-3), -s 0/1/huge, hostile -l | executed | Mostly CORRECT. nan/NAN/inf/-inf/1e400/''/'1.5abc'/'3 ' → 'H_I must be a finite decimal nu
+  COVERAGE.md:218:| Default simulation size run at least once | executed | Done. Every sanity-check run used the 5,000,000-round default, because -s refuses anything below it (-s 100000 and -s 4999999 → usage, exit 255). -s cannot be 
+  COVERAGE.md:230:**Toolchain and limits.** Apple clang 21 release builds at $S/wt/{master,upstream,repair}/cpp (-std=c++11 -O2 -ffloat-store), ASan+UBSan build at $S/wt/master-asan/cpp, my own ASan build of repair 2d4b135 at $A/wt-re
+  COVERAGE.md:252:| Documentation agreement: README / BUILDING / usage text vs the actual options and the JSON field names | both | Six concrete mismatches found (README synopses omit -o, -q and -s; ea_restart's own usage never mentio
+  CLUSTERS.md:352:| `output-automation-contracts-14` | Low | `output-automation-contracts` | yes | misreport | Documentation does not describe the machine interface: README omits -o, -q and -s; ea_restart's own usage never mentions -o
+  EXCLUSION-MAP.md:459:  restart_main.cpp:219-224 parses `-s` with `strtoul(optarg, NULL, 10)` and then rejects 0, ULONG_MAX (its overflow sentinel, which is also a legitimate value) and anything below DEFAULT_SIMULATION_ROUNDS (5,000,000) by calling the [[noreturn]] print_usage
+  CLOSING-INVENTORY.md rows mentioning -s/simulation: 0
+  FINDINGS-TRACKER.md rows mentioning the -s floor/range: 
+  FORK-DIVERGENCE-AND-TRUST.md mentions of -s: 0
+-- regression coverage --
+  regression-restart.sh:88:for bad in 5000000x +5000000 0x5000000; do
+  regression-restart.sh:89:	out=$("${tool}" -n -s "${bad}" "${work}/absent.bin" 8 1 2>&1); rc=$?
+
+== Objection 4: direction. Does any refused run reach data, an estimator, or a report? ==
+  reports written by any run above into /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-07: 0  (0 expected: refusal precedes the read)
+  stdout of s1000_unset identical to s0_unset: yes;  identical to s4999999_unset: yes;  identical to s1000_nofile (file never opened): yes;  identical with escape SET: yes
+
+# end 2026-11-08 16:06:17 -0500
+
+== Addendum 2026-11-08 16:06:42 -0500: one count above was blank because the pattern began with '-s' and the grep on this host is grep (ugrep 7.8.4 aarch64-apple-macosx +neon/AArch64; -P:pcre2jit; -z:zlib,bzip2,zstd,brotli,7z,tar/pax/cpio/zip) ==
+  FINDINGS-TRACKER.md rows mentioning the -s floor/range (corrected): 0
+  FINDINGS-TRACKER.md N-08 affected-source line for restart (the only -s row): 768:- **Affected source:** `cpp/non_iid_main.cpp`:120, :137, :186; `cpp/iid_main.cpp`:179; `cpp/restart_main.cpp`:265; `
+  full stdout of control s5000000_nofile (file IS opened once -s >= 5e6):
+    | Error reading file.
+    | Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>
+    | 
+  stdout line count: s1000_unset=33  s5000000_nofile=34  s5000000_unset=3
+  files in /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-07: 29
+# end addendum

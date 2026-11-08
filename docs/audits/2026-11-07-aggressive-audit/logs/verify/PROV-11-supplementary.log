@@ -1,0 +1,17 @@
+# PROV-11 verifier supplementary controls  2026-11-08 16:04:50 -0500
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (non-compliant short-dataset runs)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart
+
+--- S1: is -q relevant to the placeholder type? ea_non_iid -q -o <json> (no operand) ---
+rc=255
+type="non-IID" errorLevel=-1 reportComplete=false
+
+--- S2: does GetBaseJson emit a non-empty type when the main assigns it? ea_restart -q -o <json> bin/rand1_short.bin 1 0.5 (10,000 samples; restart requires exactly 1,000,000 so this is the error-report path, written after restart_main.cpp:493/499 set type="Restart") ---
+rc=255
+stdout(restart_e.out):
+
+*** Error: data (len = 10000) does not contain 1000000 samples ***
+
+stderr(restart_e.err):
+type="Restart" errorLevel=-1 errorMessage="*** Error: data (len = 10000) does not contain 1000000 samples ***" keys=["IID","assessedSampleCount","bitsPerSymbol","bitsPerSymbolInferred","commandline","dateTimeStamp","errorLevel","errorMessage","filename","sha256","sha256Scope","testCases","toolVersion","type"]

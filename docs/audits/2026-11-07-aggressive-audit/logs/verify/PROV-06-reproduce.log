@@ -1,0 +1,95 @@
+# PROV-06 verifier reproduce log  2026-11-08 16:00:32 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent agent; cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit; git=d96eef1 branch=audit/2026-11-07
+# binary sha256 before run: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  ../../../cpp/ea_non_iid
+# fixture sha256 before run: 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  ../../../bin/rand8_short.bin
+
+================ run.sh (verifier run 1) ================
+# PROV-06 observed.txt  2026-11-08 16:00:32 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=d96eef1 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[repeated_o]=0  stdout=rep.out stderr=rep.err
+a.json: errorLevel=-1 reportComplete=false testCases=<absent> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+b.json: errorLevel=0 reportComplete=<absent> Overall.hAssessed=5.860893744485249
+stdout/stderr mention of the discarded first -o: stdout=0 stderr=0 (0 = no diagnostic)
+RESULT: PASS -- exit 0, b.json is the full report, a.json is left as a permanent placeholder (errorLevel -1, 'Refuse this file') with no diagnostic about the second -o
+run.sh exit=0
+
+================ control.sh (verifier run 1) ================
+# PROV-06 control.txt  2026-11-08 16:00:33 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=d96eef1 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/a1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[single_o]=0  stdout=single.out stderr=single.err
+a1.json: errorLevel=0 reportComplete=<absent> Overall.hAssessed=5.860893744485249
+RESULT: CONTROL-OK -- one -o: the path holds the complete report; the placeholder in run.sh is the second -o's doing
+control.sh exit=0
+
+================ rule 7 mutation of run.sh (verifier) 16:02:35 ================
+# backup: cp run.sh -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-06-run.sh.orig ; original sha256 58a9201201612864f340e7e25e6aed8b5bb0658e08737cd6ce2c58d58a966d34
+# mutation: the a.json expectation  [ "$(jtop "$out/a.json" errorLevel)" = "-1" ]  ->  = "-999"  (one literal; everything else unchanged)
+# diff orig vs mutated:
+14c14
+< if [ "$RC" -eq 0 ] && [ "$(jtop "$out/a.json" errorLevel)" = "-1" ] && [ "$(jtop "$out/a.json" reportComplete)" = "false" ] && [ "$(jtop "$out/b.json" errorLevel)" = "0" ]; then
+---
+> if [ "$RC" -eq 0 ] && [ "$(jtop "$out/a.json" errorLevel)" = "-999" ] && [ "$(jtop "$out/a.json" reportComplete)" = "false" ] && [ "$(jtop "$out/b.json" errorLevel)" = "0" ]; then
+# (diff rc=1 ; 1 = files differ as intended)
+--- mutated run.sh output ---
+# PROV-06 observed.txt  2026-11-08 16:02:35 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[repeated_o]=0  stdout=rep.out stderr=rep.err
+a.json: errorLevel=-1 reportComplete=false testCases=<absent> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+b.json: errorLevel=0 reportComplete=<absent> Overall.hAssessed=5.860893744485249
+stdout/stderr mention of the discarded first -o: stdout=0 stderr=0 (0 = no diagnostic)
+RESULT: FAIL -- rc=0 a.errorLevel=-1 b.errorLevel=0
+mutated run.sh exit=1  (expected 1 = FAIL; 0 would mean the script cannot fail)
+# restored via cp; sha256 after restore 58a9201201612864f340e7e25e6aed8b5bb0658e08737cd6ce2c58d58a966d34 ; matches original: YES
+
+================ run.sh (verifier run 2, after restore -- re-establishes observed.txt and logs/repro copy) ================
+# PROV-06 observed.txt  2026-11-08 16:02:37 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[repeated_o]=0  stdout=rep.out stderr=rep.err
+a.json: errorLevel=-1 reportComplete=false testCases=<absent> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+b.json: errorLevel=0 reportComplete=<absent> Overall.hAssessed=5.860893744485249
+stdout/stderr mention of the discarded first -o: stdout=0 stderr=0 (0 = no diagnostic)
+RESULT: PASS -- exit 0, b.json is the full report, a.json is left as a permanent placeholder (errorLevel -1, 'Refuse this file') with no diagnostic about the second -o
+run.sh exit=0
+# git status of run.sh after restore: [] (empty = unchanged from HEAD)
+
+================ VERIFIER SUMMARY (2026-11-08) ================
+(a) observed.txt shows the claimed defect, lines quoted:
+      rc[repeated_o]=0  stdout=rep.out stderr=rep.err
+      a.json: errorLevel=-1 reportComplete=false testCases=<absent> errorMessage="The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+      b.json: errorLevel=0 reportComplete=<absent> Overall.hAssessed=5.860893744485249
+      stdout/stderr mention of the discarded first -o: stdout=0 stderr=0 (0 = no diagnostic)
+    Independent labelled reads (PROV-06-independent-reads.txt): a.json has 7 keys and no testCases; b.json 11 testCases,
+    Overall.hAssessed 5.860893744485249; rep.err 0 bytes; rep.out = short-dataset warning only; grep for
+    a.json|supersed|second|ignored|overrid|replac| -o in rep.out/rep.err -> no match (rc 1). b.json == control a1.json
+    after dropping commandline/dateTimeStamp. Verifier observed.txt/control.txt identical to the author's apart from the
+    two stamp lines (diff rc 0). Binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f, same as recorded.
+(b) The author's control (single -o to a1.json) differs in TWO things (one -o fewer AND a different path name).
+    Supplementary S1 (PROV-06-supp/README.log) closes that: single -o to the SAME path a.json -> rc 0, errorLevel 0,
+    11 testCases, hAssessed 5.860893744485249. S2 reversed order -> b2 placeholder, a2 complete (last wins).
+    S4 three -o -> p1,p2 placeholders, p3 complete. S3 WITHOUT EA_ALLOW_SHORT_DATASET -> rc 255, a3 placeholder,
+    b3 = the intake error report: the first path is claimed at option parse, before any data is read, so the
+    mechanism needs neither the escape nor short data.
+(c) PASS requires RC==0 && a.errorLevel=="-1" && a.reportComplete=="false" && b.errorLevel=="0"; a missing file makes
+    jtop raise (empty string) and a missing key prints <absent>, both mismatch -> FAIL: not vacuous. Mutating the
+    a.errorLevel literal -1 -> -999 gave "RESULT: FAIL -- rc=0 a.errorLevel=-1 b.errorLevel=0", exit 1; run.sh restored
+    by cp, sha256 58a9201201612864f340e7e25e6aed8b5bb0658e08737cd6ce2c58d58a966d34 = original, git status clean.
+    Control asserts the baseline accepted (RC 0 and errorLevel 0). Weakness: the "no diagnostic" clause of the verdict
+    message is logged (grepc for the literal "a.json") but NOT part of the PASS condition.
+Same shape in ea_iid (PROV-06-supp/iid.log): i_a.json placeholder type "IID"; i_b.json errorLevel 2 (IID battery
+    failed on 10,000 samples; irrelevant to the claim). ea_restart NOT RUN (needs a 1e6 matrix; heavy slot occupied).
+Verdict: CONFIRMED. Severity LOW, direction neutral (fail-closed at the first path; report at the last).

@@ -1,0 +1,32 @@
+run.sh (-q) p.json key paths: 50
+control (-vv) c_p.json key paths: 51
+only in -q  : ['testCases.[].hAssessed']
+only in -vv : ['errorClass', 'errorMessage']
+commandline -q : /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/fair10k.bin 1
+commandline -vv: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/c_p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/lag64anti.bin 1
+p.json iteration 0 nkeys 21 sum of 19 stats 254.0
+p.json iteration 1 nkeys 21 sum of 19 stats 10.0
+p.json iteration 2 nkeys 21 sum of 19 stats 176.0
+c_p.json iteration 0 nkeys 21 sum of 19 stats 31077.0
+c_p.json iteration 1 nkeys 21 sum of 19 stats 11.0
+c_p.json iteration 2 nkeys 21 sum of 19 stats 51593.0
+control per-statistic (C0,C1,C2,sum):
+  avgCollision            9998     0     2 sum=10000 FAIL(spec rule) <-- sum==10000
+  compression               44     2     4 sum=   50 pass 
+  covariance1                6     0    10 sum=   16 pass 
+  covariance16               0     0 10000 sum=10000 FAIL(spec rule) <-- sum==10000
+  covariance2                6     0     6 sum=   12 pass 
+  covariance32               0     0 10000 sum=10000 FAIL(spec rule) <-- sum==10000
+  covariance8            10000     0     0 sum=10000 FAIL(spec rule) <-- sum==10000
+  excursion                973     0     6 sum=  979 pass 
+  lenDirectionalRuns         9     5     1 sum=   15 pass 
+  lenRunsMedian              5     1     5 sum=   11 pass 
+  maxCollision           10000     0     0 sum=10000 FAIL(spec rule) <-- sum==10000
+  numDirectionalRuns        13     0     6 sum=   19 pass 
+  numIncreasesDecreases      5     1   102 sum=  108 pass 
+  numRunsMedian              0     1  9999 sum=10000 FAIL(spec rule) <-- sum==10000
+  periodicity1               6     0  1434 sum= 1440 pass 
+  periodicity16              0     0 10000 sum=10000 FAIL(spec rule) <-- sum==10000
+  periodicity2               6     0    13 sum=   19 pass 
+  periodicity32              0     0 10000 sum=10000 FAIL(spec rule) <-- sum==10000
+  periodicity8               6     1     5 sum=   12 pass 

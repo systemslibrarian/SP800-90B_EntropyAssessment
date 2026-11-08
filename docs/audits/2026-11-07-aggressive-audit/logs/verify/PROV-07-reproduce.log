@@ -1,0 +1,93 @@
+# PROV-07 verifier reproduce log  2026-11-08 16:00:39 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of run.sh then control.sh, from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+# git=d96eef1 branch=audit/2026-11-07
+# binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart
+# fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  bin/rand8_short.bin (  File: "../../../bin/rand8_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5553062    Available: 5553062
+Inodes: Total: 229640326  Free: 222122480 bytes)
+
+===== run.sh =====
+# PROV-07 observed.txt  2026-11-08 16:00:40 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=d96eef1 branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+usage text: restart_main.cpp:205:    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+code:       restart_main.cpp:454:		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_1000]=255  stdout=s_1000.out stderr=s_1000.err
+  -s 1000: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 4999999 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_4999999]=255  stdout=s_4999999.out stderr=s_4999999.err
+  -s 4999999: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 0 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_0]=255  stdout=s_0.out stderr=s_0.err
+  -s 0: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+bare-usage refusals: 3 of 3
+RESULT: PASS -- -s 1000 / -s 4999999 / -s 0 are refused with a bare usage dump (no reason line) although the usage text says the option is accepted and ignored
+run.sh exit=0
+
+===== control.sh =====
+# PROV-07 control.txt  2026-11-08 16:00:40 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=d96eef1 branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 5000000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_5000000]=255  stdout=c_s_5000000.out stderr=c_s_5000000.err
+  (a) -s 5000000: rc=255 usage-dump=0 size-refusal-line=1
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 1000x /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_1000x]=255  stdout=c_s_1000x.out stderr=c_s_1000x.err
+  (b) -s 1000x: rc=255 reason-line=1
+RESULT: CONTROL-OK -- -s 5000000 is accepted (the run reaches the data-size refusal, no usage dump); a non-decimal -s gets a reason line -- only in-range values below 5e6 get the silent usage dump
+control.sh exit=0
+# correction: the fixture-size line above is garbled (GNU stat on PATH); fixture size = 10000 bytes
+
+===== rule-7 mutation: run.sh with 'try 0' -> 'try 5000000' (an accepted value) =====
+# mutated line: 20:try 1000; try 4999999; try 5000000
+# PROV-07 observed.txt  2026-11-08 16:03:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+usage text: restart_main.cpp:205:    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+code:       restart_main.cpp:454:		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_1000]=255  stdout=s_1000.out stderr=s_1000.err
+  -s 1000: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 4999999 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_4999999]=255  stdout=s_4999999.out stderr=s_4999999.err
+  -s 4999999: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 5000000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_5000000]=255  stdout=s_5000000.out stderr=s_5000000.err
+  -s 5000000: rc=255 usage-dump=0 reason-lines=1 first-stdout-line=''
+bare-usage refusals: 2 of 3
+RESULT: FAIL -- only 2 of 3 refused as predicted
+mutated run.sh exit=1
+RESTORED: run.sh byte-identical to pre-mutation copy (sha256 8afbdb878bdcfdbf8a7b0ceee8837da372b992a7df35e3da43c472250ebf9b57)
+
+===== restored run.sh re-run (regenerates observed.txt and logs/repro/PROV-07-observed.log) =====
+# PROV-07 observed.txt  2026-11-08 16:03:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+usage text: restart_main.cpp:205:    printf("\t -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is\n");
+code:       restart_main.cpp:454:		if((inul == 0) || (inul == ULONG_MAX) || (inul < simulation_rounds)) {
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 1000 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_1000]=255  stdout=s_1000.out stderr=s_1000.err
+  -s 1000: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 4999999 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_4999999]=255  stdout=s_4999999.out stderr=s_4999999.err
+  -s 4999999: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -s 0 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 3/symbol
+rc[s_0]=255  stdout=s_0.out stderr=s_0.err
+  -s 0: rc=255 usage-dump=1 reason-lines=0 first-stdout-line='Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>'
+bare-usage refusals: 3 of 3
+RESULT: PASS -- -s 1000 / -s 4999999 / -s 0 are refused with a bare usage dump (no reason line) although the usage text says the option is accepted and ignored
+restored run.sh exit=0
+
+===== verifier byte-comparison =====
+s_0.out, s_1000.out, s_4999999.out: byte-identical to each other (cmp)
+each vs a no-argument invocation (logs/verify/PROV-07-bare-usage.out, rc 255): identical EXCEPT the no-arg path prints 'Incorrect usage.' as line 1 and the -s range refusal prints nothing before 'Usage is:'
+c_s_1000x.out: 'Simulation count must be an unsigned decimal integer.' + the identical usage block
+c_s_5000000.out: only '*** Error: data (len = 10000) does not contain 1000000 samples ***' (parse accepted; refusal is the data-size one)
+all five .err files: 0 bytes

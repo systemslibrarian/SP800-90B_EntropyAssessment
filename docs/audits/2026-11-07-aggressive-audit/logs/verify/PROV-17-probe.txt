@@ -1,0 +1,25 @@
+# PROV-17 verify probe (verifier, independent of repro/PROV-17/run.sh)  2026-11-08 16:21:54 -0500  host=Darwin 25.6.0 arm64  git=834ffeb branch=audit/2026-11-07
+# env for arms A-F,H: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs; fixture bin/rand1_short.bin = 10000 bytes (10,000 samples)
+# arm G runs WITHOUT EA_ALLOW_SHORT_DATASET on a nonexistent path: does the refusal fire before any file is opened?
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ cpp/ea_non_iid -i -- bin/rand1_short.bin 1 -q
+rc[A_dd_late_q]=255  stdout_bytes=0  stderr_bytes=698  stdout_line1=  stderr_line1=Error: '-q' looks like an option but appears after the file operand 'bin/rand1_short.bin'.
+$ cpp/ea_non_iid -i -- bin/rand1_short.bin 1
+rc[B_dd_only]=0  stdout_bytes=448  stderr_bytes=0  stdout_line1=  stderr_line1=
+$ cpp/ea_non_iid -i bin/rand1_short.bin 1 -q
+rc[C_nodd_late_q]=255  stdout_bytes=0  stderr_bytes=698  stdout_line1=  stderr_line1=Error: '-q' looks like an option but appears after the file operand 'bin/rand1_short.bin'.
+$ cpp/ea_non_iid -i -- bin/rand1_short.bin 1 extra
+rc[D_dd_3operands_word]=255  stdout_bytes=2579  stderr_bytes=0  stdout_line1=Incorrect usage.  stderr_line1=
+$ cpp/ea_non_iid -i -- bin/rand1_short.bin 1 -5
+rc[E_dd_3operands_num]=255  stdout_bytes=2579  stderr_bytes=0  stdout_line1=Incorrect usage.  stderr_line1=
+$ cpp/ea_non_iid -i -- bin/rand1_short.bin 1 --quiet
+rc[F_dd_late_long]=255  stdout_bytes=0  stderr_bytes=713  stdout_line1=  stderr_line1=Error: '--quiet' looks like an option but appears after the file operand 'bin/rand1_short.bin'.
+$ cpp/ea_non_iid -i -- bin/rand1_short.bin 1 -- -q
+rc[H_follow_advice]=255  stdout_bytes=2579  stderr_bytes=0  stdout_line1=Incorrect usage.  stderr_line1=
+$ cpp/ea_non_iid -i -- /nonexistent/no-such-capture.bin 1 -q
+rc[G_noescape_nofile]=255  stdout_bytes=0  stderr_bytes=711  stdout_line1=  stderr_line1=Error: '-q' looks like an option but appears after the file operand '/nonexistent/no-such-capture.bin'.
+cmp A.err vs C.err: byte-identical
+A.err markers: 'depends on the C'=1 'separate the'=1 'Nothing has been written'=1
+G.err markers: 'depends on the C'=1 'separate the'=1 ; 'No such file|cannot open|Error reading'=0
+B.out 'H_original' lines=1  B.err bytes=0
+D.out 'Incorrect usage' lines=1  E.out 'Incorrect usage' lines=1  H.out 'Incorrect usage' lines=1  H.err bytes=0

@@ -1,0 +1,25 @@
+# PROV-06 supplementary: ea_iid same shape? 2026-11-08 16:02:46 -0500
+# ea_iid sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+$ ea_iid -q -o i_a.json -o i_b.json rand8_short.bin 8   (EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2; 10,000 samples, NON-COMPLIANT)
+  rc=1 wall=0s stdout_bytes=241 stderr_bytes=0
+  File "<string>", line 6
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} type={json.dumps(d.get(\"type\",\"<absent>\"))} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:60]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+  File "<string>", line 6
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} type={json.dumps(d.get(\"type\",\"<absent>\"))} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:60]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+  grep iid.out/iid.err for i_a.json|supersed|second: logs/verify/PROV-06-supp/iid.out:0 logs/verify/PROV-06-supp/iid.err:0 
+
+######## CORRECTED READS 16:03:15 ########
+  rc=1
+  --- iid.out verbatim ---
+
+*** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+  --- iid.err verbatim ---
+  i_a.json: errorLevel=-1 reportComplete=False testCases=<absent> type="IID" Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when th
+  i_b.json: errorLevel=2 reportComplete=<absent> testCases=1 type="" Overall.hAssessed=<no-case> errorMessage="IID test suite failed; no IID min-entropy estimate was awarded."

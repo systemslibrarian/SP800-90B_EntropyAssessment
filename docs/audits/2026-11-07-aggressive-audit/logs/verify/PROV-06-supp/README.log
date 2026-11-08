@@ -1,0 +1,66 @@
+# PROV-06 supplementary controls (verifier) 2026-11-08 16:02:22 -0500 host=Darwin 25.6.0 arm64
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+
+== S1: single -o to the SAME first path (a.json) -- the strict one-thing-differs control ==
+  rc=0 stdout_bytes=241 stderr_bytes=0
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+
+== S2: reversed order -o b2.json -o a2.json -- is it 'last wins' rather than anything about the path? ==
+  rc=0 stdout_bytes=241 stderr_bytes=0
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+
+== S3: WITHOUT EA_ALLOW_SHORT_DATASET (compliant intake path) -- is the first path claimed before any data is read? ==
+  rc=255 stdout_bytes=137 stderr_bytes=0
+  --- s3.out ---
+
+*** Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+*** No assessment was performed. ***
+
+  --- s3.err ---
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+
+== S4: three -o's -- every non-last path a placeholder? ==
+  rc=0
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+  File "<string>", line 7
+    print(f"  {os.path.basename(p)}: errorLevel={d.get(\"errorLevel\",\"<absent>\")} reportComplete={d.get(\"reportComplete\",\"<absent>\")} testCases={len(tc) if tc else \"<absent>\"} Overall.hAssessed={ov[0].get(\"hAssessed\",\"<absent>\") if ov else \"<no-case>\"} errorMessage={json.dumps(d.get(\"errorMessage\",\"<absent>\"))[:90]}")
+                                                        ^
+SyntaxError: unexpected character after line continuation character
+
+######## CORRECTED READS 16:03:14 -- the inline reader above had an f-string quoting error; the tool runs completed (rc files above); these read the same files with /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/jread.py ########
+== S1 (single -o to the SAME path a.json): rc=0
+  a.json: errorLevel=0 reportComplete=<absent> testCases=11 type="" Overall.hAssessed=5.860893744485249 errorMessage="<absent>"
+== S2 (reversed order -o b2 -o a2): rc=0
+  b2.json: errorLevel=-1 reportComplete=False testCases=<absent> type="non-IID" Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when th
+  a2.json: errorLevel=0 reportComplete=<absent> testCases=11 type="" Overall.hAssessed=5.860893744485249 errorMessage="<absent>"
+== S3 (no EA_ALLOW_SHORT_DATASET -> intake refusal): rc=255
+  a3.json: errorLevel=-1 reportComplete=False testCases=<absent> type="non-IID" Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when th
+  b3.json: errorLevel=-1 reportComplete=<absent> testCases=<absent> type="" Overall.hAssessed=<no-case> errorMessage="Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requi
+== S4 (three -o): rc=0
+  p1.json: errorLevel=-1 reportComplete=False testCases=<absent> type="non-IID" Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when th
+  p2.json: errorLevel=-1 reportComplete=False testCases=<absent> type="non-IID" Overall.hAssessed=<no-case> errorMessage="The assessment did not complete; this placeholder was written when th
+  p3.json: errorLevel=0 reportComplete=<absent> testCases=11 type="" Overall.hAssessed=5.860893744485249 errorMessage="<absent>"

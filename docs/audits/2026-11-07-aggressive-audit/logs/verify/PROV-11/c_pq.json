@@ -1,0 +1,9 @@
+{
+   "commandline" : "cpp/ea_non_iid -q -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-11/c_pq.json",
+   "dateTimeStamp" : "20261108160450",
+   "errorLevel" : -1,
+   "errorMessage" : "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.",
+   "reportComplete" : false,
+   "toolVersion" : "1.1.8",
+   "type" : "non-IID"
+}

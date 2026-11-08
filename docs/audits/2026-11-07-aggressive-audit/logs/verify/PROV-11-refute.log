@@ -1,0 +1,82 @@
+# PROV-11-refute.log  2026-11-08 16:07:43 -0500  host=Darwin 25.6.0 arm64  git=834ffeb branch=audit/2026-11-07
+# verifier lens: REFUTE. OMP_NUM_THREADS=2 for every run. EA_ALLOW_SHORT_DATASET is set ONLY where the line says so.
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+stat: cannot read file system information for '%z': No such file or directory
+fixture bin/rand1_short.bin bytes=  File: "bin/rand1_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5257228    Available: 5257228
+Inodes: Total: 217816039  Free: 210289120 sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583
+stat: cannot read file system information for '%z': No such file or directory
+fixture bin/rand8_short.bin bytes=  File: "bin/rand8_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5257227    Available: 5257227
+Inodes: Total: 217815999  Free: 210289080 sha256=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+
+## Probe A: ea_non_iid input-error report on a missing file, EA_ALLOW_SHORT_DATASET UNSET (does the mechanism need the escape?)
+$ env -u EA_ALLOW_SHORT_DATASET OMP_NUM_THREADS=2 cpp/ea_non_iid -o docs/audits/2026-11-07-aggressive-audit/logs/verify/A_noniid_err.json docs/audits/2026-11-07-aggressive-audit/logs/verify/does-not-exist.bin 8
+rc=255
+stderr: 
+json lines (type/errorLevel/errorClass/nonCompliantShortDataset/reportComplete):
+5:   "errorClass" : "input",
+6:   "errorLevel" : -1,
+11:   "type" : ""
+
+## Probe B: ea_iid input-error report on a missing file, EA_ALLOW_SHORT_DATASET UNSET
+$ env -u EA_ALLOW_SHORT_DATASET OMP_NUM_THREADS=2 cpp/ea_iid -o docs/audits/2026-11-07-aggressive-audit/logs/verify/B_iid_err.json docs/audits/2026-11-07-aggressive-audit/logs/verify/does-not-exist.bin 8
+rc=255
+stderr: 
+json lines:
+7:   "errorClass" : "input",
+8:   "errorLevel" : -1,
+13:   "type" : ""
+
+## Probe C: ea_non_iid SUCCESS report, 10,000 x 1-bit samples, EA_ALLOW_SHORT_DATASET=1 (NON-COMPLIANT short run)
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_non_iid -q -o docs/audits/2026-11-07-aggressive-audit/logs/verify/C_noniid_ok.json bin/rand1_short.bin 1
+rc=0
+json lines:
+2:   "IID" : false,
+3:   "assessedSampleCount" : 10000,
+8:   "errorLevel" : 0,
+10:   "nonCompliantShortDataset" : true,
+65:   "type" : ""
+
+## Probe D: ea_iid report, 10,000 x 8-bit samples, EA_ALLOW_SHORT_DATASET=1 (NON-COMPLIANT short run)
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_iid -q -o docs/audits/2026-11-07-aggressive-audit/logs/verify/D_iid.json bin/rand8_short.bin 8
+rc=1
+json lines:
+2:   "IID" : false,
+5:   "assessmentMode" : "IID",
+10:   "errorClass" : "statistical",
+11:   "errorLevel" : 2,
+14:   "nonCompliantShortDataset" : true,
+34:   "type" : ""
+
+## Probe E (sibling control): ea_restart input-error report on a missing file, EA_ALLOW_SHORT_DATASET UNSET -- does a sibling tool's completed report carry type?
+$ env -u EA_ALLOW_SHORT_DATASET OMP_NUM_THREADS=2 cpp/ea_restart -o docs/audits/2026-11-07-aggressive-audit/logs/verify/E_restart_err.json docs/audits/2026-11-07-aggressive-audit/logs/verify/does-not-exist.bin 8
+rc=255
+stderr: 
+stdout (first 400 bytes via cut on the file, not a pipe of the tool): Error reading file. Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>  	 EVERY OPTION MUST COME BEFORE <file_name>. An option placed after it is 	 refused, because glibc rearranges such a command line and parses the 	 option while BSD and macOS treat it as another operand -- one command 	 line, two different operations on two supported platforms. A negative 	 number after <file_name> is still read as a value, not an option.  	 <file_name>: Must be relative path to a binary file with at least 1 million entries (samples), 	 and in the "row dataset" format described in SP800-90B Section 3.1.4.1. 	 [bits_per_symbol]: Must be between 1-8, inclusive. 	 <H_I>: Initial entropy estimate, 0 < H_I <= bits_per_symbol. For a symbol wider than one bit 	        the scale must be stated: '<value>/symbol' (as assessed) or '<value>/bit' (multiplied 	        by bits_per_symbol). A bare number is accepted only for 1-bit symbols. 	 [-i|-n]: '-i' for IID data, '-n' for non-IID data. Non-IID is the default. 	 -s <simulation count>: Accepted for compatibility and ignored: the sanity-check cutoff is 	        computed exactly from SP 800-90B 3.1.4.3 step 5, not simulated. 	 -v: Optional verbosity flag for more output. 	 -q: Quiet mode, less output to screen.  	 Restart samples are assumed to be packed into 8-bit values, where the rightmost 'bits_per_symbol' 	 bits constitute the sample.  	 This program performs restart testing as described in Restart Tests (Section 3.1.4). The data 	 consists of 1000 restarts, each with 1000 samples. The data is converted to rows and columns 	 as described Section 3.1.4.1. The sanity check (Section 3.1.4.3) and the validation test 	 (Section 3.1.4.2) are performed on this data.  	 If the restart data passes the sanity check and validation test, this program returns 	 min(H_r, H_c, H_I), which is either the validated entropy assessment or used to derive 	 'h_in' if conditioning is used (Section 3.1.5).  	 --version: Prints tool version information 
+json lines:
+5:   "errorClass" : "input",
+6:   "errorLevel" : -1,
+11:   "type" : "Restart"
+
+## Probe F (harness check): does the reproducer's jtop distinguish an empty string from an absent key? Mutate a copy of C_noniid_ok.json to drop the type key.
+baseline type repr: ''
+jtop(baseline, type)=""   jtop(mutated, type)=<absent>
+
+## Source facts (read, not run)
+assignments of .type in cpp/non_iid_main.cpp: 0; in cpp/iid_main.cpp: 0; in cpp/restart_main.cpp: 2
+upstream/master (local ref, not fetched) assignments: non_iid_main=0 iid_main=0 restart_main=2
+unrepaired-reference-2026-10-15 assignments: non_iid_main=0 iid_main=0
+commits ever touching 'testRun.type' in the two mains (git log -S): 0
+GetBaseJson emits type unconditionally: 66:        baseJson["type"] = type;
+
+## Correction: the two 'fixture ... bytes=' lines above misfired (GNU stat in PATH treats -f as filesystem). Sizes from ls -l:
+fixture bin/rand1_short.bin bytes=10000
+fixture bin/rand8_short.bin bytes=10000
+## Probe E note: ea_restart's input-error report (rc 255, errorClass input) carries "type": "Restart" -- a sibling tool populates the field on the same kind of path where ea_non_iid/ea_iid write "".

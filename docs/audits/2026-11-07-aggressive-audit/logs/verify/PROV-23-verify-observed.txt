@@ -1,0 +1,33 @@
+# PROV-23 verifier probe 2026-11-08 16:32:16 -0500 host=Darwin 25.6.0 arm64 git=e415c0e branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset run (10,000 bits)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid
+input sha256 8414daeefef2ee495b135f83d6d210223404b1f5f1dfce303e5019d1e89644d3  docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/fair10k.bin
+rc=0
+top-level IID=True errorLevel=0 nonCompliantShortDataset=True assessedSampleCount=10000
+case testCaseDesc='' ranIidPermutationTests=True passedIidPermutationTests=True
+permutationTestResults: 3 objects, iterations=[0, 1, 2], dataLayout=['input']
+  avgCollision           C0=    6 C1=    0 C2=   22  sum=   28  C0+C1=   6 C1+C2=  22  partial
+  compression            C0=    5 C1=    1 C2=    7  sum=   13  C0+C1=   6 C1+C2=   8  partial
+  covariance1            C0=   21 C1=    0 C2=    6  sum=   27  C0+C1=  21 C1+C2=   6  partial
+  covariance16           C0=    6 C1=    0 C2=   24  sum=   30  C0+C1=   6 C1+C2=  24  partial
+  covariance2            C0=    6 C1=    0 C2=    9  sum=   15  C0+C1=   6 C1+C2=   9  partial
+  covariance32           C0=   79 C1=    0 C2=    6  sum=   85  C0+C1=  79 C1+C2=   6  partial
+  covariance8            C0=    6 C1=    0 C2=   20  sum=   26  C0+C1=   6 C1+C2=  20  partial
+  excursion              C0=   18 C1=    0 C2=    6  sum=   24  C0+C1=  18 C1+C2=   6  partial
+  lenDirectionalRuns     C0=    3 C1=    3 C2=    6  sum=   12  C0+C1=   6 C1+C2=   9  partial
+  lenRunsMedian          C0=    3 C1=    3 C2=   15  sum=   21  C0+C1=   6 C1+C2=  18  partial
+  maxCollision           C0=    6 C1=    0 C2=    6  sum=   12  C0+C1=   6 C1+C2=   6  partial
+  numDirectionalRuns     C0=    6 C1=    0 C2=    6  sum=   12  C0+C1=   6 C1+C2=   6  partial
+  numIncreasesDecreases  C0=    6 C1=    0 C2=   11  sum=   17  C0+C1=   6 C1+C2=  11  partial
+  numRunsMedian          C0=    6 C1=    0 C2=    8  sum=   14  C0+C1=   6 C1+C2=   8  partial
+  periodicity1           C0=    6 C1=    0 C2=   10  sum=   16  C0+C1=   6 C1+C2=  10  partial
+  periodicity16          C0=    5 C1=    1 C2=   10  sum=   16  C0+C1=   6 C1+C2=  11  partial
+  periodicity2           C0=    5 C1=    1 C2=    6  sum=   12  C0+C1=   6 C1+C2=   7  partial
+  periodicity32          C0=    5 C1=    1 C2=   11  sum=   17  C0+C1=   6 C1+C2=  12  partial
+  periodicity8           C0=    6 C1=    0 C2=    9  sum=   15  C0+C1=   6 C1+C2=   9  partial
+statistics: 19 ; partial (sum<10000): 19
+early-termination fingerprint min(C0+C1,C1+C2)==6 holds for 19 of 19 partial statistics; exceptions: none
+all JSON keys: IID, assessedSampleCount, assessmentComplete, assessmentMode, avgCollision, binary, bitsPerSymbol, bitsPerSymbolInferred, commandline, compression, covariance1, covariance16, covariance2, covariance32, covariance8, dataLayout, dateTimeStamp, errorLevel, excursion, filename, hAssessed, hOriginal, iteration, lenDirectionalRuns, lenRunsMedian, maxCollision, nonCompliantShortDataset, numDirectionalRuns, numIncreasesDecreases, numRunsMedian, passedChiSquareTests, passedIidPermutationTests, passedLongestRepeatedSubstringTest, periodicity1, periodicity16, periodicity2, periodicity32, periodicity8, permutationTestResults, ranChiSquareTests, ranIidPermutationTests, ranLongestRepeatedSubstringTest, rawMean, sha256, sha256Scope, testCaseDesc, testCases, toolVersion, translatedSymbolMedian, type
+any key or value naming 10000 or a per-statistic permutation count: none found by key name; value 10000 appears=True
+# clarification: every JSON location holding the number 10000: ['$.assessedSampleCount'] -- this is the SAMPLE COUNT of my 10,000-bit probe, not a permutation denominator
+# verifier conclusion: all 19 statistics carry partial counters (sums 12..85); min(C0+C1,C1+C2)==6 for 19/19, the exact fingerprint of permutation_tests.h:672-674; no key names the number of permutations evaluated

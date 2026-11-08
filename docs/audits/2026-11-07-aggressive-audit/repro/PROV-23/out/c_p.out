@@ -46,25 +46,25 @@ Permutation testing: Unpermuted result compression = 1606
 
                 statistic  C[i][0]  C[i][1]  C[i][2]
 ----------------------------------------------------
-                excursion    1438       0       6
-       numDirectionalRuns      12       0       6
-       lenDirectionalRuns       7       6       0
-    numIncreasesDecreases       4       2     134
-           numRunsMedian*       1       0    9999
-            lenRunsMedian       8       1       5
-            avgCollision*   10000       0       0
+                excursion     973       0       6
+       numDirectionalRuns      13       0       6
+       lenDirectionalRuns       9       5       1
+    numIncreasesDecreases       5       1     102
+           numRunsMedian*       0       1    9999
+            lenRunsMedian       5       1       5
+            avgCollision*    9998       0       2
             maxCollision*   10000       0       0
-           periodicity(1)       6       0    1058
-           periodicity(2)       5       1      17
-           periodicity(8)      10       0       6
+           periodicity(1)       6       0    1434
+           periodicity(2)       6       0      13
+           periodicity(8)       6       1       5
          periodicity(16)*       0       0   10000
          periodicity(32)*       0       0   10000
-            covariance(1)       6       0      20
-            covariance(2)      11       0       6
+            covariance(1)       6       0      10
+            covariance(2)       6       0       6
            covariance(8)*   10000       0       0
           covariance(16)*       0       0   10000
           covariance(32)*       0       0   10000
-              compression      40       2       4
+              compression      44       2       4
 (* denotes failed test)
 
 IID permutation tests: Failed

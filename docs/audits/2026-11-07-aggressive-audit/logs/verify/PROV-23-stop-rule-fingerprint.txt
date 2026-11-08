@@ -1,0 +1,63 @@
+== repro/PROV-23/out/p.json
+  avgCollision           C0=    6 C1=    0 C2=   16 sum=   22 min(C0+C1,C1+C2)=6 OK
+  compression            C0=    8 C1=    1 C2=    5 sum=   14 min(C0+C1,C1+C2)=6 OK
+  covariance1            C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  covariance16           C0=    6 C1=    0 C2=   10 sum=   16 min(C0+C1,C1+C2)=6 OK
+  covariance2            C0=    6 C1=    0 C2=    8 sum=   14 min(C0+C1,C1+C2)=6 OK
+  covariance32           C0=   91 C1=    0 C2=    6 sum=   97 min(C0+C1,C1+C2)=6 OK
+  covariance8            C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  excursion              C0=   10 C1=    0 C2=    6 sum=   16 min(C0+C1,C1+C2)=6 OK
+  lenDirectionalRuns     C0=    4 C1=    4 C2=    2 sum=   10 min(C0+C1,C1+C2)=6 OK
+  lenRunsMedian          C0=    3 C1=    3 C2=   30 sum=   36 min(C0+C1,C1+C2)=6 OK
+  maxCollision           C0=    6 C1=    0 C2=   16 sum=   22 min(C0+C1,C1+C2)=6 OK
+  numDirectionalRuns     C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  numIncreasesDecreases  C0=    5 C1=    1 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  numRunsMedian          C0=   10 C1=    0 C2=    6 sum=   16 min(C0+C1,C1+C2)=6 OK
+  periodicity1           C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  periodicity16          C0=    6 C1=    0 C2=   10 sum=   16 min(C0+C1,C1+C2)=6 OK
+  periodicity2           C0=    5 C1=    1 C2=    5 sum=   11 min(C0+C1,C1+C2)=6 OK
+  periodicity32          C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  periodicity8           C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  partial stats consistent with stop-at-6: 19 ; full stats consistent (min<=5): 0 ; violations: 0
+== logs/verify/PROV-23-author-originals/out/p.json
+  avgCollision           C0=    6 C1=    0 C2=   17 sum=   23 min(C0+C1,C1+C2)=6 OK
+  compression            C0=    5 C1=    1 C2=   10 sum=   16 min(C0+C1,C1+C2)=6 OK
+  covariance1            C0=   13 C1=    0 C2=    6 sum=   19 min(C0+C1,C1+C2)=6 OK
+  covariance16           C0=    5 C1=    1 C2=   47 sum=   53 min(C0+C1,C1+C2)=6 OK
+  covariance2            C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  covariance32           C0=  110 C1=    0 C2=    6 sum=  116 min(C0+C1,C1+C2)=6 OK
+  covariance8            C0=    6 C1=    0 C2=    8 sum=   14 min(C0+C1,C1+C2)=6 OK
+  excursion              C0=   15 C1=    0 C2=    6 sum=   21 min(C0+C1,C1+C2)=6 OK
+  lenDirectionalRuns     C0=    5 C1=    4 C2=    2 sum=   11 min(C0+C1,C1+C2)=6 OK
+  lenRunsMedian          C0=    2 C1=    4 C2=   32 sum=   38 min(C0+C1,C1+C2)=6 OK
+  maxCollision           C0=    5 C1=    1 C2=   12 sum=   18 min(C0+C1,C1+C2)=6 OK
+  numDirectionalRuns     C0=    5 C1=    1 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  numIncreasesDecreases  C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  numRunsMedian          C0=    6 C1=    0 C2=   24 sum=   30 min(C0+C1,C1+C2)=6 OK
+  periodicity1           C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  periodicity16          C0=    6 C1=    0 C2=   15 sum=   21 min(C0+C1,C1+C2)=6 OK
+  periodicity2           C0=    9 C1=    0 C2=    6 sum=   15 min(C0+C1,C1+C2)=6 OK
+  periodicity32          C0=    7 C1=    0 C2=    6 sum=   13 min(C0+C1,C1+C2)=6 OK
+  periodicity8           C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  partial stats consistent with stop-at-6: 19 ; full stats consistent (min<=5): 0 ; violations: 0
+== repro/PROV-23/out/c_p.json
+  avgCollision           C0= 9998 C1=    0 C2=    2 sum=10000 min(C0+C1,C1+C2)=2 OK
+  compression            C0=   44 C1=    2 C2=    4 sum=   50 min(C0+C1,C1+C2)=6 OK
+  covariance1            C0=    6 C1=    0 C2=   10 sum=   16 min(C0+C1,C1+C2)=6 OK
+  covariance16           C0=    0 C1=    0 C2=10000 sum=10000 min(C0+C1,C1+C2)=0 OK
+  covariance2            C0=    6 C1=    0 C2=    6 sum=   12 min(C0+C1,C1+C2)=6 OK
+  covariance32           C0=    0 C1=    0 C2=10000 sum=10000 min(C0+C1,C1+C2)=0 OK
+  covariance8            C0=10000 C1=    0 C2=    0 sum=10000 min(C0+C1,C1+C2)=0 OK
+  excursion              C0=  973 C1=    0 C2=    6 sum=  979 min(C0+C1,C1+C2)=6 OK
+  lenDirectionalRuns     C0=    9 C1=    5 C2=    1 sum=   15 min(C0+C1,C1+C2)=6 OK
+  lenRunsMedian          C0=    5 C1=    1 C2=    5 sum=   11 min(C0+C1,C1+C2)=6 OK
+  maxCollision           C0=10000 C1=    0 C2=    0 sum=10000 min(C0+C1,C1+C2)=0 OK
+  numDirectionalRuns     C0=   13 C1=    0 C2=    6 sum=   19 min(C0+C1,C1+C2)=6 OK
+  numIncreasesDecreases  C0=    5 C1=    1 C2=  102 sum=  108 min(C0+C1,C1+C2)=6 OK
+  numRunsMedian          C0=    0 C1=    1 C2= 9999 sum=10000 min(C0+C1,C1+C2)=1 OK
+  periodicity1           C0=    6 C1=    0 C2= 1434 sum= 1440 min(C0+C1,C1+C2)=6 OK
+  periodicity16          C0=    0 C1=    0 C2=10000 sum=10000 min(C0+C1,C1+C2)=0 OK
+  periodicity2           C0=    6 C1=    0 C2=   13 sum=   19 min(C0+C1,C1+C2)=6 OK
+  periodicity32          C0=    0 C1=    0 C2=10000 sum=10000 min(C0+C1,C1+C2)=0 OK
+  periodicity8           C0=    6 C1=    1 C2=    5 sum=   12 min(C0+C1,C1+C2)=6 OK
+  partial stats consistent with stop-at-6: 11 ; full stats consistent (min<=5): 8 ; violations: 0

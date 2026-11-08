@@ -1,0 +1,93 @@
+# PROV-19 verify  2026-11-08 16:21:23 -0500  verifier run from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit  git=834ffeb branch=audit/2026-11-07
+# binaries at run time:
+1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  ../../../cpp/ea_non_iid
+22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  ../../../cpp/ea_iid
+
+===== run.sh (original) =====
+# PROV-19 observed.txt  2026-11-08 16:21:23 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/s.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[success]=0  stdout=s.out stderr=s.err
+ea_non_iid success: rc=0 errorLevel=0 reportComplete=<absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/does-not-exist.bin 8
+rc[error]=255  stdout=e.out stderr=e.err
+ea_non_iid input error: rc=255 errorLevel=-1 reportComplete=<absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid]=1  stdout=i.out stderr=i.err
+ea_iid statistical failure: rc=1 errorLevel=2 reportComplete=<absent>
+writers of 'reportComplete' in cpp/: cpp/iid_main.cpp:83 cpp/non_iid_main.cpp:85 cpp/restart_main.cpp:356 
+RESULT: PASS -- no completed report carries reportComplete; only the placeholder does (false)
+run.sh exit=0
+
+===== control.sh (original) =====
+# PROV-19 control.txt  2026-11-08 16:21:24 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/c_p.json
+rc[placeholder]=255  stdout=c_p.out stderr=c_p.err
+placeholder: rc=255 errorLevel=-1 reportComplete=false
+RESULT: CONTROL-OK -- the placeholder writes reportComplete: false; the completed reports in run.sh omit the key instead of writing true
+control.sh exit=0
+
+===== rule-7 mutation: expectation for the success arm changed from <absent> to true =====
+--- diff orig vs mutated ---
+16c16
+< [ "$rs" = "<absent>" ] && [ "$re" = "<absent>" ] && [ "$ri" = "<absent>" ] && verdict PASS "no completed report carries reportComplete; only the placeholder does (false)"
+---
+> [ "$rs" = "true" ] && [ "$re" = "<absent>" ] && [ "$ri" = "<absent>" ] && verdict PASS "no completed report carries reportComplete; only the placeholder does (false)"
+diff exit=1 (1 = differs, as intended)
+--- running mutated run.sh ---
+# PROV-19 observed.txt  2026-11-08 16:22:31 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/s.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[success]=0  stdout=s.out stderr=s.err
+ea_non_iid success: rc=0 errorLevel=0 reportComplete=<absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/does-not-exist.bin 8
+rc[error]=255  stdout=e.out stderr=e.err
+ea_non_iid input error: rc=255 errorLevel=-1 reportComplete=<absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid]=1  stdout=i.out stderr=i.err
+ea_iid statistical failure: rc=1 errorLevel=2 reportComplete=<absent>
+writers of 'reportComplete' in cpp/: cpp/iid_main.cpp:83 cpp/non_iid_main.cpp:85 cpp/restart_main.cpp:356 
+RESULT: FAIL -- reportComplete present somewhere: success=<absent> error=<absent> iid=<absent>
+mutated run.sh exit=1
+--- restored run.sh from backup; cmp vs backup: IDENTICAL
+
+===== re-run of restored run.sh (so observed.txt and logs/repro reflect the genuine script) =====
+# PROV-19 observed.txt  2026-11-08 16:22:32 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/s.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[success]=0  stdout=s.out stderr=s.err
+ea_non_iid success: rc=0 errorLevel=0 reportComplete=<absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/does-not-exist.bin 8
+rc[error]=255  stdout=e.out stderr=e.err
+ea_non_iid input error: rc=255 errorLevel=-1 reportComplete=<absent>
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-19/out/i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid]=1  stdout=i.out stderr=i.err
+ea_iid statistical failure: rc=1 errorLevel=2 reportComplete=<absent>
+writers of 'reportComplete' in cpp/: cpp/iid_main.cpp:83 cpp/non_iid_main.cpp:85 cpp/restart_main.cpp:356 
+RESULT: PASS -- no completed report carries reportComplete; only the placeholder does (false)
+restored run.sh exit=0
+
+--- observed.txt RESULT line after restore: RESULT: PASS -- no completed report carries reportComplete; only the placeholder does (false)
+--- logs/repro/PROV-19-observed.log RESULT line: RESULT: PASS -- no completed report carries reportComplete; only the placeholder does (false)
+--- git status of run.sh: 
+
+===== verifier footer =====
+tighter control (verifier's own, logs/verify/PROV-19-out/c_q.*): ea_non_iid -q -o c_q.json (no operands) -> rc=255, keys [commandline dateTimeStamp errorLevel errorMessage reportComplete toolVersion type], errorLevel=-1, reportComplete=false. So -q (which control.sh also dropped) is not the factor; the only thing that matters is whether a completing path overwrote the placeholder.
+completion keys in cpp/: reportComplete written ONLY by claimReportTarget (non_iid_main.cpp:85, iid_main.cpp:83, restart_main.cpp:356), always false; GetBaseJson (shared/test_run_base.h:61-103) never writes it. A DIFFERENT key, assessmentComplete, exists on IID reports only (iid/iid_test_run.h:20; set true at iid_main.cpp:531, restart_main.cpp:1143) -- present in i.json, not mentioned by PROV-19's README.
+script logic: jtop prints <absent> only after json.load succeeded; a missing/unparseable report makes python raise, $(...) captures "", and "" != "<absent>" -> FAIL (no vacuous pass on a missing file). Weakness: rc/errorLevel of each arm are LOGGED, not ASSERTED; measured values here are success rc=0/errorLevel=0, input-error rc=255/errorLevel=-1, iid rc=1/errorLevel=2, so each arm is what its label says in this run.
+rule-7 mutation: success-arm expectation <absent> -> true gave RESULT: FAIL, exit 1; run.sh restored from a cp backup (cmp IDENTICAL, git status clean for run.sh) and re-run -> PASS.
+record defects in README.md: commit cited as 97fbc6c; the C14 commit is 97bfc6c (git log -S reportComplete).
+prior documentation of the asymmetry: audits/2026-10-11-independent-audit/CROSS-REPO-FINDINGS.md:897-902 ("the key is written only by the placeholder ... absence is not evidence of either ... reportComplete: false means refuse"); ORCHESTRATOR-CHECKS.md:5040 consumer rule 2 ("reportComplete is not false"); logs/analysis/output.md:170-172 and :341. Not in NOTICE (231 names the placeholder only), not in README.md/cpp/README.md, no selftest asserts the key either way (regression-output.sh:112 checks errorLevel != 0 and empty testCases).
+VERDICT: CONFIRMED (reproduces; control sound; script can fail). Severity suggested LOW, direction neutral; the shape is a known, audit-recorded limitation rather than a departure from a documented decision.

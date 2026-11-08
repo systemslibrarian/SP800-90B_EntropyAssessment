@@ -1,0 +1,12 @@
+# PROV-22 author's model.py re-run by the verifier (sha256 3db32277f581e0336d6f29cece790e408d4e639b8415a999d83af90dee55c5e4)  2026-11-08 16:31:24 -0500
+k=0 (thread 0): code==canonical? True ; code state nonzero? True
+k=1 (thread 1): code==canonical? True ; code state nonzero? True
+k=2 (thread 2): code==canonical? False ; code state nonzero? True
+k=3 (thread 3): code==canonical? False ; code state nonzero? True
+k=4 (thread 4): code==canonical? False ; code state nonzero? True
+k=2 equals S1 xor S2 (the un-reset accumulator prediction)? True
+exit=1
+# control arm (kmax=1):
+k=0 (thread 0): code==canonical? True ; code state nonzero? True
+k=1 (thread 1): code==canonical? True ; code state nonzero? True
+exit=0

@@ -1,0 +1,61 @@
+# PROV-15-refute.log  2026-11-08 16:19:55 -0500  host=Darwin 25.6.0 arm64  git=834ffeb branch=audit/2026-11-07
+# lens: REFUTE. env for the one tool run: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (NON-COMPLIANT short-dataset run, 10,000 samples)
+
+## 0. Binary identity (instrument rule 4)
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+sha256 b7a55528a8270672a89bd26265feb529293718a83d2a19a350cd035289d83460  cpp/ea_conditioning  (mtime 2026-10-20 21:06:00)
+README sha256s: 1ad1568c.. ea_non_iid, 22f1319a.. ea_iid, 4d7ba82b.. ea_restart, b7a55528.. ea_conditioning
+
+## 1. otool -L re-measured now (not from the reproducer's files)
+  ea_non_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (rc otool=0)
+  ea_iid -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (rc otool=0)
+  ea_restart -> /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib  (rc otool=0)
+  ea_conditioning -> /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib  (rc otool=0)
+
+## 2. Objection: does the relink change any REPORTED value? The only OpenSSL-dependent output is the input SHA-256 (utils.h:217 EVP_Digest).
+fixture: /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  size=10000 bytes  shasum=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+$ EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_non_iid -i -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-15-rand8.json bin/rand8_short.bin 8
+rc=0  stdout=PROV-15-rand8.stdout stderr=PROV-15-rand8.stderr json=PROV-15-rand8.json
+stdout line matching 'SHA-256': 1 match(es)
+  stdout: Loaded file: 'bin/rand8_short.bin' (SHA-256 hash 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 of assessed bytes)
+  json sha256 (labelled read of key 'sha256'): 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803   sha256Scope=assessed-sample-bytes
+  shasum -a 256 of the fixture:                17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803
+  => MATCH: the openssl@4-linked binary's SHA-256 equals shasum (stdout and JSON). No reported value differs by this relink.
+  live-comparison control: shasum of a DIFFERENT fixture bin/rand1_short.bin = 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583
+  control: differs from the tool's digest, so the comparison above can fail (rule 7)
+  Assessed min entropy line(s): 0
+  stdout: H_original: 6.636441
+  stdout: H_bitstring: 0.732612
+  stdout: min(H_original, 8 X H_bitstring): 5.860894
+
+## 3. Objection: is the search-path ORDER really the mechanism? Minimal mutation of the -I order, preprocessor only (clang++ -E on a 2-line file; no compile, no link).
+  generic first (Makefile:71 order)  rc=0  -> const char *v = "OpenSSL 4.1.0 23 Oct 2026";   header: "/opt/homebrew/include/openssl/opensslv.h"
+  pinned first (the swap)            rc=0  -> const char *v = "OpenSSL 3.6.4 25 Aug 2026";   header: "/opt/homebrew/opt/openssl@3/include/openssl/opensslv.h"
+  link half: what -lcrypto resolves to in each -L directory, in Makefile:72 order:
+    lrwxr-xr-x 1 gmcas admin 45 Nov  7 19:28 /opt/homebrew/lib/libcrypto.dylib -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+    lrwxr-xr-x 1 gmcas admin 17 Aug 25 07:48 /opt/homebrew/opt/openssl@3/lib/libcrypto.dylib -> libcrypto.3.dylib
+  man ld on -L (verbatim):
+         -Ldir   Add dir to the list of directories in which to search for
+    	     libraries.  Directories specified with -L are searched in the
+    	     order they appear on the command line and before the default
+    	     search path. In Xcode4 and later, there can be a space between
+
+## 4. Objection: was the control (ea_conditioning, built 2026-10-20) built with the same INC/LDFLAGS order?
+  commits that changed the INC/LDFLAGS lines: d240098 2026-09-30;
+  Makefile commits since 2026-10-19: b53ff5d 2026-10-26;
+  b53ff5d Makefile diff lines touching INC/LDFLAGS/OPENSSL: 0
+
+## 5. Homebrew facts (local filesystem only)
+  openssl@3.rb keg_only lines: 0   openssl@4.rb keg_only lines: 0
+  /opt/homebrew/var/homebrew/linked entries matching ssl: openssl@4 
+  openssl@4 receipt: installed_on_request=False time=2026-11-07T19:28:41
+  afl++ receipt lists openssl@4 as runtime dependency: True
+
+## 6. Is the earlier (pre-audit) binary's libcrypto recorded anywhere? (bears on the 'explains b61cf8c7 -> 1ad1568c, CERTAIN' sub-claim)
+  files mentioning b61cf8c7 in the repo tree: ./docs/audits/2026-11-07-aggressive-audit/logs/analysis/cli-build.md ./docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-15-refute.log ./docs/audits/2026-11-07-aggressive-audit/repro/PROV-15/README.md ./docs/audits/2026-11-07-aggressive-audit/FINDINGS.md 
+  lines that name b61cf8c7 together with a libcrypto path (an otool record of that binary) outside this verify dir: 0  (0 = the pre-audit binary's dependency was never captured)
+  otool capture files anywhere under the audit dir naming b61cf8c7: 0
+
+# end

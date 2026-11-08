@@ -1,0 +1,116 @@
+# PROV-16 REFUTE probe  2026-11-08 16:19:52 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every run below is a NON-COMPLIANT short-dataset run (<= 20,000 samples)
+# repo git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+README.md of PROV-16 names ea_non_iid sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+
+input sha256 8b99602a725b160f22343284ffef6125ae2c042407a8e14a13f3ef3e8ecd95ea  one-in-20000.bin  (20000 bytes, width 1 declared)
+input sha256 d3a31f6355d8b69997868dcf9af69023f5c9c21430ab3310a8133fedb3281937  k6-in-20000.bin  (20000 bytes, width 1 declared)
+input sha256 b07fa01490324061013c316481ef306f93e5957b1f1978714078daa91b3a57d8  k7-in-20000.bin  (20000 bytes, width 1 declared)
+(reproducer's recorded input sha256: 8b99602a725b160f22343284ffef6125ae2c042407a8e14a13f3ef3e8ecd95ea for one-in-20000.bin)
+
+## A. verbosity: 'int verbose = 1' + three -v = 4; most_common.h prints its lines only at verbose==2 or ==3
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/one-in-20000.bin 1
+rc[A-vvv]=0  stdout=A-vvv.out (9 lines) stderr=A-vvv.err (0 bytes)
+A-vvv lines matching '^Literal Most Common Value Estimate': 0
+  A-vvv | H_original = -0
+  A-vvv | Assessed min entropy: -0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/one-in-20000.bin 1
+rc[A-vv]=0  stdout=A-vv.out (72 lines) stderr=A-vv.err (0 bytes)
+A-vv lines matching '^Literal Most Common Value Estimate': 4
+  A-vv  | Literal Most Common Value Estimate: Mode count = 19999
+  A-vv  | Literal Most Common Value Estimate: p-hat = 0.99995000000000001
+  A-vv  | Literal Most Common Value Estimate: p_u = 1
+  A-vv  | Literal Most Common Value Estimate: min entropy = -0
+  A-vv  | H_original = -0
+  A-vv  | Assessed min entropy: -0
+
+## B. k=6 ones clamps p_u to 1 (-0 expected); k=7 does not (positive expected). The probe can fail: k=7 is the control.
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/B6.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/k6-in-20000.bin 1
+rc[B6]=0  stdout=B6.out (72 lines) stderr=B6.err (0 bytes)
+  B6 | Literal Most Common Value Estimate: p_u = 1
+  B6 | Literal Most Common Value Estimate: min entropy = -0
+  B6 | Assessed min entropy: -0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/B7.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-16-refute-out/k7-in-20000.bin 1
+rc[B7]=0  stdout=B7.out (72 lines) stderr=B7.err (0 bytes)
+  B7 | Literal Most Common Value Estimate: p_u = 0.99999069906892879
+  B7 | Literal Most Common Value Estimate: min entropy = 1.3418469534311577e-05
+  B7 | Assessed min entropy: 1.3418469534311577e-05
+raw JSON text (grep -n 'hOriginal\|hAssessed\|mcvEstimatePU'):
+  B6.json | 15:         "hOriginal" : -0.0,
+  B6.json | 18:         "mcvEstimatePU" : 1.0,
+  B6.json | 22:         "hOriginal" : -0.0,
+  B6.json | 26:         "hOriginal" : 0.00043302384379962999,
+  B6.json | 30:         "hOriginal" : 0.00012404320351695918,
+  B6.json | 42:         "hOriginal" : -0.0,
+  B6.json | 46:         "hOriginal" : 0.00051056500657969918,
+  B6.json | 50:         "hOriginal" : 1.3419818898979632e-05,
+  B6.json | 54:         "hOriginal" : 1.3429947791370994e-05,
+  B6.json | 59:         "hAssessed" : -0.0,
+  B6.json | 60:         "hOriginal" : -0.0,
+  B7.json | 15:         "hOriginal" : 1.3418469534311577e-05,
+  B7.json | 18:         "mcvEstimatePU" : 0.99999069906892879,
+  B7.json | 22:         "hOriginal" : 1.3497822111094531e-05,
+  B7.json | 26:         "hOriginal" : 0.00050523219976262212,
+  B7.json | 30:         "hOriginal" : 0.00018359965880717589,
+  B7.json | 42:         "hOriginal" : 1.3461105288012611e-05,
+  B7.json | 46:         "hOriginal" : 0.0006639678714938968,
+  B7.json | 50:         "hOriginal" : 5.163507926462661e-05,
+  B7.json | 54:         "hOriginal" : 5.1673908336612962e-05,
+  B7.json | 59:         "hAssessed" : 1.3418469534311577e-05,
+  B7.json | 60:         "hOriginal" : 1.3418469534311577e-05,
+
+## C. labelled reads (testCaseDesc), sign via copysign; exact arithmetic with ZALPHA=2.5758293035489008 (utils.h:75)
+  B6: mcvEstimatePU=1.0 hOriginal=-0.0 (negzero=True, ==0.0:True) hAssessed=-0.0 (negzero=True) nonCompliantShortDataset=True
+  B7: mcvEstimatePU=0.9999906990689288 hOriginal=1.3418469534311577e-05 (negzero=False, ==0.0:False) hAssessed=1.3418469534311577e-05 (negzero=False) nonCompliantShortDataset=True
+  IEEE: math.log2(1.0) = 0.0 ; -math.log2(1.0) = -0.0 ; (-0.0 == 0.0) = True ; json.loads('-0.0') = -0.0
+  reproducer's 'str compare to 0' test is NON-DISCRIMINATING: str(0.0)=='0' is False ; str(-0.0)=='0' is False
+  clamp condition: p_hat + Z*sqrt(p_hat(1-p_hat)/(L-1)) >= 1  <=>  Z^2 (L-k)/(L-1) >= k ; Z^2 = 6.634896601021215
+  L=  20000 k=1: p_hat=0.99995 p_hat+term=1.0000787914651774 -> min(1.0,.)=1.0 -> -log2 = -0.0  CLAMPS (-0.0)
+  L=  20000 k=6: p_hat=0.9997 p_hat+term=1.0000154339343015 -> min(1.0,.)=1.0 -> -log2 = -0.0  CLAMPS (-0.0)
+  L=  20000 k=7: p_hat=0.99965 p_hat+term=0.9999906990689288 -> min(1.0,.)=0.9999906990689288 -> -log2 = 1.3418469534311577e-05  no clamp
+  L=1000000 k=1: p_hat=0.999999 p_hat+term=1.0000015758293035 -> min(1.0,.)=1.0 -> -log2 = -0.0  CLAMPS (-0.0)
+  L=1000000 k=6: p_hat=0.999994 p_hat+term=1.0000003094516845 -> min(1.0,.)=1.0 -> -log2 = -0.0  CLAMPS (-0.0)
+  L=1000000 k=7: p_hat=0.999993 p_hat+term=0.9999998149833119 -> min(1.0,.)=0.9999998149833119 -> -log2 = 2.6692268306908263e-07  no clamp
+
+## D. verdict lines (read from the files above)
+D1 README quotes 'Literal Most Common Value Estimate: min entropy = -0' from run.sh; run.sh used -vvv; A-vvv has 0 such lines (observed.txt has none either). At -vv the line is: 'Literal Most Common Value Estimate: min entropy = -0'
+D2 B6 (k=6): 'Literal Most Common Value Estimate: min entropy = -0' ; B7 (k=7): 'Literal Most Common Value Estimate: min entropy = 1.3418469534311577e-05'
+D3 binary at probe time = 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f ; README's = 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f ; same: yes
+# end
+
+## E. prior documentation of the same behaviour (grep, read from the files; appended by the verifier 2026-11-08 16:21:59 -0500)
+E1 2026-10-11 CLUSTERS.md cluster 'C15-negative-zero' (lead estimators-mcv-collision-markov-compression-1, Low, 'numerically equal to zero; comparisons and min() behave as 0'; 3 further Info members incl. t-tuple/LRS and predictors):
+  CLUSTERS.md:31:| `C15-negative-zero` | 4 | Low | refute |
+  CLUSTERS.md:245:## C15-negative-zero
+  CLUSTERS.md:247:**Lead candidate.** `estimators-mcv-collision-markov-compression-1` — Zero min-entropy is reported as "-0" in text and -0.0 in JSON (negative zero propagates through the min() folds into hOriginal/hAssessed)
+  CLUSTERS.md:255:| `estimators-mcv-collision-markov-compression-1` | Low | `estimators-mcv-collision-markov-compression` | yes | misreport (numerically equal to zero; comparisons and min() behave as 0) | Zero min-entropy is reported as "-0" in text and -0.0 in JSON (negative zero propagates through the min() folds into hOriginal/hAssessed) |
+  CLUSTERS.md:257:| `estimators-ttuple-lrs-3` | Info | `estimators-ttuple-lrs` | yes | misreport | t-tuple/LRS report '-0' (negative zero) in text and JSON when p_u clips to 1 |
+  CLUSTERS.md:258:| `predictors-8` | Info | `predictors` | yes | misreport | A zero min-entropy is reported as negative zero in stdout and in the JSON report ("hAssessed": -0.0) |
+E2 disposition search in DIRECTION-TRIAGE / CLOSING-INVENTORY / REPAIR-STRATEGY / EXCLUSION-MAP / ORCHESTRATOR-CHECKS (cluster id, 'negative zero', 'C15'):
+  DIRECTION-TRIAGE.md: 2 matching line(s)
+    DIRECTION-TRIAGE.md:69:`C12` (memory-safety, but the figure is unaffected), `C13`, `C15`, `C17`
+    DIRECTION-TRIAGE.md:184:| `C10`, `C13`, `C15`, `C19` | Diagnostics, `errorMessage` text, negative-zero presentation, documentation. None changes a figure, a verdict, an exit status, or memory safety | A consumer parsing `errorMessage` text or the sign of a zero as control flow — which `XR-01` shows is the kind of thing a harness does do, so `C15` would move on-path if TruePad branched on a figure's string form |
+  CLOSING-INVENTORY.md: 0 matching line(s)
+  REPAIR-STRATEGY.md: 0 matching line(s)
+  EXCLUSION-MAP.md: 0 matching line(s)
+  ORCHESTRATOR-CHECKS.md: 0 matching line(s)
+E3 measured at 1,000,000 samples by prior audits (compliant size, no escape):
+  2026-10-09 REPORT.md:279 | one `1` among zeros | 1 | `-0.0` | conservative |
+  2026-10-11 COVERAGE.md:245:near-constant-1bit and alternating-1bit both report hAssessed -0.0 (valid JSON; console renders it `-0.000000`)
+  2026-10-11 EXCLUSION-MAP.md:296:All three sub-claims reproduce on 1,000,000-sample fixtures
+  2026-10-11 EXCLUSION-MAP.md:296:`-0.000000` where it is -0.0
+E4 fork involvement: commit acedae5 (F13/OC-58) changed only comment lines in most_common.h; the clamp+log2 lines are byte-identical to upstream/master:
+  changed lines in acedae5 for most_common.h (all comments): 4
+  upstream/master most_common.h:26:	ubound = min(1.0,pmax + ZALPHA*sqrt(pmax*(1.0-pmax)/(len-1.0)));
+  upstream/master most_common.h:27:	entEst = -log2(ubound);
+  audit/2026-11-07 most_common.h:30:	ubound = min(1.0,pmax + ZALPHA*sqrt(pmax*(1.0-pmax)/(len-1.0)));
+  audit/2026-11-07 most_common.h:31:	entEst = -log2(ubound);
+E5 JSON emission gate is '!= -1' (test_case_base.h:52-57), so -0.0 is emitted like any value; in-repo consumers compare numerically (regression-iid-json.sh:95-98 float tolerance; pin-check.sh awk; regression-input-identity.sh:72 Python == 0).
+E6 NOTICE and FORK-DIVERGENCE-AND-TRUST.md contain no decision about the -0 rendering (grep 'negative zero|-0.0|= -0' : 0 and 0 lines).
+# end E
+E3b (re-appended; the first attempt's grep took the leading '-' of the pattern as an option and printed nothing):
+  2026-10-11 COVERAGE.md:142:-0 printed/JSON when p_u clips to 1, -vvv silences all per-estimator output
+E7 2026-10-11 DIRECTION-TRIAGE.md disposition of C15 (quoted):
+  DIRECTION-TRIAGE.md:184 | `C10`, `C13`, `C15`, `C19` | Diagnostics, `errorMessage` text, negative-zero presentation, documentation. None changes a figure, a verdict, an exit status, or memory safety | A consumer parsing `errorMessage` text or the sign of a zero as control flow — which `XR-01` shows is the kind of thing a harness does do, so `C15` would move on-path if TruePad branched on a figure's string form |
+# end E (2)

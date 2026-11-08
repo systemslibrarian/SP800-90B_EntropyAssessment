@@ -1,0 +1,168 @@
+# PROV-23 verifier reproduction  2026-11-08 16:29:58 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of repro/PROV-23/run.sh then control.sh, cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+# binary before: 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  ../../../cpp/ea_iid
+# scripts before: bdb4c4042de3f00c40b6e78892da1733c7bdb5cedbaa7fe33cc9047b041fceaf  repro/PROV-23/run.sh 2d3b9df1b38d5449f04382a29965fdd75998e56bb708b680ce6e35b70bde00ab  repro/PROV-23/control.sh 
+
+===== run.sh =====
+# PROV-23 observed.txt  2026-11-08 16:29:58 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 8414daeefef2ee495b135f83d6d210223404b1f5f1dfce303e5019d1e89644d3  (10,000 fair bits, seed 23, width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/fair10k.bin 1
+rc[iid]=0  stdout=p.out stderr=p.err
+rc=0 errorLevel=0 IID=true
+  avgCollision           C0=    6 C1=    0 C2=   33  sum=   39  partial
+  compression            C0=    5 C1=    1 C2=    7  sum=   13  partial
+  covariance1            C0=   13 C1=    0 C2=    6  sum=   19  partial
+  covariance16           C0=    6 C1=    0 C2=   13  sum=   19  partial
+  covariance2            C0=    6 C1=    0 C2=    6  sum=   12  partial
+  covariance32           C0=  126 C1=    0 C2=    6  sum=  132  partial
+  covariance8            C0=    6 C1=    0 C2=   18  sum=   24  partial
+  excursion              C0=   18 C1=    0 C2=    6  sum=   24  partial
+  lenDirectionalRuns     C0=    4 C1=    4 C2=    2  sum=   10  partial
+  lenRunsMedian          C0=    3 C1=    3 C2=    7  sum=   13  partial
+  maxCollision           C0=    6 C1=    0 C2=   10  sum=   16  partial
+  numDirectionalRuns     C0=    5 C1=    1 C2=   12  sum=   18  partial
+  numIncreasesDecreases  C0=    7 C1=    0 C2=    6  sum=   13  partial
+  numRunsMedian          C0=    6 C1=    0 C2=    8  sum=   14  partial
+  periodicity1           C0=    9 C1=    0 C2=    6  sum=   15  partial
+  periodicity16          C0=    6 C1=    0 C2=   10  sum=   16  partial
+  periodicity2           C0=    6 C1=    0 C2=    6  sum=   12  partial
+  periodicity32          C0=   11 C1=    0 C2=    6  sum=   17  partial
+  periodicity8           C0=    5 C1=    1 C2=    8  sum=   14  partial
+statistics with partial counts: 19 of 19 ; keys that could name the number of permutations evaluated: none
+DEFECT
+RESULT: PASS -- the counters are partial (early termination) and nothing in the report states the number of permutations evaluated per statistic
+run.sh exit=0
+
+===== control.sh =====
+# PROV-23 control.txt  2026-11-08 16:29:58 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 2fb87448f625ebb60588962d1b5103fade48676d173ba1d6b31e7f7a08b49ae5  (10,000 bits, b_i = 1-b_{i-64} w.p. 0.75 else fresh, seed 2323)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/c_p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/lag64anti.bin 1
+rc[iid]=1  stdout=c_p.out stderr=c_p.err
+rc=1 errorLevel=2 IID=false
+  | Chi square tests: Passed
+  | Length of longest repeated substring test: Passed
+  | IID permutation tests: Failed
+statistics evaluated for all 10,000 permutations: avgCollision(C0=9998,C1=0,C2=2), covariance16(C0=0,C1=0,C2=10000), covariance32(C0=0,C1=0,C2=10000), covariance8(C0=10000,C1=0,C2=0), maxCollision(C0=10000,C1=0,C2=0), numRunsMedian(C0=0,C1=1,C2=9999), periodicity16(C0=0,C1=0,C2=10000), periodicity32(C0=0,C1=0,C2=10000)
+FULL
+RESULT: CONTROL-OK -- a failing statistic runs the full 10,000 permutations and its C-sum is 10,000; the passing statistics in run.sh stop early with sums of a few dozen, and the report does not say which happened
+control.sh exit=0
+
+===== MUTATION (rule 7): can run.sh FAIL? =====
+# mutation: add the token "layout" to the denominator-key search list, so the existing nested key dataLayout
+# (which lives ONLY inside the permutationTestResults objects) is treated as a denominator field.
+# Expected if the script is live: denom=[dataLayout] -> NODEFECT -> RESULT: FAIL, exit 1.
+# This also proves the key walker reaches the nested objects where a real denominator field would be placed.
+# mutated diff:
+35c35
+< denom=[k for k in keys if k not in known and any(t in k.lower() for t in ('evaluated','rounds','total','denominator','permutations','permcount','nperm','iterationsrun'))]
+---
+> denom=[k for k in keys if k not in known and any(t in k.lower() for t in ('evaluated','rounds','total','denominator','permutations','permcount','nperm','iterationsrun','layout'))]
+# mutated run.sh sha256: 50a4878258852406b4297979eadd08d674e6f9ac2fe52cb101b24da3786915ea  repro/PROV-23/run.sh
+--- mutated run.sh output ---
+# PROV-23 observed.txt  2026-11-08 16:32:10 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 8414daeefef2ee495b135f83d6d210223404b1f5f1dfce303e5019d1e89644d3  (10,000 fair bits, seed 23, width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/fair10k.bin 1
+rc[iid]=0  stdout=p.out stderr=p.err
+rc=0 errorLevel=0 IID=true
+  avgCollision           C0=    6 C1=    0 C2=    8  sum=   14  partial
+  compression            C0=    5 C1=    2 C2=    4  sum=   11  partial
+  covariance1            C0=   25 C1=    0 C2=    6  sum=   31  partial
+  covariance16           C0=    6 C1=    0 C2=   16  sum=   22  partial
+  covariance2            C0=    8 C1=    0 C2=    6  sum=   14  partial
+  covariance32           C0=  202 C1=    0 C2=    6  sum=  208  partial
+  covariance8            C0=    6 C1=    0 C2=    6  sum=   12  partial
+  excursion              C0=    9 C1=    0 C2=    6  sum=   15  partial
+  lenDirectionalRuns     C0=    3 C1=    3 C2=    3  sum=    9  partial
+  lenRunsMedian          C0=    1 C1=    5 C2=    8  sum=   14  partial
+  maxCollision           C0=    5 C1=    1 C2=    5  sum=   11  partial
+  numDirectionalRuns     C0=    6 C1=    0 C2=    9  sum=   15  partial
+  numIncreasesDecreases  C0=   14 C1=    0 C2=    6  sum=   20  partial
+  numRunsMedian          C0=    6 C1=    0 C2=    9  sum=   15  partial
+  periodicity1           C0=   17 C1=    0 C2=    6  sum=   23  partial
+  periodicity16          C0=    5 C1=    1 C2=    9  sum=   15  partial
+  periodicity2           C0=    7 C1=    0 C2=    6  sum=   13  partial
+  periodicity32          C0=    9 C1=    0 C2=    6  sum=   15  partial
+  periodicity8           C0=    6 C1=    0 C2=    6  sum=   12  partial
+statistics with partial counts: 19 of 19 ; keys that could name the number of permutations evaluated: dataLayout
+NODEFECT
+RESULT: FAIL -- rc=0; see table
+MUTATED run.sh exit=1
+# mutated observed.txt saved to logs/verify/PROV-23-mutation-observed.txt
+
+===== RESTORE =====
+# restored run.sh sha256: bdb4c4042de3f00c40b6e78892da1733c7bdb5cedbaa7fe33cc9047b041fceaf  repro/PROV-23/run.sh
+# before-hash was      : bdb4c4042de3f00c40b6e78892da1733c7bdb5cedbaa7fe33cc9047b041fceaf  run.sh
+--- restored run.sh re-run (so observed.txt and logs/repro/PROV-23-observed.log carry a genuine run) ---
+# PROV-23 observed.txt  2026-11-08 16:32:11 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input sha256 8414daeefef2ee495b135f83d6d210223404b1f5f1dfce303e5019d1e89644d3  (10,000 fair bits, seed 23, width 1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/p.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-23/out/fair10k.bin 1
+rc[iid]=0  stdout=p.out stderr=p.err
+rc=0 errorLevel=0 IID=true
+  avgCollision           C0=    6 C1=    0 C2=   16  sum=   22  partial
+  compression            C0=    8 C1=    1 C2=    5  sum=   14  partial
+  covariance1            C0=    6 C1=    0 C2=    6  sum=   12  partial
+  covariance16           C0=    6 C1=    0 C2=   10  sum=   16  partial
+  covariance2            C0=    6 C1=    0 C2=    8  sum=   14  partial
+  covariance32           C0=   91 C1=    0 C2=    6  sum=   97  partial
+  covariance8            C0=    6 C1=    0 C2=    6  sum=   12  partial
+  excursion              C0=   10 C1=    0 C2=    6  sum=   16  partial
+  lenDirectionalRuns     C0=    4 C1=    4 C2=    2  sum=   10  partial
+  lenRunsMedian          C0=    3 C1=    3 C2=   30  sum=   36  partial
+  maxCollision           C0=    6 C1=    0 C2=   16  sum=   22  partial
+  numDirectionalRuns     C0=    6 C1=    0 C2=    6  sum=   12  partial
+  numIncreasesDecreases  C0=    5 C1=    1 C2=    6  sum=   12  partial
+  numRunsMedian          C0=   10 C1=    0 C2=    6  sum=   16  partial
+  periodicity1           C0=    6 C1=    0 C2=    6  sum=   12  partial
+  periodicity16          C0=    6 C1=    0 C2=   10  sum=   16  partial
+  periodicity2           C0=    5 C1=    1 C2=    5  sum=   11  partial
+  periodicity32          C0=    6 C1=    0 C2=    6  sum=   12  partial
+  periodicity8           C0=    6 C1=    0 C2=    6  sum=   12  partial
+statistics with partial counts: 19 of 19 ; keys that could name the number of permutations evaluated: none
+DEFECT
+RESULT: PASS -- the counters are partial (early termination) and nothing in the report states the number of permutations evaluated per statistic
+RESTORED run.sh exit=0
+
+===== VERIFIER SUMMARY (2026-11-08) =====
+Binary ea_iid sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349 (unchanged before/after; same as the author's).
+HEAD moved 834ffeb -> e415c0e during verification (concurrent commits on the branch); no cpp/ change, binary identical, so the runs are comparable.
+Env for every tool run: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2, 10,000 samples -> NON-COMPLIANT short-dataset runs (brief ground rule 5).
+
+(a) observed.txt shows the claimed defect: 19 of 19 statistics have C0+C1+C2 < 10,000 (sums 10..132 in my first run, 10..97 in the restored run;
+    the author's run had 11..116), IID=true rc=0, and "keys that could name the number of permutations evaluated: none".
+    Independent check (logs/verify/PROV-23-stop-rule-fingerprint.txt): every partial statistic in the author's p.json and both of mine has
+    min(C0+C1, C1+C2) == 6 EXACTLY -- the fingerprint of stopping at the first permutation where both sums exceed 5 (permutation_tests.h:672-674),
+    0 violations in 57 statistic rows. The code reading agrees: PermutationTestResult (permutation_test_result.h) has iteration, dataLayout and
+    19 doubles, no denominator; grep of cpp/ for permutationsEvaluated|permutationRounds|permCount|iterationsRun|roundsEvaluated: nothing.
+(b) control: lag-64 anti-correlated input, permutation battery runs (chi-square and LRS pass) and 8 statistics FAIL; exactly those 8 have
+    C0+C1+C2 == 10,000 and min(C0+C1,C1+C2) <= 5 (never satisfied the stop), the 11 passing statistics still stop early (sums 11..1440).
+    The control differs from run.sh in the input AND in -q -> -vv; the JSON key sets differ only by hAssessed (pass) vs errorClass/errorMessage
+    (fail) -- verbosity does not add or remove any permutation-result key (logs/verify/PROV-23-json-keyset-compare.txt), so the second
+    difference is immaterial. The control does NOT show "partial sum" for the statistics that ran to 10,000; it cannot show a denominator key
+    because no input can make the binary emit one -- that half of the claim rests on the code reading, not on the control.
+(c) run.sh logic: PASS requires partial>0 AND no denominator-like key; an absent/unparseable JSON -> python exception -> res empty -> FAIL (not vacuous);
+    an empty permutationTestResults -> partial=0 -> NODEFECT -> FAIL. Weakness noted: byit[i].get(s,0) treats an ABSENT per-iteration key as 0
+    (instrument rule 2 shape) -- unreachable with this binary (GetAsJson omits a field only at the -1 sentinel and populateTestCase sets all 19
+    from C[][] >= 0), so it cannot have produced this PASS. The denominator search is a token heuristic (evaluated/rounds/total/denominator/
+    permutations/permcount/nperm/iterationsrun); its "none" is confirmed by my own full-key walk and the header read above.
+    Rule 7 mutation: added token 'layout' -> the nested key dataLayout is found -> "NODEFECT" -> RESULT: FAIL exit 1 (logs/verify/PROV-23-mutation-observed.txt).
+    This also proves the walker reaches the nested objects where a real denominator field would sit. run.sh restored by cp from the saved copy;
+    sha256 bdb4c404... identical to the before-hash; control.sh untouched (2d3b9df1...). Restored run.sh re-run: RESULT: PASS exit 0.
+Provenance: the early termination (c34d4911, Joshua E. Hill, 2018-10-04) and the iteration-indexed PermutationTestResult are UPSTREAM code,
+    present verbatim in upstream/master (87c104d) permutation_tests.h:669-670 and permutation_test_result.h:13,38-39; the fork added only dataLayout
+    (25fbb54, NOVEL-03). Not documented in README.md, cpp/README.md, NOTICE, FORK-DIVERGENCE-AND-TRUST.md or upstream README; documented only in
+    this audit's logs/analysis/iid-permutation.md 2.1 (verdict-equivalence proof, re-derived and found sound) and 2.9.
+Verdict: CONFIRMED. Severity LOW, direction neutral: the IID verdict is unchanged (proof in 2.1 holds: both sums are non-decreasing, so a statistic
+    that stopped would pass under the full 10,000 too, and a statistic that never stopped is counted for all 10,000 with the spec's exact test);
+    the defect is that the JSON (and the -vv table) present C0/C1/C2 without the per-statistic denominator the spec defines as 10,000.

@@ -1,0 +1,7 @@
+# PROV-16 verify probes  2026-11-08 16:19:04 -0500  host=Darwin 25.6.0 arm64  env EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+input sha256 fc8a49c391691a3bf7000c3f540d4680f39911de5862f33d3633f541ffe9cab9  one-in-2000-w1.bin
+input sha256 393396085ce584139bcb8d6a6596761f0316db1648d81a68456c86ae2e56097c  two-sym-in-2000-w8.bin
+rc[p1 -vv  w1]=0
+rc[p1 -vvv w1]=0
+rc[p2 -vv  w8]=0

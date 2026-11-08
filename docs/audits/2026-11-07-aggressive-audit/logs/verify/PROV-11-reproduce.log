@@ -1,0 +1,142 @@
+# PROV-11 verifier re-run  2026-11-08 16:03:19 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of repro/PROV-11/run.sh and control.sh from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+# repo HEAD=834ffeb branch=audit/2026-11-07
+# author's originals backed up to logs/verify/PROV-11-author-originals/
+
+===== [1] bash repro/PROV-11/run.sh (stdout+stderr) =====
+# PROV-11 observed.txt  2026-11-08 16:03:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_n.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[noniid_ok]=0  stdout=t_n.out stderr=t_n.err
+ea_non_iid success report: rc=0 errorLevel=0 type="" IID=false
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid_fail]=1  stdout=t_i.out stderr=t_i.err
+ea_iid report (battery outcome rc=1): errorLevel=2 type="" assessmentMode="IID"
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/does-not-exist.bin 8
+rc[noniid_err]=255  stdout=t_e.out stderr=t_e.err
+ea_non_iid error report (missing input): rc=255 errorLevel=-1 type=""
+assignments of testRun.type in the mains: non_iid_main.cpp=0 iid_main.cpp=0 restart_main.cpp(.type =)=2
+RESULT: PASS -- type is the empty string in the ea_non_iid success report, the ea_iid report and the ea_non_iid error report
+run.sh exit=0
+
+===== [2] bash repro/PROV-11/control.sh (stdout+stderr) =====
+# PROV-11 control.txt  2026-11-08 16:03:20 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/c_p.json
+rc[placeholder_n]=255  stdout=c_p.out stderr=c_p.err
+ea_non_iid placeholder (no operand): rc=255 errorLevel=-1 type="non-IID"
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/c_pi.json
+rc[placeholder_i]=255  stdout=c_pi.out stderr=c_pi.err
+ea_iid placeholder (no operand): rc=255 errorLevel=-1 type="IID"
+RESULT: CONTROL-OK -- the placeholders name the tool ('non-IID', 'IID'); the completed reports in run.sh say the empty string
+control.sh exit=0
+
+===== [3] rule 7 mutation: can run.sh FAIL? =====
+backup: cp run.sh -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-11-run.sh.orig  sha256 6eaa2a22c72f14af6ad0f197dd1f53bcd7f19d0a4e624524e48199f12818a2c1
+mutation applied (diff backup vs mutated):
+15c15
+< [ "$tn" = '""' ] && [ "$ti" = '""' ] && [ "$te" = '""' ] && verdict PASS "type is the empty string in the ea_non_iid success report, the ea_iid report and the ea_non_iid error report"
+---
+> [ "$tn" = '"non-IID"' ] && [ "$ti" = '""' ] && [ "$te" = '""' ] && verdict PASS "type is the empty string in the ea_non_iid success report, the ea_iid report and the ea_non_iid error report"
+--- bash repro/PROV-11/run.sh (MUTATED: first conjunct now expects type="non-IID", the value expected.txt calls correct) ---
+# PROV-11 observed.txt  2026-11-08 16:04:39 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_n.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[noniid_ok]=0  stdout=t_n.out stderr=t_n.err
+ea_non_iid success report: rc=0 errorLevel=0 type="" IID=false
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid_fail]=1  stdout=t_i.out stderr=t_i.err
+ea_iid report (battery outcome rc=1): errorLevel=2 type="" assessmentMode="IID"
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/does-not-exist.bin 8
+rc[noniid_err]=255  stdout=t_e.out stderr=t_e.err
+ea_non_iid error report (missing input): rc=255 errorLevel=-1 type=""
+assignments of testRun.type in the mains: non_iid_main.cpp=0 iid_main.cpp=0 restart_main.cpp(.type =)=2
+RESULT: FAIL -- type values: noniid="" iid="" err=""
+mutated run.sh exit=1  (1 expected = FAIL; the script CAN fail)
+restore: cp /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-11-run.sh.orig -> run.sh
+cmp: restored run.sh is byte-identical to the backup
+git diff --quiet: run.sh identical to HEAD
+
+===== [4] genuine run.sh re-run after restore (restores observed.txt and logs/repro/PROV-11-observed.log to the PASS state) =====
+# PROV-11 observed.txt  2026-11-08 16:04:40 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_n.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc[noniid_ok]=0  stdout=t_n.out stderr=t_n.err
+ea_non_iid success report: rc=0 errorLevel=0 type="" IID=false
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_i.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid_fail]=1  stdout=t_i.out stderr=t_i.err
+ea_iid report (battery outcome rc=1): errorLevel=2 type="" assessmentMode="IID"
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_e.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/does-not-exist.bin 8
+rc[noniid_err]=255  stdout=t_e.out stderr=t_e.err
+ea_non_iid error report (missing input): rc=255 errorLevel=-1 type=""
+assignments of testRun.type in the mains: non_iid_main.cpp=0 iid_main.cpp=0 restart_main.cpp(.type =)=2
+RESULT: PASS -- type is the empty string in the ea_non_iid success report, the ea_iid report and the ea_non_iid error report
+restored run.sh exit=0
+
+===== [5] supplementary controls (verifier's own; copied from logs/verify/PROV-11-supplementary.log) =====
+# PROV-11 verifier supplementary controls  2026-11-08 16:04:50 -0500
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (non-compliant short-dataset runs)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart
+
+--- S1: is -q relevant to the placeholder type? ea_non_iid -q -o <json> (no operand) ---
+rc=255
+type="non-IID" errorLevel=-1 reportComplete=false
+
+--- S2: does GetBaseJson emit a non-empty type when the main assigns it? ea_restart -q -o <json> bin/rand1_short.bin 1 0.5 (10,000 samples; restart requires exactly 1,000,000 so this is the error-report path, written after restart_main.cpp:493/499 set type="Restart") ---
+rc=255
+stdout(restart_e.out):
+
+*** Error: data (len = 10000) does not contain 1000000 samples ***
+
+stderr(restart_e.err):
+type="Restart" errorLevel=-1 errorMessage="*** Error: data (len = 10000) does not contain 1000000 samples ***" keys=["IID","assessedSampleCount","bitsPerSymbol","bitsPerSymbolInferred","commandline","dateTimeStamp","errorLevel","errorMessage","filename","sha256","sha256Scope","testCases","toolVersion","type"]
+
+===== [6] upstream check (local ref upstream/master 87c104d, no network): =====
+upstream test_run_base.h declares 'string type;' and writes baseJson["type"] = type (lines 17, 26)
+upstream non_iid_main.cpp 'type' hits (excluding typedef/data_t/byte): 0
+upstream iid_main.cpp 'type' hits: 0
+upstream restart_main.cpp: testRunIid.type = "Restart" (250), testRunNonIid.type = "Restart" (257)
+=> the empty type in completed ea_non_iid/ea_iid reports is INHERITED from upstream (introduced bd56cd0, 2020-09-29, 'Added JSON output to restart tests'); the fork's C14 placeholder (97bfc6c) added the 'non-IID'/'IID' strings that make the fork's reports internally inconsistent
+
+===== [7] final state of repro/PROV-11 after the verifier's runs =====
+ M docs/audits/2026-11-07-aggressive-audit/logs/repro/PROV-11-control.log
+ M docs/audits/2026-11-07-aggressive-audit/logs/repro/PROV-11-observed.log
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/control.txt
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/observed.txt
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/c_p.json
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/c_pi.json
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_e.json
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_i.json
+ M docs/audits/2026-11-07-aggressive-audit/repro/PROV-11/out/t_n.json
+(run.sh/control.sh/README.md/expected.txt not listed = unchanged; observed.txt/control.txt/out/* re-generated by this re-run, originals in logs/verify/PROV-11-author-originals/)
+diff author observed.txt vs re-run observed.txt (timestamps and git short-hash differ by design):
+1c1
+< # PROV-11 observed.txt  2026-11-07 21:56:14 -0500  host=Darwin 25.6.0 arm64
+---
+> # PROV-11 observed.txt  2026-11-08 16:04:40 -0500  host=Darwin 25.6.0 arm64
+3c3
+< # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+---
+> # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+diff author control.txt vs re-run control.txt:
+1c1
+< # PROV-11 control.txt  2026-11-07 21:56:14 -0500  host=Darwin 25.6.0 arm64
+---
+> # PROV-11 control.txt  2026-11-08 16:03:20 -0500  host=Darwin 25.6.0 arm64
+3c3
+< # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+---
+> # repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07

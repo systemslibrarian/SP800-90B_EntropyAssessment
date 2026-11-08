@@ -1,0 +1,103 @@
+# PROV-21 verifier reproduce log  2026-11-08 16:25:01 -0500  host=Darwin 25.6.0 arm64  verifier=Fable-5.1 subagent
+# cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit  git=834ffeb branch=audit/2026-11-07
+# HEAD at author's run was 1151b22; HEAD now is 834ffeb; the binaries' sha256 are recorded by the scripts below
+
+===== run.sh (bash repro/PROV-21/run.sh) =====
+# PROV-21 observed.txt  2026-11-08 16:25:01 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -Z
+rc[ea_non_iid]=0  stdout=ea_non_iid.out stderr=ea_non_iid.err
+  ea_non_iid --version -Z: rc=0 banner-line='non_iid 1.1.8' banner=1 'illegal option' on stderr=0 usage-dump=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid --version -Z
+rc[ea_iid]=0  stdout=ea_iid.out stderr=ea_iid.err
+  ea_iid --version -Z: rc=0 banner-line='iid 1.1.8' banner=1 'illegal option' on stderr=0 usage-dump=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart --version -Z
+rc[ea_restart]=0  stdout=ea_restart.out stderr=ea_restart.err
+  ea_restart --version -Z: rc=0 banner-line='restart 1.1.8' banner=1 'illegal option' on stderr=0 usage-dump=0
+code:  if (s.rejectAt >= 0 && s.rejectAt < s.versionAt) return false;  if (s.dashDashAt >= 0 && s.dashDashAt < s.versionAt) return false;  return true; 
+RESULT: PASS -- all three tools exit 0 with a banner on '--version -Z'; the unknown option after --version is never reported
+run.sh exit=0
+
+===== control.sh (bash repro/PROV-21/control.sh) =====
+# PROV-21 control.txt  2026-11-08 16:25:02 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z --version
+rc[Z_then_version]=255  stdout=c_zv.out stderr=c_zv.err
+  -Z --version: rc=255 banner=0 'illegal option'=1 usage=1
+RESULT: CONTROL-OK -- -Z before --version is refused (exit 255, 'illegal option -- Z'); the same two flags in the other order exit 0
+control.sh exit=0
+
+===== supplementary (verifier): the mechanism without EA_ALLOW_SHORT_DATASET, and the control on all three tools =====
+$ env -u EA_ALLOW_SHORT_DATASET ea_non_iid --version -Z   rc=0  stdout-line1='non_iid 1.1.8'  stderr-bytes=0  'illegal option' count=0
+$ env -u EA_ALLOW_SHORT_DATASET ea_iid --version -Z   rc=0  stdout-line1='iid 1.1.8'  stderr-bytes=0  'illegal option' count=0
+$ env -u EA_ALLOW_SHORT_DATASET ea_restart --version -Z   rc=0  stdout-line1='restart 1.1.8'  stderr-bytes=0  'illegal option' count=0
+$ env -u EA_ALLOW_SHORT_DATASET ea_iid -Z --version   rc=255  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid: illegal option -- Z'  banner-count=0  usage-count=1
+$ env -u EA_ALLOW_SHORT_DATASET ea_restart -Z --version   rc=255  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart: illegal option -- Z'  banner-count=0  usage-count=1
+--- also: --version alone (is the banner+exit0 the normal contract?) ---
+$ ea_non_iid --version   rc=0  stdout-line1='non_iid 1.1.8'  stderr-bytes=0
+--- also: --version --bogus (a second LONG unknown option after --version) ---
+$ ea_non_iid --version --bogus   rc=0  stdout-line1='non_iid 1.1.8'  stderr-bytes=0
+--- also: --bogus --version (unknown LONG option first: does rejectAt catch it?) ---
+$ ea_non_iid --bogus --version   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''
+
+===== rule 7 mutation: run.sh expectation '[ "$RC" -eq 0 ]' -> '[ "$RC" -ne 0 ]' (predict the CORRECT behaviour; the script must then FAIL) =====
+run.sh original sha256 6c8af11f9a0c13ec22fbdfa66a5f99879700167553a401ebfdace9ec62c9a683
+--- diff orig vs mutated ---
+13c13
+<   total=$((total+1)); [ "$RC" -eq 0 ] && [ "$banner" -ge 1 ] && [ "$ill" -eq 0 ] && [ "$usage" -eq 0 ] && ok=$((ok+1))
+---
+>   total=$((total+1)); [ "$RC" -ne 0 ] && [ "$banner" -ge 1 ] && [ "$ill" -eq 0 ] && [ "$usage" -eq 0 ] && ok=$((ok+1))
+diff rc=1 (1 = mutation applied)
+mutated run.sh exit=1
+--- mutated run RESULT line ---
+17:RESULT: FAIL -- 0 of 3 behaved as predicted
+restored run.sh sha256 6c8af11f9a0c13ec22fbdfa66a5f99879700167553a401ebfdace9ec62c9a683  (matches original: YES)
+--- re-run restored run.sh so observed.txt and logs/repro/PROV-21-observed.log carry the PASS record again ---
+restored run.sh exit=0
+17:RESULT: PASS -- all three tools exit 0 with a banner on '--version -Z'; the unknown option after --version is never reported
+--- git status of run.sh after restore ---
+(empty above = run.sh unchanged vs HEAD)
+
+===== verifier extension: an unknown LONG option BEFORE --version (scanArgs sets rejectAt only for short letters) =====
+$ ea_iid --bogus --version   rc=0  stdout-line1='iid 1.1.8'  stderr-bytes=0
+$ ea_restart --bogus --version   rc=0  stdout-line1='restart 1.1.8'  stderr-bytes=0
+--- control for the extension: the same unknown long option WITHOUT --version ---
+$ ea_non_iid --bogus   rc=255  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- -'  banner-count=0  usage-count=1
+$ ea_iid --bogus   rc=255  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid: illegal option -- -'  banner-count=0  usage-count=1
+$ ea_restart --bogus   rc=255  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart: illegal option -- -'  banner-count=0  usage-count=1
+--- and with operands present (the F04 shape: the operator asked for an assessment) ---
+-rw-r--r-- 1 gmcas staff 10000 Sep 30 03:17 /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+
+===== verifier: both orderings WITH operands (the F04 shape: the operator asked for an assessment); operand is a NONEXISTENT path so nothing can be read =====
+ls: cannot access '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/absent-data': No such file or directory
+(absent-data does not exist in /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify -- confirmed)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -Z absent-data 8 (cwd=logs/verify)   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''  stdout-lines=8
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z --version absent-data 8 (cwd=logs/verify)   rc=255  stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]'  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z'  stdout-lines=41
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --bogus --version absent-data 8 (cwd=logs/verify)   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''  stdout-lines=8
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version --bogus absent-data 8 (cwd=logs/verify)   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''  stdout-lines=8
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --bogus absent-data 8 (cwd=logs/verify)   rc=255  stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]'  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- -'  stdout-lines=41
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid --bogus --version absent-data 8 (cwd=logs/verify)   rc=0  stdout-line1='iid 1.1.8'  stderr=''  stdout-lines=8
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart --bogus --version absent-data 8 0.5 (cwd=logs/verify)   rc=0  stdout-line1='restart 1.1.8'  stderr=''  stdout-lines=8
+
+===== verifier: does a STALE -o report survive with exit 0 (the F04/C14 shape)? operand is a nonexistent path =====
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json --version -Z absent-data 8   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''  stale.json: UNCHANGED (stale report left in place)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json --bogus --version absent-data 8   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''  stale.json: UNCHANGED (stale report left in place)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json -Z --version absent-data 8   rc=255  stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]'  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z'  stale.json: REPLACED
+    stale.json now: {   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json -Z --version absent-data 8",   "dateTimeStamp" : "2026110816285
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json --bogus absent-data 8   rc=255  stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]'  stderr='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- -'  stale.json: REPLACED
+    stale.json now: {   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json --bogus absent-data 8",   "dateTimeStamp" : "20261108162856",  
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o stale.json --version   rc=0  stdout-line1='non_iid 1.1.8'  stderr=''  stale.json: UNCHANGED (stale report left in place)
+
+===== verifier: comparator -- is "whichever comes first decides" conventional? (bash, git on this host) =====
+$ /bin/bash --version --bogus   rc=2  stdout-line1=''  stderr-line1='/bin/bash: --bogus: invalid option'
+$ /bin/bash --bogus --version   rc=2  stdout-line1=''  stderr-line1='/bin/bash: --bogus: invalid option'
+$ git --version --bogus   rc=129  stdout-line1=''  stderr-line1='error: unknown option `bogus''
+$ git --bogus --version   rc=129  stdout-line1=''  stderr-line1='unknown option: --bogus'
+$ /bin/bash --version -Z   rc=0  stdout-line1='GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)'  stderr-line1=''
+$ /bin/bash -Z --version   rc=2  stdout-line1=''  stderr-line1='/bin/bash: -Z: invalid option'

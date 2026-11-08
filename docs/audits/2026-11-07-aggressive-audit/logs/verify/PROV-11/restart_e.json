@@ -1,0 +1,16 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 10000,
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "cpp/ea_restart -q -o docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-11/restart_e.json bin/rand1_short.bin 1 0.5",
+   "dateTimeStamp" : "20261108160450",
+   "errorLevel" : -1,
+   "errorMessage" : "*** Error: data (len = 10000) does not contain 1000000 samples ***",
+   "filename" : "bin/rand1_short.bin",
+   "sha256" : "3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

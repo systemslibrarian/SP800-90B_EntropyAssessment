@@ -1,0 +1,12 @@
+# PROV-15 verify: Homebrew prefix state  2026-11-08 16:17:01 -0500
+lrwxr-xr-x 1 gmcas admin 41 Nov  7 19:28 /opt/homebrew/include/openssl -> ../Cellar/openssl@4/4.1.0/include/openssl
+lrwxr-xr-x 1 gmcas admin 45 Nov  7 19:28 /opt/homebrew/lib/libcrypto.dylib -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+lrwxr-xr-x 1 gmcas admin 25 Nov  7 19:28 /opt/homebrew/opt/openssl -> ../Cellar/openssl@4/4.1.0
+lrwxr-xr-x 1 gmcas admin 25 Sep 22 18:33 /opt/homebrew/opt/openssl@3 -> ../Cellar/openssl@3/3.6.4
+lrwxr-xr-x 1 gmcas admin 25 Nov  7 19:28 /opt/homebrew/opt/openssl@4 -> ../Cellar/openssl@4/4.1.0
+openssl@3 keg_only=True (brew info --json=v2); openssl@4 keg_only=False installed_on_request=False
+brew uses --installed openssl@4: afl++ python@3.15
+brew autoremove --dry-run would drop: dav1d lame libvmaf libvpx mpg123 (NOT openssl@4 while afl++/python@3.15 are installed)
+Makefile:71-72:
+INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib

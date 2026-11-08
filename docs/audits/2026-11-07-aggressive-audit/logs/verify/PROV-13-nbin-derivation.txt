@@ -1,0 +1,34 @@
+# PROV-13 compliant-size reachability, derived from the 5.2.1 bin rule on proportions only (no binary run)
+README repro L=2000 1992/4/4: nbin=2 df=-1 bins=[5.992, 994.008]
+my dfzero L=2000 1980/10/10: nbin=3 df=0 bins=[5.05, 9.9, 985.05]
+control L=2000 700/650/650: nbin=9 df=6 bins=...
+compliant L=1e6 k=3 999992/4/4: nbin=2 df=-1 bins=[6.0, 499994.0]
+compliant L=1e6 k=3 999980/10/10: nbin=3 df=0 bins=[5.0, 10.0, 499985.0]
+compliant L=1e6 k=3 999900/50/50: nbin=5 df=2 bins=[25.003, 24.998, 24.998, 24.998, 499900.005]
+compliant L=1e6 k=256 dominant=999999 (1.00000) rest=1 spread: nbin=1 df=-255
+compliant L=1e6 k=256 dominant=999998 (1.00000) rest=2 spread: nbin=1 df=-255
+compliant L=1e6 k=256 dominant=999995 (0.99999) rest=5 spread: nbin=1 df=-255
+compliant L=1e6 k=256 dominant=999990 (0.99999) rest=10 spread: nbin=2 df=-254
+compliant L=1e6 k=256 dominant=999980 (0.99998) rest=20 spread: nbin=4 df=-252
+compliant L=1e6 k=256 dominant=999950 (0.99995) rest=50 spread: nbin=10 df=-246
+compliant L=1e6 k=256 dominant=999900 (0.99990) rest=100 spread: nbin=19 df=-237
+compliant L=1e6 k=256 dominant=999800 (0.99980) rest=200 spread: nbin=37 df=-219
+compliant L=1e6 k=256 dominant=999700 (0.99970) rest=300 spread: nbin=54 df=-202
+compliant L=1e6 k=256 dominant=999600 (0.99960) rest=400 spread: nbin=69 df=-187
+compliant L=1e6 k=256 dominant=999500 (0.99950) rest=500 spread: nbin=84 df=-172
+compliant L=1e6 k=256 dominant=999400 (0.99940) rest=600 spread: nbin=101 df=-155
+compliant L=1e6 k=256 dominant=999300 (0.99930) rest=700 spread: nbin=117 df=-139
+compliant L=1e6 k=256 dominant=999200 (0.99920) rest=800 spread: nbin=134 df=-122
+compliant L=1e6 k=256 dominant=999100 (0.99910) rest=900 spread: nbin=151 df=-105
+compliant L=1e6 k=256 dominant=999000 (0.99900) rest=1000 spread: nbin=167 df=-89
+compliant L=1e6 k=256 dominant=998900 (0.99890) rest=1100 spread: nbin=171 df=-85
+compliant L=1e6 k=256 dominant=998800 (0.99880) rest=1200 spread: nbin=171 df=-85
+compliant L=1e6 k=256 dominant=998700 (0.99870) rest=1300 spread: nbin=179 df=-77
+compliant L=1e6 k=256 dominant=998600 (0.99860) rest=1400 spread: nbin=213 df=-43
+compliant L=1e6 k=256 dominant=998500 (0.99850) rest=1500 spread: nbin=246 df=-10
+compliant L=1e6 k=256 dominant=998000 (0.99800) rest=2000 spread: nbin=256 df=0
+compliant L=1e6 k=256 dominant=997000 (0.99700) rest=3000 spread: nbin=511 df=255
+compliant L=1e6 k=256 dominant=995000 (0.99500) rest=5000 spread: nbin=513 df=257
+compliant L=1e6 k=256 dominant=990000 (0.99000) rest=10000 spread: nbin=520 df=264
+compliant L=1e6 k=256 near-uniform: nbin=65536 df=65280
+MCV bound at p_max=0.99: -log2(0.99) = 0.014499569695115089 ; at 0.999 : 0.0014434168696687186

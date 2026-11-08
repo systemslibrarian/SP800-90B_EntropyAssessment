@@ -1,0 +1,62 @@
+# PROV-25-refute.log  2026-11-08 16:38:51 -0500  host=Darwin 25.6.0 arm64  git=e415c0e branch=audit/2026-11-07
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs
+
+## O1 stale source? sha256 now vs README (a5462f85... utils.h ; b3eb23f7... non_iid_main.cpp)
+now  a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h
+now  b3eb23f72c4d9f5b40faed49be22b6dea6fe6aaa9803e0b2f54d257dccb512ab  cpp/non_iid_main.cpp
+now  f5d169677ad8d6e0a44afcec72e5323a27967da04e3800f1504ca56e69cdc4aa  cpp/iid_main.cpp
+now  a1ea38d6762c50b16538f965992fe767cd0a22493a6fad419a578a883a37affa  cpp/restart_main.cpp
+
+## O2 the comment, read now (utils.h 1023-1028)
+  | // SUFFICIENCY IS PROVABLE, not hoped for. Callers refuse a sample count above
+  | // INT_MAX (iid_main.cpp, non_iid_main.cpp), so n <= 2^31 - 1 and
+  | // n*n <= 4.61e18, comfortably inside INT64_MAX = 9.22e18. The assert states
+  | // that bound where it is relied on rather than leaving it to a reader.
+  | int64_t n_choose_2(const int64_t n) {
+  | 	assert(n >= 0 && n <= (int64_t) INT_MAX);
+
+## O3 guard under another spelling in non_iid_main.cpp? (INT_MAX|INT32_MAX|numeric_limits|2147483647|0x7fffffff|LONG_MAX not preceded by U -- ULONG_MAX at :105 is the -l subset sentinel, not a length guard)
+grep rc=1 (1 = no match)
+## O3b shared intake bound on len in utils.h read_file/read_file_subset? (INT_MAX|too large|exceeds) -- lines 300-740 only
+grep rc=1 (1 = no match)
+
+## O4 call graph: n_choose_2 call sites, len_LRS_test call sites, what non_iid_main.cpp takes from lrs_test.h
+cpp/shared/lrs_test.h:712:	// inside n_choose_2() is evaluated in 64 bits (OC-53).
+cpp/shared/lrs_test.h:713:	const int64_t N = n_choose_2((int64_t) L - (int64_t) W + 1);
+cpp/iid_main.cpp:388:    // chi_square_tests() and len_LRS_test() take the sample count as int, and
+cpp/iid_main.cpp:504:    bool len_LRS_test_pass = len_LRS_test(
+cpp/restart_main.cpp:1118:        bool len_LRS_test_pass_row = len_LRS_test(rdata, sample_size, alphabet_size, verbose, "Rows");
+cpp/restart_main.cpp:1119:        bool len_LRS_test_pass_col = len_LRS_test(cdata, sample_size, alphabet_size, verbose, "Columns");
+cpp/non_iid_main.cpp:468:        SAalgs(data.bsymbols, data.blen, 2, bin_t_tuple_res, bin_lrs_res, verbose, "Bitstring");
+cpp/non_iid_main.cpp:479:        SAalgs(data.symbols, data.len, data.alph_size, t_tuple_res, lrs_res, verbose, "Literal");
+len_LRS_test signature: 643:bool len_LRS_test(const uint8_t data[], const int L, const int k, const int verbose, const char *label) {
+
+## O5 the OTHER real caller, restart_main.cpp: how is n bounded there?
+cpp/restart_main.cpp:694:    if (data.len != MIN_SIZE) {
+cpp/restart_main.cpp:831:    int sample_size = data.len;
+MIN_SIZE: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/shared/utils.h:42:#define MIN_SIZE 1000000
+
+## O6 does the OC-53 record name non_iid_main.cpp? (audits/, NOTICE, FORK-DIVERGENCE)
+grep rc=1 (1 = no match: the parenthetical exists only in the source comment)
+record's own words: **Sufficiency is provable.** Callers already refuse a sample count above `INT_MAX`, so n ≤ 2³¹−1 and n·n ≤ 4.61e18, inside `INT64_MAX` = 9.22e18. An 
+record on reach: **No §6.3.x entropy estimator reaches it.** `ea_non_iid`'s "LRS Test Estimate" is the §6.3.6 *estimator*, a different function that does not call `n_choose_2`. That is why `ea_non_iid` ran the complete non-IID battery to 
+
+## O7 runtime corroboration: the s5.2.5 label 'Longest Repeated Substring results' (lrs_test.h:716-722, verbose>1) -- present for ea_iid, absent for ea_non_iid
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  bin/rand8_short.bin  (10000 bytes)
+$ ea_iid -i -v -v -v bin/rand8_short.bin 8
+rc[ea_iid]=1
+$ ea_non_iid -i -v -v -v bin/rand8_short.bin 8
+rc[ea_non_iid]=0
+lines in ea_iid stdout: 25; in ea_non_iid stdout: 12
+label 'Longest Repeated Substring results' count: ea_iid=3  ea_non_iid=0
+label 'LRS Test Estimate' (s6.3.6 estimator) count: ea_iid=0  ea_non_iid=0
+ea_iid LRS-test lines:
+  19:Literal Longest Repeated Substring results: P_col = 0.004008299999999994159272
+  20:Literal Longest Repeated Substring results: W = 3
+  21:Literal Longest Repeated Substring results: Pr(X >= 1) = 0.9599790286591446397679
+ea_non_iid LRS lines:
+ea_iid stderr bytes: 0; ea_non_iid stderr bytes: 0
+
+## END

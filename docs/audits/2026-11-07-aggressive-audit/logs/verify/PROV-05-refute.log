@@ -1,0 +1,54 @@
+# PROV-05 REFUTE probe  2026-11-08 15:59:42 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples)
+# repo git=4026f83 branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  (10000 bytes; stat -f %z resolved to GNU stat and was replaced by wc -c)
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -v /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[v1]=0  stdout_lines=56  stderr_lines=0  per-estimator 'min entropy = ' lines=0  'Assessed min entropy:' lines=0
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[vv]=0  stdout_lines=116  stderr_lines=0  per-estimator 'min entropy = ' lines=17  'Assessed min entropy:' lines=1
+  | Assessed min entropy: 5.8608937444852494
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[vvv]=0  stdout_lines=12  stderr_lines=0  per-estimator 'min entropy = ' lines=0  'Assessed min entropy:' lines=1
+  | Assessed min entropy: 5.8608937444852494
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -v -v -v /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[v_v_v]=0  stdout_lines=12  stderr_lines=0  per-estimator 'min entropy = ' lines=0  'Assessed min entropy:' lines=1
+  | Assessed min entropy: 5.8608937444852494
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvvv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[vvvv]=0  stdout_lines=12  stderr_lines=0  per-estimator 'min entropy = ' lines=0  'Assessed min entropy:' lines=1
+  | Assessed min entropy: 5.8608937444852494
+
+# JSON direction check: -o with -vv vs -vvv
+rc[vv -o]=0
+rc[vvv -o]=0
+json top-level keys (vv): ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+json commandline (vv):  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vv -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov05/vv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+json commandline (vvv): /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -vvv -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov05/vvv.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+json hAssessed vv=None vvv=None
+json testCases count vv=11 vvv=11
+json IDENTICAL after dropping commandline/dateTimeStamp/filename/outputFilename: True
+
+# where EA_ALLOW_SHORT_DATASET is read (does it touch verbose?)
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/shared/test_run_base.h:32:    // count was allowed to proceed by EA_ALLOW_SHORT_DATASET. Such a run is
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/shared/utils.h:286:// EA_ALLOW_SHORT_DATASET exists so that this repository's own test material,
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/shared/utils.h:299:	allow = getenv("EA_ALLOW_SHORT_DATASET");
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/shared/utils.h:303:		printf("*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.\n");
+
+# upstream provenance of the level design
+  commit 64056aa Joshua E. Hill Mon Feb 21 21:17:14 2022 +0000 -- in upstream/master: yes
+  upstream/master cpp/non_iid_main.cpp: 64:    int verbose = 1; //verbose 0 is for JSON output, 1 is the normal mode, 2 is the NIST tool verbose mode, and 3 is for extra verbose output
+  upstream/master cpp/shared/most_common.h: 29:	else if(verbose == 3) {
+  this tree  cpp/non_iid_main.cpp: 97:    int verbose = 1; //verbose 0 is for JSON output, 1 is the normal mode, 2 is the NIST tool verbose mode, and 3 is for extra verbose output
+
+# iid headers use >= 3 (a second convention inside the same tree)
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/iid/chi_square_tests.h:668:		} else if(verbose >= 3) {
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/iid/chi_square_tests.h:686:	} else if(verbose >= 3) {
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/iid/chi_square_tests.h:716:	} else if(verbose >= 3) {
+  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/iid/permutation_tests.h:617:	} else if (verbose >= 3) {
+
+# END

@@ -1,0 +1,15 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 10000,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o logs/verify/PROV-04-supp/w2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin 2",
+   "dateTimeStamp" : "20261108155714",
+   "errorClass" : "input",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: Incorrect bit width specification: Data (4) does not fit within described bit width: 2.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin",
+   "sha256" : "a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

@@ -1,0 +1,138 @@
+# PROV-21 REFUTE probe  2026-11-08 16:27:05 -0500  host=Darwin 25.6.0 arm64  shell=bash 3.2.57(1)-release
+# cwd=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-21-refute.d (so any file a probe creates lands here, not in logs/verify)
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (set for uniformity; no probe here reads a data file except where stated)
+# repo git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+# source newer than ea_non_iid binary: []
+
+== A. Re-run the reproducer's claim on the CURRENT binaries (same sha as README) ==
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -Z
+   [A1_noniid_version_Z] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid --version -Z
+   [A2_iid_version_Z] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart --version -Z
+   [A3_restart_version_Z] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='restart 1.1.8' stderr-bytes=0
+
+== B. Is -Z special, or is EVERYTHING after a leading --version ignored by design? ==
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version
+   [B1_version_alone] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -q
+   [B2_version_q] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+   [B3_version_operands] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -Z /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+   [B4_version_Z_operands] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version --bogus
+   [B5_version_longbogus] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q --version -Z
+   [B6_q_version_Z] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+
+== C. The control direction (unknown option FIRST) and the '--' separator ==
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z --version
+   [C1_Z_version] rc=255 banner=0 illegal-option(stderr)=1 usage-dump=1 stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]' stderr-bytes=83
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -- --version
+   [C2_dashdash_version] rc=255 banner=0 illegal-option(stderr)=0 usage-dump=1 stdout-line1='Error reading file.' stderr-bytes=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -- -Z
+   [C3_version_dashdash_Z] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0
+
+== D. Does any file get written by the A/B probes? (nothing assessed means nothing should) ==
+   files in cwd after probes (excluding *.out *.err *.rc): []
+
+== E. Convention check: the same ordering on GNU coreutils / other tools on this host ==
+$ /opt/homebrew/bin/gls --version --bogus
+   [E1_gls_version_bogus] rc=0 stdout-line1='ls (GNU coreutils) 9.11' stderr-line1=''
+$ /opt/homebrew/bin/gls --bogus --version
+   [E2_gls_bogus_version] rc=2 stdout-line1='' stderr-line1='/opt/homebrew/bin/gls: unrecognized option '--bogus''
+$ /opt/homebrew/bin/gls --version -Z
+   [E3_gls_version_Z] rc=0 stdout-line1='ls (GNU coreutils) 9.11' stderr-line1=''
+$ /opt/homebrew/bin/gdate --version -Z
+   [E4_gdate_version_Z] rc=0 stdout-line1='date (GNU coreutils) 9.11' stderr-line1=''
+$ /opt/homebrew/bin/gsort --version -Z
+   [E5_gsort_version_Z] rc=0 stdout-line1='sort (GNU coreutils) 9.11' stderr-line1=''
+$ /opt/homebrew/bin/bash --version -Z
+   [E6_bash_version_Z] rc=0 stdout-line1='GNU bash, version 5.3.15(1)-release (aarch64-apple-darwin25.4.0)' stderr-line1=''
+$ /opt/homebrew/bin/gawk --version -Z
+   [E7_gawk_version_Z] rc=1 stdout-line1='' stderr-line1='gawk: option requires an argument -- Z'
+$ /opt/homebrew/bin/python3 --version -Z
+   [E8_python_version_Z] rc=2 stdout-line1='' stderr-line1='Unknown option: -Z'
+$ /usr/bin/git --version -Z
+   [E9_git_version_Z] rc=129 stdout-line1='' stderr-line1='error: unknown switch `Z''
+$ /opt/homebrew/bin/ghead --version -Z
+   [E10_ghead_version_Z] rc=0 stdout-line1='head (GNU coreutils) 9.11' stderr-line1=''
+$ /opt/homebrew/bin/gtrue --version -Z
+   [E11_gtrue_version_Z] rc=0 stdout-line1='' stderr-line1=''
+
+# end of probe
+
+== F. ADJACENT, not PROV-21's claim: an unknown LONG option BEFORE --version (the other verifier's PROV-21-verify.log saw rc=0) ==
+   (the documented rule is 'whichever comes FIRST decides'; -Z first is refused (C1). Does --bogus first get refused too?)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --bogus --version
+   [F1_noniid_bogus_version] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-line1=''
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid --bogus --version
+   [F2_iid_bogus_version] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='iid 1.1.8' stderr-line1=''
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart --version-x --version
+   [F3_restart_bogus_version] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='restart 1.1.8' stderr-line1=''
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --bogus
+   [F4_noniid_bogus_alone] rc=255 banner=0 illegal-option(stderr)=1 usage-dump=1 stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]' stderr-line1='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- -'
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --bogus --version /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+   [F5_noniid_bogus_operands] rc=0 banner=1 illegal-option(stderr)=0 usage-dump=0 stdout-line1='non_iid 1.1.8' stderr-line1=''
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z --version /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+   [F6_noniid_dashZ_version_operands] rc=255 banner=0 illegal-option(stderr)=1 usage-dump=1 stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]' stderr-line1='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z'
+   files in cwd after F probes (excluding *.out *.err *.rc): []
+# end of F
+
+== G. ADJACENT (continued): can the long-unknown-first ordering leave a stale -o report beside exit 0 (the C14/A04 shape)? ==
+$ ea_non_iid --bogus -o G_stale.json --version rand8_short.bin 8
+   [G1] rc=0 stdout-line1='non_iid 1.1.8' stderr-bytes=0 G_stale.json sha before=3c8964b88355256003886ed2a6ef1dcd07e78ab26d24566ca499bcca22b7fa05 after=3c8964b88355256003886ed2a6ef1dcd07e78ab26d24566ca499bcca22b7fa05 UNCHANGED (stale report survives beside exit 0)
+   G_stale.json content now: {"MARKER":"pre-existing report, must not be read as success"}
+$ ea_non_iid -Z -o G_stale2.json --version rand8_short.bin 8   (control: the SHORT unknown spelling, same line)
+   [G2] rc=255 stdout-line1='Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]' stderr-line1='/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z' G_stale2.json sha before=3c8964b88355256003886ed2a6ef1dcd07e78ab26d24566ca499bcca22b7fa05 after=3c8964b88355256003886ed2a6ef1dcd07e78ab26d24566ca499bcca22b7fa05 UNCHANGED
+   G_stale2.json content now: {"MARKER":"pre-existing report, must not be read as success"}
+# end of G
+
+== VERDICT (REFUTE lens) ==
+PROV-21 claim: `--version -Z` prints the banner and exits 0; "the unknown option is never reported".
+MEASUREMENT: REAL. Reproduces on the current binaries (A1-A3), whose sha256 equal the README's; no cpp/ source is
+  newer than the binaries and `git diff 1151b22..HEAD -- cpp/` is empty, so the binary is not stale. Not a shell
+  artefact: the reproducer is bash with quoted argv and file-captured rc. Not escape-dependent: no data is read before
+  the version gate (the other verifier's `env -u EA_ALLOW_SHORT_DATASET` runs agree).
+DEFECT CLAIM: REFUTED -- it is the documented, intended rule, stated in four places, none quoted by expected.txt:
+  1. cpp/shared/TestRunUtils.h:316-317  "Whichever comes FIRST decides: a "--version", an unrecognised option, or the
+     "--" separator."  (expected.txt quotes only the sentence AFTER this one.)
+  2. commit b63aff1 (F04 repair) message: "Whichever comes first -- a --version or an unrecognised option -- decides."
+  3. audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md OC-80 (~l.7217-7227): "A legitimate --version request
+     contains no invalid options, so this costs nothing: whichever comes first ... decides."
+  4. cpp/selftest/regression-option-order.sh:177-179 (comment to the `-Z --version` pair test).
+  And the analysis phase itself (logs/analysis/cli-build.md:132) filed `version-then-Z rc=0` under "documented option".
+ATTRIBUTION WRONG: -Z is not the cause. B1-B6 + C3: `--version -q`, `--version <file> 8`, `--version -Z <file> 8`,
+  `--version --bogus`, `-q --version -Z`, `--version -- -Z` all -> banner, rc 0. A leading --version IS the request;
+  everything after it is not parsed. That is also GNU coreutils' convention on this host (E1-E5, E10-E11:
+  `gls --version --bogus` rc 0 vs `gls --bogus --version` rc 2) and bash's (E6). python3/git/gawk differ (E7-E9) --
+  the convention is not universal, but the fork chose and documented the coreutils one.
+F04 CLASS DOES NOT APPLY: OC-80 defines it as "the operator supplied operands, so they asked for an assessment and got
+  success with nothing done". `--version -Z` has no operand, no -o, no report path; D shows no file is created.
+  The README itself concedes "the operator did ask for the version" and "Harmless in intent".
+DIRECTION: neutral. No figure, no report, no write. Severity by brief: NOT-A-DEFECT (not even LOW).
+NOT PINNED: no regression asserts `--version -Z` -> 0 (only `--version` alone -> 0, `-Z --version` -> fail, and a
+  late --version -> refused). The rule is documented, not tested; that is a test-coverage note, not a defect.
+
+== ADJACENT CANDIDATE, NOT PROV-21 (hand to the orchestrator for its own ID) ==
+The documented rule "whichever comes first decides" is implemented for the SHORT unknown spelling only.
+scanArgs (TestRunUtils.h:185-188) treats every `--long` element as "a long option" and `continue`s without setting
+rejectAt, so an unknown LONG option BEFORE --version does not decide:
+  F1-F3  `--bogus --version` (and `--version-x --version`)  -> rc 0, banner, all three tools
+  F4     `--bogus` alone                                      -> rc 255, "illegal option -- -" (getopt rejects it)
+  C1/F6  `-Z --version [...]`                                 -> rc 255 (the short spelling obeys the rule)
+  F5     `--bogus --version <file> 8`                         -> rc 0, banner, NOTHING ASSESSED, operands present
+  G1     `--bogus -o G_stale.json --version <file> 8`         -> rc 0, banner, pre-existing G_stale.json UNCHANGED:
+         exit 0 beside a stale report -- the A04/F04/C14 shape OC-80 repaired for `-Z` ("the same class, through an
+         invalid option"), open through the long spelling. The b63aff1 controls exercised `-Z` only.
+  G2     control, `-Z -o G_stale2.json --version <file> 8`    -> rc 255, file unchanged (OC-51's documented
+         "argument-parse failures above the claim" member: nonzero exit, consumer not misled).
+Direction neutral (no figure). Brief scale: LOW (exit-status-channel fail-open, no report written; the repo rated the
+identical `-Z` shape a repairable defect, F04). Needs no data, no escape. Darwin arm64 only; the mechanism is in the
+prescan, not in getopt, so platform-independent by construction but NOT measured elsewhere.
+Housekeeping: logs/verify/--version (a C14 placeholder JSON) was created by the other verifier's `-o --version` probe
+run from logs/verify; not mine, left in place.

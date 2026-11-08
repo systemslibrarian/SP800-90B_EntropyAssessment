@@ -1,0 +1,195 @@
+# PROV-23 REFUTE probe  2026-11-08 16:34:13 -0500  host=Darwin 25.6.0 arm64  verifier=independent parser (not the author's run.sh)
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every run below is NON-COMPLIANT (short dataset); nothing over 20,000 samples; no build
+# repo git=e415c0e branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (README claims 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349)
+input sha256 8414daeefef2ee495b135f83d6d210223404b1f5f1dfce303e5019d1e89644d3  a_fair10k.bin  bytes=10000
+input sha256 da1e50f2bf3dac227a6abf27f9fb8842f0635dd1b46c750b1c378e7287cba549  b_fair20k_w1.bin  bytes=20000
+input sha256 ec2837b9052c59b5bed67eec7869c2d471594c127bf060fa4ef395ec8d5e255c  c_unif20k_w8.bin  bytes=20000
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/a.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/a_fair10k.bin 1
+rc=0  stdout=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/a.out (3818 bytes) stderr=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/a.err (0 bytes)
+  console | 21:Chi square tests: Passed
+  console | 25:Length of longest repeated substring test: Passed
+  console | 70:IID permutation tests: Passed
+  console |                 statistic  C[i][0]  C[i][1]  C[i][2]
+  console | ----------------------------------------------------
+  console |                 excursion       8       0       6
+  console |        numDirectionalRuns       8       0       6
+  console |        lenDirectionalRuns       4       4       2
+  console |     numIncreasesDecreases      11       1       5
+  console |             numRunsMedian       6       0       8
+  console |             lenRunsMedian       2       4       8
+  console |              avgCollision       6       0      16
+  console |              maxCollision       7       1       5
+  console |            periodicity(1)      16       0       6
+  console |            periodicity(2)      12       0       6
+  console |            periodicity(8)       6       0       7
+  console |           periodicity(16)       6       0      10
+  console |           periodicity(32)       5       1       5
+  console |             covariance(1)      27       0       6
+  console |             covariance(2)       6       0       6
+  console |             covariance(8)       6       0      17
+  console |            covariance(16)       6       0       7
+  console |            covariance(32)     146       0       6
+  console |               compression       6       0       6
+  console | (* denotes failed test)
+  json top-level keys: IID,assessedSampleCount,assessmentComplete,assessmentMode,bitsPerSymbol,bitsPerSymbolInferred,commandline,dateTimeStamp,errorLevel,filename,nonCompliantShortDataset,sha256,sha256Scope,testCases,toolVersion,type
+  json errorLevel=0 IID=True
+  json testCases=1 ; keys per case: binary,hAssessed,hOriginal,passedChiSquareTests,passedIidPermutationTests,passedLongestRepeatedSubstringTest,permutationTestResults,ranChiSquareTests,ranIidPermutationTests,ranLongestRepeatedSubstringTest,rawMean,testCaseDesc,translatedSymbolMedian
+  json ALL keys (50): IID,assessedSampleCount,assessmentComplete,assessmentMode,avgCollision,binary,bitsPerSymbol,bitsPerSymbolInferred,commandline,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,dateTimeStamp,errorLevel,excursion,filename,hAssessed,hOriginal,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,nonCompliantShortDataset,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,passedChiSquareTests,passedIidPermutationTests,passedLongestRepeatedSubstringTest,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8,permutationTestResults,ranChiSquareTests,ranIidPermutationTests,ranLongestRepeatedSubstringTest,rawMean,sha256,sha256Scope,testCaseDesc,testCases,toolVersion,translatedSymbolMedian,type
+  permutationTestResults: 3 objects; per-object keys: avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8 | avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8 | avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8
+  avgCollision           C0=     6 C1=     0 C2=    16 sum=    22  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  compression            C0=     6 C1=     0 C2=     6 sum=    12  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance1            C0=    27 C1=     0 C2=     6 sum=    33  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance16           C0=     6 C1=     0 C2=     7 sum=    13  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance2            C0=     6 C1=     0 C2=     6 sum=    12  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance32           C0=   146 C1=     0 C2=     6 sum=   152  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance8            C0=     6 C1=     0 C2=    17 sum=    23  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  excursion              C0=     8 C1=     0 C2=     6 sum=    14  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  lenDirectionalRuns     C0=     4 C1=     4 C2=     2 sum=    10  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  lenRunsMedian          C0=     2 C1=     4 C2=     8 sum=    14  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  maxCollision           C0=     7 C1=     1 C2=     5 sum=    13  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numDirectionalRuns     C0=     8 C1=     0 C2=     6 sum=    14  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numIncreasesDecreases  C0=    11 C1=     1 C2=     5 sum=    17  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numRunsMedian          C0=     6 C1=     0 C2=     8 sum=    14  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity1           C0=    16 C1=     0 C2=     6 sum=    22  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity16          C0=     6 C1=     0 C2=    10 sum=    16  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity2           C0=    12 C1=     0 C2=     6 sum=    18  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity32          C0=     5 C1=     1 C2=     5 sum=    11  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity8           C0=     6 C1=     0 C2=     7 sum=    13  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  SUMMARY: statistics=19 stopped=19 (signature OK=19 BAD=0) full=0 (of which fail the pass condition=0)
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/b.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/b_fair20k_w1.bin 1
+rc=0  stdout=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/b.out (3829 bytes) stderr=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/b.err (0 bytes)
+  console | 21:Chi square tests: Passed
+  console | 25:Length of longest repeated substring test: Passed
+  console | 70:IID permutation tests: Passed
+  console |                 statistic  C[i][0]  C[i][1]  C[i][2]
+  console | ----------------------------------------------------
+  console |                 excursion      13       0       6
+  console |        numDirectionalRuns       5       1      33
+  console |        lenDirectionalRuns       5       4       2
+  console |     numIncreasesDecreases     117       2       4
+  console |             numRunsMedian       6       0       8
+  console |             lenRunsMedian       7       3       3
+  console |              avgCollision       6       0      57
+  console |              maxCollision      10       0       6
+  console |            periodicity(1)     117       0       6
+  console |            periodicity(2)       5       1      15
+  console |            periodicity(8)      74       1       5
+  console |           periodicity(16)       6       0       6
+  console |           periodicity(32)      23       0       6
+  console |             covariance(1)       9       0       6
+  console |             covariance(2)       6       0      10
+  console |             covariance(8)      17       0       6
+  console |            covariance(16)      17       0       6
+  console |            covariance(32)      48       0       6
+  console |               compression      12       4       2
+  console | (* denotes failed test)
+  json top-level keys: IID,assessedSampleCount,assessmentComplete,assessmentMode,bitsPerSymbol,bitsPerSymbolInferred,commandline,dateTimeStamp,errorLevel,filename,nonCompliantShortDataset,sha256,sha256Scope,testCases,toolVersion,type
+  json errorLevel=0 IID=True
+  json testCases=1 ; keys per case: binary,hAssessed,hOriginal,passedChiSquareTests,passedIidPermutationTests,passedLongestRepeatedSubstringTest,permutationTestResults,ranChiSquareTests,ranIidPermutationTests,ranLongestRepeatedSubstringTest,rawMean,testCaseDesc,translatedSymbolMedian
+  json ALL keys (50): IID,assessedSampleCount,assessmentComplete,assessmentMode,avgCollision,binary,bitsPerSymbol,bitsPerSymbolInferred,commandline,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,dateTimeStamp,errorLevel,excursion,filename,hAssessed,hOriginal,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,nonCompliantShortDataset,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,passedChiSquareTests,passedIidPermutationTests,passedLongestRepeatedSubstringTest,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8,permutationTestResults,ranChiSquareTests,ranIidPermutationTests,ranLongestRepeatedSubstringTest,rawMean,sha256,sha256Scope,testCaseDesc,testCases,toolVersion,translatedSymbolMedian,type
+  permutationTestResults: 3 objects; per-object keys: avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8 | avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8 | avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8
+  avgCollision           C0=     6 C1=     0 C2=    57 sum=    63  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  compression            C0=    12 C1=     4 C2=     2 sum=    18  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance1            C0=     9 C1=     0 C2=     6 sum=    15  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance16           C0=    17 C1=     0 C2=     6 sum=    23  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance2            C0=     6 C1=     0 C2=    10 sum=    16  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance32           C0=    48 C1=     0 C2=     6 sum=    54  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance8            C0=    17 C1=     0 C2=     6 sum=    23  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  excursion              C0=    13 C1=     0 C2=     6 sum=    19  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  lenDirectionalRuns     C0=     5 C1=     4 C2=     2 sum=    11  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  lenRunsMedian          C0=     7 C1=     3 C2=     3 sum=    13  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  maxCollision           C0=    10 C1=     0 C2=     6 sum=    16  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numDirectionalRuns     C0=     5 C1=     1 C2=    33 sum=    39  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numIncreasesDecreases  C0=   117 C1=     2 C2=     4 sum=   123  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numRunsMedian          C0=     6 C1=     0 C2=     8 sum=    14  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity1           C0=   117 C1=     0 C2=     6 sum=   123  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity16          C0=     6 C1=     0 C2=     6 sum=    12  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity2           C0=     5 C1=     1 C2=    15 sum=    21  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity32          C0=    23 C1=     0 C2=     6 sum=    29  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity8           C0=    74 C1=     1 C2=     5 sum=    80  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  SUMMARY: statistics=19 stopped=19 (signature OK=19 BAD=0) full=0 (of which fail the pass condition=0)
+
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/c.json /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/c_unif20k_w8.bin 8
+rc=0  stdout=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/c.out (4213 bytes) stderr=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/prov23/c.err (0 bytes)
+  console | 26:Chi square tests: Passed
+  console | 30:Length of longest repeated substring test: Passed
+  console | 75:IID permutation tests: Passed
+  console |                 statistic  C[i][0]  C[i][1]  C[i][2]
+  console | ----------------------------------------------------
+  console |                 excursion       6       0     236
+  console |        numDirectionalRuns       6       0      22
+  console |        lenDirectionalRuns      14       6       0
+  console |     numIncreasesDecreases     116       1       5
+  console |             numRunsMedian      24       1       5
+  console |             lenRunsMedian       5       1      47
+  console |              avgCollision       6       0      10
+  console |              maxCollision      23       1       5
+  console |            periodicity(1)       5       1      17
+  console |            periodicity(2)       4       2      14
+  console |            periodicity(8)      19       1       5
+  console |           periodicity(16)       5       1       5
+  console |           periodicity(32)       5       1      17
+  console |             covariance(1)      13       0       6
+  console |             covariance(2)       6       0      82
+  console |             covariance(8)       7       0       6
+  console |            covariance(16)       6       0      43
+  console |            covariance(32)       6       0       6
+  console |               compression       6       0      45
+  console | (* denotes failed test)
+  json top-level keys: IID,assessedSampleCount,assessmentComplete,assessmentMode,bitsPerSymbol,bitsPerSymbolInferred,commandline,dateTimeStamp,errorLevel,filename,nonCompliantShortDataset,sha256,sha256Scope,testCases,toolVersion,type
+  json errorLevel=0 IID=True
+  json testCases=1 ; keys per case: hAssessed,hBitstring,hOriginal,passedChiSquareTests,passedIidPermutationTests,passedLongestRepeatedSubstringTest,permutationTestResults,ranChiSquareTests,ranIidPermutationTests,ranLongestRepeatedSubstringTest,rawMean,testCaseDesc,translatedSymbolMedian
+  json ALL keys (50): IID,assessedSampleCount,assessmentComplete,assessmentMode,avgCollision,bitsPerSymbol,bitsPerSymbolInferred,commandline,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,dateTimeStamp,errorLevel,excursion,filename,hAssessed,hBitstring,hOriginal,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,nonCompliantShortDataset,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,passedChiSquareTests,passedIidPermutationTests,passedLongestRepeatedSubstringTest,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8,permutationTestResults,ranChiSquareTests,ranIidPermutationTests,ranLongestRepeatedSubstringTest,rawMean,sha256,sha256Scope,testCaseDesc,testCases,toolVersion,translatedSymbolMedian,type
+  permutationTestResults: 3 objects; per-object keys: avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8 | avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8 | avgCollision,compression,covariance1,covariance16,covariance2,covariance32,covariance8,dataLayout,excursion,iteration,lenDirectionalRuns,lenRunsMedian,maxCollision,numDirectionalRuns,numIncreasesDecreases,numRunsMedian,periodicity1,periodicity16,periodicity2,periodicity32,periodicity8
+  avgCollision           C0=     6 C1=     0 C2=    10 sum=    16  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  compression            C0=     6 C1=     0 C2=    45 sum=    51  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance1            C0=    13 C1=     0 C2=     6 sum=    19  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance16           C0=     6 C1=     0 C2=    43 sum=    49  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance2            C0=     6 C1=     0 C2=    82 sum=    88  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance32           C0=     6 C1=     0 C2=     6 sum=    12  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  covariance8            C0=     7 C1=     0 C2=     6 sum=    13  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  excursion              C0=     6 C1=     0 C2=   236 sum=   242  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  lenDirectionalRuns     C0=    14 C1=     6 C2=     0 sum=    20  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  lenRunsMedian          C0=     5 C1=     1 C2=    47 sum=    53  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  maxCollision           C0=    23 C1=     1 C2=     5 sum=    29  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numDirectionalRuns     C0=     6 C1=     0 C2=    22 sum=    28  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numIncreasesDecreases  C0=   116 C1=     1 C2=     5 sum=   122  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  numRunsMedian          C0=    24 C1=     1 C2=     5 sum=    30  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity1           C0=     5 C1=     1 C2=    17 sum=    23  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity16          C0=     5 C1=     1 C2=     5 sum=    11  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity2           C0=     4 C1=     2 C2=    14 sum=    20  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity32          C0=     5 C1=     1 C2=    17 sum=    23  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  periodicity8           C0=    19 C1=     1 C2=     5 sum=    25  STOPPED sig=OK min(C0+C1,C1+C2)=6
+  SUMMARY: statistics=19 stopped=19 (signature OK=19 BAD=0) full=0 (of which fail the pass condition=0)
+
+# interpretation key: STOPPED sig=OK means the counts are exactly what permutation_tests.h:672-674 produces at the first permutation where both pass sums exceed 5;
+#   a parsing artefact or a stale binary could not produce min(C0+C1,C1+C2)==6 on every stopped row. FULL-10000 rows must fail the pass condition (else they would have stopped).
+# done 2026-11-08 16:34:16 -0500
+
+# ---- provenance evidence (verifier) ----
+# git blame, the stop rule (cpp/iid/permutation_tests.h:672-674):
+c34d4911 (Joshua E. Hill 2018-10-04 672) 							if((C[j][0] + C[j][1] > 5) && (C[j][1] + C[j][2] > 5)) {
+c34d4911 (Joshua E. Hill 2018-10-04 673) 								test_status[j] = false;
+c34d4911 (Joshua E. Hill 2018-10-04 674) 							}
+# the upstream commit that introduced it:
+#   c34d491 Joshua E. Hill 2018-10-04 -- Use OpenMP features to do permutation testing more efficiently. Short circuit each test as they necessarily pass. Closes usnistgov/SP800-90B_EntropyAssessment#86, closes usnistgov/SP800-90B_EntropyAssessment#55.
+# upstream/master today (same rule, same result class, no denominator field):
+#   upstream permutation_tests.h:669:							if((C[j][0] + C[j][1] > 5) && (C[j][1] + C[j][2] > 5)) {
+#   upstream permutation_test_result.h denominator-like fields: 0
+# git blame, result class fields (cpp/iid/permutation_test_result.h:12-13):
+25fbb54b (Paul Clark 2026-10-09 12)     int iteration = -1;
+25fbb54b (Paul Clark 2026-10-09 13)     string dataLayout;
+# prior documentation grep (NOTICE, FORK-DIVERGENCE-AND-TRUST.md, audits/2026-09-30/FINDINGS-TRACKER.md, CLOSING-INVENTORY.md) for early termination / partial counts / denominator:
+#   hits: audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md:0
+#   hits: NOTICE:0
+#   hits: audits/2026-09-30/FINDINGS-TRACKER.md:0
+#   hits: FORK-DIVERGENCE-AND-TRUST.md:0
+# the one prior record touching this field's naming (Info):
+#   CLUSTERS.md:434:| `output-automation-contracts-15` | Info | `output-automation-contracts` | yes | misreport | The JSON calls the permutation-test counter index "iteration" where the console correctly labels the same three numbers C[i][0..2]; ea_iid's single test case has an empty testCaseDesc; retMinEntropy is never emitted |
+# in-repo consumers of permutationTestResults outside cpp/ and the audits (tools/, repairs/, bin/):
+#   repairs/2026-10-09-ind-02/period-two-result.json
+#   (end of list)
+# done 2026-11-08 16:34:16 -0500

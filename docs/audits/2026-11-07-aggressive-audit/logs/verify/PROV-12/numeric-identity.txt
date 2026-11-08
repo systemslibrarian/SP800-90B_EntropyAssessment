@@ -1,0 +1,7 @@
+control keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+control Overall (labelled): {"dataWordSize": 1.0, "hAssessed": 0.6117162047939451, "hOriginal": 0.6117162047939451, "testCaseDesc": "Overall"}
+arm1_80Zq.json identical to control minus commandline/dateTimeStamp: True
+arm2_FFFEq.json identical to control minus commandline/dateTimeStamp: True
+arm3_C2_quote_q.json identical to control minus commandline/dateTimeStamp: True
+arm4_E0_quote_Zq.json identical to control minus commandline/dateTimeStamp: True
+arm5.json identical to control minus commandline/dateTimeStamp: True

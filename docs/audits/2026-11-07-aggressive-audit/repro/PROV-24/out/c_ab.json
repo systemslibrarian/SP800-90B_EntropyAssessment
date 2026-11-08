@@ -6,7 +6,7 @@
    "bitsPerSymbol" : 2,
    "bitsPerSymbolInferred" : true,
    "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/c_ab.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-24/out/ex100.bin",
-   "dateTimeStamp" : "20261107215628",
+   "dateTimeStamp" : "20261108163417",
    "errorClass" : "statistical",
    "errorLevel" : 2,
    "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",

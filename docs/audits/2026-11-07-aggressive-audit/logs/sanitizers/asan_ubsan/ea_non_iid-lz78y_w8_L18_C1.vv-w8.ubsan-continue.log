@@ -1,0 +1,137 @@
+## stage: c
+## variant: asan_ubsan
+## tool: ea_non_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid
+## binary_sha256: c6350c1d3c9434402122abc54ef242362c285bda0e50c24e957d54f377d52547
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lz78y_w8_L18_C1.bin
+## input_sha256: 9a1249e43af30c2304e8ef0ee7c50128febca453b732b79d6a4d704e69cf677d
+## input_bytes: 18
+## operands: 8
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: name-declared width 8
+## timeout_seconds: 300
+## threads: 2
+## start: 2026-11-08T21:37:30Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lz78y_w8_L18_C1.bin 8
+## rerun_of: ea_non_iid-lz78y_w8_L18_C1.vv-w8.log
+## rerun_reason: first report was a recoverable UBSan class; halt_on_error=0 to see the rest
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=0:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lz78y_w8_L18_C1.bin 8
+## --- tool output ---
+Warning: Symbols appear to be narrower than described.
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/lz78y_w8_L18_C1.bin' (SHA-256 hash 9a1249e43af30c2304e8ef0ee7c50128febca453b732b79d6a4d704e69cf677d of assessed bytes)
+Loaded 18 samples of 3 distinct 8-bit-wide symbols
+
+*** Warning: dataset contains 18 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary Symbols: 144
+
+Symbols have been translated.
+Bitstring Most Common Value Estimate: Mode count = 127
+Bitstring Most Common Value Estimate: p-hat = 0.88194444444444442
+Bitstring Most Common Value Estimate: p_u = 0.95144893907548234
+Bitstring Most Common Value Estimate: min entropy = 0.071801860688884542
+Literal Most Common Value Estimate: Mode count = 16
+Literal Most Common Value Estimate: p-hat = 0.88888888888888884
+Literal Most Common Value Estimate: p_u = 1
+Literal Most Common Value Estimate: min entropy = -0
+Bitstring Collision Estimate: v = 63
+Bitstring Collision Estimate: Sum t_i = 142
+Bitstring Collision Estimate: X-bar = 2.253968253968254
+Bitstring Collision Estimate: sigma-hat = 0.43877593548026267
+Bitstring Collision Estimate: X-bar' = 2.1115749373609107
+Bitstring Collision Estimate: Found p.
+Bitstring Collision Estimate: p = 0.94069550862193352
+Bitstring Collision Estimate: min entropy = 0.088200278723677999
+Bitstring Markov Estimate: P_0 = 0.88194444444444442
+Bitstring Markov Estimate: P_1 = 0.11805555555555558
+Bitstring Markov Estimate: P_{0,0} = 0.86614173228346458
+Bitstring Markov Estimate: P_{0,1} = 0.13385826771653542
+Bitstring Markov Estimate: P_{1,0} = 1
+Bitstring Markov Estimate: P_{1,1} = 0
+Bitstring Markov Estimate: p-hat_max = 1.0452969484331986e-08
+Bitstring Markov Estimate: min entropy = 0.2071211868523706
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+Bitstring t-Tuple Estimate: t = 6
+Bitstring t-Tuple Estimate: p-hat_max = 0.8819444444444444197728
+Bitstring t-Tuple Estimate: p_u = 0.9514489390754823361362
+Bitstring t-Tuple Estimate: min entropy = 0.071801860688884542
+Bitstring LRS Estimate: u = 7
+Bitstring LRS Estimate: v = 112
+Bitstring LRS Estimate: p-hat = 0.9619929878786027677151
+Bitstring LRS Estimate: p_u = 1
+Bitstring LRS Estimate: min entropy = -0
+t-Tuple Estimate: No strings are repeated 35 times. t-Tuple estimate failed.
+Literal LRS Estimate: u = 1
+Literal LRS Estimate: v = 14
+Literal LRS Estimate: p-hat = 0.919071751193355934717
+Literal LRS Estimate: p_u = 1
+Literal LRS Estimate: min entropy = -0
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+Bitstring Lag Prediction Estimate: C = 126
+Bitstring Lag Prediction Estimate: r = 88
+Bitstring Lag Prediction Estimate: N = 143
+Bitstring Lag Prediction Estimate: P_global = 0.88111888111888115
+Bitstring Lag Prediction Estimate: P_global' = 0.95107836601728268
+Bitstring Lag Prediction Estimate: P_local can't change the result.
+Bitstring Lag Prediction Estimate: min entropy = 0.07236387514058952
+Literal Lag Prediction Estimate: C = 12
+Literal Lag Prediction Estimate: r = 13
+Literal Lag Prediction Estimate: N = 17
+Literal Lag Prediction Estimate: P_global = 0.70588235294117652
+Literal Lag Prediction Estimate: P_global' = 0.9992983528034689
+Literal Lag Prediction Estimate: P_local can't change the result.
+Literal Lag Prediction Estimate: min entropy = 0.0010126182228156395
+Bitstring MultiMMC Prediction Estimate: C = 124
+Bitstring MultiMMC Prediction Estimate: r = 14
+Bitstring MultiMMC Prediction Estimate: N = 142
+Bitstring MultiMMC Prediction Estimate: P_global = 0.87323943661971826
+Bitstring MultiMMC Prediction Estimate: P_global' = 0.94541102674112654
+Bitstring MultiMMC Prediction Estimate: P_local can't change the result.
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.080986403311206129
+Literal MultiMshared/utils.h:1229:92: runtime error: division by zero
+    #0 0x0001020b51ec in predictionEstimate(long, long, long, long, char const*, int, char const*) utils.h:1229
+    #1 0x0001020c457c in LZ78Y_test(unsigned char*, long, int, int, char const*) lz78y_test.h:209
+    #2 0x0001020ccbc0 in main non_iid_main.cpp:619
+    #3 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: float-divide-by-zero shared/utils.h:1229:92 
+MC Prediction Estimate: C = 12
+Literal MultiMMC Prediction Estimate: r = 13
+Literal MultiMMC Prediction Estimate: N = 16
+Literal MultiMMC Prediction Estimate: P_global = 0.75
+Literal MultiMMC Prediction Estimate: P_global' = 1
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = -0
+Bitstring LZ78Y Prediction Estimate: C = 110
+Bitstring LZ78Y Prediction Estimate: r = 9
+Bitstring LZ78Y Prediction Estimate: N = 127
+Bitstring LZ78Y Prediction Estimate: P_global = 0.86614173228346458
+Bitstring LZ78Y Prediction Estimate: P_global' = 0.9442773211112877
+Bitstring LZ78Y Prediction Estimate: P_local can't change the result.
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.082717473609744019
+Literal LZ78Y Prediction Estimate: C = 1
+Literal LZ78Y Prediction Estimate: r = 2
+Literal LZ78Y Prediction Estimate: N = 1
+Literal LZ78Y Prediction Estimate: P_global = 1
+Literal LZ78Y Prediction Estimate: P_global' = 1
+Literal LZ78Y Prediction Estimate: P_local can't change the result.
+Literal LZ78Y Prediction Estimate: min entropy = -0
+H_bitstring = -0
+H_bitstring Per Symbol = -0
+H_original = -0
+Assessed min entropy: -0
+## --- end of tool output ---
+## exit: 0
+## wall_seconds: 0
+## end: 2026-11-08T21:37:30Z
+## sanitizer_report: yes
+## sanitizer_report_count: 1
+## first_report_line: Literal MultiMshared/utils.h:1229:92: runtime error: division by zero
+## tool_outcome: SANITIZER

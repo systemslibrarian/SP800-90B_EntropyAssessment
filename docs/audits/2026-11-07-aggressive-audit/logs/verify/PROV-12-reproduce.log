@@ -1,0 +1,139 @@
+# PROV-12 verifier reproduce log  (runs at 2026-11-08 16:08:15/16 -0500; header rebuilt from the captured files after a stat-flag mistake)  host=Darwin 25.6.0 arm64
+# lens REPRODUCE: independent re-run of repro/PROV-12/run.sh and control.sh by the verifier (not the author)
+# repo HEAD=834ffeb branch=audit/2026-11-07   (author ran at 1151b22; binary unchanged, see sha256)
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+# fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  bin/rand1_short.bin  size=10000 bytes = 10,000 samples at 1 bit/symbol (under the 20,000 cap)
+# env for every tool run: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (exported by repro/_lib.sh) -- NON-COMPLIANT short-dataset runs
+# author's originals preserved at logs/verify/PROV-12-author-originals/ before anything was overwritten
+
+===== [1] bash repro/PROV-12/run.sh  (captured: logs/verify/PROV-12-run.stdout / .stderr / .rc) =====
+# PROV-12 observed.txt  2026-11-08 16:08:15 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin
+argv[0] bytes (hex): 65615f805a71   and   65615ffffe71
+$ ( exec -a <ea_ 80 5a 71> /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o out/u1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 )
+rc[argv0-80Zq]=0 errorLevel=0
+$ ( exec -a <ea_ ff fe 71> /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o out/u2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 )
+rc[argv0-fffeq]=0 errorLevel=0
+raw bytes of the commandline token in u1.json: 22636f6d6d616e646c696e6522203a202265615f5c7566666664710a
+argv[0] sent  : ea_ 80 'Z' 'q'   -> commandline token 0 = 'ea_�q'  (codepoints U+0065 U+0061 U+005F U+FFFD U+0071)
+argv[0] sent  : ea_ FF FE 'q'    -> commandline token 0 = 'ea_��q'  (codepoints U+0065 U+0061 U+005F U+FFFD U+FFFD U+0071)
+'Z' swallowed: True ; FF FE -> two U+FFFD: True
+DEFECT
+RESULT: PASS -- a stray 0x80 continuation byte in argv swallows the following ASCII 'Z' in the JSON commandline (valid JSON, exit 0, no diagnostic)
+--- run.sh stderr (0 bytes):
+run.sh exit=0
+
+===== [2] bash repro/PROV-12/control.sh  (captured: logs/verify/PROV-12-control.stdout / .stderr / .rc) =====
+# PROV-12 control.txt  2026-11-08 16:08:16 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+$ ( exec -a 'ea_Zq' /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o out/c_u.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1 )
+rc=0 commandline token 0 = 'ea_Zq'
+RESULT: CONTROL-OK -- valid ASCII argv[0] round-trips exactly; the lost 'Z' in run.sh is the transcoder's doing
+--- control.sh stderr (0 bytes):
+control.sh exit=0
+
+===== [3] independent checks on COPIES of the artefacts written by [1] and [2] (copied to logs/verify/PROV-12-out/) =====
+[u1] tool rc=0 stderr_bytes=0 stdout_bytes=241 json_bytes=2173
+[u2] tool rc=0 stderr_bytes=0 stdout_bytes=241 json_bytes=2179
+[c_u] tool rc=0 stderr_bytes=0 stdout_bytes=241 json_bytes=2169
+--- u1.out (tool stdout under -q), verbatim:
+
+*** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+--- JSON validity and fields via python json.load (labelled reads):
+[u1] valid JSON; errorLevel=0 errorMsg='<absent>' filename='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'
+[u1] sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 assessedSampleCount=10000
+[u1] commandline='ea_�q -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-12/out/u1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1'
+[u1] token0 codepoints: U+0065 U+0061 U+005F U+FFFD U+0071   tokens 1..: ['-q', '-o', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-12/out/u1.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[u2] valid JSON; errorLevel=0 errorMsg='<absent>' filename='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'
+[u2] sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 assessedSampleCount=10000
+[u2] commandline='ea_��q -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-12/out/u2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1'
+[u2] token0 codepoints: U+0065 U+0061 U+005F U+FFFD U+FFFD U+0071   tokens 1..: ['-q', '-o', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-12/out/u2.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+[c_u] valid JSON; errorLevel=0 errorMsg='<absent>' filename='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin'
+[c_u] sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 assessedSampleCount=10000
+[c_u] commandline='ea_Zq -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-12/out/c_u.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1'
+[c_u] token0 codepoints: U+0065 U+0061 U+005F U+005A U+0071   tokens 1..: ['-q', '-o', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-12/out/c_u.json', '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin', '1']
+u1 vs u2: keys differing outside ['commandline', 'dateTimeStamp'] -> NONE
+u1 vs c_u: keys differing outside ['commandline', 'dateTimeStamp'] -> NONE
+--- raw bytes of the "commandline" line in each JSON (grep by key, xxd):
+[u1]
+00000000: 2020 2022 636f 6d6d 616e 646c 696e 6522     "commandline"
+00000010: 203a 2022 6561 5f5c 7566 6666 6471 202d   : "ea_\ufffdq -
+00000020: 7120 2d6f 202f 5573 6572 732f 676d 6361  q -o /Users/gmca
+00000030: 732f 7265 706f 732f 5350 3830 302d 3930  s/repos/SP800-90
+00000040: 425f 456e 7472 6f70 7941 7373 6573 736d  B_EntropyAssessm
+00000050: 656e 742f 646f 6373 2f61 7564 6974 732f  ent/docs/audits/
+00000060: 3230 3236 2d31 312d 3037 2d61 6767 7265  2026-11-07-aggre
+00000070: 7373 6976 652d 6175 6469 742f 7265 7072  ssive-audit/repr
+00000080: 6f2f 5052 4f56 2d31 322f 6f75 742f 7531  o/PROV-12/out/u1
+00000090: 2e6a 736f 6e20 2f55 7365 7273 2f67 6d63  .json /Users/gmc
+000000a0: 6173 2f72 6570 6f73 2f53 5038 3030 2d39  as/repos/SP800-9
+000000b0: 3042 5f45 6e74 726f 7079 4173 7365 7373  0B_EntropyAssess
+000000c0: 6d65 6e74 2f62 696e 2f72 616e 6431 5f73  ment/bin/rand1_s
+000000d0: 686f 7274 2e62 696e 2031 222c 0a         hort.bin 1",.
+[u2]
+00000000: 2020 2022 636f 6d6d 616e 646c 696e 6522     "commandline"
+00000010: 203a 2022 6561 5f5c 7566 6666 645c 7566   : "ea_\ufffd\uf
+00000020: 6666 6471 202d 7120 2d6f 202f 5573 6572  ffdq -q -o /User
+00000030: 732f 676d 6361 732f 7265 706f 732f 5350  s/gmcas/repos/SP
+00000040: 3830 302d 3930 425f 456e 7472 6f70 7941  800-90B_EntropyA
+00000050: 7373 6573 736d 656e 742f 646f 6373 2f61  ssessment/docs/a
+00000060: 7564 6974 732f 3230 3236 2d31 312d 3037  udits/2026-11-07
+00000070: 2d61 6767 7265 7373 6976 652d 6175 6469  -aggressive-audi
+00000080: 742f 7265 7072 6f2f 5052 4f56 2d31 322f  t/repro/PROV-12/
+00000090: 6f75 742f 7532 2e6a 736f 6e20 2f55 7365  out/u2.json /Use
+000000a0: 7273 2f67 6d63 6173 2f72 6570 6f73 2f53  rs/gmcas/repos/S
+000000b0: 5038 3030 2d39 3042 5f45 6e74 726f 7079  P800-90B_Entropy
+000000c0: 4173 7365 7373 6d65 6e74 2f62 696e 2f72  Assessment/bin/r
+000000d0: 616e 6431 5f73 686f 7274 2e62 696e 2031  and1_short.bin 1
+000000e0: 222c 0a                                  ",.
+[c_u]
+00000000: 2020 2022 636f 6d6d 616e 646c 696e 6522     "commandline"
+00000010: 203a 2022 6561 5f5a 7120 2d71 202d 6f20   : "ea_Zq -q -o 
+00000020: 2f55 7365 7273 2f67 6d63 6173 2f72 6570  /Users/gmcas/rep
+00000030: 6f73 2f53 5038 3030 2d39 3042 5f45 6e74  os/SP800-90B_Ent
+00000040: 726f 7079 4173 7365 7373 6d65 6e74 2f64  ropyAssessment/d
+00000050: 6f63 732f 6175 6469 7473 2f32 3032 362d  ocs/audits/2026-
+00000060: 3131 2d30 372d 6167 6772 6573 7369 7665  11-07-aggressive
+00000070: 2d61 7564 6974 2f72 6570 726f 2f50 524f  -audit/repro/PRO
+00000080: 562d 3132 2f6f 7574 2f63 5f75 2e6a 736f  V-12/out/c_u.jso
+00000090: 6e20 2f55 7365 7273 2f67 6d63 6173 2f72  n /Users/gmcas/r
+000000a0: 6570 6f73 2f53 5038 3030 2d39 3042 5f45  epos/SP800-90B_E
+000000b0: 6e74 726f 7079 4173 7365 7373 6d65 6e74  ntropyAssessment
+000000c0: 2f62 696e 2f72 616e 6431 5f73 686f 7274  /bin/rand1_short
+000000d0: 2e62 696e 2031 222c 0a                   .bin 1",.
+
+===== [4] rule-7 mutation of run.sh's expectation: ONE token, a1.startswith('ea_<U+FFFD>') -> a1.startswith('ea_Z') (i.e. expect the Z preserved) =====
+backup: d0f1344492860d037ee886c1d5851748a32a41cd8a8a146e413b307a1633c8bd  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/PROV-12-run.sh.orig
+before: d0f1344492860d037ee886c1d5851748a32a41cd8a8a146e413b307a1633c8bd  repro/PROV-12/run.sh
+mutation applied: 1 occurrence replaced
+--- diff backup vs mutated:
+28c28
+< lostZ = ('Z' not in a1) and a1.startswith('ea_�')
+---
+> lostZ = ('Z' not in a1) and a1.startswith('ea_Z')
+(diff exit=1)
+--- running the MUTATED run.sh:
+14:'Z' swallowed: False ; FF FE -> two U+FFFD: True
+15:NODEFECT
+16:RESULT: FAIL -- rc=0; see the transcoding result above
+MUTATED run.sh stderr (0 bytes):
+MUTATED run.sh exit=1   (1 = the script's FAIL path; it CAN fail)
+--- restore by cp (never git checkout):
+restored: byte-identical to the backup
+after : d0f1344492860d037ee886c1d5851748a32a41cd8a8a146e413b307a1633c8bd  repro/PROV-12/run.sh
+git status of run.sh: []  (empty = unchanged vs HEAD)
+
+===== [5] re-run of the RESTORED run.sh so observed.txt and logs/repro/PROV-12-observed.log hold a genuine record again =====
+14:'Z' swallowed: True ; FF FE -> two U+FFFD: True
+15:DEFECT
+16:RESULT: PASS -- a stray 0x80 continuation byte in argv swallows the following ASCII 'Z' in the JSON commandline (valid JSON, exit 0, no diagnostic)
+restored run.sh exit=0
+observed.txt now ends with: RESULT: PASS -- a stray 0x80 continuation byte in argv swallows the following ASCII 'Z' in the JSON commandline (valid JSON, exit 0, no diagnostic)

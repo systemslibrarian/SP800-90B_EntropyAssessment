@@ -1,0 +1,61 @@
+## stage: c
+## variant: asan_ubsan
+## tool: ea_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid
+## binary_sha256: bebaad509b661a68a8a014007fb3818ea5da255cf8e389f436edd62035ddabcf
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/predictor-shared-tinyN-L3.bin
+## input_sha256: 039058c6f2c0cb492c533b0a4d14ef77cc0f78abccced5287d84a1a2011cfb81
+## input_bytes: 3
+## operands: <width inferred by the tool>
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: tool-inferred width
+## timeout_seconds: 300
+## threads: 2
+## start: 2026-11-08T21:37:39Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/predictor-shared-tinyN-L3.bin
+## --- tool output ---
+iid/chi_square_tests.h:439:45: runtime error: division by zero
+    #0 0x00010475c124 in calc_T(std::__1::vector<double, std::__1::allocator<double>> const&, std::__1::vector<int, std::__1::allocator<int>> const&) chi_square_tests.h:439
+    #1 0x000104761d50 in goodness_of_fit(unsigned char const*, double&, int&, int, int) chi_square_tests.h:639
+    #2 0x00010476256c in chi_square_tests(unsigned char const*, int, int, int) chi_square_tests.h:705
+    #3 0x000104763a94 in main iid_main.cpp:480
+    #4 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: float-divide-by-zero iid/chi_square_tests.h:439:45 
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/predictor-shared-tinyN-L3.bin' (SHA-256 hash 039058c6f2c0cb492c533b0a4d14ef77cc0f78abccced5287d84a1a2011cfb81 of assessed bytes)
+Loaded 3 samples of 3 distinct 2-bit-wide symbols
+
+*** Warning: dataset contains 3 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary samples: 6
+
+Samples have been translated
+Raw Mean = 2
+Translated Symbol Index Median = 1
+Binary = false
+Literal Most Common Value Estimate: Mode count = 1
+Literal Most Common Value Estimate: p-hat = 0.33333333333333331
+Literal Most Common Value Estimate: p_u = 1
+Literal Most Common Value Estimate: min entropy = -0
+Bitstring Most Common Value Estimate: Mode count = 4
+Bitstring Most Common Value Estimate: p-hat = 0.66666666666666663
+Bitstring Most Common Value Estimate: p_u = 1
+Bitstring Most Common Value Estimate: min entropy = -0
+Chi square independence: T = 4.9303806576313227e-32
+Chi square independence: df = -2
+Chi square independence: P-value = 1
+## --- end of tool output ---
+## exit: 134
+## wall_seconds: 0
+## end: 2026-11-08T21:37:39Z
+## sanitizer_report: yes
+## sanitizer_report_count: 1
+## first_report_line: iid/chi_square_tests.h:439:45: runtime error: division by zero
+## tool_outcome: SANITIZER
+## permutation_battery: not-seen
+## permutation_progress_lines: 0

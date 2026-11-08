@@ -1,0 +1,84 @@
+## stage: c
+## variant: asan_ubsan
+## tool: ea_non_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid
+## binary_sha256: c6350c1d3c9434402122abc54ef242362c285bda0e50c24e957d54f377d52547
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/perm-p3-two-values-3-200.bin
+## input_sha256: e447a5e49a28b2b5ca89b0eae6d6ad4fc41fc4fb4d58dccc191f2b915fca4ee9
+## input_bytes: 20000
+## operands: <width inferred by the tool>
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: tool-inferred width
+## timeout_seconds: 300
+## threads: 2
+## start: 2026-11-08T21:37:38Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/perm-p3-two-values-3-200.bin
+## --- tool output ---
+non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+    #0 0x00010203bb18 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
+    #1 0x0001020406a0 in main non_iid_main.cpp:563
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:111:21 
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/perm-p3-two-values-3-200.bin' (SHA-256 hash e447a5e49a28b2b5ca89b0eae6d6ad4fc41fc4fb4d58dccc191f2b915fca4ee9 of assessed bytes)
+Loaded 20000 samples of 2 distinct 8-bit-wide symbols
+
+*** Warning: dataset contains 20000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+
+Symbols have been translated.
+Literal Most Common Value Estimate: Mode count = 10129
+Literal Most Common Value Estimate: p-hat = 0.50644999999999996
+Literal Most Common Value Estimate: p_u = 0.51555640172769102
+Literal Most Common Value Estimate: min entropy = 0.95579782822177617
+Literal Collision Estimate: v = 7994
+Literal Collision Estimate: Sum t_i = 19999
+Literal Collision Estimate: X-bar = 2.5017513134851139
+Literal Collision Estimate: sigma-hat = 0.50002820908929757
+Literal Collision Estimate: X-bar' = 2.4873457744581731
+Literal Collision Estimate: Found p.
+Literal Collision Estimate: p = 0.57954315037081106
+Literal Collision Estimate: min entropy = 0.78701201258852127
+Literal Markov Estimate: P_0 = 0.49354999999999999
+Literal Markov Estimate: P_1 = 0.50645000000000007
+Literal Markov Estimate: P_{0,0} = 0.49306048019450915
+Literal Markov Estimate: P_{0,1} = 0.5069395198054909
+Literal Markov Estimate: P_{1,0} = 0.49397709320695105
+Literal Markov Estimate: P_{1,1} = 0.50602290679304895
+Literal Markov Estimate: p-hat_max = 1.3619120466149295e-38
+Literal Markov Estimate: min entropy = 0.98271589117013902
+Literal Compression Estimate: X-bar = 5.2117808257488418
+Literal Compression Estimate: sigma-hat = 1.0204428406238002
+Literal Compression Estimate: X-bar' = 5.1573620968728733
+Literal Compression Estimate: Found p.
+Literal Compression Estimate: p = 0.065282466424562147
+Literal Compression Estimate: min entropy = 0.65619343754102799
+Literal t-Tuple Estimate: t = 9
+Literal t-Tuple Estimate: p-hat_max = 0.5214639503098255080005
+Literal t-Tuple Estimate: p_u = 0.5305627146028136786882
+Literal t-Tuple Estimate: min entropy = 0.91440480143096192
+Literal LRS Estimate: u = 10
+Literal LRS Estimate: v = 27
+Literal LRS Estimate: p-hat = 0.4997426496449494104368
+Literal LRS Estimate: p_u = 0.5088498079590557665597
+Literal LRS Estimate: min entropy = 0.97468820142984769
+Literal MultiMCW Prediction Estimate: C = 9992
+Literal MultiMCW Prediction Estimate: r = 13
+Literal MultiMCW Prediction Estimate: N = 19937
+Literal MultiMCW Prediction Estimate: P_global = 0.5011787129457792
+Literal MultiMCW Prediction Estimate: P_global' = 0.51030022559313626
+Literal MultiMCW Prediction Estimate: P_local can't change the result.
+Literal MultiMCW Prediction Estimate: min entropy = 0.97058181537923893
+## --- end of tool output ---
+## exit: 134
+## wall_seconds: 1
+## end: 2026-11-08T21:37:39Z
+## sanitizer_report: yes
+## sanitizer_report_count: 1
+## first_report_line: non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+## tool_outcome: SANITIZER

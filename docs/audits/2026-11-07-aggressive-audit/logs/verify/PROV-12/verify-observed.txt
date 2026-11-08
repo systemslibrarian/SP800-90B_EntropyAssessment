@@ -1,0 +1,85 @@
+# PROV-12 independent verification probe  2026-11-08 16:10:33 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- NON-COMPLIANT short-dataset runs (10,000 samples, 1 bit)
+# repo git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+fixture sha256 3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin  (  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460988    Available: 5460988
+Inodes: Total: 225973147  Free: 218439520 bytes)
+linked: /opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib  -> ../Cellar/jsoncpp/1.9.8/lib/libjsoncpp.dylib
+--- arm control_ASCII: argv[0] bytes hex = 65615f5a71
+rc=0  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/control_ASCII.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460985    Available: 5460985
+Inodes: Total: 225973031  Free: 218439400 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/control_ASCII.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460985    Available: 5460985
+Inodes: Total: 225973031  Free: 218439400
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a202265615f5a71202d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f636f6e74726f6c5f41534349492e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c0a
+json valid: True; errorLevel=0; token0='ea_Zq'; codepoints=U+0065 U+0061 U+005F U+005A U+0071
+filename field='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin' sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 sha256Scope=assessed-sample-bytes assessedSampleCount=10000
+Overall h_original (labelled read): None
+--- arm arm1_80Zq: argv[0] bytes hex = 65615f805a71
+rc=0  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm1_80Zq.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460980    Available: 5460980
+Inodes: Total: 225972835  Free: 218439200 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm1_80Zq.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460980    Available: 5460980
+Inodes: Total: 225972835  Free: 218439200
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a202265615f5c756666666471202d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f61726d315f38305a712e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c0a
+json valid: True; errorLevel=0; token0='ea_�q'; codepoints=U+0065 U+0061 U+005F U+FFFD U+0071
+filename field='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin' sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 sha256Scope=assessed-sample-bytes assessedSampleCount=10000
+Overall h_original (labelled read): None
+--- arm arm2_FFFEq: argv[0] bytes hex = 65615ffffe71
+rc=0  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm2_FFFEq.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460974    Available: 5460974
+Inodes: Total: 225972599  Free: 218438960 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm2_FFFEq.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460974    Available: 5460974
+Inodes: Total: 225972599  Free: 218438960
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a202265615f5c75666666645c756666666471202d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f61726d325f46464645712e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c0a
+json valid: True; errorLevel=0; token0='ea_��q'; codepoints=U+0065 U+0061 U+005F U+FFFD U+FFFD U+0071
+filename field='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin' sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 sha256Scope=assessed-sample-bytes assessedSampleCount=10000
+Overall h_original (labelled read): None
+--- arm arm3_C2_quote_q: argv[0] bytes hex = 65615fc22271
+rc=0  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm3_C2_quote_q.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460969    Available: 5460969
+Inodes: Total: 225972403  Free: 218438760 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm3_C2_quote_q.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460969    Available: 5460969
+Inodes: Total: 225972403  Free: 218438760
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a202265615f5c753030613271202d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f61726d335f43325f71756f74655f712e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c0a
+json valid: True; errorLevel=0; token0='ea_¢q'; codepoints=U+0065 U+0061 U+005F U+00A2 U+0071
+filename field='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin' sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 sha256Scope=assessed-sample-bytes assessedSampleCount=10000
+Overall h_original (labelled read): None
+--- arm arm4_E0_quote_Zq: argv[0] bytes hex = 65615fe0225a71
+rc=0  stdout_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm4_E0_quote_Zq.out"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460966    Available: 5460966
+Inodes: Total: 225972287  Free: 218438640 stderr_bytes=  File: "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-12/arm4_E0_quote_Zq.err"
+    ID: 10000120000001a Namelen: ?       Type: apfs
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 120686613  Free: 5460966    Available: 5460966
+Inodes: Total: 225972287  Free: 218438640
+raw commandline line (hex): 20202022636f6d6d616e646c696e6522203a202265615f5c753038396171202d71202d6f202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f646f63732f6175646974732f323032362d31312d30372d616767726573736976652d61756469742f6c6f67732f7665726966792f50524f562d31322f61726d345f45305f71756f74655f5a712e6a736f6e202f55736572732f676d6361732f7265706f732f53503830302d3930425f456e74726f70794173736573736d656e742f62696e2f72616e64315f73686f72742e62696e2031222c0a
+json valid: True; errorLevel=0; token0='ea_࢚q'; codepoints=U+0065 U+0061 U+005F U+089A U+0071
+filename field='/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin' sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583 sha256Scope=assessed-sample-bytes assessedSampleCount=10000
+Overall h_original (labelled read): None
+--- APFS filename test: can a file with byte 0x80 in its name be created here?
+refused: b'x\x80Z.bin' errno=92 (EILSEQ) Illegal byte sequence
+refused: b'x\xff.bin' errno=92 (EILSEQ) Illegal byte sequence
+filesystem: /dev/disk3s1s1 on / (apfs, sealed, local, read-only, journaled)
+# end

@@ -45,22 +45,22 @@ Permutation testing: Unpermuted result compression = 63
 
                 statistic  C[i][0]  C[i][1]  C[i][2]
 ----------------------------------------------------
-                excursion       6       0      13
-       numDirectionalRuns     244       6       0
-       lenDirectionalRuns       6       0      74
+                excursion       6       0      23
+       numDirectionalRuns     192       6       0
+       lenDirectionalRuns       6       0      32
     numIncreasesDecreases       0       6       0
             numRunsMedian       0       6       0
             lenRunsMedian       0       6       0
              avgCollision       0       6       0
-             maxCollision       0       6     233
-           periodicity(1)       2       4     244
+             maxCollision       0       6     265
+           periodicity(1)       2       4     184
            periodicity(2)       0       6       0
-           periodicity(8)       0       6      55
-          periodicity(16)       1       5      66
-          periodicity(32)       1       5      29
-            covariance(1)       2       4     244
+           periodicity(8)       0       6      56
+          periodicity(16)       0       6      56
+          periodicity(32)       1       5      15
+            covariance(1)       2       4     212
             covariance(2)       0       6       0
-            covariance(8)       0       6       0
+            covariance(8)       1       6       0
            covariance(16)       0       6       0
            covariance(32)       0       6       0
               compression       2       4       2

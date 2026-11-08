@@ -1,0 +1,128 @@
+## stage: c
+## variant: asan_ubsan
+## tool: ea_non_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid
+## binary_sha256: c6350c1d3c9434402122abc54ef242362c285bda0e50c24e957d54f377d52547
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin
+## input_sha256: 6b61e7efaef8273960187ea1e850139cdf48a403d2fec302b74bec8086114975
+## input_bytes: 100
+## operands: <width inferred by the tool>
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: tool-inferred width
+## timeout_seconds: 300
+## threads: 2
+## start: 2026-11-08T21:36:32Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin
+## --- tool output ---
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/iid-chisq-ex11.bin' (SHA-256 hash 6b61e7efaef8273960187ea1e850139cdf48a403d2fec302b74bec8086114975 of assessed bytes)
+Loaded 100 samples of 3 distinct 2-bit-wide symbols
+
+*** Warning: dataset contains 100 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary Symbols: 200
+
+Symbols have been translated.
+Bitstring Most Common Value Estimate: Mode count = 138
+Bitstring Most Common Value Estimate: p-hat = 0.68999999999999995
+Bitstring Most Common Value Estimate: p_u = 0.77444927658881424
+Bitstring Most Common Value Estimate: min entropy = 0.36875734368423307
+Literal Most Common Value Estimate: Mode count = 41
+Literal Most Common Value Estimate: p-hat = 0.40999999999999998
+Literal Most Common Value Estimate: p_u = 0.5373260940266017
+Literal Most Common Value Estimate: min entropy = 0.89613019391906645
+Bitstring Collision Estimate: v = 77
+Bitstring Collision Estimate: Sum t_i = 199
+Bitstring Collision Estimate: X-bar = 2.5844155844155843
+Bitstring Collision Estimate: sigma-hat = 0.4960541500218808
+Bitstring Collision Estimate: X-bar' = 2.4388023648782746
+Bitstring Collision Estimate: Found p.
+Bitstring Collision Estimate: p = 0.67492517703539046
+Bitstring Collision Estimate: min entropy = 0.56720052265472809
+Bitstring Markov Estimate: P_0 = 0.31
+Bitstring Markov Estimate: P_1 = 0.68999999999999995
+Bitstring Markov Estimate: P_{0,0} = 0.12903225806451613
+Bitstring Markov Estimate: P_{0,1} = 0.87096774193548387
+Bitstring Markov Estimate: P_{1,0} = 0.39416058394160586
+Bitstring Markov Estimate: P_{1,1} = 0.6058394160583942
+Bitstring Markov Estimate: p-hat_max = 1.5785371005885972e-28
+Bitstring Markov Estimate: min entropy = 0.72152655068690619
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+Bitstring t-Tuple Estimate: t = 3
+Bitstring t-Tuple Estimate: p-hat_max = 0.6899999999999999467093
+Bitstring t-Tuple Estimate: p_u = 0.7744492765888142393749
+Bitstring t-Tuple Estimate: min entropy = 0.36875734368423307
+Bitstring LRS Estimate: u = 4
+Bitstring LRS Estimate: v = 44
+Bitstring LRS Estimate: p-hat = 0.8297864092644740008353
+Bitstring LRS Estimate: p_u = 0.8984095856945479852129
+Bitstring LRS Estimate: min entropy = 0.15455477404977075
+Literal t-Tuple Estimate: t = 1
+Literal t-Tuple Estimate: p-hat_max = 0.4099999999999999755751
+Literal t-Tuple Estimate: p_u = 0.5373260940266016971734
+Literal t-Tuple Estimate: min entropy = 0.89613019391906645
+Literal LRS Estimate: u = 2
+Literal LRS Estimate: v = 21
+Literal LRS Estimate: p-hat = 0.7103263970197111198956
+Literal LRS Estimate: p_u = 0.8277574404822454212649
+Literal LRS Estimate: min entropy = 0.27272002122087979
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+Bitstring Lag Prediction Estimate: C = 129
+Bitstring Lag Prediction Estimate: r = 10
+Bitstring Lag Prediction Estimate: N = 199
+Bitstring Lag Prediction Estimate: P_global = 0.64824120603015079
+Bitstring Lag Prediction Estimate: P_global' = 0.7356540566408335
+Bitstring Lag Prediction Estimate: P_local can't change the result.
+Bitstring Lag Prediction Estimate: min entropy = 0.44290060047968877
+Literal Lag Prediction Estimate: C = 33
+Literal Lag Prediction Estimate: r = 8
+Literal Lag Prediction Estimate: N = 99
+Literal Lag Prediction Estimate: P_global = 0.33333333333333331
+Literal Lag Prediction Estimate: P_global' = 0.45599187159756666
+Literal Lag Prediction Estimate: P_local can't change the result.
+Literal Lag Prediction Estimate: min entropy = 1.1329199874061171
+Bitstring MultiMMC Prediction Estimate: C = 132
+Bitstring MultiMMC Prediction Estimate: r = 9
+Bitstring MultiMMC Prediction Estimate: N = 198
+Bitstring MultiMMC Prediction Estimate: P_global = 0.66666666666666663
+Bitstring MultiMMC Prediction Estimate: P_global' = 0.75317893705875572
+Bitstring MultiMMC Prediction Estimate: P_local can't change the result.
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.40893543989774561
+Literal MultiMMC Prediction Estimate: C = 44
+Literal MultiMMC Prediction Estimate: r = 9
+Literal MultiMMC Prediction Estimate: N = 98
+Literal MultiMMC Prediction Estimate: P_global = 0.44897959183673469
+Literal MultiMMC Prediction Estimate: P_global' = 0.57906493139184156
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = 0.78820296611190488
+Bitstring LZ78Y Prediction Estimate: C = 122
+Bitstring LZ78Y Prediction Estimate: r = 9
+Bitstring LZ78Y Prediction Estimate: N = 183
+Bitstring LZ78Y Prediction Estimate: P_global = 0.66666666666666663
+Bitstring LZ78Y Prediction Estimate: P_global' = 0.75667342669647641
+Bitstring LZ78Y Prediction Estimate: P_local can't change the result.
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.40225731428260719
+Literal LZ78Y Prediction Estimate: C = 28
+Literal LZ78Y Prediction Estimate: r = 5
+Literal LZ78Y Prediction Estimate: N = 83
+Literal LZ78Y Prediction Estimate: P_global = 0.33734939759036142
+Literal LZ78Y Prediction Estimate: P_global' = 0.47184014943433911
+Literal LZ78Y Prediction Estimate: P_local can't change the result.
+Literal LZ78Y Prediction Estimate: min entropy = 1.0836299104656442
+H_bitstring = 0.15455477404977075
+H_bitstring Per Symbol = 0.3091095480995415
+H_original = 0.27272002122087979
+Assessed min entropy: 0.27272002122087979
+## --- end of tool output ---
+## exit: 0
+## wall_seconds: 0
+## end: 2026-11-08T21:36:32Z
+## sanitizer_report: no
+## sanitizer_report_count: 0
+## first_report_line: -
+## tool_outcome: COMPLETED

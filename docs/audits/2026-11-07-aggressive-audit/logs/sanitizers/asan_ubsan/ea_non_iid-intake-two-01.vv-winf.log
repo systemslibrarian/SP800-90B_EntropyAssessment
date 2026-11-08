@@ -1,0 +1,55 @@
+## stage: c
+## variant: asan_ubsan
+## tool: ea_non_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid
+## binary_sha256: c6350c1d3c9434402122abc54ef242362c285bda0e50c24e957d54f377d52547
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/intake-two-01.bin
+## input_sha256: b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2
+## input_bytes: 2
+## operands: <width inferred by the tool>
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: tool-inferred width
+## timeout_seconds: 300
+## threads: 2
+## start: 2026-11-08T21:36:47Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_non_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/intake-two-01.bin
+## --- tool output ---
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/intake-two-01.bin' (SHA-256 hash b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2 of assessed bytes)
+Loaded 2 samples of 2 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 2 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Literal Most Common Value Estimate: Mode count = 1
+Literal Most Common Value Estimate: p-hat = 0.5
+Literal Most Common Value Estimate: p_u = 1
+Literal Most Common Value Estimate: min entropy = -0
+	*** Warning: not enough collisions to run collision test (need at least 2, found 0) ***
+Literal Markov Estimate: P_0 = 0.5
+Literal Markov Estimate: P_1 = 0.5
+Literal Markov Estimate: P_{0,0} = 0
+Literal Markov Estimate: P_{0,1} = 1
+Literal Markov Estimate: P_{1,0} = 0
+Literal Markov Estimate: P_{1,1} = 0
+Literal Markov Estimate: p-hat_max = 2.9387358770557188e-39
+Literal Markov Estimate: min entropy = 1
+	*** Warning: not enough samples to run compression test (need at least 1002 blocks of 6 bits) ***
+t-Tuple and LRS Estimates: no repeated substrings. Can't run either test.
+	*** Warning: not enough samples to run multiMCW test (need more than 4096) ***
+	*** Warning: not enough samples to run lag test (need at least 3) ***
+	*** Warning: not enough samples to run multiMMC test (need more than 16) ***
+	*** Warning: not enough samples to run LZ78Y test (need at least 19) ***
+H_original = -0
+Assessed min entropy: -0
+## --- end of tool output ---
+## exit: 0
+## wall_seconds: 0
+## end: 2026-11-08T21:36:47Z
+## sanitizer_report: no
+## sanitizer_report_count: 0
+## first_report_line: -
+## tool_outcome: COMPLETED

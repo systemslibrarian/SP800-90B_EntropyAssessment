@@ -1,0 +1,14 @@
+== ic.json vs c.json (dateTimeStamp, commandline excluded): 0 differing fields ==
+== ci.json vs i.json (dateTimeStamp, commandline excluded): 0 differing fields ==
+== ic.json vs ci.json (dateTimeStamp, commandline excluded): 11 differing fields ==
+   /testCases[Most Common Value]/hOriginal: only in B
+   /testCases[Most Common Value]/mcvEstimateMode: 40099.0 vs 58.0
+   /testCases[Most Common Value]/mcvEstimatePHat: 0.5012375 vs 0.0058
+   /testCases[Most Common Value]/mcvEstimatePU: 0.505790980432204 vs 0.007756093777586632
+   /testCases[T-Tuple Test]/tTupleRes: only in B
+   /testCases[LRS Test]/lrsRes: only in B
+   /testCases[Multi Most Common in Window Test]/hOriginal: only in B
+   /testCases[Lag Prediction Test]/hOriginal: only in B
+   /testCases[Multi Markov Model with Counting Test (MultiMMC)]/hOriginal: only in B
+   /testCases[LZ78Y Test]/hOriginal: only in B
+   /testCases[Overall]/hOriginal: only in B

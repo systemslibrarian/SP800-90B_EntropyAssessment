@@ -1,0 +1,88 @@
+# PROV-19 REFUTE probe  2026-11-08 16:24:20 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- the tool runs below are NON-COMPLIANT short-dataset runs (10,000 samples)
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment git=834ffeb branch=audit/2026-11-07
+# verifier: this probe was written independently of repro/PROV-19/_lib.sh; readers below are (a) python json key test, (b) grep -c of the literal string in the file
+
+## instrument rule 4: binaries
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+README claims: ea_non_iid 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f ; ea_iid 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+
+## fixture
+bin/rand1_short.bin bytes=10000 sha256=3814404497a3b912f8d3db6bc05a99338f0986cd75fe54af2a5f1bdb0a12a583
+
+## run 1: completed success report (ea_non_iid, 1 bit/symbol, 10,000 samples)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-19-refute.success.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand1_short.bin 1
+rc=0  stdout bytes=241 stderr bytes=0
+
+## run 2: placeholder (ea_non_iid -o <path> with no operand -> usage exit; the C14 claim is all that is written)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/PROV-19-refute.placeholder.json
+rc=255  stdout bytes=2579 stderr bytes=0
+
+## reads: two independent readers per file, then the two consumer rules
+success     read(a) python: key present=False value=<absent> | read(b) literal '"reportComplete"' occurrences in file=0 | errorLevel=0 testCases=present(11) dateTimeStamp=20261108162420 nonCompliantShortDataset=True
+success     readers agree: True
+success     documented rule (reportComplete is not False) -> ACCEPT ; hypothetical rule (reportComplete == true) -> REFUSE
+placeholder read(a) python: key present=True value=false | read(b) literal '"reportComplete"' occurrences in file=1 | errorLevel=-1 testCases=None dateTimeStamp=20261108162420 nonCompliantShortDataset='<absent>'
+placeholder readers agree: True
+placeholder documented rule (reportComplete is not False) -> REFUSE ; hypothetical rule (reportComplete == true) -> REFUSE
+
+## source: every key GetBaseJson() writes, and every writer of reportComplete (to show the absence is not a sample-count branch)
+GetBaseJson key writes (cpp/shared/test_run_base.h):
+    63:        baseJson["dateTimeStamp"] = timestamp;
+    64:        baseJson["commandline"] = commandline;
+    65:        baseJson["errorLevel"] = errorLevel;
+    66:        baseJson["type"] = type;
+    67:        baseJson["toolVersion"] = VERSION;
+    70:            baseJson["errorMessage"] = errorMsg;
+    71:            if (!errorClass.empty()) baseJson["errorClass"] = errorClass;
+    74:            baseJson["nonCompliantShortDataset"] = true;
+    77:            baseJson["bitsPerSymbol"] = bitsPerSymbol;
+    78:            baseJson["bitsPerSymbolInferred"] = bitsPerSymbolInferred;
+    81:            baseJson["subsetIndex"] = (Json::UInt64)subsetIndex;
+    82:            baseJson["subsetRequestedSamples"] = (Json::UInt64)subsetRequestedSamples;
+    83:            baseJson["subsetActualSamples"] = (Json::Int64)subsetActualSamples;
+    86:            baseJson["restartHI"] = restartHI;
+    87:            baseJson["restartAlpha"] = restartAlpha;
+    88:            baseJson["restartXmax"] = restartXmax;
+    89:            baseJson["restartXcutoff"] = restartXcutoff;
+    90:            if (restartXcutoffPrintedBinomial >= 0) baseJson["restartXcutoffPrintedBinomial"] = restartXcutoffPrintedBinomial;
+    91:            if (!restartCutoffMethod.empty()) baseJson["restartCutoffMethod"] = restartCutoffMethod;
+    92:            baseJson["passedRestartSanityCheck"] = (restartSanityCheckPassed == 1);
+    95:            baseJson["filename"] = filename;
+    98:            baseJson["sha256"] = sha256;
+    99:            baseJson["sha256Scope"] = "assessed-sample-bytes";
+    100:            baseJson["assessedSampleCount"] = (Json::Int64)assessedSampleCount;
+writers of reportComplete anywhere in cpp/:
+    cpp/iid_main.cpp:83:    j["reportComplete"] = false;
+    cpp/non_iid_main.cpp:85:    j["reportComplete"] = false;
+    cpp/restart_main.cpp:356:    j["reportComplete"] = false;
+conditions guarding GetBaseJson keys (none mentions sample count or EA_ALLOW_SHORT_DATASET except the nonCompliantShortDataset flag itself):
+    69:        if (errorLevel != 0){
+    71:            if (!errorClass.empty()) baseJson["errorClass"] = errorClass;
+    73:        if (nonCompliantShortDataset) {
+    76:        if (bitsPerSymbol > 0) {
+    80:        if (subsetRequested) {
+    85:        if (restartXcutoff >= 0) {
+    90:            if (restartXcutoffPrintedBinomial >= 0) baseJson["restartXcutoffPrintedBinomial"] = restartXcutoffPrintedBinomial;
+    91:            if (!restartCutoffMethod.empty()) baseJson["restartCutoffMethod"] = restartCutoffMethod;
+    94:        if(!filename.empty()) {
+    97:        if(!sha256.empty()) {
+
+## in-repository consumers of the key, and which rule each applies
+    audits/2026-10-11-independent-audit/oracles/entropy_floor.py:52:    reportComplete: false (the C14 placeholder: the run did not finish).
+    audits/2026-10-11-independent-audit/oracles/entropy_floor.py:320:    if d.get('reportComplete') is False:
+    audits/2026-10-11-independent-audit/oracles/entropy_floor.py:321:        raise SystemExit("REFUSED: %s carries reportComplete: false -- the run did not finish "
+    docs/audits/2026-11-07-aggressive-audit/harness/determinism/compare_runs.py:21:placeholder (reportComplete == false) and the final marker for the tool is present:
+    docs/audits/2026-11-07-aggressive-audit/harness/determinism/compare_runs.py:257:        if j.get("reportComplete") is False:
+    docs/audits/2026-11-07-aggressive-audit/harness/determinism/compare_runs.py:258:            self.problems.append("JSON is the C14 placeholder (reportComplete false): the assessment did not complete")
+    (regression-output.sh identifies the placeholder by errorLevel != 0 and empty testCases, line 112; it does not read reportComplete at all)
+    (fix/stale-report worktree: cpp/selftest/regression-stale-report.sh toolreport() asserts a tool-written report has NO reportComplete key -- the repairers encode the absence as the contract)
+
+## where the asymmetry is documented
+    audits/2026-10-11-independent-audit/CROSS-REPO-FINDINGS.md XR-12 (line ~897): 'A report lacking reportComplete is a completed report from a repaired binary (the key is written only by the placeholder) ... Use it only in the positive direction: reportComplete: false means refuse, unconditionally.'
+    audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md 'The consumer rule' item 2 (line ~5040): 'complete -- the JSON parses, and reportComplete is not false'
+    docs/audits/2026-11-07-aggressive-audit/logs/analysis/output.md 2.4 and 4.4: the analysis phase itself recorded the asymmetry and the working rule
+
+END

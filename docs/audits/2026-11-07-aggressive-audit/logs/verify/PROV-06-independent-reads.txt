@@ -1,0 +1,31 @@
+# PROV-06 verifier independent reads 2026-11-08 16:02:05 -0500 -- own python, labelled keys, of the files run.sh/control.sh wrote on the verifier run
+rep.out.rc file contents: [0]
+rep.out bytes=241 rep.err bytes=0
+--- rep.out verbatim ---
+
+*** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+--- rep.err verbatim ---
+--- rep.out/rep.err grep for: a.json | superseded | second | -o | ignored | overrid | replac ---
+(grep rc=1 ; 1 = no match)
+--- a.json all top-level keys and values ---
+  commandline = "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-06/out/b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8"
+  dateTimeStamp = "20261108160032"
+  errorLevel = -1
+  errorMessage = "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file."
+  reportComplete = false
+  toolVersion = "1.1.8"
+  type = "non-IID"
+--- b.json top-level keys + Overall case ---
+  keys: ['IID', 'assessedSampleCount', 'bitsPerSymbol', 'bitsPerSymbolInferred', 'commandline', 'dateTimeStamp', 'errorLevel', 'filename', 'nonCompliantShortDataset', 'sha256', 'sha256Scope', 'testCases', 'toolVersion', 'type']
+  errorLevel = 0  reportComplete = <absent>  type = ""
+  testCases count = 11
+  Overall.hAssessed = 5.860893744485249
+--- a1.json (control) ---
+  errorLevel = 0  reportComplete = <absent>
+  testCases count = 11
+  Overall.hAssessed = 5.860893744485249
+--- byte comparison: b.json (repeated) vs a1.json (control) ignoring commandline+dateTimeStamp ---
+  identical after dropping commandline/dateTimeStamp: True

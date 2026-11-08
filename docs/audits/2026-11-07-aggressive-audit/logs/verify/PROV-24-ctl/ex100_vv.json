@@ -1,0 +1,35 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 100,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 2,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vv -o logs/verify/PROV-24-ctl/ex100_vv.json repro/PROV-24/out/ex100.bin",
+   "dateTimeStamp" : "20261108163604",
+   "errorClass" : "statistical",
+   "errorLevel" : 2,
+   "errorMessage" : "IID test suite failed; no IID min-entropy estimate was awarded.",
+   "filename" : "repro/PROV-24/out/ex100.bin",
+   "nonCompliantShortDataset" : true,
+   "sha256" : "683a02f12d1233e76262550e1ac67b93587c9c06f8e5e43dc578d527715e9edb",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "hBitstring" : 0.44008222574077555,
+         "hOriginal" : 0.92460410024210438,
+         "passedChiSquareTests" : false,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : false,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "rawMean" : 1.0,
+         "testCaseDesc" : "",
+         "translatedSymbolMedian" : 1.0
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

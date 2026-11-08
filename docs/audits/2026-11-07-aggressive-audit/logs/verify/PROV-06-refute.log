@@ -1,0 +1,149 @@
+# PROV-06 REFUTE probe log  2026-11-08 16:02:07 -0500  host=Darwin 25.6.0 arm64  shell=bash 3.2.57(1)-release
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment git=834ffeb branch=audit/2026-11-07
+# binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+# README PROV-06 claims sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f
+# fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin  (10000 bytes)
+# working COPY of fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin  -- every alias probe below targets the COPY, never bin/rand8_short.bin
+# Every run is on a <= 20,000-sample input; runs with EA_ALLOW_SHORT_DATASET=1 are NON-COMPLIANT short-dataset runs.
+
+--- probe P1_repeated_o (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p1_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p1_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P1_repeated_o]=0  stdout_bytes=241 stderr_bytes=0
+stdout:
+    
+    *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+    *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+    *** Its result is NOT a compliant SP 800-90B assessment. ***
+    
+  p1_a.json: bytes=789 errorLevel=-1 reportComplete=false testCases_present=no Overall.hAssessed=<no-case>
+  p1_b.json: bytes=2829 errorLevel=0 reportComplete=<absent> testCases_present=yes Overall.hAssessed=5.860893744485249
+  stdout/stderr mentions of 'p1_a.json' (superseded path): stdout=0 stderr=0
+
+--- probe P2_single_o (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p2_a.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P2_single_o]=0  stdout_bytes=241 stderr_bytes=0
+stdout:
+    
+    *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+    *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+    *** Its result is NOT a compliant SP 800-90B assessment. ***
+    
+  p2_a.json: bytes=2710 errorLevel=0 reportComplete=<absent> testCases_present=yes Overall.hAssessed=5.860893744485249
+
+--- probe P3_repeated_o_no_escape (EA_ALLOW_SHORT_DATASET=0) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p3_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p3_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P3_repeated_o_no_escape]=255  stdout_bytes=137 stderr_bytes=0
+stdout:
+    
+    *** Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+    *** No assessment was performed. ***
+    
+  p3_a.json: bytes=789 errorLevel=-1 reportComplete=false testCases_present=no Overall.hAssessed=<no-case>
+  p3_b.json: bytes=1116 errorLevel=-1 reportComplete=<absent> testCases_present=yes Overall.hAssessed=<no-case>
+
+--- probe P4_same_path_twice (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p4_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p4_a.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P4_same_path_twice]=0  stdout_bytes=241 stderr_bytes=0
+stdout:
+    
+    *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+    *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+    *** Its result is NOT a compliant SP 800-90B assessment. ***
+    
+  p4_a.json: bytes=2829 errorLevel=0 reportComplete=<absent> testCases_present=yes Overall.hAssessed=5.860893744485249
+
+--- probe P5_first_o_is_input (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin 8
+rc[P5_first_o_is_input]=255  stdout_bytes=0 stderr_bytes=613
+stderr:
+    Error: refusing to write the report to '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin': it is the same file as the
+           input '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin' (or that cannot be ruled out). Writing it would destroy
+           the input capture. Nothing has been written.
+    Error: the output path '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin' cannot be written; refusing to assess.
+stdout:
+  p5_input.bin sha256 before=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 after=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  INPUT-INTACT bytes_now=10000
+  p5_b.json: <does not exist>
+
+--- probe P6_last_o_is_input (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_input.bin /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_input.bin 8
+rc[P6_last_o_is_input]=255  stdout_bytes=0 stderr_bytes=515
+stderr:
+    Error: the output path '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_input.bin' is the same file as the input '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p6_input.bin'.
+           Refusing to run: claiming the output truncates it, and that would
+           destroy the input capture before any sample was read. Nothing has
+           been written; the input is untouched. Choose a different -o path.
+stdout:
+  p6_input.bin sha256 before=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 after=17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  INPUT-INTACT bytes_now=10000
+  p6_a.json: <does not exist>
+
+--- probe P7_seed_good_report (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p7_good.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P7_seed_good_report]=0  stdout_bytes=241 stderr_bytes=0
+stdout:
+    
+    *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+    *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+    *** Its result is NOT a compliant SP 800-90B assessment. ***
+    
+  p7_good.json: bytes=2713 errorLevel=0 reportComplete=<absent> testCases_present=yes Overall.hAssessed=5.860893744485249
+
+--- probe P7_repeated_o_over_good (EA_ALLOW_SHORT_DATASET=1) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p7_good.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p7_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P7_repeated_o_over_good]=0  stdout_bytes=241 stderr_bytes=0
+stdout:
+    
+    *** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+    *** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+    *** Its result is NOT a compliant SP 800-90B assessment. ***
+    
+  p7_good.json sha256 before=0d456a8531061a098ebe3b7f2a98a401e5d81c117315e752daebafdbe9221312 after=5acb1842198f2c4e7a468806f7746a016114fbb53abbac65206570572bee6eae  PRIOR-REPORT-REPLACED
+  p7_good.json: bytes=792 errorLevel=-1 reportComplete=false testCases_present=no Overall.hAssessed=<no-case>
+  p7_b.json: bytes=2832 errorLevel=0 reportComplete=<absent> testCases_present=yes Overall.hAssessed=5.860893744485249
+
+# end of probes
+
+# ---- part 2 2026-11-08 16:03:59 -0500: the same shape in the other two tools, claim-before-intake only (no escape, so no estimator runs) ----
+# binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+# binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart
+
+--- probe P8_iid_repeated_o_no_escape (EA_ALLOW_SHORT_DATASET unset) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p8_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p8_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8
+rc[P8_iid_repeated_o_no_escape]=255  stdout_bytes=137 stderr_bytes=0
+stdout:
+    
+    *** Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+    *** No assessment was performed. ***
+    
+  p8_a.json: bytes=781 errorLevel=-1 reportComplete=false testCases_present=no type="IID"
+  p8_b.json: bytes=1174 errorLevel=-1 reportComplete=<absent> testCases_present=yes type=""
+
+--- probe P9_restart_repeated_o_no_escape (EA_ALLOW_SHORT_DATASET unset) ---
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p9_a.json -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p9_b.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/copy_of_rand8_short.bin 8 7.0/symbol
+rc[P9_restart_repeated_o_no_escape]=255  stdout_bytes=69 stderr_bytes=0
+stdout:
+    
+    *** Error: data (len = 10000) does not contain 1000000 samples ***
+    
+  p9_a.json: bytes=800 errorLevel=-1 reportComplete=false testCases_present=no type="restart"
+  p9_b.json: bytes=1083 errorLevel=-1 reportComplete=<absent> testCases_present=yes type="Restart"
+# end of part 2
+
+# ==== VERIFIER VERDICT (REFUTE lens) 2026-11-08 ====
+# Objection 1, harness artefact: FAILED. Reproducer is bash (not zsh), every argument quoted, JSON read by key via python;
+#   README sha256 1ad1568c...6e16f == cpp/ea_non_iid now; P1 reproduces independently: rc 0, first -o path = placeholder
+#   (errorLevel -1, reportComplete false, no testCases), last -o path = complete report (hAssessed 5.860893744485249 ==
+#   the single -o control P2), zero mention of the superseded path on stdout/stderr.
+# Objection 2, EA_ALLOW_SHORT_DATASET-only / needs < 1e6: FAILED. P3 (escape UNSET): both -o paths are claimed BEFORE the
+#   3.1.1 intake refusal (claimReportTarget runs inside the getopt loop, before the file is opened), in ea_non_iid, ea_iid
+#   (P8) and ea_restart (P9). A compliant 1e6+ run would differ only in completing, which is what P1 shows with the escape.
+# Objection 3, documented/intended: PARTLY. C14's design ("claimed the moment -o is parsed": NOTICE 2026-10-19, OC-31,
+#   comment at non_iid_main.cpp:68-77) entails it, but NO prior document names the repeated -o case (NOTICE, FORK-DIVERGENCE
+#   A/B/D, FINDINGS-TRACKER, CLOSING-INVENTORY, ORCHESTRATOR-CHECKS: zero hits for repeated/second/twice -o). Only this
+#   audit's own analysis log (cli-build.md 4.2, 8.7, 9 row 9) records it -- the reproducer's source, not prior knowledge.
+#   And the placeholder's own text ("The assessment did not complete") is FALSE at the first path after a run that exited 0.
+# Objection 4, direction: HOLDS as neutral/fail-closed. P5/P6: when either -o names the input, the input is INTACT and the
+#   tool exits 255 (choke point at the first claim in P5; early prescan on the LAST -o in P6). P7: a pre-existing good
+#   report at the superseded path IS replaced by the placeholder with no diagnostic -- the operator-facing cost.
+# Reachability: needs no escape and no short input; needs the operator to pass -o twice. Repo scripts: 0 genuine repeated
+#   -o invocations (5 regex hits inspected, each a '-o' inside a check_fail label or prose; positive control matched).
+# VERDICT: CONFIRMED, LOW, direction neutral (fail-closed), not previously documented.

@@ -1,0 +1,61 @@
+# PROV-22 independent verifier (verifier-authored, model-level, no binary run)  2026-11-08 16:31:09 -0500
+# python: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python (Python 3.14.7)  repo HEAD e415c0e
+# source sha256 a5462f85e296d8fcd908e0f7f56f445aa0905724d840ea69082cdbc97ffdc60e  cpp/shared/utils.h
+JUMP constants read from utils.h: ['180ec6d33cfd0aba', 'd5a61266f0c9392c', 'a9582618e03fc9aa', '39abdc4529b1661c']
+accumulator declaration at body offset 118, j-loop at 191 -> declared BEFORE the loop
+accumulators re-zeroed inside the j loop? False
+
+V1 code_jump(k) vs k canonical jumps (4 seeds, k = 0..8)
+  k=0: agree=True expected=True PASS
+  k=1: agree=True expected=True PASS
+  k=2: agree=False expected=False PASS
+  k=3: agree=False expected=False PASS
+  k=4: agree=False expected=False PASS
+  k=5: agree=False expected=False PASS
+  k=6: agree=False expected=False PASS
+  k=7: agree=False expected=False PASS
+  k=8: agree=False expected=False PASS
+  author's seed, k=2 == S1^S2 ? True
+
+V2 closed form code_jump(k,S0) == J (I+J)^(k-1) S0, k = 1..8
+  k=1: PASS
+  k=2: PASS
+  k=3: PASS
+  k=4: PASS
+  k=5: PASS
+  k=6: PASS
+  k=7: PASS
+  k=8: PASS
+
+V3 J linear; J == T^(2^128) by GF(2) matrix exponentiation
+  J(a^b) == J(a)^J(b), 20 random pairs: PASS
+  T^(2^128) == J (0.9s): PASS
+
+V4 rank over GF(2) of S0 -> code_jump(k,S0), k = 1..8 (256 = bijection)
+  k=1: rank 256 PASS
+  k=2: rank 256 PASS
+  k=3: rank 256 PASS
+  k=4: rank 256 PASS
+  k=5: rank 256 PASS
+  k=6: rank 256 PASS
+  k=7: rank 256 PASS
+  k=8: rank 256 PASS
+
+V5 fixed_jump(k) == k canonical jumps, k = 0..8, 4 seeds
+  PASS
+
+V6 minimal polynomial of T: degree, irreducibility, primitivity (single 2^256-1 cycle)
+  Berlekamp-Massey degree: 256 (PASS: equals 256 => it is the minimal polynomial of T)
+  irreducible: PASS
+  primitive (x has order 2^256-1 mod C; factorisation checked by multiplying back): PASS
+  => every nonzero state is on one cycle; (I+J) is a fixed element of GF(2^256)* so (I+J) = T^m for a
+     FIXED m: thread k>=1 starts 2^128 + (k-1)m steps after thread 0, independent of the seed.
+
+V7 bounded offset probe among threads 0,1,2 (both directions, N = 2^18 steps); positive control
+  offsets < 2^18 found between distinct threads: none
+  positive control (state planted 1234 steps ahead of thread 0): [(1234, 'planted')] PASS
+  cannot see: offsets >= 2^18 (a run consumes ~2^34 draws per thread); the a-priori bound for a fixed m
+  landing within 2^44 of 0, +-2^128 or a multiple is ~2^-211 and is an argument, not a measurement.
+
+OVERALL: PASS (every check as predicted)
+exit=0

@@ -1,0 +1,19 @@
+
+*** Warning: dataset contains 20000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+
+Running Entropic Statistic Estimates (bit strings only)...
+
+Running Tuple Estimates...
+
+Running Predictor Estimates...
+
+H_original: 1.030535
+H_bitstring: 0.168156
+min(H_original, 8 X H_bitstring): 1.030535

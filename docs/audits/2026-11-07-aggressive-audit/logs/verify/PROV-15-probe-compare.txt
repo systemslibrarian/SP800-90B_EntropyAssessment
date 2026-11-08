@@ -1,0 +1,5 @@
+json.sha256      = d1666217aa60615c6cad36546dccf17bff3269f09f7f23ef6d660c2c4be8827b
+shasum -a 256    = d1666217aa60615c6cad36546dccf17bff3269f09f7f23ef6d660c2c4be8827b
+sha256Scope      = assessed-sample-bytes
+MATCH
+  bitsPerSymbol = 8

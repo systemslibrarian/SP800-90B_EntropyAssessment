@@ -1,0 +1,5 @@
+host: macOS-26.6.2-arm64-arm-64bit | libc: /usr/lib/libc.dylib | optreset symbol: absent (glibc-style)
+argv='-i -- file 1 -q'                        options parsed=['i'] optind=3 operands=['file', '1', '-q'] (count 3; tool accepts 1 or 2)
+argv='-i file 1 -q'                           options parsed=['i'] optind=2 operands=['file', '1', '-q'] (count 3; tool accepts 1 or 2)
+argv='-i -- file 1'                           options parsed=['i'] optind=3 operands=['file', '1'] (count 2; tool accepts 1 or 2)
+argv='-i -- file 1 -- -q'                     options parsed=['i'] optind=3 operands=['file', '1', '--', '-q'] (count 4; tool accepts 1 or 2)

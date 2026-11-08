@@ -1,6 +1,6 @@
-# PROV-13 control.txt  2026-11-07 21:56:16 -0500  host=Darwin 25.6.0 arm64
+# PROV-13 control.txt  2026-11-08 16:07:19 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
 binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
 input ok 2000 [700, 650, 650] 2001 sha256 df0929c16affa55d1140e844aed915244c0799194ae73039a92dba64f3d45d75
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/bal.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/balanced.bin 2

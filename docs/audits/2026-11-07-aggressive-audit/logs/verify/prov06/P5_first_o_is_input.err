@@ -1,0 +1,4 @@
+Error: refusing to write the report to '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin': it is the same file as the
+       input '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin' (or that cannot be ruled out). Writing it would destroy
+       the input capture. Nothing has been written.
+Error: the output path '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/verify/prov06/p5_input.bin' cannot be written; refusing to assess.

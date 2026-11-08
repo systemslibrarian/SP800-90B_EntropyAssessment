@@ -1,0 +1,72 @@
+JUMP constants equal the published xoshiro256 jump constants (verifier's memory, not fetched): True
+seed[0] = ['53cf8275fcb3084c', 'fec2e4927358a085', 'e52ba3af391c6db0', '62bd90444c5706c7']
+  code_jump(0) == J^0  -> True  (expected True): OK
+  code_jump(1) == J^1  -> True  (expected True): OK
+  code_jump(2) == J^2  -> False  (expected False): OK
+  code_jump(3) == J^3  -> False  (expected False): OK
+  code_jump(4) == J^4  -> False  (expected False): OK
+  code_jump(5) == J^5  -> False  (expected False): OK
+  code_jump(2) == S1^S2: OK
+  code_jump(3) == S1^S3           (verifier's own prediction, untested by model.py): OK
+  code_jump(4) == S1^S2^S3^S4     (verifier's own prediction, untested by model.py): OK
+  MECHANISM CONTROL fixed_jump(0) == J^0: OK
+  MECHANISM CONTROL fixed_jump(1) == J^1: OK
+  MECHANISM CONTROL fixed_jump(2) == J^2: OK
+  MECHANISM CONTROL fixed_jump(3) == J^3: OK
+  MECHANISM CONTROL fixed_jump(4) == J^4: OK
+  MECHANISM CONTROL fixed_jump(5) == J^5: OK
+  every code_jump(k) state nonzero, k=0..5: OK
+seed[1] = ['03c626de8deac93b', 'c326af538c7a7c7d', 'fc036e1eab8606bf', '14c6b2116cdb1eb6']
+  code_jump(0) == J^0  -> True  (expected True): OK
+  code_jump(1) == J^1  -> True  (expected True): OK
+  code_jump(2) == J^2  -> False  (expected False): OK
+  code_jump(3) == J^3  -> False  (expected False): OK
+  code_jump(4) == J^4  -> False  (expected False): OK
+  code_jump(5) == J^5  -> False  (expected False): OK
+  code_jump(2) == S1^S2: OK
+  code_jump(3) == S1^S3           (verifier's own prediction, untested by model.py): OK
+  code_jump(4) == S1^S2^S3^S4     (verifier's own prediction, untested by model.py): OK
+  MECHANISM CONTROL fixed_jump(0) == J^0: OK
+  MECHANISM CONTROL fixed_jump(1) == J^1: OK
+  MECHANISM CONTROL fixed_jump(2) == J^2: OK
+  MECHANISM CONTROL fixed_jump(3) == J^3: OK
+  MECHANISM CONTROL fixed_jump(4) == J^4: OK
+  MECHANISM CONTROL fixed_jump(5) == J^5: OK
+  every code_jump(k) state nonzero, k=0..5: OK
+seed[2] = ['6cb92a4fdaafa169', 'f2fc8187b3238cc5', '0026c3241bf143d2', '4c15c0f05f9d5b17']
+  code_jump(0) == J^0  -> True  (expected True): OK
+  code_jump(1) == J^1  -> True  (expected True): OK
+  code_jump(2) == J^2  -> False  (expected False): OK
+  code_jump(3) == J^3  -> False  (expected False): OK
+  code_jump(4) == J^4  -> False  (expected False): OK
+  code_jump(5) == J^5  -> False  (expected False): OK
+  code_jump(2) == S1^S2: OK
+  code_jump(3) == S1^S3           (verifier's own prediction, untested by model.py): OK
+  code_jump(4) == S1^S2^S3^S4     (verifier's own prediction, untested by model.py): OK
+  MECHANISM CONTROL fixed_jump(0) == J^0: OK
+  MECHANISM CONTROL fixed_jump(1) == J^1: OK
+  MECHANISM CONTROL fixed_jump(2) == J^2: OK
+  MECHANISM CONTROL fixed_jump(3) == J^3: OK
+  MECHANISM CONTROL fixed_jump(4) == J^4: OK
+  MECHANISM CONTROL fixed_jump(5) == J^5: OK
+  every code_jump(k) state nonzero, k=0..5: OK
+seed[3] = ['9e3779b97f4a7c15', 'bf58476d1ce4e5b9', '94d049bb133111eb', '2545f4914f6cdd1d']
+  code_jump(0) == J^0  -> True  (expected True): OK
+  code_jump(1) == J^1  -> True  (expected True): OK
+  code_jump(2) == J^2  -> False  (expected False): OK
+  code_jump(3) == J^3  -> False  (expected False): OK
+  code_jump(4) == J^4  -> False  (expected False): OK
+  code_jump(5) == J^5  -> False  (expected False): OK
+  code_jump(2) == S1^S2: OK
+  code_jump(3) == S1^S3           (verifier's own prediction, untested by model.py): OK
+  code_jump(4) == S1^S2^S3^S4     (verifier's own prediction, untested by model.py): OK
+  MECHANISM CONTROL fixed_jump(0) == J^0: OK
+  MECHANISM CONTROL fixed_jump(1) == J^1: OK
+  MECHANISM CONTROL fixed_jump(2) == J^2: OK
+  MECHANISM CONTROL fixed_jump(3) == J^3: OK
+  MECHANISM CONTROL fixed_jump(4) == J^4: OK
+  MECHANISM CONTROL fixed_jump(5) == J^5: OK
+  every code_jump(k) state nonzero, k=0..5: OK
+  J linear over GF(2): J(a^b) == J(a)^J(b): OK
+RESULT: all checks hold
+probe exit=0

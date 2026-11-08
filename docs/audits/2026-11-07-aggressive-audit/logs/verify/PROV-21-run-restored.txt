@@ -1,0 +1,17 @@
+# PROV-21 observed.txt  2026-11-08 16:26:31 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid --version -Z
+rc[ea_non_iid]=0  stdout=ea_non_iid.out stderr=ea_non_iid.err
+  ea_non_iid --version -Z: rc=0 banner-line='non_iid 1.1.8' banner=1 'illegal option' on stderr=0 usage-dump=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid --version -Z
+rc[ea_iid]=0  stdout=ea_iid.out stderr=ea_iid.err
+  ea_iid --version -Z: rc=0 banner-line='iid 1.1.8' banner=1 'illegal option' on stderr=0 usage-dump=0
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart --version -Z
+rc[ea_restart]=0  stdout=ea_restart.out stderr=ea_restart.err
+  ea_restart --version -Z: rc=0 banner-line='restart 1.1.8' banner=1 'illegal option' on stderr=0 usage-dump=0
+code:  if (s.rejectAt >= 0 && s.rejectAt < s.versionAt) return false;  if (s.dashDashAt >= 0 && s.dashDashAt < s.versionAt) return false;  return true; 
+RESULT: PASS -- all three tools exit 0 with a banner on '--version -Z'; the unknown option after --version is never reported

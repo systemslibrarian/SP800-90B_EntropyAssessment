@@ -1,0 +1,4 @@
+skew-lsb0-8bit  i: flags=['-i'] errorLevel=0 bitsPerSymbol=8 Overall.hAssessed=1.0305347188697431 hOriginal=1.0305347188697431 hBitstring=0.16815618845789834
+skew-lsb0-8bit ic: flags=['-i', '-c'] errorLevel=0 bitsPerSymbol=8 Overall.hAssessed=1.3452495076631867 hOriginal=<absent> hBitstring=0.16815618845789834
+skew-lsb0-8bit ci: flags=['-c', '-i'] errorLevel=0 bitsPerSymbol=8 Overall.hAssessed=1.0305347188697431 hOriginal=1.0305347188697431 hBitstring=0.16815618845789834
+skew-lsb0-8bit  c: flags=['-c'] errorLevel=0 bitsPerSymbol=8 Overall.hAssessed=1.3452495076631867 hOriginal=<absent> hBitstring=0.16815618845789834

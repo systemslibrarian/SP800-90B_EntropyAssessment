@@ -1,0 +1,125 @@
+# PROV-13 verifier reproduction  2026-11-08 16:07:18 -0500  host=Darwin 25.6.0 arm64
+# verifier: independent re-run of repro/PROV-13/run.sh and control.sh from /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+# git HEAD=834ffeb branch=audit/2026-11-07
+# ea_iid sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349
+
+===== run.sh (stdout+stderr) =====
+# PROV-13 observed.txt  2026-11-08 16:07:18 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input ok 2000 [1992, 4, 4] 2000 sha256 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e  (corpus/iid-chisq-dfneg.bin was 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/df.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/dfneg.bin 2
+rc[iid_vvv]=0  stdout=df.out stderr=df.err
+  | Chi square independence: T = 0.17059228241416982
+  | Chi square independence: df = -1
+  | Chi square independence: P-value = 1
+  | Chi square goodness of fit: T = 0
+  | Chi square goodness of fit: df = 0
+  | Chi square goodness of fit: P-value = 1
+  | Chi square tests: Passed
+JSON passedChiSquareTests/ranChiSquareTests: true true ; rc=0 errorLevel=0 IID=true
+JSON keys carrying df, T, p-value or 'applied': passedChiSquareTests,ranChiSquareTests
+RESULT: PASS -- df = -1 (< 1) printed with P-value = 1 and 'Chi square tests: Passed'; JSON passedChiSquareTests true -- a test the standard says not to apply is reported as applied and passed
+run.sh exit=0
+
+===== control.sh (stdout+stderr) =====
+# PROV-13 control.txt  2026-11-08 16:07:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input ok 2000 [700, 650, 650] 2001 sha256 df0929c16affa55d1140e844aed915244c0799194ae73039a92dba64f3d45d75
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/bal.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/balanced.bin 2
+rc[iid_vvv]=0  stdout=bal.out stderr=bal.err
+  | Chi square independence: T = 3.2664654027291435
+  | Chi square independence: df = 6
+  | Chi square independence: P-value = 0.7747356989584685
+  | Chi square goodness of fit: T = 18.096703296703296
+  | Chi square goodness of fit: df = 18
+  | Chi square goodness of fit: P-value = 0.44929932758944602
+  | Chi square tests: Passed
+rc=0 df=6 pv=0.7747356989584685 -> OK
+RESULT: CONTROL-OK -- with nbin > k the test is applied: df = 6, P-value = 0.7747356989584685 in (0,1); the df = -1 / P = 1 pair in run.sh is the not-applicable case misreported
+control.sh exit=0
+
+===== rule 7 mutation: run.sh expectation 'df < 1' -> 'df >= 1' (expect RESULT: FAIL, exit 1) =====
+mutation diff:
+26c26
+< ok=$("$PY" -c 'import sys; df=int(sys.argv[1]); pv=float(sys.argv[2]); print("DEFECT" if df < 1 and pv == 1.0 else "NODEFECT")' "$df" "$pv")
+---
+> ok=$("$PY" -c 'import sys; df=int(sys.argv[1]); pv=float(sys.argv[2]); print("DEFECT" if df >= 1 and pv == 1.0 else "NODEFECT")' "$df" "$pv")
+--- mutated run.sh output ---
+# PROV-13 observed.txt  2026-11-08 16:09:18 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input ok 2000 [1992, 4, 4] 2000 sha256 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e  (corpus/iid-chisq-dfneg.bin was 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/df.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/dfneg.bin 2
+rc[iid_vvv]=0  stdout=df.out stderr=df.err
+  | Chi square independence: T = 0.17059228241416982
+  | Chi square independence: df = -1
+  | Chi square independence: P-value = 1
+  | Chi square goodness of fit: T = 0
+  | Chi square goodness of fit: df = 0
+  | Chi square goodness of fit: P-value = 1
+  | Chi square tests: Passed
+JSON passedChiSquareTests/ranChiSquareTests: true true ; rc=0 errorLevel=0 IID=true
+JSON keys carrying df, T, p-value or 'applied': passedChiSquareTests,ranChiSquareTests
+RESULT: FAIL -- df=-1 pv=1 passed=1 json=true true
+mutated run.sh exit=1
+
+===== run.sh restored (cp from backup; sha256 30df4ea3df578cf222eb46e3b4a72f730b5d1c3c53604ef900cb37ced6395b38) and re-run to leave observed.txt in its true state =====
+# PROV-13 observed.txt  2026-11-08 16:09:20 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=834ffeb branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+input ok 2000 [1992, 4, 4] 2000 sha256 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e  (corpus/iid-chisq-dfneg.bin was 7aed588a0c91bada25332b13b6e3af94ea8daae8c84764dccc0a5ea4c816224e)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -vvv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/df.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-13/out/dfneg.bin 2
+rc[iid_vvv]=0  stdout=df.out stderr=df.err
+  | Chi square independence: T = 0.17059228241416982
+  | Chi square independence: df = -1
+  | Chi square independence: P-value = 1
+  | Chi square goodness of fit: T = 0
+  | Chi square goodness of fit: df = 0
+  | Chi square goodness of fit: P-value = 1
+  | Chi square tests: Passed
+JSON passedChiSquareTests/ranChiSquareTests: true true ; rc=0 errorLevel=0 IID=true
+JSON keys carrying df, T, p-value or 'applied': passedChiSquareTests,ranChiSquareTests
+RESULT: PASS -- df = -1 (< 1) printed with P-value = 1 and 'Chi square tests: Passed'; JSON passedChiSquareTests true -- a test the standard says not to apply is reported as applied and passed
+restored run.sh exit=0
+
+===== verifier extra: seed-controlled control (gen.py seed 2000 = run.sh's seed, counts 700/650/650) -- closes the seed-2000-vs-2001 difference between run.sh and control.sh =====
+input: ok 2000 [700, 650, 650] 2000 sha256 d3e749d6856b7881a3594b17a7721eaa664da4ec3f9121d783b6b0a92fe46f7a
+cmd: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 cpp/ea_iid -vvv -o logs/verify/PROV-13-balanced-seed2000.json logs/verify/PROV-13-balanced-seed2000.bin 2 ; rc=0
+  | Chi square independence: T = 10.638763434367828
+  | Chi square independence: df = 6
+  | Chi square independence: P-value = 0.10020335719348375
+  | Chi square goodness of fit: T = 13.015384615384619
+  | Chi square goodness of fit: df = 18
+  | Chi square goodness of fit: P-value = 0.790658259723235
+  | Chi square tests: Passed
+
+===== verifier derivation of compliant-size reachability (NOT measured; see logs/verify/PROV-13-reach-derivation.txt) =====
+L=2000 counts=[1992, 4, 4] k=3 -> nbin=2 df=-1 NOT APPLIED (df<1)  bins=[5.992, 994.008]  p_max=0.996  -log2(p_max)=0.00578
+L=2000 counts=[700, 650, 650] k=3 -> nbin=9 df=6 applied  bins=[105.625, 105.625, 105.625, 105.625, 113.75, 113.75, 113.75, 113.75, 122.5]  p_max=0.35  -log2(p_max)=1.51457
+L=1000000 counts=[999990, 5, 5] k=3 -> nbin=2 df=-1 NOT APPLIED (df<1)  bins=[5.0, 499995.0]  p_max=0.99999  -log2(p_max)=0.00001
+L=1000000 counts=[999980, 10, 10] k=3 -> nbin=3 df=0 NOT APPLIED (df<1)  bins=[5.0, 10.0, 499985.0]  p_max=0.99998  -log2(p_max)=0.00003
+L=1000000 counts=[999900, 50, 50] k=3 -> nbin=5 df=2 applied  bins=[25.003, 24.998, 24.998, 24.998, 499900.005]  p_max=0.9999  -log2(p_max)=0.00014
+L=1000000 counts=[990000, 5000, 5000] k=3 -> nbin=9 df=6 applied  bins=[12.5, 12.5, 12.5, 12.5, 2475.0, 2475.0, 2475.0, 2475.0, 490050.0]  p_max=0.99  -log2(p_max)=0.01450
+
+===== verifier prior-record cross-check (the README cites only N-01) =====
+The non-binary df<1 'Passed' shape is ALREADY ON RECORD, three times, none cited by repro/PROV-13/README.md:
+  audits/2026-09-30/novel-findings/REPORT.md:340 -- 'Non-binary independence with df < 1 reported Passed | Spec-consistent: 5.2.1 says the test is not applied.'
+  audits/2026-09-30/novel-findings/agent-reports/iid.md:41,320 -- same, rejected as spec-consistent
+  audits/2026-10-11-independent-audit/DISPOSITIONS.md:86-115 -- C04 'partially refuted, downgraded to Low'; reporting/transparency only; 'returning false at df < 1 would ... exit 1 on data SP 800-90B does not reject'
+  audits/2026-10-11-independent-audit/DIRECTION-TRIAGE.md:185 -- C04 'Verified NEUTRAL ... closed, not set aside'
+  audits/2026-10-11-independent-audit/RESUME.md:32-45 -- C04 reproduced AT COMPLIANT SIZE: skew8b.bin (k=75) df = -58, P-value = 1, Passed; imbal-k3-1M.bin df = -1; imbal-k4-1M.bin df = 0 (so the README's 'compliant-size reachability is derived, not measured' is behind the record)
+  audits/2026-10-11-independent-audit/COVERAGE.md:320,345 -- MS-12, byte-identical in upstream, master and repair
+  docs/audits/2026-11-07-aggressive-audit/LIMITATIONS-DRAFT.md:692 -- already listed in this audit's limitations draft
+NOT in CLOSING-INVENTORY.md, NOT in FORK-DIVERGENCE-AND-TRUST.md, NOT in NOTICE (grep C04|MS-12|imbal-k3: only ORCHESTRATOR-CHECKS.md:359,406,474,480,789 mention C04, as a provenance lesson).
+
+===== verifier verdict =====
+(a) observed.txt shows exactly the claimed lines: 'Chi square independence: df = -1', 'P-value = 1', 'Chi square tests: Passed', JSON passedChiSquareTests true ranChiSquareTests true -- reproduced by me 2026-11-08 against ea_iid sha256 22f1319a...
+(b) control differs in counts (700/650/650 vs 1992/4/4) AND seed (2001 vs 2000); the seed-2000 balanced probe above gives df = 6 too, so counts are the operative variable; control shows df = 6, P in (0,1): no defect.
+(c) PASS requires df<1 AND pv==1.0 AND exactly one 'Chi square tests: Passed' AND JSON passedChiSquareTests true; an absent df line makes int('') raise -> FAIL (not vacuous). ranChiSquareTests is logged but not asserted. Mutation 'df < 1' -> 'df >= 1' produced RESULT: FAIL exit 1; restored byte-identical; re-run PASS exit 0.
+Mechanism confirmed in source: chi_square_tests.h:569 df = bin_expectations.size() - alphabet_size (size_t - int -> int); :368 chi_square_pvalue -> :279-280 cephes_igamc returns 1.0 for a <= 0; :693 pvalue < 0.001 false -> pass. Hand binning for 1992/4/4 at L=2000: bins {5.992},{994.008} -> nbin 2, df -1 (matches expected.txt).
