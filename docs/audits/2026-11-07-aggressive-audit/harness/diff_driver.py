@@ -940,7 +940,7 @@ def run_ref_module(module: str, file_path: str, bps: int, mode: str, translate: 
         if rec.get("error") is None:
             rec["error"] = (tail[-1] if tail else "no error text")
     rec["options_used"] = options
-    write_json(out_path, rec)
+    write_json(out_path, compact_tables(rec))   # raw module output: tables elided too (see ELIDE_OVER)
     return rec
 
 
@@ -955,7 +955,7 @@ def ref_child_main(argv: list[str]) -> int:
     except Exception as ex:
         rec = {"status": "error", "values": None, "error": f"{type(ex).__name__}: {ex}",
                "traceback": traceback.format_exc().splitlines()[-12:]}
-    write_json(out_path, rec)
+    write_json(out_path, compact_tables(rec))   # raw module output: tables elided too (see ELIDE_OVER)
     return 0 if rec["status"] == "ok" else 1
 
 
