@@ -8,6 +8,7 @@ regression-iid-failclosed.sh
 regression-iid-json.sh
 regression-input-identity.sh
 regression-minsize.sh
+regression-multimmc-lookup.sh
 regression-multimmc.sh
 regression-nonregular.sh
 regression-notrun.sh

@@ -81,7 +81,7 @@ not a proof about every qualifying input:
     on before, with the same eight predictor values, for the platform
     reason recorded in upstream issue #155.
 
-  * Two changes alter results deliberately, and are not covered by the
+  * Three changes alter results deliberately, and are not covered by the
     sentence above:
 
       - F09 (commit 69b6094) corrects the MultiMMC run of correct
@@ -103,6 +103,25 @@ not a proof about every qualifying input:
         min-entropy figure, and it changes it on exactly the datasets
         the standard says it should.
 
+      - F10 / C01 (2026-11-08) makes the MultiMMC predictor consult
+        every depth independently, as SP 800-90B 6.3.9 step 4.b.i is
+        written, instead of skipping every deeper depth once a shallower
+        one had missed. The two readings differ only after a depth's
+        dictionary reaches its 100,000-entry cap, and then in either
+        direction. On the 2026-11-07 audit's two crafted 1,000,000-sample
+        8-bit files the Literal MultiMMC figure moves from
+        0.97830188845975063 to about 0.90052 on one (the spec-literal
+        reference computes 0.9005162186024169 with the printed Z = 2.576;
+        the tool's binary64 quantile, D-1, moves the seventh decimal) and
+        from 1.1479041002434913 to about 1.24064 on the other. The first
+        is the direction that matters: the old figure was too HIGH. On
+        every multi-bit sample under bin/ the spec-literal reference gives
+        C and r identical to cpp/selftest/refdata/ (derived 2026-11-08
+        with reference/py90b/multimmc.py; to be confirmed by the
+        self-test on the repaired build), and the binary path cannot
+        reach the mechanism, so no reference figure is expected to move.
+        Regression: cpp/selftest/regression-multimmc-lookup.sh.
+
   * bin/ and cpp/selftest/refdata/ are untouched. The reference data is
     NIST's and is not regenerated here.
 
@@ -110,9 +129,10 @@ not a proof about every qualifying input:
     altered. Most estimator changes only turn producing an unmeasured
     number, reading out of bounds, or aborting the process into
     declining to produce an estimate, which the combination logic
-    already handled. The two exceptions are F09 and N-01, described
-    above: they change results deliberately. This sentence said "only"
-    until 2026-10-01, which those two contradict.
+    already handled. The three exceptions are F09, N-01 and F10 / C01,
+    described above: they change results deliberately. This sentence
+    said "only" until 2026-10-01, which the first two contradict; the
+    third joined them on 2026-11-08.
 
 What is no longer true: cpp/shared/, cpp/non_iid/ and the *_main.cpp
 programs have been modified. Each change is listed below with the
@@ -256,6 +276,23 @@ A second repair pass on the same date, working the remaining queue:
             SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
             against brute-force enumeration. -s is accepted and ignored.
             Audit C23, OC-30. Self-authored and unreviewed.
+2026-11-08  cpp/non_iid/multi_mmc_test.h: each MultiMMC depth looks its
+            prefix up independently, as SP 800-90B 6.3.9 step 4.b.i is
+            written; a miss at depth d-1 no longer makes depths >= d Null.
+            The two readings differ only once a depth's dictionary holds
+            MAX_ENTRIES pairs, where a prefix can be present at depth d
+            with its suffix refused at d-1; the chained lookup then lowered
+            C and r and raised the estimate (audit F10 / C01, recorded as
+            NOT REPAIRED until now; the 2026-11-07 audit's experiment X3
+            measured +0.078 bit on a crafted compliant 8-bit file). The
+            binary path is changed the same way for consistency and cannot
+            reach the mechanism, so no binary figure moves. The F09 run
+            counter (commit 69b6094) and the #257 decline (commit ed88de9)
+            share these loops and are exercised by the regression as named
+            pairs. Regression: regression-multimmc-lookup.sh, with the
+            pre-repair figures recorded in its header. Written without a
+            build; the observed failure against master's binary is the
+            orchestrator's to record. Self-authored and unreviewed.
 2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
             report that is actually written. Commit 23dca69.
 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed
@@ -332,10 +369,12 @@ A second repair pass on the same date, working the remaining queue:
 
 The scope statement at the head of this section covers these too: no
 unintended numerical change was observed on the datasets tested, with
-F09 and N-01 the two deliberate exceptions described there. On every
-sample under bin/ the figures are unchanged, including the Literal
-MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which the
-build still reproduces exactly.
+F09, N-01 and F10 / C01 the three deliberate exceptions described there.
+On every sample under bin/ the figures are unchanged, including the
+Literal MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which
+the build still reproduces exactly; for F10 / C01 that is a derivation
+from the spec-literal reference (2026-11-08), to be confirmed by the
+self-test on the repaired build.
 
 Withdrawn, not merely unchanged (recorded 2026-10-02): the treatment of a
 two-symbol alphabet as binary regardless of the declared sample width

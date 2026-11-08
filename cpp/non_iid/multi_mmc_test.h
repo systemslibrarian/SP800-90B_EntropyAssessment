@@ -63,7 +63,6 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
    //In C, arrays are 0 indexed.
    //i is the index of the new symbol to be predicted
    for(i=2; i<L; i++) {
-      bool found_x = false;
       // See the generic path below: SP 800-90B 6.3.9 leaves correct[i-2] at 0
       // for a Null prediction, so a Null from the winner ends the run. The
       // run counter was only reset where the winner predicted and was wrong.
@@ -77,6 +76,7 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
          uint8_t curPrediction = 2;
          long curCount;
          long *binaryDictEntry;
+         bool found_x;
 
          //Add S[i-d-1] to the start of curPattern
          curPattern = (curPattern | (((uint32_t)(S[i-d-1]&1))<<d));
@@ -84,25 +84,24 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
 
          binaryDictEntry = BINARYDICTLOC(d+1, curPattern);
 
-         // check if the prefix x has been previously seen. If the prefix x has not occurred,
-         // then do not make a prediction for current d and larger d's
-         // as well, since it will not occur for them either. In other words,
-         // prediction is NULL, so do not update the scoreboard.
-         // Note that found_x is meaningless on the first round, but for that round d==0.
-         // All future rounds use a meaningful found_x
-         if((d == 0) || found_x) {
-            //For the prediction, curPrediction is the max across all pairs (there are only 2 symbols here!)
-            if((binaryDictEntry[0] > binaryDictEntry[1])) {
-               curPrediction = 0;
-               curCount = binaryDictEntry[0];
-            } else {
-               curPrediction = 1;
-               curCount = binaryDictEntry[1];
-            }
-
-            if(curCount == 0) found_x = false;
-            else found_x = true;
+         // Each depth looks its prefix up on its own; the generic path below
+         // says why (SP 800-90B 6.3.9 step 4.b.i, audit F10 / C01). This used
+         // to skip the lookup once a shallower depth had missed. For binary
+         // data the two readings are equivalent: depth index d holds at most
+         // 2^(d+2) pairs and 2^16 < MAX_ENTRIES, so the cap can bind only at
+         // the top depth, which has no deeper depth to skip. No binary figure
+         // moves; the change keeps both paths implementing the same step.
+         //For the prediction, curPrediction is the max across all pairs (there are only 2 symbols here!)
+         if((binaryDictEntry[0] > binaryDictEntry[1])) {
+            curPrediction = 0;
+            curCount = binaryDictEntry[0];
+         } else {
+            curPrediction = 1;
+            curCount = binaryDictEntry[1];
          }
+
+         // The prefix x is in the dictionary iff some (x,y) has been counted.
+         found_x = (curCount != 0);
 
          if(found_x) {
             // x is present as a prefix.
@@ -172,6 +171,9 @@ static double binaryMultiMMCPredictionEstimate(const uint8_t *S, long L, const i
  *    could run out of a short-string length prior to a long string length, thus erroneously not add
  *    some long string to the dictionary after no longer looking for a string to the dictionary when
  *    we should have), this can't happen in practice because we add strings from shortest to longest.
+ *    (The last sentence does not survive the MAX_ENTRIES cap: a shorter string CAN be refused while
+ *    the longer one is added. The lookup inside the prediction loop below says what follows from
+ *    that and why every depth is now consulted independently. Audit F10 / C01.)
  */
 double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose, const char *label){
 	int winner, cur_winner;
@@ -214,7 +216,6 @@ double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose,
 	// perform predictions
 	//i is the index of the new symbol to be predicted
 	for (i = 2; i < len; i++){
-		bool found_x = false;
 		// Whether the winning subpredictor predicted S[i] correctly this
 		// round. SP 800-90B 6.3.9 step 1 initialises correct[] to 0 and step
 		// 4.d sets correct[i-2] = 1 only when the prediction equals s_i, so a
@@ -228,23 +229,31 @@ double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose,
 
 		for(d = 0; (d < D_MMC) && (i-2 >= d); d++) {
 			map<array<uint8_t, D_MMC>, PostfixDictionary>::iterator curp;
-			// check if x has been previously seen as a prefix. If the prefix x has not occurred,
-			// then do not make a prediction for current d and larger d's
-			// as well, since it will not occur for them either. In other words,
-			// prediction is NULL, so do not update the scoreboard.
-			// Note that found_x is uninitialized on the first round, but for that round d==0.
-			if((d == 0) || found_x) {
-				//Get the prediction
-				//predict S[i] by using the prior d+1 symbols and the current state
-				//We need the d-tuple prior to S[i], that is (S[i-d-1], ..., S[i-1])
+			bool found_x;
 
-				//This populates the curp for the later increment
-
-				memcpy(x.data(), data+i-d-1, d+1);
-				curp = M[d].find(x);
-				if(curp == M[d].end()) found_x = false;
-				else found_x = true;
-			}
+			// Every depth is looked up independently. SP 800-90B 6.3.9 step
+			// 4.b.i (PDF p. 61) reads, for each d from 1 to D, "If d < i, find
+			// the y value that corresponds to the highest M_d[(s_{i-d}, ...,
+			// s_{i-1}), y] value", with no condition on any other depth.
+			//
+			// This used to consult depth d only when depth d-1 had found its
+			// prefix, on the argument (restated above this function) that a
+			// stored (d+1)-symbol prefix implies its d-symbol suffix is stored.
+			// That holds without the dictionary cap and fails with it: once
+			// M[d-1] holds MAX_ENTRIES pairs a new pair is refused there while
+			// the same round still adds the longer pair to M[d], so a prefix can
+			// be present at depth d with its suffix absent at depth d-1. Every
+			// later visit to that context then went Null at depths >= d where
+			// the standard predicts, which lowers C and r and raises the
+			// estimate: the overstating direction (audit F10 / C01; +0.078 bit
+			// on a crafted 1,000,000-sample 8-bit file, 2026-11-07 audit
+			// experiment X3). The reverse direction exists on other inputs.
+			//
+			// The prediction uses the d+1 symbols before S[i], (S[i-d-1], ..., S[i-1]);
+			// x keeps its zero padding beyond d+1 bytes from the memset above.
+			memcpy(x.data(), data+i-d-1, d+1);
+			curp = M[d].find(x);
+			found_x = (curp != M[d].end());
 
 			if(found_x){
 				long predictCount;
@@ -266,9 +275,7 @@ double multi_mmc_test(uint8_t *data, long len, int alph_size, const int verbose,
 				}
 			} else if(entries[d] < MAX_ENTRIES) {
 				//We didn't find the x prefix, so (x,y) surely can't have occurred.
-				//We're allowed to make a new entry. Do so.
-				//curp isn't populated here, because it wasn't found
-				memcpy(x.data(), data+i-d-1, d+1);
+				//We're allowed to make a new entry. Do so. x already holds the prefix.
 				(M[d][x]).incrementPostfix(data[i], true);
 				entries[d]++;
 			}
