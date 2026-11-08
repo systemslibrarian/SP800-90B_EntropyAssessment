@@ -1,0 +1,2 @@
+regression-workflows: PyYAML is not available, so the workflows cannot be parsed.
+                      Refusing to report a syntax verdict this run did not reach.

@@ -1,0 +1,20 @@
+offset multiplication overflow:              refused
+offset past end of file:                     refused
+zero-sample subset request:                  refused
+N-08 ea_non_iid treats 010 as decimal 10:    yes
+N-08 ea_non_iid refuses -l +0,1:             refused
+N-08 ea_non_iid refuses -l 0,+1:             refused
+N-08 ea_non_iid refuses -l 0,1x:             refused
+N-08 ea_non_iid refuses -l 0,0x1:            refused
+N-08 ea_iid treats 010 as decimal 10:        yes
+N-08 ea_iid refuses -l +0,1:                 refused
+N-08 ea_iid refuses -l 0,+1:                 refused
+N-08 ea_iid refuses -l 0,1x:                 refused
+N-08 ea_iid refuses -l 0,0x1:                refused
+ordinary subset accepted:                    yes
+subset provenance in JSON:                   index, requested and actual present
+short final block recorded:                  requested 700000, actual 300000
+sha256 identifies assessed block zero:       yes
+short-block hash binds consumed bytes:       yes
+
+regression-subset: PASS

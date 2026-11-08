@@ -76,8 +76,8 @@ contract absolutely ("never a stale success"), and no regression covers this ord
 cannot see it). This audit's contribution is the executed evidence on all three tools and the contradiction. The
 refute lens rejected the finding *as framed* (as new, and as "overstates": no figure is reported and the stale file
 names its own run), and that objection is accepted — direction is **neutral for a consumer that honours the rule,
-permissive for one that reads only the file**. Fix offered: `fix/stale-report` (claims the target from the argv
-prescan, before `getopt`; 29-check regression observed failing on master's binaries, `repro/FIX-stale-report/`).
+permissive for one that reads only the file**. Fix offered: `fix/stale-report` `c8b0bc6` (claims the target from the argv prescan, before `getopt`): its 29-check
+`regression-stale-report.sh` **FAILS on master's binaries (9 stale probes) and PASSES on the fixed build** (`logs/fixes/stale-report/`).
 
 **AA-03 — `ea_restart` omits a declined row/column estimator with no not-run flag, and no JSON field carries the
 awarded `min(H_r, H_c, H_I)`.** Executed at compliant size (X6, `logs/experiments/x6-*.json`; `repro/PROV-10` heavy
@@ -87,7 +87,8 @@ awarded 0.5 appears only in text (`-q` suppresses it). Spec: §3.1.4.2 (PDF p. 2
 estimates computed; the fork's own F05 repair made omission visible in `ea_non_iid` and not here. Direction: the
 row/column minimum is over fewer estimators (permissive for the validation gate; the awarded figure is still
 ≤ `H_I`). Prior-fix interaction: R-2, F05, NOVEL-03. Not lens-verified (compliant-size only). Fix offered:
-`fix/restart-notrun`.
+`fix/restart-notrun` `745b396` (F05-style not-run flags for rows and columns; an explicit `hAssessed = min(h_r, h_c, h_i)` on
+Overall): `regression-restart-notrun.sh` **FAILS on master's binary, PASSES on the fixed build** (`logs/fixes/restart-notrun/`).
 
 ### 1.2 LOW
 
@@ -100,8 +101,9 @@ sha256 change from the suite-blessed binaries (`b61cf8c7…` → `1ad1568c…`);
 fixed output path. libcrypto is used only for the report's input SHA-256 (`TestRunUtils.h:658-721`), so no figure
 depends on it (the self-test on the relinked binaries matches every reference figure) — hence LOW, not MEDIUM.
 **Disclosure: this audit changed the build environment of this machine.** Lens-verified (3/3). Fix offered:
-`fix/openssl-pin` (pinned prefix first; the new check abstains on Linux, so the x86-64 gate expects two named
-abstentions).
+`fix/openssl-pin` `b62336b` (pinned prefix first on `-I` and `-L`; the new check abstains on Linux, so the x86-64 gate expects two
+named abstentions): `regression-openssl-pin.sh` **FAILS against master's Makefile/binaries, PASSES on the fixed build, whose three
+binaries link `/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib`** (`logs/fixes/openssl-pin/`).
 
 **AA-05 — `ea_restart -s` refuses 0 and every value below 5,000,000 with a bare usage dump although its usage text
 says "accepted for compatibility and ignored"** (`restart_main.cpp:454`; `regression-restart.sh` probes only the
@@ -220,7 +222,7 @@ and reports only where the measured magnitude differs from the recorded one.
 |---|---|---|---|
 | **D-1 / C22c** — the exact binary64 0.995 quantile `2.5758293035489008` where the text prints `2.576` (MCV, t-Tuple, LRS, Collision, Compression, the four predictors' `P_global'`) | FORK-DIVERGENCE §B, §D | permissive, bounded by the floor's C22c term (3.36e-3 bit at n = 1e6) | 94 of 94 `CPP_HIGHER` records at 50,000 samples vanish when the reference is re-run with the exact constant (`logs/diff/SUMMARY.md`); at 5,000 samples the excess is 1e-6–4e-5 bit/symbol, shrinking as 1/√N. Consistent with the record. |
 | **F02** — with the width omitted, `n` is inferred from the highest set bit (upstream #254 position; the fork repaired by REPORTING `bitsPerSymbolInferred`) | tracker F02, NOTICE | "up to 2.4×", +21.9 % at 20,000 | **+38.5 % at 1,000,000** (experiment X1: MSB-dead uniform 7-bit data, inferred `6.2727` vs declared-8 `4.5300`; both below the 7-bit truth; LSB-dead control identical either way, `4.5402`). Direction permissive relative to the declared-width computation; it reaches the TRUE figure in no measured case. See L-02 and the stuck-bit note under L-01 for why "always declare 8" is not the right mitigation. |
-| **C01 / F10** — MultiMMC's chained prefix lookup (`multi_mmc_test.h:236`, `:267-274`) vs §6.3.9 step 4.b.i's independent per-depth lookup; **NOT REPAIRED** | FORK-DIVERGENCE §A.1 | one executed overestimate (`f10_over_8bit_1M`); margin 3.69e-4 bit at width 1 | **±0.08 bit at width 8, 1,000,000 samples**, on crafted compliant files (experiment X3): naive construction tool `1.1479` vs spec-literal reference `1.2406` (tool LOWER, ΔC = −28,087); gadget tool `0.9783` vs `0.9005` (tool **HIGHER** by 0.078 bit, ΔC = +28,121). Two independent models (text-as-written ≡ reference; C++-transcribed ≡ tool) agree the cause is the chained lookup with the 100,000-entry cap bound. The assessed figure did not move on these files (other estimators gave 0), so this is the estimator's margin, not a final-figure overstatement here; the prior record holds the one executed final-figure case. **The recorded margin is a width-1 number and does not bound width 8.** Fix offered for the owner's decision: `fix/multimmc-independent-lookup`. |
+| **C01 / F10** — MultiMMC's chained prefix lookup (`multi_mmc_test.h:236`, `:267-274`) vs §6.3.9 step 4.b.i's independent per-depth lookup; **NOT REPAIRED** | FORK-DIVERGENCE §A.1 | one executed overestimate (`f10_over_8bit_1M`); margin 3.69e-4 bit at width 1 | **±0.08 bit at width 8, 1,000,000 samples**, on crafted compliant files (experiment X3): naive construction tool `1.1479` vs spec-literal reference `1.2406` (tool LOWER, ΔC = −28,087); gadget tool `0.9783` vs `0.9005` (tool **HIGHER** by 0.078 bit, ΔC = +28,121). Two independent models (text-as-written ≡ reference; C++-transcribed ≡ tool) agree the cause is the chained lookup with the 100,000-entry cap bound. The assessed figure did not move on these files (other estimators gave 0), so this is the estimator's margin, not a final-figure overstatement here; the prior record holds the one executed final-figure case. **The recorded margin is a width-1 number and does not bound width 8.** Fix offered for the owner's decision: `fix/multimmc-lookup` `f46f2ea` (independent per-depth lookup per §6.3.9 step 4.b.i, F09 run counter preserved): `regression-multimmc-lookup.sh` **FAILS on master's binary (gadget C 2288, r 12) and PASSES on the fixed build (C 2409, r 20 = the spec model)**; its 20,000-sample baselines are unchanged either way (`logs/fixes/multimmc-lookup/`). Whether the self-test corpus figures move is DERIVED unchanged by the fix author and is checked by the suite run below. |
 | **D-2** — Collision adjusted mean clamped to 2 instead of the text's 1-bit fallback | FORK-DIVERGENCE §D | conservative | code matches the decision; reproduced (`logs/analysis/collision.md`). |
 | **D-3** — Markov six-path table (the standard's) | §D | — | +0.0037 bit/bit measured vs the fitted model's true max path, ceiling log2(φ)/128 = 0.0054 (L-06). |
 | **C23** — restart sanity check decides on the exact multinomial maximum, not step 5's printed formula | §B | printed cutoff rejects correctly-operating 8-bit sources 82.5–83.2 % of the time | not re-measured; the two quoted false-reject rates differ (PROV/S10 doc note). |

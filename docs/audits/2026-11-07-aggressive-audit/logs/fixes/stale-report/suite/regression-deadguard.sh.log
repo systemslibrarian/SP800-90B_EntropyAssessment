@@ -1,0 +1,4 @@
+  [provenance] provenance: fork @ fix/stale-report c8b0bc6
+  flags now                                    40
+  flags in the pinned baseline                 40
+regression-deadguard: PASS (flag set unchanged)
