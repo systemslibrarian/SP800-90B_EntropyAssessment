@@ -1,0 +1,210 @@
+{
+ "name": "x6-restart",
+ "tool": "restart",
+ "files": {
+  "stdout": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.stdout",
+  "stderr": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.stderr",
+  "rc": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.rc",
+  "meta": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.meta"
+ },
+ "rc": 0,
+ "stderr_tail": [],
+ "meta": {
+  "name": "x6-restart",
+  "start": "2026-11-07T22:32:34-0500",
+  "cwd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit",
+  "host": "Darwin 25.6.0 arm64",
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "<unset>",
+  "cmd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x6-debruijn-k100-seed11-1000000.bin 8 0.5/symbol",
+  "sha256": {
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart": "4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x6-debruijn-k100-seed11-1000000.bin": "4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8"
+  },
+  "end": "2026-11-07T22:32:40-0500",
+  "rc": "0"
+ },
+ "text": {
+  "loaded": {
+   "n": 1000000,
+   "k": 100,
+   "width": 8
+  },
+  "narrower_warning": true,
+  "refusal": null,
+  "short_escape": false,
+  "estimates": {
+   "Literal": {
+    "MCV": {
+     "mode": {
+      "text": "10000, p-hat = 0.01, p_u = 0.010256291907862211",
+      "value": null
+     }
+    },
+    "t-Tuple": {
+     "t": {
+      "text": "2, p-hat_max = 0.01178983201746907835683, p_u = 0.01206786464528758658077",
+      "value": null
+     }
+    },
+    "LRS": {
+     "u": {
+      "text": "3, v = 6, p-hat = 0.01122464106164054, p_u = 0.011496005132238927",
+      "value": null
+     }
+    },
+    "MultiMCW Prediction": {
+     "N": {
+      "text": "999937, Pglobal' = 0.010254912514212971 (C = 9998) Plocal can't affect result (r = 4)",
+      "value": null
+     }
+    },
+    "Lag Prediction": {
+     "N": {
+      "text": "999999, Pglobal' = 0.010281619113016964 (C = 10025) Plocal can't affect result (r = 4)",
+      "value": null
+     }
+    },
+    "MultiMMC Prediction": {
+     "N": {
+      "text": "999998, Pglobal' = 0.010227956920235872 (C = 9972) Plocal can't affect result (r = 3)",
+      "value": null
+     }
+    },
+    "LZ78Y Prediction": {
+     "N": {
+      "text": "999983, Pglobal' = 0.010149116102645432 (C = 9894) Plocal can't affect result (r = 4)",
+      "value": null
+     }
+    }
+   },
+   "Bitstring": {}
+  },
+  "notes": [],
+  "h_original": null,
+  "h_bitstring": null,
+  "h_bitstring_per_symbol": null,
+  "assessed": null,
+  "h_prime": null,
+  "restart_min": {
+   "text": "0.500000",
+   "value": 0.5
+  },
+  "restart_passed": true,
+  "degenerate": [],
+  "lines": 57,
+  "min_of_printed": {
+   "Literal": {
+    "count": 0,
+    "estimators": [],
+    "min": null,
+    "binding": null
+   },
+   "Bitstring": {
+    "count": 0,
+    "estimators": [],
+    "min": null,
+    "binding": null
+   }
+  }
+ },
+ "json": {
+  "present": true,
+  "top": {
+   "errorLevel": 0,
+   "errorClass": null,
+   "errorMessage": null,
+   "nonCompliantShortDataset": null,
+   "bitsPerSymbol": 8,
+   "bitsPerSymbolInferred": false,
+   "subsetRequested": null,
+   "subsetIndex": null,
+   "subsetRequestedSamples": null,
+   "subsetActualSamples": null,
+   "sha256": "4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8",
+   "sha256Scope": "assessed-sample-bytes",
+   "assessmentComplete": null,
+   "IID": false,
+   "commandline": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x6-debruijn-k100-seed11-1000000.bin 8 0.5/symbol"
+  },
+  "cases": [
+   {
+    "testCaseDesc": "Most Common Value",
+    "dataWordSize": 8.0,
+    "h_r": 6.607346961079835,
+    "h_c": 6.607346961079835
+   },
+   {
+    "testCaseDesc": "T-Tuple Test",
+    "dataWordSize": 8.0,
+    "h_r": 6.607346248835782,
+    "h_c": 6.372685769538714
+   },
+   {
+    "testCaseDesc": "LRS Test",
+    "dataWordSize": 8.0,
+    "h_c": 6.442723578794639
+   },
+   {
+    "testCaseDesc": "Multi Most Common in Window Test",
+    "dataWordSize": 8.0,
+    "h_r": 6.597743649343146,
+    "h_c": 6.607541005694597
+   },
+   {
+    "testCaseDesc": "Lag Prediction Test",
+    "dataWordSize": 8.0,
+    "h_r": 6.583331523434294,
+    "h_c": 6.603788716839529
+   },
+   {
+    "testCaseDesc": "Multi Markov Model with Counting Test (MultiMMC)",
+    "dataWordSize": 8.0,
+    "h_r": 6.643856189774724,
+    "h_c": 6.61133820064617
+   },
+   {
+    "testCaseDesc": "LZ78Y Test",
+    "dataWordSize": 8.0,
+    "h_r": 6.643856189774724,
+    "h_c": 6.622502102744322
+   },
+   {
+    "testCaseDesc": "Overall",
+    "h_r": 6.583331523434294,
+    "h_c": 6.372685769538714,
+    "h_i": 0.5
+   }
+  ],
+  "overall": {
+   "testCaseDesc": "Overall",
+   "h_r": 6.583331523434294,
+   "h_c": 6.372685769538714,
+   "h_i": 0.5
+  },
+  "not_run_flags": [],
+  "restart_cases_with_h_r": [
+   "Most Common Value",
+   "T-Tuple Test",
+   "Multi Most Common in Window Test",
+   "Lag Prediction Test",
+   "Multi Markov Model with Counting Test (MultiMMC)",
+   "LZ78Y Test",
+   "Overall"
+  ],
+  "restart_cases_with_h_c": [
+   "Most Common Value",
+   "T-Tuple Test",
+   "LRS Test",
+   "Multi Most Common in Window Test",
+   "Lag Prediction Test",
+   "Multi Markov Model with Counting Test (MultiMMC)",
+   "LZ78Y Test",
+   "Overall"
+  ]
+ },
+ "well_formed": true,
+ "accepted": true,
+ "compliant": true,
+ "consistency": {}
+}

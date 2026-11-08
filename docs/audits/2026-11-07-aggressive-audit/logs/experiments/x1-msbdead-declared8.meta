@@ -1,0 +1,12 @@
+name: x1-msbdead-declared8
+start: 2026-11-07T22:31:38-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x1-msbdead-declared8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x1-uniform7-msbdead-8bit-1000000.bin 8
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 6c49635a8af86806bcf60dd482be68c37f830c9be2db9eb84f740c5b49096a39  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x1-uniform7-msbdead-8bit-1000000.bin  (1000000 bytes)
+end: 2026-11-07T22:31:43-0500
+rc: 0
+report sha256 eb4d0292077b3880bb35a1027e93d981da71cb439cd200fa506d4f78662805e2  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x1-msbdead-declared8.json

@@ -59,7 +59,7 @@
   "{\"z\": 2.575829303548901}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-1bit-5000-b1-literal.multimcw.ref.d02aa7c4.json"
  ],
- "duration_s": 0.08,
+ "duration_s": 0.074,
  "options_used": {
   "z": 2.575829303548901
  },

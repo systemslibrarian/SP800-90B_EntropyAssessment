@@ -165,7 +165,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-1bit-5000-b1-literal.lag.ref.json"
  ],
- "duration_s": 0.083,
+ "duration_s": 0.073,
  "options_used": {},
  "module": "lag",
  "mode": "literal",

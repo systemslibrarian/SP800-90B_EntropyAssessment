@@ -1,0 +1,12 @@
+name: x7-restart-1bit-1000001
+start: 2026-11-07T22:31:30-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-restart-1bit-1000001.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-1bit-1000001.bin 1 0.9
+sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (230904 bytes)
+sha256 78f65869bd2e987c162b68a24024680fcb2f6df1b99bf6b1bb9cd9095639acb3  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-1bit-1000001.bin  (1000001 bytes)
+end: 2026-11-07T22:31:31-0500
+rc: 255
+report sha256 cf75dfae89286c7bb12899fd49dd4c8af16a8e9573e6d226cadf106ebfc98478  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-restart-1bit-1000001.json

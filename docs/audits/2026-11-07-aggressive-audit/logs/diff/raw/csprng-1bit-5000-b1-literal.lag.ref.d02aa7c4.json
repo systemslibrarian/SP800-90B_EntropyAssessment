@@ -165,7 +165,7 @@
   "{\"z\": 2.575829303548901}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-1bit-5000-b1-literal.lag.ref.d02aa7c4.json"
  ],
- "duration_s": 0.078,
+ "duration_s": 0.077,
  "options_used": {
   "z": 2.575829303548901
  },
@@ -181,7 +181,7 @@
  },
  "n_symbols_fed": 5000,
  "bps_fed": 1,
- "estimate_seconds": 0.003,
+ "estimate_seconds": 0.004,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py",
  "module_sha256": "badcca9ddde16551eba813180c9c07b79bbb5dbd85a68428b02d94810e157c67"
 }

@@ -1,0 +1,22 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 1,
+   "assessmentComplete" : false,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -i -a -v -v -l 1,1000000 -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-8bit-l1-1000000-on-1000001.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-8bit-1000001.bin 8",
+   "dateTimeStamp" : "20261107223131",
+   "errorClass" : "input",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: dataset contains 1 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-8bit-1000001.bin",
+   "sha256" : "c00e7f889cfc9216ec818bf2e1682fc6af0d89939c91776669478caf27c9727c",
+   "sha256Scope" : "assessed-sample-bytes",
+   "subsetActualSamples" : 1,
+   "subsetIndex" : 1,
+   "subsetRequestedSamples" : 1000000,
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

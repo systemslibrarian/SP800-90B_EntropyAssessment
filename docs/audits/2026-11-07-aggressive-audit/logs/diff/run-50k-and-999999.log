@@ -163,3 +163,4 @@ two9010-8bit-50000-b8-bitstring: NOT_RUN -- binary source (k = 2, declared 8 bit
 two9010-8bit-50000-b8-assessed: !!! CPP_HIGHER -- Assessed cpp=0.0844804397165132 ref=0.08448028047443361 [CPP_HIGHER: !!! C++ Assessed min entropy 0.0844804397165132 exceeds reference 0.08448028047443361 by 1.59242e-07]; D-1 recheck with z = 2.575829303548901: AGREE -- the assessed difference IS documented divergence D-1 [EA_ALLOW_SHORT_DATASET=1]
 rc=0 END 50k pass Sat Nov  7 21:50:14 EST 2026
 START 999999 refusal pass (C++ only) Sat Nov  7 21:50:14 EST 2026
+ORCHESTRATOR NOTE Sat Nov  7 22:30:55 EST 2026: the 999,999 'refusal' pass was in fact a full assessment pass (the driver sets EA_ALLOW_SHORT_DATASET=1 for n < 1e6). It produced 22 records in 60 min, then sat 28+ min at 100% CPU in SAalgs32 on lfsr16-tap8-8bit-999999.bin (profile: logs/experiments/sample-lfsr16-tap8-8bit-999999.txt). Killed here to free the heavy slot; recorded as a runtime observation, not a crash.

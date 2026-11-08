@@ -1,0 +1,9 @@
+# PROV-09 control.txt  2026-11-07 22:33:12 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
+fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803  /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/c_iid.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
+rc[iid_fail]=1  stdout=c_iid.out stderr=c_iid.err
+rc=1 JSON errorLevel=2 errorClass="statistical" errorMessage="IID test suite failed; no IID min-entropy estimate was awarded." IID=false assessmentComplete=true
+RESULT: CONTROL-OK -- ea_iid encodes the same statistical rejection as errorLevel 2 + errorClass 'statistical'; the restart path (run.sh) omits the class

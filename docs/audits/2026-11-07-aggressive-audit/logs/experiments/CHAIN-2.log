@@ -1,0 +1,203 @@
+CHAIN-2 start Sat Nov  7 22:31:24 EST 2026 (CHAIN-1 was killed by an over-broad pkill at 22:52)
+=== smoke recheck with fixed options ===
+csprng-1bit-5000-b1-literal: !!! CPP_HIGHER (cpp_higher 8, not_run 1, agree 1); cpp_higher in: mcv (+3.3e-06; p_u D-1), collision (+7.58e-06; p,x_bar' D-1), ttuple (+3.19e-06; p_u D-1), lrs (+3.36e-06; p_u D-1), multimcw (+3.36e-06; p_global' D-1), lag (+3.33e-06; p_global' D-1), multimmc (+3.29e-06; p_global' D-1), lz78y (+3.34e-06; p_global' D-1); ALL explained by documented divergence D-1 (vanish with z = 2.575829303548901) [EA_ALLOW_SHORT_DATASET=1]
+csprng-1bit-5000-b1-bitstring: NOT_RUN -- binary source (k = 2, declared 1 bit, rule observed): 3.1.3 has no bitstring term; C++ printed 0 Bitstring blocks [EA_ALLOW_SHORT_DATASET=1]
+csprng-1bit-5000-b1-assessed: !!! CPP_HIGHER -- Assessed cpp=0.6409198006180368 ref=0.6409122219361569 [CPP_HIGHER: !!! C++ Assessed min entropy 0.6409198006180368 exceeds reference 0.6409122219361569 by 7.57868e-06]; D-1 recheck with z = 2.575829303548901: AGREE -- the assessed difference IS documented divergence D-1 [EA_ALLOW_SHORT_DATASET=1]
+csprng-8bit-5000-b8-literal: !!! CPP_HIGHER (cpp_higher 7, not_run 3); cpp_higher in: mcv (+2.89e-05; p_u D-1), ttuple (+2.89e-05; p_u D-1), lrs (+3.41e-05; p_u D-1), multimcw (+4.07e-05; p_global' D-1), lag (+3.82e-05; p_global' D-1), multimmc (+3.82e-05; p_global' D-1), lz78y (+3.67e-05; p_global' D-1); ALL explained by documented divergence D-1 (vanish with z = 2.575829303548901) [EA_ALLOW_SHORT_DATASET=1]
+csprng-8bit-5000-b8-bitstring: !!! CPP_HIGHER (cpp_higher 9, agree 1); cpp_higher in: mcv (+1.21e-06; p_u D-1), collision (+4.86e-06; p,x_bar' D-1), compression (+1.5e-05; p,x_bar' D-1), ttuple (+1.14e-06; p_u D-1), lrs (+1.22e-06; p_u D-1), multimcw (+1.22e-06; p_global' D-1), lag (+1.22e-06; p_global' D-1), multimmc (+1.22e-06; p_global' D-1), lz78y (+1.21e-06; p_global' D-1); ALL explained by documented divergence D-1 (vanish with z = 2.575829303548901) [EA_ALLOW_SHORT_DATASET=1]
+csprng-8bit-5000-b8-assessed: !!! CPP_HIGHER -- Assessed cpp=6.179101871317015 ref=6.179062988162769 [CPP_HIGHER: !!! C++ Assessed min entropy 6.179101871317015 exceeds reference 6.179062988162769 by 3.88832e-05]; D-1 recheck with z = 2.575829303548901: AGREE -- the assessed difference IS documented divergence D-1 [EA_ALLOW_SHORT_DATASET=1]
+rc=0
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/SUMMARY.md (306 lines)
+=== X7-refusals START Sat Nov  7 22:31:30 EST 2026 ===
+x7-non_iid-1bit-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-1bit-999999.{stdout,stderr,rc,meta})
+x7-non_iid-1bit-l1-1000000-on-1000001: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-1bit-l1-1000000-on-1000001.{stdout,stderr,rc,meta})
+x7-non_iid-1bit-l0-999999-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-1bit-l0-999999-on-1000000.{stdout,stderr,rc,meta})
+x7-non_iid-1bit-l1-500000-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-1bit-l1-500000-on-1000000.{stdout,stderr,rc,meta})
+x7-non_iid-1bit-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=2 width=1  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=1 inferred=False
+x7-non_iid-1bit-l1-1000000-on-1000001: rc=255  well_formed  refused/other  non-compliant  loaded n=1 k=1 width=1  refusal='*** Error: dataset contains 1 samples; SP 800-90B Section 3.1.1 requires at least 1000000 '  json errorLevel=-1 bps=1 inferred=False
+x7-non_iid-1bit-l0-999999-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=2 width=1  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=1 inferred=False
+x7-non_iid-1bit-l1-500000-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=500000 k=2 width=1  refusal='*** Error: dataset contains 500000 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=1 inferred=False
+x7-iid-1bit-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-1bit-999999.{stdout,stderr,rc,meta})
+x7-iid-1bit-l1-1000000-on-1000001: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-1bit-l1-1000000-on-1000001.{stdout,stderr,rc,meta})
+x7-iid-1bit-l0-999999-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-1bit-l0-999999-on-1000000.{stdout,stderr,rc,meta})
+x7-iid-1bit-l1-500000-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-1bit-l1-500000-on-1000000.{stdout,stderr,rc,meta})
+x7-iid-1bit-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=2 width=1  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=1 inferred=False
+x7-iid-1bit-l1-1000000-on-1000001: rc=255  well_formed  refused/other  non-compliant  loaded n=1 k=1 width=1  refusal='*** Error: dataset contains 1 samples; SP 800-90B Section 3.1.1 requires at least 1000000 '  json errorLevel=-1 bps=1 inferred=False
+x7-iid-1bit-l0-999999-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=2 width=1  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=1 inferred=False
+x7-iid-1bit-l1-500000-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=500000 k=2 width=1  refusal='*** Error: dataset contains 500000 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=1 inferred=False
+x7-restart-1bit-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-restart-1bit-999999.{stdout,stderr,rc,meta})
+x7-restart-1bit-1000001: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-restart-1bit-1000001.{stdout,stderr,rc,meta})
+x7-restart-1bit-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=2 width=1  refusal='*** Error: data (len = 999999) does not contain 1000000 samples ***'  json errorLevel=-1 bps=1 inferred=False
+x7-restart-1bit-1000001: rc=255  well_formed  refused/other  non-compliant  loaded n=1000001 k=2 width=1  refusal='*** Error: data (len = 1000001) does not contain 1000000 samples ***'  json errorLevel=-1 bps=1 inferred=False
+x7-non_iid-8bit-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-8bit-999999.{stdout,stderr,rc,meta})
+x7-non_iid-8bit-l1-1000000-on-1000001: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-8bit-l1-1000000-on-1000001.{stdout,stderr,rc,meta})
+x7-non_iid-8bit-l0-999999-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-8bit-l0-999999-on-1000000.{stdout,stderr,rc,meta})
+x7-non_iid-8bit-l1-500000-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-non_iid-8bit-l1-500000-on-1000000.{stdout,stderr,rc,meta})
+x7-non_iid-8bit-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=256 width=8  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x7-non_iid-8bit-l1-1000000-on-1000001: rc=255  well_formed  refused/other  non-compliant  loaded n=1 k=1 width=8  refusal='*** Error: dataset contains 1 samples; SP 800-90B Section 3.1.1 requires at least 1000000 '  json errorLevel=-1 bps=8 inferred=False
+x7-non_iid-8bit-l0-999999-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=256 width=8  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x7-non_iid-8bit-l1-500000-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=500000 k=256 width=8  refusal='*** Error: dataset contains 500000 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x7-iid-8bit-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-8bit-999999.{stdout,stderr,rc,meta})
+x7-iid-8bit-l1-1000000-on-1000001: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-8bit-l1-1000000-on-1000001.{stdout,stderr,rc,meta})
+x7-iid-8bit-l0-999999-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-8bit-l0-999999-on-1000000.{stdout,stderr,rc,meta})
+x7-iid-8bit-l1-500000-on-1000000: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-iid-8bit-l1-500000-on-1000000.{stdout,stderr,rc,meta})
+x7-iid-8bit-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=256 width=8  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x7-iid-8bit-l1-1000000-on-1000001: rc=255  well_formed  refused/other  non-compliant  loaded n=1 k=1 width=8  refusal='*** Error: dataset contains 1 samples; SP 800-90B Section 3.1.1 requires at least 1000000 '  json errorLevel=-1 bps=8 inferred=False
+x7-iid-8bit-l0-999999-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=256 width=8  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x7-iid-8bit-l1-500000-on-1000000: rc=255  well_formed  refused/other  non-compliant  loaded n=500000 k=256 width=8  refusal='*** Error: dataset contains 500000 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x7-restart-8bit-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-restart-8bit-999999.{stdout,stderr,rc,meta})
+x7-restart-8bit-1000001: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x7-restart-8bit-1000001.{stdout,stderr,rc,meta})
+x7-restart-8bit-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=256 width=8  refusal='*** Error: data (len = 999999) does not contain 1000000 samples ***'  json errorLevel=-1 bps=8 inferred=False
+x7-restart-8bit-1000001: rc=255  well_formed  refused/other  non-compliant  loaded n=1000001 k=256 width=8  refusal='*** Error: data (len = 1000001) does not contain 1000000 samples ***'  json errorLevel=-1 bps=8 inferred=False
+--- X7 decision: every *-999999 and every -l case loading < 1,000,000 is refused (rc 255, errorLevel -1, class input);
+    every 1,000,000 / 1,000,001 / -l 0,1000000 case is accepted and COMPLIANT; ea_restart refuses 999,999 AND 1,000,001.
+=== X7-refusals rc=0 END Sat Nov  7 22:31:31 EST 2026 ===
+=== X5 START Sat Nov  7 22:31:31 EST 2026 ===
+x5-c-999999: rc=255  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.{stdout,stderr,rc,meta})
+x5-c-1e6: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-1e6.{stdout,stderr,rc,meta})
+x5-c-999999: rc=255  well_formed  refused/other  non-compliant  loaded n=999999 k=256 width=8  refusal='*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 100'  json errorLevel=-1 bps=8 inferred=False
+x5-c-1e6: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=256 width=8  Assessed=7.1978448401477628  nxH_bitstring=7.1978448401477628  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+--- X5 decision: x5-c-1e6 accepted+COMPLIANT (rc 0, errorLevel 0, no nonCompliantShortDataset) = the -c gate counts bytes,
+    accepting 31,250 conditioner outputs where 3.1.1 item 2 asks for 1,000,000; x5-c-999999 must be refused (control).
+=== X5 rc=0 END Sat Nov  7 22:31:33 EST 2026 ===
+=== X1 START Sat Nov  7 22:31:33 EST 2026 ===
+x1-msbdead-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x1-msbdead-inferred.{stdout,stderr,rc,meta})
+x1-msbdead-declared8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x1-msbdead-declared8.{stdout,stderr,rc,meta})
+x1-lsbdead-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x1-lsbdead-inferred.{stdout,stderr,rc,meta})
+x1-lsbdead-declared8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x1-lsbdead-declared8.{stdout,stderr,rc,meta})
+x1-msbdead-inferred: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=7  Assessed=6.2726641699213186  H_original=6.6590284524068286  nxH_bitstring=6.2726641699213186  json errorLevel=0 bps=7 inferred=True  fold-consistency OK
+x1-msbdead-declared8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=8  Assessed=4.5299726282168047  H_original=6.6590284524068286  nxH_bitstring=4.5299726282168047  narrower-warning  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x1-lsbdead-inferred: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=8  Assessed=4.540151152880779  H_original=6.6590284524068286  nxH_bitstring=4.540151152880779  json errorLevel=0 bps=8 inferred=True  fold-consistency OK
+x1-lsbdead-declared8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=8  Assessed=4.540151152880779  H_original=6.6590284524068286  nxH_bitstring=4.540151152880779  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+--- X1 decision: inferred vs declared (F02 direction), and each vs the truth 7
+A x1-msbdead-declared8: Assessed = 4.529972628216805   (compliant=True)
+B x1-msbdead-inferred: Assessed = 6.272664169921319   (compliant=True)
+B / A = 1.384702    A - B = -1.74269154
+truth = 7.0:  A - truth = -2.47003 (at or below truth);  B - truth = -0.727336 (at or below truth)
+--- X1 control: lsbdead inferred vs declared must be identical
+A x1-lsbdead-inferred: Assessed = 4.540151152880779   (compliant=True)
+B x1-lsbdead-declared8: Assessed = 4.540151152880779   (compliant=True)
+B / A = 1.000000    A - B = 0
+truth = 7.0:  A - truth = -2.45985 (at or below truth);  B - truth = -2.45985 (at or below truth)
+=== X1 rc=0 END Sat Nov  7 22:31:52 EST 2026 ===
+=== X2 START Sat Nov  7 22:31:52 EST 2026 ===
+x2a-chain-lag1-packed7-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-chain-lag1-packed7-inferred.{stdout,stderr,rc,meta})
+x2a-chain-lag1-packed7-declared8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-chain-lag1-packed7-declared8.{stdout,stderr,rc,meta})
+x2a-chain-lag1-lsbpad-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2a-chain-lag1-lsbpad-inferred.{stdout,stderr,rc,meta})
+x2a-chain-lag1-packed7-inferred: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=127 width=7  Assessed=0.54504293138453375  H_original=1.0615813939618333  nxH_bitstring=0.54504293138453375  json errorLevel=0 bps=7 inferred=True  fold-consistency OK
+x2a-chain-lag1-packed7-declared8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=127 width=8  Assessed=1.0615813939618333  H_original=1.0615813939618333  nxH_bitstring=1.0650952182703328  narrower-warning  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x2a-chain-lag1-lsbpad-inferred: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=127 width=8  Assessed=1.0615813939618333  H_original=1.0615813939618333  nxH_bitstring=1.0650952182703328  json errorLevel=0 bps=8 inferred=True  fold-consistency OK
+--- X2 a-chain-lag1 decision: 7-bit (inferred) vs padded, each vs the conditional truth 1.0640216541153495
+A x2a-chain-lag1-packed7-inferred: Assessed = 0.5450429313845337   (compliant=True)
+B x2a-chain-lag1-lsbpad-inferred: Assessed = 1.0615813939618333   (compliant=True)
+B / A = 1.947702    A - B = -0.516538463
+truth = 1.0640216541153495:  A - truth = -0.518979 (at or below truth);  B - truth = -0.00244026 (at or below truth)
+--- X2 a-chain-lag1: pad-first (declared 8 on packed7) vs pad-last (lsbpad) -- same bits, two pad positions
+A x2a-chain-lag1-packed7-declared8: Assessed = 1.0615813939618333   (compliant=True)
+B x2a-chain-lag1-lsbpad-inferred: Assessed = 1.0615813939618333   (compliant=True)
+B / A = 1.000000    A - B = 0
+truth = 1.0640216541153495:  A - truth = -0.00244026 (at or below truth);  B - truth = -0.00244026 (at or below truth)
+x2b-chain-lag20-packed7-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-packed7-inferred.{stdout,stderr,rc,meta})
+x2b-chain-lag20-packed7-declared8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-packed7-declared8.{stdout,stderr,rc,meta})
+x2b-chain-lag20-lsbpad-inferred: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-lsbpad-inferred.{stdout,stderr,rc,meta})
+x2b-chain-lag20-packed7-inferred: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=7  Assessed=1.0626944915402192  H_original=3.2278369952715664  nxH_bitstring=1.0626944915402192  json errorLevel=0 bps=7 inferred=True  fold-consistency OK
+x2b-chain-lag20-packed7-declared8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=8  Assessed=2.5694630088412045  H_original=3.2278369952715664  nxH_bitstring=2.5694630088412045  narrower-warning  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x2b-chain-lag20-lsbpad-inferred: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=128 width=8  Assessed=2.5694666112544229  H_original=3.2278369952715664  nxH_bitstring=2.5694666112544229  json errorLevel=0 bps=8 inferred=True  fold-consistency OK
+--- X2 b-chain-lag20 decision: 7-bit (inferred) vs padded, each vs the conditional truth 1.0640216541153495
+A x2b-chain-lag20-packed7-inferred: Assessed = 1.0626944915402192   (compliant=True)
+B x2b-chain-lag20-lsbpad-inferred: Assessed = 2.569466611254423   (compliant=True)
+B / A = 2.417879    A - B = -1.50677212
+truth = 1.0640216541153495:  A - truth = -0.00132716 (at or below truth);  B - truth = +1.50544 (OVERSTATES)
+--- X2 b-chain-lag20: pad-first (declared 8 on packed7) vs pad-last (lsbpad) -- same bits, two pad positions
+A x2b-chain-lag20-packed7-declared8: Assessed = 2.5694630088412045   (compliant=True)
+B x2b-chain-lag20-lsbpad-inferred: Assessed = 2.569466611254423   (compliant=True)
+B / A = 1.000001    A - B = -3.60241322e-06
+truth = 1.0640216541153495:  A - truth = +1.50544 (OVERSTATES);  B - truth = +1.50544 (OVERSTATES)
+=== X2 rc=0 END Sat Nov  7 22:32:20 EST 2026 ===
+=== X4 START Sat Nov  7 22:32:20 EST 2026 ===
+x4-alt1: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-alt1.{stdout,stderr,rc,meta})
+x4-alt8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-alt8.{stdout,stderr,rc,meta})
+x4-two8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-two8.{stdout,stderr,rc,meta})
+x4-once1: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-once1.{stdout,stderr,rc,meta})
+x4-once8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-once8.{stdout,stderr,rc,meta})
+x4-ctr8: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-ctr8.{stdout,stderr,rc,meta})
+x4-alt1: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=2 width=1  Assessed=-0  H_original=-0  DEGENERATE:-0(8)  json errorLevel=0 bps=1 inferred=False  fold-consistency OK
+x4-alt8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=2 width=8  Assessed=-0  H_original=-0  DEGENERATE:-0(8)  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x4-two8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=2 width=8  Assessed=0.87158292813242555  H_original=0.87158292813242555  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x4-once1: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=2 width=1  Assessed=-0  H_original=-0  DEGENERATE:-0(10)  json errorLevel=0 bps=1 inferred=False  fold-consistency OK
+x4-once8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=256 width=8  Assessed=7.3537577331212258  H_original=7.3537577331212258  nxH_bitstring=7.4519255933847228  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x4-ctr8: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=256 width=8  Assessed=-0  H_original=-0  nxH_bitstring=7.6780921184591925e-07  DEGENERATE:-0(4)  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+--- X4 decision per run: DEGENERATE kinds (nan/inf = finding; -0 = record), notRun flags (none expected),
+    fold-consistency (FAIL = the assessed figure is not the min of the printed estimates), estimate counts:
+x4-alt1 Literal 10 Bitstring 0 degenerate ['-0', '-0', '-0', '-0', '-0', '-0', '-0', '-0'] notRun []
+x4-alt8 Literal 10 Bitstring 0 degenerate ['-0', '-0', '-0', '-0', '-0', '-0', '-0', '-0'] notRun []
+x4-two8 Literal 10 Bitstring 0 degenerate [] notRun []
+x4-once1 Literal 10 Bitstring 0 degenerate ['-0', '-0', '-0', '-0', '-0', '-0', '-0', '-0', '-0', '-0'] notRun []
+x4-once8 Literal 7 Bitstring 10 degenerate [] notRun []
+x4-ctr8 Literal 7 Bitstring 10 degenerate ['-0', '-0', '-0', '-0'] notRun []
+=== X4 rc=0 END Sat Nov  7 22:32:29 EST 2026 ===
+=== X6 START Sat Nov  7 22:32:29 EST 2026 ===
+x6-noniid: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-noniid.{stdout,stderr,rc,meta})
+x6-restart: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.{stdout,stderr,rc,meta})
+x6-noniid: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=100 width=8  Assessed=3.6616738743698498  H_original=6.5833315234342944  nxH_bitstring=3.6616738743698498  narrower-warning  json errorLevel=0 bps=8 inferred=False  notRun=LRS Test:L  fold-consistency OK
+x6-restart: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=100 width=8  min(H_r,H_c,H_I)=0.500000  narrower-warning  json errorLevel=0 bps=8 inferred=False
+--- X6 decision: ea_non_iid JSON marks LRS 'literalEstimateNotRun'; the restart JSON's 'LRS Test' case has h_c but no h_r and NO flag:
+non_iid notRun flags: [{'case': 'LRS Test', 'literal': True, 'bitstring': None}]
+restart notRun flags: []
+cases with h_r: ['Most Common Value', 'T-Tuple Test', 'Multi Most Common in Window Test', 'Lag Prediction Test', 'Multi Markov Model with Counting Test (MultiMMC)', 'LZ78Y Test', 'Overall']
+cases with h_c: ['Most Common Value', 'T-Tuple Test', 'LRS Test', 'Multi Most Common in Window Test', 'Lag Prediction Test', 'Multi Markov Model with Counting Test (MultiMMC)', 'LZ78Y Test', 'Overall']
+Overall: {'testCaseDesc': 'Overall', 'h_r': 6.583331523434294, 'h_c': 6.372685769538714, 'h_i': 0.5}
+text min(H_r,H_c,H_I): {'text': '0.500000', 'value': 0.5} passed: True
+=== X6 rc=0 END Sat Nov  7 22:32:40 EST 2026 ===
+=== X3 START Sat Nov  7 22:32:40 EST 2026 ===
+x3-naive-tool: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-naive-tool.{stdout,stderr,rc,meta})
+x3-naive-tool: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=248 width=8  Assessed=-0  H_original=-0  nxH_bitstring=8.337441832268777e-07  DEGENERATE:-0(3)  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x3-naive-ref: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-naive-ref.{stdout,stderr,rc,meta})
+x3-naive-model: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-naive-model.{stdout,stderr,rc,meta})
+--- X3 naive: Literal MultiMMC as printed by the tool
+Literal MultiMMC Prediction Estimate: C = 449998
+Literal MultiMMC Prediction Estimate: r = 17
+Literal MultiMMC Prediction Estimate: N = 999998
+Literal MultiMMC Prediction Estimate: P_global = 0.44999889999780002
+Literal MultiMMC Prediction Estimate: P_global' = 0.45128036053380099
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = 1.1479041002434913
+--- X3 naive: reference C, r, min entropy (py90b)
+{'C': 421911, 'r': 16, 'N': 999998, 'P_global': 0.4219118438236876, "P_global'": 0.42318404093306133, 'P_local': 0.32416928222022345, 'min_entropy': 1.2406428731558032, 'winner': 2, 'cap_bound': True}
+--- X3 naive: models (text == reference? cpp == tool?)
+text {'C': 421911, 'r': 16, 'min_entropy': 1.2406428731558032}
+cpp  {'C': 449998, 'r': 17, 'min_entropy': 1.1479038287616958}
+delta C text-cpp -28087
+x3-gadget-tool: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-gadget-tool.{stdout,stderr,rc,meta})
+x3-gadget-tool: rc=0  well_formed  accepted  COMPLIANT  loaded n=1000000 k=248 width=8  Assessed=-0  H_original=-0  nxH_bitstring=8.3369194815053318e-07  DEGENERATE:-0(3)  json errorLevel=0 bps=8 inferred=False  fold-consistency OK
+x3-gadget-ref: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-gadget-ref.{stdout,stderr,rc,meta})
+x3-gadget-model: rc=0  (/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x3-gadget-model.{stdout,stderr,rc,meta})
+--- X3 gadget: Literal MultiMMC as printed by the tool
+Literal MultiMMC Prediction Estimate: C = 506288
+Literal MultiMMC Prediction Estimate: r = 12
+Literal MultiMMC Prediction Estimate: N = 999998
+Literal MultiMMC Prediction Estimate: P_global = 0.50628901257802517
+Literal MultiMMC Prediction Estimate: P_global' = 0.50757682727911901
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = 0.97830188845975063
+--- X3 gadget: reference C, r, min entropy (py90b)
+{'C': 534409, 'r': 20, 'N': 999998, 'P_global': 0.5344100688201376, "P_global'": 0.5356950170073741, 'P_local': 0.4088115606993812, 'min_entropy': 0.9005162186024169, 'winner': 3, 'cap_bound': True}
+--- X3 gadget: models (text == reference? cpp == tool?)
+text {'C': 534409, 'r': 20, 'min_entropy': 0.9005162186024169}
+cpp  {'C': 506288, 'r': 12, 'min_entropy': 0.9783016458917511}
+delta C text-cpp 28121
+=== X3 rc=0 END Sat Nov  7 22:33:11 EST 2026 ===
+=== heavy repros ===
+--- PROV-08 run Sat Nov  7 22:33:11 EST 2026
+PROV-08 run rc=0
+--- PROV-08 control Sat Nov  7 22:33:11 EST 2026
+PROV-08 control rc=0
+--- PROV-09 run Sat Nov  7 22:33:11 EST 2026
+PROV-09 run rc=0
+--- PROV-09 control Sat Nov  7 22:33:12 EST 2026
+PROV-09 control rc=0
+--- PROV-10 run Sat Nov  7 22:33:12 EST 2026
+PROV-10 run rc=0
+--- PROV-10 control Sat Nov  7 22:33:19 EST 2026
+PROV-10 control rc=0
+ALL DONE Sat Nov  7 22:33:24 EST 2026

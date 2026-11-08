@@ -1,0 +1,5 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x7-csprng-8bit-1000001.bin' (SHA-256 hash a72bdda1dc00c4cca8d66f8cbf81d6362ef4f9c165e0e63e01f3db34cc51892c of assessed bytes)
+Loaded 1000001 samples made up of 256 distinct 8-bit-wide symbols.
+
+*** Error: data (len = 1000001) does not contain 1000000 samples ***
+

@@ -1,0 +1,12 @@
+name: x5-c-999999
+start: 2026-11-07T22:31:31-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin 8
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 98a8f905d5bf969ff9a363ea0e5d43cd07e3e2164e1dfd42bb66a4d3c704fecb  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin  (999999 bytes)
+end: 2026-11-07T22:31:31-0500
+rc: 255
+report sha256 72f0e2e49dca1b1e58c9d17e9709c64fc8480ad7223bb89db7d67a148683a4bc  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.json

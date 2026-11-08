@@ -1,0 +1,6 @@
+H_I: 0.500000
+ALPHA: 5.0000000000000004e-06, X_cutoff: 769 (exact distribution of the multinomial maximum, the statistic 3.1.4.3 forms)
+X_cutoff_printed_binomial: 769 (SP 800-90B 3.1.4.3 step 5 as printed; conformance figure, not the verdict -- it rejects correctly-operating sources, see OC-30)
+X_max: 1000
+
+*** Restart Sanity Check Failed ***

@@ -1,0 +1,12 @@
+name: x4-two8
+start: 2026-11-07T22:32:21-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-two8.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-two-symbol-0-255-random-8bit-1000000.bin 8
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 f6a4699dd0a42d43277fd27432d6be8ac1a3bda64c74597e2d6725efc59b4263  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x4-two-symbol-0-255-random-8bit-1000000.bin  (1000000 bytes)
+end: 2026-11-07T22:32:21-0500
+rc: 0
+report sha256 df6a0ddec28c6149fbf71ea87ef9be6aef7444a6492356b04714042490a61e2f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x4-two8.json

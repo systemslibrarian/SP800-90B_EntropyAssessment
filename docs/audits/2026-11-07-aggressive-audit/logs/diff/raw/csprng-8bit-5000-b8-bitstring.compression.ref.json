@@ -52,7 +52,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-8bit-5000-b8-bitstring.compression.ref.json"
  ],
- "duration_s": 0.249,
+ "duration_s": 0.077,
  "options_used": {},
  "module": "compression",
  "mode": "bitstring",
@@ -66,7 +66,7 @@
  },
  "n_symbols_fed": 40000,
  "bps_fed": 1,
- "estimate_seconds": 0.014,
+ "estimate_seconds": 0.005,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/compression.py",
  "module_sha256": "9847dba436069655ff6ca12e8839f282f467e95711d19e99afeba8b0fa6f7c2b"
 }

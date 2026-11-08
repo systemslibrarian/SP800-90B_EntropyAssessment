@@ -1,0 +1,11 @@
+name: x3-naive-ref
+start: 2026-11-07T22:32:43-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python -m py90b.multimmc /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-naive-P32-b17-q0-8bit-1000000.bin 8 --k-mode=observed
+sha256 87d4df53fd91304be5bac391fb204643c36b7df2023c04a0953bcbc7d4fdf634  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python  (34640 bytes)
+sha256 cf6e4f28c0c592dce6d53275452428cd350e61d5c55bd6923e7a9b18033652f7  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-naive-P32-b17-q0-8bit-1000000.bin  (1000000 bytes)
+end: 2026-11-07T22:32:46-0500
+rc: 0

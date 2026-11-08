@@ -38,7 +38,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-8bit-5000-b8-literal.ttuple.ref.json"
  ],
- "duration_s": 0.298,
+ "duration_s": 0.075,
  "options_used": {},
  "module": "ttuple",
  "mode": "literal",
@@ -52,7 +52,7 @@
  },
  "n_symbols_fed": 5000,
  "bps_fed": 8,
- "estimate_seconds": 0.001,
+ "estimate_seconds": 0.0,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
  "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
 }

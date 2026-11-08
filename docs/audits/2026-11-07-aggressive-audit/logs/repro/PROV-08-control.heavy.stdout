@@ -1,0 +1,16 @@
+# PROV-08 control.txt  2026-11-07 22:33:11 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+# EA_REPRO_HEAVY=1: running the heavy step
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-08/out/c_v1.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-08/out/rows-constant-1e6.bin 1 0.5
+rc[restart_v1]=255  stdout=c_v1.out stderr=c_v1.err
+stdout at verbose 1 (verbatim):
+  | H_I: 0.500000
+  | ALPHA: 5.0000000000000004e-06, X_cutoff: 769 (exact distribution of the multinomial maximum, the statistic 3.1.4.3 forms)
+  | X_cutoff_printed_binomial: 769 (SP 800-90B 3.1.4.3 step 5 as printed; conformance figure, not the verdict -- it rejects correctly-operating sources, see OC-30)
+  | X_max: 1000
+  | 
+  | *** Restart Sanity Check Failed ***
+H_I lines: 1 ; sanity-failed lines: 1
+RESULT: CONTROL-OK -- at verbose 1 both the H_I line and the verdict line print; -q (run.sh) suppresses the verdict line but not H_I

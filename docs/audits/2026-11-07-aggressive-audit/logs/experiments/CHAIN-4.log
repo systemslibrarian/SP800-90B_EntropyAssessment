@@ -1,0 +1,82 @@
+CHAIN-4 start Sun Nov  8 15:49:36 EST 2026
+=== X2b reference: Lag alone, bitstring mode (the binding estimator) ===
+--- corpus/x2b-chain-lag20-p09-lsbpad-8bit-1000000.bin bps=8 --bitstring Sun Nov  8 15:49:36 EST 2026
+rc=1
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json;d=json.load(open('../logs/experiments/x2b-ref-lag-x2b-chain-lag20-p09-lsbpad-8bit-1000000.json'));print({k:d[k] for k in d if k in ('min_entropy','P_global','P_global\'','P_local','C','r','N')})
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 298, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+--- corpus/x2b-chain-lag20-p09-packed7-1000000.bin bps=7 --bitstring Sun Nov  8 15:49:37 EST 2026
+rc=1
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json;d=json.load(open('../logs/experiments/x2b-ref-lag-x2b-chain-lag20-p09-packed7-1000000.json'));print({k:d[k] for k in d if k in ('min_entropy','P_global','P_global\'','P_local','C','r','N')})
+                  ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 298, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+--- C++ H_bitstring lines for comparison
+logs/experiments/x2b-chain-lag20-lsbpad-inferred.stdout:Bitstring Lag Prediction Estimate: C = 6400390
+logs/experiments/x2b-chain-lag20-lsbpad-inferred.stdout:Bitstring Lag Prediction Estimate: r = 81
+logs/experiments/x2b-chain-lag20-lsbpad-inferred.stdout:Bitstring Lag Prediction Estimate: N = 7999999
+logs/experiments/x2b-chain-lag20-lsbpad-inferred.stdout:Bitstring Lag Prediction Estimate: P_global' = 0.80041309395540983
+logs/experiments/x2b-chain-lag20-lsbpad-inferred.stdout:Bitstring Lag Prediction Estimate: min entropy = 0.32118332640680286
+logs/experiments/x2b-chain-lag20-lsbpad-inferred.stdout:H_bitstring = 0.32118332640680286
+logs/experiments/x2b-chain-lag20-packed7-inferred.stdout:Bitstring Lag Prediction Estimate: C = 6298781
+logs/experiments/x2b-chain-lag20-packed7-inferred.stdout:Bitstring Lag Prediction Estimate: r = 161
+logs/experiments/x2b-chain-lag20-packed7-inferred.stdout:Bitstring Lag Prediction Estimate: N = 6999999
+logs/experiments/x2b-chain-lag20-packed7-inferred.stdout:Bitstring Lag Prediction Estimate: P_global' = 0.90011828307165964
+logs/experiments/x2b-chain-lag20-packed7-inferred.stdout:Bitstring Lag Prediction Estimate: min entropy = 0.15181349879145989
+logs/experiments/x2b-chain-lag20-packed7-inferred.stdout:H_bitstring = 0.15181349879145989
+=== X2b reference: all modules via the driver (bitstring + literal + assessed) Sun Nov  8 15:49:37 EST 2026 ===
+Traceback (most recent call last):
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py", line 1727, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py", line 1690, in main
+    items = enumerate_cases(a)
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py", line 1617, in enumerate_cases
+    items.sort(key=lambda it: (os.path.getsize(it[0]), it[0]))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py", line 1617, in <lambda>
+    items.sort(key=lambda it: (os.path.getsize(it[0]), it[0]))
+                               ~~~~~~~~~~~~~~~^^^^^^^
+  File "<frozen genericpath>", line 86, in getsize
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/x2b-chain-lag20-p09-lsbpad-8bit-1000000.bin'
+rc=1
+wrote /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/SUMMARY.md (306 lines)
+=== sanitizers: quick Sun Nov  8 15:49:37 EST 2026 ===
+harness/sanitizers/run.sh: line 377: 57084 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-biased-random-bits.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-biased-random-bits.selftest-vv.ubsan-continue.log (UBSan continue pass, 3 report lines)
+harness/sanitizers/run.sh: line 377: 57486 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    2s exit=134 ea_non_iid-biased-random-bytes.selftest-vv.log
+SANITIZER   10s exit=0   ea_non_iid-biased-random-bytes.selftest-vv.ubsan-continue.log (UBSan continue pass, 3 report lines)
+harness/sanitizers/run.sh: line 377: 61697 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-data.pi.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-data.pi.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)

@@ -1,0 +1,105 @@
+## stage: a
+## variant: asan_ubsan
+## tool: ea_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid
+## binary_sha256: bebaad509b661a68a8a014007fb3818ea5da255cf8e389f436edd62035ddabcf
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin
+## input_sha256: a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac
+## input_bytes: 10000
+## operands: <width inferred by the tool>
+## flags: -vv
+## short_dataset_escape: yes
+## heavy: no
+## note: refdata_inferred_width:4 (extra: not in selftest)
+## timeout_seconds: 600
+## threads: 2
+## start: 2026-11-08T03:34:01Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid -vv /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin
+## --- tool output ---
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin' (SHA-256 hash a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac of assessed bytes)
+Loaded 10000 samples of 16 distinct 4-bit-wide symbols
+
+*** Warning: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary samples: 40000
+Raw Mean = 7.5183999999999997
+Translated Symbol Index Median = 8
+Binary = false
+Literal Most Common Value Estimate: Mode count = 659
+Literal Most Common Value Estimate: p-hat = 0.0659
+Literal Most Common Value Estimate: p_u = 0.07229113790606298
+Literal Most Common Value Estimate: min entropy = 3.7900373902139739
+Bitstring Most Common Value Estimate: Mode count = 20033
+Bitstring Most Common Value Estimate: p-hat = 0.50082499999999996
+Bitstring Most Common Value Estimate: p_u = 0.50726464498906265
+Bitstring Most Common Value Estimate: min entropy = 0.97918948296240216
+Chi square independence: T = 234.34619998315162
+Chi square independence: df = 240
+Chi square independence: P-value = 0.59080606880557762
+Chi square goodness of fit: T = 150.75514709180158
+Chi square goodness of fit: df = 135
+Chi square goodness of fit: P-value = 0.16750195761274278
+Chi square tests: Passed
+Literal Longest Repeated Substring results: P_col = 0.06258266000000001216819
+Literal Longest Repeated Substring results: W = 6
+Literal Longest Repeated Substring results: Pr(X >= 1) = 0.9502456022261929202699
+Length of longest repeated substring test: Passed
+Permutation testing: Unpermuted result excursion = 450.3760000000005447873
+Permutation testing: Unpermuted result numDirectionalRuns = 6669
+Permutation testing: Unpermuted result lenDirectionalRuns = 7
+Permutation testing: Unpermuted result numIncreasesDecreases = 5269
+Permutation testing: Unpermuted result numRunsMedian = 4990
+Permutation testing: Unpermuted result lenRunsMedian = 13
+Permutation testing: Unpermuted result avgCollision = 5.742102240091901066421
+Permutation testing: Unpermuted result maxCollision = 14
+Permutation testing: Unpermuted result periodicity(1) = 547
+Permutation testing: Unpermuted result periodicity(2) = 604
+Permutation testing: Unpermuted result periodicity(8) = 664
+Permutation testing: Unpermuted result periodicity(16) = 692
+Permutation testing: Unpermuted result periodicity(32) = 598
+Permutation testing: Unpermuted result covariance(1) = 562563
+Permutation testing: Unpermuted result covariance(2) = 562511
+Permutation testing: Unpermuted result covariance(8) = 569110
+Permutation testing: Unpermuted result covariance(16) = 568260
+Permutation testing: Unpermuted result covariance(32) = 561023
+Permutation testing: Unpermuted result compression = 5520
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       6       0       6
+       numDirectionalRuns       6       0       6
+       lenDirectionalRuns       1       5       4
+    numIncreasesDecreases      54       0       6
+            numRunsMedian      15       0       6
+            lenRunsMedian       4       3       3
+             avgCollision       6       0      15
+             maxCollision       1       5       4
+          periodicity(1)*    9997       0       3
+           periodicity(2)      22       0       6
+           periodicity(8)       6       0      69
+          periodicity(16)       5       1    2470
+          periodicity(32)      23       0       6
+            covariance(1)     103       0       6
+            covariance(2)      45       0       6
+            covariance(8)       6       0     272
+           covariance(16)       6       0     194
+           covariance(32)      81       0       6
+              compression       6       0      18
+(* denotes failed test)
+
+IID permutation tests: Failed
+IID test suite failed: no IID min-entropy estimate was awarded.
+## --- end of tool output ---
+## exit: 1
+## wall_seconds: 1
+## end: 2026-11-08T03:34:02Z
+## sanitizer_report: no
+## sanitizer_report_count: 0
+## first_report_line: -
+## tool_outcome: COMPLETED-IID-BATTERY-FAILED
+## permutation_battery: not-seen
+## permutation_progress_lines: 0

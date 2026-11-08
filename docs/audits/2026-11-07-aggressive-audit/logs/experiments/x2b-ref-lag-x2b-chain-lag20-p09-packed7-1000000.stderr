@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py", line 525, in <module>
+    sys.exit(main(sys.argv))
+             ~~~~^^^^^^^^^^
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py", line 517, in main
+    symbols = _read_raw(path, bps)
+  File "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py", line 479, in _read_raw
+    data = np.fromfile(path, dtype=np.uint8)
+FileNotFoundError: [Errno 2] No such file or directory: '../corpus/x2b-chain-lag20-p09-packed7-1000000.bin'

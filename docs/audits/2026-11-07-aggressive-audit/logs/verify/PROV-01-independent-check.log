@@ -1,0 +1,63 @@
+# independent check of repro/PROV-01/out  2026-11-07 22:35:06 -0500
+## byte comparison (cmp exit 0 = identical)
+cmp good.json stale_noniid_Z.json -> exit 0
+cmp good.json stale_noniid_l.json -> exit 0
+cmp good.json stale_iid_Z.json -> exit 0
+cmp good.json stale_restart_Z.json -> exit 0
+## sha256
+2eeebd248e01b96d7e4df71e6dbbf3a0c849039da677e589faed5e53bf2bf38a  good.json
+2eeebd248e01b96d7e4df71e6dbbf3a0c849039da677e589faed5e53bf2bf38a  stale_noniid_Z.json
+2eeebd248e01b96d7e4df71e6dbbf3a0c849039da677e589faed5e53bf2bf38a  stale_noniid_l.json
+2eeebd248e01b96d7e4df71e6dbbf3a0c849039da677e589faed5e53bf2bf38a  stale_iid_Z.json
+2eeebd248e01b96d7e4df71e6dbbf3a0c849039da677e589faed5e53bf2bf38a  stale_restart_Z.json
+## recorded tool exit codes (.rc files)
+baseline.out.rc = 0
+noniid_Z.out.rc = 255
+noniid_l.out.rc = 255
+iid_Z.out.rc = 255
+restart_Z.out.rc = 255
+## labelled JSON reads (errorLevel, reportComplete, len(testCases), type)
+good.json errorLevel= 0 reportComplete= <absent> testCases= 11 type= '' hAssessed= <absent>
+stale_noniid_Z.json errorLevel= 0 reportComplete= <absent> testCases= 11 type= '' hAssessed= <absent>
+stale_noniid_l.json errorLevel= 0 reportComplete= <absent> testCases= 11 type= '' hAssessed= <absent>
+stale_iid_Z.json errorLevel= 0 reportComplete= <absent> testCases= 11 type= '' hAssessed= <absent>
+stale_restart_Z.json errorLevel= 0 reportComplete= <absent> testCases= 11 type= '' hAssessed= <absent>
+## probe stderr (failure mode)
+--- noniid_Z.err (83 bytes) ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z
+--- iid_Z.err (79 bytes) ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid: illegal option -- Z
+--- restart_Z.err (83 bytes) ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart: illegal option -- Z
+--- noniid_l.err (0 bytes) ---
+## probe stdout first 3 lines via sed (full files are usage dumps)
+--- noniid_Z.out (2562 bytes) ---
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+	 EVERY OPTION MUST COME BEFORE <file_name>. An option placed after it is
+[grep -c 'Usage is' noniid_Z.out = 1]  [grep -c 'hAssessed\|min-entropy\|H_original' noniid_Z.out = 3]
+--- noniid_l.out (2617 bytes) ---
+Error: -l requires unsigned decimal <index>,<samples>.
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+[grep -c 'Usage is' noniid_l.out = 1]  [grep -c 'hAssessed\|min-entropy\|H_original' noniid_l.out = 3]
+--- iid_Z.out (2558 bytes) ---
+Usage is: ea_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+	 EVERY OPTION MUST COME BEFORE <file_name>. An option placed after it is
+[grep -c 'Usage is' iid_Z.out = 1]  [grep -c 'hAssessed\|min-entropy\|H_original' iid_Z.out = 3]
+--- restart_Z.out (2018 bytes) ---
+Usage is: ea_restart [-i|-n] [-v] [-q] [-s <simulation count>] <file_name> [bits_per_symbol] <H_I>
+
+	 EVERY OPTION MUST COME BEFORE <file_name>. An option placed after it is
+[grep -c 'Usage is' restart_Z.out = 1]  [grep -c 'hAssessed\|min-entropy\|H_original' restart_Z.out = 0]
+## control files
+c_stale_noniid_Z.json errorLevel= -1 reportComplete= False testCases= 0 type= 'non-IID' errorMessage= 'The assessment did not complete; this placeholder was written when the output path was cl
+c_stale_iid_Z.json errorLevel= -1 reportComplete= False testCases= 0 type= 'IID' errorMessage= 'The assessment did not complete; this placeholder was written when the output path was cl
+c_stale_restart_Z.json errorLevel= -1 reportComplete= False testCases= 0 type= 'restart' errorMessage= 'The assessment did not complete; this placeholder was written when the output path was cl
+--- c_noniid_Z.err ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z
+--- c_iid_Z.err ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid: illegal option -- Z
+--- c_restart_Z.err ---
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart: illegal option -- Z

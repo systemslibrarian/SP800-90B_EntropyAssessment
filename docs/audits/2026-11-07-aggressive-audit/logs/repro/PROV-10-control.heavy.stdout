@@ -1,0 +1,10 @@
+# PROV-10 control.txt  2026-11-07 22:33:19 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
+# EA_REPRO_HEAVY=1: running the heavy step
+input sha256 4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-10/out/db100.bin
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-10/out/c_n.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-10/out/db100.bin 8
+rc[noniid]=0  stdout=c_n.out stderr=c_n.err
+rc=0 errorLevel=0 LRS literalEstimateNotRun=true lrsRes=<absent> Overall.hAssessed=3.66167387436985
+RESULT: CONTROL-OK -- ea_non_iid flags the declined LRS estimate and carries the assessed minimum; ea_restart (run.sh) does neither

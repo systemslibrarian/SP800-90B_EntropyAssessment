@@ -86,7 +86,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-8bit-5000-b8-bitstring.markov.ref.json"
  ],
- "duration_s": 0.252,
+ "duration_s": 0.075,
  "options_used": {},
  "module": "markov",
  "mode": "bitstring",
@@ -100,7 +100,7 @@
  },
  "n_symbols_fed": 40000,
  "bps_fed": 1,
- "estimate_seconds": 0.005,
+ "estimate_seconds": 0.002,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/markov.py",
  "module_sha256": "b50f05e0ac2810236108bdedb0d5d9057ff94ef2e38e5ce749cc0d09ff8996e1"
 }

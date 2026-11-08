@@ -1,0 +1,12 @@
+name: x3-gadget-model
+start: 2026-11-07T22:33:01-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/experiments/x3_multimmc_orphans.py --model /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-gadget-P32-b17-q4-8bit-1000000.bin
+sha256 87d4df53fd91304be5bac391fb204643c36b7df2023c04a0953bcbc7d4fdf634  /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python  (34640 bytes)
+sha256 56ca131be96812b10c20cd2ef24f8d4c40bffcffb3274d1c48316559a558586a  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/experiments/x3_multimmc_orphans.py  (28125 bytes)
+sha256 095aeaf1e294a65c0fdbb2a1fff57a5e9ed0b7c5dc0a203a386f23de5f3c7116  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x3-mmc-orphan-gadget-P32-b17-q4-8bit-1000000.bin  (1000000 bytes)
+end: 2026-11-07T22:33:11-0500
+rc: 0

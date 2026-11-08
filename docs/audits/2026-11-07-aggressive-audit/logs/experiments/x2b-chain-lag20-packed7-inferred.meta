@@ -1,0 +1,12 @@
+name: x2b-chain-lag20-packed7-inferred
+start: 2026-11-07T22:32:06-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-packed7-inferred.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-packed7-1000000.bin
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 33f11d85ba4c4ef84a11fcfdc1d66ade4f4a591fe573d3a1415a9305b3b620f4  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-packed7-1000000.bin  (1000000 bytes)
+end: 2026-11-07T22:32:11-0500
+rc: 0
+report sha256 abb99814366e22f7e7e070e9e36239051f8735a23c01ec3dac8ec819ef23020d  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-packed7-inferred.json

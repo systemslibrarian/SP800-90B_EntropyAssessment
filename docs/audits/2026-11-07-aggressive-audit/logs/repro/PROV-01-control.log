@@ -1,12 +1,12 @@
-# PROV-01 control.txt  2026-11-07 21:56:06 -0500  host=Darwin 25.6.0 arm64
+# PROV-01 control.txt  2026-11-07 22:33:55 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
 binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/c_good.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
 rc[baseline]=0  stdout=c_baseline.out stderr=c_baseline.err
-c_good.json sha256 8ffdbec4bfea9f131f7c73620a6ba664ce4385fd2df58a0ffc52eeea2f82bcde errorLevel=0
+c_good.json sha256 10f617b8f0a1dd6879975ba9628e36bbd0e4824175187134a09bc02b71f21849 errorLevel=0
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/c_stale_noniid_Z.json -Z /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
 rc[noniid_Z]=255  stdout=c_noniid_Z.out stderr=c_noniid_Z.err
   noniid_Z: replaced by the placeholder (errorLevel -1, reportComplete false), rc=255

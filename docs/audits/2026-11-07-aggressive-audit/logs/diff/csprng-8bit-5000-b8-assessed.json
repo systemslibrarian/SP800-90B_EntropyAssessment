@@ -10,8 +10,8 @@
   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
   "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
  },
- "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
- "timestamp": "2026-11-07T21:16:09-0500",
+ "harness_sha256": "9a38bd931d76836fe1c2387956f4a79e987f6a9363575b5d791486e09b93b1e8",
+ "timestamp": "2026-11-07T22:31:30-0500",
  "env": {
   "OMP_NUM_THREADS": "2",
   "EA_ALLOW_SHORT_DATASET": "1"
@@ -38,7 +38,16 @@
    "z",
    2.575829303548901
   ],
-  "d1_options_by_module": {}
+  "d1_options_by_module": {
+   "ttuple": [
+    "z_variant",
+    "exact"
+   ],
+   "collision": [
+    "z_alpha",
+    2.575829303548901
+   ]
+  }
  },
  "cpp": {
   "cmd": [
@@ -357,22 +366,22 @@
   "Assessed min entropy [z exact]": {
    "label": "Assessed min entropy",
    "cpp": 6.179101871317015,
-   "ref": 6.179062988162769,
-   "class": "CPP_HIGHER",
-   "reason": "!!! C++ Assessed min entropy 6.179101871317015 exceeds reference 6.179062988162769 by 3.88832e-05",
-   "delta": 3.888315424571687e-05,
+   "ref": 6.179101871317013,
+   "class": "AGREE",
+   "reason": "Assessed min entropy 6.179101871317015 vs 6.179101871317013 within 1e-09",
+   "delta": 1.7763568394002505e-15,
    "tol": 1e-09
   }
  },
  "class": "CPP_HIGHER",
- "d1_explained": false,
+ "d1_explained": true,
  "reference_combination_d1": {
   "literal": {
-   "min": 6.63844449262557,
-   "binding": "ttuple",
+   "min": 6.638473423154783,
+   "binding": "mcv",
    "values": {
     "mcv": 6.638473423154783,
-    "ttuple": 6.63844449262557,
+    "ttuple": 6.638473423154783,
     "lrs": 7.222275362633257,
     "multimcw": 7.883091738669933,
     "lag": 7.6457528234122325,
@@ -384,14 +393,14 @@
    "complete": true
   },
   "bitstring": {
-   "min": 0.7723828735203462,
+   "min": 0.7723877339146267,
    "binding": "collision",
    "values": {
     "mcv": 0.9728048004983335,
-    "collision": 0.7723828735203462,
+    "collision": 0.7723877339146267,
     "markov": 0.9885239370258041,
     "compression": 0.8141780266283279,
-    "ttuple": 0.8919596809069109,
+    "ttuple": 0.891960820984504,
     "lrs": 0.9810457269336514,
     "multimcw": 0.9812023152259512,
     "lag": 0.9859242302148187,
@@ -403,10 +412,10 @@
    "complete": true
   },
   "combined": {
-   "H_original": 6.63844449262557,
-   "H_bitstring": 0.7723828735203462,
-   "H_bitstring Per Symbol": 6.179062988162769,
-   "assessed": 6.179062988162769,
+   "H_original": 6.638473423154783,
+   "H_bitstring": 0.7723877339146267,
+   "H_bitstring Per Symbol": 6.179101871317013,
+   "assessed": 6.179101871317013,
    "binary": false,
    "complete": true
   },
@@ -414,5 +423,5 @@
    "z": 2.575829303548901
   }
  },
- "verdict": "csprng-8bit-5000-b8-assessed: !!! CPP_HIGHER -- Assessed cpp=6.179101871317015 ref=6.179062988162769 [CPP_HIGHER: !!! C++ Assessed min entropy 6.179101871317015 exceeds reference 6.179062988162769 by 3.88832e-05]; D-1 recheck with z = 2.575829303548901: CPP_HIGHER -- residual delta 3.888315424571687e-05: NOT explained by D-1 [EA_ALLOW_SHORT_DATASET=1]"
+ "verdict": "csprng-8bit-5000-b8-assessed: !!! CPP_HIGHER -- Assessed cpp=6.179101871317015 ref=6.179062988162769 [CPP_HIGHER: !!! C++ Assessed min entropy 6.179101871317015 exceeds reference 6.179062988162769 by 3.88832e-05]; D-1 recheck with z = 2.575829303548901: AGREE -- the assessed difference IS documented divergence D-1 [EA_ALLOW_SHORT_DATASET=1]"
 }

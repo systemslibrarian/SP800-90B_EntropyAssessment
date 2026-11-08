@@ -1,0 +1,9 @@
+{
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -o logs/verify/PROV-01-extra/x4_stale.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8 extra",
+   "dateTimeStamp" : "20261107223524",
+   "errorLevel" : -1,
+   "errorMessage" : "The assessment did not complete; this placeholder was written when the output path was claimed. Any earlier report at this path has been replaced. Refuse this file.",
+   "reportComplete" : false,
+   "toolVersion" : "1.1.8",
+   "type" : "non-IID"
+}

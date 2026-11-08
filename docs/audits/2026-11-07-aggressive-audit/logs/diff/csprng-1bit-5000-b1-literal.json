@@ -10,8 +10,8 @@
   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
   "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
  },
- "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
- "timestamp": "2026-11-07T21:29:59-0500",
+ "harness_sha256": "9a38bd931d76836fe1c2387956f4a79e987f6a9363575b5d791486e09b93b1e8",
+ "timestamp": "2026-11-07T22:31:24-0500",
  "env": {
   "OMP_NUM_THREADS": "2",
   "EA_ALLOW_SHORT_DATASET": "1"
@@ -209,7 +209,7 @@
     "p_u clamped": false
    },
    "error": null,
-   "duration_s": 0.09,
+   "duration_s": 0.132,
    "options_used": {},
    "module": "mcv",
    "mode": "literal",
@@ -253,7 +253,7 @@
     "note": ""
    },
    "error": null,
-   "duration_s": 0.082,
+   "duration_s": 0.127,
    "options_used": {},
    "module": "collision",
    "mode": "literal",
@@ -345,7 +345,7 @@
     "min_entropy_upper": 0.9533795834776533
    },
    "error": null,
-   "duration_s": 0.087,
+   "duration_s": 0.077,
    "options_used": {},
    "module": "markov",
    "mode": "literal",
@@ -359,7 +359,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 1,
-   "estimate_seconds": 0.003,
+   "estimate_seconds": 0.002,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/markov.py",
    "module_sha256": "b50f05e0ac2810236108bdedb0d5d9057ff94ef2e38e5ce749cc0d09ff8996e1"
   },
@@ -402,7 +402,7 @@
     "note": "v = floor(L/b) - d = -167 < 1: no test data; spec gives no value"
    },
    "error": null,
-   "duration_s": 0.09,
+   "duration_s": 0.073,
    "options_used": {},
    "module": "compression",
    "mode": "literal",
@@ -464,7 +464,7 @@
     "method": "direct"
    },
    "error": null,
-   "duration_s": 0.09,
+   "duration_s": 0.073,
    "options_used": {},
    "module": "ttuple",
    "mode": "literal",
@@ -571,7 +571,7 @@
     }
    },
    "error": null,
-   "duration_s": 0.082,
+   "duration_s": 0.077,
    "options_used": {},
    "module": "lrs",
    "mode": "literal",
@@ -585,7 +585,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 1,
-   "estimate_seconds": 0.016,
+   "estimate_seconds": 0.012,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
    "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
   },
@@ -636,7 +636,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.082,
+   "duration_s": 0.075,
    "options_used": {},
    "module": "multimcw",
    "mode": "literal",
@@ -807,7 +807,7 @@
     "winner_final": 2
    },
    "error": null,
-   "duration_s": 0.083,
+   "duration_s": 0.073,
    "options_used": {},
    "module": "lag",
    "mode": "literal",
@@ -920,7 +920,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.137,
+   "duration_s": 0.131,
    "options_used": {},
    "module": "multimmc",
    "mode": "literal",
@@ -934,7 +934,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 1,
-   "estimate_seconds": 0.017,
+   "estimate_seconds": 0.016,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimmc.py",
    "module_sha256": "021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb"
   },
@@ -976,7 +976,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.084,
+   "duration_s": 0.131,
    "options_used": {},
    "module": "lz78y",
    "mode": "literal",
@@ -990,7 +990,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 1,
-   "estimate_seconds": 0.015,
+   "estimate_seconds": 0.014,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
    "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
   }
@@ -1017,7 +1017,7 @@
     "p_u clamped": false
    },
    "error": null,
-   "duration_s": 0.086,
+   "duration_s": 0.078,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1063,7 +1063,7 @@
     "note": ""
    },
    "error": null,
-   "duration_s": 0.084,
+   "duration_s": 0.073,
    "options_used": {
     "z_alpha": 2.575829303548901
    },
@@ -1127,7 +1127,7 @@
     "method": "direct"
    },
    "error": null,
-   "duration_s": 0.08,
+   "duration_s": 0.074,
    "options_used": {
     "z_variant": "exact"
    },
@@ -1236,7 +1236,7 @@
     }
    },
    "error": null,
-   "duration_s": 0.085,
+   "duration_s": 0.125,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1303,7 +1303,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.08,
+   "duration_s": 0.074,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1476,7 +1476,7 @@
     "winner_final": 2
    },
    "error": null,
-   "duration_s": 0.078,
+   "duration_s": 0.077,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1492,7 +1492,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 1,
-   "estimate_seconds": 0.003,
+   "estimate_seconds": 0.004,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py",
    "module_sha256": "badcca9ddde16551eba813180c9c07b79bbb5dbd85a68428b02d94810e157c67"
   },
@@ -1591,7 +1591,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.085,
+   "duration_s": 0.127,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1649,7 +1649,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.089,
+   "duration_s": 0.127,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1665,7 +1665,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 1,
-   "estimate_seconds": 0.017,
+   "estimate_seconds": 0.014,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
    "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
   }

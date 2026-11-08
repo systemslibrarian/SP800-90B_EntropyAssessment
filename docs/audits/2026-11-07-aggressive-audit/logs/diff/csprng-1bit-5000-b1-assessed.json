@@ -10,8 +10,8 @@
   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
   "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
  },
- "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
- "timestamp": "2026-11-07T21:30:01-0500",
+ "harness_sha256": "9a38bd931d76836fe1c2387956f4a79e987f6a9363575b5d791486e09b93b1e8",
+ "timestamp": "2026-11-07T22:31:26-0500",
  "env": {
   "OMP_NUM_THREADS": "2",
   "EA_ALLOW_SHORT_DATASET": "1"

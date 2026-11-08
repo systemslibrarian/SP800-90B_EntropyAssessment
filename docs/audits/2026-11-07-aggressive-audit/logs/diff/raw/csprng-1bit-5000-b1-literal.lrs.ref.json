@@ -101,7 +101,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-1bit-5000-b1-literal.lrs.ref.json"
  ],
- "duration_s": 0.082,
+ "duration_s": 0.077,
  "options_used": {},
  "module": "lrs",
  "mode": "literal",
@@ -115,7 +115,7 @@
  },
  "n_symbols_fed": 5000,
  "bps_fed": 1,
- "estimate_seconds": 0.016,
+ "estimate_seconds": 0.012,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
  "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
 }

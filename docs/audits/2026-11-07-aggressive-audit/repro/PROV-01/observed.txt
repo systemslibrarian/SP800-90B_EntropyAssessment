@@ -1,6 +1,6 @@
-# PROV-01 observed.txt  2026-11-07 21:56:05 -0500  host=Darwin 25.6.0 arm64
+# PROV-01 observed.txt  2026-11-07 22:33:55 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
 binary sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (mtime 2026-11-07 19:28:57)
 binary sha256 22f1319ae347ab4e187953c9161219893310569965234876fdbd6a73daba7349  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid  (mtime 2026-11-07 19:28:52)
 binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
@@ -8,7 +8,7 @@ fixture sha256 17d2eaf9544cd6aea3e245bec362f494376d0b1ca6140c475a35f1ad1f8c2803 
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/good.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
 rc[baseline]=0  stdout=baseline.out stderr=baseline.err
 good.json errorLevel=0 testCases=11
-good.json sha256 ab05dc8eef4ab840c555ddc5603f637b746154e61760d55e3d1c874177c2a19e
+good.json sha256 2eeebd248e01b96d7e4df71e6dbbf3a0c849039da677e589faed5e53bf2bf38a
 $ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -Z -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-01/out/stale_noniid_Z.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin 8
 rc[noniid_Z]=255  stdout=noniid_Z.out stderr=noniid_Z.err
   noniid_Z: STALE SUCCESS SURVIVED -- stale_noniid_Z.json is byte-identical to good.json (errorLevel 0), tool rc=255

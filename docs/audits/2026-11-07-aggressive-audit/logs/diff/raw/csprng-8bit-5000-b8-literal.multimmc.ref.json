@@ -107,7 +107,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-8bit-5000-b8-literal.multimmc.ref.json"
  ],
- "duration_s": 0.436,
+ "duration_s": 0.128,
  "options_used": {},
  "module": "multimmc",
  "mode": "literal",
@@ -121,7 +121,7 @@
  },
  "n_symbols_fed": 5000,
  "bps_fed": 8,
- "estimate_seconds": 0.125,
+ "estimate_seconds": 0.015,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimmc.py",
  "module_sha256": "021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb"
 }

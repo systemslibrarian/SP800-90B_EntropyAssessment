@@ -1,0 +1,40 @@
+# verifier's own extra controls  2026-11-07 22:35:23 -0500  env EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 (NON-COMPLIANT short dataset)
+# binary: 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+## baseline (verifier's own)
+rc=0
+v_good.json sha=fb94aee8de7a3993410803f038038bedf1f5a4ea56cff7511f306e8d0b8a86c4 errorLevel=0
+
+## EXTRA CONTROL X1: -o FIRST then malformed -l (the control.sh does not cover the -l probe)
+rc=255
+sha after=799214c9d0dd1cb2386f92059670922e8139897b1e1028169f0edf138faf823e  identical_to_good=NO
+errorLevel= -1 reportComplete= <absent> errorMessage= 'Error: -l requires unsigned decimal <index>,<samples>.' testCases= None
+stdout:
+Error: -l requires unsigned decimal <index>,<samples>.
+Usage is: ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples> ] <file_name> [bits_per_symbol]
+
+## VERIFIER PROBE X2: my own re-run of -Z BEFORE -o on a fresh copy (independent of run.sh)
+rc=255
+sha after=fb94aee8de7a3993410803f038038bedf1f5a4ea56cff7511f306e8d0b8a86c4  identical_to_good=YES
+stderr:
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid: illegal option -- Z
+
+## VERIFIER PROBE X3: unknown option AFTER the operand (OC-104 refusal path) -- does the refusal claim?
+rc=255
+sha after=fb94aee8de7a3993410803f038038bedf1f5a4ea56cff7511f306e8d0b8a86c4  identical_to_good=YES
+stderr:
+Error: '-Z' looks like an option but appears after the file operand '/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand8_short.bin'.
+       Refusing to run: what this command line MEANS depends on the C
+       library. glibc rearranges it and parses '-Z'; BSD and macOS treat
+       it as another operand and fail on the usage path. One line, two
+       supported platforms, two different operations -- and guessing which
+       was wanted is worse than refusing. Nothing has been written.
+
+       Put every option BEFORE the file:
+         ea_non_iid [-i|-c] [-a|-t] [-v] [-q] [-l <index>,<samples>] [-o <file>] <file_name> [bits_per_symbol]
+       If '-Z' is meant as an operand and not an option, separate the
+       operands with '--'.
+
+## VERIFIER PROBE X4: wrong operand count with -o parsed (usage exit AFTER the claim) -- should be placeholder
+rc=255
+sha after=a9d16aa95ff4fd8ed9b507b90e89685395df906af4a714591c8ed7ede45f97e1  identical_to_good=NO
+errorLevel= -1 reportComplete= False

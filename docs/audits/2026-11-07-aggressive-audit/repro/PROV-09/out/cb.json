@@ -1,0 +1,38 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 1000000,
+   "assessmentComplete" : true,
+   "assessmentMode" : "IID",
+   "bitsPerSymbol" : 1,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -i -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/cb.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/checkerboard-1e6.bin 1 0.5",
+   "dateTimeStamp" : "20261107223312",
+   "errorLevel" : 2,
+   "errorMessage" : "IID restart test suite failed; no IID restart entropy estimate was awarded.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/checkerboard-1e6.bin",
+   "passedRestartSanityCheck" : true,
+   "restartAlpha" : 5.0000000000000004e-06,
+   "restartCutoffMethod" : "exact-multinomial-maximum",
+   "restartHI" : 0.5,
+   "restartXcutoff" : 769,
+   "restartXcutoffPrintedBinomial" : 769,
+   "restartXmax" : 500,
+   "sha256" : "fa54573ed95090d473e6296b7bb945c97e3cced2e4a80ed40fc008536b9aa01d",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "passedChiSquareTests" : false,
+         "passedIidPermutationTests" : false,
+         "passedLongestRepeatedSubstringTest" : false,
+         "permutationTestResults" : null,
+         "ranChiSquareTests" : true,
+         "ranIidPermutationTests" : false,
+         "ranLongestRepeatedSubstringTest" : true,
+         "rawMean" : 0.5,
+         "testCaseDesc" : "Overall",
+         "translatedSymbolMedian" : 0.5
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

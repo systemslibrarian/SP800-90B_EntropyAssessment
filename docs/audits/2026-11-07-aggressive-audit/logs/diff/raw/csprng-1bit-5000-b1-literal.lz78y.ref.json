@@ -50,7 +50,7 @@
   "{}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-1bit-5000-b1-literal.lz78y.ref.json"
  ],
- "duration_s": 0.084,
+ "duration_s": 0.131,
  "options_used": {},
  "module": "lz78y",
  "mode": "literal",
@@ -64,7 +64,7 @@
  },
  "n_symbols_fed": 5000,
  "bps_fed": 1,
- "estimate_seconds": 0.015,
+ "estimate_seconds": 0.014,
  "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
  "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
 }

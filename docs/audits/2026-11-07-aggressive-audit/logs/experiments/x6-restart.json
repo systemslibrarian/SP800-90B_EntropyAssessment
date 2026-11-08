@@ -1,0 +1,70 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 1000000,
+   "bitsPerSymbol" : 8,
+   "bitsPerSymbolInferred" : false,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x6-restart.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x6-debruijn-k100-seed11-1000000.bin 8 0.5/symbol",
+   "dateTimeStamp" : "20261107223234",
+   "errorLevel" : 0,
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x6-debruijn-k100-seed11-1000000.bin",
+   "passedRestartSanityCheck" : true,
+   "restartAlpha" : 5.0000000000000004e-06,
+   "restartCutoffMethod" : "exact-multinomial-maximum",
+   "restartHI" : 0.5,
+   "restartXcutoff" : 769,
+   "restartXcutoffPrintedBinomial" : 769,
+   "restartXmax" : 30,
+   "sha256" : "4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : [
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.607346961079835,
+         "h_r" : 6.607346961079835,
+         "testCaseDesc" : "Most Common Value"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.3726857695387142,
+         "h_r" : 6.6073462488357819,
+         "testCaseDesc" : "T-Tuple Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.4427235787946389,
+         "testCaseDesc" : "LRS Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.6075410056945971,
+         "h_r" : 6.5977436493431458,
+         "testCaseDesc" : "Multi Most Common in Window Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.6037887168395288,
+         "h_r" : 6.5833315234342944,
+         "testCaseDesc" : "Lag Prediction Test"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.6113382006461698,
+         "h_r" : 6.6438561897747244,
+         "testCaseDesc" : "Multi Markov Model with Counting Test (MultiMMC)"
+      },
+      {
+         "dataWordSize" : 8.0,
+         "h_c" : 6.6225021027443223,
+         "h_r" : 6.6438561897747244,
+         "testCaseDesc" : "LZ78Y Test"
+      },
+      {
+         "h_c" : 6.3726857695387142,
+         "h_i" : 0.5,
+         "h_r" : 6.5833315234342944,
+         "testCaseDesc" : "Overall"
+      }
+   ],
+   "toolVersion" : "1.1.8",
+   "type" : "Restart"
+}

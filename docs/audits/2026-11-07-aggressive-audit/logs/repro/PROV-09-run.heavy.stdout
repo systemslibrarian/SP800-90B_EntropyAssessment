@@ -1,0 +1,11 @@
+# PROV-09 observed.txt  2026-11-07 22:33:11 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+code: restart_main.cpp:1155 sets errorLevel = 2 and errorMsg; errorClass assignments in that block (lines 1149-1167): 0
+# EA_REPRO_HEAVY=1: running the heavy step
+input sha256 fa54573ed95090d473e6296b7bb945c97e3cced2e4a80ed40fc008536b9aa01d  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/checkerboard-1e6.bin (1,000,000 samples, 1-bit checkerboard)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -i -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/cb.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-09/out/checkerboard-1e6.bin 1 0.5
+rc[restart_i]=1  stdout=cb.out stderr=cb.err
+rc=1 JSON errorLevel=2 errorClass=<absent> errorMessage="IID restart test suite failed; no IID restart entropy estimate was awarded." IID=false assessmentComplete=true
+RESULT: PASS -- restart IID-suite failure: exit 1, errorLevel 2, errorClass ABSENT (ea_iid writes errorClass 'statistical' for the same outcome)

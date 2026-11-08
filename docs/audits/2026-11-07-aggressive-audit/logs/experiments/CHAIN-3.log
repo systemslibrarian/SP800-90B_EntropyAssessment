@@ -1,0 +1,75 @@
+CHAIN-3 waiting for CHAIN-2's ALL DONE marker Sat Nov  7 22:32:54 EST 2026
+CHAIN-3 start Sat Nov  7 22:33:25 EST 2026
+=== sanitizers: selftest of the summarizer ===
+derived critical(resultUpdate) from source                   PASS {'file': 'iid/permutation_tests.h', 'kind': 'critical', 'name': 'resultUpdate', 'start': 661, 'end': 680}
+derived critical(verboseOutput) from source                  PASS {'file': 'iid/permutation_tests.h', 'kind': 'critical', 'name': 'verboseOutput', 'start': 714, 'end': 718}
+derived `omp atomic` from source                             PASS {'file': 'iid/permutation_tests.h', 'kind': 'atomic', 'name': '', 'start': 722, 'end': 723}
+derived parallel region from source                          PASS {'file': 'iid/permutation_tests.h', 'kind': 'parallel', 'name': '', 'start': 625, 'end': 729}
+found the unguarded `passed_count < 19` read                 PASS 653
+clean log: no report detected                                PASS 
+ASan log: report detected, class AddressSanitizer            PASS 
+UBSan log with a wrong header: report re-derived yes         PASS 
+RESULTS.md flags the header disagreement                     PASS 
+incomplete log named as killed run                           PASS 
+TSan fixture: four blocks parsed                             PASS 4
+triage #1 critical vs atomic -> ATOMIC_VS_PLAIN              PASS ATOMIC_VS_PLAIN
+triage #2 both in resultUpdate -> SAME_CRITICAL              PASS SAME_CRITICAL
+triage #3 critical vs unguarded read -> CROSSES_CRITICAL     PASS CROSSES_CRITICAL
+triage #4 resultUpdate vs verboseOutput -> DIFFERENT_CRITICALS PASS DIFFERENT_CRITICALS
+triage with no construct ranges never says SAME_CRITICAL     PASS ['ATOMIC_VS_PLAIN', 'OUTSIDE_OMP', 'OUTSIDE_OMP', 'OUTSIDE_OMP']
+selftest fixtures in /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T/san-selftest-rk9b6y3l; RESULTS fixture at /var/folders/wz/rhjpp_9d3ql1ykjyrjtwjjwr0000gn/T/san-selftest-rk9b6y3l/RESULTS.md
+selftest: PASS
+rc=0
+=== sanitizers: build ===
+[asan_ubsan/ea_non_iid] 2026-11-08T03:33:25Z building ...
+[asan_ubsan/ea_non_iid] built in 2 s, 9 warning(s); sha256 c6350c1d3c9434402122abc54ef242362c285bda0e50c24e957d54f377d52547; --version exit 0: non_iid 1.1.8  Disclaimer: NIST-developed software is provided by NIST as a public service. You may use, copy, and distr
+[asan_ubsan/ea_iid] 2026-11-08T03:33:27Z building ...
+[asan_ubsan/ea_iid] built in 2 s, 5 warning(s); sha256 bebaad509b661a68a8a014007fb3818ea5da255cf8e389f436edd62035ddabcf; --version exit 0: iid 1.1.8  Disclaimer: NIST-developed software is provided by NIST as a public service. You may use, copy, and distribut
+[asan_ubsan/ea_restart] 2026-11-08T03:33:29Z building ...
+[asan_ubsan/ea_restart] built in 3 s, 10 warning(s); sha256 9f913fd296d6a5be11956f7e8bb77b8e03a62fdb2014ca8906a3aa0cca9dff4e; --version exit 0: restart 1.1.8  Disclaimer: NIST-developed software is provided by NIST as a public service. You may use, copy, and distr
+[tsan/ea_non_iid] 2026-11-08T03:33:32Z building ...
+[tsan/ea_non_iid] built in 1 s, 9 warning(s); sha256 600839ad54bc5f955873a8797319c89cf8344738e0d418553a36335a1ea22b42; --version exit 0: non_iid 1.1.8  Disclaimer: NIST-developed software is provided by NIST as a public service. You may use, copy, and distr
+[tsan/ea_iid] 2026-11-08T03:33:34Z building ...
+[tsan/ea_iid] built in 1 s, 5 warning(s); sha256 c59311b28c5a76397d56e2c67d74933494ee6e39ff099d514afadf01119bb143; --version exit 0: iid 1.1.8  Disclaimer: NIST-developed software is provided by NIST as a public service. You may use, copy, and distribut
+[tsan/ea_restart] 2026-11-08T03:33:35Z building ...
+[tsan/ea_restart] built in 1 s, 10 warning(s); sha256 072cb7898553adfc5f2a04dda3b8bf63cb6e1c3cc9a075c46ce4078627e54d5f; --version exit 0: restart 1.1.8  Disclaimer: NIST-developed software is provided by NIST as a public service. You may use, copy, and distr
+LeakSanitizer on this host: no
+record: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/BUILD-RECORD.txt
+build rc=0
+=== sanitizers: quick ===
+harness/sanitizers/run.sh: line 377: 33097 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-biased-random-bits.selftest-vv.log
+SANITIZER    1s exit=0   ea_non_iid-biased-random-bits.selftest-vv.ubsan-continue.log (UBSan continue pass, 3 report lines)
+harness/sanitizers/run.sh: line 377: 33212 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-biased-random-bytes.selftest-vv.log
+SANITIZER   10s exit=0   ea_non_iid-biased-random-bytes.selftest-vv.ubsan-continue.log (UBSan continue pass, 3 report lines)
+harness/sanitizers/run.sh: line 377: 33704 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-data.pi.selftest-vv.log
+SANITIZER    1s exit=0   ea_non_iid-data.pi.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 33802 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-normal.selftest-vv.log
+SANITIZER    9s exit=0   ea_non_iid-normal.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 34586 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-rand1_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand1_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED    0s exit=0   ea_iid-rand1_short.vv.log
+harness/sanitizers/run.sh: line 377: 34665 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-rand4_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand4_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED-IID-BATTERY-FAILED    1s exit=1   ea_iid-rand4_short.vv.log
+harness/sanitizers/run.sh: line 377: 34736 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-rand8_short.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-rand8_short.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-rand8_short.vv.log
+harness/sanitizers/run.sh: line 377: 34871 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-ringOsc-nist.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-ringOsc-nist.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 34921 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_non_iid-truerand_1bit.selftest-vv.log
+SANITIZER    0s exit=0   ea_non_iid-truerand_1bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 35028 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_non_iid-truerand_4bit.selftest-vv.log
+SANITIZER   18s exit=0   ea_non_iid-truerand_4bit.selftest-vv.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 36663 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    8s exit=134 ea_non_iid-truerand_8bit.selftest-vv.log
+ORCHESTRATOR: CHAIN-3 stopped at Sat Nov  7 22:34:43 EST 2026 to run the X2b reference first; relaunched afterwards

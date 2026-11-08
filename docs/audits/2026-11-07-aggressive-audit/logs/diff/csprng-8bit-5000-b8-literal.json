@@ -10,8 +10,8 @@
   "path": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid",
   "sha256": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f"
  },
- "harness_sha256": "d47647773aaba47cb1f33c5a54392fbf93cdab244d774b04605b632e7c5a11dd",
- "timestamp": "2026-11-07T21:15:55-0500",
+ "harness_sha256": "9a38bd931d76836fe1c2387956f4a79e987f6a9363575b5d791486e09b93b1e8",
+ "timestamp": "2026-11-07T22:31:26-0500",
  "env": {
   "OMP_NUM_THREADS": "2",
   "EA_ALLOW_SHORT_DATASET": "1"
@@ -38,7 +38,16 @@
    "z",
    2.575829303548901
   ],
-  "d1_options_by_module": {}
+  "d1_options_by_module": {
+   "ttuple": [
+    "z_variant",
+    "exact"
+   ],
+   "collision": [
+    "z_alpha",
+    2.575829303548901
+   ]
+  }
  },
  "cpp": {
   "cmd": [
@@ -246,7 +255,7 @@
     "p_u clamped": false
    },
    "error": null,
-   "duration_s": 0.264,
+   "duration_s": 0.077,
    "options_used": {},
    "module": "mcv",
    "mode": "literal",
@@ -290,7 +299,7 @@
     "method": "direct"
    },
    "error": null,
-   "duration_s": 0.298,
+   "duration_s": 0.075,
    "options_used": {},
    "module": "ttuple",
    "mode": "literal",
@@ -304,7 +313,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.001,
+   "estimate_seconds": 0.0,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
    "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
   },
@@ -349,7 +358,7 @@
     }
    },
    "error": null,
-   "duration_s": 0.255,
+   "duration_s": 0.074,
    "options_used": {},
    "module": "lrs",
    "mode": "literal",
@@ -363,7 +372,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.012,
+   "estimate_seconds": 0.004,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
    "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
   },
@@ -414,7 +423,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.424,
+   "duration_s": 0.128,
    "options_used": {},
    "module": "multimcw",
    "mode": "literal",
@@ -428,7 +437,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.17,
+   "estimate_seconds": 0.027,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimcw.py",
    "module_sha256": "a54674a93aef82c7b43cc9820a22664ef4ac7258ac7a42b2bfdaa657a8c35079"
   },
@@ -585,7 +594,7 @@
     "winner_final": 63
    },
    "error": null,
-   "duration_s": 0.25,
+   "duration_s": 0.075,
    "options_used": {},
    "module": "lag",
    "mode": "literal",
@@ -599,7 +608,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.024,
+   "estimate_seconds": 0.003,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py",
    "module_sha256": "badcca9ddde16551eba813180c9c07b79bbb5dbd85a68428b02d94810e157c67"
   },
@@ -698,7 +707,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.436,
+   "duration_s": 0.128,
    "options_used": {},
    "module": "multimmc",
    "mode": "literal",
@@ -712,7 +721,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.125,
+   "estimate_seconds": 0.015,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimmc.py",
    "module_sha256": "021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb"
   },
@@ -754,7 +763,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.31,
+   "duration_s": 0.125,
    "options_used": {},
    "module": "lz78y",
    "mode": "literal",
@@ -768,7 +777,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.063,
+   "estimate_seconds": 0.017,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
    "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
   },
@@ -810,7 +819,7 @@
     "p_u clamped": false
    },
    "error": null,
-   "duration_s": 0.364,
+   "duration_s": 0.078,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -831,29 +840,50 @@
    "module_sha256": "aa075588a826cf1f35dd6bfe5fa557ecca83bcf47308ee5469d9ea55342ae698"
   },
   "ttuple": {
-   "status": "error",
-   "values": null,
-   "error": "TypeError: unknown option(s): ['z']",
-   "duration_s": 0.239,
+   "status": "ok",
+   "values": {
+    "min_entropy": 6.638473423154783,
+    "t": 1,
+    "p-hat_max": 0.007,
+    "p_u": 0.010037380185360038,
+    "Q": [
+     35
+    ],
+    "P": [
+     0.007
+    ],
+    "P_max": [
+     0.007
+    ],
+    "Q_next": 3,
+    "argmax_i": 1,
+    "L": 5000,
+    "k": 256,
+    "cutoff": 35,
+    "z": 2.575829303548901,
+    "z_variant": "exact",
+    "method": "direct"
+   },
+   "error": null,
+   "duration_s": 0.126,
    "options_used": {
-    "z": 2.575829303548901
+    "z_variant": "exact"
    },
    "module": "ttuple",
    "mode": "literal",
    "translated": false,
    "reused": false,
-   "traceback": [
-    "Traceback (most recent call last):",
-    "  File \"/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py\", line 915, in ref_child_main",
-    "    rec = ref_child(module, file_path, int(bps), mode, translate == \"1\", bit_order, int(truncate),",
-    "                    json.loads(options_json))",
-    "  File \"/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/diff_driver.py\", line 847, in ref_child",
-    "    vals = mod.estimate(data, bps_eff, **options)",
-    "  File \"/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py\", line 373, in estimate",
-    "    raise TypeError(f\"unknown option(s): {sorted(options)}\")",
-    "TypeError: unknown option(s): ['z']"
-   ],
-   "stderr_tail": []
+   "input_info": {
+    "n": 5000,
+    "overwidth_count": 0,
+    "raw_max": 255,
+    "masked": false
+   },
+   "n_symbols_fed": 5000,
+   "bps_fed": 8,
+   "estimate_seconds": 0.001,
+   "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/ttuple.py",
+   "module_sha256": "e35c547bb351f4e12b106ff42db54d4d96ce9ac70084baf7f342a6144b158467"
   },
   "lrs": {
    "status": "ok",
@@ -896,7 +926,7 @@
     }
    },
    "error": null,
-   "duration_s": 0.255,
+   "duration_s": 0.131,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -912,7 +942,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.047,
+   "estimate_seconds": 0.004,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lrs.py",
    "module_sha256": "548115a92d76342b5de279e135b63e79aa530576862ba61c01cd2d89ebf785f8"
   },
@@ -963,7 +993,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.372,
+   "duration_s": 0.133,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -979,7 +1009,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.094,
+   "estimate_seconds": 0.024,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimcw.py",
    "module_sha256": "a54674a93aef82c7b43cc9820a22664ef4ac7258ac7a42b2bfdaa657a8c35079"
   },
@@ -1136,7 +1166,7 @@
     "winner_final": 63
    },
    "error": null,
-   "duration_s": 0.255,
+   "duration_s": 0.077,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1152,7 +1182,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.006,
+   "estimate_seconds": 0.003,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lag.py",
    "module_sha256": "badcca9ddde16551eba813180c9c07b79bbb5dbd85a68428b02d94810e157c67"
   },
@@ -1251,7 +1281,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.313,
+   "duration_s": 0.129,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1267,7 +1297,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.07,
+   "estimate_seconds": 0.014,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/multimmc.py",
    "module_sha256": "021ff91ed5df659b3106b4e63cf098f19fb6e34a62fbafa945c676bd30dca6fb"
   },
@@ -1309,7 +1339,7 @@
     ]
    },
    "error": null,
-   "duration_s": 0.421,
+   "duration_s": 0.131,
    "options_used": {
     "z": 2.575829303548901
    },
@@ -1325,7 +1355,7 @@
    },
    "n_symbols_fed": 5000,
    "bps_fed": 8,
-   "estimate_seconds": 0.159,
+   "estimate_seconds": 0.017,
    "module_file": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/reference/py90b/lz78y.py",
    "module_sha256": "01c9009644c9f100bec8bf1d24f8435946c845c1cfb3f8ee8c7b7191b63215fe"
   }
@@ -1496,14 +1526,14 @@
    "estimator": "t-Tuple",
    "d1_recheck": {
     "option": {
-     "z": 2.575829303548901
+     "z_variant": "exact"
     },
-    "possible": false,
-    "class_after": null,
-    "delta_after": null,
-    "differing_after": null,
-    "explained": false,
-    "error": "module does not accept option 'z': TypeError: unknown option(s): ['z']"
+    "possible": true,
+    "class_after": "AGREE",
+    "delta_after": 0.0,
+    "differing_after": [],
+    "explained": true,
+    "error": null
    }
   },
   "lrs": {
@@ -1972,6 +2002,6 @@
  },
  "unmapped_cpp_estimators": [],
  "class": "CPP_HIGHER",
- "d1_explained": false,
- "verdict": "csprng-8bit-5000-b8-literal: !!! CPP_HIGHER (cpp_higher 7, not_run 3); cpp_higher in: mcv (+2.89e-05; p_u D-1), ttuple (+2.89e-05; p_u D-1?), lrs (+3.41e-05; p_u D-1), multimcw (+4.07e-05; p_global' D-1), lag (+3.82e-05; p_global' D-1), multimmc (+3.82e-05; p_global' D-1), lz78y (+3.67e-05; p_global' D-1); NOT all explained by D-1 -- needs a human eye [EA_ALLOW_SHORT_DATASET=1]"
+ "d1_explained": true,
+ "verdict": "csprng-8bit-5000-b8-literal: !!! CPP_HIGHER (cpp_higher 7, not_run 3); cpp_higher in: mcv (+2.89e-05; p_u D-1), ttuple (+2.89e-05; p_u D-1), lrs (+3.41e-05; p_u D-1), multimcw (+4.07e-05; p_global' D-1), lag (+3.82e-05; p_global' D-1), multimmc (+3.82e-05; p_global' D-1), lz78y (+3.67e-05; p_global' D-1); ALL explained by documented divergence D-1 (vanish with z = 2.575829303548901) [EA_ALLOW_SHORT_DATASET=1]"
 }

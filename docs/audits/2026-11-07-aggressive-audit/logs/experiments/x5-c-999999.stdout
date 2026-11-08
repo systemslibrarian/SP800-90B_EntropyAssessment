@@ -1,0 +1,6 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin' (SHA-256 hash 98a8f905d5bf969ff9a363ea0e5d43cd07e3e2164e1dfd42bb66a4d3c704fecb of assessed bytes)
+Loaded 999999 samples of 256 distinct 8-bit-wide symbols
+
+*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***
+*** No assessment was performed. ***
+

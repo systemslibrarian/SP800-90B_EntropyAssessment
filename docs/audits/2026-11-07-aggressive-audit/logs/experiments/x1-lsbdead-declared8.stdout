@@ -1,0 +1,113 @@
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x1-uniform7-lsbdead-8bit-1000000.bin' (SHA-256 hash d5048d32d74b75bb78563e27348c1e8ab0c354663ea847b3ef65dd8ecb1104ec of assessed bytes)
+Loaded 1000000 samples of 128 distinct 8-bit-wide symbols
+Number of Binary Symbols: 8000000
+
+Symbols have been translated.
+Bitstring Most Common Value Estimate: Mode count = 4499752
+Bitstring Most Common Value Estimate: p-hat = 0.562469
+Bitstring Most Common Value Estimate: p_u = 0.56292077877514335
+Bitstring Most Common Value Estimate: min entropy = 0.82899619231570909
+Literal Most Common Value Estimate: Mode count = 8061
+Literal Most Common Value Estimate: p-hat = 0.0080610000000000005
+Literal Most Common Value Estimate: p_u = 0.0082913319795939223
+Literal Most Common Value Estimate: min entropy = 6.9141803993471722
+Bitstring Collision Estimate: v = 3199012
+Bitstring Collision Estimate: Sum t_i = 7999999
+Bitstring Collision Estimate: X-bar = 2.5007718007934949
+Bitstring Collision Estimate: sigma-hat = 0.49999948247223425
+Bitstring Collision Estimate: X-bar' = 2.5000517241906461
+Bitstring Collision Estimate: Could Not Find p. Proceeding with the lower bound for p.
+Bitstring Collision Estimate: p = 0.5
+Bitstring Collision Estimate: min entropy = 1
+Bitstring Markov Estimate: P_0 = 0.562469
+Bitstring Markov Estimate: P_1 = 0.437531
+Bitstring Markov Estimate: P_{0,0} = 0.55541428847951813
+Bitstring Markov Estimate: P_{0,1} = 0.44458571152048187
+Bitstring Markov Estimate: P_{1,0} = 0.57153835956766497
+Bitstring Markov Estimate: P_{1,1} = 0.42846164043233503
+Bitstring Markov Estimate: p-hat_max = 2.0723528589015617e-33
+Bitstring Markov Estimate: min entropy = 0.84822154265695149
+Bitstring Compression Estimate: X-bar = 5.0946099841168628
+Bitstring Compression Estimate: sigma-hat = 1.0447091945711717
+Bitstring Compression Estimate: X-bar' = 5.0922786414920553
+Bitstring Compression Estimate: Found p.
+Bitstring Compression Estimate: p = 0.094397118732169161
+Bitstring Compression Estimate: min entropy = 0.56751889411009737
+Bitstring t-Tuple Estimate: t = 20
+Bitstring t-Tuple Estimate: p-hat_max = 0.5624689999999999967528
+Bitstring t-Tuple Estimate: p_u = 0.5629207787751433489376
+Bitstring t-Tuple Estimate: min entropy = 0.82899619231570909
+Bitstring LRS Estimate: u = 21
+Bitstring LRS Estimate: v = 45
+Bitstring LRS Estimate: p-hat = 0.5211810824374376593937
+Bitstring LRS Estimate: p_u = 0.5216360203025360853246
+Bitstring LRS Estimate: min entropy = 0.93888460009292052
+Literal t-Tuple Estimate: t = 2
+Literal t-Tuple Estimate: p-hat_max = 0.009643655582821951399719
+Literal t-Tuple Estimate: p_u = 0.00989538495141969488833
+Literal t-Tuple Estimate: min entropy = 6.6590284524068286
+Literal LRS Estimate: u = 3
+Literal LRS Estimate: v = 5
+Literal LRS Estimate: p-hat = 0.007801064799457279805295
+Literal LRS Estimate: p_u = 0.008027682390013824581532
+Literal LRS Estimate: min entropy = 6.9608007461150629
+Bitstring MultiMCW Prediction Estimate: C = 4499184
+Bitstring MultiMCW Prediction Estimate: r = 26
+Bitstring MultiMCW Prediction Estimate: N = 7999937
+Bitstring MultiMCW Prediction Estimate: P_global = 0.56240242891912773
+Bitstring MultiMCW Prediction Estimate: P_global' = 0.56285421710334693
+Bitstring MultiMCW Prediction Estimate: P_local can't change the result.
+Bitstring MultiMCW Prediction Estimate: min entropy = 0.8291667915815969
+Literal MultiMCW Prediction Estimate: C = 7841
+Literal MultiMCW Prediction Estimate: r = 3
+Literal MultiMCW Prediction Estimate: N = 999937
+Literal MultiMCW Prediction Estimate: P_global = 0.0078414940141228896
+Literal MultiMCW Prediction Estimate: P_global' = 0.0080687005996285845
+Literal MultiMCW Prediction Estimate: P_local can't change the result.
+Literal MultiMCW Prediction Estimate: min entropy = 6.953447927071263
+Bitstring Lag Prediction Estimate: C = 4501219
+Bitstring Lag Prediction Estimate: r = 23
+Bitstring Lag Prediction Estimate: N = 7999999
+Bitstring Lag Prediction Estimate: P_global = 0.56265244533155567
+Bitstring Lag Prediction Estimate: P_global' = 0.56310420306627207
+Bitstring Lag Prediction Estimate: P_local can't change the result.
+Bitstring Lag Prediction Estimate: min entropy = 0.82852617553668906
+Literal Lag Prediction Estimate: C = 7769
+Literal Lag Prediction Estimate: r = 3
+Literal Lag Prediction Estimate: N = 999999
+Literal Lag Prediction Estimate: P_global = 0.0077690077690077694
+Literal Lag Prediction Estimate: P_global' = 0.0079951630251527909
+Literal Lag Prediction Estimate: P_local can't change the result.
+Literal Lag Prediction Estimate: min entropy = 6.9666568334228236
+Bitstring MultiMMC Prediction Estimate: C = 4499731
+Bitstring MultiMMC Prediction Estimate: r = 26
+Bitstring MultiMMC Prediction Estimate: N = 7999998
+Bitstring MultiMMC Prediction Estimate: P_global = 0.56246651561662886
+Bitstring MultiMMC Prediction Estimate: P_global' = 0.56291829473314481
+Bitstring MultiMMC Prediction Estimate: P_local can't change the result.
+Bitstring MultiMMC Prediction Estimate: min entropy = 0.82900255861646555
+Literal MultiMMC Prediction Estimate: C = 7807
+Literal MultiMMC Prediction Estimate: r = 3
+Literal MultiMMC Prediction Estimate: N = 999998
+Literal MultiMMC Prediction Estimate: P_global = 0.0078070156140312283
+Literal MultiMMC Prediction Estimate: P_global' = 0.0080337191692802876
+Literal MultiMMC Prediction Estimate: P_local can't change the result.
+Literal MultiMMC Prediction Estimate: min entropy = 6.9597162539692654
+Bitstring LZ78Y Prediction Estimate: C = 4499736
+Bitstring LZ78Y Prediction Estimate: r = 26
+Bitstring LZ78Y Prediction Estimate: N = 7999983
+Bitstring LZ78Y Prediction Estimate: P_global = 0.56246819524491487
+Bitstring LZ78Y Prediction Estimate: P_global' = 0.56291997459236176
+Bitstring LZ78Y Prediction Estimate: P_local can't change the result.
+Bitstring LZ78Y Prediction Estimate: min entropy = 0.82899825333634181
+Literal LZ78Y Prediction Estimate: C = 7810
+Literal LZ78Y Prediction Estimate: r = 3
+Literal LZ78Y Prediction Estimate: N = 999983
+Literal LZ78Y Prediction Estimate: P_global = 0.007810132772257128
+Literal LZ78Y Prediction Estimate: P_global' = 0.0080368829261462538
+Literal LZ78Y Prediction Estimate: P_local can't change the result.
+Literal LZ78Y Prediction Estimate: min entropy = 6.9591482184503759
+H_bitstring = 0.56751889411009737
+H_bitstring Per Symbol = 4.540151152880779
+H_original = 6.6590284524068286
+Assessed min entropy: 4.540151152880779

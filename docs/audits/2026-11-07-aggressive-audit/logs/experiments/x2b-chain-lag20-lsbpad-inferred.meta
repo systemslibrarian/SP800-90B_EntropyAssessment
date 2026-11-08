@@ -1,0 +1,12 @@
+name: x2b-chain-lag20-lsbpad-inferred
+start: 2026-11-07T22:32:16-0500
+cwd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit
+host: Darwin 25.6.0 arm64
+OMP_NUM_THREADS: 2
+EA_ALLOW_SHORT_DATASET: <unset>
+cmd: /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-lsbpad-inferred.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-lsbpad-8bit-1000000.bin
+sha256 1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid  (153368 bytes)
+sha256 19d8865d73a5b5123d16b87df6c0c5c25ab17d1eb416002d9b50c8737c79e1db  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x2b-chain-lag20-p09-lsbpad-8bit-1000000.bin  (1000000 bytes)
+end: 2026-11-07T22:32:20-0500
+rc: 0
+report sha256 a35194d0479b5b8d1c6b426391dc249200e003ecc72b59ca4c8dc389ba4e334b  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x2b-chain-lag20-lsbpad-inferred.json

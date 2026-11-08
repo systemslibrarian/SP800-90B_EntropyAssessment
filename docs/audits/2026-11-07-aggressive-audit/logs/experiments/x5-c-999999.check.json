@@ -1,0 +1,94 @@
+{
+ "name": "x5-c-999999",
+ "tool": "non_iid",
+ "files": {
+  "stdout": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.stdout",
+  "stderr": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.stderr",
+  "rc": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.rc",
+  "meta": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.meta"
+ },
+ "rc": 255,
+ "stderr_tail": [],
+ "meta": {
+  "name": "x5-c-999999",
+  "start": "2026-11-07T22:31:31-0500",
+  "cwd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit",
+  "host": "Darwin 25.6.0 arm64",
+  "OMP_NUM_THREADS": "2",
+  "EA_ALLOW_SHORT_DATASET": "<unset>",
+  "cmd": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin 8",
+  "sha256": {
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid": "1ad1568c083b277490ea358ddb6e7f11d0da464d1c9391bd8e4c50eb37e6e16f",
+   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin": "98a8f905d5bf969ff9a363ea0e5d43cd07e3e2164e1dfd42bb66a4d3c704fecb"
+  },
+  "end": "2026-11-07T22:31:31-0500",
+  "rc": "255"
+ },
+ "text": {
+  "loaded": {
+   "n": 999999,
+   "k": 256,
+   "width": 8
+  },
+  "narrower_warning": false,
+  "refusal": "*** Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 1000000 ***",
+  "short_escape": false,
+  "estimates": {
+   "Literal": {},
+   "Bitstring": {}
+  },
+  "notes": [],
+  "h_original": null,
+  "h_bitstring": null,
+  "h_bitstring_per_symbol": null,
+  "assessed": null,
+  "h_prime": null,
+  "restart_min": null,
+  "restart_passed": null,
+  "degenerate": [],
+  "lines": 6,
+  "min_of_printed": {
+   "Literal": {
+    "count": 0,
+    "estimators": [],
+    "min": null,
+    "binding": null
+   },
+   "Bitstring": {
+    "count": 0,
+    "estimators": [],
+    "min": null,
+    "binding": null
+   }
+  }
+ },
+ "json": {
+  "present": true,
+  "top": {
+   "errorLevel": -1,
+   "errorClass": "input",
+   "errorMessage": "Error: dataset contains 999999 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "nonCompliantShortDataset": null,
+   "bitsPerSymbol": 8,
+   "bitsPerSymbolInferred": false,
+   "subsetRequested": null,
+   "subsetIndex": null,
+   "subsetRequestedSamples": null,
+   "subsetActualSamples": null,
+   "sha256": "98a8f905d5bf969ff9a363ea0e5d43cd07e3e2164e1dfd42bb66a4d3c704fecb",
+   "sha256Scope": "assessed-sample-bytes",
+   "assessmentComplete": null,
+   "IID": false,
+   "commandline": "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -c -a -v -v -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/experiments/x5-c-999999.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/experiments/x5-sha256-outputs-31250-999999.bin 8"
+  },
+  "cases": [],
+  "overall": null,
+  "not_run_flags": [],
+  "restart_cases_with_h_r": [],
+  "restart_cases_with_h_c": []
+ },
+ "well_formed": true,
+ "accepted": false,
+ "compliant": false,
+ "consistency": {}
+}

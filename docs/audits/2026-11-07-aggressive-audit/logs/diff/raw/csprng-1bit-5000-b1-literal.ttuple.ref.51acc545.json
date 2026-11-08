@@ -56,7 +56,7 @@
   "{\"z_variant\": \"exact\"}",
   "/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/diff/raw/csprng-1bit-5000-b1-literal.ttuple.ref.51acc545.json"
  ],
- "duration_s": 0.08,
+ "duration_s": 0.074,
  "options_used": {
   "z_variant": "exact"
  },

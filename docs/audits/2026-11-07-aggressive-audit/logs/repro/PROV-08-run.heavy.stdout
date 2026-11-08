@@ -1,0 +1,13 @@
+# PROV-08 observed.txt  2026-11-07 22:33:11 -0500  host=Darwin 25.6.0 arm64
+# env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
+binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
+code: restart_main.cpp:735:    printf("H_I: %f\n", H_I);;restart_main.cpp:1173:        printf("H_I: %f\n", H_I);;
+# EA_REPRO_HEAVY=1: running the heavy step
+input sha256 825e359a0293f876bcd0f5ef60419c35ab0d04d57e7e15fbc48f42f36195a1c2  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-08/out/rows-constant-1e6.bin (1,000,000 samples, 1-bit, row r constant = r&1)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-08/out/q.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-08/out/rows-constant-1e6.bin 1 0.5
+rc[restart_q]=255  stdout=q.out stderr=q.err
+stdout under -q (verbatim):
+  | H_I: 0.500000
+H_I lines under -q: 1 ; JSON errorLevel=-1 errorClass="statistical" passedRestartSanityCheck=false
+RESULT: PASS -- -q still prints 'H_I: ...' (restart_main.cpp:735 is not gated on verbose)

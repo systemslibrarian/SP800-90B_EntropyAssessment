@@ -1,6 +1,15 @@
-# PROV-10 observed.txt  2026-11-07 21:56:13 -0500  host=Darwin 25.6.0 arm64
+# PROV-10 observed.txt  2026-11-07 22:33:12 -0500  host=Darwin 25.6.0 arm64
 # env: EA_ALLOW_SHORT_DATASET=1 OMP_NUM_THREADS=2 -- every tool run below is a NON-COMPLIANT short-dataset run unless stated
-# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=1151b22 branch=audit/2026-11-07
+# repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment  git=dc9813a branch=audit/2026-11-07
 binary sha256 4d7ba82b43ce03d02a83c5eb08712e5be7c80154515c9ee9d8da1fbdb468419c  /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart  (mtime 2026-11-07 19:29:04)
 grep -c not_run cpp/restart_main.cpp = 0 ; cpp/non_iid_main.cpp = 16
-RESULT: NOT-RUN -- HEAVY: ea_restart -n on a 1,000,000-sample 8-bit de Bruijn B(100,3) matrix (ten estimators on rows and columns). Not run in this phase (brief ground rule 4: a run on >= 200,000 samples is a heavy job). Re-run with EA_REPRO_HEAVY=1 when the heavy-job slot is free.
+# EA_REPRO_HEAVY=1: running the heavy step
+input sha256 4072d76831816f72639bf35ad6497bfb92debbb53061f28fd37fd6daeba073d8  /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-10/out/db100.bin (ok 1000000 max symbol 99)
+$ /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart -n -q -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-10/out/r.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/repro/PROV-10/out/db100.bin 8 0.5/symbol
+rc[restart_n]=0  stdout=r.out stderr=r.err
+rc=0 errorLevel=0 passedRestartSanityCheck=true
+Overall: h_r=6.583331523434294 h_c=6.372685769538714 h_i=0.5 hAssessed=<absent> retMinEntropy=<absent>
+Overall keys: h_c h_i h_r testCaseDesc
+LRS Test: h_r=<absent> h_c=6.442723578794639 literalEstimateNotRun=<absent> bitstringEstimateNotRun=<absent>
+min(h_r,h_c,h_i) recomputed by the consumer: 0.5 (the tool prints this only at verbose > 0, restart_main.cpp:1222; nothing in the JSON holds it)
+RESULT: PASS -- success report: no field carries min(H_r,H_c,H_I); the LRS row estimate is absent with no not-run flag
