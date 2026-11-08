@@ -84,10 +84,11 @@ script that declares it by `cpp/selftest/regression-docs.sh`, or is dated and
 attributed, because hand-typed counts in this document drifted six times
 before that rule existed (`OC-126`):
 
-- `cpp/selftest/run-all-checks.sh` runs 24 regression scripts
-  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 26 passed, 0 failed);
-- `audits/enum-instruments.sh` prints **87 live instruments** (measured
-  2026-10-27 at `a5422cf`, up one for `oracles/git-classification-test.py`,
+- `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
+  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
+- `audits/enum-instruments.sh` prints **88 live instruments** (measured
+  2026-11-08 on `fix/restart-notrun`, up one for
+  `cpp/selftest/regression-restart-notrun.sh`; 87 at `a5422cf`, 2026-10-27,
   `OC-128`; the count has a hand-reviewed limb, `OC-126`);
 - three mutation harnesses — `harness-inventory-mutation-test.sh`,
   `outside-battery-mutation-test.sh`, and the band-1 pair battery
@@ -477,7 +478,7 @@ the merge, and two entries were wrong when it was. The checks are cheap:
 
 ```sh
 cd cpp && make non_iid iid restart && cd selftest
-./run-all-checks.sh --allow-known-platform-deltas   # expect 26 passed, 0 failed
+./run-all-checks.sh --allow-known-platform-deltas   # expect 27 passed, 0 failed
 ./harness-inventory-mutation-test.sh                # expect 5 of 5 mutations landed
 ./outside-battery-mutation-test.sh                  # expect 9 of 9 mutations landed
 ./regression-docs.sh                                # the prose claims that can be checked

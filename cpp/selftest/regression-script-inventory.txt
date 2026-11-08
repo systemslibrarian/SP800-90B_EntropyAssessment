@@ -17,6 +17,7 @@ regression-output.sh
 regression-outside-battery.sh
 regression-platform-deltas.sh
 regression-restart.sh
+regression-restart-notrun.sh
 regression-selftest-inventory.sh
 regression-subset.sh
 regression-width.sh

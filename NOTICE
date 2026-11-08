@@ -261,6 +261,20 @@ A second repair pass on the same date, working the remaining queue:
 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed
             is no longer folded into H_r or H_c as if it were an
             entropy. Commit d892b90.
+2026-11-08  cpp/restart_main.cpp, cpp/non_iid/non_iid_test_case.h: a row or
+            column estimator that could not be computed is now RECORDED on
+            its test case (rowEstimateNotRun, columnEstimateNotRun) as well
+            as left out of H_r or H_c, as ea_non_iid has recorded a declined
+            estimator since dfe325a (F05); until now the restart report only
+            lacked the value, so a minimum over fewer estimators than
+            SP 800-90B 6.2 lists was indistinguishable from a complete one.
+            And the Overall case carries hAssessed = min(H_r, H_c, H_I), the
+            figure 3.1.4.2 awards, which was printed only under verbose and
+            written nowhere. No estimator or cutoff changes; a report in
+            which every estimator produced a value gains the one field and
+            is otherwise unchanged. Audit 2026-11-07, PROV-10 (AA-04).
+            Regression: regression-restart-notrun.sh. Self-authored and
+            unreviewed.
 2026-09-30  cpp/restart_main.cpp: sha256_file()'s status is checked
             rather than discarded with an uninitialised buffer.
             Commit fd83a43.

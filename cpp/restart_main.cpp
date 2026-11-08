@@ -898,6 +898,17 @@ int main(int argc, char* argv[]) {
                 if (verbose > 1) printf("\tCollision Test Estimate (Rows) = %f / 1 bit(s)\n", ret_min_entropy);
                 tc632.h_r = ret_min_entropy;
                 H_r = min(ret_min_entropy, H_r);
+            } else {
+                // Skipping a declined estimate (the >= 0 guards, R-2) left h_r
+                // or h_c out of the report with nothing saying why, so H_r or
+                // H_c was a minimum over fewer estimators than SP 800-90B 6.2
+                // lists and a consumer could not tell -- the direction that can
+                // only raise the figure. ea_non_iid has recorded the same fact
+                // since F05 (literalEstimateNotRun); these are its row and
+                // column counterparts, and like F05 they are not an error.
+                // Every fallible fold below does the same (audit 2026-11-07,
+                // PROV-10).
+                tc632.row_not_run = true;
             }
 
             ret_min_entropy = collision_test(cdata, data.len, verbose, "Literal");
@@ -905,6 +916,8 @@ int main(int argc, char* argv[]) {
                 if (verbose > 1) printf("\tCollision Test Estimate (Cols) = %f / 1 bit(s)\n", ret_min_entropy);
                 tc632.h_c = ret_min_entropy;
                 H_c = min(ret_min_entropy, H_c);
+            } else {
+                tc632.col_not_run = true;
             }
 
             testRunNonIid.testCases.push_back(tc632);
@@ -938,6 +951,8 @@ int main(int argc, char* argv[]) {
                 if (verbose > 1) printf("\tCompression Test Estimate (Rows) = %f / 1 bit(s)\n", ret_min_entropy);
                 tc634.h_r = ret_min_entropy;
                 H_r = min(ret_min_entropy, H_r);
+            } else {
+                tc634.row_not_run = true;
             }
 
             ret_min_entropy = compression_test(cdata, data.len, verbose, "Literal");
@@ -945,6 +960,8 @@ int main(int argc, char* argv[]) {
                 if (verbose > 1) printf("\tCompression Test Estimate (Cols) = %f / 1 bit(s)\n", ret_min_entropy);
                 tc634.h_c = ret_min_entropy;
                 H_c = min(ret_min_entropy, H_c);
+            } else {
+                tc634.col_not_run = true;
             }
             testRunNonIid.testCases.push_back(tc634);
 
@@ -973,12 +990,16 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tT-Tuple Test Estimate (Rows) = %f / %d bit(s)\n", row_t_tuple_res, data.word_size);
             tc635.h_r = row_t_tuple_res;
             H_r = min(row_t_tuple_res, H_r);
+        } else {
+            tc635.row_not_run = true;
         }
 
         if (col_t_tuple_res >= 0) {
             if (verbose > 1) printf("\tT-Tuple Test Estimate (Cols) = %f / %d bit(s)\n", col_t_tuple_res, data.word_size);
             tc635.h_c = col_t_tuple_res;
             H_c = min(col_t_tuple_res, H_c);
+        } else {
+            tc635.col_not_run = true;
         }
 
         testRunNonIid.testCases.push_back(tc635);
@@ -992,12 +1013,16 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tLRS Test Estimate (Rows) = %f / %d bit(s)\n", row_lrs_res, data.word_size);
             tc636.h_r = row_lrs_res;
             H_r = min(row_lrs_res, H_r);
+        } else {
+            tc636.row_not_run = true;
         }
 
         if (col_lrs_res >= 0) {
             if (verbose > 1) printf("\tLRS Test Estimate (Cols) = %f / %d bit(s)\n", col_lrs_res, data.word_size);
             tc636.h_c = col_lrs_res;
             H_c = min(col_lrs_res, H_c);
+        } else {
+            tc636.col_not_run = true;
         }
 
         testRunNonIid.testCases.push_back(tc636);
@@ -1015,6 +1040,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tMulti Most Common in Window (MultiMCW) Prediction Test Estimate (Rows) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc637.h_r = ret_min_entropy;
             H_r = min(ret_min_entropy, H_r);
+        } else {
+            tc637.row_not_run = true;
         }
 
         ret_min_entropy = multi_mcw_test(cdata, data.len, data.alph_size, verbose, "Literal");
@@ -1022,6 +1049,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tMulti Most Common in Window (MultiMCW) Prediction Test Estimate (Cols) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc637.h_c = ret_min_entropy;
             H_c = min(ret_min_entropy, H_c);
+        } else {
+            tc637.col_not_run = true;
         }
 
         testRunNonIid.testCases.push_back(tc637);
@@ -1036,6 +1065,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tLag Prediction Test Estimate (Rows) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc638.h_r = ret_min_entropy;
             H_r = min(ret_min_entropy, H_r);
+        } else {
+            tc638.row_not_run = true;
         }
 
         ret_min_entropy = lag_test(cdata, data.len, data.alph_size, verbose, "Literal");
@@ -1043,6 +1074,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tLag Prediction Test Estimate (Cols) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc638.h_c = ret_min_entropy;
             H_c = min(ret_min_entropy, H_c);
+        } else {
+            tc638.col_not_run = true;
         }
         testRunNonIid.testCases.push_back(tc638);
 
@@ -1056,6 +1089,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tMulti Markov Model with Counting (MultiMMC) Prediction Test Estimate (Rows) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc639.h_r = ret_min_entropy;
             H_r = min(ret_min_entropy, H_r);
+        } else {
+            tc639.row_not_run = true;
         }
 
         ret_min_entropy = multi_mmc_test(cdata, data.len, data.alph_size, verbose, "Literal");
@@ -1063,6 +1098,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tMulti Markov Model with Counting (MultiMMC) Prediction Test Estimate (Cols) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc639.h_c = ret_min_entropy;
             H_c = min(ret_min_entropy, H_c);
+        } else {
+            tc639.col_not_run = true;
         }
         testRunNonIid.testCases.push_back(tc639);
 
@@ -1077,6 +1114,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tLZ78Y Prediction Test Estimate (Rows) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc6310.h_r = ret_min_entropy;
             H_r = min(ret_min_entropy, H_r);
+        } else {
+            tc6310.row_not_run = true;
         }
 
         ret_min_entropy = LZ78Y_test(cdata, data.len, data.alph_size, verbose, "Literal");
@@ -1084,6 +1123,8 @@ int main(int argc, char* argv[]) {
             if (verbose > 1) printf("\tLZ78Y Prediction Test Estimate (Cols) = %f / %d bit(s)\n", ret_min_entropy, data.word_size);
             tc6310.h_c = ret_min_entropy;
             H_c = min(ret_min_entropy, H_c);
+        } else {
+            tc6310.col_not_run = true;
         }
         testRunNonIid.testCases.push_back(tc6310);
 
@@ -1193,6 +1234,19 @@ int main(int argc, char* argv[]) {
     }
 
 
+    // The figure 3.1.4.2 awards -- "the entropy assessment of the noise source
+    // is taken as the minimum of the row, the column and the initial
+    // estimates, i.e., min(Hr, Hc, HI)" -- was printed once, under verbose,
+    // and written nowhere: Overall carried h_r, h_c and h_i and left the
+    // minimum to the consumer, and -q suppressed the one line that stated it.
+    // A consumer reading h_i alone overstates, since h_i >= the minimum. The
+    // report now carries it as hAssessed, the field ea_non_iid uses for the
+    // figure it awards, and the printed line reads the same variable (audit
+    // 2026-11-07, PROV-10). It is absent when validation failed above, where
+    // 3.1.4.2 awards nothing.
+    double H_assessed = min(min(H_r, H_c), H_I);
+
+    tcOverallIid.h_assessed = H_assessed;
     testRunIid.testCases.push_back(tcOverallIid);
     testRunIid.errorLevel = 0;
 
@@ -1200,6 +1254,7 @@ int main(int argc, char* argv[]) {
     tcOverallNonIid.h_r = H_r;
     tcOverallNonIid.h_c = H_c;
     tcOverallNonIid.h_i = H_I;
+    tcOverallNonIid.h_assessed = H_assessed;
     tcOverallNonIid.testCaseNumber = "Overall";
     testRunNonIid.testCases.push_back(tcOverallNonIid);
     testRunNonIid.errorLevel = 0;
@@ -1219,7 +1274,7 @@ int main(int argc, char* argv[]) {
     }
     if (verbose > 0) {
         printf("Validation Test Passed...\n\n");
-        printf("min(H_r, H_c, H_I): %f\n\n", min(min(H_r, H_c), H_I));
+        printf("min(H_r, H_c, H_I): %f\n\n", H_assessed);
     }
     free(cdata);
     free(crawdata);
