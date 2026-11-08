@@ -277,7 +277,7 @@ analysis phase's prediction for it (+14 correct per period) was refuted by those
 implicit-conversion,nullability`, `-O1 -g`) and TSan builds of the three tools, sha256-recorded; the
 `implicit-conversion` group fires on three deliberate `uint8_t` ring-buffer wraps in `lag_test.h` on every input,
 so the harness runs a `halt_on_error=0` continue pass whenever the halt pass stops there; ASan still aborts in that
-pass, so memory errors are not masked. LeakSanitizer is unavailable on this ASan runtime (probed). TSan on Homebrew
+pass, so memory errors are not masked. LeakSanitizer is unavailable on this ASan runtime (probed). The run summariser's exit-code classification reads any exit ≥ 128 as a signal, so the tool's own refusal exit 255 appears as `SIGNAL-127` in RESULTS.md: every such row (the `onesym*` and `overwidth*` families) is a correct refusal, verified by reading the logs, not a crash. TSan on Homebrew
 libomp (not TSan-instrumented, no OMPT) cannot see libomp's own synchronisation, so a `SAME_CRITICAL` report is a
 platform artefact; the summariser classifies each report against the source's critical-section line ranges.
 
