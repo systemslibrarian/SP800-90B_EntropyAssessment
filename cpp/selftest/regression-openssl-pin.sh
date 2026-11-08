@@ -133,7 +133,12 @@ printf '  compile line: %s\n' "${line}"
 printf '%s\n' "${line}" | tr ' \t' '\n\n' | grep -v '^$' > "${work}/tokens.txt"
 
 tokpos() { # tokpos <token> -- its 1-based position on the compile line, required exactly once
-    grep -nxF -- "$1" "${work}/tokens.txt" | sed 's/:.*//' | lr_one "token $1 on the compile line"
+    # No pipe from the verification command (rule 17 / the dead-guard detector's class D):
+    # grep writes its matches to a file whose status is read, and the line numbers
+    # are then extracted from that file.
+    grep -nxF -- "$1" "${work}/tokens.txt" > "${work}/token-hits.txt"; local grc=$?
+    [ "${grc}" -le 1 ] || { echo "regression-openssl-pin: grep failed (rc ${grc}) looking for $1" >&2; exit 2; }
+    sed 's/:.*//' "${work}/token-hits.txt" | lr_one "token $1 on the compile line"
 }
 
 # PAIR TEST (rule 12, d240098): every one of the four tokens is still there,

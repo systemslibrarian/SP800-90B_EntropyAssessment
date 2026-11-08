@@ -86,9 +86,9 @@ before that rule existed (`OC-126`):
 
 - `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
   (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
-- `audits/enum-instruments.sh` prints **87 live instruments** (measured
-  2026-10-27 at `a5422cf`, up one for `oracles/git-classification-test.py`,
-  `OC-128`; the count has a hand-reviewed limb, `OC-126`);
+- `audits/enum-instruments.sh` prints **88 live instruments** (measured
+  2026-11-08 at `b62336b`, up one for `cpp/selftest/regression-openssl-pin.sh` on
+  top of `OC-128`'s 87; the count has a hand-reviewed limb, `OC-126`);
 - three mutation harnesses — `harness-inventory-mutation-test.sh`,
   `outside-battery-mutation-test.sh`, and the band-1 pair battery
   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
