@@ -287,7 +287,22 @@ one access discipline for `completed`); not fixed here, because the only honest 
 the suite. `passed_count` is thread-private (`:630`) and is not a race. Cannot see: libomp's own synchronisation
 (no OMPT/Archer), and `ea_restart`'s dead `simulateBound` region.
 
-**4.6 Fuzzing, determinism, SAalgs32 scaling, fix-branch verification** — _(CHAIN-6; filled in when complete)_
+**4.6 Determinism across thread counts and against Linux — clean.** 80 runs (`harness/determinism/run.sh`,
+`logs/determinism/RESULTS.md`): `ea_non_iid -i -a -vv -o` on the 11 self-test inputs and 4 corpus files at
+1,000,000 samples, at `OMP_NUM_THREADS` 1, 2, 10 and twice at 10 — **every pair byte-identical** on JSON (minus
+timestamp/command line), stdout, stderr and exit code (it has no OpenMP site; `libdivsufsort` is single-threaded);
+`ea_restart -n` on a 1-bit and an 8-bit 1000×1000 matrix — identical (its only parallel region is dead in production);
+`ea_iid` on `truerand_1bit`/`truerand_8bit` — every RNG-independent field identical across all runs, only the
+permutation counters and their verdict path differ, which the live `/dev/urandom` seed explains (`seed()` opens it
+by a literal string; `EA_TEST_RANDOM_SOURCE` only names the report's temp file, so the "fixed-seed" arm is not one —
+DET-01). The 10,000-sample fixtures are INCOMPLETE because the tool refuses them (correct). Against Linux
+(`compare_linux.py`, the refdata the strict x86-64 CI suite matches to 1e-10): **32 KNOWN rows** (the eight manifest
+deltas × four runs) all within tolerance with 2.7–8× headroom, **0 NEW / EXCEEDS / STRUCTURAL / varying, 0 missing
+rows**. Sub-threshold (< 1e-10) differences exist and are listed, not flagged — the eight known deltas are the
+≥ 1e-10 tail of a wider arm64/x86-64 long-double difference in the prediction estimators (DET-04). Cannot see:
+Windows (not run this audit; the record's CI measurements stand); a race that needs more than two repeats to show.
+
+**4.7 Fuzzing, SAalgs32 scaling, fix-branch verification** — _(CHAIN-8/9; filled in when complete)_
 
 ## 5. Method, instruments, and their known blind spots
 
