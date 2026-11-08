@@ -1,0 +1,26 @@
+[build-state] ea_non_iid                         asserts=LIVE    sha256=34d18941efc146aa
+  6.3.9 worked example C (spec: 3):                              3
+  6.3.9 worked example r (spec: 3; F09's case):                  3
+  6.3.9 worked example N (spec: 7):                              7
+  BASELINE 20,000 x 8-bit, Literal C == spec model:              96
+  BASELINE 20,000 x 8-bit, Literal r == spec model:              2
+  BASELINE 20,000 x 8-bit, Literal N == spec model:              19998
+  BASELINE 20,000 x 8-bit, Bitstring C == spec model:            81118
+  BASELINE 20,000 x 8-bit, Bitstring r == spec model:            16
+  BASELINE 20,000 x 8-bit, Bitstring N == spec model:            159998
+  PAIR #257: binary path, 20,000 bits, C == spec model:          9896
+  PAIR #257: binary path, 20,000 bits, r == spec model:          13
+  PAIR #257: binary path, 20,000 bits, N == spec model:          19998
+  PAIR #257: 16 bits still decline (warning present, no figure): yes
+  PAIR #257: 17 bits run, C == spec model:                       5
+  PAIR #257: 17 bits run, r == spec model:                       4
+  PAIR #257: 17 bits run, N == spec model:                       15
+  F10 gadget 104,000 x 8-bit: Literal C (chained: 2288):         2409
+  F10 x F09 gadget 104,000 x 8-bit: Literal r (chained: 12):     20
+  F10 gadget 104,000 x 8-bit: Literal N:                         103998
+  F10 naive 104,000 x 8-bit: Literal C (chained: 1998):          1911
+  F10 x F09 naive 104,000 x 8-bit: Literal r (chained: 17):      16
+  F10 naive 104,000 x 8-bit: Literal N:                          103998
+  X3 files at 1,000,000 samples:                                 NOT RUN (set EA_REGRESSION_HEAVY=1; a heavy job)
+
+regression-multimmc-lookup: PASS

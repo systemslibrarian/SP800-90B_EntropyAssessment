@@ -1,0 +1,16 @@
+[build-state] ea_restart                         asserts=LIVE    sha256=4d7ba82b43ce03d0
+fixture: de Bruijn B(100,3), 1,000,000 bytes, 100 symbols: yes
+baseline: the run is accepted (exit 0):                    yes
+baseline: 'Validation Test Passed' printed once:           yes
+baseline: errorLevel 0 and the sanity check passed:        yes
+baseline: Overall carries h_r (R-2 holds) and h_i = 0.5 (C16 scale): h_r 6.583331523434294
+baseline: the LRS estimate declined exactly once (one of rows/cols): yes
+baseline: it was the ROW estimate (LRS Test has h_c, lacks h_r): h_c 6.442723578794639
+LRS Test carries rowEstimateNotRun true:                   <absent> (the decline is silent)
+LRS Test carries no columnEstimateNotRun (that estimate ran): yes
+no other case carries a row or column flag:                none
+Overall carries hAssessed = min(h_r, h_c, h_i):            hAssessed <absent>, min 0.5, difference <absent>
+hAssessed agrees with the printed min(H_r, H_c, H_I):      json <absent>, text 0.500000
+a declined estimator is not an error:                      errorLevel 0
+
+regression-restart-notrun: FAIL (3 checks)
