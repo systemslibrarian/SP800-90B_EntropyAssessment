@@ -136,8 +136,9 @@ tokpos() { # tokpos <token> -- its 1-based position on the compile line, require
     # No pipe from the verification command (rule 17 / the dead-guard detector's class D):
     # grep writes its matches to a file whose status is read, and the line numbers
     # are then extracted from that file.
-    grep -nxF -- "$1" "${work}/tokens.txt" > "${work}/token-hits.txt"; local grc=$?
-    [ "${grc}" -le 1 ] || { echo "regression-openssl-pin: grep failed (rc ${grc}) looking for $1" >&2; exit 2; }
+    # grep exits 1 for "no match" (a legitimate answer lr_one judges) and >1 for a failure.
+    grep -nxF -- "$1" "${work}/tokens.txt" > "${work}/token-hits.txt" || [ $? -eq 1 ] \
+        || { echo "regression-openssl-pin: grep failed looking for $1" >&2; exit 2; }
     sed 's/:.*//' "${work}/token-hits.txt" | lr_one "token $1 on the compile line"
 }
 
