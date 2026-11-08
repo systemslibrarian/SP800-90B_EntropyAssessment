@@ -36,94 +36,109 @@ _(written last — see the end of this file)_
 
 ## 1. Findings, ranked
 
-Every entry carries a reproducer, observed vs expected, the spec citation, a negative control, the
-binary sha256 and the platform. **No CRITICAL code defect was found**: nothing made the C++ report more
-min-entropy than the standard's own algorithm gives (§1.4 below records the one case where the
-standard's algorithm itself overstates — it is a LIMITATION, §2, and the headline for Paul). **No HIGH
-defect was found** on this host (sanitizer and fuzzing coverage: §4). Entries marked PROVISIONAL are
-awaiting the three-lens verification; the final file removes the marks or the entries.
+Every entry carries a reproducer, observed vs expected, the spec citation, a negative control, the binary sha256
+and the platform (Darwin 25.6.0 arm64, Apple clang 21, binaries `1ad1568c…`/`22f1319a…`/`4d7ba82b…` unless
+stated). **No CRITICAL code defect was found**: nothing made the C++ report more min-entropy than the standard's
+own algorithm gives — the one case where the figure exceeds the data's true min-entropy is the standard's own
+term, filed as L-01 (§1.4, §2). **No HIGH defect was found** on this host (sanitizer and fuzzing coverage: §4.5).
+Twenty-one light reproducers went through three independent lenses each (re-reproduce with controls; classify
+against the spec and the prior record; try to refute — `logs/verify/`, `scratchpad` journal `wf_762d77f7-465`):
+16 survived all three; 4 were confirmed as observations but refuted as defects (listed in §1.3); one (AA-02) was
+refuted "as framed" and is kept with the verifier's objection recorded. The compliant-size experiments (X1–X7)
+were executed and recorded by the orchestrator, not lens-verified.
 
 ### 1.1 MEDIUM
 
-**AA-01 — the `-c` minimum counts BYTES, the standard counts conditioning-component OUTPUTS** (permissive
-gate; `ea_non_iid -c`, `ea_iid -c`). Spec: §3.1.1 item 2 (PDF p. 19) — *"a conditioned sequential dataset of
-at least 1 000 000 consecutive conditioning component outputs"*. Code: `cpp/shared/utils.h:297`
-`if (dp->len >= MIN_SIZE) return true;` where `len` is bytes loaded, under `-i` and `-c` alike
-(`non_iid_main.cpp:320`, `iid_main.cpp:320`). Reproducer (experiment X5, `harness/experiments/x5_c_gate.py`,
-`logs/experiments/x5-c-1e6.*`): 1,000,000 bytes that are **31,250** SHA-256 outputs, `ea_non_iid -c -a -vv -o … f 8`
-→ exit 0, `errorLevel 0`, no `nonCompliantShortDataset`, `Assessed min entropy: 7.1978448401477628`
-(= `n × H_bitstring`). Expected: refusal (31,250 < 1,000,000 outputs). Negative control: the same stream at
-999,999 bytes is refused (`x5-c-999999`, exit 255, `errorLevel -1`). Binary `1ad1568c…`, Darwin arm64. Direction:
-permissive (a non-conforming dataset is assessed as compliant). Why MEDIUM not CRITICAL: the figure printed is the
-standard's figure for the bits given; what is wrong is the compliance claim. Prior-fix interaction: the ≥ 1,000,000
-intake (upstream #255 family, `regression-minsize.sh`) — this is its `-c` blind spot. The tool is never told
-`n_out`, so the repair is an interface decision (an `n_out` argument, or a documented statement that `-c`'s gate is
-on bytes); recorded for the owner, not fixed here.
+**AA-01 — the `-c` minimum counts BYTES; §3.1.1 item 2 counts conditioning-component OUTPUTS** (permissive gate).
+Spec: §3.1.1 item 2 (PDF p. 19) — *"a conditioned sequential dataset of at least 1 000 000 consecutive conditioning
+component outputs"*. Code: `cpp/shared/utils.h:297` `if (dp->len >= MIN_SIZE) return true;` on bytes loaded, under `-i`
+and `-c` alike (`non_iid_main.cpp:320`, `iid_main.cpp:320`). Reproducer (X5, `harness/experiments/x5_c_gate.py`,
+`logs/experiments/x5-c-1e6.*`): 1,000,000 bytes that are **31,250** SHA-256 outputs → `ea_non_iid -c -a -vv -o … f 8`
+exits 0, `errorLevel 0`, no `nonCompliantShortDataset`, `Assessed min entropy: 7.1978448401477628`. Expected: refusal.
+Negative control: the same stream at 999,999 bytes is refused (exit 255, `errorLevel −1`). Direction: permissive on the
+compliance claim; the number itself is the standard's figure for the bits given. Not previously recorded anywhere
+searched (LIMITATIONS-DRAFT L-09 raised it as a borderline; the text is not ambiguous and no decision covers it).
+Prior-fix interaction: the ≥ 1,000,000 intake (`regression-minsize.sh`) — this is its `-c` blind spot. The tool is
+never told `n_out`, so the repair is an interface decision (an `n_out` argument or a documented byte-count semantics)
+— recorded for the owner, not fixed here.
 
-**AA-02 — a stale SUCCESS report survives when an option error precedes `-o`** (all three tools). PROVISIONAL
-(`repro/PROV-01`). NOTICE promises the `-o` file *"is never a stale success"* (C14). Mechanism: the C14 placeholder is
-claimed when `getopt` reaches `-o`; an invalid option (`-Z`) or a malformed `-l` earlier in `argv` exits 255 before
-that, so a previous complete report at the path survives byte-identical — `ea_non_iid`, `ea_iid`, `ea_restart`
-(`logs/analysis/prior-repairs.md`, probes A–D; control `-o p -Z` is replaced as designed). Exit status is nonzero,
-so a status-checking caller is safe; a file-reading consumer is not. Fix offered: `fix/stale-report-option-error`.
+**AA-02 — a stale SUCCESS report survives when an option error precedes `-o`** (all three tools). Reproducer
+`repro/PROV-01` (re-run independently by two verifiers; `logs/verify/PROV-01-*.log`): with a complete `errorLevel 0`
+report at `p`, `ea_non_iid -Z -o p f 8`, `ea_non_iid -l 5x,10 -o p f 8`, `ea_iid -Z -o p f 8` and
+`ea_restart -Z -o p f 8 3/symbol` each exit 255 and leave `p` **byte-identical**; the control `-o p -Z` replaces it with
+the C14 placeholder as designed. Needs no test escape (a nonexistent input gives the same result: the exit is at
+`getopt`'s usage path before any file is opened). Mechanism: `claimReportTarget()` is called only inside `getopt`'s
+`case 'o'` (`non_iid_main.cpp:233`, `iid_main.cpp:230`, `restart_main.cpp:447`); an error on an earlier option exits
+first. **Status: KNOWN OPEN RESIDUE** — `ORCHESTRATOR-CHECKS.md` OC-51 records "argument-parse failures above the
+claim — OPEN, and small" and left the claim inside `case 'o'` relying on the consumer rule (check the exit status and
+the report's own `commandline`/`dateTimeStamp`); but `NOTICE:232` and the three code comments still assert the
+contract absolutely ("never a stale success"), and no regression covers this ordering (`regression-output.sh`
+cannot see it). This audit's contribution is the executed evidence on all three tools and the contradiction. The
+refute lens rejected the finding *as framed* (as new, and as "overstates": no figure is reported and the stale file
+names its own run), and that objection is accepted — direction is **neutral for a consumer that honours the rule,
+permissive for one that reads only the file**. Fix offered: `fix/stale-report` (claims the target from the argv
+prescan, before `getopt`; 29-check regression observed failing on master's binaries, `repro/FIX-stale-report/`).
 
-**AA-03 — under `-c`, JSON `hAssessed` is `word_size × h'` while stdout prints `h'` per bit; no unit or mode field**
-(tracker F23, previously UNCONFIRMED). PROVISIONAL (`repro/PROV-02`). Spec: §3.1.5.2 (PDF p. 25) defines `h'` per
-bit. Code: `non_iid_main.cpp:633-637` vs `:651`. A consumer reading `hAssessed` as the per-bit `h'` overstates by
-`bitsPerSymbol` (up to 8×). Not on the `-i` target profile.
+**AA-03 — `ea_restart` omits a declined row/column estimator with no not-run flag, and no JSON field carries the
+awarded `min(H_r, H_c, H_I)`.** Executed at compliant size (X6, `logs/experiments/x6-*.json`; `repro/PROV-10` heavy
+run): de Bruijn B(100,3), 1,000,000 bytes; `ea_non_iid` marks `LRS Test` `literalEstimateNotRun: true`; the restart
+JSON's `LRS Test` case has `h_c` and **no `h_r` and no flag**; `Overall` has `h_r 6.583`, `h_c 6.373`, `h_i 0.5` and the
+awarded 0.5 appears only in text (`-q` suppresses it). Spec: §3.1.4.2 (PDF p. 21) — the validation minimum is over the
+estimates computed; the fork's own F05 repair made omission visible in `ea_non_iid` and not here. Direction: the
+row/column minimum is over fewer estimators (permissive for the validation gate; the awarded figure is still
+≤ `H_I`). Prior-fix interaction: R-2, F05, NOVEL-03. Not lens-verified (compliant-size only). Fix offered:
+`fix/restart-notrun`.
 
-**AA-04 — `ea_restart` omits a declined row/column estimator with no not-run flag, and no JSON field carries the
-awarded `min(H_r, H_c, H_I)`.** Reproducer at compliant size (experiment X6, `logs/experiments/x6-*.json`): de Bruijn
-B(100,3), 1,000,000 bytes; `ea_non_iid` marks `LRS Test` `literalEstimateNotRun: true`; the restart JSON's `LRS Test`
-case has `h_c` and **no `h_r` and no flag**; `Overall` has `h_r 6.583`, `h_c 6.373`, `h_i 0.5` and the awarded
-0.5 appears only in text (suppressed by `-q`). Spec: §3.1.4.2 (PDF p. 21) — the validation minimum is over the
-estimates "computed"; the standard is silent on omission, the fork's own F05 repair made omission visible in
-`ea_non_iid` and not here. Direction: the row/column minimum is over fewer estimators (permissive for the
-validation gate; the awarded figure is still ≤ `H_I`). Prior-fix interaction: R-2, F05, NOVEL-03. Fix offered:
-`fix/restart-notrun-flags`.
+### 1.2 LOW
 
-**AA-05 — the Makefile's OpenSSL pin is defeated by include/link order; the production binaries link
-`libcrypto.4`.** `cpp/Makefile` (Darwin block) puts `-I$(BREW_PREFIX)/include` / `-L$(BREW_PREFIX)/lib` BEFORE the
-pinned `openssl@3` paths. Measured: `otool -L cpp/ea_non_iid` → `/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib`
-for all three tools, after `brew install afl++` (for this audit, 2026-11-07 19:24–19:28) pulled in `openssl@4`
-4.1.0 and repointed `/opt/homebrew/lib/libcrypto.dylib` at 19:28 — the minute the binaries were rebuilt. This is
-the measured cause of the sha256 change from the suite-blessed binaries (`b61cf8c7…` → `1ad1568c…`); builds are
-otherwise byte-reproducible at a fixed output path (same path twice → identical; a different path changes only
-the UUID/ad-hoc-signature bytes). libcrypto is used only for the report's input SHA-256
-(`TestRunUtils.h:658-721`); no entropy figure depends on it, and the self-test on the relinked binaries matches
-every reference figure. Direction: nondeterminism of provenance across machines. **Disclosure: this audit changed
-the build environment of this machine by installing AFL++ and, through it, OpenSSL 4.** Fix offered:
-`fix/openssl-pin-order`.
+**AA-04 — the Makefile's OpenSSL pin is defeated by include/link order; the production binaries link
+`libcrypto.4`.** `cpp/Makefile:71-72` searches `$(BREW_PREFIX)` before `$(OPENSSL_PREFIX)`; `otool -L` on all three
+tools → `/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib` after `brew install afl++` (this audit, 2026-11-07
+19:24–19:28) pulled in `openssl@4` 4.1.0 and repointed `/opt/homebrew/lib/libcrypto.dylib` at 19:28 — the minute the
+binaries were rebuilt; `BUILDING.md` and `NOTICE:464` assert the openssl@3 pin. This is the measured cause of the
+sha256 change from the suite-blessed binaries (`b61cf8c7…` → `1ad1568c…`); builds are otherwise byte-reproducible at a
+fixed output path. libcrypto is used only for the report's input SHA-256 (`TestRunUtils.h:658-721`), so no figure
+depends on it (the self-test on the relinked binaries matches every reference figure) — hence LOW, not MEDIUM.
+**Disclosure: this audit changed the build environment of this machine.** Lens-verified (3/3). Fix offered:
+`fix/openssl-pin` (pinned prefix first; the new check abstains on Linux, so the x86-64 gate expects two named
+abstentions).
 
-**AA-06 — `ea_restart -s` is documented "accepted for compatibility and ignored" but refuses every value below
-5,000,000 with a bare usage dump.** PROVISIONAL (`repro/PROV-07`; `restart_main.cpp:449-459`). Wrong refusal.
+**AA-05 — `ea_restart -s` refuses 0 and every value below 5,000,000 with a bare usage dump although its usage text
+says "accepted for compatibility and ignored"** (`restart_main.cpp:454`; `regression-restart.sh` probes only the
+≥ 5,000,000 shapes). Lens-verified 3/3; three prior records affirm the false behaviour.
 
-**AA-07 — t-Tuple/LRS (`SAalgs32`) runtime grows pathologically on highly periodic 8-bit data.** OBSERVED, scaling
-measurement pending (CHAIN-5): `lfsr16-tap8-8bit` at 999,999 samples ran 28+ minutes at 100 % CPU in `SAalgs32`
-(`logs/experiments/sample-lfsr16-tap8-8bit-999999.txt`) where the 50,000-sample prefix completes in under a second;
-the longest repeated substring on period-65,535 data is nearly the whole bitstring. Availability only; not reachable
-by a physical source's data. LOW/MEDIUM pending the measurement.
+**AA-06 — t-Tuple/LRS (`SAalgs32`) runtime grows pathologically on highly periodic 8-bit data.** OBSERVED:
+`lfsr16-tap8-8bit` at 999,999 samples ran 28+ minutes at 100 % CPU in `SAalgs32` (profile
+`logs/experiments/sample-lfsr16-tap8-8bit-999999.txt`) where the 50,000-sample prefix completes in under a second;
+scaling measurement at 50k/100k/200k/400k in CHAIN-6 (§4.5 when complete). Availability only.
 
-### 1.2 LOW (reporting, CLI, hygiene) — PROVISIONAL, from `repro/PROV-*`
+**AA-07 … AA-20 (reporting and CLI; each lens-verified 3/3 unless noted):** the "Symbols appear to be narrower than
+described" warning never reaches the JSON (`errorLevel` stays 0) and leaks under `-q` (PROV-04) · `-vvv` prints no
+per-estimator lines because estimators print at `verbose == 3` exactly (PROV-05) · repeated `-o` leaves a permanent
+placeholder at the first path after exit 0 (PROV-06) · `ea_restart -q` still prints `H_I` (PROV-08, executed) ·
+restart IID-suite failure lacks `errorClass` (PROV-09, executed) · JSON `mcvEstimate*` carry only the Literal triple
+(PROV-03, known) · `type` is the empty string in every completed `ea_non_iid`/`ea_iid` report while the placeholder
+and restart reports fill it (PROV-11, known) · lossy UTF-8 transcoding of `commandline`/`filename` — a stray
+continuation byte swallows the following ASCII byte (PROV-12, known) · non-binary chi-square independence with
+`df ≤ 0` reported applied and PASSED where §5.2.1 says "do not apply" (PROV-13; short inputs only) · Makefile flag
+probes write to the fixed path `/tmp/.ea_fs_$.c` (PROV-14) · zero estimates print as IEEE `-0`/`-0.0` (PROV-16,
+known) · the OC-104 refusal fires after a pre-operand `--` with a false reason (PROV-17) · contradictory mode flags
+(`-i -c`, `-a -t`) resolved silently by the last (PROV-20) · `xoshiro_jump(k)` for k ≥ 2 is `J(I+J)^(k−1)` not `J^k`
+(PROV-22, model-level; the streams are distinct and the verdict is unaffected) · `permutationTestResults` carry
+partial counters with no field for the permutations evaluated (PROV-23) · `utils.h:1023` claims an INT_MAX refusal
+`non_iid_main.cpp` does not have (PROV-25) · three `uint8_t` ring-buffer truncations in `lag_test.h:86/108/111` that
+UBSan's `implicit-conversion` group flags on every input (benign modular arithmetic; no memory effect).
 
-PROV-03 JSON `mcvEstimate*` carry only the Literal triple · PROV-04 the "narrower than described" warning never
-reaches the JSON and leaks under `-q` · PROV-05 `-vvv` prints no per-estimator lines (estimators print at
-`verbose == 3` exactly) · PROV-06 repeated `-o` leaves a permanent placeholder at the first path · PROV-08
-`ea_restart -q` still prints `H_I` · PROV-09 IID-suite failure report lacks `errorClass` · PROV-11 `type` is the
-empty string in completed reports · PROV-12 lossy UTF-8 transcoding of `filename`/`commandline` · PROV-13 non-binary
-chi-square independence with `df ≤ 0` reported PASSED (short inputs only) · PROV-14 Makefile probes use the fixed
-path `/tmp/.ea_fs_$.c` · PROV-16 zero estimates print as `-0` / `-0.0` · PROV-17 OC-104 refusal fires after `--`
-with a false reason · PROV-19 `reportComplete` written only by the placeholder · PROV-20 contradictory mode flags
-resolved silently by the last · PROV-21 `--version -Z` exits 0 · PROV-22 `xoshiro_jump(k)` is not k canonical jumps
-(threads ≥ 2 start at a J-linear image of the seed; model-level) · PROV-23 partial permutation counters with no
-field for the number evaluated · PROV-24 `ea_iid` aborts on `assert(n>=p)` for 3..31 samples under the escape ·
-PROV-25 `utils.h` comment claims an INT_MAX refusal `non_iid_main.cpp` does not have · the three Lag ring-buffer
-`uint8_t` truncations UBSan's implicit-conversion group flags (benign modular index arithmetic, `lag_test.h:86/108/111`).
+### 1.3 Observations confirmed but NOT defects (verifier-refuted as findings)
 
-### 1.3 Excluded scope (unsupported executable, recorded not filed)
-
-PROV-18 `ea_conditioning` folds `collision_test()`'s `-1` "declined" sentinel into `h'` (`h' = -1`, `h_out = -8`,
-exit 0). Not built or shipped by this fork; the tracker's `EXCLUDED-UNSUPPORTED` rows apply.
+- **`-c` JSON `hAssessed` = `word_size × h'` while stdout prints `h'` per bit, no unit field** (PROV-02): accurate, but
+  it is tracker **F23**, reproduced twice before and decided "not reopened" in the 2026-10-11 audit (C02); the
+  `commandline` key records `-c`. The tracker row still says `UNCONFIRMED` — stale; owner's update.
+- **`reportComplete` written only by the placeholder** (PROV-19): by design; the key marks a placeholder.
+- **`--version -Z` exits 0** (PROV-21): the documented "whichever comes first decides" rule (F04 / OC-80).
+- **`ea_iid` aborts on `assert(n>=p)` for 3..31 samples** (PROV-24): needs the test escape; production refuses at
+  the 1,000,000 gate.
+- **`ea_conditioning` folds a `-1` decline into `h'`** (PROV-18): unsupported executable, `EXCLUDED-UNSUPPORTED`.
 
 ### 1.4 Where the standard's own algorithm overstates — the headline, filed as a LIMITATION
 
@@ -137,8 +152,6 @@ is the documented D-1 quantile) — and on the unpadded 7-bit file `C = 6298781,
 (`logs/experiments/x2b-ref-lag-*.json` vs `x2b-chain-lag20-*-inferred.stdout`). So this is not a code defect and
 cannot be repaired in the code without departing from the text; it is the limitation an 8-bit consumer must
 defend against operationally (L-01).
-
----
 
 ## 2. Limitations (the standard's own design, code follows the text)
 
