@@ -1,0 +1,22 @@
+  generic Homebrew prefix: /opt/homebrew
+  pinned OpenSSL prefix:   /opt/homebrew/opt/openssl@3
+
+== 1. the Makefile's dry-run: the pinned prefix precedes the generic one on -I and -L ==
+  dry-run source: make -n -f /Users/gmcas/repos/SP800-90B_EntropyAssessment/.claude/worktrees/wf_5c2ce2eb-d82-2/cpp/Makefile non_iid  (make exit 0)
+  compile line: clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2  -Werror=ignored-optimization-argument -I/usr/include/jsoncpp  -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/include non_iid_main.cpp -o ea_non_iid -L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+  PAIR d240098: -I/opt/homebrew/opt/openssl@3/include is on the line once (token 9) PASS
+  PAIR d240098: -I/opt/homebrew/include is on the line once (token 10) PASS
+  PAIR d240098: -L/opt/homebrew/opt/openssl@3/lib is on the line once (token 14) PASS
+  PAIR d240098: -L/opt/homebrew/lib is on the line once (token 15)   PASS
+  -I: the pinned prefix (token 9) precedes the generic one (token 10) PASS
+  -L: the pinned prefix (token 14) precedes the generic one (token 15) PASS
+
+== 2. the built binaries: libcrypto is loaded from the pinned prefix ==
+[build-state] ea_non_iid                         asserts=LIVE    sha256=1ad1568c083b2774
+  ea_non_iid loads libcrypto from the pinned prefix                  FAIL  loads /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib; the pin is /opt/homebrew/opt/openssl@3
+[build-state] ea_iid                             asserts=LIVE    sha256=22f1319ae347ab4e
+  ea_iid loads libcrypto from the pinned prefix                      FAIL  loads /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib; the pin is /opt/homebrew/opt/openssl@3
+[build-state] ea_restart                         asserts=LIVE    sha256=4d7ba82b43ce03d0
+  ea_restart loads libcrypto from the pinned prefix                  FAIL  loads /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib; the pin is /opt/homebrew/opt/openssl@3
+
+regression-openssl-pin: FAIL (3)

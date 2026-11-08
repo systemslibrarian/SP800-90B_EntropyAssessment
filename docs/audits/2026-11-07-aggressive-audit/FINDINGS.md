@@ -107,10 +107,16 @@ abstentions).
 says "accepted for compatibility and ignored"** (`restart_main.cpp:454`; `regression-restart.sh` probes only the
 ≥ 5,000,000 shapes). Lens-verified 3/3; three prior records affirm the false behaviour.
 
-**AA-06 — t-Tuple/LRS (`SAalgs32`) runtime grows pathologically on highly periodic 8-bit data.** OBSERVED:
-`lfsr16-tap8-8bit` at 999,999 samples ran 28+ minutes at 100 % CPU in `SAalgs32` (profile
-`logs/experiments/sample-lfsr16-tap8-8bit-999999.txt`) where the 50,000-sample prefix completes in under a second;
-scaling measurement at 50k/100k/200k/400k in CHAIN-6 (§4.5 when complete). Availability only.
+**AA-06 — t-Tuple/LRS (`SAalgs32`) runtime grows as roughly n^3.5 on highly periodic 8-bit data.** Measured
+(`logs/experiments/saalgs-scaling.txt`, `saalgs-lfsr16-*.stdout`, production binary, `EA_ALLOW_SHORT_DATASET=1`,
+`OMP_NUM_THREADS=2`): prefixes of `lfsr16-tap8-8bit` (period 65,535 symbols) — **50,000 samples 1 s; 100,000 32 s;
+200,000 370 s**; the 999,999-sample run was still in `SAalgs32` after 28 minutes when stopped (profile
+`sample-lfsr16-tap8-8bit-999999.txt`: 100 % of samples in `SAalgs32`). The longest repeated substring on such data
+is nearly the whole bitstring, and the per-length loop over `W ∈ [u, v]` in `lrs_test.h` does work proportional to
+that length for each of millions of positions. Availability only — the figure, when it completes, is the standard's
+(the 50,000-sample case AGREEs with the reference); a physical source does not produce such data. Not lens-verified
+(orchestrator measurement). Recommendation: cap `v` at the value above which the LRS/t-Tuple estimate cannot change,
+or time out with a refusal rather than running for hours.
 
 **AA-07 … AA-20 (reporting and CLI; each lens-verified 3/3 unless noted):** the "Symbols appear to be narrower than
 described" warning never reaches the JSON (`errorLevel` stays 0) and leaks under `-q` (PROV-04) · `-vvv` prints no

@@ -1,0 +1,3 @@
+n=200000 rc=0 wall=370s
+n=50000 rc=0 wall=1s
+n=100000 rc=0 wall=32s

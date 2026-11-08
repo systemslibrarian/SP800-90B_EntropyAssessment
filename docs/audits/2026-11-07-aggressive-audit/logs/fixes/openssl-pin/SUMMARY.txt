@@ -1,0 +1,9 @@
+fix: openssl-pin  worktree: /Users/gmcas/repos/SP800-90B_EntropyAssessment/.claude/worktrees/wf_5c2ce2eb-d82-2  branch: fix/openssl-pin  commit: b62336b  Sun Nov  8 17:24:42 EST 2026
+step 1: regression against MASTER's binaries (expect FAIL)
+  rc=1  FAILED as expected (defect present)
+step 2: make all in the worktree (fixed sources/Makefile)
+  build rc=0  warnings=24
+step 3: regression against the FIXED binaries (expect PASS)
+  rc=0  PASS
+step 4: SKIPPED here (run separately: the host cannot hold a 15-minute background job -- see FINDINGS 5)
+done Sun Nov  8 17:24:52 EST 2026

@@ -33,6 +33,7 @@ if [ $rcb -ne 0 ]; then say "  BUILD FAILED -- stopping"; exit 2; fi
 say "step 3: regression against the FIXED binaries (expect PASS)"
 ( cd "$WT/cpp/selftest" && bash "./$REG" ) > "$OUT/3-regression-on-fixed.log" 2>&1; rc3=$?
 say "  rc=$rc3  $( [ $rc3 -eq 0 ] && echo 'PASS' || echo 'FAIL -- the fix does not satisfy its own test')"
+if [ "${SKIP_SUITE:-0}" = "1" ]; then say "step 4: SKIPPED here (run separately: the host cannot hold a 15-minute background job -- see FINDINGS 5)"; say "done $(date)"; exit 0; fi
 say "step 4: full suite in the worktree"
 ( cd "$WT/cpp/selftest" && ./run-all-checks.sh --allow-known-platform-deltas ) > "$OUT/4-run-all-checks.log" 2>&1; rc4=$?
 say "  rc=$rc4  $(grep -E '^run-all-checks:' "$OUT/4-run-all-checks.log" | tail -1)"
