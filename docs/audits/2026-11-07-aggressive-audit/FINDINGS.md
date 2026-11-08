@@ -30,7 +30,49 @@ unless the code departs from the text.
 
 ## 0. Summary for Paul
 
-_(written last — see the end of this file)_
+**Counts.** CRITICAL: **0** code defects. HIGH: **0**. MEDIUM: **3** (AA-01 `-c` gate counts bytes; AA-02 stale success
+report when an option error precedes `-o`; AA-03 `ea_restart` drops a declined estimator silently). LOW: **~22**
+(AA-04…AA-21, mostly reporting/CLI/build hygiene, including 21 formal-but-benign data races in the IID permutation
+battery). Documented divergences re-measured: **3** (D-1 quantile — consistent; F02 width inference — +38.5 % at
+compliant size, still below the truth; **MultiMMC chained lookup — ±0.08 bit at 8 bits, 200× the recorded margin**).
+Limitations of the standard: **17**, one of them the headline below. Four fix branches, each FAIL-before/PASS-after
+with the suites green, none merged.
+
+**Could any of this have overstated entropy for ShannonPad's data (1,000,000+ samples from an Infinite Noise device,
+1 or 8 bits, `ea_non_iid -i`)?**
+
+- **From the code: no.** Across 156 differential cases the C++ never exceeded the standard's own arithmetic by more
+  than the documented 0.995-quantile constant; the final figure was always the minimum of the printed estimates; no
+  NaN/inf reached a verdict at compliant size; refusals are exact at the 1,000,000 boundary; ASan/UBSan, TSan and the
+  thread-count determinism runs found nothing that moves a figure. The MultiMMC divergence can raise *that
+  estimator* by 0.08 bit at 8 bits on crafted data, but on real device data it does not bind the minimum (the record's
+  one executed final-figure case was crafted too); the offered fix removes the question.
+- **From the standard: yes, in one specific and plausible situation.** If one of the eight bit lines of an 8-bit capture
+  is stuck (constant), §3.1.3's `n × H_bitstring` term can exceed the data's true min-entropy — **2.57 vs 1.06
+  bits/sample (2.42×) measured at 1,000,000 samples** on a construction whose bit-level dependence the symbol-level
+  estimators cannot see — and the code follows the text exactly (the spec-only reference reproduces it to the last
+  digit). At 1 bit per symbol the mechanism does not exist. **Operational rule for ShannonPad: measure the eight
+  per-position bit proportions of every capture before assessment; refuse a capture with a constant or near-constant
+  line, or strip that line and assess at the real width. "Always declare 8" is the wrong rule here — on the same bits,
+  declared-8 gave 2.57 and the real width gave 1.06.** Also keep passing the width explicitly when every line is live
+  (F02: an omitted width is inferred and moved the figure +38.5 % on an MSB-dead capture — in that case *below* the
+  truth, but it is the inference, not the data, deciding).
+
+**Should ShannonPad's pin move?** On the evidence here, **not for safety reasons**: nothing in the pinned code reports
+more entropy than the standard's algorithm gives on its target profile. Moving the pin would buy three MEDIUM
+repairs that do not touch a figure (a compliance-claim bug in a mode ShannonPad does not use, a report-file hygiene
+bug that exit-status checking already covers, a restart-report completeness bug) plus the optional MultiMMC change,
+which *does* alter a reported estimator on crafted data and is a decision about departing from the fork's recorded
+NOT-REPAIRED stance. Whether to take it is yours; nothing here forces it. What **does** need action regardless of
+the pin is the stuck-bit rule above, which lives in ShannonPad's capture pipeline, not in this tool.
+
+**Two things this audit did to your machine** (both reversible, both disclosed in AA-04): `brew install afl++`
+pulled in OpenSSL 4 and Python 3.15; the binaries you build now link `libcrypto.4` (the Makefile's pin order bug,
+fixed on `fix/openssl-pin`) and `regression-workflows.sh` cannot find PyYAML under the new default `python3`
+(`brew unlink python@3.15` or run it with `python3.14` first on `PATH`).
+
+**Fuzzing:** _(§4.8 — filled in when the slices complete)_
+
 
 ---
 

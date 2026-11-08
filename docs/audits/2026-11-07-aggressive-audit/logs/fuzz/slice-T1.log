@@ -1,0 +1,5 @@
+[18:38:29] record: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/fuzz/RUN-RECORD.md
+[18:38:31] preflight T1: ok, tuples=525, seeds=29 assessed=25 refused=4 signal=0
+[18:38:31] fuzzing T1 (ea_non_iid, plain) for 8 min -> /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T1
+[18:46:34]   done: rc=0 execs=44076 crashes=0 hangs=0
+[18:46:34] campaign finished; record /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/fuzz/RUN-RECORD.md
