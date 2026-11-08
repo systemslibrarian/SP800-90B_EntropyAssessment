@@ -1,0 +1,33 @@
+  extracted: 26 block(s) from 3 workflow file(s)
+  c22c-source-check.yml              install mpmath             bash  OK
+  c22c-source-check.yml              record what is being check bash  OK
+  c22c-source-check.yml              one source per family valu bash  OK
+  c22c-source-check.yml              re-derive every carried va bash  OK
+  windows-platform-facts.yml         0. Is MSYS2 preinstalled o cmd   UNCHECKED: 16 line(s) of cmd logic
+  windows-platform-facts.yml         1. Toolchain and dependenc cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         2. Build each supported to cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         3. The float environment,  cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         4. R-1 affected set (predi cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         5. Runtime behaviour of al cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         5b. A05: the Win32 file-id cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         6. The build-state probe o cmd   delegates to a bash script (checked below)
+  windows-platform-facts.yml         7. Verdict                 cmd   UNCHECKED: 10 line(s) of cmd logic
+  windows-platform-facts.yml         8. Tally -- THIS GATES     cmd   delegates to a bash script (checked below)
+  x86-64-platform-facts.yml          Install build dependencies bash  OK
+  x86-64-platform-facts.yml          1. Print the float environ bash  OK
+  x86-64-platform-facts.yml          2. Build master (asserts l bash  OK
+  x86-64-platform-facts.yml          3. Build the unrepaired re bash  OK
+  x86-64-platform-facts.yml          4. The canary, all four bu bash  OK
+  x86-64-platform-facts.yml          5. R-1 at all five symbol  bash  OK
+  x86-64-platform-facts.yml          5b. R-1's blast radius thr bash  OK
+  x86-64-platform-facts.yml          5c. getopt PERMUTATION as  bash  OK
+  x86-64-platform-facts.yml          5d. A LATE --version: does bash  OK
+  x86-64-platform-facts.yml          5e. NIST's 11 reference da bash  OK
+  x86-64-platform-facts.yml          6. The full suite and the  bash  OK
+  x86-64-platform-facts.yml          7. Summary                 bash  OK
+  .github/scripts                    windows-facts.sh           bash  OK
+
+  17 block(s) checked with bash -n; 10 not, of which 8 delegate to a checked bash script
+  UNCHECKED SURFACE: 2 block(s), 26 line(s) of shell no syntax tool here can parse
+  0 GitHub expression(s) substituted
+regression-workflows: PASS
