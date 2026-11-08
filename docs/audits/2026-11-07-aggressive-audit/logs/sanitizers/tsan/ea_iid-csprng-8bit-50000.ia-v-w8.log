@@ -1,0 +1,625 @@
+## stage: tsan
+## variant: tsan
+## tool: ea_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/tsan/ea_iid
+## binary_sha256: c59311b28c5a76397d56e2c67d74933494ee6e39ff099d514afadf01119bb143
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/csprng-8bit-50000.bin
+## input_sha256: b66085a1b1a2c97f1c6177d6546fb105f05614ff29b529f9461f8a24fbc1ee2e
+## input_bytes: 50000
+## operands: 8
+## flags: -i -a -v
+## short_dataset_escape: yes
+## heavy: yes
+## note: early-stop battery, 8-bit
+## timeout_seconds: 1800
+## threads: 10
+## start: 2026-11-08T21:48:04Z
+## env: OMP_NUM_THREADS=10 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 TSAN_OPTIONS=halt_on_error=0:second_deadlock_stack=1:history_size=3:print_suppressions=1:suppressions=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/sanitizers/tsan-libomp.supp OMP_WAIT_POLICY=passive
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/tsan/ea_iid -i -a -v /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/csprng-8bit-50000.bin 8
+## --- tool output ---
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/csprng-8bit-50000.bin' (SHA-256 hash b66085a1b1a2c97f1c6177d6546fb105f05614ff29b529f9461f8a24fbc1ee2e of assessed bytes)
+Loaded 50000 samples of 256 distinct 8-bit-wide symbols
+
+*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Number of Binary samples: 400000
+Calculating baseline statistics...
+	Raw Mean: 127.258520
+	Translated Symbol Index Median: 127.000000
+	Binary: false
+
+Literal MCV Estimate: mode = 230, p-hat = 0.0045999999999999999, p_u = 0.0053794964729538082
+Bitstring MCV Estimate: mode = 200043, p-hat = 0.50010750000000004, p_u = 0.50214387436415886
+Chi square independence
+	score = 4750.211775
+	degrees of freedom = 4560
+	p-value = 0.024322
+
+Chi square goodness of fit
+	score = 2356.101259
+	degrees of freedom = 2295
+	p-value = 0.183049
+
+** Passed chi square tests
+
+Literal Longest Repeated Substring results
+	P_col: 0.003926
+	Length of LRS: 3
+	Pr(X >= 1): 1.000000
+** Passed length of longest repeated substring test
+
+Beginning initial tests...
+
+Initial test results
+              excursion: 20702.5
+     numDirectionalRuns: 33305
+     lenDirectionalRuns: 8
+  numIncreasesDecreases: 25008
+          numRunsMedian: 25140
+          lenRunsMedian: 16
+           avgCollision: 20.7998
+           maxCollision: 66
+         periodicity(1): 172
+         periodicity(2): 202
+         periodicity(8): 193
+        periodicity(16): 196
+        periodicity(32): 202
+          covariance(1): 8.08237e+08
+          covariance(2): 8.08571e+08
+          covariance(8): 8.09767e+08
+         covariance(16): 8.07036e+08
+         covariance(32): 8.07389e+08
+            compression: 53469
+
+Beginning permutation tests... these may take some time
+  0.01% of Permutation test rounds,   0.00% of Permutation tests (Core 0/9, passed_count 0)
+  0.02% of Permutation test rounds,   0.00% of Permutation tests (Core 4/9, passed_count 0)
+  0.03% of Permutation test rounds,   0.00% of Permutation tests (Core 2/9, passed_count 0)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1cb4 by thread T5:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:670 (ea_iid:arm64+0x10000fbf0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbf0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous write of size 4 at 0x00016aee1cb4 by thread T2:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:670 (ea_iid:arm64+0x10000fbf0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbf0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T5 (tid=115342167, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T2 (tid=115342164, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:670 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.04% of Permutation test rounds,   0.00% of Permutation tests (Core 5/9, passed_count 0)
+  0.05% of Permutation test rounds,   0.00% of Permutation tests (Core 7/9, passed_count 0)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1cd0 by thread T9:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h (ea_iid:arm64+0x10000fb90)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb90)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous write of size 4 at 0x00016aee1cd0 by thread T7:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h (ea_iid:arm64+0x10000fb90)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb90)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T9 (tid=115342171, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T7 (tid=115342169, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 8 at 0x00016aee1bc8 by thread T9:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous write of size 8 at 0x00016aee1bc8 by thread T7:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T9 (tid=115342171, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T7 (tid=115342169, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:679 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.06% of Permutation test rounds,   0.00% of Permutation tests (Core 9/9, passed_count 0)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1cb8 by thread T6:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h (ea_iid:arm64+0x10000fb90)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb90)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous read of size 4 at 0x00016aee1cb8 by thread T7:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:672 (ea_iid:arm64+0x10000fb9c)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb9c)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T6 (tid=115342168, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T7 (tid=115342169, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.07% of Permutation test rounds,   0.00% of Permutation tests (Core 6/9, passed_count 0)
+  0.08% of Permutation test rounds,   0.00% of Permutation tests (Core 8/9, passed_count 0)
+  0.09% of Permutation test rounds,   5.26% of Permutation tests (Core 3/9, passed_count 1)
+  0.10% of Permutation test rounds,   5.26% of Permutation tests (Core 1/9, passed_count 1)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1cb8 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h (ea_iid:arm64+0x10000fb90)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb90)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Previous write of size 4 at 0x00016aee1cb8 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h (ea_iid:arm64+0x10000fb90)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb90)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T1 (tid=115342163, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1d2c by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:670 (ea_iid:arm64+0x10000fbf0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbf0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Previous read of size 4 at 0x00016aee1d2c by thread T3:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:672 (ea_iid:arm64+0x10000fbc0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbc0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T3 (tid=115342165, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:670 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.11% of Permutation test rounds,   5.26% of Permutation tests (Core 0/9, passed_count 1)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1cb4 by thread T4:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:670 (ea_iid:arm64+0x10000fbf0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbf0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous write of size 4 at 0x00016aee1cb4 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:670 (ea_iid:arm64+0x10000fbf0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbf0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Location is stack of main thread.
+
+  Thread T4 (tid=115342166, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:670 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 8 at 0x00016aee1bc8 by thread T4:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous write of size 8 at 0x00016aee1bc8 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Location is stack of main thread.
+
+  Thread T4 (tid=115342166, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:679 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.12% of Permutation test rounds,  21.05% of Permutation tests (Core 4/9, passed_count 4)
+  0.13% of Permutation test rounds,  21.05% of Permutation tests (Core 2/9, passed_count 4)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 1 at 0x00016aee1bfe by thread T5:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:673 (ea_iid:arm64+0x10000fbd8)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbd8)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous read of size 1 at 0x00016aee1bfe by thread T2:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:664 (ea_iid:arm64+0x10000fb48)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb48)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T5 (tid=115342167, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T2 (tid=115342164, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:673 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 4 at 0x00016aee1d14 by thread T5:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:670 (ea_iid:arm64+0x10000fbf0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbf0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous read of size 4 at 0x00016aee1d14 by thread T2:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:672 (ea_iid:arm64+0x10000fbc0)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fbc0)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T5 (tid=115342167, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T2 (tid=115342164, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:670 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.14% of Permutation test rounds,  26.32% of Permutation tests (Core 5/9, passed_count 5)
+  0.15% of Permutation test rounds,  31.58% of Permutation tests (Core 7/9, passed_count 6)
+  0.16% of Permutation test rounds,  31.58% of Permutation tests (Core 9/9, passed_count 6)
+  0.17% of Permutation test rounds,  31.58% of Permutation tests (Core 6/9, passed_count 6)
+  0.18% of Permutation test rounds,  31.58% of Permutation tests (Core 5/9, passed_count 6)
+  0.19% of Permutation test rounds,  31.58% of Permutation tests (Core 8/9, passed_count 6)
+  0.20% of Permutation test rounds,  36.84% of Permutation tests (Core 3/9, passed_count 7)
+  0.21% of Permutation test rounds,  36.84% of Permutation tests (Core 1/9, passed_count 7)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Read of size 4 at 0x00016aee1d00 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:672 (ea_iid:arm64+0x10000fb9c)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb9c)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Previous write of size 4 at 0x00016aee1d00 by thread T1:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h (ea_iid:arm64+0x10000fb90)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fb90)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T1 (tid=115342163, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:672 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+  0.22% of Permutation test rounds,  36.84% of Permutation tests (Core 0/9, passed_count 7)
+  0.23% of Permutation test rounds,  42.11% of Permutation tests (Core 2/9, passed_count 8)
+  0.24% of Permutation test rounds,  47.37% of Permutation tests (Core 4/9, passed_count 9)
+  0.25% of Permutation test rounds,  52.63% of Permutation tests (Core 6/9, passed_count 10)
+  0.26% of Permutation test rounds,  57.89% of Permutation tests (Core 9/9, passed_count 11)
+  0.27% of Permutation test rounds,  57.89% of Permutation tests (Core 7/9, passed_count 11)
+  0.28% of Permutation test rounds,  57.89% of Permutation tests (Core 6/9, passed_count 11)
+  0.29% of Permutation test rounds,  63.16% of Permutation tests (Core 9/9, passed_count 12)
+  0.30% of Permutation test rounds,  63.16% of Permutation tests (Core 7/9, passed_count 12)
+  0.31% of Permutation test rounds,  63.16% of Permutation tests (Core 6/9, passed_count 12)
+  0.32% of Permutation test rounds,  63.16% of Permutation tests (Core 9/9, passed_count 12)
+  0.33% of Permutation test rounds,  63.16% of Permutation tests (Core 7/9, passed_count 12)
+  0.34% of Permutation test rounds,  63.16% of Permutation tests (Core 6/9, passed_count 12)
+  0.35% of Permutation test rounds,  63.16% of Permutation tests (Core 9/9, passed_count 12)
+  0.36% of Permutation test rounds,  63.16% of Permutation tests (Core 7/9, passed_count 12)
+  0.37% of Permutation test rounds,  63.16% of Permutation tests (Core 6/9, passed_count 12)
+  0.38% of Permutation test rounds,  63.16% of Permutation tests (Core 9/9, passed_count 12)
+  0.39% of Permutation test rounds,  63.16% of Permutation tests (Core 5/9, passed_count 12)
+  0.40% of Permutation test rounds,  63.16% of Permutation tests (Core 3/9, passed_count 12)
+  0.41% of Permutation test rounds,  63.16% of Permutation tests (Core 7/9, passed_count 12)
+  0.42% of Permutation test rounds,  63.16% of Permutation tests (Core 6/9, passed_count 12)
+  0.43% of Permutation test rounds,  63.16% of Permutation tests (Core 8/9, passed_count 12)
+  0.44% of Permutation test rounds,  68.42% of Permutation tests (Core 9/9, passed_count 13)
+  0.45% of Permutation test rounds,  68.42% of Permutation tests (Core 1/9, passed_count 13)
+  0.46% of Permutation test rounds,  68.42% of Permutation tests (Core 4/9, passed_count 13)
+  0.47% of Permutation test rounds,  68.42% of Permutation tests (Core 2/9, passed_count 13)
+  0.48% of Permutation test rounds,  73.68% of Permutation tests (Core 0/9, passed_count 14)
+  0.49% of Permutation test rounds,  78.95% of Permutation tests (Core 5/9, passed_count 15)
+  0.50% of Permutation test rounds,  78.95% of Permutation tests (Core 3/9, passed_count 15)
+  0.51% of Permutation test rounds,  78.95% of Permutation tests (Core 7/9, passed_count 15)
+  0.52% of Permutation test rounds,  78.95% of Permutation tests (Core 6/9, passed_count 15)
+  0.53% of Permutation test rounds,  78.95% of Permutation tests (Core 8/9, passed_count 15)
+  0.54% of Permutation test rounds,  78.95% of Permutation tests (Core 9/9, passed_count 15)
+  0.55% of Permutation test rounds,  78.95% of Permutation tests (Core 1/9, passed_count 15)
+  0.56% of Permutation test rounds,  78.95% of Permutation tests (Core 4/9, passed_count 15)
+  0.57% of Permutation test rounds,  78.95% of Permutation tests (Core 2/9, passed_count 15)
+  0.58% of Permutation test rounds,  78.95% of Permutation tests (Core 0/9, passed_count 15)
+  0.59% of Permutation test rounds,  78.95% of Permutation tests (Core 5/9, passed_count 15)
+  0.60% of Permutation test rounds,  78.95% of Permutation tests (Core 3/9, passed_count 15)
+  0.61% of Permutation test rounds,  78.95% of Permutation tests (Core 7/9, passed_count 15)
+  0.62% of Permutation test rounds,  78.95% of Permutation tests (Core 6/9, passed_count 15)
+  0.63% of Permutation test rounds,  78.95% of Permutation tests (Core 8/9, passed_count 15)
+  0.64% of Permutation test rounds,  84.21% of Permutation tests (Core 9/9, passed_count 16)
+  0.65% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  0.66% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  0.67% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  0.68% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  0.69% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  0.70% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  0.71% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  0.72% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  0.73% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  0.74% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  0.75% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  0.76% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  0.77% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  0.78% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  0.79% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  0.80% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  0.81% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  0.82% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  0.83% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  0.84% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  0.85% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  0.86% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  0.87% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  0.88% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  0.89% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  0.90% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  0.91% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  0.92% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  0.93% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  0.94% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  0.95% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  0.96% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  0.97% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  0.98% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  0.99% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  1.00% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  1.01% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  1.02% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  1.03% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  1.04% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  1.05% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  1.06% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  1.07% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  1.08% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  1.09% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  1.10% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  1.11% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  1.12% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  1.13% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  1.14% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  1.15% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  1.16% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  1.17% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  1.18% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  1.19% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  1.20% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  1.21% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  1.22% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  1.23% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  1.24% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  1.25% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  1.26% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  1.27% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  1.28% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  1.29% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  1.30% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  1.31% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  1.32% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  1.33% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  1.34% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  1.35% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  1.36% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  1.37% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  1.38% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  1.39% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  1.40% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  1.41% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  1.42% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  1.43% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  1.44% of Permutation test rounds,  89.47% of Permutation tests (Core 9/9, passed_count 17)
+  1.45% of Permutation test rounds,  89.47% of Permutation tests (Core 1/9, passed_count 17)
+  1.46% of Permutation test rounds,  89.47% of Permutation tests (Core 4/9, passed_count 17)
+  1.47% of Permutation test rounds,  89.47% of Permutation tests (Core 2/9, passed_count 17)
+  1.48% of Permutation test rounds,  89.47% of Permutation tests (Core 0/9, passed_count 17)
+  1.49% of Permutation test rounds,  89.47% of Permutation tests (Core 5/9, passed_count 17)
+  1.50% of Permutation test rounds,  89.47% of Permutation tests (Core 3/9, passed_count 17)
+  1.51% of Permutation test rounds,  89.47% of Permutation tests (Core 7/9, passed_count 17)
+  1.52% of Permutation test rounds,  89.47% of Permutation tests (Core 6/9, passed_count 17)
+  1.53% of Permutation test rounds,  89.47% of Permutation tests (Core 8/9, passed_count 17)
+  1.54% of Permutation test rounds,  94.74% of Permutation tests (Core 9/9, passed_count 18)
+  1.55% of Permutation test rounds,  94.74% of Permutation tests (Core 1/9, passed_count 18)
+  1.56% of Permutation test rounds,  94.74% of Permutation tests (Core 4/9, passed_count 18)
+  1.57% of Permutation test rounds,  94.74% of Permutation tests (Core 2/9, passed_count 18)
+  1.58% of Permutation test rounds,  94.74% of Permutation tests (Core 0/9, passed_count 18)
+  1.59% of Permutation test rounds,  94.74% of Permutation tests (Core 5/9, passed_count 18)
+  1.60% of Permutation test rounds,  94.74% of Permutation tests (Core 3/9, passed_count 18)
+  1.61% of Permutation test rounds,  94.74% of Permutation tests (Core 7/9, passed_count 18)
+  1.62% of Permutation test rounds,  94.74% of Permutation tests (Core 6/9, passed_count 18)
+  1.63% of Permutation test rounds, 100.00% of Permutation tests (Core 8/9, passed_count 19)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 8 at 0x00016aee1bc8 by thread T9:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous atomic write of size 8 at 0x00016aee1bc8 by thread T8:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:723 (ea_iid:arm64+0x10000fa70)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fa70)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T9 (tid=115342171, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Thread T8 (tid=115342170, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:679 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+ 11.49% of Permutation test rounds, 100.00% of Permutation tests (Core 9/9, passed_count 19)
+ 21.30% of Permutation test rounds, 100.00% of Permutation tests (Core 1/9, passed_count 19)
+ 31.16% of Permutation test rounds, 100.00% of Permutation tests (Core 4/9, passed_count 19)
+ 41.01% of Permutation test rounds, 100.00% of Permutation tests (Core 2/9, passed_count 19)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 8 at 0x00016aee1bc8 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Previous atomic write of size 8 at 0x00016aee1bc8 by thread T2:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:723 (ea_iid:arm64+0x10000fa70)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fa70)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Location is stack of main thread.
+
+  Thread T2 (tid=115342164, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:679 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+ 50.86% of Permutation test rounds, 100.00% of Permutation tests (Core 0/9, passed_count 19)
+==================
+WARNING: ThreadSanitizer: data race (pid=31252)
+  Write of size 8 at 0x00016aee1bc8 by thread T5:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:679 (ea_iid:arm64+0x10000fc30)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fc30)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+
+  Previous atomic write of size 8 at 0x00016aee1bc8 by main thread:
+    #0 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__) permutation_tests.h:723 (ea_iid:arm64+0x10000fa70)
+    #1 permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined) permutation_tests.h:625 (ea_iid:arm64+0x10000fa70)
+    #2 __kmp_invoke_microtask <null> (libomp.dylib:arm64+0x6b138)
+    #3 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+  Location is stack of main thread.
+
+  Thread T5 (tid=115342167, running) created by main thread at:
+    #0 pthread_create <null> (libclang_rt.tsan_osx_dynamic.dylib:arm64e+0x33bac)
+    #1 __kmp_create_worker <null> (libomp.dylib:arm64+0x50efc)
+    #2 main iid_main.cpp:517 (ea_iid:arm64+0x100015648)
+
+SUMMARY: ThreadSanitizer: data race permutation_tests.h:679 in permutation_tests(data_t const*, double, double, int, IidTestCase&, char const*) (.omp_outlined_debug__)
+==================
+ 60.71% of Permutation test rounds, 100.00% of Permutation tests (Core 5/9, passed_count 19)
+ 70.55% of Permutation test rounds, 100.00% of Permutation tests (Core 3/9, passed_count 19)
+ 80.40% of Permutation test rounds, 100.00% of Permutation tests (Core 7/9, passed_count 19)
+ 90.21% of Permutation test rounds, 100.00% of Permutation tests (Core 6/9, passed_count 19)
+
+
+                statistic  C[i][0]  C[i][1]  C[i][2]
+----------------------------------------------------
+                excursion       6       0      59
+       numDirectionalRuns       8       0       6
+       lenDirectionalRuns       0       6      18
+    numIncreasesDecreases     157       0       6
+            numRunsMedian       6       0      38
+            lenRunsMedian       1       5       3
+             avgCollision       6       0       9
+             maxCollision       5       1      19
+           periodicity(1)      42       1       5
+           periodicity(2)       4       2      17
+           periodicity(8)      14       1       5
+          periodicity(16)       6       0       6
+          periodicity(32)       6       0       6
+            covariance(1)      43       0       6
+            covariance(2)      23       0       6
+            covariance(8)       6       0       6
+           covariance(16)     148       0       6
+           covariance(32)      58       0       6
+              compression      20       1       5
+(* denotes failed test)
+
+** Passed IID permutation tests
+
+H_original: 7.538313
+H_bitstring: 0.993827
+min(H_original, 8 X H_bitstring): 7.538313
+ThreadSanitizer: reported 14 warnings
+## --- end of tool output ---
+## exit: 134
+## wall_seconds: 5
+## end: 2026-11-08T21:48:09Z
+## sanitizer_report: yes
+## sanitizer_report_count: 28
+## first_report_line: WARNING: ThreadSanitizer: data race (pid=31252)
+## tool_outcome: SANITIZER
+## permutation_battery: reached
+## permutation_progress_lines: 172

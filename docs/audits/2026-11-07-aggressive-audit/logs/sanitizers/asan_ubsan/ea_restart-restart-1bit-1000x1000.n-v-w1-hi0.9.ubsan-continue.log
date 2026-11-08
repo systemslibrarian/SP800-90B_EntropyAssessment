@@ -1,0 +1,113 @@
+## stage: e
+## variant: asan_ubsan
+## tool: ea_restart
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_restart
+## binary_sha256: 9f913fd296d6a5be11956f7e8bb77b8e03a62fdb2014ca8906a3aa0cca9dff4e
+## input: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-1bit-1000x1000.bin
+## input_sha256: d11f7dbe2a62b83c7697138a4b96d46f31566958fa75ee15ae0708ba0cb549b0
+## input_bytes: 1000000
+## operands: 1 0.9
+## flags: -n -v
+## short_dataset_escape: no
+## heavy: yes
+## note: non-IID restart; X_max rows/cols 548/554 (gen_inputs)
+## timeout_seconds: 3600
+## threads: 2
+## start: 2026-11-08T21:47:17Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_restart -n -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-1bit-1000x1000.bin 1 0.9
+## rerun_of: ea_restart-restart-1bit-1000x1000.n-v-w1-hi0.9.log
+## rerun_reason: first report was a recoverable UBSan class; halt_on_error=0 to see the rest
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=0:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_restart -n -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-1bit-1000x1000.bin 1 0.9
+## --- tool output ---
+non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+    #0 0x000100ed7ca8 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
+    #1 0x000100ef5e4c in main restart_main.cpp:1034
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:111:21 
+non_iid/lag_test.h:86:17: runtime error: implicit conversion from type 'int' of value -1 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 255 (8-bit, unsigned)
+    #0 0x000100ed7b04 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:86
+    #1 0x000100ef5e4c in main restart_main.cpp:1034
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:86:17 
+Loaded file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-1bit-1000x1000.bin' (SHA-256 hash d11f7dbe2a62b83c7697138a4b96d46f31566958fa75ee15ae0708ba0cb549b0 of assessed bytes)
+Loaded 1000000 samples made up of 2 distinct 1-bit-wide symbols.
+H_I: 0.900000
+ALPHA: 5.0000000000000004e-06, X_cutoff: 605 (exact distribution of the multinomial maximum, the statistic 3.1.4.3 forms)
+X_cutoff_printed_binomial: 605 (SP 800-90B 3.1.4.3 step 5 as printed; conformance figure, not the verdict -- it rejects correctly-operating sources, see OC-30)
+X_max: 554
+
+Restart Sanity Check Passed...
+Calculating baseline statistics...
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+Literal MCV Estimate: mode = 500149, p-hat = 0.50014899999999995, p_u = 0.50143691523854617
+	Most Common Value Estimate (Rows) = 0.995860 / 1 bit(s)
+Literal MCV Estimate: mode = 500149, p-hat = 0.50014899999999995, p_u = 0.50143691523854617
+	Most Common Value Estimate (Cols) = 0.995860 / 1 bit(s)
+
+Running Entropic Statistic Estimates (bit strings only)...
+Literal Collision Estimate: X-bar = 2.5000750022500675, sigma-hat = 0.50000061939457785, p = 0.53131615146075384
+	Collision Test Estimate (Rows) = 0.912358 / 1 bit(s)
+Literal Collision Estimate: X-bar = 2.4996200569914513, sigma-hat = 0.50000048055054458, p = 0.53475747488387027
+	Collision Test Estimate (Cols) = 0.903043 / 1 bit(s)
+Literal Markov Estimate: P_0 = 0.49985099999999999, P_1 = 0.50014899999999995, P_0,0 = 0.49971891623703862, P_0,1 = 0.50028108376296143, P_1,0 = 0.4999820053264234, P_1,1 = 0.50001799467357655, p_max = 3.0385569445527211e-39
+	Markov Test Estimate (Rows) = 0.999624 / 1 bit(s)
+Literal Markov Estimate: P_0 = 0.49985099999999999, P_1 = 0.50014899999999995, P_0,0 = 0.49965089596699819, P_0,1 = 0.50034910403300181, P_1,0 = 0.50004998520437949, P_1,1 = 0.49995001479562051, p_max = 3.0914771393208194e-39
+	Markov Test Estimate (Cols) = 0.999429 / 1 bit(s)
+Literal Compression Estimate: X-bar = 5.2161198550627041, sigma-hat = 1.0159618642616024, p = 0.030863526791202966
+	Compression Test Estimate (Rows) = 0.836326 / 1 bit(s)
+Literal Compression Estimate: X-bar = 5.2189718235567373, sigma-hat = 1.0143920513100055, p = 0.027563041917350262
+	Compression Test Estimate (Cols) = 0.863520 / 1 bit(s)
+
+Running Tuple Estimates...
+Literal t-Tuple Estimate: t = 15, p-hat_max = 0.5206504808365454151087, p_u = 0.5219372972201817839633
+Literal LRS Estimate: u = 16, v = 41, p-hat = 0.52414885208919992, p_u = 0.52543526436836474
+Literal t-Tuple Estimate: t = 16, p-hat_max = 0.5275569070895033130242, p_u = 0.5288428648552971900187
+Literal LRS Estimate: u = 17, v = 36, p-hat = 0.50051422752572028, p_u = 0.50180214214032559
+	T-Tuple Test Estimate (Rows) = 0.938052 / 1 bit(s)
+	T-Tuple Test Estimate (Cols) = 0.919089 / 1 bit(s)
+	LRS Test Estimate (Rows) = 0.928415 / 1 bit(s)
+	LRS Test Estimate (Cols) = 0.994809 / 1 bit(s)
+
+Running Predictor Estimates...
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.50130945722041609 (C = 499990) Plocal can't affect result (r = 20)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (Rows) = 0.996227 / 1 bit(s)
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.5018714917527004 (C = 500552) Plocal can't affect result (r = 21)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (Cols) = 0.994610 / 1 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.50084241498296345 (C = 499554) Plocal can't affect result (r = 17)
+	Lag Prediction Test Estimate (Rows) = 0.997571 / 1 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.50123341587754011 (C = 499945) Plocal can't affect result (r = 19)
+	Lag Prediction Test Estimate (Cols) = 0.996445 / 1 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.49991290896368201 (C = 498624) Plocal can't affect result (r = 19)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (Rows) = 1.000000 / 1 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.5015449169275199 (C = 500256) Plocal can't affect result (r = 24)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (Cols) = 0.995549 / 1 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.50060341339953285 (C = 499307) Plocal can't affect result (r = 20)
+	LZ78Y Prediction Test Estimate (Rows) = 0.998260 / 1 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.50100942130878656 (C = 499713) Plocal can't affect result (r = 20)
+	LZ78Y Prediction Test Estimate (Cols) = 0.997090 / 1 bit(s)
+
+H_r: 0.836326
+H_c: 0.863520
+H_I: 0.900000
+
+Validation Test Passed...
+
+min(H_r, H_c, H_I): 0.836326
+
+## --- end of tool output ---
+## exit: 0
+## wall_seconds: 2
+## end: 2026-11-08T21:47:20Z
+## sanitizer_report: yes
+## sanitizer_report_count: 2
+## first_report_line: non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+## tool_outcome: SANITIZER
+## permutation_battery: not-seen
+## permutation_progress_lines: 0

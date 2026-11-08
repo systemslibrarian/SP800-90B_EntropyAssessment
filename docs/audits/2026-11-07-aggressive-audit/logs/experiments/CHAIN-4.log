@@ -788,3 +788,227 @@ UNCLASSIFIED    1s exit=0   ea_iid-csprng-1bit-50000.c-v-w1.log
 UNCLASSIFIED    0s exit=0   ea_iid-csprng-8bit-50000.ia-v-w8.log
 UNCLASSIFIED    6s exit=0   ea_iid-csprng-8bit-50000.c-v-w8.log
 COMPLETED-IID-BATTERY-FAILED  109s exit=1   ea_iid-lfsr16-tap1-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED  181s exit=1   ea_iid-lfsr16-tap1-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED  238s exit=1   ea_iid-lfsr16-tap1-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr16-tap1-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr16-tap8-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr16-tap8-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr16-tap8-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr16-tap8-8bit-50000.c-v-w8.log
+UNCLASSIFIED    1s exit=0   ea_iid-lfsr32-tap1-1bit-50000.ia-v-w1.log
+UNCLASSIFIED    1s exit=0   ea_iid-lfsr32-tap1-1bit-50000.c-v-w1.log
+UNCLASSIFIED    0s exit=0   ea_iid-lfsr32-tap1-8bit-50000.ia-v-w8.log
+UNCLASSIFIED    5s exit=0   ea_iid-lfsr32-tap1-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr32-tap8-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr32-tap8-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr32-tap8-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-lfsr32-tap8-8bit-50000.c-v-w8.log
+SIGNAL-127    0s exit=255 ea_iid-onesym0-1bit-50000.ia-v-w1.log
+SIGNAL-127    0s exit=255 ea_iid-onesym0-1bit-50000.c-v-w1.log
+SIGNAL-127    0s exit=255 ea_iid-onesym0-8bit-50000.ia-v-w8.log
+SIGNAL-127    0s exit=255 ea_iid-onesym0-8bit-50000.c-v-w8.log
+SIGNAL-127    0s exit=255 ea_iid-onesymmax-1bit-50000.ia-v-w1.log
+SIGNAL-127    0s exit=255 ea_iid-onesymmax-1bit-50000.c-v-w1.log
+SIGNAL-127    0s exit=255 ea_iid-onesymmax-8bit-50000.ia-v-w8.log
+SIGNAL-127    0s exit=255 ea_iid-onesymmax-8bit-50000.c-v-w8.log
+SIGNAL-127    0s exit=255 ea_iid-overwidth-1bit-50000.ia-v-w1.log
+SIGNAL-127    0s exit=255 ea_iid-overwidth-1bit-50000.c-v-w1.log
+SIGNAL-127    0s exit=255 ea_iid-overwidth-7bit-50000.ia-v-w7.log
+SIGNAL-127    0s exit=255 ea_iid-overwidth-7bit-50000.c-v-w7.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1000-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1000-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1000-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1000-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1023-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    1s exit=1   ea_iid-period1023-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1023-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period1023-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period16-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period16-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period16-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period16-8bit-50000.c-v-w8.log
+alias ea_iid-period2-1bit-50000.ia-v-w1.log -> alternating-1bit-50000.ia-v-w1
+alias ea_iid-period2-1bit-50000.c-v-w1.log -> alternating-1bit-50000.c-v-w1
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period2-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period2-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period255-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period255-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period255-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period255-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period256-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period256-1bit-50000.c-v-w1.log
+alias ea_iid-period256-8bit-50000.ia-v-w8.log -> counter-8bit-50000.ia-v-w8
+alias ea_iid-period256-8bit-50000.c-v-w8.log -> counter-8bit-50000.c-v-w8
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period3-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period3-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period3-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period3-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4095-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4095-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4095-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4095-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4096-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4096-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4096-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period4096-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period7-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period7-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    1s exit=1   ea_iid-period7-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-period7-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs100-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs100-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs100-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs100-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10000-1bit-50000.ia-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10000-1bit-50000.c-v-w1.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10000-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-runs10000-8bit-50000.c-v-w8.log
+UNCLASSIFIED    2s exit=0   ea_iid-two5050-1bit-50000.ia-v-w1.log
+UNCLASSIFIED    1s exit=0   ea_iid-two5050-1bit-50000.c-v-w1.log
+UNCLASSIFIED    2s exit=0   ea_iid-two5050-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    0s exit=1   ea_iid-two5050-8bit-50000.c-v-w8.log
+UNCLASSIFIED    6s exit=0   ea_iid-two9010-1bit-50000.ia-v-w1.log
+UNCLASSIFIED    4s exit=0   ea_iid-two9010-1bit-50000.c-v-w1.log
+UNCLASSIFIED    2s exit=0   ea_iid-two9010-8bit-50000.ia-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    1s exit=1   ea_iid-two9010-8bit-50000.c-v-w8.log
+COMPLETED-IID-BATTERY-FAILED    8s exit=1   ea_iid-iid-lag32copy-q030-1bit-50000.ia-v-w1.log
+UNCLASSIFIED    0s exit=0   ea_iid-csprng-8bit-50000.o.ia-v-w8.log
+harness/sanitizers/run.sh: line 377: 16137 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_restart-restart-1bit-1000x1000.n-v-w1-hi0.9.log
+SANITIZER    2s exit=0   ea_restart-restart-1bit-1000x1000.n-v-w1-hi0.9.ubsan-continue.log (UBSan continue pass, 2 report lines)
+harness/sanitizers/run.sh: line 377: 16992 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    0s exit=134 ea_restart-restart-8bit-1000x1000.n-v-w8-hi7.0symbol.log
+SANITIZER   19s exit=0   ea_restart-restart-8bit-1000x1000.n-v-w8-hi7.0symbol.ubsan-continue.log (UBSan continue pass, 2 report lines)
+COMPLETED   21s exit=0   ea_restart-restart-1bit-1000x1000.i-v-w1-hi0.9.log
+harness/sanitizers/run.sh: line 377: 30548 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    1s exit=134 ea_restart-restart-1bit-1000x1000.o.n-v-w1-hi0.9.log
+SANITIZER    2s exit=0   ea_restart-restart-1bit-1000x1000.o.n-v-w1-hi0.9.ubsan-continue.log (UBSan continue pass, 2 report lines)
+runs=393 skipped(existing)=0 aliases=16 sanitizer_reports=180 timeouts/signals/unclassified/skipped-input=52
+RESULTS.md: 589 logs, 360 with sanitizer reports, 0 incomplete -> /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+results: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+rc=0
+=== sanitizers: tsan Sun Nov  8 16:48:04 EST 2026 ===
+harness/sanitizers/run.sh: line 377: 31251 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    5s exit=134 ea_iid-csprng-8bit-50000.ia-v-w8.log
+harness/sanitizers/run.sh: line 377: 32243 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER    4s exit=134 ea_iid-csprng-1bit-50000.ia-v-w1.log
+harness/sanitizers/run.sh: line 377: 32903 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER   88s exit=134 ea_iid-iid-lag32copy-q030-1bit-50000.ia-v-w1.log
+COMPLETED    4s exit=0   ea_non_iid-csprng-8bit-50000.ia-vv-w8.log
+COMPLETED    0s exit=0   ea_non_iid-csprng-1bit-50000.ia-vv-w1.log
+SIGNAL-127    0s exit=255 ea_non_iid-overwidth-7bit-50000.ia-vv-w7.log
+COMPLETED    5s exit=0   ea_restart-restart-1bit-1000x1000.n-v-w1-hi0.9.log
+COMPLETED  192s exit=0   ea_restart-restart-8bit-1000x1000.n-v-w8-hi7.0symbol.log
+harness/sanitizers/run.sh: line 377: 86814 Abort trap: 6              env "${envs[@]}" "$TIMEOUT_BIN" -k 15 "$tmo_" "${cmd[@]}" >> "$log" 2>&1
+SANITIZER  101s exit=134 ea_restart-restart-1bit-1000x1000.i-v-w1-hi0.9.log
+runs=9 skipped(existing)=0 aliases=0 sanitizer_reports=4 timeouts/signals/unclassified/skipped-input=1
+RESULTS.md: 598 logs, 364 with sanitizer reports, 0 incomplete -> /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+results: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+rc=0
+RESULTS.md: 598 logs, 364 with sanitizer reports, 0 incomplete -> /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/sanitizers/RESULTS.md
+=== determinism Sun Nov  8 16:54:43 EST 2026 ===
+2026-11-08T16:54:43-0500 determinism phase: mode=full threads='1 2 10' out=/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism repo=/Users/gmcas/repos/SP800-90B_EntropyAssessment python=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/venv/bin/python
+2026-11-08T16:54:44-0500 binaries recorded in /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/binaries.sha256
+2026-11-08T16:54:44-0500 note: other jobs running (recorded in heavy-guard.txt); continuing because mode=full force=1
+2026-11-08T16:54:46-0500 == ea_non_iid matrix ==
+2026-11-08T16:54:46-0500   non_iid biased-random-bits t1-r1 (threads=1) ...
+2026-11-08T16:54:47-0500   -> rc=0 wall=1s
+2026-11-08T16:54:47-0500   non_iid biased-random-bits t2-r1 (threads=2) ...
+2026-11-08T16:54:47-0500   -> rc=0 wall=0s
+2026-11-08T16:54:47-0500   non_iid biased-random-bits t10-r1 (threads=10) ...
+2026-11-08T16:54:48-0500   -> rc=0 wall=1s
+2026-11-08T16:54:48-0500   non_iid biased-random-bits t10-r2 (threads=10) ...
+2026-11-08T16:54:48-0500   -> rc=0 wall=0s
+2026-11-08T16:54:48-0500   non_iid biased-random-bytes t1-r1 (threads=1) ...
+2026-11-08T16:55:00-0500   -> rc=0 wall=12s
+2026-11-08T16:55:00-0500   non_iid biased-random-bytes t2-r1 (threads=2) ...
+2026-11-08T16:55:10-0500   -> rc=0 wall=10s
+2026-11-08T16:55:10-0500   non_iid biased-random-bytes t10-r1 (threads=10) ...
+2026-11-08T16:55:18-0500   -> rc=0 wall=8s
+2026-11-08T16:55:18-0500   non_iid biased-random-bytes t10-r2 (threads=10) ...
+2026-11-08T16:55:28-0500   -> rc=0 wall=9s
+2026-11-08T16:55:28-0500   non_iid data.pi t1-r1 (threads=1) ...
+2026-11-08T16:55:28-0500   -> rc=0 wall=0s
+2026-11-08T16:55:28-0500   non_iid data.pi t2-r1 (threads=2) ...
+2026-11-08T16:55:28-0500   -> rc=0 wall=0s
+2026-11-08T16:55:28-0500   non_iid data.pi t10-r1 (threads=10) ...
+2026-11-08T16:55:29-0500   -> rc=0 wall=1s
+2026-11-08T16:55:29-0500   non_iid data.pi t10-r2 (threads=10) ...
+2026-11-08T16:55:29-0500   -> rc=0 wall=0s
+2026-11-08T16:55:29-0500   non_iid normal t1-r1 (threads=1) ...
+2026-11-08T16:55:37-0500   -> rc=0 wall=8s
+2026-11-08T16:55:37-0500   non_iid normal t2-r1 (threads=2) ...
+2026-11-08T16:55:45-0500   -> rc=0 wall=8s
+2026-11-08T16:55:45-0500   non_iid normal t10-r1 (threads=10) ...
+2026-11-08T16:55:57-0500   -> rc=0 wall=12s
+2026-11-08T16:55:57-0500   non_iid normal t10-r2 (threads=10) ...
+2026-11-08T16:56:07-0500   -> rc=0 wall=10s
+2026-11-08T16:56:07-0500   non_iid rand1_short t1-r1 (threads=1) ...
+2026-11-08T16:56:07-0500   -> rc=255 wall=0s
+2026-11-08T16:56:07-0500   non_iid rand1_short t2-r1 (threads=2) ...
+2026-11-08T16:56:07-0500   -> rc=255 wall=0s
+2026-11-08T16:56:07-0500   non_iid rand1_short t10-r1 (threads=10) ...
+2026-11-08T16:56:07-0500   -> rc=255 wall=0s
+2026-11-08T16:56:07-0500   non_iid rand1_short t10-r2 (threads=10) ...
+2026-11-08T16:56:07-0500   -> rc=255 wall=0s
+2026-11-08T16:56:07-0500   non_iid rand4_short t1-r1 (threads=1) ...
+2026-11-08T16:56:07-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand4_short t2-r1 (threads=2) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand4_short t10-r1 (threads=10) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand4_short t10-r2 (threads=10) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand8_short t1-r1 (threads=1) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand8_short t2-r1 (threads=2) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand8_short t10-r1 (threads=10) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:08-0500   non_iid rand8_short t10-r2 (threads=10) ...
+2026-11-08T16:56:08-0500   -> rc=255 wall=0s
+2026-11-08T16:56:09-0500   non_iid ringOsc-nist t1-r1 (threads=1) ...
+2026-11-08T16:56:09-0500   -> rc=0 wall=0s
+2026-11-08T16:56:09-0500   non_iid ringOsc-nist t2-r1 (threads=2) ...
+2026-11-08T16:56:09-0500   -> rc=0 wall=0s
+2026-11-08T16:56:09-0500   non_iid ringOsc-nist t10-r1 (threads=10) ...
+2026-11-08T16:56:10-0500   -> rc=0 wall=1s
+2026-11-08T16:56:10-0500   non_iid ringOsc-nist t10-r2 (threads=10) ...
+2026-11-08T16:56:10-0500   -> rc=0 wall=0s
+2026-11-08T16:56:10-0500   non_iid truerand_1bit t1-r1 (threads=1) ...
+2026-11-08T16:56:11-0500   -> rc=0 wall=1s
+2026-11-08T16:56:11-0500   non_iid truerand_1bit t2-r1 (threads=2) ...
+2026-11-08T16:56:12-0500   -> rc=0 wall=1s
+2026-11-08T16:56:12-0500   non_iid truerand_1bit t10-r1 (threads=10) ...
+2026-11-08T16:56:12-0500   -> rc=0 wall=0s
+2026-11-08T16:56:12-0500   non_iid truerand_1bit t10-r2 (threads=10) ...
+2026-11-08T16:56:13-0500   -> rc=0 wall=1s
+2026-11-08T16:56:13-0500   non_iid truerand_4bit t1-r1 (threads=1) ...
+2026-11-08T16:56:22-0500   -> rc=0 wall=9s
+2026-11-08T16:56:22-0500   non_iid truerand_4bit t2-r1 (threads=2) ...
+2026-11-08T16:56:34-0500   -> rc=0 wall=12s
+2026-11-08T16:56:34-0500   non_iid truerand_4bit t10-r1 (threads=10) ...
+2026-11-08T16:56:47-0500   -> rc=0 wall=13s
+2026-11-08T16:56:47-0500   non_iid truerand_4bit t10-r2 (threads=10) ...
+2026-11-08T16:56:56-0500   -> rc=0 wall=9s
+2026-11-08T16:56:56-0500   non_iid truerand_8bit t1-r1 (threads=1) ...
+2026-11-08T16:57:04-0500   -> rc=0 wall=8s
+2026-11-08T16:57:04-0500   non_iid truerand_8bit t2-r1 (threads=2) ...
+2026-11-08T16:57:13-0500   -> rc=0 wall=9s
+2026-11-08T16:57:13-0500   non_iid truerand_8bit t10-r1 (threads=10) ...
+2026-11-08T16:57:22-0500   -> rc=0 wall=9s
+2026-11-08T16:57:22-0500   non_iid truerand_8bit t10-r2 (threads=10) ...
+2026-11-08T16:57:31-0500   -> rc=0 wall=9s
+2026-11-08T16:57:31-0500   non_iid csprng-1bit-1000000 t1-r1 (threads=1) ...
+2026-11-08T16:57:32-0500   -> rc=0 wall=1s
+2026-11-08T16:57:32-0500   non_iid csprng-1bit-1000000 t2-r1 (threads=2) ...
+2026-11-08T16:57:32-0500   -> rc=0 wall=0s
+2026-11-08T16:57:33-0500   non_iid csprng-1bit-1000000 t10-r1 (threads=10) ...
+2026-11-08T16:57:33-0500   -> rc=0 wall=0s
+2026-11-08T16:57:33-0500   non_iid csprng-1bit-1000000 t10-r2 (threads=10) ...
+2026-11-08T16:57:34-0500   -> rc=0 wall=1s
+2026-11-08T16:57:34-0500   non_iid csprng-8bit-1000000 t1-r1 (threads=1) ...

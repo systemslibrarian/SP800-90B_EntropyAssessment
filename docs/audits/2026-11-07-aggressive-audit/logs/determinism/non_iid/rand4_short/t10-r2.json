@@ -1,0 +1,17 @@
+{
+   "IID" : false,
+   "assessedSampleCount" : 10000,
+   "bitsPerSymbol" : 4,
+   "bitsPerSymbolInferred" : true,
+   "commandline" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid -i -a -vv -o /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/logs/determinism/non_iid/rand4_short/t10-r2.json /Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin",
+   "dateTimeStamp" : "20261108165608",
+   "errorClass" : "input",
+   "errorLevel" : -1,
+   "errorMessage" : "Error: dataset contains 10000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.",
+   "filename" : "/Users/gmcas/repos/SP800-90B_EntropyAssessment/bin/rand4_short.bin",
+   "sha256" : "a9e2169cb1accc78cd23892d793a232b84b0cd13ccc3923526e0b20762bd77ac",
+   "sha256Scope" : "assessed-sample-bytes",
+   "testCases" : null,
+   "toolVersion" : "1.1.8",
+   "type" : ""
+}

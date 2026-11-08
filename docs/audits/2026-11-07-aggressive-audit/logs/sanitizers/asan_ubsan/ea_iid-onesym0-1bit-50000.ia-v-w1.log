@@ -1,0 +1,38 @@
+## stage: d
+## variant: asan_ubsan
+## tool: ea_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid
+## binary_sha256: bebaad509b661a68a8a014007fb3818ea5da255cf8e389f436edd62035ddabcf
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin
+## input_sha256: 5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d
+## input_bytes: 50000
+## operands: 1
+## flags: -i -a -v
+## short_dataset_escape: yes
+## heavy: no
+## note: 
+## timeout_seconds: 1200
+## threads: 2
+## start: 2026-11-08T21:46:45Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin EA_ALLOW_SHORT_DATASET=1 ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid -i -a -v /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin 1
+## --- tool output ---
+Warning: Symbols appear to be narrower than described.
+Loaded file: '/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/onesym0-1bit-50000.bin' (SHA-256 hash 5b4b67b5d68e02c992760de07640472efe53a7f7553865f83262d0a74efc3e5d of assessed bytes)
+Loaded 50000 samples of 1 distinct 1-bit-wide symbols
+
+*** Warning: dataset contains 50000 samples; SP 800-90B Section 3.1.1 requires at least 1000000.
+*** EA_ALLOW_SHORT_DATASET is set, so this run continues for test purposes only.
+*** Its result is NOT a compliant SP 800-90B assessment. ***
+
+Symbol alphabet consists of 1 symbol. No entropy awarded...
+## --- end of tool output ---
+## exit: 255
+## wall_seconds: 0
+## end: 2026-11-08T21:46:45Z
+## sanitizer_report: no
+## sanitizer_report_count: 0
+## first_report_line: -
+## tool_outcome: SIGNAL-127
+## permutation_battery: not-seen
+## permutation_progress_lines: 0

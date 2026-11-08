@@ -1,0 +1,24 @@
+## stage: d
+## variant: asan_ubsan
+## tool: ea_iid
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_iid
+## binary_sha256: bebaad509b661a68a8a014007fb3818ea5da255cf8e389f436edd62035ddabcf
+## input: /Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/corpus/period256-8bit-50000.bin
+## input_sha256: 9d3550b2e0ae28ea766fd775454403cd4888c27509cb10d1be190f89b3f1decd
+## input_bytes: 50000
+## operands: 8
+## flags: -c -v
+## short_dataset_escape: yes
+## heavy: no
+## note: alias_of:counter-8bit-50000.c-v-w8
+## timeout_seconds: 1200
+## threads: 2
+## start: 2026-11-08T21:46:48Z
+## alias_of: counter-8bit-50000.c-v-w8
+## --- tool output ---
+## --- end of tool output ---
+## exit: -
+## wall_seconds: 0
+## sanitizer_report: see-alias
+## first_report_line: -
+## tool_outcome: ALIAS

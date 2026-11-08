@@ -1,0 +1,99 @@
+## stage: e
+## variant: asan_ubsan
+## tool: ea_restart
+## binary: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_restart
+## binary_sha256: 9f913fd296d6a5be11956f7e8bb77b8e03a62fdb2014ca8906a3aa0cca9dff4e
+## input: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-8bit-1000x1000.bin
+## input_sha256: c1cd45a57ea9d72a43316ea022c6329922a1fcdf2b81c2410033f172bfda88d0
+## input_bytes: 1000000
+## operands: 8 7.0/symbol
+## flags: -n -v
+## short_dataset_escape: no
+## heavy: yes
+## note: non-IID restart; X_max rows/cols 15/15
+## timeout_seconds: 3600
+## threads: 2
+## start: 2026-11-08T21:47:20Z
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_restart -n -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-8bit-1000x1000.bin 8 7.0/symbol
+## rerun_of: ea_restart-restart-8bit-1000x1000.n-v-w8-hi7.0symbol.log
+## rerun_reason: first report was a recoverable UBSan class; halt_on_error=0 to see the rest
+## env: OMP_NUM_THREADS=2 EA_TEST_RANDOM_SOURCE=/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/random-source-1MiB.bin ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:halt_on_error=1:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=0:report_error_type=1
+## cmd: /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/asan_ubsan/ea_restart -n -v /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-8bit-1000x1000.bin 8 7.0/symbol
+## --- tool output ---
+non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+    #0 0x0001006efca8 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
+    #1 0x00010070de4c in main restart_main.cpp:1034
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:111:21 
+non_iid/lag_test.h:86:17: runtime error: implicit conversion from type 'int' of value -1 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 255 (8-bit, unsigned)
+    #0 0x0001006efb04 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:86
+    #1 0x00010070de4c in main restart_main.cpp:1034
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: implicit-signed-integer-truncation non_iid/lag_test.h:86:17 
+Loaded file: '/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/san/inputs/restart-8bit-1000x1000.bin' (SHA-256 hash c1cd45a57ea9d72a43316ea022c6329922a1fcdf2b81c2410033f172bfda88d0 of assessed bytes)
+Loaded 1000000 samples made up of 256 distinct 8-bit-wide symbols.
+H_I: 7.000000
+ALPHA: 5.0000000000000004e-06, X_cutoff: 27 (exact distribution of the multinomial maximum, the statistic 3.1.4.3 forms)
+X_cutoff_printed_binomial: 23 (SP 800-90B 3.1.4.3 step 5 as printed; conformance figure, not the verdict -- it rejects correctly-operating sources, see OC-30)
+X_max: 15
+
+Restart Sanity Check Passed...
+Calculating baseline statistics...
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+Literal MCV Estimate: mode = 4088, p-hat = 0.0040879999999999996, p_u = 0.0042523551143838108
+	Most Common Value Estimate (Rows) = 7.877522 / 8 bit(s)
+Literal MCV Estimate: mode = 4088, p-hat = 0.0040879999999999996, p_u = 0.0042523551143838108
+	Most Common Value Estimate (Cols) = 7.877522 / 8 bit(s)
+
+Running Tuple Estimates...
+Literal t-Tuple Estimate: t = 2, p-hat_max = 0.005916082741141725706568, p_u = 0.006113618597830375832325
+Literal LRS Estimate: u = 3, v = 5, p-hat = 0.0045730587507903549, p_u = 0.0047468489906174289
+Literal t-Tuple Estimate: t = 2, p-hat_max = 0.006000003000002250216904, p_u = 0.006198926559604730178454
+Literal LRS Estimate: u = 3, v = 4, p-hat = 0.0039359862305130373, p_u = 0.004097268901431775
+	T-Tuple Test Estimate (Rows) = 7.353758 / 8 bit(s)
+	T-Tuple Test Estimate (Cols) = 7.333766 / 8 bit(s)
+	LRS Test Estimate (Rows) = 7.718814 / 8 bit(s)
+	LRS Test Estimate (Cols) = 7.931122 / 8 bit(s)
+
+Running Predictor Estimates...
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.004084274725362806 (C = 3923) Plocal can't affect result (r = 3)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (Rows) = 7.935704 / 8 bit(s)
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.0040914182006635885 (C = 3930) Plocal can't affect result (r = 3)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate (Cols) = 7.933183 / 8 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.0039574660655974647 (C = 3799) Plocal can't affect result (r = 3)
+	Lag Prediction Test Estimate (Rows) = 7.981207 / 8 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.0039727774138450358 (C = 3814) Plocal can't affect result (r = 3)
+	Lag Prediction Test Estimate (Cols) = 7.975636 / 8 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.0040370823992760671 (C = 3877) Plocal can't affect result (r = 3)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (Rows) = 7.952471 / 8 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.0039921748924887646 (C = 3833) Plocal can't affect result (r = 3)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate (Cols) = 7.968609 / 8 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.0040361223694322743 (C = 3876) Plocal can't affect result (r = 3)
+	LZ78Y Prediction Test Estimate (Rows) = 7.952814 / 8 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.0039932554703402366 (C = 3834) Plocal can't affect result (r = 3)
+	LZ78Y Prediction Test Estimate (Cols) = 7.968219 / 8 bit(s)
+
+H_r: 7.353758
+H_c: 7.333766
+H_I: 7.000000
+
+Validation Test Passed...
+
+min(H_r, H_c, H_I): 7.000000
+
+## --- end of tool output ---
+## exit: 0
+## wall_seconds: 19
+## end: 2026-11-08T21:47:39Z
+## sanitizer_report: yes
+## sanitizer_report_count: 2
+## first_report_line: non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+## tool_outcome: SANITIZER
+## permutation_battery: not-seen
+## permutation_progress_lines: 0
