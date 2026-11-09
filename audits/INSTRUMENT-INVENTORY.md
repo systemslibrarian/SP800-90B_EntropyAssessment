@@ -76,7 +76,7 @@ them was being invoked **then**. So:
 
 | set | rule that applies | count |
 |---|---|---:|
-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **89** at `04c1ccc` with `c8b0bc6` and `7d647e6` merged, 2026-11-08 |
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **90** at `04c1ccc` with `c8b0bc6`, `7d647e6` and `745b396` merged, 2026-11-08 |
 | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
 
 Counting frozen by the live rule would silently retire 47 artefacts that were
@@ -90,13 +90,15 @@ validation), `oracles/c22c_derive.py` (the slow re-derivation),
 `audits/enum-instruments.sh` by `regression-docs.sh`, which is how this
 document was found to be four behind rather than by anyone remembering.
 
-**87 -> 89 across the 2026-11-08 merges into master (PROV-01, PROV-15).** The
-instruments are `cpp/selftest/regression-stale-report.sh`, the regression for
-the stale-report ordering defect in the three tools' `-o` claim, and
+**87 -> 90 across the 2026-11-08 merges into master (PROV-01, PROV-15, AA-04).**
+The instruments are `cpp/selftest/regression-stale-report.sh`, the regression
+for the stale-report ordering defect in the three tools' `-o` claim;
 `cpp/selftest/regression-openssl-pin.sh`, the regression for the openssl@3
-pin's include and link order. Each fix branch counted 88 alone against the
-same 87, so the branch figures do not sum: the merged tree is counted once,
-by the enumerator, after each merge.
+pin's include and link order; and `cpp/selftest/regression-restart-notrun.sh`,
+the regression for a declined restart row or column estimator that was
+dropped from the report silently. Each fix branch counted 88 alone against
+the same 87, so the branch figures do not sum: the merged tree is counted
+once, by the enumerator, after each merge.
 
 Three consequences the rule settles, each of which was got wrong once:
 
@@ -124,7 +126,7 @@ thing an extension-matched glob missed.
 
 | set | count | what it is |
 |---|---:|---|
-| **LIVE** | **89** at `04c1ccc` with `c8b0bc6` and `7d647e6` merged, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+| **LIVE** | **90** at `04c1ccc` with `c8b0bc6`, `7d647e6` and `745b396` merged, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
 | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
 Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for

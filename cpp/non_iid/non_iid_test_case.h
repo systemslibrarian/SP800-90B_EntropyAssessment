@@ -18,6 +18,16 @@ public:
     double h_r = -1.0;
     double h_c = -1.0;
     double h_i = -1.0;
+    // ea_restart runs each literal estimator on the rows and again on the
+    // columns of the restart matrix, and either run can decline the way F05
+    // records for ea_non_iid (test_case_base.h, literal_not_run). Until
+    // 2026-11-08 the declined half simply left h_r or h_c out, so H_r or H_c
+    // was a minimum over fewer estimators than SP 800-90B 6.2 lists with
+    // nothing in the report saying so. These say which half declined. Same
+    // rule as F05: a statement of fact about the run, not an error (audit
+    // 2026-11-07, PROV-10).
+    bool row_not_run = false;
+    bool col_not_run = false;
     double n_in = -1.0;
     double n_out = -1.0;
     double nw = -1.0;
@@ -41,6 +51,10 @@ public:
             json["h_r"] = h_r;
         if(h_c != -1)
             json["h_c"] = h_c;
+        if(row_not_run)
+            json["rowEstimateNotRun"] = true;
+        if(col_not_run)
+            json["columnEstimateNotRun"] = true;
         if(h_i != -1)
             json["h_i"] = h_i;
         if(n_in != -1)

@@ -18,6 +18,7 @@ regression-output.sh
 regression-outside-battery.sh
 regression-platform-deltas.sh
 regression-restart.sh
+regression-restart-notrun.sh
 regression-selftest-inventory.sh
 regression-stale-report.sh
 regression-subset.sh
