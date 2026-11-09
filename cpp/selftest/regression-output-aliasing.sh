@@ -55,6 +55,14 @@ cases=0
 DECLARED_CASES=49
 pass() { cases=$((cases + 1)); printf '  %-52s PASS\n' "$1"; }
 fail() { cases=$((cases + 1)); printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
+# OC-131: a SKIP is a declared case that could not be put on this platform. It
+# is COUNTED and named, not scored -- the same rule the Windows job states for
+# its own gates. Until now the skip sites printed a row without counting it, so
+# on Windows (no symlink alias: three alias cases and the three F03 plants) the
+# declared total could never be met and the count check failed there for a
+# reason that had nothing to do with the guard. A skipped case must still be
+# ONE case, so the F03 block skips once per tool, as it would have run.
+skip() { cases=$((cases + 1)); printf '  %-52s SKIP  %s\n' "$1" "$2"; }
 
 # A 1-bit input the tools accept, so a refusal cannot be confused with an input
 # rejection. splitmix64 bit 0: no short period, and it passes the required
@@ -122,9 +130,9 @@ for tool in ea_non_iid ea_iid ea_restart; do
         # writing through one name and reading through the other.
         case "${alias}" in
             hardlink.bin) [ "${HARDLINK_IS_ALIAS}" = yes ] || {
-                printf '  %-52s SKIP  ln does not alias on this platform\n' "${tool} -o ${alias}"; continue; } ;;
+                skip "${tool} -o ${alias}" "ln does not alias on this platform"; continue; } ;;
             symlink.bin)  [ "${SYMLINK_IS_ALIAS}" = yes ] || {
-                printf '  %-52s SKIP  ln -s does not alias on this platform (MSYS2 copies)\n' "${tool} -o ${alias}"; continue; } ;;
+                skip "${tool} -o ${alias}" "ln -s does not alias on this platform (MSYS2 copies)"; continue; } ;;
         esac
         run_tool "${tool}" "${alias}"; rc=$?
         now=$(sha_of "${work}/capture.bin")
@@ -152,8 +160,7 @@ elif grep -q 'could not put the report in place' "${work}/control.out"; then
     # That is a separately tracked defect, not this guard refusing a legitimate
     # run, and the distinction is read off the tool's own message rather than
     # guessed from the platform.
-    printf '  %-52s SKIP  C24: no report can be written on this platform\n' \
-        "control: a distinct -o path still assesses"
+    skip "control: a distinct -o path still assesses" "C24: no report can be written on this platform"
 else
     fail "control: a distinct -o path still assesses" "the guard refuses a legitimate run"
 fi
@@ -235,10 +242,14 @@ PLANTEOF
         rm -f "${work}/f03.json" "${work}"/f03.json.tmp.*
         "${work}/gen" > "${work}/capture.bin"
     else
-        printf '  %-52s SKIP  no symlink() on this platform\n' "F03 temp-path symlink"
+        for tool in ea_non_iid ea_iid ea_restart; do
+            skip "${tool} symlink planted at the temp path" "no symlink() on this platform"
+        done
     fi
 else
-    printf '  %-52s SKIP  ln -s does not alias here (MSYS2 copies)\n' "F03 temp-path symlink"
+    for tool in ea_non_iid ea_iid ea_restart; do
+        skip "${tool} symlink planted at the temp path" "ln -s does not alias here (MSYS2 copies)"
+    done
 fi
 
 # ---- A04 / F04: a --version that is really -o's ARGUMENT, in every spelling ----
@@ -306,7 +317,7 @@ ctl_assess() { # ctl_assess <label> <args...>
         fail "control: ${label}" "printed the version banner"
     elif [ "${rc}" -ne 0 ]; then
         if printf '%s' "${out}" | grep -q 'could not put the report in place'; then
-            printf '  %-52s SKIP  C24: no report can be written on this platform\n' "control: ${label}"
+            skip "control: ${label}" "C24: no report can be written on this platform"
         else
             fail "control: ${label}" "exit ${rc}"
         fi

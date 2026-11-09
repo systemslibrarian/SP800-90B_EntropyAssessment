@@ -274,7 +274,9 @@ r1)
   if g++ -std=c++11 $OMPFLAGS -ffloat-store -O2 -Icpp/shared -Icpp/non_iid \
         audits/2026-10-11-independent-audit/reproducers/r1_pcol_sweep.cpp \
         -o /tmp/r1sweep.exe $OMPLIB -lbz2 -lpthread -ldivsufsort -ldivsufsort64 \
-        -ljsoncpp -lcrypto >> "$L" 2>&1; then
+        -ljsoncpp -lcrypto -lbcrypt >> "$L" 2>&1; then
+        # -lbcrypt: the sweep includes shared/utils.h, which since C25 reaches
+        # BCryptGenRandom through shared/os_random.h (OC-131); same as the Makefile
     /tmp/r1sweep.exe >> "$L" 2>&1
     grep -E 'sizeof|aborting alphabet|^aborting k|powers of two|width 1|still aborting' "$L"
     n=$(sed -n 's/^aborting alphabet sizes at exact balance: \([0-9]*\) of 255/\1/p' "$L" | head -1)
@@ -337,7 +339,10 @@ EOF
     printf '%s' "$out" | grep -q 'Loaded'            && far="loaded the input"
     printf '%s' "$out" | grep -q 'Calculating base'  && far="reached baseline statistics"
     printf '%s' "$out" | grep -qE '^\*\* (Passed|Failed)' && far="reached the test battery"
-    printf '%s' "$out" | grep -qE 'H_original|H_bitstring|H_assessed|Assessed min entropy|min entropy' \
+    # ea_restart's figure lines are H_r / H_c / min(H_r, H_c, H_I); until C25
+    # it never got this far on Windows, so the classifier had never met them
+    # and read a completed restart run as "reached the test battery" (OC-131)
+    printf '%s' "$out" | grep -qE 'H_original|H_bitstring|H_assessed|Assessed min entropy|min entropy|^H_r:|min\(H_r' \
                                                      && far="produced a figure"
     # the death at seed(): upstream's text ("Can't open random source.
     # Reverting to a deterministic seed.") before C25, and the fail-closed
