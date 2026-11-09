@@ -1,0 +1,9 @@
+iid/chi_square_tests.h:439:45: runtime error: division by zero
+    #0 0x000104404124 in calc_T(std::__1::vector<double, std::__1::allocator<double>> const&, std::__1::vector<int, std::__1::allocator<int>> const&) chi_square_tests.h:439
+    #1 0x000104409d50 in goodness_of_fit(unsigned char const*, double&, int&, int, int) chi_square_tests.h:639
+    #2 0x00010440a56c in chi_square_tests(unsigned char const*, int, int, int) chi_square_tests.h:705
+    #3 0x00010440ba94 in main iid_main.cpp:480
+    #4 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior iid/chi_square_tests.h:439:45 
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/fuzz/fuzz_common.sh: line 46: 45946 Abort trap: 6              timeout -k 5 "$secs" "$@"

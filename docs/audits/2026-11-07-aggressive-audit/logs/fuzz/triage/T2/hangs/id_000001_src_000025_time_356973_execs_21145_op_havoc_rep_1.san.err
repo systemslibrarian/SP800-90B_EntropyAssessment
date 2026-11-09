@@ -1,0 +1,7 @@
+non_iid/lag_test.h:111:21: runtime error: implicit conversion from type 'int' of value 256 (32-bit, signed) to type 'uint8_t' (aka 'unsigned char') changed the value to 0 (8-bit, unsigned)
+    #0 0x000102357b18 in lag_test(unsigned char*, long, int, int, char const*) lag_test.h:111
+    #1 0x00010235c628 in main non_iid_main.cpp:552
+    #2 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
+
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior non_iid/lag_test.h:111:21 
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/fuzz/fuzz_common.sh: line 46: 40796 Abort trap: 6              timeout -k 5 "$secs" "$@"
