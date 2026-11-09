@@ -13291,3 +13291,54 @@ wanting it should run `gh run list -R systemslibrarian/SP800-90B_EntropyAssessme
   included, and a rule written by the person who broke it four times is not
   independent confirmation that the four are one pattern.
 - Nothing reported upstream.
+
+## OC-129 — after the aggressive audit: three repairs merged, one declined with its margin re-measured, and the machine put back
+
+The aggressive audit of 2026-11-07/08 (branch `audit/2026-11-07`,
+`docs/audits/2026-11-07-aggressive-audit/FINDINGS.md`) ended with four fix
+branches, each FAIL-before / PASS-after. The owner merged three and declined
+one, in this order, each merge verified on a clean build before the next:
+
+| merge | branch | master after | FAIL evidence (pre-merge) → PASS (merged) | suite |
+|---|---|---|---|---|
+| 1 | `fix/stale-report` `c8b0bc6` | `61dbe9b` | `regression-stale-report.sh` FAIL (9 of 29) against the `04c1ccc` binaries → PASS (29) | selftest known deltas only; 25/25 scripts; deadguard 40; harness-inventory 5/5; docs PASS |
+| 2 | `fix/openssl-pin` `7d647e6` | `db1d67c` | FAIL against the `04c1ccc` Makefile text (the test's seam; the environment no longer has openssl@4 to show the bad link) → PASS, binaries on `libcrypto.3` | 26/26; deadguard 40; 5/5; docs PASS |
+| 3 | `fix/restart-notrun` `745b396` | `4c62713` | FAIL (3) against the `04c1ccc` `ea_restart` → PASS | 27/27; deadguard 40; 5/5; docs PASS |
+
+The three branches edit the same count lines from the same base, so git
+auto-merged them to a value no tree carries (the guide's "clean merge is a
+statement about text" hazard, observed: merge 2 landed `25/27` for a tree
+with two new scripts). Every count was set by hand after each merge from a
+read-only simulation whose final tree `5e955105…` the real merge 3 reproduced
+byte-for-byte (`EXPECTED_REGRESSION_SCRIPTS=27`, `EXPECTED_TOTAL_CHECKS=29`,
+live instruments 90, the x86-64 gate at `N-2 passed, 2 could not run`). Each
+suite was run in foreground pieces because the host could not hold a
+15-minute background job (the audit's §5 explains).
+
+**Declined: `fix/multimmc-lookup` (`3b1a418`).** The NOT-REPAIRED stance on
+`C01`/`F10` stands. What changed is the recorded margin: the audit's X3 drove
+the chained lookup at width 8 and compliant size to **+0.078 bit** on the
+Literal MultiMMC estimator (and −0.093 bit on a second construction) against
+a spec-only reference, with two behavioural models agreeing on the cause.
+The 3.69e-4 that stood in `FORK-DIVERGENCE-AND-TRUST.md` A.1 and
+`entropy_floor.py` was a width-1-era instance; both now carry ±0.08 /
+`C01 = 7.8e-2`, the tracker's F10 row moves from `UNCONFIRMED` to
+`NEEDS-FIX` with the owner's decision as its next action, and the tool,
+reference and model outputs are copied to `logs/f10/`. Still a measurement,
+not a bound.
+
+**The machine.** `brew install afl++` (2026-11-07 19:28) had added afl++,
+z3, llvm 23, lld, openssl@4 and python@3.15, upgraded sqlite 3.53.4→3.54.1,
+unlinked openssl@3 and overwritten python@3.14's `python3`. Reverted
+2026-11-08 from the install receipts: python3 relinked to 3.14.7 (PyYAML
+present; `regression-workflows.sh` passes again), the six added kegs
+uninstalled (nothing else depended on them), openssl@3 relinked. sqlite stays
+at 3.54.1: python@3.14, node and rust now load it. Record:
+`audit/2026-11-07` branch, `logs/followups/brew-forensics.md`, `revert.log`.
+Caveat for later: python@3.14's current formula depends on openssl@4, so a
+`brew upgrade python@3.14` brings it back; the durable protection for the
+build is merge 2's `-I`/`-L` order.
+
+**Does not establish.** Windows and x86-64 are measured by the CI runs the
+push of this master fires, recorded afterwards by the usual one-run lag.
+

@@ -337,13 +337,35 @@ never broke anything.
   width 1 a **DERIVED** exclusion: with `D_MMC = 16` and
   `MAX_ENTRIES = 100000`, binary data gives `entries[d] ≤ 2^(d+2)`, so the cap
   cannot bind below `d = 15` and `d = 15` has no `d+1` to suppress. **A proof,
-  not a measurement.**
-- **STATUS.** **NOT REPAIRED.** Excluded from the entropy floor at width 1 by
-  the proof above; above width 1 it contributes an **evaluated margin** of
-  3.69e-4 and the floor oracle then refuses to call its output a floor at all.
-- **DOES NOT ESTABLISH.** Anything above width 1. The margin is one measured
-  overestimate over the inputs tried; the mechanism is data-dependent, so
-  nothing bounds it.
+  not a measurement.** **RE-MEASURED 2026-11-08 at width 8, compliant size
+  (the aggressive audit's X3):** two crafted 1,000,000-sample 8-bit files
+  whose fill saturates depths 2–16 at consecutive steps and then repeats a
+  period with orphan contexts. Literal MultiMMC, tool vs a spec-only
+  reference implementing §6.3.9 step 4.b.i's independent per-depth lookup:
+  naive construction `C 449,998 / r 17 / 1.1479 bit` vs `421,911 / 16 / 1.2406`
+  (tool LOWER, −0.093 bit); gadget construction `C 506,288 / r 12 / 0.9783`
+  vs `534,409 / 20 / 0.9005` (tool **HIGHER, +0.078 bit**). Two behavioural
+  models (text-as-written ≡ reference; C++-transcribed ≡ tool) agree the
+  cause is the chained lookup at `multi_mmc_test.h:236` with the cap bound.
+  The assessed figure did not move on these files (other estimators gave
+  0), so this is the estimator's margin, not a final-figure case; the earlier
+  record holds the one executed final-figure case. Reproducer: branch
+  `audit/2026-11-07` — `docs/audits/2026-11-07-aggressive-audit/harness/experiments/x3_multimmc_orphans.py` exists only on that branch
+  (with `common.py`; generator sha256 and file digests in that directory's
+  `MANIFEST.txt`), run plan `PLAN.md` §X3; the tool, reference and model
+  outputs are copied to `audits/2026-10-11-independent-audit/logs/f10/`.
+- **STATUS.** **NOT REPAIRED — owner decision restated 2026-11-08.** Excluded
+  from the entropy floor at width 1 by the proof above; above width 1 it
+  contributes an **evaluated margin**, now recorded as **±0.08 bit at width 8
+  (+0.078 measured)** — two hundred times the 3.69e-4 that stood here, which
+  was a width-1-era instance — and the floor oracle then refuses to call its
+  output a floor at all. A repair implementing the independent lookup
+  (`fix/multimmc-lookup`, `3b1a418`, FAIL-before/PASS-after with the self-test
+  corpus unchanged) is on the fork, **unmerged**, for the owner.
+- **DOES NOT ESTABLISH.** Anything above width 1 as a bound. The margin is
+  the larger of two measured instances on crafted inputs; the mechanism is
+  data-dependent, so nothing bounds it, and ±0.08 is a measurement, not a
+  ceiling.
 
 ### A.2 — Introduced by this fork, and repaired
 

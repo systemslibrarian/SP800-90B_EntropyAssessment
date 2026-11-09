@@ -103,7 +103,14 @@ import json, sys, os
 # it is an EVALUATED MARGIN over the inputs measured, not a certified bound,
 # and the output says so. Correcting the algorithm is the second option and is
 # a change to estimator numerics, which is the owner's call, not this script's.
-C01 = 3.69e-4          # F10 margin; EXCLUDED at width 1 by the proof above (A02 / OC-55)
+# RE-MEASURED 2026-11-08 (OC-129): the aggressive audit's X3 drove the chained lookup
+# at width 8 and compliant size to +0.078 bit on the Literal MultiMMC estimator
+# (and -0.093 bit on a second construction), against a spec-only reference, with
+# two behavioural models agreeing on the cause. 3.69e-4 was a width-1-era
+# instance; the margin carried above width 1 is now the larger measured instance.
+# Still ONE MEASUREMENT and not a bound -- the output says so. Record and
+# reproducer: FORK-DIVERGENCE-AND-TRUST.md A.1, audits/.../logs/f10/.
+C01 = 7.8e-2           # F10 margin, width-8 measurement 2026-11-08; EXCLUDED at width 1 by the proof above (A02 / OC-55)
 # P_local bisection quantisation: half-ULP of x amplified by (N+1) (OC-22).
 #
 # THE VALUE AND ITS SUPREMACY ARE BOTH ESTABLISHED (OC-63). The constant behind

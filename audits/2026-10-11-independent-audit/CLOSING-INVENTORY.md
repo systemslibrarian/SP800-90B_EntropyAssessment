@@ -47,6 +47,18 @@ log shows the fixture running and every declared self-test case run. **The
 run-id lag is cut there by decision; nothing records the run this revision
 fires.**
 
+**2026-11-08, after the aggressive audit (`audit/2026-11-07`).** Three
+repairs merged into master one at a time, each FAIL-before/PASS-after on a
+clean build with the suite green (`OC-129`): the stale-report ordering of
+the `-o` claim, the OpenSSL pin's search order, and the restart report's
+not-run flags and awarded minimum. The MultiMMC chained-lookup divergence
+stays **NOT REPAIRED** by decision, with its margin re-measured at ±0.08 bit
+at width 8 (was 3.69e-4, a width-1 instance). The audit's own headline is a
+limitation of the standard, not of this code: a stuck bit line on an 8-bit
+capture let §3.1.3's `n × H_bitstring` term report 2.42× the true min-entropy
+with the C++ matching the text exactly — the consumer's capture pipeline must
+assess at the real width.
+
 ## What the campaign established
 
 Three findings lead, because they are the ones that would survive an outside
