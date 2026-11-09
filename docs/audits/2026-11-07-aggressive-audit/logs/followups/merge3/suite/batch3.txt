@@ -1,0 +1,9 @@
+regression-restart.sh rc=0 regression-restart: PASS
+regression-restart-notrun.sh rc=0 regression-restart-notrun: PASS
+regression-selftest-inventory.sh rc=0 regression-selftest-inventory: PASS
+regression-stale-report.sh rc=0 regression-stale-report: PASS (29 checks)
+regression-subset.sh rc=0 regression-subset: PASS
+regression-width.sh rc=0 regression-width: PASS
+regression-workflows.sh rc=0 regression-workflows: PASS
+regression-constants.sh rc=0 regression-constants: PASS (10 constants, the C22c digest, the sweep, 
+harness-inventory-mutation-test rc=0 harness-inventory-mutation-test: PASS

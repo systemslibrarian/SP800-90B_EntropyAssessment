@@ -1,0 +1,221 @@
+== installed_dependents.rb lines 25-75 ==
+      kegs:     T::Array[Keg],
+      casks:    T::Array[Cask::Cask],
+      formulae: T::Array[Formula],
+    ).returns(T.nilable([T::Array[Keg], T::Array[String]]))
+  }
+  def find_some_installed_dependents(kegs, casks: [], formulae: Formula.installed)
+    keg_names = kegs.select(&:optlinked?).map(&:name)
+    keg_formulae = []
+    kegs_by_source = kegs.group_by do |keg|
+      # First, attempt to resolve the keg to a formula
+      # to get up-to-date name and tap information.
+      f = keg.to_formula
+      keg_formulae << f
+      [f.name, f.tap]
+    rescue
+      # If the formula for the keg can't be found,
+      # fall back to the information in the tab.
+      [keg.name, keg.tab.tap]
+    end
+
+    all_required_kegs = Set.new
+    all_dependents = []
+
+    # Don't include dependencies of kegs that were in the given array.
+    dependents_to_check = (formulae - keg_formulae) + (Cask::Caskroom.casks - casks)
+
+    dependents_to_check.each do |dependent|
+      required = case dependent
+      when Formula
+        dependent.missing_dependencies(hide: keg_names).filter_map do |d|
+          d.to_installed_formula
+        rescue FormulaUnavailableError
+          nil
+        end
+      when Cask::Cask
+        # When checking for cask dependents, we don't care about missing or non-runtime dependencies
+        CaskDependent.new(dependent).runtime_dependencies.map(&:to_installed_formula)
+      end
+
+      required_kegs = required.filter_map do |f|
+        f_kegs = kegs_by_source[[f.name, f.tap]]
+        next unless f_kegs
+
+        f_kegs.max_by(&:scheme_and_version)
+      end
+
+      next if required_kegs.empty?
+
+      all_required_kegs += required_kegs
+      all_dependents << dependent.to_s
+    end
+
+== cmd/link.rb lines 60-135 ==
+          end
+        end
+
+        kegs.freeze.each do |keg|
+          keg_only = Formulary.keg_only?(keg.rack)
+          formula = begin
+            keg.to_formula
+          rescue FormulaUnavailableError
+            # Not all kegs may belong to current formulae
+            nil
+          end
+          versioned_keg_only_formula = formula.present? && formula.keg_only_reason&.versioned_formula?
+
+          if keg.linked?
+            opoo "Already linked: #{keg}"
+            name_and_flag = +""
+            name_and_flag << "--HEAD " if args.HEAD?
+            name_and_flag << "--force " if keg_only && !versioned_keg_only_formula
+            name_and_flag << keg.name
+            puts <<~EOS
+              To relink, run:
+                brew unlink #{keg.name} && brew link #{name_and_flag}
+            EOS
+            next
+          end
+
+          if args.dry_run?
+            if args.overwrite?
+              puts "Would remove:"
+            else
+              puts "Would link:"
+            end
+            keg.link(overwrite: args.overwrite?, dry_run: args.dry_run?, verbose: args.verbose?)
+            puts_keg_only_path_message(keg) if keg_only && !versioned_keg_only_formula
+            next
+          end
+
+          if keg_only
+            if HOMEBREW_PREFIX.to_s == HOMEBREW_DEFAULT_PREFIX && formula.present? &&
+               formula.keg_only_reason.by_macos?
+              caveats = Caveats.new(formula)
+              opoo <<~EOS
+                Refusing to link macOS provided/shadowed software: #{keg.name}
+                #{caveats.keg_only_text(skip_reason: true)&.strip}
+              EOS
+              next
+            end
+
+            if !args.force? && (formula.nil? || !formula.keg_only_reason.versioned_formula?)
+              opoo "#{keg.name} is keg-only and must be linked with `--force`."
+              puts_keg_only_path_message(keg)
+              next
+            end
+          end
+
+          Unlink.unlink_link_overwrite_formulae(formula, verbose: args.verbose?) if formula
+
+          keg.lock do
+            print "Linking #{keg}... "
+            puts if args.verbose?
+
+            begin
+              n = keg.link(overwrite: args.overwrite?, dry_run: args.dry_run?, verbose: args.verbose?)
+            rescue Keg::LinkError
+              puts
+              raise
+            else
+              puts "#{n} symlinks created."
+            end
+
+            if keg_only && !versioned_keg_only_formula && !Homebrew::EnvConfig.developer?
+              puts_keg_only_path_message(keg)
+            end
+          end
+        end
+
+
+== keg.rb uninstall 322-363 ==
+  def remove_opt_record
+    opt_record.unlink
+    rmdir_if_possible(opt_record.parent)
+  end
+
+  sig { params(raise_failures: T::Boolean, dry_run: T::Boolean).void }
+  def uninstall(raise_failures: false, dry_run: false)
+    return if dry_run
+
+    CacheStoreDatabase.use(:linkage) do |db|
+      break unless db.created?
+
+      LinkageCacheStore.new(path.to_s,
+                            T.cast(db,
+                                   CacheStoreDatabase[String, T::Hash[T.any(String, Symbol), T.anything]])).delete!
+    end
+
+    # Capture these before we delete the Tab.
+    versioned_aliases = aliases
+    FileUtils.rm_r(path)
+    rmdir_if_possible(path.parent)
+    remove_opt_record if optlinked?
+    remove_linked_keg_record if linked?
+    remove_old_aliases(versioned_aliases:)
+    remove_oldname_opt_records
+  rescue Errno::EACCES, Errno::ENOTEMPTY
+    raise if raise_failures
+
+    odie <<~EOS
+      Could not remove #{name} keg! Do so manually:
+        sudo rm -rf #{path}
+    EOS
+  end
+
+  sig { void }
+  def ignore_interrupts_and_uninstall!
+    Utils::Interrupts.ignore do
+      uninstall
+    end
+  end
+
+  sig { params(verbose: T::Boolean, dry_run: T::Boolean).returns(Integer) }
+
+== uninstall.rb 56-100 (per-keg path, opt relink?) ==
+          rm_pin rack unless dry_run
+        else
+          kegs.each do |keg|
+            begin
+              f = Formulary.from_rack(rack)
+              if f.pinned?
+                onoe "#{f.full_name} is pinned. You must unpin it to uninstall."
+                break # exit keg loop and move on to next rack
+              end
+            rescue
+              nil
+            end
+
+            keg.lock do
+              if dry_run
+                puts "Would uninstall #{keg.name} #{keg.version}"
+                kegs_to_uninstall << keg
+                keg.unlink(dry_run: true)
+                keg.uninstall(dry_run: true)
+                next
+              end
+
+              puts "Uninstalling #{keg}... (#{keg.abv})"
+              kegs_to_uninstall << keg
+              keg.unlink
+              keg.uninstall
+              rack = keg.rack
+              rm_pin rack
+
+              if rack.directory?
+                versions = rack.subdirs.map(&:basename)
+                puts <<~EOS
+                  #{keg.name} #{Utils::Text.to_sentence(versions)} #{versions.one? ? "is" : "are"} still installed.
+                  To remove all versions, run:
+                    brew uninstall --force #{keg.name}
+                EOS
+              end
+
+              next unless f
+
+              paths = f.pkgetc.find.map(&:to_s) if f.pkgetc.exist?
+              if paths.present?
+                puts
+                opoo <<~EOS
+                  The following #{f.name} configuration files have not been removed!

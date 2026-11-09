@@ -1,0 +1,572 @@
+NOTICE
+======
+
+This is a modified copy of the NIST SP 800-90B Entropy Assessment software.
+
+Source:  National Institute of Standards and Technology (NIST),
+         https://github.com/usnistgov/SP800-90B_EntropyAssessment
+         Upstream baseline for this fork: commit
+         87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289
+         ("Merge pull request #248 from joshuaehill/proportionRounding").
+
+The National Institute of Standards and Technology is hereby explicitly
+acknowledged as the source of this software.
+
+
+NIST licence (reproduced verbatim from the upstream README.md)
+----------------------------------------------------------------
+
+NIST-developed software is provided by NIST as a public service. You may use, copy, and distribute copies of the software in any medium, provided that you keep intact this entire notice. You may improve, modify, and create derivative works of the software or any portion of the software, and you may copy and distribute such modifications or works. Modified works should carry a notice stating that you changed the software and should note the date and nature of any such change. Please explicitly acknowledge the National Institute of Standards and Technology as the source of the software.
+
+NIST-developed software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT, OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE.
+
+You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property. The software developed by NIST employees is not subject to copyright protection within the United States.
+
+
+Statement of changes (required by the licence above)
+-----------------------------------------------------
+
+The software was changed by the maintainers of this fork.
+
+Changes fall into two periods. Until 2026-09-30 nothing outside the
+build files was touched, and the statement that no change affected a
+reported figure held without qualification. On 2026-09-30, after the
+defects this fork had reported upstream had been reviewed on the upstream
+threads, repairs were made to the estimator sources as well. Correction
+(2026-10-02): until 2026-10-02 this sentence said "after NIST reviewed the defects this fork had reported upstream and agreed with several of them".
+The reviewer was @joshuaehill (Joshua E. Hill, KeyPair Consulting), not a
+NIST account; see "Correction of upstream attributions" below.
+
+Branch policy, and when it changed (recorded 2026-10-01 from the history).
+Until 2026-09-30 this fork followed the rule: master stays pinned to
+upstream behaviour, each fix lives on its own branch off upstream, and no
+fix is merged into master (see the open PR branches fix/bitstring-gate-
+word-size #256 and fix/multimmc-binary-overread #268, and the audit commit
+cbffcbc which states "master's behaviour and pinned output are unchanged").
+That rule was SUPERSEDED on 2026-09-30, deliberately and not by drift: a
+separate session installed a canonical repair queue (audits/2026-09-30/
+FINDINGS-TRACKER.md) and audits/BUG-REPAIR-GUIDE.md, whose stated policy is
+that a defect is resolved only when upstream is corrected OR this fork
+contains the correction with a regression test (option B). Under that
+policy the repairs below were committed DIRECTLY to master (first estimator
+change c2f1dcd/ed88de9, 2026-09-30), not merged from the PR branches.
+MASTER IS NOW THE PATCHED BUILD. The supersession was a decision; see the
+"Product-dependency status" section below for why patched was chosen over
+unpatched.
+
+One inconsistency the history showed, and how it was closed. Until 2026-10-02
+not every reported fix was on master: the bitstring-gate change (F01, upstream
+#253, PR #256 - gate the bitstring estimators on word_size rather than the
+observed alphabet) was branch-only, and this file recorded that as an open item
+for the independent review. It is now closed by WITHDRAWAL. The upstream
+respondent answered the open question on 2026-10-01, holding the current
+behaviour correct; the standard defines "binary" by the alphabet in §4.4.2 and
+§5 rather than by the sample width, and §6.2's binary-only Collision, Markov
+and Compression estimates already run on the translated two-symbol data, which
+the patch would have withheld. PR #256 was closed on 2026-10-02 and the change
+withdrawn. Master gates on `alph_size > 2`, identical to upstream, as it always
+did: no shipped behaviour changed on withdrawal, because none had changed on
+raising. The branch fix/bitstring-gate-word-size is retained unmerged as the
+evidence behind the analysis. Raising the question was not the error; the
+"over-credited" label was, and it is corrected in the findings tracker.
+
+What was observed across the changes below, stated as scope rather than
+as a guarantee, because the evidence is a finite set of datasets and
+not a proof about every qualifying input:
+
+  * No unintended numerical change was observed on the datasets tested.
+    The pinned-output check on bin/ringOsc-nist.bin is unchanged at
+    0.12644573619604868, and the reference comparison against
+    cpp/selftest/refdata/ differs on exactly the two files it differed
+    on before, with the same eight predictor values, for the platform
+    reason recorded in upstream issue #155.
+
+  * Two changes alter results deliberately, and are not covered by the
+    sentence above:
+
+      - F09 (commit 69b6094) corrects the MultiMMC run of correct
+        predictions. Where the defect bit, the MultiMMC estimate rises:
+        on the audit's dataset from 0.00211176482535928 to
+        0.93188950992564512. Because the reported figure is a minimum
+        over the estimators, an input on which MultiMMC was the binding
+        minimum will report a HIGHER figure after this change than
+        before. The earlier value was wrong, being too low, so the
+        higher figure is the correct one, but anyone comparing a report
+        made before this change with one made after must expect it. No
+        such input was demonstrated: on the audit's own dataset the
+        overall figure is unchanged at 0.0008876062538599284 because a
+        different estimator binds.
+
+      - N-01 (commit c8799f4) makes a binary chi-square independence
+        test with m = 1 fail, as SP 800-90B 5.2.3 requires, where it
+        previously passed. That changes an IID verdict rather than a
+        min-entropy figure, and it changes it on exactly the datasets
+        the standard says it should.
+
+  * bin/ and cpp/selftest/refdata/ are untouched. The reference data is
+    NIST's and is not regenerated here.
+
+  * No estimator's formula, cut-off, rounding or confidence bound is
+    altered. Most estimator changes only turn producing an unmeasured
+    number, reading out of bounds, or aborting the process into
+    declining to produce an estimate, which the combination logic
+    already handled. The two exceptions are F09 and N-01, described
+    above: they change results deliberately. This sentence said "only"
+    until 2026-10-01, which those two contradict.
+
+What is no longer true: cpp/shared/, cpp/non_iid/ and the *_main.cpp
+programs have been modified. Each change is listed below with the
+upstream issue it answers and the commit that made it.
+
+2026-09-30  cpp/Makefile: on macOS (uname -s = Darwin) add Homebrew's
+            include and library prefixes, and OpenSSL 3's keg-only
+            prefix, to the compile and link lines (INC, LDFLAGS).
+            Link rules now pass $(LDFLAGS); empty elsewhere.
+2026-09-30  cpp/Makefile: on macOS compile with Apple clang and enable
+            OpenMP via Homebrew's libomp (-Xpreprocessor -fopenmp,
+            -lomp) instead of a bare -fopenmp, which Apple clang rejects.
+            Non-Darwin command lines are unchanged.
+2026-09-30  cpp/Makefile: on Apple-silicon macOS default ARCH to arm64
+            so the x86-only -march=native flag is omitted, as upstream
+            already does for any non-x86 ARCH. ARCH can still be set.
+2026-09-30  cpp/selftest/pin-check.sh: new script that runs ea_non_iid
+            on the upstream sample bin/ringOsc-nist.bin and asserts the
+            reported min-entropy against upstream's own reference value.
+2026-09-30  NOTICE (this file) and BUILDING.md added; one pointer line
+            added to README.md. Build documentation only.
+
+The following were made on 2026-09-30 after the defects reported
+upstream from this fork's audit had been reviewed on the upstream
+threads. Correction (2026-10-02): until 2026-10-02 this sentence said "after NIST's review of the defects".
+The review was by @joshuaehill (Joshua E. Hill, KeyPair Consulting),
+the tool's principal contributor outside NIST; no NIST account has
+replied to any of the fork's issues or pull requests, and on PR #268
+(2026-10-01) he wrote "The NIST folks may have more relevant feedback
+on the issue." Where an entry below says the upstream respondent asked,
+called or regards, it means him. Each entry names the upstream issue
+and this fork's commit.
+
+2026-09-30  cpp/selftest/compareresults.pl, cpp/selftest/selftest: the
+            comparison now also covers H_original, H_bitstring and the
+            Assessed min entropy, and the harness propagates a
+            mismatch as a nonzero exit status. Upstream #272, accepted.
+            Commit da0265c.
+2026-09-30  cpp/iid_main.cpp: under -c the Section 5 IID tests run on
+            the conditioned output as a binary string, per SP 800-90B
+            3.1.1 item 2 and 3.1.5.2, instead of on the packed
+            multi-bit symbols. Upstream #271, accepted; remedy 1 of the
+            two offered. Commit 134d377.
+2026-09-30  cpp/shared/utils.h, cpp/shared/test_run_base.h,
+            cpp/non_iid_main.cpp, cpp/iid_main.cpp: datasets of fewer
+            than 1,000,000 samples are refused before any estimator
+            runs, with a nonzero exit and a JSON error. Answers the
+            remedy the upstream respondent gave for #257, #258, #261,
+            #263, #264 and the sub-minimum half of #255. Commit c2f1dcd.
+2026-09-30  cpp/non_iid/multi_mmc_test.h: the binary MultiMMC estimator
+            declines below D_MMC+1 samples instead of reading past the
+            end of the sample buffer. Upstream #257, which the upstream
+            respondent called "a real bug" (on PR #268). Commit ed88de9.
+2026-09-30  cpp/non_iid/compression_test.h: the compression estimate
+            requires at least two test blocks, instead of dividing by
+            v-1 = 0. Upstream #263. Commit c0ee84a.
+2026-09-30  cpp/non_iid/collision_test.h, cpp/non_iid_main.cpp: the
+            collision estimate requires at least two collisions instead
+            of dividing by v-1 = 0, and its result is guarded in the
+            combination logic the way every other fallible estimator
+            already was. Upstream #264. Commit c217f20.
+2026-09-30  cpp/shared/lrs_test.h, cpp/non_iid/lag_test.h,
+            cpp/non_iid/lz78y_test.h: estimators decline rather than
+            aborting the process on short or repeat-free input.
+            Upstream #261. Commit 21b0a31.
+2026-09-30  cpp/shared/utils.h, cpp/shared/test_run_base.h,
+            cpp/non_iid_main.cpp, cpp/iid_main.cpp: the -l subset offset
+            is checked for overflow and against the file length, a
+            zero-sample subset is refused, and the report records which
+            block was requested and how many samples were obtained. The
+            sha256 field still hashes the whole file, which is what the
+            upstream respondent asked for. Upstream #260. Commit 0e1ffcd.
+2026-09-30  cpp/shared/test_run_base.h, cpp/non_iid_main.cpp,
+            cpp/iid_main.cpp: the JSON report records the symbol width
+            the assessment used and whether it was inferred. Upstream
+            #254, the half the upstream respondent called useful; the
+            inference itself is unchanged. Commit 97571de.
+2026-09-30  cpp/shared/TestRunUtils.h, cpp/non_iid_main.cpp,
+            cpp/iid_main.cpp: non-regular input files are refused
+            instead of hanging, and the hash function's status is
+            checked. Fork hardening; the upstream respondent does not
+            regard upstream #259 as a defect. Commit cdb5cd6.
+2026-09-30  cpp/selftest/regression-*.sh: new regression tests for each
+            of the above. Test material only.
+
+A second repair pass on the same date, working the remaining queue:
+
+2026-09-30  cpp/iid/chi_square_tests.h: a binary chi-square independence
+            test with m = 1 now fails the battery, as SP 800-90B 5.2.3
+            requires, instead of returning a statistic of 0 on 0 degrees
+            of freedom and being read as a pass. Reachable with a
+            compliant dataset. Commit c8799f4.
+2026-09-30  cpp/restart_main.cpp: H_I is parsed with strtod and must be
+            finite, instead of atof, which accepted "abc" as 0 and let
+            "nan" through to an out-of-bounds index. Commit db7a2ba.
+2026-10-18  cpp/restart_main.cpp: H_I must be greater than zero, must not
+            underflow, and for a multi-bit symbol must state its scale as
+            '<v>/symbol' or '<v>/bit'; a bare number at the wrong scale had
+            produced a wrong cutoff silently (audit C16, OC-29). The report
+            gains restartHI, restartAlpha, restartXmax, restartXcutoff and
+            passedRestartSanityCheck. Regression: regression-restart.sh,
+            shown failing against tag unrepaired-reference-2026-10-15.
+            Self-authored and unreviewed.
+2026-10-18  cpp/restart_main.cpp: the 3.1.4.3 sanity-check cutoff was made
+            the printed single-binomial tail instead of upstream's simulated
+            value. THIS WAS WRONG and was corrected the next day; see the
+            2026-10-19 entry. Recorded rather than removed because the
+            commit (a5005bd) is in the history.
+2026-10-20  cpp/shared/TestRunUtils.h: the JSON report is written to a
+            sibling temporary file and renamed over the target, so an
+            interrupted write can no longer leave truncated JSON at the
+            operator's path. Measured: with the previous code, 4 of 5 writes
+            killed part-way left a truncated document; with this one, 0 of 5.
+            Audit C08/oac-13, OC-47. Self-authored and unreviewed.
+2026-10-19  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
+            a -o report target is claimed with a fail-closed placeholder when
+            the option is parsed, so a failed run can no longer leave the
+            previous run's report in place for a caller that checks the exit
+            status and then reads the file. This covers paths that never reach
+            the report writer at all -- a usage-path exit, an assert, a signal
+            -- which an error report on each failure path cannot. An -o path
+            that cannot be written now fails before the assessment rather than
+            after it. Also: --version is honoured only as an option, scanned
+            from argv[1] and stopping at "--" and at the first operand; it was
+            matched anywhere in argv, so a file of that name made the tool
+            print its version and exit 0 having assessed nothing and written
+            no report. Audit C14, OC-31. Regression: regression-output.sh,
+            shown failing against tag unrepaired-reference-2026-10-15.
+            Self-authored and unreviewed.
+2026-10-19  cpp/restart_main.cpp: the sanity-check cutoff is computed as the
+            exact distribution of the MULTINOMIAL MAXIMUM (Levin's
+            representation), which is the statistic 3.1.4.3 actually forms,
+            and the printed single-binomial value is reported beside it as
+            the conformance figure (restartXcutoffPrintedBinomial,
+            restartCutoffMethod). The printed formula is not the probability
+            of the event tested and rejects correctly-operating sources:
+            83.2% of full-entropy 8-bit matrices, measured. Upstream
+            simulates the right statistic on purpose (upstream issue #56);
+            the upstream defect is that nothing records the departure from
+            the printed text. Anchored on Hill/UL's published comments on
+            SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
+            against brute-force enumeration. -s is accepted and ignored.
+            Audit C23, OC-30. Self-authored and unreviewed.
+2026-11-08  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
+            the -o report target is also claimed from the argv prescan, as
+            soon as the path is known and after the A05 identity refusal,
+            not only when getopt reaches -o. The 2026-10-19 claim was bound
+            to getopt's traversal order, so an option error parsed EARLIER
+            in argv -- an unknown option, a malformed -l or -s value --
+            exited 255 on the usage path without claiming, and the previous
+            run's complete report survived byte-identical at the -o path:
+            the 2026-10-19 entry's "can no longer leave the previous run's
+            report in place" was false for that ordering. Measured
+            2026-11-07 on all three tools (aggressive audit, PROV-01). The
+            claim at -o itself stays, for the value getopt actually
+            produced. Repair-interaction pairs (rule 12): C14, A05, C08,
+            A04. Regression: regression-stale-report.sh, whose
+            REGRESSION_STALE_REPORT_BINDIR points it at a pre-fix build.
+            Self-authored and unreviewed.
+2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
+            report that is actually written. Commit 23dca69.
+2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed
+            is no longer folded into H_r or H_c as if it were an
+            entropy. Commit d892b90.
+2026-11-08  cpp/restart_main.cpp, cpp/non_iid/non_iid_test_case.h: a row or
+            column estimator that could not be computed is now RECORDED on
+            its test case (rowEstimateNotRun, columnEstimateNotRun) as well
+            as left out of H_r or H_c, as ea_non_iid has recorded a declined
+            estimator since dfe325a (F05); until now the restart report only
+            lacked the value, so a minimum over fewer estimators than
+            SP 800-90B 6.2 lists was indistinguishable from a complete one.
+            And the Overall case carries hAssessed = min(H_r, H_c, H_I), the
+            figure 3.1.4.2 awards, which was printed only under verbose and
+            written nowhere. No estimator or cutoff changes; a report in
+            which every estimator produced a value gains the one field and
+            is otherwise unchanged. Audit 2026-11-07, PROV-10 (AA-04).
+            Regression: regression-restart-notrun.sh. Self-authored and
+            unreviewed.
+2026-09-30  cpp/restart_main.cpp: sha256_file()'s status is checked
+            rather than discarded with an uninitialised buffer.
+            Commit fd83a43.
+2026-09-30  cpp/shared/TestRunUtils.h and the three programs this fork
+            builds: report writes go through a checked helper, and a
+            report that cannot be written fails the run. Commit 47d6624.
+2026-09-30  cpp/iid_main.cpp: only the figures that were computed are
+            reported, and the assessed figure no longer depends on the
+            verbosity. Commit 9f64f62.
+2026-09-30  cpp/non_iid/compression_test.h: block indices are held in a
+            64-bit type, with a compile-time guard. Commit 6b60f9d.
+2026-09-30  cpp/non_iid/multi_mmc_test.h: a Null prediction from the
+            winning subpredictor ends the run of correct predictions, in
+            both the binary and the generic implementation, per
+            SP 800-90B 6.3.9. Commit 69b6094.
+2026-09-30  cpp/shared/test_case_base.h, cpp/non_iid_main.cpp: the report
+            records which estimators applied but could not produce a
+            value, without treating that as an error. Commit dfe325a.
+2026-09-30  cpp/selftest/regression-*.sh: regression tests for each of
+            the above. Test material only.
+
+2026-10-02  No source change. PR #256 closed upstream and the F01 bitstring-
+            gate change withdrawn; it was never on master, so nothing in the
+            shipped build changed. The pinned figure and the full check suite
+            were re-run after the withdrawal and are unchanged. Recorded above
+            under "Withdrawn, not merely unchanged".
+2026-10-02  cpp/selftest/regression-docs.sh: the stale-claim check now
+            normalises whitespace before matching, because it had been
+            matching line by line against text wrapped at 72 columns and
+            could not see the sentences it was added to block; and it now
+            also scans cpp/ for the same attributions. cpp/selftest/
+            run-all-checks.sh: a selftest that exits non-zero without its
+            summary line is now a failure, where it had been reported as a
+            pass. cpp/selftest/regression-nonregular.sh: every case now runs
+            against ea_iid as well as ea_non_iid, with the absent-file hash
+            path asserted, closing the gap the re-audit confirmed as REV-006.
+            cpp/shared/TestRunUtils.h, cpp/selftest/regression-nonregular.sh,
+            cpp/selftest/regression-subset.sh: three comments re-attributed
+            away from NIST. Test material and comments only; no estimator
+            behaviour changes.
+2026-10-02  README.md, NOTICE, BUILDING.md, audits/2026-09-30/
+            FINDINGS-TRACKER.md, cpp/selftest/regression-docs.sh:
+            replies on the upstream threads re-attributed from "NIST" to
+            their author, @joshuaehill (not a NIST account); the F01 /
+            PR #256 question recorded as answered on 2026-10-01 with the
+            decision it leaves open; regression-docs.sh carries the
+            corrected phrasings. Documentation only; no source change.
+2026-10-09  cpp/Makefile: restrict the default all target to ea_non_iid,
+            ea_iid and ea_restart. ea_conditioning and ea_transpose remain
+            explicit unsupported development targets. cpp/selftest/
+            regression-docs.sh checks make's expanded build plan and fails
+            if that supported boundary drifts. README.md and BUILDING.md make
+            the exclusion and the carried conditioning defects explicit.
+2026-10-09  cpp/shared/utils.h and the supported command-line programs:
+            parse integer arguments as complete unsigned decimal strings,
+            rejecting signs, suffixes and overflow. The unsupported
+            ea_conditioning parser was deliberately not changed. Commit
+            031d7ee.
+2026-10-09  cpp/iid_main.cpp, cpp/restart_main.cpp and cpp/shared/
+            iid_test_case.h: distinguish the raw-sample mean from the
+            translated-symbol median in text and JSON, and make restart
+            reports contain the values actually calculated. The unsupported
+            ea_conditioning report was deliberately not changed. Commit
+            094189c.
+2026-10-09  cpp/shared/iid_test_case.h, cpp/iid/permutation_tests.h,
+            cpp/iid_main.cpp and cpp/restart_main.cpp: label permutation
+            results by assessed layout (`input`, `rows`, or `columns`) so
+            restart row and column results are not ambiguous. Commit 25fbb54.
+2026-11-08  cpp/Makefile: on macOS the pinned openssl@3 prefix now comes
+            BEFORE the generic Homebrew prefix on both -I and -L. It had been
+            second since the 2026-09-30 entry above, so whichever `openssl`
+            formula Homebrew linked into the generic prefix won: on
+            2026-11-07 that became openssl@4, and the three tools built that
+            day load libcrypto.4.dylib while this file and BUILDING.md's pin
+            table say openssl@3 (PROV-15, audit of 2026-11-07; otool -L on
+            3 of 3 binaries, against a 2026-10-20 build from the same
+            Makefile that loads the pinned library). No reported figure
+            moves: OpenSSL computes only the SHA-256 of the input. Non-Darwin
+            command lines are unchanged. Regression: cpp/selftest/
+            regression-openssl-pin.sh, which reads the order from `make -n`
+            and the load command from the built binaries, and abstains
+            (exit 2) off macOS. Self-authored and unreviewed.
+
+The scope statement at the head of this section covers these too: no
+unintended numerical change was observed on the datasets tested, with
+F09 and N-01 the two deliberate exceptions described there. On every
+sample under bin/ the figures are unchanged, including the Literal
+MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which the
+build still reproduces exactly.
+
+Withdrawn, not merely unchanged (recorded 2026-10-02): the treatment of a
+two-symbol alphabet as binary regardless of the declared sample width
+(upstream #253 and PR #256). This paragraph previously said "Deliberately not
+changed" and described the question as unresolved. It is resolved, against the
+fork's reading.
+
+The upstream respondent's position (PR #256, 2026-09-30 and 2026-10-01): {0,1}
+and {33,211} are both two-symbol alphabets, the `alph_size > 2` gate tests the
+translated data, which is the data actually assessed, and a declared width only
+fixes the encoding of the bitstring the assessment uses when -c forces it.
+Asked on 2026-09-30 whether an explicitly declared bits_per_symbol of 8 changes
+that, he answered on 2026-10-01: it does not. "In summary, I think that this
+aspect of the current behavior is correct."
+
+That is right, and the fork's premise was wrong. §4.4.2 defines a binary noise
+source as one that "produces only two distinct values", and §5 as "binary, i.e.,
+k = 2"; neither defines it by the sample width, and nothing in the standard
+does. §6.2 then restricts the Collision, Markov and Compression estimates to
+binary inputs, and master runs exactly those three on the translated two-symbol
+data; the patch would have rewritten their gates to the sample width and
+withheld three required estimates from a genuine binary input. Because the
+bitstring is a deterministic symbol-wise expansion, it can also carry no
+structure the symbol-level battery has not already seen. The respondent reached
+the same conclusion independently on 2026-10-02.
+
+PR #256 was therefore closed on 2026-10-02 and the change withdrawn. The fork
+follows upstream, which it always did on this point: the patch was never on
+master. The figure the fork had called over-credited, 0.92162256445118362 on a
+fair coin recorded two bits wide, is the accurate one; the 0.17960299911578648
+the patch would have produced is depressed by the constant padding bit. The
+"dangerous direction" label is corrected in the tracker.
+
+What survives, and is not a defect of that kind: declaring bits_per_symbol for
+a two-valued file has no effect on the initial estimate and the tool never says
+so. And one observation for the standard's authors rather than the tool: the
+assessment is discontinuous at the alphabet boundary, so a single rare third
+value switches the bitstring term on and drops the reported figure several-fold
+on barely different data.
+
+
+Correction of upstream attributions (recorded 2026-10-02)
+---------------------------------------------------------
+
+Until 2026-10-02 this file, README.md, BUILDING.md and the findings
+tracker credited "NIST" with the replies received on the fork's
+upstream issues and pull requests (#253-#255, #257-#261, #263, #264,
+#271, #272, PRs #256, #268, #270): they said NIST reviewed, agreed,
+accepted, asked, regards, disputes. Checked against GitHub on
+2026-10-02, every one of those replies was written by @joshuaehill
+(Joshua E. Hill, KeyPair Consulting), the tool's principal contributor
+outside NIST. He is not a NIST account, and on PR #268 (2026-10-01) he
+deferred explicitly: "The NIST folks may have more relevant feedback on
+the issue." No NIST account has replied to any of the fork's threads.
+The attributions were corrected in all four documents on 2026-10-02 to
+name him; the tracker's "Upstream disposition" vocabulary now means his
+replies. Nothing he wrote is an official NIST position, and the
+evidence sentence in "Product-dependency status" below must not say
+otherwise: each change was documented and offered upstream with its
+issue number, and the upstream responses came from him. That is all
+that can be claimed.
+
+Known upstream defects carried into the shipped build, and the exclusion
+rule that stopped applying (recorded 2026-10-02)
+-----------------------------------------------------------------------
+
+The 2026-09-30 audits deliberately did not queue defects that were already
+known upstream: they are listed as rediscoveries, "not counted", in
+audits/2026-09-30/novel-findings/REPORT.md section 3 and in that directory's
+agent-reports/restart.md. That was sound while the rule above held, because
+master then carried upstream's behaviour on purpose and an upstream defect was
+not this fork's to answer. THAT RATIONALE LAPSED on 2026-09-30, when master
+became the patched build and this build became a product dependency. Nothing
+recorded the lapse until now, so defects excluded under the old rule were left
+out of the queue under the new one.
+
+At least one of them is a memory-safety defect in a program this fork builds
+and ships:
+
+  * cpp/restart_main.cpp, simulateBound(): line 124 allocates with
+    `new uint16_t[simulation_rounds]` and line 161 frees it with a scalar
+    `delete results`. Freeing an array with scalar delete is undefined
+    behaviour. The code is upstream's, unchanged here and unchanged since
+    2023, and ordinary valid input reaches it. A default sanitizer build does
+    not diagnose it; ASAN_OPTIONS=alloc_dealloc_mismatch=1 aborts at line 161
+    on the full command line (audits/2026-10-01-re-audit/KNOWN-242.md records
+    those runs). Upstream PR #242 by garlic-hub, "Fix warnings and set them to
+    be errors", carries `delete[]` in its diff and is open; it is not an issue
+    describing this defect, and the re-audit's file name calls it one. Nothing
+    in this fork repairs it, and no regression covers it.
+
+It is recorded here rather than silently repaired because changing it is a
+decision about diverging further from upstream on a program whose figures no
+product prices anything against, and because the honest statement of what
+ships must name it. The findings tracker now carries it in the "Other upstream
+items" table with the same note.
+
+No continuous integration (recorded 2026-10-02)
+-----------------------------------------------
+
+There is no CI anywhere in this repository: no workflow, no pipeline
+configuration, no commit hook. Every check named above and in BUILDING.md runs
+only when a person runs it, on the machine they run it on. A reader who sees a
+regression suite, a pinned-output check and a documentation check will
+reasonably assume something enforces them on each commit, and nothing does.
+The per-change expected values of the "Product-dependency status" section below
+are therefore a manual procedure, not an automated gate, and no record exists
+of which commits the suite was run against.
+
+ea_non_iid, ea_iid and ea_restart are built from this fork; the repairs
+listed above and the regression suite cover all three. ea_conditioning,
+the only program that links MPFR and GMP, is not built or shipped, and
+none of the three that are built links either: verified with otool -L
+and nm -u on each binary, and cpp/Makefile still passes COND_LIB only
+in the ea_conditioning rule.
+
+
+Third-party components linked into ea_non_iid
+-----------------------------------------------
+
+Versions are those used for the verified macOS build on 2026-09-30.
+Licence identifiers are SPDX where one exists.
+
+| Component            | Version (macOS) | Licence                                   | Notes                                                        |
+|----------------------|-----------------|-------------------------------------------|--------------------------------------------------------------|
+| OpenSSL libcrypto    | 3.6.4           | Apache-2.0                                | Pinned to the 3.x series. Used only to SHA-256 the input file (cpp/shared/TestRunUtils.h). OpenSSL 1.1.x and earlier carried the dual OpenSSL/SSLeay licence, whose clauses 3 and 6 are advertising clauses; 1.1.x is also end-of-life. Do not build against it. |
+| jsoncpp              | 1.9.8           | Public Domain OR MIT (author's choice)    | JSON report output.                                          |
+| libdivsufsort (+64)  | 2.0.1           | MIT                                       | Suffix arrays for the t-tuple and LRS estimators.            |
+| bzip2 / libbz2       | 1.0.8 (system)  | bzip2-1.0.6 (BSD-style)                   | Named on the link line for every program; ea_non_iid references no symbol from it (only cpp/iid/permutation_tests.h does). |
+| OpenMP runtime       | libomp 23.1.2   | Apache-2.0 WITH LLVM-exception            | macOS build. On Linux and MinGW the runtime is GCC's libgomp (GPL-3.0-or-later WITH GCC-exception-3.1). ea_non_iid contains no OpenMP pragmas; the runtime is linked because shared/utils.h includes <omp.h>. |
+| pthreads             | libSystem       | Apple OS component                        | glibc (LGPL-2.1-or-later) on Linux; mingw-w64 winpthreads (MIT, with parts under ZPL-2.1; see its COPYING) on MSYS2. |
+| C++ standard library | libc++          | Apache-2.0 WITH LLVM-exception            | libstdc++ (GPL-3.0-or-later WITH GCC-exception-3.1) with GCC on Linux/MinGW. |
+
+Not linked into ea_non_iid (used only by ea_conditioning, via COND_LIB in cpp/Makefile):
+
+| Component | Licence                                            |
+|-----------|----------------------------------------------------|
+| GNU MPFR  | LGPL-3.0-or-later                                  |
+| GNU GMP   | LGPL-3.0-or-later OR GPL-2.0-or-later (dual)       |
+
+Evidence: cpp/Makefile defines COND_LIB = -lmpfr -lgmp and passes it only
+in the ea_conditioning rule; conditioning_main.cpp is the only source
+file that includes <mpfr.h>/<gmp.h>; `otool -L cpp/ea_non_iid` on the
+built binary lists no MPFR or GMP library and `nm -u` shows no mpfr/gmp
+symbols. See BUILDING.md for the exact commands.
+
+
+Product-dependency status (recorded 2026-10-01)
+-----------------------------------------------
+
+This patched build is no longer only an upstream proposal: TruePad SHIPS it as
+the entropy-assessment engine of its hardware-RNG path. That changes four things,
+recorded here because this file is now part of the evidence chain, not a licence
+formality.
+
+1. THE EVIDENCE SENTENCE CHANGES. "Assessed with NIST's reference
+   implementation" is no longer accurate for a shipped patched build. The honest
+   form names the patched build, its commit, and that each change is documented
+   above and was offered upstream with its issue number. Every surface that
+   states the unpatched form must be updated to the patched form, and the dated
+   change list above is the artefact that backs it: it is read as evidence, not
+   skimmed as a formality.
+
+2. THE BAR RISES. A fix that upstream declines costs nothing as a PR; shipped, a
+   wrong fix silently changes the number pads are priced against. TruePad's
+   independent review therefore now covers a PRODUCT DEPENDENCY, and any fix the
+   review cannot independently support DOES NOT SHIP, whatever its claimed
+   upstream status (accepted, "a real bug", or still open). Upstream acceptance
+   is necessary context, not sufficient warrant.
+
+3. THE PINNED-OUTPUT TEST'S JOB CHANGES. On an unpatched build the single pin
+   (cpp/selftest/pin-check.sh on bin/ringOsc-nist.bin) proves equivalence to the
+   reference. On a patched build that pin proves only that the UNCHANGED paths
+   still match the reference; it cannot speak to the deliberate divergences. The
+   requirement for a patched build is PER-CHANGE EXPECTED VALUES: each deliberate
+   divergence (e.g. F09's MultiMMC rise) must have a recorded expected figure and
+   be shown to produce exactly that, AND nothing else may have moved. The
+   cpp/selftest/regression-*.sh scripts are that mechanism; the global pin is
+   necessary but no longer sufficient.
+
+4. THE ALTERNATIVE GIVEN UP. Shipping UNPATCHED keeps the evidence at its
+   strongest — "assessed with NIST's own reference implementation, unmodified" —
+   at the cost of carrying the known defects (the heap over-read, the
+   divide-by-zero estimates, the sub-minimum-sample acceptance, and the rest
+   listed above). Shipping PATCHED was chosen instead: the defects are real and
+   several change the number in the dangerous direction, so carrying them into a
+   product that prices pads on that number was judged worse than taking on the
+   evidence burden of a documented, upstream-offered, independently-reviewed fork.
+   This was a decision, not a default; a later reader should see both sides were
+   weighed.

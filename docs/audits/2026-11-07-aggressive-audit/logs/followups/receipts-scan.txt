@@ -1,0 +1,76 @@
+window epochs 1794097200 1794098100
+total kegs 130
+
+== KEGS IN WINDOW ==
+afl++              5.03c          epoch=1794097748 local=2026-11-07 19:29:08 EST utc=2026-11-08 00:29:08 UTC as_dep=None on_req=True stable=5.03c
+    runtime_deps: lz4 1.11.0, xz 5.8.4, zstd 1.5.7, z3 5.3.3, llvm 23.1.5, lld 23.1.5, ca-certificates 2026-11-05, mpdecimal 4.0.1, openssl@4 4.1.0, readline 8.3.6, sqlite 3.54.1, python@3.15 3.15.2
+lld                23.1.5         epoch=1794097716 local=2026-11-07 19:28:36 EST utc=2026-11-08 00:28:36 UTC as_dep=None on_req=False stable=23.1.5
+    runtime_deps: lz4 1.11.0, xz 5.8.4, zstd 1.5.7, z3 5.3.3, llvm 23.1.5
+llvm               23.1.5         epoch=1794097702 local=2026-11-07 19:28:22 EST utc=2026-11-08 00:28:22 UTC as_dep=None on_req=False stable=23.1.5
+    runtime_deps: lz4 1.11.0, xz 5.8.4, zstd 1.5.7, z3 5.3.3
+openssl@4          4.1.0          epoch=1794097721 local=2026-11-07 19:28:41 EST utc=2026-11-08 00:28:41 UTC as_dep=None on_req=False stable=4.1.0
+    runtime_deps: ca-certificates 2026-11-05
+python@3.15        3.15.2         epoch=1794097733 local=2026-11-07 19:28:53 EST utc=2026-11-08 00:28:53 UTC as_dep=None on_req=False stable=3.15.2
+    runtime_deps: ca-certificates 2026-11-05, mpdecimal 4.0.1, openssl@4 4.1.0, readline 8.3.6, sqlite 3.54.1, xz 5.8.4, lz4 1.11.0, zstd 1.5.7
+sqlite             3.54.1         epoch=1794097730 local=2026-11-07 19:28:50 EST utc=2026-11-08 00:28:50 UTC as_dep=None on_req=False stable=3.54.1
+    runtime_deps: readline 8.3.6
+z3                 5.3.3          epoch=1794097696 local=2026-11-07 19:28:16 EST utc=2026-11-08 00:28:16 UTC as_dep=None on_req=False stable=5.3.3
+    runtime_deps: 
+
+== KEGS 2026-11-07 (any time) or 2026-11-08 ==
+afl++              5.03c          2026-11-07 19:29:08 EST  as_dep=None
+lld                23.1.5         2026-11-07 19:28:36 EST  as_dep=None
+llvm               23.1.5         2026-11-07 19:28:22 EST  as_dep=None
+openssl@4          4.1.0          2026-11-07 19:28:41 EST  as_dep=None
+python@3.15        3.15.2         2026-11-07 19:28:53 EST  as_dep=None
+sqlite             3.54.1         2026-11-07 19:28:50 EST  as_dep=None
+z3                 5.3.3          2026-11-07 19:28:16 EST  as_dep=None
+
+== FORMULAE WITH MULTIPLE KEGS ==
+ca-certificates [('2026-07-16', '2026-07-24 18:45:55 EDT'), ('2026-08-13', '2026-08-30 19:50:53 EDT'), ('2026-10-20', '2026-10-20 19:57:40 EDT')]
+openssl@3 [('3.6.3', '2026-07-24 18:45:59 EDT'), ('3.6.4', '2026-09-22 18:33:41 EDT')]
+pcre2 [('10.47_1', '2026-07-29 20:38:31 EDT'), ('10.48', '2026-09-22 18:34:39 EDT')]
+simdutf [('9.0.0', '2026-07-24 18:46:02 EDT'), ('9.2.0', '2026-09-22 18:33:29 EDT')]
+sqlite [('3.53.4', '2026-08-30 19:51:03 EDT'), ('3.54.1', '2026-11-07 19:28:50 EST')]
+
+== ALL KEGS SORTED BY TIME (last 40) ==
+2026-09-22 18:34:05 EDT  readline               8.3.6          as_dep=None on_req=False
+2026-09-22 18:34:05 EDT  simdjson               4.6.11         as_dep=None on_req=False
+2026-09-22 18:34:06 EDT  highway                1.4.0          as_dep=None on_req=False
+2026-09-22 18:34:06 EDT  xz                     5.8.4          as_dep=None on_req=False
+2026-09-22 18:34:25 EDT  python@3.14            3.14.7         as_dep=None on_req=False
+2026-09-22 18:34:31 EDT  fontconfig             2.18.3         as_dep=None on_req=False
+2026-09-22 18:34:39 EDT  pcre2                  10.48          as_dep=None on_req=False
+2026-09-22 18:34:40 EDT  glib                   2.90.0         as_dep=None on_req=False
+2026-09-22 18:34:50 EDT  harfbuzz               14.5.0         as_dep=None on_req=False
+2026-09-22 18:34:52 EDT  little-cms2            2.19.1         as_dep=None on_req=False
+2026-09-22 18:34:52 EDT  openjdk                27             as_dep=None on_req=False
+2026-09-22 18:34:55 EDT  emscripten             6.0.10         as_dep=None on_req=True
+2026-09-22 18:34:55 EDT  yuicompressor          2.4.8_1        as_dep=None on_req=False
+2026-09-22 18:56:32 EDT  node                   26.9.0         as_dep=None on_req=False
+2026-09-30 03:20:45 EDT  isl                    0.28           as_dep=None on_req=False
+2026-09-30 03:20:46 EDT  gcc                    16.2.0         as_dep=None on_req=True
+2026-09-30 03:20:46 EDT  libmpc                 1.4.1          as_dep=None on_req=False
+2026-09-30 03:20:49 EDT  libdivsufsort          2.0.1          as_dep=None on_req=True
+2026-09-30 03:20:50 EDT  jsoncpp                1.9.8          as_dep=None on_req=True
+2026-09-30 03:20:51 EDT  libomp                 23.1.2         as_dep=None on_req=True
+2026-10-09 00:21:06 EDT  boost                  1.92.0         as_dep=None on_req=False
+2026-10-09 00:21:10 EDT  confuse                3.4            as_dep=None on_req=False
+2026-10-09 00:21:10 EDT  libftdi                1.5_2          as_dep=None on_req=True
+2026-10-10 07:47:34 EDT  shellcheck             0.11.0         as_dep=None on_req=True
+2026-10-14 18:08:41 EDT  uhubctl                2.6.0          as_dep=None on_req=True
+2026-10-14 20:45:44 EDT  terraform              1.16.6         as_dep=None on_req=True
+2026-10-20 19:57:36 EDT  dav1d                  1.5.4          as_dep=None on_req=False
+2026-10-20 19:57:37 EDT  mpg123                 1.33.7         as_dep=None on_req=False
+2026-10-20 19:57:38 EDT  lame                   4.0            as_dep=None on_req=False
+2026-10-20 19:57:39 EDT  libvmaf                3.2.1          as_dep=None on_req=False
+2026-10-20 19:57:39 EDT  libvpx                 1.17.0         as_dep=None on_req=False
+2026-10-20 19:57:40 EDT  ca-certificates        2026-10-20     as_dep=None on_req=False
+2026-10-25 20:10:53 EDT  gawk                   5.4.1          as_dep=None on_req=True
+2026-11-07 19:28:16 EST  z3                     5.3.3          as_dep=None on_req=False
+2026-11-07 19:28:22 EST  llvm                   23.1.5         as_dep=None on_req=False
+2026-11-07 19:28:36 EST  lld                    23.1.5         as_dep=None on_req=False
+2026-11-07 19:28:41 EST  openssl@4              4.1.0          as_dep=None on_req=False
+2026-11-07 19:28:50 EST  sqlite                 3.54.1         as_dep=None on_req=False
+2026-11-07 19:28:53 EST  python@3.15            3.15.2         as_dep=None on_req=False
+2026-11-07 19:29:08 EST  afl++                  5.03c          as_dep=None on_req=True

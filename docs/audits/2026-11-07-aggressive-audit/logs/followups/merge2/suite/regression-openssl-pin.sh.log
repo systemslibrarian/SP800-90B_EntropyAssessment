@@ -1,0 +1,22 @@
+  generic Homebrew prefix: /opt/homebrew
+  pinned OpenSSL prefix:   /opt/homebrew/opt/openssl@3
+
+== 1. the Makefile's dry-run: the pinned prefix precedes the generic one on -I and -L ==
+  dry-run source: make -n -f /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/Makefile non_iid  (make exit 0)
+  compile line: clang++ -std=c++11 -Xpreprocessor -fopenmp -I/opt/homebrew/opt/libomp/include -O2  -Werror=ignored-optimization-argument -I/usr/include/jsoncpp  -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/include non_iid_main.cpp -o ea_non_iid -L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/lib -lbz2 -lpthread -ldivsufsort -ldivsufsort64 -L/opt/homebrew/opt/libomp/lib -lomp -ljsoncpp -lcrypto
+  PAIR d240098: -I/opt/homebrew/opt/openssl@3/include is on the line once (token 9) PASS
+  PAIR d240098: -I/opt/homebrew/include is on the line once (token 10) PASS
+  PAIR d240098: -L/opt/homebrew/opt/openssl@3/lib is on the line once (token 14) PASS
+  PAIR d240098: -L/opt/homebrew/lib is on the line once (token 15)   PASS
+  -I: the pinned prefix (token 9) precedes the generic one (token 10) PASS
+  -L: the pinned prefix (token 14) precedes the generic one (token 15) PASS
+
+== 2. the built binaries: libcrypto is loaded from the pinned prefix ==
+[build-state] ea_non_iid                         asserts=LIVE    sha256=f47e0326d98a5825
+  ea_non_iid loads /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib PASS
+[build-state] ea_iid                             asserts=LIVE    sha256=af4ed62abbf2455b
+  ea_iid loads /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib     PASS
+[build-state] ea_restart                         asserts=LIVE    sha256=abf9126bec7af49f
+  ea_restart loads /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib PASS
+
+regression-openssl-pin: PASS

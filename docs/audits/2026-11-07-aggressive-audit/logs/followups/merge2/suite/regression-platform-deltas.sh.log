@@ -1,0 +1,8 @@
+  baseline: the genuine transcript is accepted       PASS
+  1. a LARGE delta in a named file fails             PASS
+  2. an UNEXPECTED estimator fails                   PASS
+  3. a MISSING comparison fails                      PASS
+  4. the WRONG PLATFORM fails                        PASS
+  5. an unreadable manifest refuses (rc 2)           PASS
+regression-platform-deltas: 6 of 6 declared cases ran
+regression-platform-deltas: PASS

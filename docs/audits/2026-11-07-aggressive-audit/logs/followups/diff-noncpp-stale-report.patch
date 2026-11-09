@@ -1,0 +1,181 @@
+diff --git a/NOTICE b/NOTICE
+index b9389e4..d0b6c85 100644
+--- a/NOTICE
++++ b/NOTICE
+@@ -256,6 +256,22 @@ A second repair pass on the same date, working the remaining queue:
+             SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
+             against brute-force enumeration. -s is accepted and ignored.
+             Audit C23, OC-30. Self-authored and unreviewed.
++2026-11-08  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
++            the -o report target is also claimed from the argv prescan, as
++            soon as the path is known and after the A05 identity refusal,
++            not only when getopt reaches -o. The 2026-10-19 claim was bound
++            to getopt's traversal order, so an option error parsed EARLIER
++            in argv -- an unknown option, a malformed -l or -s value --
++            exited 255 on the usage path without claiming, and the previous
++            run's complete report survived byte-identical at the -o path:
++            the 2026-10-19 entry's "can no longer leave the previous run's
++            report in place" was false for that ordering. Measured
++            2026-11-07 on all three tools (aggressive audit, PROV-01). The
++            claim at -o itself stays, for the value getopt actually
++            produced. Repair-interaction pairs (rule 12): C14, A05, C08,
++            A04. Regression: regression-stale-report.sh, whose
++            REGRESSION_STALE_REPORT_BINDIR points it at a pre-fix build.
++            Self-authored and unreviewed.
+ 2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
+             report that is actually written. Commit 23dca69.
+ 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed
+diff --git a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+index 5dcdbdb..c87a6fe 100644
+--- a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
++++ b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+@@ -84,11 +84,12 @@ script that declares it by `cpp/selftest/regression-docs.sh`, or is dated and
+ attributed, because hand-typed counts in this document drifted six times
+ before that rule existed (`OC-126`):
+ 
+-- `cpp/selftest/run-all-checks.sh` runs 24 regression scripts
+-  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 26 passed, 0 failed);
+-- `audits/enum-instruments.sh` prints **87 live instruments** (measured
+-  2026-10-27 at `a5422cf`, up one for `oracles/git-classification-test.py`,
+-  `OC-128`; the count has a hand-reviewed limb, `OC-126`);
++- `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
++  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
++- `audits/enum-instruments.sh` prints **88 live instruments** (measured
++  2026-11-08 at `04c1ccc` with `cpp/selftest/regression-stale-report.sh`
++  staged, up one for that script, PROV-01; 87 at `a5422cf`, `OC-128`; the
++  count has a hand-reviewed limb, `OC-126`);
+ - three mutation harnesses — `harness-inventory-mutation-test.sh`,
+   `outside-battery-mutation-test.sh`, and the band-1 pair battery
+   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
+@@ -477,7 +478,7 @@ the merge, and two entries were wrong when it was. The checks are cheap:
+ 
+ ```sh
+ cd cpp && make non_iid iid restart && cd selftest
+-./run-all-checks.sh --allow-known-platform-deltas   # expect 26 passed, 0 failed
++./run-all-checks.sh --allow-known-platform-deltas   # expect 27 passed, 0 failed
+ ./harness-inventory-mutation-test.sh                # expect 5 of 5 mutations landed
+ ./outside-battery-mutation-test.sh                  # expect 9 of 9 mutations landed
+ ./regression-docs.sh                                # the prose claims that can be checked
+diff --git a/audits/INSTRUMENT-INVENTORY.md b/audits/INSTRUMENT-INVENTORY.md
+index f95750b..6291d29 100644
+--- a/audits/INSTRUMENT-INVENTORY.md
++++ b/audits/INSTRUMENT-INVENTORY.md
+@@ -76,7 +76,7 @@ them was being invoked **then**. So:
+ 
+ | set | rule that applies | count |
+ |---|---|---:|
+-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **87** at `a5422cf`, 2026-10-27 |
++| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `04c1ccc` with `cpp/selftest/regression-stale-report.sh` staged, 2026-11-08 |
+ | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
+ 
+ Counting frozen by the live rule would silently retire 47 artefacts that were
+@@ -90,6 +90,12 @@ validation), `oracles/c22c_derive.py` (the slow re-derivation),
+ `audits/enum-instruments.sh` by `regression-docs.sh`, which is how this
+ document was found to be four behind rather than by anyone remembering.
+ 
++**87 -> 88 at `04c1ccc` with one file staged (PROV-01, 2026-11-08).** The
++instrument is `cpp/selftest/regression-stale-report.sh`, the regression for
++the stale-report ordering defect in the three tools' `-o` claim. Counted
++while staged and before its commit existed, which is what the index rule
++above is for: the number was read from the enumerator, not predicted.
++
+ Three consequences the rule settles, each of which was got wrong once:
+ 
+ 1. **Runnable, not source-shaped.** Membership is decided by `file -b` and the
+@@ -116,7 +122,7 @@ thing an extension-matched glob missed.
+ 
+ | set | count | what it is |
+ |---|---:|---|
+-| **LIVE** | **87** at `a5422cf`, 2026-10-27 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
++| **LIVE** | **88** at `04c1ccc` with `cpp/selftest/regression-stale-report.sh` staged, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+ | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
+ 
+ Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
+diff --git a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+index ac10262..b60b728 100644
+--- a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
++++ b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+@@ -1,7 +1,8 @@
+ # What a green run of `run-all-checks.sh` establishes
+ 
+ Measured at `d8060c9`, 2026-10-21, on macOS arm64. Recompute every count with
+-the commands given.
++the commands given. Counts re-derived 2026-11-08 when
++`regression-stale-report.sh` joined the suite (PROV-01).
+ 
+ **Why this file exists.** *"22 passed, 0 failed"* has been the basis of a great
+ many claims here, and **five of the suite's members have now been found to pass
+@@ -18,9 +19,9 @@ This is not a reassurance. It is the content.
+ |---|---:|---|---|
+ | **reference comparison** (`selftest` → `compareresults.pl`) | 1 | that ~60–103 estimate values per fixture agree with `refdata/` within 1e-10, **and** that both sides name the same input, sample count and symbol width (`OC-74`, since 2026-10-21) | that `refdata/` is **right**. Ten of eleven references are upstream-captured with no independent derivation. "The self-test passes" validates agreement with a reference, never the reference. |
+ | **pinned figure** (`pin-check.sh`) | 1 | that one named input, **bound by SHA-256**, still yields 0.12644573619605429 within tolerance, with exactly one `Assessed min entropy` line | that the figure is correct for any device. It is an upstream sample, to be re-based on a real capture in January. |
+-| **behaviour regressions** (`regression-*.sh`) | 24 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
++| **behaviour regressions** (`regression-*.sh`) | 25 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
+ | **inventory and corpus integrity** (`verify-fixture-inventory.sh`, `regression-selftest-inventory.sh`, `regression-outside-battery.sh`) | 3 | that the fixture and corpus sets match their manifests, both directions | that a manifest is right. `verify-fixture-inventory.sh` **prints its manifest's digest and does not verify it** (`OC-76`, Tier A). |
+-| **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 24. |
++| **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 25. |
+ 
+ ## What has to be true for the aggregate to mean anything
+ 
+@@ -29,28 +30,28 @@ believed:
+ 
+ | precondition | status | evidence |
+ |---|---|---|
+-| **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 24 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
+-| **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 24 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
+-| **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **5 of 26** — measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists. It is NOT derivable by reading the tree: seven scripts source `buildstate-lib.sh` and only five of them are suite members that declare, so a static count gives 7 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
++| **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 25 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
++| **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 5 of 25 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 5 |
++| **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **6 of 27** — 5 measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists, plus `regression-stale-report.sh` (2026-11-08), a member that declares; re-read the line at the next full run. It is NOT derivable by reading the tree: seven scripts source `buildstate-lib.sh` and only five of them are suite members that declare, so a static count gives 7 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+ | **4. no member's claim text is hard-coded** | **ENFORCED, 0 remaining.** `regression-restart.sh` printed "32 H_I values × 2 columns" from an empty loop; its claim line now derives from the pin count and reads `0 comparisons made` when emptied. | `grep -lE 'echo .*[0-9]+ (of\|values\|comparisons\|files\|checks)' cpp/selftest/*.sh \| wc -l` → 0 |
+ | **5. the suite's own inventory is complete** | **ENFORCED.** Discovery is checked against `regression-script-inventory.txt` and the expected counts; an unlisted script is an inventory error, not a silent addition. A mutation harness proves 5 of 5 inventory mutations are caught. | `./run-all-checks.sh` refuses on a mismatch |
+ 
+ ## So, plainly
+ 
+-A green run establishes that **21 named defects do not reproduce on
++A green run establishes that **22 named defects do not reproduce on
+ generated inputs, one pinned figure is unchanged on a digest-bound input, the
+ fixture and corpus sets match their manifests, and ~98 estimate values per
+ fixture agree with an upstream reference that describes the same input.**
+ 
+ It does **not** establish that the references are right, that the figure is
+ right for any device, that members not covered by a mutation harness can fail
+-at all, or that the binary measured was the one intended in the 21 of 26 checks
++at all, or that the binary measured was the one intended in the 21 of 27 checks
+ that do not say (measured 2026-10-27, same source as above).
+ 
+ **Precondition 1 is the weak one and it is the one that has failed.** Until
+ every member has been observed to fail against a known-wrong build — the
+ obligation in the guide's step 5, which the tracker's evidence section records
+-seven prior violations of — a green suite is a statement about 21 checks
++seven prior violations of — a green suite is a statement about 22 checks
+ that were each believed to work.
+ 
+ ## Re-reading this file
+diff --git a/cpp/selftest/regression-script-inventory.txt b/cpp/selftest/regression-script-inventory.txt
+index 6085e10..3498980 100644
+--- a/cpp/selftest/regression-script-inventory.txt
++++ b/cpp/selftest/regression-script-inventory.txt
+@@ -18,6 +18,7 @@ regression-outside-battery.sh
+ regression-platform-deltas.sh
+ regression-restart.sh
+ regression-selftest-inventory.sh
++regression-stale-report.sh
+ regression-subset.sh
+ regression-width.sh
+ regression-workflows.sh
+diff --git a/cpp/selftest/run-all-checks.sh b/cpp/selftest/run-all-checks.sh
+index d9de0f0..c7469b0 100755
+--- a/cpp/selftest/run-all-checks.sh
++++ b/cpp/selftest/run-all-checks.sh
+@@ -26,8 +26,8 @@ allow_platform=0
+ DELTA_MANIFEST="known-platform-deltas.txt"
+ here_cmp="./check-platform-deltas.py"
+ REGRESSION_INVENTORY="regression-script-inventory.txt"
+-EXPECTED_REGRESSION_SCRIPTS=24
+-EXPECTED_TOTAL_CHECKS=26
++EXPECTED_REGRESSION_SCRIPTS=25
++EXPECTED_TOTAL_CHECKS=27
+ 
+ inventory_error() {
+     echo "run-all-checks: regression inventory error: $*" >&2

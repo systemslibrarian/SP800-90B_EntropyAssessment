@@ -1,0 +1,77 @@
+== brew autoremove --dry-run (what brew considers orphaned NOW, before any uninstall) ==
+==> Would autoremove 5 unneeded formulae:
+dav1d
+lame
+libvmaf
+libvpx
+mpg123
+(exit 0)
+
+== brew deps --installed python@3.14 (receipt-based) ==
+mpdecimal
+readline
+sqlite
+xz
+zstd
+
+== brew deps --installed --include-build llvm / z3 (build deps declared) ==
+ca-certificates cmake lz4 mpdecimal ninja openssl@4 pkgconf python@3.15 readline sqlite xz z3 zstd 
+ca-certificates cmake lz4 mpdecimal openssl@4 pkgconf python@3.15 readline sqlite xz zstd 
+
+== brew info gcloud-cli (why it appears in recursive uses) ==
+==> gcloud-cli (Google Cloud CLI): 592.0.0 (auto_updates)
+Set of tools to manage resources and applications hosted on Google Cloud
+https://cloud.google.com/cli/
+Installed (on request)
+/opt/homebrew/Caskroom/gcloud-cli/577.0.0 (409.5MB)
+  Installed on 2026-07-24 at 18:46:48
+From: https://github.com/Homebrew/homebrew-cask/blob/HEAD/Casks/g/gcloud-cli.rb
+==> Dependencies
+Required (1): python@3.14
+Recursive Runtime (9): all installed ✔
+==> Artifacts
+google-cloud-sdk/install.sh (Installer)
+-- casks installed:
+android-commandlinetools gcloud-cli temurin@21 
+
+== brew list --versions llvm@22 lldb ==
+llvm@22 22.1.8
+
+== python3.14 _sqlite3 / readline linkage (is the sqlite upgrade live for the OLD keg via opt/?) ==
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_sqlite3.cpython-314-darwin.so:
+	/opt/homebrew/opt/sqlite/lib/libsqlite3.dylib (compatibility version 9.0.0, current version 9.6.0)
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/readline.cpython-314-darwin.so:
+opt/sqlite -> ../Cellar/sqlite/3.54.1
+python3.14 sqlite3.sqlite_version = 3.54.1
+
+== /usr/local/bin python entries ==
+/usr/local/bin/python3    -> ../../../Library/Frameworks/Python.framework/Versions/3.14/bin/python3
+/usr/local/bin/python3.14 -> ../../../Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14
+/usr/local/bin/pip3       -> ../../../Library/Frameworks/Python.framework/Versions/3.14/bin/pip3
+/usr/local/bin/python3 3.14.5
+ModuleNotFoundError: No module named 'yaml'
+
+== pkg-config openssl now ==
+4.1.0
+/opt/homebrew/Cellar/openssl@4/4.1.0
+
+== bottles in cache from the window (fetched; lz4/ca-certificates fetched but NOT installed) ==
+-rw-r--r--  1 gmcas staff     13748 2026-11-07 19:27 0a2aa42fc5dd1b6fcec153c162c6f4843a4026023f86c210e558fea3af5bad61--z3-5.3.3.bottle_manifest.json
+-rw-r--r--  1 gmcas staff     72278 2026-11-07 19:27 0a598ffed446020b2285e41bebc26896b209dd997be6f00b44ad60f6bf634b0f--llvm-23.1.5.bottle_manifest.json
+-rw-r--r--  1 gmcas staff     13136 2026-11-07 19:27 1cdb126ce5ae39da5b6aff520159627a107674dbcbb2a87c73adf7f97f149b89--lz4-1.11.0.bottle_manifest.json
+-rw-r--r--  1 gmcas staff     19599 2026-11-07 19:27 5af22dbf16746a00108f01eb3ec1c010f19da2e7071814b40972545eef69bf92--openssl@4-4.1.0.bottle_manifest.json
+-rw-r--r--  1 gmcas staff     48893 2026-11-07 19:27 5f9d0a78a2c77fd1758408c284f55f4e8367667653c3d9a0aff0c0d9750b2022--lld-23.1.5.bottle_manifest.json
+-rw-r--r--  1 gmcas staff     22616 2026-11-07 19:27 634ebfaa359526f81034cd1bf1bcc70f7ef898ce755187d3754b7db11e1109d2--sqlite-3.54.1.bottle_manifest.json
+-rw-r--r--  1 gmcas staff      8095 2026-11-07 19:27 67314617287d32358cd696789ae54c253459f15a4fb8e9424a5c01cf2f596620--ca-certificates-2026-11-05.bottle_manifest.json
+-rw-r--r--  1 gmcas staff     98218 2026-11-07 19:27 9388f7890e987231f0cca4b175779bb827c9a2d2e80372ff128b57ba4ad3e3dd--afl++-5.03c-1.bottle_manifest.json
+-rw-r--r--  1 gmcas staff    108743 2026-11-07 19:27 acf8a6f01eabec8c681a47140910f1a36f89b5d37e96eecf4f97e321223c4f40--python@3.15-3.15.2.bottle_manifest.json
+
+== du of window kegs ==
+6.2M	/opt/homebrew/Cellar/afl++/5.03c
+5.8M	/opt/homebrew/Cellar/lld/23.1.5
+1.8G	/opt/homebrew/Cellar/llvm/23.1.5
+25M	/opt/homebrew/Cellar/openssl@4/4.1.0
+92M	/opt/homebrew/Cellar/python@3.15/3.15.2
+44M	/opt/homebrew/Cellar/z3/5.3.3
+5.2M	/opt/homebrew/Cellar/sqlite/3.54.1
+5.2M	/opt/homebrew/Cellar/sqlite/3.53.4

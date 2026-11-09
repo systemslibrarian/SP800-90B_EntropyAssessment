@@ -1,0 +1,7 @@
+m = 1 fails the chi-square battery:            Failed (as SP 800-90B 5.2.3 requires)
+m = 1 reported with its reason:                present
+m >= 2 still applies the test:                 Passed
+truerand_1bit unaffected:                      Passed
+truerand_8bit unaffected:                      Passed
+
+regression-chisquare: PASS

@@ -1,0 +1,10 @@
+ .github/workflows/x86-64-platform-facts.yml        |  19 +-
+ NOTICE                                             |  14 ++
+ .../CLOSING-INVENTORY.md                           |  12 +-
+ audits/INSTRUMENT-INVENTORY.md                     |   4 +-
+ cpp/Makefile                                       |  21 +-
+ cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md     |  19 +-
+ cpp/selftest/regression-openssl-pin.sh             | 223 +++++++++++++++++++++
+ cpp/selftest/regression-script-inventory.txt       |   1 +
+ cpp/selftest/run-all-checks.sh                     |   4 +-
+ 9 files changed, 288 insertions(+), 29 deletions(-)

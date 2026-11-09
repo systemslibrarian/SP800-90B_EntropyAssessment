@@ -1,0 +1,114 @@
+== Cellar/python@3.14/3.14.7/bin ==
+total 12
+drwxr-xr-x 14 gmcas admin 448 Sep 22 18:34 .
+drwxr-xr-x 14 gmcas admin 448 Sep 22 18:34 ..
+lrwxr-xr-x  1 gmcas admin  54 Aug  5 06:29 idle3 -> ../Frameworks/Python.framework/Versions/3.14/bin/idle3
+lrwxr-xr-x  1 gmcas admin  57 Aug  5 06:29 idle3.14 -> ../Frameworks/Python.framework/Versions/3.14/bin/idle3.14
+-r-xr-xr-x  1 gmcas admin 207 Sep 22 18:34 pip3
+-r-xr-xr-x  1 gmcas admin 207 Sep 22 18:34 pip3.14
+lrwxr-xr-x  1 gmcas admin  55 Aug  5 06:29 pydoc3 -> ../Frameworks/Python.framework/Versions/3.14/bin/pydoc3
+lrwxr-xr-x  1 gmcas admin  58 Aug  5 06:29 pydoc3.14 -> ../Frameworks/Python.framework/Versions/3.14/bin/pydoc3.14
+lrwxr-xr-x  1 gmcas admin  56 Aug  5 06:29 python3 -> ../Frameworks/Python.framework/Versions/3.14/bin/python3
+lrwxr-xr-x  1 gmcas admin  63 Aug  5 06:29 python3-config -> ../Frameworks/Python.framework/Versions/3.14/bin/python3-config
+lrwxr-xr-x  1 gmcas admin  59 Aug  5 06:29 python3.14 -> ../Frameworks/Python.framework/Versions/3.14/bin/python3.14
+lrwxr-xr-x  1 gmcas admin  66 Aug  5 06:29 python3.14-config -> ../Frameworks/Python.framework/Versions/3.14/bin/python3.14-config
+lrwxr-xr-x  1 gmcas admin   9 Aug  5 06:29 wheel3 -> wheel3.14
+-r-xr-xr-x  1 gmcas admin 200 Sep 22 18:34 wheel3.14
+
+== Cellar/python@3.15/3.15.2/bin ==
+total 8
+drwxr-xr-x 12 gmcas admin 384 Nov  7 19:28 .
+drwxr-xr-x 14 gmcas admin 448 Nov  7 19:29 ..
+lrwxr-xr-x  1 gmcas admin  54 Oct 25 12:57 idle3 -> ../Frameworks/Python.framework/Versions/3.15/bin/idle3
+lrwxr-xr-x  1 gmcas admin  57 Oct 25 12:57 idle3.15 -> ../Frameworks/Python.framework/Versions/3.15/bin/idle3.15
+-r-xr-xr-x  1 gmcas admin 207 Nov  7 19:28 pip3
+-r-xr-xr-x  1 gmcas admin 207 Nov  7 19:28 pip3.15
+lrwxr-xr-x  1 gmcas admin  55 Oct 25 12:57 pydoc3 -> ../Frameworks/Python.framework/Versions/3.15/bin/pydoc3
+lrwxr-xr-x  1 gmcas admin  58 Oct 25 12:57 pydoc3.15 -> ../Frameworks/Python.framework/Versions/3.15/bin/pydoc3.15
+lrwxr-xr-x  1 gmcas admin  56 Oct 25 12:57 python3 -> ../Frameworks/Python.framework/Versions/3.15/bin/python3
+lrwxr-xr-x  1 gmcas admin  63 Oct 25 12:57 python3-config -> ../Frameworks/Python.framework/Versions/3.15/bin/python3-config
+lrwxr-xr-x  1 gmcas admin  59 Oct 25 12:57 python3.15 -> ../Frameworks/Python.framework/Versions/3.15/bin/python3.15
+lrwxr-xr-x  1 gmcas admin  66 Oct 25 12:57 python3.15-config -> ../Frameworks/Python.framework/Versions/3.15/bin/python3.15-config
+
+== Cellar/python@3.14 lib/pkgconfig and share/man ==
+/opt/homebrew/Cellar/python@3.14/3.14.7/lib/pkgconfig/:
+total 0
+drwxr-xr-x 6 gmcas admin 192 Aug  5 06:29 .
+drwxr-xr-x 4 gmcas admin 128 Aug  5 06:29 ..
+lrwxr-xr-x 1 gmcas admin  82 Aug  5 06:29 python-3.14-embed.pc -> ../../Frameworks/Python.framework/Versions/3.14/lib/pkgconfig/python-3.14-embed.pc
+lrwxr-xr-x 1 gmcas admin  76 Aug  5 06:29 python-3.14.pc -> ../../Frameworks/Python.framework/Versions/3.14/lib/pkgconfig/python-3.14.pc
+lrwxr-xr-x 1 gmcas admin  78 Aug  5 06:29 python3-embed.pc -> ../../Frameworks/Python.framework/Versions/3.14/lib/pkgconfig/python3-embed.pc
+lrwxr-xr-x 1 gmcas admin  72 Aug  5 06:29 python3.pc -> ../../Frameworks/Python.framework/Versions/3.14/lib/pkgconfig/python3.pc
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/share/man/man1/:
+total 56
+drwxr-xr-x 4 gmcas admin   128 Aug  5 06:29 .
+drwxr-xr-x 3 gmcas admin    96 Aug  5 06:29 ..
+-rw-r--r-- 1 gmcas admin 24984 Aug  5 06:29 python3.1
+-rw-r--r-- 1 gmcas admin 24984 Aug  5 06:29 python3.14.1
+
+== Cellar/python@3.14 Frameworks/Python.framework top ==
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/:
+total 0
+drwxr-xr-x 6 gmcas admin 192 Aug  5 06:29 .
+drwxr-xr-x 3 gmcas admin  96 Aug  5 06:29 ..
+lrwxr-xr-x 1 gmcas admin  24 Aug  5 06:29 Headers -> Versions/Current/Headers
+lrwxr-xr-x 1 gmcas admin  23 Aug  5 06:29 Python -> Versions/Current/Python
+lrwxr-xr-x 1 gmcas admin  26 Aug  5 06:29 Resources -> Versions/Current/Resources
+drwxr-xr-x 4 gmcas admin 128 Aug  5 06:29 Versions
+
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/:
+total 0
+drwxr-xr-x 4 gmcas admin 128 Aug  5 06:29 .
+drwxr-xr-x 6 gmcas admin 192 Aug  5 06:29 ..
+drwxr-xr-x 9 gmcas admin 288 Aug  5 06:29 3.14
+lrwxr-xr-x 1 gmcas admin   4 Aug  5 06:29 Current -> 3.14
+
+== Cellar/python@3.15 Frameworks/Python.framework top ==
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/:
+total 0
+drwxr-xr-x 6 gmcas admin 192 Oct 25 12:57 .
+drwxr-xr-x 3 gmcas admin  96 Oct 25 12:57 ..
+lrwxr-xr-x 1 gmcas admin  24 Oct 25 12:57 Headers -> Versions/Current/Headers
+lrwxr-xr-x 1 gmcas admin  23 Oct 25 12:57 Python -> Versions/Current/Python
+lrwxr-xr-x 1 gmcas admin  26 Oct 25 12:57 Resources -> Versions/Current/Resources
+drwxr-xr-x 4 gmcas admin 128 Oct 25 12:57 Versions
+
+/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/:
+total 0
+drwxr-xr-x 4 gmcas admin 128 Oct 25 12:57 .
+drwxr-xr-x 6 gmcas admin 192 Oct 25 12:57 ..
+drwxr-xr-x 9 gmcas admin 288 Oct 25 12:57 3.15
+lrwxr-xr-x 1 gmcas admin   4 Oct 25 12:57 Current -> 3.15
+
+== openssl@3/3.6.4 bin and lib top ==
+/opt/homebrew/Cellar/openssl@3/3.6.4/bin:
+c_rehash
+openssl
+
+/opt/homebrew/Cellar/openssl@3/3.6.4/lib:
+cmake
+engines-3
+libcrypto.3.dylib
+libcrypto.a
+libcrypto.dylib
+libssl.3.dylib
+libssl.a
+libssl.dylib
+ossl-modules
+pkgconfig
+
+== openssl@4/4.1.0 bin and lib top ==
+/opt/homebrew/Cellar/openssl@4/4.1.0/bin:
+openssl
+
+/opt/homebrew/Cellar/openssl@4/4.1.0/lib:
+cmake
+libcrypto.4.dylib
+libcrypto.a
+libcrypto.dylib
+libssl.4.dylib
+libssl.a
+libssl.dylib
+ossl-modules
+pkgconfig

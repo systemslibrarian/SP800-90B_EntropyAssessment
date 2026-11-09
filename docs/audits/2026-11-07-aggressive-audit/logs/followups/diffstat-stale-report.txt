@@ -1,0 +1,11 @@
+ NOTICE                                             |  16 ++
+ .../CLOSING-INVENTORY.md                           |  13 +-
+ audits/INSTRUMENT-INVENTORY.md                     |  10 +-
+ cpp/iid_main.cpp                                   |  23 +-
+ cpp/non_iid_main.cpp                               |  23 +-
+ cpp/restart_main.cpp                               |  23 +-
+ cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md     |  19 +-
+ cpp/selftest/regression-script-inventory.txt       |   1 +
+ cpp/selftest/regression-stale-report.sh            | 305 +++++++++++++++++++++
+ cpp/selftest/run-all-checks.sh                     |   4 +-
+ 10 files changed, 412 insertions(+), 25 deletions(-)

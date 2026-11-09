@@ -1,0 +1,13 @@
+ea_non_iid character device /dev/zero:       refused promptly
+ea_iid character device /dev/zero:           refused promptly
+ea_non_iid character device /dev/urandom:    refused promptly
+ea_iid character device /dev/urandom:        refused promptly
+ea_non_iid FIFO:                             refused promptly
+ea_iid FIFO:                                 refused promptly
+ea_non_iid directory:                        refused promptly
+ea_iid directory:                            refused promptly
+ea_non_iid absent file no hash invented:     errorLevel set, sha256 absent
+ea_iid absent file no hash invented:         errorLevel set, sha256 absent
+regular file still hashed:                   hash unchanged
+
+regression-nonregular: PASS (0 skipped)

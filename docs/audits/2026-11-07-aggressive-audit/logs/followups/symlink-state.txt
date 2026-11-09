@@ -1,0 +1,285 @@
+== /opt/homebrew/opt/<f> ==
+openssl@4      -> ../Cellar/openssl@4/4.1.0
+python@3.15    -> ../Cellar/python@3.15/3.15.2
+llvm           -> ../Cellar/llvm/23.1.5
+lld            -> ../Cellar/lld/23.1.5
+z3             -> ../Cellar/z3/5.3.3
+zstd           -> ../Cellar/zstd/1.5.7_1
+xz             -> ../Cellar/xz/5.8.4
+sqlite         -> ../Cellar/sqlite/3.54.1
+readline       -> ../Cellar/readline/8.3.6
+mpdecimal      -> ../Cellar/mpdecimal/4.0.1
+afl++          -> ../Cellar/afl++/5.03c
+openssl@3      -> ../Cellar/openssl@3/3.6.4
+python@3.14    -> ../Cellar/python@3.14/3.14.7
+openssl        -> ../Cellar/openssl@4/4.1.0
+python         -> ../Cellar/python@3.15/3.15.2
+python3        -> ../Cellar/python@3.15/3.15.2
+llvm@22        -> ../Cellar/llvm@22/22.1.8
+
+== /opt/homebrew/bin symlinks ==
+python3            -> ../Cellar/python@3.15/3.15.2/bin/python3
+python3.14         -> ../Cellar/python@3.14/3.14.7/bin/python3.14
+python3.15         -> ../Cellar/python@3.15/3.15.2/bin/python3.15
+pip3               -> ../Cellar/python@3.15/3.15.2/bin/pip3
+pip3.14            -> ../Cellar/python@3.14/3.14.7/bin/pip3.14
+pip3.15            -> ../Cellar/python@3.15/3.15.2/bin/pip3.15
+idle3              -> ../Cellar/python@3.15/3.15.2/bin/idle3
+pydoc3             -> ../Cellar/python@3.15/3.15.2/bin/pydoc3
+python3-config     -> ../Cellar/python@3.15/3.15.2/bin/python3-config
+python             -> (absent)
+python3.13         -> (absent)
+openssl            -> ../Cellar/openssl@4/4.1.0/bin/openssl
+afl-fuzz           -> ../Cellar/afl++/5.03c/bin/afl-fuzz
+afl-clang-fast     -> ../Cellar/afl++/5.03c/bin/afl-clang-fast
+ld.lld             -> ../Cellar/lld/23.1.5/bin/ld.lld
+lld                -> ../Cellar/lld/23.1.5/bin/lld
+z3                 -> ../Cellar/z3/5.3.3/bin/z3
+clang              -> (absent)
+
+== /opt/homebrew/lib openssl dylibs and pkgconfig ==
+libcrypto.dylib              -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.dylib
+libssl.dylib                 -> ../Cellar/openssl@4/4.1.0/lib/libssl.dylib
+libcrypto.3.dylib            -> (absent)
+libcrypto.4.dylib            -> ../Cellar/openssl@4/4.1.0/lib/libcrypto.4.dylib
+libssl.3.dylib               -> (absent)
+libssl.4.dylib               -> ../Cellar/openssl@4/4.1.0/lib/libssl.4.dylib
+pkgconfig/openssl.pc         -> ../../Cellar/openssl@4/4.1.0/lib/pkgconfig/openssl.pc
+pkgconfig/libcrypto.pc       -> ../../Cellar/openssl@4/4.1.0/lib/pkgconfig/libcrypto.pc
+pkgconfig/libssl.pc          -> ../../Cellar/openssl@4/4.1.0/lib/pkgconfig/libssl.pc
+pkgconfig/python3.pc         -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python3.pc
+pkgconfig/python3-embed.pc   -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python3-embed.pc
+pkgconfig/python-3.14.pc     -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python-3.14.pc
+pkgconfig/python-3.15.pc     -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python-3.15.pc
+
+== /opt/homebrew/include/openssl ==
+include/openssl -> ../Cellar/openssl@4/4.1.0/include/openssl
+
+== Python.framework ==
+/opt/homebrew/Frameworks/Python.framework/:
+total 0
+drwxr-xr-x 6 gmcas admin 192 Nov  7 19:29 .
+drwxrwxr-x 3 gmcas admin  96 Sep 22 18:34 ..
+lrwxr-xr-x 1 gmcas admin  67 Nov  7 19:29 Headers -> ../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Headers
+lrwxr-xr-x 1 gmcas admin  66 Nov  7 19:29 Python -> ../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Python
+lrwxr-xr-x 1 gmcas admin  69 Nov  7 19:29 Resources -> ../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Resources
+drwxr-xr-x 5 gmcas admin 160 Nov  7 19:29 Versions
+
+/opt/homebrew/Frameworks/Python.framework/Versions/:
+total 0
+drwxr-xr-x 5 gmcas admin 160 Nov  7 19:29 .
+drwxr-xr-x 6 gmcas admin 192 Nov  7 19:29 ..
+lrwxr-xr-x 1 gmcas admin  76 Sep 22 18:34 3.14 -> ../../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14
+lrwxr-xr-x 1 gmcas admin  76 Nov  7 19:29 3.15 -> ../../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15
+lrwxr-xr-x 1 gmcas admin  79 Nov  7 19:29 Current -> ../../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/Current
+Versions/Current -> ../../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/Current
+
+== share/man/man1/python3.1 ==
+../../../Cellar/python@3.15/3.15.2/share/man/man1/python3.1
+
+== /opt/homebrew/var/homebrew/linked/ ==
+total 0
+drwxrwxr-x 116 gmcas admin 3712 Nov  7 19:29 .
+drwxrwxr-x   5 gmcas admin  160 Jul 24 18:43 ..
+lrwxr-xr-x   1 gmcas admin   33 Sep 22 18:33 abseil -> ../../../Cellar/abseil/20260817.0
+lrwxr-xr-x   1 gmcas admin   29 Sep 22 18:33 ada-url -> ../../../Cellar/ada-url/4.0.0
+lrwxr-xr-x   1 gmcas admin   27 Nov  7 19:29 afl++ -> ../../../Cellar/afl++/5.03c
+lrwxr-xr-x   1 gmcas admin   27 Sep  2 18:32 bash -> ../../../Cellar/bash/5.3.15
+lrwxr-xr-x   1 gmcas admin   28 Oct  9 00:21 boost -> ../../../Cellar/boost/1.92.0
+lrwxr-xr-x   1 gmcas admin   28 Jul 24 18:45 brotli -> ../../../Cellar/brotli/1.2.0
+lrwxr-xr-x   1 gmcas admin   33 Jul 29 20:38 bundletool -> ../../../Cellar/bundletool/1.18.3
+lrwxr-xr-x   1 gmcas admin   29 Jul 24 18:45 c-ares -> ../../../Cellar/c-ares/1.34.8
+lrwxr-xr-x   1 gmcas admin   42 Oct 20 19:57 ca-certificates -> ../../../Cellar/ca-certificates/2026-10-20
+lrwxr-xr-x   1 gmcas admin   28 Jul 29 20:38 cairo -> ../../../Cellar/cairo/1.18.4
+lrwxr-xr-x   1 gmcas admin   28 Sep 16 21:47 cliclick -> ../../../Cellar/cliclick/5.1
+lrwxr-xr-x   1 gmcas admin   27 Sep 22 18:33 cmake -> ../../../Cellar/cmake/4.4.3
+lrwxr-xr-x   1 gmcas admin   32 Jul 25 06:08 cocoapods -> ../../../Cellar/cocoapods/1.17.0
+lrwxr-xr-x   1 gmcas admin   29 Sep  4 07:11 colima -> ../../../Cellar/colima/0.10.3
+lrwxr-xr-x   1 gmcas admin   27 Oct  9 00:21 confuse -> ../../../Cellar/confuse/3.4
+lrwxr-xr-x   1 gmcas admin   30 Aug 29 11:43 coreutils -> ../../../Cellar/coreutils/9.11
+lrwxr-xr-x   1 gmcas admin   27 Oct 20 19:57 dav1d -> ../../../Cellar/dav1d/1.5.4
+lrwxr-xr-x   1 gmcas admin   29 Sep  4 07:11 docker -> ../../../Cellar/docker/29.8.0
+lrwxr-xr-x   1 gmcas admin   33 Sep 22 18:34 emscripten -> ../../../Cellar/emscripten/6.0.10
+lrwxr-xr-x   1 gmcas admin   36 Jul 24 18:46 firebase-cli -> ../../../Cellar/firebase-cli/15.24.0
+lrwxr-xr-x   1 gmcas admin   27 Aug  7 19:56 flint -> ../../../Cellar/flint/3.6.0
+lrwxr-xr-x   1 gmcas admin   26 Jul 24 18:45 fmt -> ../../../Cellar/fmt/12.2.0
+lrwxr-xr-x   1 gmcas admin   33 Sep 22 18:34 fontconfig -> ../../../Cellar/fontconfig/2.18.3
+lrwxr-xr-x   1 gmcas admin   31 Jul 29 20:38 freetype -> ../../../Cellar/freetype/2.14.3
+lrwxr-xr-x   1 gmcas admin   26 Oct 25 20:10 gawk -> ../../../Cellar/gawk/5.4.1
+lrwxr-xr-x   1 gmcas admin   26 Sep 30 03:20 gcc -> ../../../Cellar/gcc/16.2.0
+lrwxr-xr-x   1 gmcas admin   27 Jul 29 20:38 gettext -> ../../../Cellar/gettext/1.0
+lrwxr-xr-x   1 gmcas admin   25 Jul 24 18:47 gh -> ../../../Cellar/gh/2.96.0
+lrwxr-xr-x   1 gmcas admin   28 Jul 29 20:38 giflib -> ../../../Cellar/giflib/6.1.3
+lrwxr-xr-x   1 gmcas admin   38 Sep 16 19:26 git-filter-repo -> ../../../Cellar/git-filter-repo/2.47.0
+lrwxr-xr-x   1 gmcas admin   29 Aug 25 07:21 git-lfs -> ../../../Cellar/git-lfs/3.7.1
+lrwxr-xr-x   1 gmcas admin   27 Sep 22 18:34 glib -> ../../../Cellar/glib/2.90.0
+lrwxr-xr-x   1 gmcas admin   25 Aug  7 19:56 gmp -> ../../../Cellar/gmp/6.3.0
+lrwxr-xr-x   1 gmcas admin   28 Aug 22 07:17 gnupg -> ../../../Cellar/gnupg/2.5.21
+lrwxr-xr-x   1 gmcas admin   31 Aug 22 07:17 gnutls -> ../../../Cellar/gnutls/3.8.13_2
+lrwxr-xr-x   1 gmcas admin   27 Aug 22 07:17 gpgme -> ../../../Cellar/gpgme/2.1.2
+lrwxr-xr-x   1 gmcas admin   29 Aug 22 07:17 gpgmepp -> ../../../Cellar/gpgmepp/2.1.0
+lrwxr-xr-x   1 gmcas admin   32 Jul 29 20:38 graphite2 -> ../../../Cellar/graphite2/1.3.15
+lrwxr-xr-x   1 gmcas admin   31 Sep 22 18:34 harfbuzz -> ../../../Cellar/harfbuzz/14.5.0
+lrwxr-xr-x   1 gmcas admin   38 Jul 24 18:45 hdrhistogram_c -> ../../../Cellar/hdrhistogram_c/0.11.10
+lrwxr-xr-x   1 gmcas admin   29 Sep 22 18:34 highway -> ../../../Cellar/highway/1.4.0
+lrwxr-xr-x   1 gmcas admin   24 Sep 30 03:20 isl -> ../../../Cellar/isl/0.28
+lrwxr-xr-x   1 gmcas admin   32 Jul 29 20:38 jpeg-turbo -> ../../../Cellar/jpeg-turbo/3.2.0
+lrwxr-xr-x   1 gmcas admin   27 Jul 29 20:38 json-c -> ../../../Cellar/json-c/0.19
+lrwxr-xr-x   1 gmcas admin   29 Sep 30 03:20 jsoncpp -> ../../../Cellar/jsoncpp/1.9.8
+lrwxr-xr-x   1 gmcas admin   24 Oct 20 19:57 lame -> ../../../Cellar/lame/4.0
+lrwxr-xr-x   1 gmcas admin   31 Aug 22 07:17 libassuan -> ../../../Cellar/libassuan/3.0.2
+lrwxr-xr-x   1 gmcas admin   35 Sep 30 03:20 libdivsufsort -> ../../../Cellar/libdivsufsort/2.0.1
+lrwxr-xr-x   1 gmcas admin   29 Oct  9 00:21 libftdi -> ../../../Cellar/libftdi/1.5_2
+lrwxr-xr-x   1 gmcas admin   32 Aug 22 07:17 libgcrypt -> ../../../Cellar/libgcrypt/1.12.2
+lrwxr-xr-x   1 gmcas admin   29 Aug 30 19:50 libgit2 -> ../../../Cellar/libgit2/1.9.7
+lrwxr-xr-x   1 gmcas admin   33 Aug 22 07:17 libgpg-error -> ../../../Cellar/libgpg-error/1.61
+lrwxr-xr-x   1 gmcas admin   29 Aug 22 07:17 libidn2 -> ../../../Cellar/libidn2/2.3.8
+lrwxr-xr-x   1 gmcas admin   29 Aug 22 07:17 libksba -> ../../../Cellar/libksba/1.8.0
+lrwxr-xr-x   1 gmcas admin   28 Sep 30 03:20 libmpc -> ../../../Cellar/libmpc/1.4.1
+lrwxr-xr-x   1 gmcas admin   33 Sep 22 18:33 libnghttp2 -> ../../../Cellar/libnghttp2/1.70.0
+lrwxr-xr-x   1 gmcas admin   33 Jul 24 18:45 libnghttp3 -> ../../../Cellar/libnghttp3/1.17.0
+lrwxr-xr-x   1 gmcas admin   32 Jul 24 18:46 libngtcp2 -> ../../../Cellar/libngtcp2/1.24.0
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 libpng -> ../../../Cellar/libpng/1.6.58
+lrwxr-xr-x   1 gmcas admin   32 Aug 30 19:50 libssh2 -> ../../../Cellar/libssh2/1.11.1_4
+lrwxr-xr-x   1 gmcas admin   31 Aug 22 07:17 libtasn1 -> ../../../Cellar/libtasn1/4.21.0
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 libtiff -> ../../../Cellar/libtiff/4.7.2
+lrwxr-xr-x   1 gmcas admin   34 Jul 29 20:38 libunistring -> ../../../Cellar/libunistring/1.4.2
+lrwxr-xr-x   1 gmcas admin   29 Aug 22 07:17 libusb -> ../../../Cellar/libusb/1.0.30
+lrwxr-xr-x   1 gmcas admin   28 Jul 24 18:46 libuv -> ../../../Cellar/libuv/1.52.1
+lrwxr-xr-x   1 gmcas admin   29 Oct 20 19:57 libvmaf -> ../../../Cellar/libvmaf/3.2.1
+lrwxr-xr-x   1 gmcas admin   29 Oct 20 19:57 libvpx -> ../../../Cellar/libvpx/1.17.0
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 libx11 -> ../../../Cellar/libx11/1.8.13
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 libxau -> ../../../Cellar/libxau/1.0.12
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 libxcb -> ../../../Cellar/libxcb/1.17.0
+lrwxr-xr-x   1 gmcas admin   30 Jul 29 20:38 libxdmcp -> ../../../Cellar/libxdmcp/1.1.5
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 libxext -> ../../../Cellar/libxext/1.3.7
+lrwxr-xr-x   1 gmcas admin   33 Jul 29 20:38 libxrender -> ../../../Cellar/libxrender/0.9.12
+lrwxr-xr-x   1 gmcas admin   29 Jul 25 06:08 libyaml -> ../../../Cellar/libyaml/0.2.5
+lrwxr-xr-x   1 gmcas admin   26 Sep  4 07:11 lima -> ../../../Cellar/lima/2.2.0
+lrwxr-xr-x   1 gmcas admin   34 Sep 22 18:34 little-cms2 -> ../../../Cellar/little-cms2/2.19.1
+lrwxr-xr-x   1 gmcas admin   26 Nov  7 19:28 lld -> ../../../Cellar/lld/23.1.5
+lrwxr-xr-x   1 gmcas admin   28 Aug 30 19:50 llhttp -> ../../../Cellar/llhttp/9.4.3
+lrwxr-xr-x   1 gmcas admin   26 Jul 24 18:46 lz4 -> ../../../Cellar/lz4/1.10.0
+lrwxr-xr-x   1 gmcas admin   24 Jul 29 20:38 lzo -> ../../../Cellar/lzo/2.10
+lrwxr-xr-x   1 gmcas admin   29 Sep 22 18:33 merve -> ../../../Cellar/merve/1.2.2_3
+lrwxr-xr-x   1 gmcas admin   31 Jul 24 18:46 mpdecimal -> ../../../Cellar/mpdecimal/4.0.1
+lrwxr-xr-x   1 gmcas admin   26 Aug  7 19:56 mpfr -> ../../../Cellar/mpfr/4.2.2
+lrwxr-xr-x   1 gmcas admin   29 Oct 20 19:57 mpg123 -> ../../../Cellar/mpg123/1.33.7
+lrwxr-xr-x   1 gmcas admin   28 Jul 24 18:46 nbytes -> ../../../Cellar/nbytes/0.1.4
+lrwxr-xr-x   1 gmcas admin   26 Aug 22 07:17 nettle -> ../../../Cellar/nettle/4.0
+lrwxr-xr-x   1 gmcas admin   27 Sep 22 18:56 node -> ../../../Cellar/node/26.9.0
+lrwxr-xr-x   1 gmcas admin   24 Aug 22 07:17 npth -> ../../../Cellar/npth/1.8
+lrwxr-xr-x   1 gmcas admin   25 Aug 22 07:17 nspr -> ../../../Cellar/nspr/4.40
+lrwxr-xr-x   1 gmcas admin   25 Aug 22 07:17 nss -> ../../../Cellar/nss/3.127
+lrwxr-xr-x   1 gmcas admin   30 Aug 22 07:17 openjpeg -> ../../../Cellar/openjpeg/2.5.4
+lrwxr-xr-x   1 gmcas admin   31 Nov  7 19:28 openssl@4 -> ../../../Cellar/openssl@4/4.1.0
+lrwxr-xr-x   1 gmcas admin   30 Aug 22 07:17 p11-kit -> ../../../Cellar/p11-kit/0.26.5
+lrwxr-xr-x   1 gmcas admin   27 Sep 22 18:34 pcre2 -> ../../../Cellar/pcre2/10.48
+lrwxr-xr-x   1 gmcas admin   30 Aug 22 07:17 pinentry -> ../../../Cellar/pinentry/1.3.3
+lrwxr-xr-x   1 gmcas admin   29 Jul 29 20:38 pixman -> ../../../Cellar/pixman/0.46.4
+lrwxr-xr-x   1 gmcas admin   29 Aug  7 19:56 pkgconf -> ../../../Cellar/pkgconf/3.0.5
+lrwxr-xr-x   1 gmcas admin   31 Aug 22 07:17 poppler -> ../../../Cellar/poppler/26.08.0
+lrwxr-xr-x   1 gmcas admin   34 Sep 22 18:34 python@3.14 -> ../../../Cellar/python@3.14/3.14.7
+lrwxr-xr-x   1 gmcas admin   34 Nov  7 19:29 python@3.15 -> ../../../Cellar/python@3.15/3.15.2
+lrwxr-xr-x   1 gmcas admin   26 Jul 25 06:08 ruby -> ../../../Cellar/ruby/4.0.6
+lrwxr-xr-x   1 gmcas admin   27 Aug 30 19:51 rust -> ../../../Cellar/rust/1.98.0
+lrwxr-xr-x   1 gmcas admin   33 Oct 10 07:47 shellcheck -> ../../../Cellar/shellcheck/0.11.0
+lrwxr-xr-x   1 gmcas admin   31 Sep 22 18:34 simdjson -> ../../../Cellar/simdjson/4.6.11
+lrwxr-xr-x   1 gmcas admin   29 Sep 22 18:33 simdutf -> ../../../Cellar/simdutf/9.2.0
+lrwxr-xr-x   1 gmcas admin   32 Oct 14 20:45 terraform -> ../../../Cellar/terraform/1.16.6
+lrwxr-xr-x   1 gmcas admin   29 Oct 14 18:08 uhubctl -> ../../../Cellar/uhubctl/2.6.0
+lrwxr-xr-x   1 gmcas admin   29 Jul 24 18:46 uvwasi -> ../../../Cellar/uvwasi/0.0.23
+lrwxr-xr-x   1 gmcas admin   26 Jul 29 20:38 webp -> ../../../Cellar/webp/1.6.0
+lrwxr-xr-x   1 gmcas admin   32 Jul 29 20:38 xorgproto -> ../../../Cellar/xorgproto/2025.1
+lrwxr-xr-x   1 gmcas admin   24 Sep 22 18:34 xz -> ../../../Cellar/xz/5.8.4
+lrwxr-xr-x   1 gmcas admin   37 Sep 22 18:34 yuicompressor -> ../../../Cellar/yuicompressor/2.4.8_1
+lrwxr-xr-x   1 gmcas admin   24 Nov  7 19:28 z3 -> ../../../Cellar/z3/5.3.3
+lrwxr-xr-x   1 gmcas admin   28 Jul 24 18:46 zstd -> ../../../Cellar/zstd/1.5.7_1
+
+== brew list --pinned ==
+
+== Backup dir ==
+/Users/gmcas/Library/Caches/Homebrew/Backup:
+total 0
+drwxr-xr-x  6 gmcas staff  192 Nov  7 19:28 .
+drwxr-xr-x 67 gmcas staff 2144 Nov  8 19:59 ..
+drwxr-xr-x  3 gmcas staff   96 Nov  7 19:28 Frameworks
+drwxr-xr-x  7 gmcas staff  224 Nov  7 19:28 bin
+drwxr-xr-x  3 gmcas staff   96 Nov  7 19:28 lib
+drwxr-xr-x  3 gmcas staff   96 Nov  7 19:28 share
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks:
+total 0
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:28 .
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:28 ..
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:29 Python.framework
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks/Python.framework:
+total 0
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:29 .
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:28 ..
+lrwxr-xr-x 1 gmcas admin  67 Sep 22 18:34 Headers -> ../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Headers
+lrwxr-xr-x 1 gmcas admin  66 Sep 22 18:34 Python -> ../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Python
+lrwxr-xr-x 1 gmcas admin  69 Sep 22 18:34 Resources -> ../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Resources
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:29 Versions
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks/Python.framework/Versions:
+total 0
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:29 .
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:29 ..
+lrwxr-xr-x 1 gmcas admin  79 Sep 22 18:34 Current -> ../../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/Current
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/bin:
+total 0
+drwxr-xr-x 7 gmcas staff 224 Nov  7 19:28 .
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:28 ..
+lrwxr-xr-x 1 gmcas admin  38 Sep 22 18:34 idle3 -> ../Cellar/python@3.14/3.14.7/bin/idle3
+lrwxr-xr-x 1 gmcas admin  37 Sep 22 18:34 pip3 -> ../Cellar/python@3.14/3.14.7/bin/pip3
+lrwxr-xr-x 1 gmcas admin  39 Sep 22 18:34 pydoc3 -> ../Cellar/python@3.14/3.14.7/bin/pydoc3
+lrwxr-xr-x 1 gmcas admin  40 Sep 22 18:34 python3 -> ../Cellar/python@3.14/3.14.7/bin/python3
+lrwxr-xr-x 1 gmcas admin  47 Sep 22 18:34 python3-config -> ../Cellar/python@3.14/3.14.7/bin/python3-config
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/lib:
+total 0
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:28 .
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:28 ..
+drwxr-xr-x 4 gmcas staff 128 Nov  7 19:28 pkgconfig
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/lib/pkgconfig:
+total 0
+drwxr-xr-x 4 gmcas staff 128 Nov  7 19:28 .
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:28 ..
+lrwxr-xr-x 1 gmcas admin  62 Sep 22 18:34 python3-embed.pc -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python3-embed.pc
+lrwxr-xr-x 1 gmcas admin  56 Sep 22 18:34 python3.pc -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python3.pc
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/share:
+total 0
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:28 .
+drwxr-xr-x 6 gmcas staff 192 Nov  7 19:28 ..
+drwxr-xr-x 3 gmcas staff  96 Nov  7 19:28 man
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/share/man:
+total 0
+drwxr-xr-x 3 gmcas staff 96 Nov  7 19:28 .
+drwxr-xr-x 3 gmcas staff 96 Nov  7 19:28 ..
+drwxr-xr-x 3 gmcas staff 96 Nov  7 19:28 man1
+
+/Users/gmcas/Library/Caches/Homebrew/Backup/share/man/man1:
+total 0
+drwxr-xr-x 3 gmcas staff 96 Nov  7 19:28 .
+drwxr-xr-x 3 gmcas staff 96 Nov  7 19:28 ..
+lrwxr-xr-x 1 gmcas admin 59 Sep 22 18:34 python3.1 -> ../../../Cellar/python@3.14/3.14.7/share/man/man1/python3.1
+
+== Backup symlink targets ==
+/Users/gmcas/Library/Caches/Homebrew/Backup/bin/python3 -> ../Cellar/python@3.14/3.14.7/bin/python3
+/Users/gmcas/Library/Caches/Homebrew/Backup/bin/pip3 -> ../Cellar/python@3.14/3.14.7/bin/pip3
+/Users/gmcas/Library/Caches/Homebrew/Backup/bin/idle3 -> ../Cellar/python@3.14/3.14.7/bin/idle3
+/Users/gmcas/Library/Caches/Homebrew/Backup/bin/python3-config -> ../Cellar/python@3.14/3.14.7/bin/python3-config
+/Users/gmcas/Library/Caches/Homebrew/Backup/bin/pydoc3 -> ../Cellar/python@3.14/3.14.7/bin/pydoc3
+/Users/gmcas/Library/Caches/Homebrew/Backup/lib/pkgconfig/python3.pc -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python3.pc
+/Users/gmcas/Library/Caches/Homebrew/Backup/lib/pkgconfig/python3-embed.pc -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python3-embed.pc
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks/Python.framework/Python -> ../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Python
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks/Python.framework/Resources -> ../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Resources
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks/Python.framework/Headers -> ../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Headers
+/Users/gmcas/Library/Caches/Homebrew/Backup/Frameworks/Python.framework/Versions/Current -> ../../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/Current
+/Users/gmcas/Library/Caches/Homebrew/Backup/share/man/man1/python3.1 -> ../../../Cellar/python@3.14/3.14.7/share/man/man1/python3.1

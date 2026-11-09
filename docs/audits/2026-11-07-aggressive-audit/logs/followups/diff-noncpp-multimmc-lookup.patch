@@ -1,0 +1,226 @@
+diff --git a/NOTICE b/NOTICE
+index b9389e4..6fe7966 100644
+--- a/NOTICE
++++ b/NOTICE
+@@ -81,7 +81,7 @@ not a proof about every qualifying input:
+     on before, with the same eight predictor values, for the platform
+     reason recorded in upstream issue #155.
+ 
+-  * Two changes alter results deliberately, and are not covered by the
++  * Three changes alter results deliberately, and are not covered by the
+     sentence above:
+ 
+       - F09 (commit 69b6094) corrects the MultiMMC run of correct
+@@ -103,6 +103,25 @@ not a proof about every qualifying input:
+         min-entropy figure, and it changes it on exactly the datasets
+         the standard says it should.
+ 
++      - F10 / C01 (2026-11-08) makes the MultiMMC predictor consult
++        every depth independently, as SP 800-90B 6.3.9 step 4.b.i is
++        written, instead of skipping every deeper depth once a shallower
++        one had missed. The two readings differ only after a depth's
++        dictionary reaches its 100,000-entry cap, and then in either
++        direction. On the 2026-11-07 audit's two crafted 1,000,000-sample
++        8-bit files the Literal MultiMMC figure moves from
++        0.97830188845975063 to about 0.90052 on one (the spec-literal
++        reference computes 0.9005162186024169 with the printed Z = 2.576;
++        the tool's binary64 quantile, D-1, moves the seventh decimal) and
++        from 1.1479041002434913 to about 1.24064 on the other. The first
++        is the direction that matters: the old figure was too HIGH. On
++        every multi-bit sample under bin/ the spec-literal reference gives
++        C and r identical to cpp/selftest/refdata/ (derived 2026-11-08
++        with reference/py90b/multimmc.py; to be confirmed by the
++        self-test on the repaired build), and the binary path cannot
++        reach the mechanism, so no reference figure is expected to move.
++        Regression: cpp/selftest/regression-multimmc-lookup.sh.
++
+   * bin/ and cpp/selftest/refdata/ are untouched. The reference data is
+     NIST's and is not regenerated here.
+ 
+@@ -110,9 +129,10 @@ not a proof about every qualifying input:
+     altered. Most estimator changes only turn producing an unmeasured
+     number, reading out of bounds, or aborting the process into
+     declining to produce an estimate, which the combination logic
+-    already handled. The two exceptions are F09 and N-01, described
+-    above: they change results deliberately. This sentence said "only"
+-    until 2026-10-01, which those two contradict.
++    already handled. The three exceptions are F09, N-01 and F10 / C01,
++    described above: they change results deliberately. This sentence
++    said "only" until 2026-10-01, which the first two contradict; the
++    third joined them on 2026-11-08.
+ 
+ What is no longer true: cpp/shared/, cpp/non_iid/ and the *_main.cpp
+ programs have been modified. Each change is listed below with the
+@@ -256,6 +276,23 @@ A second repair pass on the same date, working the remaining queue:
+             SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
+             against brute-force enumeration. -s is accepted and ignored.
+             Audit C23, OC-30. Self-authored and unreviewed.
++2026-11-08  cpp/non_iid/multi_mmc_test.h: each MultiMMC depth looks its
++            prefix up independently, as SP 800-90B 6.3.9 step 4.b.i is
++            written; a miss at depth d-1 no longer makes depths >= d Null.
++            The two readings differ only once a depth's dictionary holds
++            MAX_ENTRIES pairs, where a prefix can be present at depth d
++            with its suffix refused at d-1; the chained lookup then lowered
++            C and r and raised the estimate (audit F10 / C01, recorded as
++            NOT REPAIRED until now; the 2026-11-07 audit's experiment X3
++            measured +0.078 bit on a crafted compliant 8-bit file). The
++            binary path is changed the same way for consistency and cannot
++            reach the mechanism, so no binary figure moves. The F09 run
++            counter (commit 69b6094) and the #257 decline (commit ed88de9)
++            share these loops and are exercised by the regression as named
++            pairs. Regression: regression-multimmc-lookup.sh, with the
++            pre-repair figures recorded in its header. Written without a
++            build; the observed failure against master's binary is the
++            orchestrator's to record. Self-authored and unreviewed.
+ 2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
+             report that is actually written. Commit 23dca69.
+ 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed
+@@ -332,10 +369,12 @@ A second repair pass on the same date, working the remaining queue:
+ 
+ The scope statement at the head of this section covers these too: no
+ unintended numerical change was observed on the datasets tested, with
+-F09 and N-01 the two deliberate exceptions described there. On every
+-sample under bin/ the figures are unchanged, including the Literal
+-MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which the
+-build still reproduces exactly.
++F09, N-01 and F10 / C01 the three deliberate exceptions described there.
++On every sample under bin/ the figures are unchanged, including the
++Literal MultiMMC figure in cpp/selftest/refdata/truerand_8bit.res, which
++the build still reproduces exactly; for F10 / C01 that is a derivation
++from the spec-literal reference (2026-11-08), to be confirmed by the
++self-test on the repaired build.
+ 
+ Withdrawn, not merely unchanged (recorded 2026-10-02): the treatment of a
+ two-symbol alphabet as binary regardless of the declared sample width
+diff --git a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+index 5dcdbdb..08f29dc 100644
+--- a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
++++ b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+@@ -84,11 +84,11 @@ script that declares it by `cpp/selftest/regression-docs.sh`, or is dated and
+ attributed, because hand-typed counts in this document drifted six times
+ before that rule existed (`OC-126`):
+ 
+-- `cpp/selftest/run-all-checks.sh` runs 24 regression scripts
+-  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 26 passed, 0 failed);
+-- `audits/enum-instruments.sh` prints **87 live instruments** (measured
+-  2026-10-27 at `a5422cf`, up one for `oracles/git-classification-test.py`,
+-  `OC-128`; the count has a hand-reviewed limb, `OC-126`);
++- `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
++  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
++- `audits/enum-instruments.sh` prints **88 live instruments** (measured
++  2026-11-08 at `f46f2ea`, up one for `cpp/selftest/regression-multimmc-lookup.sh`
++  on top of `OC-128`'s 87; the count has a hand-reviewed limb, `OC-126`);
+ - three mutation harnesses — `harness-inventory-mutation-test.sh`,
+   `outside-battery-mutation-test.sh`, and the band-1 pair battery
+   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
+@@ -477,7 +477,7 @@ the merge, and two entries were wrong when it was. The checks are cheap:
+ 
+ ```sh
+ cd cpp && make non_iid iid restart && cd selftest
+-./run-all-checks.sh --allow-known-platform-deltas   # expect 26 passed, 0 failed
++./run-all-checks.sh --allow-known-platform-deltas   # expect 27 passed, 0 failed
+ ./harness-inventory-mutation-test.sh                # expect 5 of 5 mutations landed
+ ./outside-battery-mutation-test.sh                  # expect 9 of 9 mutations landed
+ ./regression-docs.sh                                # the prose claims that can be checked
+diff --git a/audits/INSTRUMENT-INVENTORY.md b/audits/INSTRUMENT-INVENTORY.md
+index f95750b..20021a4 100644
+--- a/audits/INSTRUMENT-INVENTORY.md
++++ b/audits/INSTRUMENT-INVENTORY.md
+@@ -76,7 +76,7 @@ them was being invoked **then**. So:
+ 
+ | set | rule that applies | count |
+ |---|---|---:|
+-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **87** at `a5422cf`, 2026-10-27 |
++| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `f46f2ea`, 2026-11-08 |
+ | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
+ 
+ Counting frozen by the live rule would silently retire 47 artefacts that were
+@@ -116,7 +116,7 @@ thing an extension-matched glob missed.
+ 
+ | set | count | what it is |
+ |---|---:|---|
+-| **LIVE** | **87** at `a5422cf`, 2026-10-27 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
++| **LIVE** | **88** at `f46f2ea`, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+ | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
+ 
+ Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
+diff --git a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+index ac10262..371b092 100644
+--- a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
++++ b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+@@ -18,9 +18,9 @@ This is not a reassurance. It is the content.
+ |---|---:|---|---|
+ | **reference comparison** (`selftest` → `compareresults.pl`) | 1 | that ~60–103 estimate values per fixture agree with `refdata/` within 1e-10, **and** that both sides name the same input, sample count and symbol width (`OC-74`, since 2026-10-21) | that `refdata/` is **right**. Ten of eleven references are upstream-captured with no independent derivation. "The self-test passes" validates agreement with a reference, never the reference. |
+ | **pinned figure** (`pin-check.sh`) | 1 | that one named input, **bound by SHA-256**, still yields 0.12644573619605429 within tolerance, with exactly one `Assessed min entropy` line | that the figure is correct for any device. It is an upstream sample, to be re-based on a real capture in January. |
+-| **behaviour regressions** (`regression-*.sh`) | 24 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
++| **behaviour regressions** (`regression-*.sh`) | 25 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
+ | **inventory and corpus integrity** (`verify-fixture-inventory.sh`, `regression-selftest-inventory.sh`, `regression-outside-battery.sh`) | 3 | that the fixture and corpus sets match their manifests, both directions | that a manifest is right. `verify-fixture-inventory.sh` **prints its manifest's digest and does not verify it** (`OC-76`, Tier A). |
+-| **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 24. |
++| **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 25. |
+ 
+ ## What has to be true for the aggregate to mean anything
+ 
+@@ -29,28 +29,29 @@ believed:
+ 
+ | precondition | status | evidence |
+ |---|---|---|
+-| **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 24 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
+-| **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 24 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
+-| **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **5 of 26** — measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists. It is NOT derivable by reading the tree: seven scripts source `buildstate-lib.sh` and only five of them are suite members that declare, so a static count gives 7 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
++| **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 25 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
++| **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 25 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
++| **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **6 of 27** EXPECTED after 2026-11-08, when `regression-multimmc-lookup.sh` (which declares) joined the suite, and **5 of 26** MEASURED 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists — re-measure it there. It is NOT derivable by reading the tree: seven scripts source `buildstate-lib.sh` and only five of them are suite members that declare, so a static count gives 7 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+ | **4. no member's claim text is hard-coded** | **ENFORCED, 0 remaining.** `regression-restart.sh` printed "32 H_I values × 2 columns" from an empty loop; its claim line now derives from the pin count and reads `0 comparisons made` when emptied. | `grep -lE 'echo .*[0-9]+ (of\|values\|comparisons\|files\|checks)' cpp/selftest/*.sh \| wc -l` → 0 |
+ | **5. the suite's own inventory is complete** | **ENFORCED.** Discovery is checked against `regression-script-inventory.txt` and the expected counts; an unlisted script is an inventory error, not a silent addition. A mutation harness proves 5 of 5 inventory mutations are caught. | `./run-all-checks.sh` refuses on a mismatch |
+ 
+ ## So, plainly
+ 
+-A green run establishes that **21 named defects do not reproduce on
++A green run establishes that **22 named defects do not reproduce on
+ generated inputs, one pinned figure is unchanged on a digest-bound input, the
+ fixture and corpus sets match their manifests, and ~98 estimate values per
+ fixture agree with an upstream reference that describes the same input.**
+ 
+ It does **not** establish that the references are right, that the figure is
+ right for any device, that members not covered by a mutation harness can fail
+-at all, or that the binary measured was the one intended in the 21 of 26 checks
+-that do not say (measured 2026-10-27, same source as above).
++at all, or that the binary measured was the one intended in the 21 of 27 checks
++that do not say (27 less the 6 expected to declare; 21 of 26 was measured
++2026-10-27, same source as above).
+ 
+ **Precondition 1 is the weak one and it is the one that has failed.** Until
+ every member has been observed to fail against a known-wrong build — the
+ obligation in the guide's step 5, which the tracker's evidence section records
+-seven prior violations of — a green suite is a statement about 21 checks
++seven prior violations of — a green suite is a statement about 22 checks
+ that were each believed to work.
+ 
+ ## Re-reading this file
+diff --git a/cpp/selftest/regression-script-inventory.txt b/cpp/selftest/regression-script-inventory.txt
+index 6085e10..90dd0ab 100644
+--- a/cpp/selftest/regression-script-inventory.txt
++++ b/cpp/selftest/regression-script-inventory.txt
+@@ -8,6 +8,7 @@ regression-iid-failclosed.sh
+ regression-iid-json.sh
+ regression-input-identity.sh
+ regression-minsize.sh
++regression-multimmc-lookup.sh
+ regression-multimmc.sh
+ regression-nonregular.sh
+ regression-notrun.sh
+diff --git a/cpp/selftest/run-all-checks.sh b/cpp/selftest/run-all-checks.sh
+index d9de0f0..c7469b0 100755
+--- a/cpp/selftest/run-all-checks.sh
++++ b/cpp/selftest/run-all-checks.sh
+@@ -26,8 +26,8 @@ allow_platform=0
+ DELTA_MANIFEST="known-platform-deltas.txt"
+ here_cmp="./check-platform-deltas.py"
+ REGRESSION_INVENTORY="regression-script-inventory.txt"
+-EXPECTED_REGRESSION_SCRIPTS=24
+-EXPECTED_TOTAL_CHECKS=26
++EXPECTED_REGRESSION_SCRIPTS=25
++EXPECTED_TOTAL_CHECKS=27
+ 
+ inventory_error() {
+     echo "run-all-checks: regression inventory error: $*" >&2

@@ -1,0 +1,271 @@
+== caveats ==
+-- afl++ keg_only=False keg_only_reason=None linked_keg=5.03c pinned=False outdated=False
+   deps=['lld', 'llvm', 'python@3.15'] build_deps=['coreutils'] uses_from_macos=[]
+   caveats: 
+-- lld keg_only=False keg_only_reason=None linked_keg=23.1.5 pinned=False outdated=False
+   deps=['llvm', 'zstd'] build_deps=['cmake'] uses_from_macos=[]
+   caveats: 
+-- llvm keg_only=True keg_only_reason={'reason': ':provided_by_macos', 'explanation': ''} linked_keg=None pinned=False outdated=False
+   deps=['zstd', 'z3'] build_deps=['cmake', 'ninja', 'python@3.15'] uses_from_macos=['libedit', 'libffi']
+   caveats: CLANG_CONFIG_FILE_SYSTEM_DIR: $HOMEBREW_PREFIX/etc/clang
+            CLANG_CONFIG_FILE_USER_DIR:   ~/.config/clang
+            
+            LLD and LLDB are now provided in separate formulae:
+              brew install lld
+              brew install lldb
+            
+            Z3 solver support will be removed in LLVM 24 as it is unsupported upstream,
+            see https://github.com/llvm/llvm-project/pull/205370
+            
+            Using `clang`, `clang++`, etc., requires a CLT installation at `/Library/Developer/CommandLineTools`.
+            If you don't want to install the CLT, you can write appropriate configuration files pointing to your
+            SDK at ~/.config/clang.
+            
+            To use the bundled libunwind please use the following LDFLAGS:
+              LDFLAGS="-L$HOMEBREW_PREFIX/opt/llvm/lib/unwind -lunwind"
+            
+            To use the bundled libc++ please use the following LDFLAGS:
+              LDFLAGS="-L$HOMEBREW_PREFIX/opt/llvm/lib/c++ -L$HOMEBREW_PREFIX/opt/llvm/lib/unwind -lunwind"
+            Features newer than system libc++ will require the following define to enable
+            (support for this may be removed in a future major LLVM release):
+              CPPFLAGS="-D_LIBCPP_DISABLE_AVAILABILITY"
+            
+            NOTE: You probably want to use the libunwind and libc++ provided by macOS unless you know what you're doing.
+-- openssl@3 keg_only=True keg_only_reason={'reason': ':versioned_formula', 'explanation': ''} linked_keg=None pinned=False outdated=True
+   deps=['ca-certificates'] build_deps=[] uses_from_macos=[]
+   caveats: To add additional certificates, place .pem files in
+              $HOMEBREW_PREFIX/etc/openssl@3/certs
+            
+            and run
+              $HOMEBREW_PREFIX/opt/openssl@3/bin/c_rehash
+-- openssl@4 keg_only=False keg_only_reason=None linked_keg=4.1.0 pinned=False outdated=False
+   deps=['ca-certificates'] build_deps=[] uses_from_macos=[{'perl': 'build'}]
+   caveats: To add additional certificates, place .pem, .crt, .cer, or .crl files in
+              $HOMEBREW_PREFIX/etc/openssl@4/certs
+            
+            and run
+              $HOMEBREW_PREFIX/Cellar/openssl@4/4.1.0/bin/openssl rehash $HOMEBREW_PREFIX/etc/openssl@4/certs
+-- python@3.14 keg_only=False keg_only_reason=None linked_keg=3.14.7 pinned=False outdated=True
+   deps=['ca-certificates', 'mpdecimal', 'openssl@4', 'sqlite', 'xz', 'zstd'] build_deps=['pkgconf'] uses_from_macos=['bzip2', 'expat', 'libedit', 'libffi', 'ncurses']
+   caveats: Python is installed as
+              $HOMEBREW_PREFIX/bin/python3.14
+            
+            Unversioned and major-versioned symlinks `python`, `python3`, `python-config`, `python3-config`, `pip`, `pip3`, etc. pointing to
+            `python3.14`, `python3.14-config`, `pip3.14` etc., respectively, are installed into
+              $HOMEBREW_PREFIX/opt/python@3.14/libexec/bin
+            
+            If you do not need a specific version of Python, and always want Homebrew's `python3` in your PATH:
+              brew install python3
+            
+            `idle3.14` requires tkinter, which is available separately:
+              brew install python-tk@3.14
+            
+            `dbm.gnu` is available separately:
+              brew install python-gdbm@3.14
+            
+            For more information about Homebrew and Python, see: https://docs.brew.sh/Homebrew-and-Python
+-- python@3.15 keg_only=False keg_only_reason=None linked_keg=3.15.2 pinned=False outdated=False
+   deps=['ca-certificates', 'mpdecimal', 'openssl@4', 'sqlite', 'xz', 'zstd'] build_deps=['pkgconf'] uses_from_macos=['bzip2', 'expat', 'libedit', 'libffi', 'ncurses']
+   caveats: Python is installed as
+              $HOMEBREW_PREFIX/bin/python3
+            
+            Unversioned symlinks `python`, `python-config`, `pip` etc. pointing to
+            `python3`, `python3-config`, `pip3` etc., respectively, are installed into
+              $HOMEBREW_PREFIX/opt/python@3.15/libexec/bin
+            
+            `idle3.15` requires tkinter, which is available separately:
+              brew install python-tk@3.15
+            
+            `dbm.gnu` is available separately:
+              brew install python-gdbm@3.15
+            
+            For more information about Homebrew and Python, see: https://docs.brew.sh/Homebrew-and-Python
+-- readline keg_only=True keg_only_reason={'reason': ':shadowed_by_macos', 'explanation': 'macOS provides BSD libedit'} linked_keg=None pinned=False outdated=False
+   deps=[] build_deps=[] uses_from_macos=['ncurses']
+   caveats: 
+-- sqlite keg_only=True keg_only_reason={'reason': ':provided_by_macos', 'explanation': ''} linked_keg=None pinned=False outdated=False
+   deps=['readline'] build_deps=[] uses_from_macos=[]
+   caveats: 
+-- z3 keg_only=False keg_only_reason=None linked_keg=5.3.3 pinned=False outdated=False
+   deps=[] build_deps=['cmake', 'python@3.15'] uses_from_macos=[]
+   caveats: 
+
+== brew deps --tree afl++ ==
+Warning: `brew deps` is not the actual runtime dependencies because --tree was passed!
+This means dependencies may differ from a formula's declared dependencies.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+afl++
+├── lld
+│   ├── llvm
+│   │   ├── zstd
+│   │   │   ├── lz4
+│   │   │   └── xz
+│   │   └── z3
+│   └── zstd
+│       ├── lz4
+│       └── xz
+├── llvm
+│   ├── zstd
+│   │   ├── lz4
+│   │   └── xz
+│   └── z3
+└── python@3.15
+    ├── ca-certificates
+    ├── mpdecimal
+    ├── openssl@4
+    │   └── ca-certificates
+    ├── sqlite
+    │   └── readline
+    ├── xz
+    └── zstd
+        ├── lz4
+        └── xz
+
+
+== brew deps --installed afl++ ==
+lld
+llvm
+mpdecimal
+openssl@4
+python@3.15
+readline
+sqlite
+xz
+z3
+zstd
+
+== brew deps --tree --installed python@3.15 ==
+Warning: `brew deps` is not the actual runtime dependencies because --tree was passed!
+This means dependencies may differ from a formula's declared dependencies.
+Hide these hints with `HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+python@3.15
+├── ca-certificates
+├── mpdecimal
+├── openssl@4
+│   └── ca-certificates
+├── sqlite
+│   └── readline
+├── xz
+└── zstd
+    ├── lz4
+    └── xz
+
+
+== brew leaves ==
+afl++
+bash
+bundletool
+cliclick
+cmake
+cocoapods
+colima
+coreutils
+dav1d
+docker
+emscripten
+firebase-cli
+flint
+gawk
+gcc
+gh
+git-filter-repo
+git-lfs
+hashicorp/tap/terraform
+jsoncpp
+lame
+libdivsufsort
+libftdi
+libomp
+libvmaf
+libvpx
+poppler
+rust
+shellcheck
+uhubctl
+
+== brew outdated ==
+==> Auto-updating Homebrew...
+Adjust how often this is run with `$HOMEBREW_AUTO_UPDATE_SECS` or disable with
+`$HOMEBREW_NO_AUTO_UPDATE=1`. Hide these hints with `$HOMEBREW_NO_ENV_HINTS=1` (see `man brew`).
+==> Auto-updated Homebrew!
+==> Updated Homebrew from 3ccfa1d071 to bc63375ac3.
+Updated 2 taps (homebrew/core and homebrew/cask).
+==> New Formulae
+csound-plugins: Additional opcodes for Csound
+drydock: Dashboard for a fleet of Git repositories
+emeraldian: Terminal UI for Obsidian vaults, with a graph and an assistant
+gam: Command-line management for Google Workspace
+knife: Reverse engineering toolkit for PE, ELF, and Mach-O binaries
+llamastash: Terminal-native local LLM orchestrator and proxy
+lsoff: List listening TCP and UDP ports
+otel-tui: Terminal OpenTelemetry viewer
+sping: Real-time connectivity monitor with network diagnostics
+sqlmux: Terminal database client with tmux-style panes and Vim keybindings
+tennis: Print stylish CSV tables in your terminal
+upmd: Run tasks and dependency-aware workflows from Markdown
+==> New Casks
+agent-orchestrator: Supervisor for coding agents running in parallel Git worktrees
+
+ada-url
+bash
+boost
+brotli
+c-ares
+ca-certificates
+cairo
+cmake
+cocoapods
+coreutils
+docker
+emscripten
+firebase-cli
+fmt
+freetype
+gh
+git-lfs
+glib
+gnupg
+gpgme
+gpgmepp
+harfbuzz
+hdrhistogram_c
+icu4c@78
+jpeg-turbo
+libgcrypt
+libgit2
+libksba
+libnghttp2
+libnghttp3
+libngtcp2
+libomp
+libpng
+libssh2
+libunistring
+libuv
+libx11
+libxrender
+lima
+lz4
+merve
+node
+nss
+openjdk
+openjpeg
+openssl@3
+pcre2
+pkgconf
+poppler
+python@3.14
+ruby
+rust
+simdjson
+simdutf
+hashicorp/tap/terraform
+xorgproto
+temurin@21
+
+== brew missing (receipt deps not in Cellar) ==
+(exit 0)
+
+== Homebrew repo last update ==
+bc63375ac3a4d6debb1ceb441ae6e22854f0909a 2026-11-08 22:43:05 +0000 Merge pull request #24543 from dduugg/livecheck-typed-options

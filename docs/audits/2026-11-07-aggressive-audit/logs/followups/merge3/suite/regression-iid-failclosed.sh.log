@@ -1,0 +1,13 @@
+width 1, 1M samples, #153/#252 rejection:                     PASS
+width 2, 1M samples, #153/#252 rejection:                     PASS
+width 3, 1M samples, #153/#252 rejection:                     PASS
+width 4, 1M samples, #153/#252 rejection:                     PASS
+width 5, 1M samples, #153/#252 rejection:                     PASS
+width 6, 1M samples, #153/#252 rejection:                     PASS
+width 7, 1M samples, #153/#252 rejection:                     PASS
+width 8, 1M samples, #153/#252 rejection:                     PASS
+IID restart failure returns no entropy award:                 PASS
+positive truerand_1bit, 1M samples:                           PASS
+positive truerand_8bit, 1M samples:                           PASS
+
+regression-iid-failclosed: PASS

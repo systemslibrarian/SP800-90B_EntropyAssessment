@@ -1,0 +1,47 @@
+== (1) enumerator on the COMMITTED final tree (46230d3)
+live:   90  (80 mechanical + 10 reviewed)
+unmerged index entries now: 0
+== (3) new scripts and C++ identical to their branch versions (rc 0 = identical)
+stale-report files rc=0
+openssl-pin files rc=0
+restart-notrun files rc=0
+NOTICE equals three-way union? lines: master=528 final=572 (+16 +14 +14 = +44 expected)
+== (5) run-all-checks.sh inventory parsing (comment handling), final tree lines 40-66
+inventory_count=0
+while IFS= read -r name || [ -n "${name}" ]; do
+    # OC-121: COMMENTS AND BLANKS ARE SKIPPED, NOT REJECTED. The inventory had
+    # never contained one, so the first comment ever added -- recording WHY
+    # regression-constants.sh is deliberately last and must not be sorted back
+    # into alphabetical order -- was rejected as a malformed entry. A file whose
+    # ordering is load-bearing must be able to say so inside itself.
+    case "${name}" in
+        ''|'#'*) continue ;;
+    esac
+    case "${name}" in
+        regression-[A-Za-z0-9]*.sh) ;;
+        *) inventory_error "malformed entry ${name:-<empty>}" ;;
+    esac
+    case " ${inventory_names} " in
+        *" ${name} "*) inventory_error "duplicate entry ${name}" ;;
+    esac
+    [ -f "./${name}" ] || inventory_error "required script ${name} is missing"
+    [ -x "./${name}" ] || inventory_error "required script ${name} is not executable"
+    inventory_names="${inventory_names} ${name}"
+    inventory_count=$((inventory_count + 1))
+done < "${REGRESSION_INVENTORY}"
+
+[ "${inventory_count}" -eq "${EXPECTED_REGRESSION_SCRIPTS}" ] ||
+    inventory_error "expected ${EXPECTED_REGRESSION_SCRIPTS} entries, found ${inventory_count}"
+
+discovered_names=""
+== (2) reproduce the 92: recreate the step-3 conflict and read git ls-files
+merge rc=1 (1 = conflict, expected)
+git ls-files duplicates under cpp/selftest during the unresolved merge:
+      3 cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+      3 cpp/selftest/run-all-checks.sh
+enumerator during the unresolved merge:
+live:   92  (82 mechanical + 10 reviewed)
+git ls-files -u count: 12  (4 files x 3 stages = 12 expected)
+restored: HEAD=46230d3 tree=5e955105de4d21855b45313f3eb08c478f054a88 clean=0
+enumerator after restore:
+live:   90  (80 mechanical + 10 reviewed)

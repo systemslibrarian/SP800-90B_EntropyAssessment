@@ -1,0 +1,78 @@
+---- audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+87: <<<<<<< HEAD
+88: - `cpp/selftest/run-all-checks.sh` runs 26 regression scripts
+89:   (`./run-all-checks.sh --allow-known-platform-deltas` — expect 28 passed, 0 failed);
+90: - `audits/enum-instruments.sh` prints **89 live instruments** (measured
+91:   2026-11-08 on the merged tree, `04c1ccc` with `c8b0bc6` and `7d647e6`
+92:   merged, up two on `OC-128`'s 87 at `a5422cf`: one each for
+93:   `cpp/selftest/regression-stale-report.sh` (PROV-01) and
+94:   `cpp/selftest/regression-openssl-pin.sh` (PROV-15); the count has a
+95:   hand-reviewed limb, `OC-126`);
+96: =======
+97: - `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
+98:   (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
+99: - `audits/enum-instruments.sh` prints **88 live instruments** (measured
+100:   2026-11-08 on `fix/restart-notrun`, up one for
+101:   `cpp/selftest/regression-restart-notrun.sh`; 87 at `a5422cf`, 2026-10-27,
+102:   `OC-128`; the count has a hand-reviewed limb, `OC-126`);
+103: >>>>>>> fix/restart-notrun
+
+492: <<<<<<< HEAD
+493: ./run-all-checks.sh --allow-known-platform-deltas   # expect 28 passed, 0 failed
+494: =======
+495: ./run-all-checks.sh --allow-known-platform-deltas   # expect 27 passed, 0 failed
+496: >>>>>>> fix/restart-notrun
+
+---- audits/INSTRUMENT-INVENTORY.md
+79: <<<<<<< HEAD
+80: | **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **89** at `04c1ccc` with `c8b0bc6` and `7d647e6` merged, 2026-11-08 |
+81: =======
+82: | **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `fix/restart-notrun` on `04c1ccc`, 2026-11-08 |
+83: >>>>>>> fix/restart-notrun
+
+131: <<<<<<< HEAD
+132: | **LIVE** | **89** at `04c1ccc` with `c8b0bc6` and `7d647e6` merged, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+133: =======
+134: | **LIVE** | **88** at `fix/restart-notrun` on `04c1ccc`, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+135: >>>>>>> fix/restart-notrun
+
+---- cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+23: <<<<<<< HEAD
+24: | **behaviour regressions** (`regression-*.sh`) | 26 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). A fourth, `regression-openssl-pin.sh`, is about the BUILD rather than the tool: it reads the Makefile's `make -n` plan and the built binaries' `otool -L` load commands to assert the openssl@3 pin is searched before the generic Homebrew prefix (PROV-15), and off macOS it abstains with exit 2 rather than passing. |
+25: | **inventory and corpus integrity** (`verify-fixture-inventory.sh`, `regression-selftest-inventory.sh`, `regression-outside-battery.sh`) | 3 | that the fixture and corpus sets match their manifests, both directions | that a manifest is right. `verify-fixture-inventory.sh` **prints its manifest's digest and does not verify it** (`OC-76`, Tier A). |
+26: | **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 26. |
+27: =======
+28: | **behaviour regressions** (`regression-*.sh`) | 25 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
+29: | **inventory and corpus integrity** (`verify-fixture-inventory.sh`, `regression-selftest-inventory.sh`, `regression-outside-battery.sh`) | 3 | that the fixture and corpus sets match their manifests, both directions | that a manifest is right. `verify-fixture-inventory.sh` **prints its manifest's digest and does not verify it** (`OC-76`, Tier A). |
+30: | **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 25. |
+31: >>>>>>> fix/restart-notrun
+
+40: <<<<<<< HEAD
+41: | **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 26 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
+42: | **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 5 of 26 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 5 |
+43: | **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **7 of 28** — 5 of 26 measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists, plus `regression-stale-report.sh` and `regression-openssl-pin.sh` (added 2026-11-08), each of which declares through `bs_print`; DERIVED from the measurement by two, and the next run's `build-state:` line re-measures it. It is NOT derivable by reading the tree: nine scripts source `buildstate-lib.sh` and only seven of them are suite members that declare, so a static count gives 9 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+44: =======
+45: | **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 25 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
+46: | **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 25 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
+47: | **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **6 of 27** — 5 of 26 measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists, plus `regression-restart-notrun.sh`, a declaring member added 2026-11-08 (DERIVED from the measurement by one; the next run's `build-state:` line re-measures it). It is NOT derivable by reading the tree: eight scripts source `buildstate-lib.sh` and only six of them are suite members that declare, so a static count gives 8 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+48: >>>>>>> fix/restart-notrun
+
+61: <<<<<<< HEAD
+62: at all, or that the binary measured was the one intended in the 21 of 28 checks
+63: that do not say (21 of 26 measured 2026-10-27, same source as above; the two members
+64: added 2026-11-08 declare, so the denominator moved and the numerator did not).
+65: =======
+66: at all, or that the binary measured was the one intended in the 21 of 27 checks
+67: that do not say (21 of 26 measured 2026-10-27, same source as above; the member
+68: added 2026-11-08 declares, so the denominator moved and the numerator did not).
+69: >>>>>>> fix/restart-notrun
+
+---- cpp/selftest/run-all-checks.sh
+29: <<<<<<< HEAD
+30: EXPECTED_REGRESSION_SCRIPTS=26
+31: EXPECTED_TOTAL_CHECKS=28
+32: =======
+33: EXPECTED_REGRESSION_SCRIPTS=25
+34: EXPECTED_TOTAL_CHECKS=27
+35: >>>>>>> fix/restart-notrun
+

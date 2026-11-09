@@ -1,0 +1,37 @@
+== brew linkage --reverse openssl@4 ==
+/opt/homebrew/Cellar/openssl@4/4.1.0/lib/libcrypto.4.dylib
+  bin/openssl
+  lib/libssl.4.dylib
+  lib/ossl-modules/legacy.dylib
+
+/opt/homebrew/Cellar/openssl@4/4.1.0/lib/libssl.4.dylib
+  bin/openssl
+
+/usr/lib/libSystem.B.dylib
+  bin/openssl
+  lib/libcrypto.4.dylib
+  lib/libssl.4.dylib
+  lib/ossl-modules/legacy.dylib
+(exit 0)
+
+== brew linkage --reverse openssl@3 ==
+/opt/homebrew/Cellar/openssl@3/3.6.4/lib/libcrypto.3.dylib
+  bin/openssl
+  lib/engines-3/capi.dylib
+  lib/engines-3/loader_attic.dylib
+  lib/engines-3/padlock.dylib
+  lib/libssl.3.dylib
+  lib/ossl-modules/legacy.dylib
+
+/opt/homebrew/Cellar/openssl@3/3.6.4/lib/libssl.3.dylib
+  bin/openssl
+
+/usr/lib/libSystem.B.dylib
+  bin/openssl
+  lib/engines-3/capi.dylib
+  lib/engines-3/loader_attic.dylib
+  lib/engines-3/padlock.dylib
+  lib/libcrypto.3.dylib
+  lib/libssl.3.dylib
+  lib/ossl-modules/legacy.dylib
+(exit 0)

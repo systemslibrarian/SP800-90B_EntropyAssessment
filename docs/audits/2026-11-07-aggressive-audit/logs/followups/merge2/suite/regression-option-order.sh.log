@@ -1,0 +1,38 @@
+[build-state] ea_non_iid                         asserts=LIVE    sha256=f47e0326d98a5825
+[build-state] ea_iid                             asserts=LIVE    sha256=af4ed62abbf2455b
+[build-state] ea_restart                         asserts=LIVE    sha256=abf9126bec7af49f
+== the refusal fires, and names the offending argument ==
+  ea_non_iid: -q after the operand refused, named            PASS
+  ea_non_iid: -o after the operand refused, nothing written  PASS
+  ea_non_iid: late --version refused, no banner, nothing assessed PASS
+  ea_iid: -q after the operand refused, named                PASS
+  ea_iid: -o after the operand refused, nothing written      PASS
+  ea_iid: late --version refused, no banner, nothing assessed PASS
+  ea_restart: -q after the operand refused, named            PASS
+  ea_restart: -o after the operand refused, nothing written  PASS
+  ea_restart: late --version refused, no banner, nothing assessed PASS
+
+== the well-formed forms are untouched ==
+  ea_non_iid: options before the operand still assess        PASS
+  ea_non_iid: --version alone still prints the banner        PASS
+  ea_non_iid: -- separator is not refused                    PASS
+  ea_iid: options before the operand still assess            PASS
+  ea_iid: --version alone still prints the banner            PASS
+  ea_iid: -- separator is not refused                        PASS
+  ea_restart: options before the operand still assess        PASS
+  ea_restart: --version alone still prints the banner        PASS
+  ea_restart: -- separator is not refused                    PASS
+
+== PAIR TEST, A04/F04: the shared walk did not change the version gate ==
+  A04 pair: '-o --version' no banner, not mis-refused        PASS
+  A04 pair: '-vo --version' no banner, not mis-refused       PASS
+  A04 pair: '-qo --version' no banner, not mis-refused       PASS
+  A04 pair: '-Z --version' fails, no banner                  PASS
+
+== PAIR TEST, A05/F03: the refusal fires before the identity guard ==
+  A05 pair: permuted '-o <input>' refused by option order    PASS
+  A05 pair: ordinary '-o <input>' still refused by identity  PASS
+
+  the capture is byte identical after every case             PASS
+
+regression-option-order: PASS

@@ -1,0 +1,25 @@
+== step-1 tree (a8b3cfa = master + fix/stale-report) enumerator
+live:   88  (78 mechanical + 10 reviewed)
+== resolution patches (what each resolved merge commit must produce in the four count-bearing files, relative to the previous merged state)
+step2 patch: 0 lines
+step3 patch: 0 lines
+final-vs-master non-C++ patch: 138 lines
+fatal: path 'cpp/selftest/run-all-checks.sh audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md audits/INSTRUMENT-INVENTORY.md cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md' does not exist in '46230d3'
+drwxr-xr-x  5 gmcas staff   160 Nov  8 20:09 .
+drwxr-xr-x 53 gmcas staff  1696 Nov  8 20:09 ..
+-rw-r--r--  1 gmcas staff 37870 Nov  8 20:09 NOTICE
+-rw-r--r--  1 gmcas staff     0 Nov  8 20:09 WHAT-A-GREEN-SUITE-ESTABLISHES.md
+-rw-r--r--  1 gmcas staff  1028 Nov  8 20:09 regression-script-inventory.txt
+== sha256 of the final copies
+b10d804e0965fd29451f185e61da7b4d82d6e09d961e10c043a45d8ea6f60c6f  NOTICE
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  WHAT-A-GREEN-SUITE-ESTABLISHES.md
+9af97b82d35770858ce105b72e18fca2b1fe7472a8950097403dbbf639ac88ce  regression-script-inventory.txt
+== simulated commits for the record
+46230d3 5e955105de4d21855b45313f3eb08c478f054a88 mergesim: merge fix/restart-notrun (resolved to 27/29/90)
+bf79f05 61905d21ce3f26307d3e3fe2fd974169d30101b6 mergesim: merge fix/openssl-pin (resolved to 26/28/89)
+a8b3cfa 1f3325cfe5a1a8eec1ec0a0faff98d990f8734dd Merge branch 'fix/stale-report' into HEAD
+7d647e6 1c95bd271ff7d82aac0f10b30aa3ea66cbfc3406 fix/openssl-pin: read grep's status inline so the dead-guard detector sees it read
+== remove the scratch worktree
+0
+(0 = removed)
+== main checkout unchanged: master=04c1ccc HEAD=04c1ccc branch=master tracked-mods=0

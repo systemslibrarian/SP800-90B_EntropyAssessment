@@ -1,0 +1,25 @@
+#257 binary MultiMMC L=4:                            no sanitizer error
+#257 binary MultiMMC L=5:                            no sanitizer error
+#257 binary MultiMMC L=8:                            no sanitizer error
+#257 binary MultiMMC L=12:                           no sanitizer error
+#257 binary MultiMMC L=16:                           no sanitizer error
+#257 binary MultiMMC declines below D_MMC+1:         declined
+#263 compression declines at v=1 (v1_nan):           declined
+#263 no NaN/inf sigma-hat (v1_nan):                  none
+#263 compression declines at v=1 (v1_inf):           declined
+#263 no NaN/inf sigma-hat (v1_inf):                  none
+#263 compression still runs at v=2:                  ran with a finite sigma-hat
+#264 collision declines at v=1:                      declined
+#264 no unmeasured 1.0 from NaN:                     none
+#261 two distinct bytes, nothing repeats:            no abort, on an input shown present (exit 0)
+#261 256 distinct bytes, nothing repeats:            no abort, on an input shown present (exit 0)
+#261 binary L=3 (MultiMMC):                          no abort, on an input shown present (exit 0)
+#261 binary L=17 (LZ78Y):                            no abort, on an input shown present (exit 0)
+#261 binary L=18 (LZ78Y):                            no abort, on an input shown present (exit 0)
+#261 binary L=19 (LZ78Y):                            no abort, on an input shown present (exit 0)
+#261 repeat-free data declines and reports:          both present
+F14 narrowing the dictionary fails the build:        build refused, as intended
+F14 compression estimate unchanged:                  0.15932269772157773 (reference 0.15932269772157898)
+compliant dataset under AddressSanitizer:            clean
+
+regression-estimator-guards: PASS

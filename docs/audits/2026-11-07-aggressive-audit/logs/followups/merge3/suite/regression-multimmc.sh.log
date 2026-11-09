@@ -1,0 +1,7 @@
+F09 run length matches the spec reference:       r = 24
+F09 C unchanged:                                 7089
+F09 N unchanged:                                 114144
+F09 binary path matches an independent reference: r = 17
+F09 NIST sample still matches refdata:           7.9268088197517388
+
+regression-multimmc: PASS

@@ -1,0 +1,3953 @@
+[
+ {
+  "formula": "abseil",
+  "version": "20260817.0",
+  "time": 1790116403,
+  "time_local": "2026-09-22 18:33:23 EDT",
+  "time_utc": "2026-09-22 22:33:23 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "20260817.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.19-9-g533246d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "ada-url",
+  "version": "4.0.0",
+  "time": 1790116408,
+  "time_local": "2026-09-22 18:33:28 EDT",
+  "time_utc": "2026-09-22 22:33:28 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.0.0",
+  "runtime_dependencies": [
+   [
+    "fmt",
+    "12.2.0"
+   ]
+  ],
+  "homebrew_version": "6.0.13-8-g536cb45",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "afl++",
+  "version": "5.03c",
+  "time": 1794097748,
+  "time_local": "2026-11-07 19:29:08 EST",
+  "time_utc": "2026-11-08 00:29:08 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "5.03c",
+  "runtime_dependencies": [
+   [
+    "lz4",
+    "1.11.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "z3",
+    "5.3.3"
+   ],
+   [
+    "llvm",
+    "23.1.5"
+   ],
+   [
+    "lld",
+    "23.1.5"
+   ],
+   [
+    "ca-certificates",
+    "2026-11-05"
+   ],
+   [
+    "mpdecimal",
+    "4.0.1"
+   ],
+   [
+    "openssl@4",
+    "4.1.0"
+   ],
+   [
+    "readline",
+    "8.3.6"
+   ],
+   [
+    "sqlite",
+    "3.54.1"
+   ],
+   [
+    "python@3.15",
+    "3.15.2"
+   ]
+  ],
+  "homebrew_version": "7.0.9-86-geb56e2b",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "bash",
+  "version": "5.3.15",
+  "time": 1788388323,
+  "time_local": "2026-09-02 18:32:03 EDT",
+  "time_utc": "2026-09-02 22:32:03 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "5.3.15",
+  "runtime_dependencies": [
+   [
+    "ncurses",
+    "6.6"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ]
+  ],
+  "homebrew_version": "5.1.15-249-g528537d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "boost",
+  "version": "1.92.0",
+  "time": 1791519666,
+  "time_local": "2026-10-09 00:21:06 EDT",
+  "time_utc": "2026-10-09 04:21:06 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.92.0",
+  "runtime_dependencies": [
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ]
+  ],
+  "homebrew_version": "6.0.17-27-gec55b2e",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "brotli",
+  "version": "1.2.0",
+  "time": 1784933154,
+  "time_local": "2026-07-24 18:45:54 EDT",
+  "time_utc": "2026-07-24 22:45:54 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.2.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.19",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "bundletool",
+  "version": "1.18.3",
+  "time": 1785371914,
+  "time_local": "2026-07-29 20:38:34 EDT",
+  "time_utc": "2026-07-30 00:38:34 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "1.18.3",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.2"
+   ],
+   [
+    "pcre2",
+    "10.47"
+   ],
+   [
+    "glib",
+    "2.88.2"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ],
+   [
+    "cairo",
+    "1.18.4"
+   ],
+   [
+    "graphite2",
+    "1.3.15"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "harfbuzz",
+    "14.2.1"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ],
+   [
+    "little-cms2",
+    "2.19"
+   ],
+   [
+    "openjdk",
+    "26.0.2"
+   ]
+  ],
+  "homebrew_version": "5.0.5-106-g43f9748",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "c-ares",
+  "version": "1.34.8",
+  "time": 1784933154,
+  "time_local": "2026-07-24 18:45:54 EDT",
+  "time_utc": "2026-07-24 22:45:54 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.34.8",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.8-30-g6557697",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "ca-certificates",
+  "version": "2026-07-16",
+  "time": 1784933155,
+  "time_local": "2026-07-24 18:45:55 EDT",
+  "time_utc": "2026-07-24 22:45:55 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2026-07-16",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.11-28-gf9e050f",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "ca-certificates",
+  "version": "2026-08-13",
+  "time": 1788133853,
+  "time_local": "2026-08-30 19:50:53 EDT",
+  "time_utc": "2026-08-30 23:50:53 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2026-08-13",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.18-9-gac983be",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "ca-certificates",
+  "version": "2026-10-20",
+  "time": 1792540660,
+  "time_local": "2026-10-20 19:57:40 EDT",
+  "time_utc": "2026-10-20 23:57:40 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2026-10-20",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.10-31-g332963d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "cairo",
+  "version": "1.18.4",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.18.4",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.2"
+   ],
+   [
+    "pcre2",
+    "10.47"
+   ],
+   [
+    "glib",
+    "2.88.2"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ]
+  ],
+  "homebrew_version": "5.0.14-59-g45db1ce",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "cliclick",
+  "version": "5.1",
+  "time": 1789609622,
+  "time_local": "2026-09-16 21:47:02 EDT",
+  "time_utc": "2026-09-17 01:47:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "5.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.11-64-g7e498eb",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "cmake",
+  "version": "4.4.3",
+  "time": 1790116390,
+  "time_local": "2026-09-22 18:33:10 EDT",
+  "time_utc": "2026-09-22 22:33:10 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "4.4.3",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.19-35-g9574410",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "cocoapods",
+  "version": "1.17.0",
+  "time": 1784974134,
+  "time_local": "2026-07-25 06:08:54 EDT",
+  "time_utc": "2026-07-25 10:08:54 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "1.17.0",
+  "runtime_dependencies": [
+   [
+    "libyaml",
+    "0.2.5"
+   ],
+   [
+    "ca-certificates",
+    "2026-07-16"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ],
+   [
+    "ruby",
+    "4.0.6"
+   ]
+  ],
+  "homebrew_version": "6.0.8-2-g988192e",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "colima",
+  "version": "0.10.3",
+  "time": 1788520313,
+  "time_local": "2026-09-04 07:11:53 EDT",
+  "time_utc": "2026-09-04 11:11:53 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "0.10.3",
+  "runtime_dependencies": [
+   [
+    "lima",
+    "2.2.0"
+   ]
+  ],
+  "homebrew_version": "5.1.15-25-g5472a6b",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "confuse",
+  "version": "3.4",
+  "time": 1791519670,
+  "time_local": "2026-10-09 00:21:10 EDT",
+  "time_utc": "2026-10-09 04:21:10 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.4",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.17-97-gfba9b30",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "coreutils",
+  "version": "9.11",
+  "time": 1788018208,
+  "time_local": "2026-08-29 11:43:28 EDT",
+  "time_utc": "2026-08-29 15:43:28 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "9.11",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ]
+  ],
+  "homebrew_version": "6.0.19-9-g533246d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "dav1d",
+  "version": "1.5.4",
+  "time": 1792540656,
+  "time_local": "2026-10-20 19:57:36 EDT",
+  "time_utc": "2026-10-20 23:57:36 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.5.4",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.10-51-gf40cb3e",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "docker",
+  "version": "29.8.0",
+  "time": 1788520313,
+  "time_local": "2026-09-04 07:11:53 EDT",
+  "time_utc": "2026-09-04 11:11:53 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "29.8.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.21-70-g2316567",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "emscripten",
+  "version": "6.0.10",
+  "time": 1790116495,
+  "time_local": "2026-09-22 18:34:55 EDT",
+  "time_utc": "2026-09-22 22:34:55 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "6.0.10",
+  "runtime_dependencies": [
+   [
+    "abseil",
+    "20260817.0"
+   ],
+   [
+    "fmt",
+    "12.2.0"
+   ],
+   [
+    "ada-url",
+    "4.0.0"
+   ],
+   [
+    "brotli",
+    "1.2.0"
+   ],
+   [
+    "c-ares",
+    "1.34.8"
+   ],
+   [
+    "hdrhistogram_c",
+    "0.11.10"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "libffi",
+    "3.8.0"
+   ],
+   [
+    "libnghttp2",
+    "1.70.0"
+   ],
+   [
+    "libuv",
+    "1.52.1"
+   ],
+   [
+    "llhttp",
+    "9.4.3"
+   ],
+   [
+    "simdutf",
+    "9.2.0"
+   ],
+   [
+    "merve",
+    "1.2.2"
+   ],
+   [
+    "nbytes",
+    "0.1.4"
+   ],
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "openssl@3",
+    "3.6.4"
+   ],
+   [
+    "simdjson",
+    "4.6.11"
+   ],
+   [
+    "readline",
+    "8.3.6"
+   ],
+   [
+    "sqlite",
+    "3.53.4"
+   ],
+   [
+    "uvwasi",
+    "0.0.23"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "highway",
+    "1.4.0"
+   ],
+   [
+    "node",
+    "26.9.0"
+   ],
+   [
+    "mpdecimal",
+    "4.0.1"
+   ],
+   [
+    "python@3.14",
+    "3.14.7"
+   ],
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.3"
+   ],
+   [
+    "pcre2",
+    "10.48"
+   ],
+   [
+    "glib",
+    "2.90.0"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ],
+   [
+    "cairo",
+    "1.18.6"
+   ],
+   [
+    "graphite2",
+    "1.3.15"
+   ],
+   [
+    "harfbuzz",
+    "14.5.0"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ],
+   [
+    "little-cms2",
+    "2.19.1"
+   ],
+   [
+    "openjdk",
+    "27"
+   ],
+   [
+    "yuicompressor",
+    "2.4.8"
+   ]
+  ],
+  "homebrew_version": "7.0.6-6-g1d86792",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "firebase-cli",
+  "version": "15.24.0",
+  "time": 1784933164,
+  "time_local": "2026-07-24 18:46:04 EDT",
+  "time_utc": "2026-07-24 22:46:04 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "15.24.0",
+  "runtime_dependencies": [
+   [
+    "fmt",
+    "12.2.0"
+   ],
+   [
+    "ada-url",
+    "3.4.4"
+   ],
+   [
+    "brotli",
+    "1.2.0"
+   ],
+   [
+    "c-ares",
+    "1.34.8"
+   ],
+   [
+    "hdrhistogram_c",
+    "0.11.10"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "libffi",
+    "3.7.1"
+   ],
+   [
+    "libnghttp2",
+    "1.69.0"
+   ],
+   [
+    "libnghttp3",
+    "1.17.0"
+   ],
+   [
+    "ca-certificates",
+    "2026-07-16"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ],
+   [
+    "libngtcp2",
+    "1.24.0"
+   ],
+   [
+    "libuv",
+    "1.52.1"
+   ],
+   [
+    "llhttp",
+    "9.4.2"
+   ],
+   [
+    "simdutf",
+    "9.0.0"
+   ],
+   [
+    "merve",
+    "1.2.2"
+   ],
+   [
+    "nbytes",
+    "0.1.4"
+   ],
+   [
+    "simdjson",
+    "4.6.4"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ],
+   [
+    "sqlite",
+    "3.53.3"
+   ],
+   [
+    "uvwasi",
+    "0.0.23"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "node",
+    "26.5.0"
+   ]
+  ],
+  "homebrew_version": "6.0.11-49-g3488a8c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "flint",
+  "version": "3.6.0",
+  "time": 1786147009,
+  "time_local": "2026-08-07 19:56:49 EDT",
+  "time_utc": "2026-08-07 23:56:49 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "3.6.0",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "mpfr",
+    "4.2.2"
+   ]
+  ],
+  "homebrew_version": "6.0.5-17-ga8fac8c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "fmt",
+  "version": "12.2.0",
+  "time": 1784933154,
+  "time_local": "2026-07-24 18:45:54 EDT",
+  "time_utc": "2026-07-24 22:45:54 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "12.2.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.2-120-g67cbed1",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "fontconfig",
+  "version": "2.18.3",
+  "time": 1790116471,
+  "time_local": "2026-09-22 18:34:31 EDT",
+  "time_utc": "2026-09-22 22:34:31 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.18.3",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ]
+  ],
+  "homebrew_version": "6.0.15-119-gad31b20",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "freetype",
+  "version": "2.14.3",
+  "time": 1785371906,
+  "time_local": "2026-07-29 20:38:26 EDT",
+  "time_utc": "2026-07-30 00:38:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.14.3",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ]
+  ],
+  "homebrew_version": "5.1.0-149-g71bb136",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gawk",
+  "version": "5.4.1",
+  "time": 1792973453,
+  "time_local": "2026-10-25 20:10:53 EDT",
+  "time_utc": "2026-10-26 00:10:53 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "5.4.1",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "mpfr",
+    "4.2.2"
+   ],
+   [
+    "readline",
+    "8.3.6"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.5"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ]
+  ],
+  "homebrew_version": "6.0.9-66-g06440bb",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gcc",
+  "version": "16.2.0",
+  "time": 1790752846,
+  "time_local": "2026-09-30 03:20:46 EDT",
+  "time_utc": "2026-09-30 07:20:46 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "16.2.0",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "isl",
+    "0.28"
+   ],
+   [
+    "mpfr",
+    "4.2.2"
+   ],
+   [
+    "libmpc",
+    "1.4.1"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ]
+  ],
+  "homebrew_version": "6.0.21-49-g40916f6",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gettext",
+  "version": "1.0",
+  "time": 1785371906,
+  "time_local": "2026-07-29 20:38:26 EDT",
+  "time_utc": "2026-07-30 00:38:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.0",
+  "runtime_dependencies": [
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ]
+  ],
+  "homebrew_version": "6.0.6-34-g63b90be",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gh",
+  "version": "2.96.0",
+  "time": 1784933247,
+  "time_local": "2026-07-24 18:47:27 EDT",
+  "time_utc": "2026-07-24 22:47:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "2.96.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.6-21-g09f982d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "giflib",
+  "version": "6.1.3",
+  "time": 1785371906,
+  "time_local": "2026-07-29 20:38:26 EDT",
+  "time_utc": "2026-07-30 00:38:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "6.1.3",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.5-113-gaa1e53c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "git-filter-repo",
+  "version": "2.47.0",
+  "time": 1789601176,
+  "time_local": "2026-09-16 19:26:16 EDT",
+  "time_utc": "2026-09-16 23:26:16 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "2.47.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.9-6-g24e7d8f",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "git-lfs",
+  "version": "3.7.1",
+  "time": 1787656863,
+  "time_local": "2026-08-25 07:21:03 EDT",
+  "time_utc": "2026-08-25 11:21:03 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "3.7.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.17-43-ga469d12",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "glib",
+  "version": "2.90.0",
+  "time": 1790116480,
+  "time_local": "2026-09-22 18:34:40 EDT",
+  "time_utc": "2026-09-22 22:34:40 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.90.0",
+  "runtime_dependencies": [
+   [
+    "pcre2",
+    "10.48"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ]
+  ],
+  "homebrew_version": "7.0.1-11-gd2c0312",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gmp",
+  "version": "6.3.0",
+  "time": 1786147009,
+  "time_local": "2026-08-07 19:56:49 EDT",
+  "time_utc": "2026-08-07 23:56:49 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "6.3.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gnupg",
+  "version": "2.5.21",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.5.21",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libidn2",
+    "2.3.8"
+   ],
+   [
+    "libtasn1",
+    "4.21.0"
+   ],
+   [
+    "nettle",
+    "4.0"
+   ],
+   [
+    "p11-kit",
+    "0.26.5"
+   ],
+   [
+    "gnutls",
+    "3.8.13"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ],
+   [
+    "libassuan",
+    "3.0.2"
+   ],
+   [
+    "libgcrypt",
+    "1.12.2"
+   ],
+   [
+    "libksba",
+    "1.8.0"
+   ],
+   [
+    "libusb",
+    "1.0.30"
+   ],
+   [
+    "npth",
+    "1.8"
+   ],
+   [
+    "pinentry",
+    "1.3.3"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ]
+  ],
+  "homebrew_version": "6.0.6-18-gf0bc156",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gnutls",
+  "version": "3.8.13_2",
+  "time": 1787397446,
+  "time_local": "2026-08-22 07:17:26 EDT",
+  "time_utc": "2026-08-22 11:17:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.8.13",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libidn2",
+    "2.3.8"
+   ],
+   [
+    "libtasn1",
+    "4.21.0"
+   ],
+   [
+    "nettle",
+    "4.0"
+   ],
+   [
+    "p11-kit",
+    "0.26.5"
+   ]
+  ],
+  "homebrew_version": "6.0.6-86-g700b37f",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gpgme",
+  "version": "2.1.2",
+  "time": 1787397448,
+  "time_local": "2026-08-22 07:17:28 EDT",
+  "time_utc": "2026-08-22 11:17:28 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.1.2",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libidn2",
+    "2.3.8"
+   ],
+   [
+    "libtasn1",
+    "4.21.0"
+   ],
+   [
+    "nettle",
+    "4.0"
+   ],
+   [
+    "p11-kit",
+    "0.26.5"
+   ],
+   [
+    "gnutls",
+    "3.8.13"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ],
+   [
+    "libassuan",
+    "3.0.2"
+   ],
+   [
+    "libgcrypt",
+    "1.12.2"
+   ],
+   [
+    "libksba",
+    "1.8.0"
+   ],
+   [
+    "libusb",
+    "1.0.30"
+   ],
+   [
+    "npth",
+    "1.8"
+   ],
+   [
+    "pinentry",
+    "1.3.3"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ],
+   [
+    "gnupg",
+    "2.5.21"
+   ]
+  ],
+  "homebrew_version": "6.0.6",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "gpgmepp",
+  "version": "2.1.0",
+  "time": 1787397448,
+  "time_local": "2026-08-22 07:17:28 EDT",
+  "time_utc": "2026-08-22 11:17:28 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.1.0",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libidn2",
+    "2.3.8"
+   ],
+   [
+    "libtasn1",
+    "4.21.0"
+   ],
+   [
+    "nettle",
+    "4.0"
+   ],
+   [
+    "p11-kit",
+    "0.26.5"
+   ],
+   [
+    "gnutls",
+    "3.8.13"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ],
+   [
+    "libassuan",
+    "3.0.2"
+   ],
+   [
+    "libgcrypt",
+    "1.12.2"
+   ],
+   [
+    "libksba",
+    "1.8.0"
+   ],
+   [
+    "libusb",
+    "1.0.30"
+   ],
+   [
+    "npth",
+    "1.8"
+   ],
+   [
+    "pinentry",
+    "1.3.3"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ],
+   [
+    "gnupg",
+    "2.5.21"
+   ],
+   [
+    "gpgme",
+    "2.1.2"
+   ]
+  ],
+  "homebrew_version": "5.1.12-2-ga7f3847",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "graphite2",
+  "version": "1.3.15",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.3.15",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.14-157-g061a673",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "harfbuzz",
+  "version": "14.5.0",
+  "time": 1790116490,
+  "time_local": "2026-09-22 18:34:50 EDT",
+  "time_utc": "2026-09-22 22:34:50 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "14.5.0",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.3"
+   ],
+   [
+    "pcre2",
+    "10.48"
+   ],
+   [
+    "glib",
+    "2.90.0"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ],
+   [
+    "cairo",
+    "1.18.6"
+   ],
+   [
+    "graphite2",
+    "1.3.15"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ]
+  ],
+  "homebrew_version": "7.0.4-41-g13eeb3b",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "hdrhistogram_c",
+  "version": "0.11.10",
+  "time": 1784933154,
+  "time_local": "2026-07-24 18:45:54 EDT",
+  "time_utc": "2026-07-24 22:45:54 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.11.10",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.5-17-ga8fac8c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "highway",
+  "version": "1.4.0",
+  "time": 1790116446,
+  "time_local": "2026-09-22 18:34:06 EDT",
+  "time_utc": "2026-09-22 22:34:06 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.4.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.7-74-gc256c58",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "icu4c@78",
+  "version": "78.3",
+  "time": 1784933154,
+  "time_local": "2026-07-24 18:45:54 EDT",
+  "time_utc": "2026-07-24 22:45:54 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "78.3",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.0-67-g603412f",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "isl",
+  "version": "0.28",
+  "time": 1790752845,
+  "time_local": "2026-09-30 03:20:45 EDT",
+  "time_utc": "2026-09-30 07:20:45 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.28",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ]
+  ],
+  "homebrew_version": "6.0.6-88-gfe99b3b",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "jpeg-turbo",
+  "version": "3.2.0",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.2.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.6",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "json-c",
+  "version": "0.19",
+  "time": 1785371906,
+  "time_local": "2026-07-29 20:38:26 EDT",
+  "time_utc": "2026-07-30 00:38:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.19",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.5-17-ga8fac8c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "jsoncpp",
+  "version": "1.9.8",
+  "time": 1790752850,
+  "time_local": "2026-09-30 03:20:50 EDT",
+  "time_utc": "2026-09-30 07:20:50 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "1.9.8",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.2-10-g7807692",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "lame",
+  "version": "4.0",
+  "time": 1792540658,
+  "time_local": "2026-10-20 19:57:38 EDT",
+  "time_utc": "2026-10-20 23:57:38 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.0",
+  "runtime_dependencies": [
+   [
+    "mpg123",
+    "1.33.7"
+   ]
+  ],
+  "homebrew_version": "6.0.9-112-g34c40c1",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libassuan",
+  "version": "3.0.2",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.0.2",
+  "runtime_dependencies": [
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ]
+  ],
+  "homebrew_version": "4.6.10-77-g6cb3473",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libdivsufsort",
+  "version": "2.0.1",
+  "time": 1790752849,
+  "time_local": "2026-09-30 03:20:49 EDT",
+  "time_utc": "2026-09-30 07:20:49 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "2.0.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-79-g5f1241b",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libffi",
+  "version": "3.8.0",
+  "time": 1790116409,
+  "time_local": "2026-09-22 18:33:29 EDT",
+  "time_utc": "2026-09-22 22:33:29 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.8.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.15-154-g749b355",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libftdi",
+  "version": "1.5_2",
+  "time": 1791519670,
+  "time_local": "2026-10-09 00:21:10 EDT",
+  "time_utc": "2026-10-09 04:21:10 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "1.5",
+  "runtime_dependencies": [
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "boost",
+    "1.92.0"
+   ],
+   [
+    "confuse",
+    "3.4"
+   ],
+   [
+    "libusb",
+    "1.0.30"
+   ]
+  ],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libgcrypt",
+  "version": "1.12.2",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.12.2",
+  "runtime_dependencies": [
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ]
+  ],
+  "homebrew_version": "5.1.6-61-g7cc11da",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libgit2",
+  "version": "1.9.7",
+  "time": 1788133858,
+  "time_local": "2026-08-30 19:50:58 EDT",
+  "time_utc": "2026-08-30 23:50:58 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.9.7",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ],
+   [
+    "libssh2",
+    "1.11.1"
+   ],
+   [
+    "llhttp",
+    "9.4.3"
+   ]
+  ],
+  "homebrew_version": "6.0.17-36-g6cf9b12",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libgpg-error",
+  "version": "1.61",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.61",
+  "runtime_dependencies": [
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ]
+  ],
+  "homebrew_version": "5.1.10-9-g43eb23c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libidn2",
+  "version": "2.3.8",
+  "time": 1787397445,
+  "time_local": "2026-08-22 07:17:25 EDT",
+  "time_utc": "2026-08-22 11:17:25 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.3.8",
+  "runtime_dependencies": [
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ]
+  ],
+  "homebrew_version": "4.6.10-77-g6cb3473",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libksba",
+  "version": "1.8.0",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.8.0",
+  "runtime_dependencies": [
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ]
+  ],
+  "homebrew_version": "5.1.11-75-gcd6613e",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libmpc",
+  "version": "1.4.1",
+  "time": 1790752846,
+  "time_local": "2026-09-30 03:20:46 EDT",
+  "time_utc": "2026-09-30 07:20:46 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.4.1",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "mpfr",
+    "4.2.2"
+   ]
+  ],
+  "homebrew_version": "5.1.6-89-g598ecb7",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libnghttp2",
+  "version": "1.70.0",
+  "time": 1790116409,
+  "time_local": "2026-09-22 18:33:29 EDT",
+  "time_utc": "2026-09-22 22:33:29 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.70.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.4-30-g14c54f7",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libnghttp3",
+  "version": "1.17.0",
+  "time": 1784933155,
+  "time_local": "2026-07-24 18:45:55 EDT",
+  "time_utc": "2026-07-24 22:45:55 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.17.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.5-7-gc0ed315",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libngtcp2",
+  "version": "1.24.0",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.24.0",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-07-16"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ]
+  ],
+  "homebrew_version": "6.0.5-17-ga8fac8c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libomp",
+  "version": "23.1.2",
+  "time": 1790752851,
+  "time_local": "2026-09-30 03:20:51 EDT",
+  "time_utc": "2026-09-30 07:20:51 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "23.1.2",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.6-6-g1d86792",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libpng",
+  "version": "1.6.58",
+  "time": 1785371906,
+  "time_local": "2026-07-29 20:38:26 EDT",
+  "time_utc": "2026-07-30 00:38:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.6.58",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.6-70-g0269fbf",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libssh2",
+  "version": "1.11.1_4",
+  "time": 1788133858,
+  "time_local": "2026-08-30 19:50:58 EDT",
+  "time_utc": "2026-08-30 23:50:58 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.11.1",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ]
+  ],
+  "homebrew_version": "6.0.13",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libtasn1",
+  "version": "4.21.0",
+  "time": 1787397445,
+  "time_local": "2026-08-22 07:17:25 EDT",
+  "time_utc": "2026-08-22 11:17:25 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.21.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.0.9-31-g3b90473",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libtiff",
+  "version": "4.7.2",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.7.2",
+  "runtime_dependencies": [
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ]
+  ],
+  "homebrew_version": "6.0.8-26-g1954a82",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libunistring",
+  "version": "1.4.2",
+  "time": 1785371906,
+  "time_local": "2026-07-29 20:38:26 EDT",
+  "time_utc": "2026-07-30 00:38:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.4.2",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.0.15-20-ga43dea8",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libusb",
+  "version": "1.0.30",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.0.30",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.11-176-g57a1eff",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libuv",
+  "version": "1.52.1",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.52.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.0.16-73-gbfa73b8",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libvmaf",
+  "version": "3.2.1",
+  "time": 1792540659,
+  "time_local": "2026-10-20 19:57:39 EDT",
+  "time_utc": "2026-10-20 23:57:39 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.2.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.1-7-ga4fe460",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libvpx",
+  "version": "1.17.0",
+  "time": 1792540659,
+  "time_local": "2026-10-20 19:57:39 EDT",
+  "time_utc": "2026-10-20 23:57:39 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.17.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.4-39-gf00137e",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libx11",
+  "version": "1.8.13",
+  "time": 1785371912,
+  "time_local": "2026-07-29 20:38:32 EDT",
+  "time_utc": "2026-07-30 00:38:32 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.8.13",
+  "runtime_dependencies": [
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ]
+  ],
+  "homebrew_version": "5.0.13-84-g589bfc7",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libxau",
+  "version": "1.0.12",
+  "time": 1785371912,
+  "time_local": "2026-07-29 20:38:32 EDT",
+  "time_utc": "2026-07-30 00:38:32 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.0.12",
+  "runtime_dependencies": [
+   [
+    "xorgproto",
+    "2025.1"
+   ]
+  ],
+  "homebrew_version": "4.6.10-22-g8ef7a9d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libxcb",
+  "version": "1.17.0",
+  "time": 1785371912,
+  "time_local": "2026-07-29 20:38:32 EDT",
+  "time_utc": "2026-07-30 00:38:32 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.17.0",
+  "runtime_dependencies": [
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ]
+  ],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libxdmcp",
+  "version": "1.1.5",
+  "time": 1785371912,
+  "time_local": "2026-07-29 20:38:32 EDT",
+  "time_utc": "2026-07-30 00:38:32 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.1.5",
+  "runtime_dependencies": [
+   [
+    "xorgproto",
+    "2025.1"
+   ]
+  ],
+  "homebrew_version": "4.6.10-22-g8ef7a9d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libxext",
+  "version": "1.3.7",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.3.7",
+  "runtime_dependencies": [
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ]
+  ],
+  "homebrew_version": "5.0.12-11-g4099c46",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libxrender",
+  "version": "0.9.12",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.9.12",
+  "runtime_dependencies": [
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ]
+  ],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "libyaml",
+  "version": "0.2.5",
+  "time": 1784974130,
+  "time_local": "2026-07-25 06:08:50 EDT",
+  "time_utc": "2026-07-25 10:08:50 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.2.5",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "lima",
+  "version": "2.2.0",
+  "time": 1788520313,
+  "time_local": "2026-09-04 07:11:53 EDT",
+  "time_utc": "2026-09-04 11:11:53 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.2.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.12-40-g126b4b0",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "little-cms2",
+  "version": "2.19.1",
+  "time": 1790116492,
+  "time_local": "2026-09-22 18:34:52 EDT",
+  "time_utc": "2026-09-22 22:34:52 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.19.1",
+  "runtime_dependencies": [
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ]
+  ],
+  "homebrew_version": "6.0.21-52-g27d05ae",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "lld",
+  "version": "23.1.5",
+  "time": 1794097716,
+  "time_local": "2026-11-07 19:28:36 EST",
+  "time_utc": "2026-11-08 00:28:36 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "23.1.5",
+  "runtime_dependencies": [
+   [
+    "lz4",
+    "1.11.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "z3",
+    "5.3.3"
+   ],
+   [
+    "llvm",
+    "23.1.5"
+   ]
+  ],
+  "homebrew_version": "7.0.12-57-g7a9af24",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "llhttp",
+  "version": "9.4.3",
+  "time": 1788133858,
+  "time_local": "2026-08-30 19:50:58 EDT",
+  "time_utc": "2026-08-30 23:50:58 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "9.4.3",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.13-116-gdecf7f1",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "llvm",
+  "version": "23.1.5",
+  "time": 1794097702,
+  "time_local": "2026-11-07 19:28:22 EST",
+  "time_utc": "2026-11-08 00:28:22 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "23.1.5",
+  "runtime_dependencies": [
+   [
+    "lz4",
+    "1.11.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "z3",
+    "5.3.3"
+   ]
+  ],
+  "homebrew_version": "7.0.12-57-g7a9af24",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "llvm@22",
+  "version": "22.1.8",
+  "time": 1788133859,
+  "time_local": "2026-08-30 19:50:59 EDT",
+  "time_utc": "2026-08-30 23:50:59 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "22.1.8",
+  "runtime_dependencies": [
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ]
+  ],
+  "homebrew_version": "6.0.17-93-gd4a8404",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "lz4",
+  "version": "1.10.0",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.10.0",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-20-g51a98eb",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "lzo",
+  "version": "2.10",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.10",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-22-g8ef7a9d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "merve",
+  "version": "1.2.2_3",
+  "time": 1790116409,
+  "time_local": "2026-09-22 18:33:29 EDT",
+  "time_utc": "2026-09-22 22:33:29 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.2.2",
+  "runtime_dependencies": [
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "simdutf",
+    "9.2.0"
+   ]
+  ],
+  "homebrew_version": "7.0.2-6-g9221b88",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "mpdecimal",
+  "version": "4.0.1",
+  "time": 1784933181,
+  "time_local": "2026-07-24 18:46:21 EDT",
+  "time_utc": "2026-07-24 22:46:21 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.0.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-20-g51a98eb",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "mpfr",
+  "version": "4.2.2",
+  "time": 1786147009,
+  "time_local": "2026-08-07 19:56:49 EDT",
+  "time_utc": "2026-08-07 23:56:49 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.2.2",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ]
+  ],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "mpg123",
+  "version": "1.33.7",
+  "time": 1792540657,
+  "time_local": "2026-10-20 19:57:37 EDT",
+  "time_utc": "2026-10-20 23:57:37 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.33.7",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.4-39-gf00137e",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "nbytes",
+  "version": "0.1.4",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.1.4",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.1.5-34-g688bd81",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "ncurses",
+  "version": "6.6",
+  "time": 1788388323,
+  "time_local": "2026-09-02 18:32:03 EDT",
+  "time_utc": "2026-09-02 22:32:03 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "6.6",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.0.8-15-g7543440",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "nettle",
+  "version": "4.0",
+  "time": 1787397446,
+  "time_local": "2026-08-22 07:17:26 EDT",
+  "time_utc": "2026-08-22 11:17:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.0",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ]
+  ],
+  "homebrew_version": "5.1.10-91-g6f293da",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "node",
+  "version": "26.9.0",
+  "time": 1790117792,
+  "time_local": "2026-09-22 18:56:32 EDT",
+  "time_utc": "2026-09-22 22:56:32 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "26.9.0",
+  "runtime_dependencies": [
+   [
+    "abseil",
+    "20260817.0"
+   ],
+   [
+    "fmt",
+    "12.2.0"
+   ],
+   [
+    "ada-url",
+    "4.0.0"
+   ],
+   [
+    "brotli",
+    "1.2.0"
+   ],
+   [
+    "c-ares",
+    "1.34.8"
+   ],
+   [
+    "hdrhistogram_c",
+    "0.11.10"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "libffi",
+    "3.8.0"
+   ],
+   [
+    "libnghttp2",
+    "1.70.0"
+   ],
+   [
+    "libuv",
+    "1.52.1"
+   ],
+   [
+    "llhttp",
+    "9.4.3"
+   ],
+   [
+    "simdutf",
+    "9.2.0"
+   ],
+   [
+    "merve",
+    "1.2.2"
+   ],
+   [
+    "nbytes",
+    "0.1.4"
+   ],
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "openssl@3",
+    "3.6.4"
+   ],
+   [
+    "simdjson",
+    "4.6.11"
+   ],
+   [
+    "readline",
+    "8.3.6"
+   ],
+   [
+    "sqlite",
+    "3.53.4"
+   ],
+   [
+    "uvwasi",
+    "0.0.23"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "highway",
+    "1.4.0"
+   ]
+  ],
+  "homebrew_version": "7.0.4-5-g6bfe3ed",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "npth",
+  "version": "1.8",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.8",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-22-g8ef7a9d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "nspr",
+  "version": "4.40",
+  "time": 1787397448,
+  "time_local": "2026-08-22 07:17:28 EDT",
+  "time_utc": "2026-08-22 11:17:28 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.40",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.15-125-g7372067",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "nss",
+  "version": "3.127",
+  "time": 1787397448,
+  "time_local": "2026-08-22 07:17:28 EDT",
+  "time_utc": "2026-08-22 11:17:28 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.127",
+  "runtime_dependencies": [
+   [
+    "nspr",
+    "4.40"
+   ]
+  ],
+  "homebrew_version": "6.0.18-9-gac983be",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "openjdk",
+  "version": "27",
+  "time": 1790116492,
+  "time_local": "2026-09-22 18:34:52 EDT",
+  "time_utc": "2026-09-22 22:34:52 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "27",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.3"
+   ],
+   [
+    "pcre2",
+    "10.48"
+   ],
+   [
+    "glib",
+    "2.90.0"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ],
+   [
+    "cairo",
+    "1.18.6"
+   ],
+   [
+    "graphite2",
+    "1.3.15"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "harfbuzz",
+    "14.5.0"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ],
+   [
+    "little-cms2",
+    "2.19.1"
+   ]
+  ],
+  "homebrew_version": "7.0.4-47-g32b5f52",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "openjpeg",
+  "version": "2.5.4",
+  "time": 1787397449,
+  "time_local": "2026-08-22 07:17:29 EDT",
+  "time_utc": "2026-08-22 11:17:29 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.5.4",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ],
+   [
+    "little-cms2",
+    "2.19"
+   ]
+  ],
+  "homebrew_version": "4.6.11-101-g8f74261",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "openssl@3",
+  "version": "3.6.3",
+  "time": 1784933159,
+  "time_local": "2026-07-24 18:45:59 EDT",
+  "time_utc": "2026-07-24 22:45:59 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.6.3",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-07-16"
+   ]
+  ],
+  "homebrew_version": "6.0.6-117-g20ce576",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "openssl@3",
+  "version": "3.6.4",
+  "time": 1790116421,
+  "time_local": "2026-09-22 18:33:41 EDT",
+  "time_utc": "2026-09-22 22:33:41 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.6.4",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ]
+  ],
+  "homebrew_version": "6.0.19-35-g9574410",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "openssl@4",
+  "version": "4.1.0",
+  "time": 1794097721,
+  "time_local": "2026-11-07 19:28:41 EST",
+  "time_utc": "2026-11-08 00:28:41 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.1.0",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-11-05"
+   ]
+  ],
+  "homebrew_version": "7.0.10-90-g7c5b605",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "p11-kit",
+  "version": "0.26.5",
+  "time": 1787397446,
+  "time_local": "2026-08-22 07:17:26 EDT",
+  "time_utc": "2026-08-22 11:17:26 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.26.5",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "libtasn1",
+    "4.21.0"
+   ]
+  ],
+  "homebrew_version": "6.0.15-123-g617a217",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "pcre2",
+  "version": "10.47_1",
+  "time": 1785371911,
+  "time_local": "2026-07-29 20:38:31 EDT",
+  "time_utc": "2026-07-30 00:38:31 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "10.47",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.0.13-26-g7788a02",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "pcre2",
+  "version": "10.48",
+  "time": 1790116479,
+  "time_local": "2026-09-22 18:34:39 EDT",
+  "time_utc": "2026-09-22 22:34:39 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "10.48",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.20-73-g518895a",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "pinentry",
+  "version": "1.3.3",
+  "time": 1787397447,
+  "time_local": "2026-08-22 07:17:27 EDT",
+  "time_utc": "2026-08-22 11:17:27 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.3.3",
+  "runtime_dependencies": [
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ],
+   [
+    "libassuan",
+    "3.0.2"
+   ]
+  ],
+  "homebrew_version": "6.0.6-2-g7f14ed4",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "pixman",
+  "version": "0.46.4",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.46.4",
+  "runtime_dependencies": [],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "pkgconf",
+  "version": "3.0.5",
+  "time": 1786147009,
+  "time_local": "2026-08-07 19:56:49 EDT",
+  "time_utc": "2026-08-07 23:56:49 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "3.0.5",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.14-38-g1f3abf4",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "poppler",
+  "version": "26.08.0",
+  "time": 1787397449,
+  "time_local": "2026-08-22 07:17:29 EDT",
+  "time_utc": "2026-08-22 11:17:29 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "26.08.0",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.3"
+   ],
+   [
+    "pcre2",
+    "10.47"
+   ],
+   [
+    "glib",
+    "2.88.3"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ],
+   [
+    "cairo",
+    "1.18.4"
+   ],
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "gmp",
+    "6.3.0"
+   ],
+   [
+    "libidn2",
+    "2.3.8"
+   ],
+   [
+    "libtasn1",
+    "4.21.0"
+   ],
+   [
+    "nettle",
+    "4.0"
+   ],
+   [
+    "p11-kit",
+    "0.26.5"
+   ],
+   [
+    "gnutls",
+    "3.8.13"
+   ],
+   [
+    "libgpg-error",
+    "1.61"
+   ],
+   [
+    "libassuan",
+    "3.0.2"
+   ],
+   [
+    "libgcrypt",
+    "1.12.2"
+   ],
+   [
+    "libksba",
+    "1.8.0"
+   ],
+   [
+    "libusb",
+    "1.0.30"
+   ],
+   [
+    "npth",
+    "1.8"
+   ],
+   [
+    "pinentry",
+    "1.3.3"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ],
+   [
+    "gnupg",
+    "2.5.21"
+   ],
+   [
+    "gpgme",
+    "2.1.2"
+   ],
+   [
+    "gpgmepp",
+    "2.1.0"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ],
+   [
+    "little-cms2",
+    "2.19"
+   ],
+   [
+    "nspr",
+    "4.40"
+   ],
+   [
+    "nss",
+    "3.127"
+   ],
+   [
+    "openjpeg",
+    "2.5.4"
+   ]
+  ],
+  "homebrew_version": "6.0.14-50-g7b0f22a",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "python@3.14",
+  "version": "3.14.7",
+  "time": 1790116465,
+  "time_local": "2026-09-22 18:34:25 EDT",
+  "time_utc": "2026-09-22 22:34:25 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.14.7",
+  "runtime_dependencies": [
+   [
+    "mpdecimal",
+    "4.0.1"
+   ],
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "openssl@3",
+    "3.6.4"
+   ],
+   [
+    "readline",
+    "8.3.6"
+   ],
+   [
+    "sqlite",
+    "3.53.4"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ]
+  ],
+  "homebrew_version": "6.0.15-163-g6c94e1c",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "python@3.15",
+  "version": "3.15.2",
+  "time": 1794097733,
+  "time_local": "2026-11-07 19:28:53 EST",
+  "time_utc": "2026-11-08 00:28:53 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.15.2",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-11-05"
+   ],
+   [
+    "mpdecimal",
+    "4.0.1"
+   ],
+   [
+    "openssl@4",
+    "4.1.0"
+   ],
+   [
+    "readline",
+    "8.3.6"
+   ],
+   [
+    "sqlite",
+    "3.54.1"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.11.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ]
+  ],
+  "homebrew_version": "7.0.11",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "readline",
+  "version": "8.3.6",
+  "time": 1790116445,
+  "time_local": "2026-09-22 18:34:05 EDT",
+  "time_utc": "2026-09-22 22:34:05 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "8.3.6",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.1-21-gef55185",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "ruby",
+  "version": "4.0.6",
+  "time": 1784974130,
+  "time_local": "2026-07-25 06:08:50 EDT",
+  "time_utc": "2026-07-25 10:08:50 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.0.6",
+  "runtime_dependencies": [
+   [
+    "libyaml",
+    "0.2.5"
+   ],
+   [
+    "ca-certificates",
+    "2026-07-16"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ]
+  ],
+  "homebrew_version": "6.0.10-25-g199d35f",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "rust",
+  "version": "1.98.0",
+  "time": 1788133863,
+  "time_local": "2026-08-30 19:51:03 EDT",
+  "time_utc": "2026-08-30 23:51:03 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "1.98.0",
+  "runtime_dependencies": [
+   [
+    "ca-certificates",
+    "2026-08-13"
+   ],
+   [
+    "openssl@3",
+    "3.6.3"
+   ],
+   [
+    "libssh2",
+    "1.11.1"
+   ],
+   [
+    "llhttp",
+    "9.4.3"
+   ],
+   [
+    "libgit2",
+    "1.9.7"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "llvm@22",
+    "22.1.8"
+   ],
+   [
+    "pkgconf",
+    "3.0.6"
+   ],
+   [
+    "readline",
+    "8.3.3"
+   ],
+   [
+    "sqlite",
+    "3.53.4"
+   ]
+  ],
+  "homebrew_version": "6.0.18-96-gac9e7ac",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "shellcheck",
+  "version": "0.11.0",
+  "time": 1791632854,
+  "time_local": "2026-10-10 07:47:34 EDT",
+  "time_utc": "2026-10-10 11:47:34 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "0.11.0",
+  "runtime_dependencies": [
+   [
+    "gmp",
+    "6.3.0"
+   ]
+  ],
+  "homebrew_version": "6.0.12-85-g383f614",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "simdjson",
+  "version": "4.6.11",
+  "time": 1790116445,
+  "time_local": "2026-09-22 18:34:05 EDT",
+  "time_utc": "2026-09-22 22:34:05 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "4.6.11",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.22-42-g1490a40",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "simdutf",
+  "version": "9.0.0",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "9.0.0",
+  "runtime_dependencies": [
+   [
+    "icu4c@78",
+    "78.3"
+   ]
+  ],
+  "homebrew_version": "5.1.7-40-g0f962ab",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "simdutf",
+  "version": "9.2.0",
+  "time": 1790116409,
+  "time_local": "2026-09-22 18:33:29 EDT",
+  "time_utc": "2026-09-22 22:33:29 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "9.2.0",
+  "runtime_dependencies": [
+   [
+    "icu4c@78",
+    "78.3"
+   ]
+  ],
+  "homebrew_version": "7.0.2-6-g9221b88",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "sqlite",
+  "version": "3.53.4",
+  "time": 1788133863,
+  "time_local": "2026-08-30 19:51:03 EDT",
+  "time_utc": "2026-08-30 23:51:03 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.53.4",
+  "runtime_dependencies": [
+   [
+    "readline",
+    "8.3.3"
+   ]
+  ],
+  "homebrew_version": "6.0.18-9-gac983be",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "sqlite",
+  "version": "3.54.1",
+  "time": 1794097730,
+  "time_local": "2026-11-07 19:28:50 EST",
+  "time_utc": "2026-11-08 00:28:50 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "3.54.1",
+  "runtime_dependencies": [
+   [
+    "readline",
+    "8.3.6"
+   ]
+  ],
+  "homebrew_version": "7.0.9-157-g013821d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "terraform",
+  "version": "1.16.6",
+  "time": 1792025144,
+  "time_local": "2026-10-14 20:45:44 EDT",
+  "time_utc": "2026-10-15 00:45:44 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "1.16.6",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.9-108-gf63eb29",
+  "poured_from_bottle": false
+ },
+ {
+  "formula": "uhubctl",
+  "version": "2.6.0",
+  "time": 1792015721,
+  "time_local": "2026-10-14 18:08:41 EDT",
+  "time_utc": "2026-10-14 22:08:41 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": true,
+  "stable": "2.6.0",
+  "runtime_dependencies": [
+   [
+    "libusb",
+    "1.0.30"
+   ]
+  ],
+  "homebrew_version": "4.6.10-49-g0a7a60f",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "uvwasi",
+  "version": "0.0.23",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "0.0.23",
+  "runtime_dependencies": [
+   [
+    "libuv",
+    "1.52.1"
+   ]
+  ],
+  "homebrew_version": "4.6.10-69-g47b7bf3",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "webp",
+  "version": "1.6.0",
+  "time": 1785371913,
+  "time_local": "2026-07-29 20:38:33 EDT",
+  "time_utc": "2026-07-30 00:38:33 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.6.0",
+  "runtime_dependencies": [
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "libpng",
+    "1.6.58"
+   ]
+  ],
+  "homebrew_version": "4.6.10-33-g34be148",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "xorgproto",
+  "version": "2025.1",
+  "time": 1785371912,
+  "time_local": "2026-07-29 20:38:32 EDT",
+  "time_utc": "2026-07-30 00:38:32 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2025.1",
+  "runtime_dependencies": [],
+  "homebrew_version": "5.0.6-55-gb344d16",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "xz",
+  "version": "5.8.4",
+  "time": 1790116446,
+  "time_local": "2026-09-22 18:34:06 EDT",
+  "time_utc": "2026-09-22 22:34:06 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "5.8.4",
+  "runtime_dependencies": [],
+  "homebrew_version": "6.0.22-323-gde1ac14",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "yuicompressor",
+  "version": "2.4.8_1",
+  "time": 1790116495,
+  "time_local": "2026-09-22 18:34:55 EDT",
+  "time_utc": "2026-09-22 22:34:55 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "2.4.8",
+  "runtime_dependencies": [
+   [
+    "libpng",
+    "1.6.58"
+   ],
+   [
+    "freetype",
+    "2.14.3"
+   ],
+   [
+    "giflib",
+    "6.1.3"
+   ],
+   [
+    "json-c",
+    "0.19"
+   ],
+   [
+    "libunistring",
+    "1.4.2"
+   ],
+   [
+    "gettext",
+    "1.0"
+   ],
+   [
+    "fontconfig",
+    "2.18.3"
+   ],
+   [
+    "pcre2",
+    "10.48"
+   ],
+   [
+    "glib",
+    "2.90.0"
+   ],
+   [
+    "xorgproto",
+    "2025.1"
+   ],
+   [
+    "libxau",
+    "1.0.12"
+   ],
+   [
+    "libxdmcp",
+    "1.1.5"
+   ],
+   [
+    "libxcb",
+    "1.17.0"
+   ],
+   [
+    "libx11",
+    "1.8.13"
+   ],
+   [
+    "libxext",
+    "1.3.7"
+   ],
+   [
+    "libxrender",
+    "0.9.12"
+   ],
+   [
+    "lzo",
+    "2.10"
+   ],
+   [
+    "pixman",
+    "0.46.4"
+   ],
+   [
+    "cairo",
+    "1.18.6"
+   ],
+   [
+    "graphite2",
+    "1.3.15"
+   ],
+   [
+    "icu4c@78",
+    "78.3"
+   ],
+   [
+    "harfbuzz",
+    "14.5.0"
+   ],
+   [
+    "jpeg-turbo",
+    "3.2.0"
+   ],
+   [
+    "webp",
+    "1.6.0"
+   ],
+   [
+    "xz",
+    "5.8.4"
+   ],
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "zstd",
+    "1.5.7"
+   ],
+   [
+    "libtiff",
+    "4.7.2"
+   ],
+   [
+    "little-cms2",
+    "2.19.1"
+   ],
+   [
+    "openjdk",
+    "27"
+   ]
+  ],
+  "homebrew_version": "4.6.6-27-g566290d",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "z3",
+  "version": "5.3.3",
+  "time": 1794097696,
+  "time_local": "2026-11-07 19:28:16 EST",
+  "time_utc": "2026-11-08 00:28:16 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "5.3.3",
+  "runtime_dependencies": [],
+  "homebrew_version": "7.0.11-32-g3ef701b",
+  "poured_from_bottle": true
+ },
+ {
+  "formula": "zstd",
+  "version": "1.5.7_1",
+  "time": 1784933162,
+  "time_local": "2026-07-24 18:46:02 EDT",
+  "time_utc": "2026-07-24 22:46:02 UTC",
+  "installed_as_dependency": null,
+  "installed_on_request": false,
+  "stable": "1.5.7",
+  "runtime_dependencies": [
+   [
+    "lz4",
+    "1.10.0"
+   ],
+   [
+    "xz",
+    "5.8.3"
+   ]
+  ],
+  "homebrew_version": "5.0.13-24-g70b5921",
+  "poured_from_bottle": true
+ }
+]

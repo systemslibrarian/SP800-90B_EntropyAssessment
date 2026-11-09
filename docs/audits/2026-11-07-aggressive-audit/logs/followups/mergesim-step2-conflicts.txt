@@ -1,0 +1,3 @@
+audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+audits/INSTRUMENT-INVENTORY.md
+cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md

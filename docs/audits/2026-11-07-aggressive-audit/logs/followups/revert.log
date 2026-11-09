@@ -1,0 +1,56 @@
+REVERT Sun Nov  8 20:19:45 EST 2026
+before: python3 -> ../Cellar/python@3.15/3.15.2/bin/python3 (Python 3.15.2)
+Unlinking /opt/homebrew/Cellar/python@3.15/3.15.2... 500 symlinks removed.
+unlink python@3.15 rc=0
+Unlinking /opt/homebrew/Cellar/python@3.14/3.14.7... 509 symlinks removed.
+unlink python@3.14 rc=0
+Linking /opt/homebrew/Cellar/python@3.14/3.14.7... 521 symlinks created.
+link python@3.14 rc=0
+after: python3 -> ../Cellar/python@3.14/3.14.7/bin/python3 (Python 3.14.7); yaml: 6.0.3
+python restored -- proceeding to uninstall the six audit-added kegs
+dependents check:
+  afl++ used by: 
+  lld used by: afl++ 
+  llvm used by: afl++ lld 
+  z3 used by: afl++ lld llvm 
+  python@3.15 used by: afl++ 
+  openssl@4 used by: afl++ python@3.15 
+Warning: The following openssl@4 configuration files have not been removed!
+If desired, remove them manually with `rm -rf`:
+  /opt/homebrew/etc/openssl@4
+  /opt/homebrew/etc/openssl@4/cert.pem
+  /opt/homebrew/etc/openssl@4/certs
+  /opt/homebrew/etc/openssl@4/certs/.keepme
+  /opt/homebrew/etc/openssl@4/ct_log_list.cnf
+  /opt/homebrew/etc/openssl@4/ct_log_list.cnf.dist
+  /opt/homebrew/etc/openssl@4/misc
+  /opt/homebrew/etc/openssl@4/misc/CA.pl
+  /opt/homebrew/etc/openssl@4/misc/tsget
+  /opt/homebrew/etc/openssl@4/misc/tsget.pl
+  /opt/homebrew/etc/openssl@4/openssl.cnf
+  /opt/homebrew/etc/openssl@4/openssl.cnf.dist
+  /opt/homebrew/etc/openssl@4/private
+  /opt/homebrew/etc/openssl@4/private/.keepme
+Uninstalling /opt/homebrew/Cellar/afl++/5.03c... (301 files, 5.7MB)
+Uninstalling /opt/homebrew/Cellar/lld/23.1.5... (44 files, 6MB)
+Uninstalling /opt/homebrew/Cellar/llvm/23.1.5... (9,338 files, 1.9GB)
+Uninstalling /opt/homebrew/Cellar/z3/5.3.3... (143 files, 44.9MB)
+Uninstalling /opt/homebrew/Cellar/python@3.15/3.15.2... (4,236 files, 86MB)
+Uninstalling /opt/homebrew/Cellar/openssl@4/4.1.0... (6,869 files, 24.6MB)
+
+==> Autoremoving 5 unneeded formulae:
+dav1d
+lame
+libvmaf
+libvpx
+mpg123
+Uninstalling /opt/homebrew/Cellar/lame/4.0... (29 files, 1.9MB)
+Uninstalling /opt/homebrew/Cellar/libvpx/1.17.0... (22 files, 4.4MB)
+Uninstalling /opt/homebrew/Cellar/libvmaf/3.2.1... (243 files, 8.2MB)
+Uninstalling /opt/homebrew/Cellar/dav1d/1.5.4... (16 files, 959.6KB)
+Uninstalling /opt/homebrew/Cellar/mpg123/1.33.7... (34 files, 1.9MB)
+uninstall rc=0
+Linking /opt/homebrew/Cellar/openssl@3/3.6.4... 6570 symlinks created.
+link openssl@3 rc=0 -> libcrypto.dylib: ../Cellar/openssl@3/3.6.4/lib/libcrypto.dylib
+sqlite (left alone): ../Cellar/sqlite/3.54.1
+remaining Cellar kegs from the window: sqlite/3.54.1 

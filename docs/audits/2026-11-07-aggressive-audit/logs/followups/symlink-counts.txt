@@ -1,0 +1,44 @@
+== symlinks under /opt/homebrew (excluding Cellar, opt, var/homebrew/linked) that resolve into Cellar/python@3.15 ==
+count: 500
+/opt/homebrew/bin/pydoc3.15 -> ../Cellar/python@3.15/3.15.2/bin/pydoc3.15
+/opt/homebrew/bin/pip3.15 -> ../Cellar/python@3.15/3.15.2/bin/pip3.15
+/opt/homebrew/bin/python3 -> ../Cellar/python@3.15/3.15.2/bin/python3
+/opt/homebrew/bin/pip3 -> ../Cellar/python@3.15/3.15.2/bin/pip3
+/opt/homebrew/bin/idle3 -> ../Cellar/python@3.15/3.15.2/bin/idle3
+/opt/homebrew/bin/idle3.15 -> ../Cellar/python@3.15/3.15.2/bin/idle3.15
+/opt/homebrew/bin/python3-config -> ../Cellar/python@3.15/3.15.2/bin/python3-config
+/opt/homebrew/bin/python3.15-config -> ../Cellar/python@3.15/3.15.2/bin/python3.15-config
+/opt/homebrew/bin/python3.15 -> ../Cellar/python@3.15/3.15.2/bin/python3.15
+/opt/homebrew/bin/pydoc3 -> ../Cellar/python@3.15/3.15.2/bin/pydoc3
+/opt/homebrew/lib/pkgconfig/python3.pc -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python3.pc
+/opt/homebrew/lib/pkgconfig/python-3.15-embed.pc -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python-3.15-embed.pc
+/opt/homebrew/lib/pkgconfig/python-3.15.pc -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python-3.15.pc
+/opt/homebrew/lib/pkgconfig/python3-embed.pc -> ../../Cellar/python@3.15/3.15.2/lib/pkgconfig/python3-embed.pc
+/opt/homebrew/Frameworks/Python.framework/Python -> ../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Python
+/opt/homebrew/Frameworks/Python.framework/Resources -> ../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Resources
+/opt/homebrew/Frameworks/Python.framework/Headers -> ../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Headers
+/opt/homebrew/Frameworks/Python.framework/Versions/3.15 -> ../../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15
+/opt/homebrew/Frameworks/Python.framework/Versions/Current -> ../../../Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/Current
+(man pages / site-packages entries elided above; full list in symlinks-into-python@3.15.txt)
+
+== symlinks under /opt/homebrew (excluding Cellar, opt, var/homebrew/linked) that resolve into Cellar/python@3.14 ==
+count: 509
+/opt/homebrew/bin/python3.14-config -> ../Cellar/python@3.14/3.14.7/bin/python3.14-config
+/opt/homebrew/bin/pydoc3.14 -> ../Cellar/python@3.14/3.14.7/bin/pydoc3.14
+/opt/homebrew/bin/wheel3 -> ../Cellar/python@3.14/3.14.7/bin/wheel3
+/opt/homebrew/bin/pip3.14 -> ../Cellar/python@3.14/3.14.7/bin/pip3.14
+/opt/homebrew/bin/idle3.14 -> ../Cellar/python@3.14/3.14.7/bin/idle3.14
+/opt/homebrew/bin/wheel3.14 -> ../Cellar/python@3.14/3.14.7/bin/wheel3.14
+/opt/homebrew/bin/python3.14 -> ../Cellar/python@3.14/3.14.7/bin/python3.14
+/opt/homebrew/lib/pkgconfig/python-3.14-embed.pc -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python-3.14-embed.pc
+/opt/homebrew/lib/pkgconfig/python-3.14.pc -> ../../Cellar/python@3.14/3.14.7/lib/pkgconfig/python-3.14.pc
+/opt/homebrew/Frameworks/Python.framework/Versions/3.14 -> ../../../Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14
+(man pages / site-packages entries elided above; full list in symlinks-into-python@3.14.txt)
+
+== symlinks under /opt/homebrew (excluding Cellar, opt, var/homebrew/linked) that resolve into Cellar/openssl@4 ==
+count: 6708
+
+== symlinks under /opt/homebrew (excluding Cellar, opt, var/homebrew/linked) that resolve into Cellar/openssl@3 ==
+count: 0
+
+== symlinks under /opt/homebrew (excluding Cellar, opt, var/homebrew/linked) that resolve into Cellar/z3 ==

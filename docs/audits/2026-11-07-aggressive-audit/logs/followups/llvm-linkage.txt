@@ -1,0 +1,15 @@
+== brew linkage llvm | grep openssl/python/missing ==
+(pipestatus 0)
+
+== otool -L llvm bin/lldb, bin/clang (python? openssl?) ==
+-- /opt/homebrew/opt/llvm/bin/lldb
+error: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/otool-classic: can't open file: /opt/homebrew/opt/llvm/bin/lldb (No such file or directory)
+-- /opt/homebrew/opt/llvm/bin/clang
+/opt/homebrew/opt/llvm/bin/clang:
+-- /opt/homebrew/opt/llvm/bin/llvm-config
+/opt/homebrew/opt/llvm/bin/llvm-config:
+	/opt/homebrew/opt/z3/lib/libz3.5.3.dylib (compatibility version 5.3.0, current version 5.3.3)
+	/opt/homebrew/opt/zstd/lib/libzstd.1.dylib (compatibility version 1.0.0, current version 1.5.7)
+
+== llvm lib python bindings? ==
+(eval):4: no matches found: /opt/homebrew/Cellar/llvm/23.1.5/libexec/python*

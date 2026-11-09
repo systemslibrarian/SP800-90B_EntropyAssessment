@@ -1,0 +1,14 @@
+ea_non_iid: short file refused:                exit 255
+ea_non_iid: human-readable reason:             present
+ea_non_iid: JSON errorLevel and message:       set
+ea_non_iid: estimators did not run:            confirmed
+ea_iid: short file refused:                    exit 255
+ea_iid: human-readable reason:                 present
+ea_iid: JSON errorLevel and message:           set
+ea_iid: estimators did not run:                confirmed
+short -l subset of a long file:                refused
+compliant file still assessed:                 Assessed 0.12644573619604868
+escape permits and warns:                      exit 0 with the non-compliance notice
+escape marked in JSON:                         nonCompliantShortDataset true
+
+regression-minsize: PASS

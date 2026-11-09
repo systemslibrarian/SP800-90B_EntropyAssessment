@@ -1,0 +1,324 @@
+== brew uses --installed openssl@4 ==
+afl++
+python@3.15
+   (exit 0)
+== brew uses --installed --recursive openssl@4 ==
+afl++
+gcloud-cli
+python@3.15
+
+== brew uses --installed python@3.15 ==
+afl++
+   (exit 0)
+== brew uses --installed --recursive python@3.15 ==
+afl++
+
+== brew uses --installed llvm ==
+afl++
+lld
+   (exit 0)
+== brew uses --installed --recursive llvm ==
+afl++
+lld
+
+== brew uses --installed lld ==
+afl++
+   (exit 0)
+== brew uses --installed --recursive lld ==
+afl++
+
+== brew uses --installed z3 ==
+afl++
+lld
+llvm
+   (exit 0)
+== brew uses --installed --recursive z3 ==
+afl++
+lld
+llvm
+
+== brew uses --installed zstd ==
+afl++
+boost
+bundletool
+emscripten
+firebase-cli
+gcc
+libftdi
+libtiff
+little-cms2
+lld
+llvm
+llvm@22
+node
+openjdk
+openjpeg
+poppler
+python@3.14
+python@3.15
+rust
+yuicompressor
+   (exit 0)
+== brew uses --installed --recursive zstd ==
+afl++
+boost
+bundletool
+emscripten
+firebase-cli
+gcc
+gcloud-cli
+libftdi
+libtiff
+little-cms2
+lld
+llvm
+llvm@22
+node
+openjdk
+openjpeg
+poppler
+python@3.14
+python@3.15
+rust
+yuicompressor
+
+== brew uses --installed xz ==
+afl++
+boost
+bundletool
+emscripten
+firebase-cli
+gcc
+libftdi
+libtiff
+little-cms2
+lld
+llvm
+llvm@22
+node
+openjdk
+openjpeg
+poppler
+python@3.14
+python@3.15
+rust
+yuicompressor
+zstd
+   (exit 0)
+== brew uses --installed --recursive xz ==
+afl++
+boost
+bundletool
+emscripten
+firebase-cli
+gcc
+gcloud-cli
+libftdi
+libtiff
+little-cms2
+lld
+llvm
+llvm@22
+node
+openjdk
+openjpeg
+poppler
+python@3.14
+python@3.15
+rust
+yuicompressor
+zstd
+
+== brew uses --installed sqlite ==
+afl++
+emscripten
+firebase-cli
+node
+python@3.14
+python@3.15
+rust
+   (exit 0)
+== brew uses --installed --recursive sqlite ==
+afl++
+emscripten
+firebase-cli
+gcloud-cli
+node
+python@3.14
+python@3.15
+rust
+
+== brew uses --installed readline ==
+afl++
+bash
+emscripten
+firebase-cli
+gawk
+gnupg
+gpgme
+gpgmepp
+node
+poppler
+python@3.14
+python@3.15
+rust
+sqlite
+   (exit 0)
+== brew uses --installed --recursive readline ==
+afl++
+bash
+emscripten
+firebase-cli
+gawk
+gcloud-cli
+gnupg
+gpgme
+gpgmepp
+node
+poppler
+python@3.14
+python@3.15
+rust
+sqlite
+
+== brew uses --installed mpdecimal ==
+afl++
+emscripten
+python@3.14
+python@3.15
+   (exit 0)
+== brew uses --installed --recursive mpdecimal ==
+afl++
+emscripten
+gcloud-cli
+python@3.14
+python@3.15
+
+== brew uses --installed afl++ ==
+   (exit 0)
+== brew uses --installed --recursive afl++ ==
+
+== brew uses --installed openssl@3 ==
+cocoapods
+emscripten
+firebase-cli
+libgit2
+libngtcp2
+libssh2
+node
+python@3.14
+ruby
+rust
+   (exit 0)
+== brew uses --installed --recursive openssl@3 ==
+cocoapods
+emscripten
+firebase-cli
+libgit2
+libngtcp2
+libssh2
+node
+python@3.14
+ruby
+rust
+
+== brew uses --installed python@3.14 ==
+emscripten
+gcloud-cli
+   (exit 0)
+== brew uses --installed --recursive python@3.14 ==
+emscripten
+gcloud-cli
+
+== brew uses --installed ca-certificates ==
+afl++
+cocoapods
+emscripten
+firebase-cli
+gnupg
+gnutls
+gpgme
+gpgmepp
+libgit2
+libngtcp2
+libssh2
+node
+openssl@3
+openssl@4
+p11-kit
+poppler
+python@3.14
+python@3.15
+ruby
+rust
+   (exit 0)
+== brew uses --installed --recursive ca-certificates ==
+afl++
+cocoapods
+emscripten
+firebase-cli
+gcloud-cli
+gnupg
+gnutls
+gpgme
+gpgmepp
+libgit2
+libngtcp2
+libssh2
+node
+openssl@3
+openssl@4
+p11-kit
+poppler
+python@3.14
+python@3.15
+ruby
+rust
+
+== brew uses --installed lz4 ==
+afl++
+boost
+bundletool
+emscripten
+firebase-cli
+gcc
+libftdi
+libtiff
+little-cms2
+lld
+llvm
+llvm@22
+node
+openjdk
+openjpeg
+poppler
+python@3.14
+python@3.15
+rust
+yuicompressor
+zstd
+   (exit 0)
+== brew uses --installed --recursive lz4 ==
+afl++
+boost
+bundletool
+emscripten
+firebase-cli
+gcc
+gcloud-cli
+libftdi
+libtiff
+little-cms2
+lld
+llvm
+llvm@22
+node
+openjdk
+openjpeg
+poppler
+python@3.14
+python@3.15
+rust
+yuicompressor
+zstd
+

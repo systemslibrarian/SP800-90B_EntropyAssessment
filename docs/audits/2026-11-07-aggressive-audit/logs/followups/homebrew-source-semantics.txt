@@ -1,0 +1,99 @@
+== Homebrew source: how uninstall finds dependents (installed_dependents.rb) ==
+30:  def find_some_installed_dependents(kegs, casks: [], formulae: Formula.installed)
+41:      # fall back to the information in the tab.
+42:      [keg.name, keg.tab.tap]
+61:        CaskDependent.new(dependent).runtime_dependencies.map(&:to_installed_formula)
+
+== uninstall.rb: dependents check + multi-version behaviour ==
+17:        kegs_by_rack:        T::Hash[Pathname, T::Array[Keg]],
+19:        force:               T::Boolean,
+20:        ignore_dependencies: T::Boolean,
+25:    def self.uninstall_kegs(kegs_by_rack, casks: [], force: false, ignore_dependencies: false, named_args: [],
+28:      handle_unsatisfied_dependents(kegs_by_rack,
+30:                                    ignore_dependencies:,
+34:      kegs_by_rack.each do |rack, kegs|
+35:        if force
+36:          name = rack.basename
+38:          if rack.directory?
+47:              puts "Uninstalling #{name}... (#{rack.abv})"
+56:          rm_pin rack unless dry_run
+60:              f = Formulary.from_rack(rack)
+63:                break # exit keg loop and move on to next rack
+82:              rack = keg.rack
+83:              rm_pin rack
+85:              if rack.directory?
+86:                versions = rack.subdirs.map(&:basename)
+88:                  #{keg.name} #{Utils::Text.to_sentence(versions)} #{versions.one? ? "is" : "are"} still installed.
+89:                  To remove all versions, run:
+90:                    brew uninstall --force #{keg.name}
+144:        HOMEBREW_CELLAR.children.each do |rack|
+145:          rack.unlink if rack.symlink? && !Utils::Path.resolved_path_exists?(rack)
+152:        kegs_by_rack:        T::Hash[Pathname, T::Array[Keg]],
+154:        ignore_dependencies: T::Boolean,
+158:    def self.handle_unsatisfied_dependents(kegs_by_rack, casks: [], ignore_dependencies: false, named_args: [])
+159:      return if ignore_dependencies
+161:      all_kegs = kegs_by_rack.values.flatten(1)
+162:      check_for_dependents!(all_kegs, casks:, named_args:)
+169:    def self.check_for_dependents!(kegs, casks: [], named_args: [])
+176:    sig { params(rack: Pathname).void }
+177:    def self.rm_pin(rack)
+178:      Formulary.from_rack(rack).unpin
+
+== cmd/link.rb: Already linked / keg_only handling ==
+20:        switch "--overwrite",
+24:                            "`brew link --overwrite` without actually linking or deleting any files."
+25:        switch "-f", "--force",
+26:               description: "Allow keg-only formulae to be linked. When linking casks, overwrite " \
+64:          keg_only = Formulary.keg_only?(keg.rack)
+71:          versioned_keg_only_formula = formula.present? && formula.keg_only_reason&.versioned_formula?
+74:            opoo "Already linked: #{keg}"
+77:            name_and_flag << "--force " if keg_only && !versioned_keg_only_formula
+80:              To relink, run:
+87:            if args.overwrite?
+92:            keg.link(overwrite: args.overwrite?, dry_run: args.dry_run?, verbose: args.verbose?)
+93:            puts_keg_only_path_message(keg) if keg_only && !versioned_keg_only_formula
+97:          if keg_only
+99:               formula.keg_only_reason.by_macos?
+102:                Refusing to link macOS provided/shadowed software: #{keg.name}
+103:                #{caveats.keg_only_text(skip_reason: true)&.strip}
+108:            if !args.force? && (formula.nil? || !formula.keg_only_reason.versioned_formula?)
+109:              opoo "#{keg.name} is keg-only and must be linked with `--force`."
+110:              puts_keg_only_path_message(keg)
+115:          Unlink.unlink_link_overwrite_formulae(formula, verbose: args.verbose?) if formula
+122:              n = keg.link(overwrite: args.overwrite?, dry_run: args.dry_run?, verbose: args.verbose?)
+130:            if keg_only && !versioned_keg_only_formula && !Homebrew::EnvConfig.developer?
+131:              puts_keg_only_path_message(keg)
+141:            artifact.link_action(force: args.force?, overwrite: args.overwrite?) == :conflict
+146:              To force the link and overwrite all conflicting files:
+147:                brew link --cask --overwrite #{cask}
+151:          puts(args.overwrite? ? "Would remove:" : "Would link:") if args.dry_run?
+153:            artifact.install_phase(force: args.force?, overwrite: args.overwrite?, dry_run: args.dry_run?,
+162:      def puts_keg_only_path_message(keg)
+
+== cmd/unlink.rb ==
+5:require "unlink"
+14:          `brew unlink` <formula> `&&` <commands> `&& brew link` <formula>
+17:               description: "List files which would be unlinked without actually unlinking or " \
+35:            keg.unlink(dry_run: args.dry_run?, verbose: args.verbose?)
+39:          Unlink.unlink(keg, dry_run: args.dry_run?, verbose: args.verbose?)
+
+== keg.rb: uninstall/unlink/optlink ==
+322:  def remove_opt_record
+328:  def uninstall(raise_failures: false, dry_run: false)
+364:  def unlink(verbose: false, dry_run: false)
+525:  def link(verbose: false, dry_run: false, overwrite: false)
+668:  def optlink(verbose: false, dry_run: false, overwrite: false)
+
+== cli/named_args.rb: resolve keg for multi-version rack ==
+239:      def to_default_kegs
+254:      def to_latest_kegs
+269:      def to_kegs
+287:      def to_kegs_to_casks(only: parent.only_formula_or_cask, ignore_unavailable: false, method: :default_kegs)
+526:      def resolve_kegs(name)
+550:      def resolve_latest_keg(name)
+571:      def resolve_default_keg(name)
+574:        linked_keg_ref = HOMEBREW_LINKED_KEGS/rack.basename
+575:        opt_prefix = HOMEBREW_PREFIX/"opt/#{rack.basename}"
+578:          return Keg.new(Utils::Path.resolved_path(opt_prefix)) if opt_prefix.symlink? && opt_prefix.directory?
+579:          if linked_keg_ref.symlink? && linked_keg_ref.directory?
+580:            return Keg.new(Utils::Path.resolved_path(linked_keg_ref))

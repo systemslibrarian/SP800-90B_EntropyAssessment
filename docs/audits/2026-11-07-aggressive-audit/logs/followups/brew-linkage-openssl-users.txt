@@ -1,0 +1,77 @@
+== brew linkage python@3.14 | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/Python (python@3.14)
+  /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (openssl@3)
+  /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib (openssl@3)
+  openssl@3
+   (pipestatus 0)
+
+== brew linkage python@3.15 | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/Python (python@3.15)
+  /opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (openssl@4)
+  /opt/homebrew/opt/openssl@4/lib/libssl.4.dylib (openssl@4)
+   (pipestatus 0)
+
+== brew linkage afl++ | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/python@3.15/Frameworks/Python.framework/Versions/3.15/Python (python@3.15)
+   (pipestatus 0)
+
+== brew linkage lld | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+
+== brew linkage z3 | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+
+== brew linkage node | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/abseil/lib/libabsl_strerror.2608.0.0.dylib (abseil)
+  /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (openssl@3)
+  /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib (openssl@3)
+  openssl@3
+   (pipestatus 0)
+
+== brew linkage ruby | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (openssl@3)
+  /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib (openssl@3)
+  openssl@3
+   (pipestatus 0)
+
+== brew linkage rust | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (openssl@3)
+  /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib (openssl@3)
+  openssl@3
+   (pipestatus 0)
+
+== brew linkage libgit2 | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+
+== brew linkage libssh2 | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (openssl@3)
+  /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib (openssl@3)
+  openssl@3
+   (pipestatus 0)
+
+== brew linkage libngtcp2 | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (openssl@3)
+  /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib (openssl@3)
+  openssl@3
+   (pipestatus 0)
+
+== brew linkage cocoapods | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+
+== brew linkage emscripten | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+
+== brew linkage firebase-cli | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+
+== brew linkage gcloud-cli | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+Error: No such keg: /opt/homebrew/Cellar/gcloud-cli
+   (pipestatus 1)
+
+== brew linkage gnupg | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+  /opt/homebrew/opt/libgpg-error/lib/libgpg-error.0.dylib (libgpg-error)
+   (pipestatus 0)
+
+== brew linkage gnutls | grep -iE 'openssl|libcrypto|libssl|python@|Python.framework' ==
+   (pipestatus 0)
+

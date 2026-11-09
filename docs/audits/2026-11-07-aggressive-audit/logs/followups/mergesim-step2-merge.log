@@ -1,0 +1,9 @@
+Auto-merging NOTICE
+Auto-merging audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+CONFLICT (content): Merge conflict in audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+Auto-merging audits/INSTRUMENT-INVENTORY.md
+CONFLICT (content): Merge conflict in audits/INSTRUMENT-INVENTORY.md
+Auto-merging cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+CONFLICT (content): Merge conflict in cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+Auto-merging cpp/selftest/regression-script-inventory.txt
+Automatic merge failed; fix conflicts and then commit the result.

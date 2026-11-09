@@ -1,0 +1,45 @@
+---- audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+90: <<<<<<< HEAD
+91:   2026-11-08 at `04c1ccc` with `cpp/selftest/regression-stale-report.sh`
+92:   staged, up one for that script, PROV-01; 87 at `a5422cf`, `OC-128`; the
+93:   count has a hand-reviewed limb, `OC-126`);
+94: =======
+95:   2026-11-08 at `b62336b`, up one for `cpp/selftest/regression-openssl-pin.sh` on
+96:   top of `OC-128`'s 87; the count has a hand-reviewed limb, `OC-126`);
+97: >>>>>>> fix/openssl-pin
+
+---- audits/INSTRUMENT-INVENTORY.md
+79: <<<<<<< HEAD
+80: | **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `04c1ccc` with `cpp/selftest/regression-stale-report.sh` staged, 2026-11-08 |
+81: =======
+82: | **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `b62336b`, 2026-11-08 |
+83: >>>>>>> fix/openssl-pin
+
+129: <<<<<<< HEAD
+130: | **LIVE** | **88** at `04c1ccc` with `cpp/selftest/regression-stale-report.sh` staged, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+131: =======
+132: | **LIVE** | **88** at `b62336b`, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+133: >>>>>>> fix/openssl-pin
+
+---- cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+22: <<<<<<< HEAD
+23: | **behaviour regressions** (`regression-*.sh`) | 25 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
+24: =======
+25: | **behaviour regressions** (`regression-*.sh`) | 25 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). A fourth, `regression-openssl-pin.sh`, is about the BUILD rather than the tool: it reads the Makefile's `make -n` plan and the built binaries' `otool -L` load commands to assert the openssl@3 pin is searched before the generic Homebrew prefix (PROV-15), and off macOS it abstains with exit 2 rather than passing. |
+26: >>>>>>> fix/openssl-pin
+
+38: <<<<<<< HEAD
+39: | **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 5 of 25 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 5 |
+40: | **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **6 of 27** — 5 measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists, plus `regression-stale-report.sh` (2026-11-08), a member that declares; re-read the line at the next full run. It is NOT derivable by reading the tree: seven scripts source `buildstate-lib.sh` and only five of them are suite members that declare, so a static count gives 7 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+41: =======
+42: | **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 25 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
+43: | **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **6 of 27** — 5 of 26 measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists, plus `regression-openssl-pin.sh` (added 2026-11-08), which declares through `bs_print`; re-measure at the next suite run. It is NOT derivable by reading the tree: eight scripts source `buildstate-lib.sh` and only six of them are suite members that declare, so a static count gives 8 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+44: >>>>>>> fix/openssl-pin
+
+58: <<<<<<< HEAD
+59: that do not say (measured 2026-10-27, same source as above).
+60: =======
+61: that do not say (26 − 5 measured 2026-10-27, same source as above; the member
+62: added 2026-11-08 declares).
+63: >>>>>>> fix/openssl-pin
+

@@ -1,0 +1,41 @@
+  commit SHA extraction from NOTICE and the tracker:   27 item(s) extracted (floor 10)
+  every commit SHA in NOTICE and the tracker resolves: yes
+  repo-path extraction from the docs:                  94 item(s) extracted (floor 20)
+  every repo path referenced in the docs exists:       yes
+  markdown link extraction from the docs:              12 item(s) extracted (floor 5)
+  every local markdown link target resolves:           yes
+  regression-script names extracted from the tracker:  15 item(s) extracted (floor 8)
+  every regression the tracker names exists:           yes
+  tracker counts match its own sections:               yes (30 findings)
+  pinned-figure extraction across the docs:            2 item(s) extracted (floor 1)
+  pinned figures quoted in docs are consistent:        reference 0.12644573619605429, this build 0.12644573619604868
+  no built program links MPFR or GMP:                  confirmed
+  make all builds exactly the supported programs:      ea_non_iid ea_iid ea_restart
+  quoted permutation rate matches the table:           0.94 s per thousand bits
+  no previously-corrected claim has reappeared:        none, over 51 file(s); 28 dated report(s) excluded
+  no NIST attribution in cpp/ comments:                none
+
+  "certified floor" is retired and every use says so:  yes
+
+  no document ASSERTS a certified floor (only quotes one): yes
+
+  every recorded gh command names its repository:      yes
+
+  every withdrawn verification carries its five fields: yes, over 7 entries
+
+  the instrument inventory's live count matches the enumerator: 89
+
+  the divergence document's figures match a re-measurement: at 34ceb59
+  the divergence document's measurement is current:    30 commit(s) behind HEAD, threshold 40
+
+  entropy_floor.py has no "CERTIFIED FLOOR" string literal: yes
+
+  the floor's PROVED/DERIVED/MEASURED vocabulary is defined: yes
+
+  every cited rule number has a definition:            yes
+
+  the suite's scope statement matches the tree:        yes
+  the inventory's counts match the scripts' declarations: yes (9 rows, 12 occurrences)
+  every script-count pair in the inventory is checked: yes (12)
+
+regression-docs: PASS

@@ -1,0 +1,131 @@
+== formula.rb: missing_dependencies / runtime_dependencies (tab vs declared) ==
+3006:  sig { params(read_from_tab: T::Boolean, undeclared: T::Boolean).returns(T::Array[Dependency]) }
+3007:  def runtime_dependencies(read_from_tab: true, undeclared: true)
+3008:    cache_key = "#{full_name}-#{read_from_tab}-#{undeclared}"
+3012:      deps = if read_from_tab && undeclared &&
+3013:                (tab_deps = any_installed_keg&.runtime_dependencies)
+3014:        tab_deps.filter_map do |d|
+3022:        deps ||= declared_runtime_dependencies unless undeclared
+3023:        deps ||= (declared_runtime_dependencies | undeclared_runtime_dependencies)
+3033:  sig { params(read_from_tab: T::Boolean, undeclared: T::Boolean).returns(T::Array[Formula]) }
+3034:  def runtime_formula_dependencies(read_from_tab: true, undeclared: true)
+3035:    cache_key = "#{full_name}-#{read_from_tab}-#{undeclared}"
+3039:      read_from_tab:,
+3049:  sig { params(read_from_tab: T::Boolean, undeclared: T::Boolean).returns(T::Array[Formula]) }
+3050:  def installed_runtime_formula_dependencies(read_from_tab: true, undeclared: true)
+3051:    cache_key = "#{full_name}-#{read_from_tab}-#{undeclared}"
+3055:      read_from_tab:,
+3089:  def missing_dependencies(hide: [])
+3090:    tab_deps = any_installed_keg&.runtime_dependencies
+3091:    return [] if tab_deps.blank?
+3093:    tab_deps.filter_map do |d|
+3621:  def declared_runtime_dependencies
+3622:    cache_key = "Formula#declared_runtime_dependencies"
+3644:  def undeclared_runtime_dependencies
+--
+  def missing_dependencies(hide: [])
+    tab_deps = any_installed_keg&.runtime_dependencies
+    return [] if tab_deps.blank?
+
+    tab_deps.filter_map do |d|
+      full_name = d["full_name"]
+      next if full_name.blank?
+
+      # Use base name to check the cellar directly, avoiding Formulary.resolve.
+--
+  def runtime_dependencies(read_from_tab: true, undeclared: true)
+    cache_key = "#{full_name}-#{read_from_tab}-#{undeclared}"
+
+    Formula.cache[:runtime_dependencies] ||= {}
+    Formula.cache[:runtime_dependencies][cache_key] ||= begin
+      deps = if read_from_tab && undeclared &&
+                (tab_deps = any_installed_keg&.runtime_dependencies)
+        tab_deps.filter_map do |d|
+          full_name = d["full_name"]
+          next unless full_name
+
+          Dependency.new full_name
+        end
+      end
+      begin
+        deps ||= declared_runtime_dependencies unless undeclared
+        deps ||= (declared_runtime_dependencies | undeclared_runtime_dependencies)
+      rescue FormulaUnavailableError
+        onoe "Could not get runtime dependencies from #{path}!"
+        deps ||= []
+      end
+      deps
+    end
+
+== site-packages/z3 under python3.15: symlink or real? ==
+total 0
+drwxr-xr-x  5 gmcas admin 160 Nov  7 19:29 .
+drwxr-xr-x  3 gmcas admin  96 Nov  7 19:28 ..
+drwxr-xr-x  9 gmcas admin 288 Nov  8 15:15 pip
+drwxr-xr-x  8 gmcas admin 256 Nov  7 19:29 pip-26.2.2.dist-info
+drwxr-xr-x 14 gmcas admin 448 Nov  7 19:28 z3
+total 0
+drwxr-xr-x 14 gmcas admin 448 Nov  7 19:28 .
+drwxr-xr-x  5 gmcas admin 160 Nov  7 19:29 ..
+lrwxr-xr-x  1 gmcas admin  71 Nov  7 19:28 __init__.py -> ../../../../Cellar/z3/5.3.3/lib/python3.15/site-packages/z3/__init__.py
+lrwxr-xr-x  1 gmcas admin  65 Nov  7 19:28 z3.py -> ../../../../Cellar/z3/5.3.3/lib/python3.15/site-packages/z3/z3.py
+
+== etc/clang ownership (mtimes) and llvm@22 keg-only ==
+      1 2026-11-07 19:28 .keepme
+      1 2026-11-07 19:28 ..
+      1 2026-08-30 19:51 x86_64-apple-macosx27.cfg
+      1 2026-08-30 19:51 x86_64-apple-macosx26.cfg
+      1 2026-08-30 19:51 x86_64-apple-macosx15.cfg
+      1 2026-08-30 19:51 x86_64-apple-macosx14.cfg
+/opt/homebrew/Cellar/llvm/23.1.5/etc
+/opt/homebrew/Cellar/llvm@22/22.1.8/etc
+llvm@22 keg_only True linked None on_request [False]
+
+== fix/openssl-pin vs master: cpp/Makefile diff ==
+ cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md     |  19 +-
+ cpp/selftest/regression-openssl-pin.sh             | 223 +++++++++++++++++++++
+ cpp/selftest/regression-script-inventory.txt       |   1 +
+ cpp/selftest/run-all-checks.sh                     |   4 +-
+ 9 files changed, 288 insertions(+), 29 deletions(-)
+diff --git a/cpp/Makefile b/cpp/Makefile
+index 2de2bf1..88e03c3 100644
+--- a/cpp/Makefile
++++ b/cpp/Makefile
+@@ -68,8 +68,25 @@ ifeq ($(UNAME_S),Darwin)
+ #   brew install libdivsufsort jsoncpp openssl@3
+ BREW_PREFIX ?= $(shell brew --prefix 2>/dev/null || echo /opt/homebrew)
+ OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+-INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+-LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
++# THE PINNED PREFIX GOES FIRST, OR IT IS NOT A PIN (PROV-15, audit of
++# 2026-11-07).
++#
++# These two lines had the generic prefix first for the life of this fork, and
++# the generic prefix is where Homebrew links the UNVERSIONED `openssl` formula:
++# $(BREW_PREFIX)/include/openssl and $(BREW_PREFIX)/lib/libcrypto.dylib point
++# at whatever that formula is today. Installing afl++ on 2026-11-07 pulled in
++# openssl@4 and re-pointed both at 4.1.0, and the three tools built that minute
++# compiled against OpenSSL 4 headers and load libcrypto.4.dylib (otool -L),
++# while this file, BUILDING.md's pin table and the 2026-10-20 build all say
++# openssl@3. The compiler and the linker each take the FIRST directory that has
++# the file, so a pinned -I/-L placed second can only win when the generic prefix
++# has nothing -- it pinned nothing. Reordering is the whole fix: the Homebrew
++# dylib's install name is already the absolute openssl@3 path, so no -rpath is
++# needed, and -lcrypto stays as it is because SHARED_LIB is shared with the
++# non-Darwin line. selftest/regression-openssl-pin.sh reads this order from
++# `make -n` and the load command from the built binaries.
++INC += -I$(OPENSSL_PREFIX)/include -I$(BREW_PREFIX)/include
++LDFLAGS += -L$(OPENSSL_PREFIX)/lib -L$(BREW_PREFIX)/lib
+ endif
+ 
+ ######
+
+== bottle tarballs in cache dated Nov 7 ==
+1760 2026-11-07 19:27 .
+(all downloads dir entries matching lz4|ca-cert:)
+070305d181910d3354218fd9e4579aa49b5020098213d78e7a533cca4ed0835d--ca-certificates-2026-10-20.bottle_manifest.json
+1cdb126ce5ae39da5b6aff520159627a107674dbcbb2a87c73adf7f97f149b89--lz4-1.11.0.bottle_manifest.json
+67314617287d32358cd696789ae54c253459f15a4fb8e9424a5c01cf2f596620--ca-certificates-2026-11-05.bottle_manifest.json
+ac6aa168f04376e415d15584b8c4a880c5ed0b040c7e409038c0bf75f866549e--ca-certificates--2026-10-20.all.bottle.tar.gz
+f89bbdb47b08d05910ffe2b16f6c8e2db5e940007493d038b87f3e5504d9c25e--ca-certificates--2026-11-05.all.bottle.tar.gz
+fb736ea661221ff27cfdf5a6696e925edeb593231d6e32436ebad450d98b5c54--lz4--1.11.0.arm64_tahoe.bottle.tar.gz

@@ -1,0 +1,9 @@
+regression-multimmc.sh rc=0 regression-multimmc: PASS
+regression-nonregular.sh rc=0 regression-nonregular: PASS (0 skipped)
+regression-notrun.sh rc=0 regression-notrun: PASS
+regression-openssl-pin.sh rc=0 regression-openssl-pin: PASS
+regression-option-order.sh rc=0 regression-option-order: PASS
+regression-output-aliasing.sh rc=0 regression-output-aliasing: PASS
+regression-output.sh rc=0 regression-output: PASS (3 skipped)
+regression-outside-battery.sh rc=0 regression-outside-battery: PASS
+regression-platform-deltas.sh rc=0 regression-platform-deltas: PASS

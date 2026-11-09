@@ -1,0 +1,30 @@
+== simulation commits still readable?
+a8b3cfa commit
+bf79f05 commit
+46230d3 commit
+== resolution patches, explicit paths
+step2 patch: 153 lines
+step3 patch: 158 lines
+final-vs-master non-C++ patch: 322 lines
+== final copies of the six enumerating/count-bearing files
+e58a24c56b538c83971345d8c9d440e796322e146412a33739f03554a3045a84  CLOSING-INVENTORY.md
+2ea9ac02233a711e827135d6221301fbc37a1706892376ba704e52b047bef5f3  INSTRUMENT-INVENTORY.md
+b10d804e0965fd29451f185e61da7b4d82d6e09d961e10c043a45d8ea6f60c6f  NOTICE
+3b8a98211261dc06a1ae877c78963aa15427aeb76f98c8c3a8e9a2c92334d071  WHAT-A-GREEN-SUITE-ESTABLISHES.md
+9af97b82d35770858ce105b72e18fca2b1fe7472a8950097403dbbf639ac88ce  regression-script-inventory.txt
+42a7606312620826102df1b32068c40cfba94652ef0798c74cd153ba91ab986a  run-all-checks.sh
+ 40905 docs/audits/2026-11-07-aggressive-audit/logs/followups/final-files/CLOSING-INVENTORY.md
+  9307 docs/audits/2026-11-07-aggressive-audit/logs/followups/final-files/INSTRUMENT-INVENTORY.md
+ 37870 docs/audits/2026-11-07-aggressive-audit/logs/followups/final-files/NOTICE
+  7415 docs/audits/2026-11-07-aggressive-audit/logs/followups/final-files/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+  1028 docs/audits/2026-11-07-aggressive-audit/logs/followups/final-files/regression-script-inventory.txt
+ 15128 docs/audits/2026-11-07-aggressive-audit/logs/followups/final-files/run-all-checks.sh
+111653 total
+== sanity: step-3 patch touches exactly the four files
+diff --git a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+diff --git a/audits/INSTRUMENT-INVENTORY.md b/audits/INSTRUMENT-INVENTORY.md
+diff --git a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+diff --git a/cpp/selftest/run-all-checks.sh b/cpp/selftest/run-all-checks.sh
+== sanity: final run-all-checks.sh counts
+EXPECTED_REGRESSION_SCRIPTS=27
+EXPECTED_TOTAL_CHECKS=29

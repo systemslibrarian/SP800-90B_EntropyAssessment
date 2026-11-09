@@ -1,0 +1,85 @@
+== measurements on the final (step-3) tree
+live:   92  (82 mechanical + 10 reviewed)
+n_pres: 5
+buildstate sourcing scripts (excluding the lib): 10
+    pin-check.sh
+    regression-option-order.sh
+    regression-openssl-pin.sh
+    sanitizer-restart-c01.sh
+    regression-restart.sh
+    regression-stale-report.sh
+    regression-output-aliasing.sh
+    regression-output.sh
+    regression-restart-notrun.sh
+    regression-workflows.sh
+n_scripts: 27
+n_mut: 3
+n_hard: 0
+== SCOPE checks replicated (regression-docs.sh forms)
+mutation-harness arrow 3: ok
+input-presence arrow 5: ok
+hardcoded-claim arrow 0: ok
+regression-script-count | 27 |: ok
+prose N-of-M forms:
+3 of 27 scripts
+5 of 27 assert
+21 of 29 checks
+wrong denominators (expect none):
+(end)
+== inv_count rows replicated on CLOSING-INVENTORY.md
+ok   run-all-checks total: doc=29 decl=29 occurrences=2
+ok   run-all-checks scripts: doc=27 decl=27 occurrences=1
+ok   harness-inventory MUT_DECLARED: doc=5 decl=5 occurrences=1
+ok   outside-battery MUT_DECLARED: doc=9 decl=9 occurrences=1
+ok   platform-deltas DECLARED_CASES: doc=6 decl=6 occurrences=1
+ok   oracle-selftest (command block): doc=33 decl=33 occurrences=1
+ok   oracle-selftest (prose): doc=33 decl=33 occurrences=2
+ok   output-aliasing DECLARED_CASES: doc=46 decl=46 occurrences=2
+FAIL live instruments vs enumerator: doc=90 decl=92 occurrences=1
+inv_pairs sweep: 12 pairs found (master had: see map)
+INSTRUMENT-INVENTORY live row: STALE
+== commit step 3
+HEAD 46230d3 tree 5e955105de4d21855b45313f3eb08c478f054a88
+== markers in tracked files (expect none)
+(end)
+== final inventory (non-comment, in file order)
+     1	regression-271.sh
+     2	regression-272.sh
+     3	regression-chisquare.sh
+     4	regression-deadguard.sh
+     5	regression-docs.sh
+     6	regression-estimator-guards.sh
+     7	regression-iid-failclosed.sh
+     8	regression-iid-json.sh
+     9	regression-input-identity.sh
+    10	regression-minsize.sh
+    11	regression-multimmc.sh
+    12	regression-nonregular.sh
+    13	regression-notrun.sh
+    14	regression-openssl-pin.sh
+    15	regression-option-order.sh
+    16	regression-output-aliasing.sh
+    17	regression-output.sh
+    18	regression-outside-battery.sh
+    19	regression-platform-deltas.sh
+    20	regression-restart.sh
+    21	regression-restart-notrun.sh
+    22	regression-selftest-inventory.sh
+    23	regression-stale-report.sh
+    24	regression-subset.sh
+    25	regression-width.sh
+    26	regression-workflows.sh
+    27	regression-constants.sh
+== NOTICE 2026-11-08 entries
+259:2026-11-08  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
+280:2026-11-08  cpp/restart_main.cpp, cpp/non_iid/non_iid_test_case.h: a row or
+362:2026-11-08  cpp/Makefile: on macOS the pinned openssl@3 prefix now comes
+== new scripts identical to their branch versions (expect three empty diffs)
+== restart_main.cpp: both stale-report and restart-notrun touched it; auto-merged. hunks from each present?
+78
+56
+23
+== x86-64 gate strings derived from final TOTAL
+TOTAL=29 -> '27 passed, 0 failed, 2 could not run' and 'could-not-run: regression-openssl-pin regression-platform-deltas'
+== full-suite expected macOS summary line
+run-all-checks: 29 passed, 0 failed (27 regression scripts discovered)

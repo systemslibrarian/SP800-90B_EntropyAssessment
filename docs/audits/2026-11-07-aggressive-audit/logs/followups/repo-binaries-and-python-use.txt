@@ -1,0 +1,130 @@
+== git status (should be clean, branch audit/2026-11-07) ==
+## master...origin/master
+?? .claude/
+?? docs/audits/
+
+== binaries in cpp/ (Mach-O executables) ==
+-rwxr-xr-x 1 gmcas staff 139856 Oct 20 21:06 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning
+-rwxr-xr-x 1 gmcas staff 193656 Nov  7 19:28 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+-rwxr-xr-x 1 gmcas staff 153368 Nov  7 19:28 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+-rwxr-xr-x 1 gmcas staff 230904 Nov  7 19:29 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart
+-rwxr-xr-x 1 gmcas staff 75792 Oct 15 18:17 /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_transpose
+
+== otool -L cpp/ea_* ==
+-- /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_conditioning:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/mpfr/lib/libmpfr.6.dylib (compatibility version 9.0.0, current version 9.2.0)
+	/opt/homebrew/opt/gmp/lib/libgmp.10.dylib (compatibility version 16.0.0, current version 16.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+-- /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+-- /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_non_iid:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+-- /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_restart:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.40.3)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.32.0)
+-- /Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_transpose
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/cpp/ea_transpose:
+	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1359.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2200.27.0)
+
+== otool -L other cpp Mach-O ==
+
+== any libcrypto/libssl/python reference in cpp Mach-O ==
+ea_conditioning: 	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+ea_conditioning: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_conditioning: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_conditioning: 	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+ea_conditioning: 	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+ea_conditioning: 	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_iid: 	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+ea_iid: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_iid: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_iid: 	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+ea_iid: 	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+ea_iid: 	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+ea_non_iid: 	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+ea_non_iid: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_non_iid: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_non_iid: 	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+ea_non_iid: 	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+ea_non_iid: 	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+ea_restart: 	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+ea_restart: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_restart: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_restart: 	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+ea_restart: 	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+ea_restart: 	/opt/homebrew/opt/openssl@4/lib/libcrypto.4.dylib (compatibility version 4.0.0, current version 4.0.0)
+ea_transpose: 	/usr/lib/libbz2.1.0.dylib (compatibility version 1.0.0, current version 1.0.8)
+ea_transpose: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_transpose: 	/opt/homebrew/opt/libdivsufsort/lib/libdivsufsort64.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+ea_transpose: 	/opt/homebrew/opt/libomp/lib/libomp.dylib (compatibility version 5.0.0, current version 5.0.0)
+ea_transpose: 	/opt/homebrew/opt/jsoncpp/lib/libjsoncpp.27.dylib (compatibility version 27.0.0, current version 27.0.0)
+ea_transpose: 	/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib (compatibility version 3.0.0, current version 3.0.0)
+
+== Makefile link flags in cpp ==
+15:CXX ?= $(CROSS_COMPILE)g++
+22:CXX = clang++
+25:OPENMP_LIB = -L$(LIBOMP_PREFIX)/lib -lomp
+51:CXXFLAGS = -std=c++11 $(OPENMP_CXXFLAGS) -O2 $(FLOAT_STORE) $(IGNORED_FLAG_IS_ERROR) -I/usr/include/jsoncpp
+53:CXXFLAGS += -march=native
+60:LIB = -lbz2 -lpthread -ldivsufsort -ldivsufsort64 $(OPENMP_LIB)
+62:SHARED_LIB = -ljsoncpp -lcrypto
+72:LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
+
+== how the workflows / regression scripts invoke python and yaml ==
+.github/workflows/c22c-source-check.yml:60:      - uses: actions/setup-python@v5
+.github/workflows/c22c-source-check.yml:62:          python-version: '3.12'
+.github/workflows/c22c-source-check.yml:65:        run: python3 -m pip install --disable-pip-version-check mpmath
+.github/workflows/c22c-source-check.yml:69:          python3 -c 'import mpmath, sys; print("mpmath", mpmath.__version__); print(sys.version)'
+.github/workflows/c22c-source-check.yml:73:          python3 audits/2026-10-11-independent-audit/oracles/c22c_source.py
+.github/workflows/c22c-source-check.yml:79:        run: python3 audits/2026-10-11-independent-audit/oracles/c22c_derive.py
+.github/workflows/x86-64-platform-facts.yml:159:            python3 - "$k" <<'PY'
+.github/workflows/x86-64-platform-facts.yml:263:            python3 -c "import os,sys; sys.stdout.buffer.write(bytes(b & 1 for b in os.urandom(1000000)))" > logs/perm.bin
+.github/workflows/x86-64-platform-facts.yml:318:          python3 -c "import os,sys; sys.stdout.buffer.write(bytes(b & 1 for b in os.urandom(1000000)))" > logs/lv.bin
+.github/workflows/x86-64-platform-facts.yml:58:                                  libjsoncpp-dev libssl-dev python3 python3-pip \
+.github/workflows/x86-64-platform-facts.yml:59:                                  python3-yaml clang libomp-dev
+.github/workflows/x86-64-platform-facts.yml:70:          python3 -m pip install --quiet mpmath || true
+
+== shebangs of repo python/shell scripts that use yaml ==
+.claude/worktrees/wf_5c2ce2eb-d82-1/cpp/selftest/regression-workflows.sh : #!/bin/bash
+.claude/worktrees/wf_5c2ce2eb-d82-2/cpp/selftest/regression-workflows.sh : #!/bin/bash
+.claude/worktrees/wf_5c2ce2eb-d82-3/cpp/selftest/regression-workflows.sh : #!/bin/bash
+.claude/worktrees/wf_5c2ce2eb-d82-4/cpp/selftest/regression-workflows.sh : #!/bin/bash
+cpp/selftest/regression-workflows.sh : #!/bin/bash

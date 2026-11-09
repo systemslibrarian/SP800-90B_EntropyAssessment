@@ -1,0 +1,9 @@
+ NOTICE                                             |  55 ++-
+ .../CLOSING-INVENTORY.md                           |  12 +-
+ audits/INSTRUMENT-INVENTORY.md                     |   4 +-
+ cpp/non_iid/multi_mmc_test.h                       |  87 ++--
+ cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md     |  19 +-
+ cpp/selftest/regression-multimmc-lookup.sh         | 490 +++++++++++++++++++++
+ cpp/selftest/regression-script-inventory.txt       |   1 +
+ cpp/selftest/run-all-checks.sh                     |   4 +-
+ 8 files changed, 605 insertions(+), 67 deletions(-)

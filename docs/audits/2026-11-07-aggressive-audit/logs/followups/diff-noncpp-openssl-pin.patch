@@ -1,0 +1,239 @@
+diff --git a/.github/workflows/x86-64-platform-facts.yml b/.github/workflows/x86-64-platform-facts.yml
+index 00f5a45..bad3852 100644
+--- a/.github/workflows/x86-64-platform-facts.yml
++++ b/.github/workflows/x86-64-platform-facts.yml
+@@ -59,8 +59,8 @@ jobs:
+                                   python3-yaml clang libomp-dev
+           # python3-yaml is NAMED rather than assumed: regression-workflows.sh
+           # parses the workflow YAML and, without PyYAML, reports COULD NOT RUN
+-          # (exit 2) -- correct behaviour, and it would add a SECOND abstention
+-          # where the gate below expects exactly one, so the job would go red
++          # (exit 2) -- correct behaviour, and it would add a THIRD abstention
++          # where the gate below expects exactly two, so the job would go red
+           # for a missing package rather than for a defect. The runner image
+           # happens to carry it; a dependency that happens to be present is not
+           # a dependency that was declared.
+@@ -424,15 +424,18 @@ jobs:
+           # measure. That is rule 7's corollary -- a hardcoded expected count
+           # inside a harness is a staleness trap -- found one layer up from
+           # where it was first fixed, by the CI run that fixed it elsewhere.
+-          # ON LINUX ONE CHECK LEGITIMATELY CANNOT RUN (OC-66).
++          # ON LINUX TWO CHECKS LEGITIMATELY CANNOT RUN (OC-66; PROV-15).
+           # regression-platform-deltas.sh exercises the known-platform-delta
+           # manifest, and Linux is the platform NIST's reference data came from,
+           # so selftest reports no differences and there is nothing to check
+           # against. It used to print "SKIPPED (not a pass)" and return 0, so
+           # the abstention was counted among the 22 here. It now exits 2, which
+           # run-all-checks reports as COULD NOT RUN -- apart from both pass and
+-          # fail -- so the expected shape on THIS platform is N-1 passed with
+-          # exactly one could-not-run, and the gate names which one. An
++          # fail. regression-openssl-pin.sh (PROV-15, 2026-11-08) abstains the
++          # same way: the OpenSSL pin it checks lives in the Makefile's Darwin
++          # block only, and on Linux there is no -I/-L order to read. So the
++          # expected shape on THIS platform is N-2 passed with exactly two
++          # could-not-run, and the gate names both, in inventory order. An
+           # abstention is allowed; an unexplained one is not.
+           TOTAL="$(sed -n 's/^EXPECTED_TOTAL_CHECKS=\([0-9]*\)$/\1/p' \
+                    cpp/selftest/run-all-checks.sh | head -1)"
+@@ -440,9 +443,9 @@ jobs:
+             echo "GATE FAIL  cannot read EXPECTED_TOTAL_CHECKS from run-all-checks.sh"; fail=1
+           else
+             gate "full suite (platform flag)" logs/06-run-all-checks-platform.log \
+-                 "$((TOTAL - 1)) passed, 0 failed, 1 could not run"
+-            gate "the one abstention is the expected one" logs/06-run-all-checks-platform.log \
+-                 "could-not-run: regression-platform-deltas"
++                 "$((TOTAL - 2)) passed, 0 failed, 2 could not run"
++            gate "the two abstentions are the expected ones" logs/06-run-all-checks-platform.log \
++                 "could-not-run: regression-openssl-pin regression-platform-deltas"
+             gate "build state reached the summary" logs/06-run-all-checks-platform.log \
+                  "checks declared the artefact they measured"
+           fi
+diff --git a/NOTICE b/NOTICE
+index b9389e4..740741e 100644
+--- a/NOTICE
++++ b/NOTICE
+@@ -329,6 +329,20 @@ A second repair pass on the same date, working the remaining queue:
+             cpp/iid_main.cpp and cpp/restart_main.cpp: label permutation
+             results by assessed layout (`input`, `rows`, or `columns`) so
+             restart row and column results are not ambiguous. Commit 25fbb54.
++2026-11-08  cpp/Makefile: on macOS the pinned openssl@3 prefix now comes
++            BEFORE the generic Homebrew prefix on both -I and -L. It had been
++            second since the 2026-09-30 entry above, so whichever `openssl`
++            formula Homebrew linked into the generic prefix won: on
++            2026-11-07 that became openssl@4, and the three tools built that
++            day load libcrypto.4.dylib while this file and BUILDING.md's pin
++            table say openssl@3 (PROV-15, audit of 2026-11-07; otool -L on
++            3 of 3 binaries, against a 2026-10-20 build from the same
++            Makefile that loads the pinned library). No reported figure
++            moves: OpenSSL computes only the SHA-256 of the input. Non-Darwin
++            command lines are unchanged. Regression: cpp/selftest/
++            regression-openssl-pin.sh, which reads the order from `make -n`
++            and the load command from the built binaries, and abstains
++            (exit 2) off macOS. Self-authored and unreviewed.
+ 
+ The scope statement at the head of this section covers these too: no
+ unintended numerical change was observed on the datasets tested, with
+diff --git a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+index 5dcdbdb..c99b950 100644
+--- a/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
++++ b/audits/2026-10-11-independent-audit/CLOSING-INVENTORY.md
+@@ -84,11 +84,11 @@ script that declares it by `cpp/selftest/regression-docs.sh`, or is dated and
+ attributed, because hand-typed counts in this document drifted six times
+ before that rule existed (`OC-126`):
+ 
+-- `cpp/selftest/run-all-checks.sh` runs 24 regression scripts
+-  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 26 passed, 0 failed);
+-- `audits/enum-instruments.sh` prints **87 live instruments** (measured
+-  2026-10-27 at `a5422cf`, up one for `oracles/git-classification-test.py`,
+-  `OC-128`; the count has a hand-reviewed limb, `OC-126`);
++- `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
++  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
++- `audits/enum-instruments.sh` prints **88 live instruments** (measured
++  2026-11-08 at `b62336b`, up one for `cpp/selftest/regression-openssl-pin.sh` on
++  top of `OC-128`'s 87; the count has a hand-reviewed limb, `OC-126`);
+ - three mutation harnesses — `harness-inventory-mutation-test.sh`,
+   `outside-battery-mutation-test.sh`, and the band-1 pair battery
+   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
+@@ -477,7 +477,7 @@ the merge, and two entries were wrong when it was. The checks are cheap:
+ 
+ ```sh
+ cd cpp && make non_iid iid restart && cd selftest
+-./run-all-checks.sh --allow-known-platform-deltas   # expect 26 passed, 0 failed
++./run-all-checks.sh --allow-known-platform-deltas   # expect 27 passed, 0 failed
+ ./harness-inventory-mutation-test.sh                # expect 5 of 5 mutations landed
+ ./outside-battery-mutation-test.sh                  # expect 9 of 9 mutations landed
+ ./regression-docs.sh                                # the prose claims that can be checked
+diff --git a/audits/INSTRUMENT-INVENTORY.md b/audits/INSTRUMENT-INVENTORY.md
+index f95750b..ec71e98 100644
+--- a/audits/INSTRUMENT-INVENTORY.md
++++ b/audits/INSTRUMENT-INVENTORY.md
+@@ -76,7 +76,7 @@ them was being invoked **then**. So:
+ 
+ | set | rule that applies | count |
+ |---|---|---:|
+-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **87** at `a5422cf`, 2026-10-27 |
++| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `b62336b`, 2026-11-08 |
+ | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
+ 
+ Counting frozen by the live rule would silently retire 47 artefacts that were
+@@ -116,7 +116,7 @@ thing an extension-matched glob missed.
+ 
+ | set | count | what it is |
+ |---|---:|---|
+-| **LIVE** | **87** at `a5422cf`, 2026-10-27 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
++| **LIVE** | **88** at `b62336b`, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+ | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
+ 
+ Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
+diff --git a/cpp/Makefile b/cpp/Makefile
+index 2de2bf1..88e03c3 100644
+--- a/cpp/Makefile
++++ b/cpp/Makefile
+@@ -68,8 +68,25 @@ ifeq ($(UNAME_S),Darwin)
+ #   brew install libdivsufsort jsoncpp openssl@3
+ BREW_PREFIX ?= $(shell brew --prefix 2>/dev/null || echo /opt/homebrew)
+ OPENSSL_PREFIX ?= $(shell brew --prefix openssl@3 2>/dev/null || echo $(BREW_PREFIX)/opt/openssl@3)
+-INC += -I$(BREW_PREFIX)/include -I$(OPENSSL_PREFIX)/include
+-LDFLAGS += -L$(BREW_PREFIX)/lib -L$(OPENSSL_PREFIX)/lib
++# THE PINNED PREFIX GOES FIRST, OR IT IS NOT A PIN (PROV-15, audit of
++# 2026-11-07).
++#
++# These two lines had the generic prefix first for the life of this fork, and
++# the generic prefix is where Homebrew links the UNVERSIONED `openssl` formula:
++# $(BREW_PREFIX)/include/openssl and $(BREW_PREFIX)/lib/libcrypto.dylib point
++# at whatever that formula is today. Installing afl++ on 2026-11-07 pulled in
++# openssl@4 and re-pointed both at 4.1.0, and the three tools built that minute
++# compiled against OpenSSL 4 headers and load libcrypto.4.dylib (otool -L),
++# while this file, BUILDING.md's pin table and the 2026-10-20 build all say
++# openssl@3. The compiler and the linker each take the FIRST directory that has
++# the file, so a pinned -I/-L placed second can only win when the generic prefix
++# has nothing -- it pinned nothing. Reordering is the whole fix: the Homebrew
++# dylib's install name is already the absolute openssl@3 path, so no -rpath is
++# needed, and -lcrypto stays as it is because SHARED_LIB is shared with the
++# non-Darwin line. selftest/regression-openssl-pin.sh reads this order from
++# `make -n` and the load command from the built binaries.
++INC += -I$(OPENSSL_PREFIX)/include -I$(BREW_PREFIX)/include
++LDFLAGS += -L$(OPENSSL_PREFIX)/lib -L$(BREW_PREFIX)/lib
+ endif
+ 
+ ######
+diff --git a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+index ac10262..3d6fef7 100644
+--- a/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
++++ b/cpp/selftest/WHAT-A-GREEN-SUITE-ESTABLISHES.md
+@@ -18,9 +18,9 @@ This is not a reassurance. It is the content.
+ |---|---:|---|---|
+ | **reference comparison** (`selftest` → `compareresults.pl`) | 1 | that ~60–103 estimate values per fixture agree with `refdata/` within 1e-10, **and** that both sides name the same input, sample count and symbol width (`OC-74`, since 2026-10-21) | that `refdata/` is **right**. Ten of eleven references are upstream-captured with no independent derivation. "The self-test passes" validates agreement with a reference, never the reference. |
+ | **pinned figure** (`pin-check.sh`) | 1 | that one named input, **bound by SHA-256**, still yields 0.12644573619605429 within tolerance, with exactly one `Assessed min entropy` line | that the figure is correct for any device. It is an upstream sample, to be re-based on a real capture in January. |
+-| **behaviour regressions** (`regression-*.sh`) | 24 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). |
++| **behaviour regressions** (`regression-*.sh`) | 25 | that the specific defect each names does not reproduce, on the inputs each generates | anything about inputs it does not generate, or defects it does not name. Several assert only that a tool did not abort. One member, `regression-workflows.sh`, is not about the tool at all: it `bash -n`s the shell blocks in the CI workflow definitions, and says nothing about whether those workflows' gates are *correct* — only that bash can parse them (`OC-84`). Another, `regression-option-order.sh`, guards a deliberate BEHAVIOUR CHANGE rather than a defect: `OC-104` makes all three tools refuse an option placed after the file operand, because glibc permutes such a line and BSD does not, so one command line named two different operations on two supported platforms. A third, `regression-constants.sh`, asserts that **no mutated constant survives** in the floor oracle or the pinned manifests — it runs **last** and compares values rather than searching for markers, because a mutation that removed its own marker would pass a marker search (`OC-121`). A fourth, `regression-openssl-pin.sh`, is about the BUILD rather than the tool: it reads the Makefile's `make -n` plan and the built binaries' `otool -L` load commands to assert the openssl@3 pin is searched before the generic Homebrew prefix (PROV-15), and off macOS it abstains with exit 2 rather than passing. |
+ | **inventory and corpus integrity** (`verify-fixture-inventory.sh`, `regression-selftest-inventory.sh`, `regression-outside-battery.sh`) | 3 | that the fixture and corpus sets match their manifests, both directions | that a manifest is right. `verify-fixture-inventory.sh` **prints its manifest's digest and does not verify it** (`OC-76`, Tier A). |
+-| **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 24. |
++| **mutation harnesses** | 3 | that the guards they mutate **can fail**, with each mutation shown to land and a baseline shown accepted | that any *other* member can fail. They cover 3 of 25. |
+ 
+ ## What has to be true for the aggregate to mean anything
+ 
+@@ -29,28 +29,29 @@ believed:
+ 
+ | precondition | status | evidence |
+ |---|---|---|
+-| **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 24 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
+-| **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 24 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
+-| **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **5 of 26** — measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists. It is NOT derivable by reading the tree: seven scripts source `buildstate-lib.sh` and only five of them are suite members that declare, so a static count gives 7 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
++| **1. every member can fail** | **BELIEVED, and known false five times.** 3 of 25 scripts are covered by a mutation harness; the rest rest on having been *observed* to fail once, at the time they were written, recorded in the commit if at all. | `ls cpp/selftest/*mutation-test.sh cpp/selftest/regression-deadguard.sh \| wc -l` → 3 |
++| **2. every member's inputs exist before an absence is read** | **PARTLY ENFORCED, and it is the minority.** 4 of 25 assert presence or carry a third outcome. | `grep -lE 'HARNESS FAULT\|is absent or empty\|INPUT-DID-NOT-REACH' cpp/selftest/*.sh \| grep -c .` → 4 |
++| **3. build state is recorded** | **ENFORCED where declared, and declared by few.** The aggregator now surfaces every declaration and prints the coverage; it is **6 of 27** — 5 of 26 measured 2026-10-27 from the `build-state:` line of `./run-all-checks.sh --allow-known-platform-deltas`, which is the only place this figure exists, plus `regression-openssl-pin.sh` (added 2026-11-08), which declares through `bs_print`; re-measure at the next suite run. It is NOT derivable by reading the tree: eight scripts source `buildstate-lib.sh` and only six of them are suite members that declare, so a static count gives 8 and is wrong (`OC-126`). The two `-DNDEBUG` arms are now distinguishable, where before they were byte-identical (`OC-66`). | the `build-state:` line in every run |
+ | **4. no member's claim text is hard-coded** | **ENFORCED, 0 remaining.** `regression-restart.sh` printed "32 H_I values × 2 columns" from an empty loop; its claim line now derives from the pin count and reads `0 comparisons made` when emptied. | `grep -lE 'echo .*[0-9]+ (of\|values\|comparisons\|files\|checks)' cpp/selftest/*.sh \| wc -l` → 0 |
+ | **5. the suite's own inventory is complete** | **ENFORCED.** Discovery is checked against `regression-script-inventory.txt` and the expected counts; an unlisted script is an inventory error, not a silent addition. A mutation harness proves 5 of 5 inventory mutations are caught. | `./run-all-checks.sh` refuses on a mismatch |
+ 
+ ## So, plainly
+ 
+-A green run establishes that **21 named defects do not reproduce on
++A green run establishes that **22 named defects do not reproduce on
+ generated inputs, one pinned figure is unchanged on a digest-bound input, the
+ fixture and corpus sets match their manifests, and ~98 estimate values per
+ fixture agree with an upstream reference that describes the same input.**
+ 
+ It does **not** establish that the references are right, that the figure is
+ right for any device, that members not covered by a mutation harness can fail
+-at all, or that the binary measured was the one intended in the 21 of 26 checks
+-that do not say (measured 2026-10-27, same source as above).
++at all, or that the binary measured was the one intended in the 21 of 27 checks
++that do not say (26 − 5 measured 2026-10-27, same source as above; the member
++added 2026-11-08 declares).
+ 
+ **Precondition 1 is the weak one and it is the one that has failed.** Until
+ every member has been observed to fail against a known-wrong build — the
+ obligation in the guide's step 5, which the tracker's evidence section records
+-seven prior violations of — a green suite is a statement about 21 checks
++seven prior violations of — a green suite is a statement about 22 checks
+ that were each believed to work.
+ 
+ ## Re-reading this file
+diff --git a/cpp/selftest/regression-script-inventory.txt b/cpp/selftest/regression-script-inventory.txt
+index 6085e10..636d803 100644
+--- a/cpp/selftest/regression-script-inventory.txt
++++ b/cpp/selftest/regression-script-inventory.txt
+@@ -11,6 +11,7 @@ regression-minsize.sh
+ regression-multimmc.sh
+ regression-nonregular.sh
+ regression-notrun.sh
++regression-openssl-pin.sh
+ regression-option-order.sh
+ regression-output-aliasing.sh
+ regression-output.sh
+diff --git a/cpp/selftest/run-all-checks.sh b/cpp/selftest/run-all-checks.sh
+index d9de0f0..c7469b0 100755
+--- a/cpp/selftest/run-all-checks.sh
++++ b/cpp/selftest/run-all-checks.sh
+@@ -26,8 +26,8 @@ allow_platform=0
+ DELTA_MANIFEST="known-platform-deltas.txt"
+ here_cmp="./check-platform-deltas.py"
+ REGRESSION_INVENTORY="regression-script-inventory.txt"
+-EXPECTED_REGRESSION_SCRIPTS=24
+-EXPECTED_TOTAL_CHECKS=26
++EXPECTED_REGRESSION_SCRIPTS=25
++EXPECTED_TOTAL_CHECKS=27
+ 
+ inventory_error() {
+     echo "run-all-checks: regression inventory error: $*" >&2

@@ -1,0 +1,53 @@
+== raw receipt z3 (top-level keys and the dependency flags) ==
+['aliases', 'arch', 'binary_relocation_files', 'built_as_bottle', 'built_on', 'changed_files', 'compiler', 'homebrew_version', 'installed_on_request', 'linkage_files', 'loaded_from_api', 'loaded_from_internal_api', 'poured_from_bottle', 'runtime_dependencies', 'source', 'source_modified_time', 'time', 'unused_options', 'used_options']
+{'installed_on_request': False}
+
+== raw receipt afl++ flags ==
+{'installed_on_request': True}
+
+== raw receipt python@3.14 flags ==
+{'installed_on_request': False}
+runtime: [('mpdecimal', '4.0.1'), ('ca-certificates', '2026-08-13'), ('openssl@3', '3.6.4'), ('readline', '8.3.6'), ('sqlite', '3.53.4'), ('xz', '5.8.4'), ('lz4', '1.10.0'), ('zstd', '1.5.7')]
+
+== raw receipt openssl@3/3.6.4 flags ==
+{'installed_on_request': False}
+
+== Cellar lz4 and ca-certificates dirs ==
+/opt/homebrew/Cellar/ca-certificates/:
+total 0
+drwxr-xr-x   5 gmcas admin  160 Oct 20 19:57 .
+drwxrwxr-x 126 gmcas admin 4032 Nov  7 19:29 ..
+drwxr-xr-x   6 gmcas admin  192 Jul 24 18:45 2026-07-16
+drwxr-xr-x   7 gmcas admin  224 Aug 30 19:50 2026-08-13
+drwxr-xr-x   7 gmcas admin  224 Oct 20 19:57 2026-10-20
+
+/opt/homebrew/Cellar/lz4/:
+total 0
+drwxr-xr-x   3 gmcas admin   96 Jul 24 18:46 .
+drwxrwxr-x 126 gmcas admin 4032 Nov  7 19:29 ..
+drwxr-xr-x  12 gmcas admin  384 Jul 24 18:46 1.10.0
+
+== lz4 receipt(s) ==
+/opt/homebrew/Cellar/lz4/1.10.0/
+ time 1784933162 2026-07-24 18:46:02-04:00 on_request False as_dep None
+
+== brew list --versions (selected) ==
+afl++ 5.03c
+ca-certificates 2026-08-13 2026-10-20 2026-07-16
+gcc 16.2.0
+jsoncpp 1.9.8
+libdivsufsort 2.0.1
+libomp 23.1.2
+lld 23.1.5
+llvm 23.1.5
+lz4 1.10.0
+mpdecimal 4.0.1
+openssl@3 3.6.4 3.6.3
+openssl@4 4.1.0
+python@3.14 3.14.7
+python@3.15 3.15.2
+readline 8.3.6
+sqlite 3.54.1 3.53.4
+xz 5.8.4
+z3 5.3.3
+zstd 1.5.7_1

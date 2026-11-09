@@ -1,0 +1,9 @@
+regression-iid-json.sh rc=0 regression-iid-json: PASS
+regression-input-identity.sh rc=0 regression-input-identity: PASS (replacement rejected as result identi
+regression-minsize.sh rc=0 regression-minsize: PASS
+regression-multimmc.sh rc=0 regression-multimmc: PASS
+regression-nonregular.sh rc=0 regression-nonregular: PASS (0 skipped)
+regression-notrun.sh rc=0 regression-notrun: PASS
+regression-option-order.sh rc=0 regression-option-order: PASS
+regression-output-aliasing.sh rc=0 regression-output-aliasing: PASS
+regression-output.sh rc=0 regression-output: PASS (3 skipped)

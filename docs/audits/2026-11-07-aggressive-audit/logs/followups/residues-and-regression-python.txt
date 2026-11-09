@@ -1,0 +1,84 @@
+== residues outside the Cellar that brew uninstall would leave ==
+/opt/homebrew/lib/python3.15                       DIR: 1 entries: site-packages 
+/opt/homebrew/lib/python3.15/site-packages         DIR: 3 entries: pip pip-26.2.2.dist-info z3 
+/opt/homebrew/etc/openssl@4                        DIR: 8 entries: cert.pem certs ct_log_list.cnf ct_log_list.cnf.dist misc openssl.cnf openssl.cnf.dist private 
+/opt/homebrew/etc/openssl@3                        DIR: 8 entries: cert.pem certs ct_log_list.cnf ct_log_list.cnf.dist misc openssl.cnf openssl.cnf.dist private 
+/opt/homebrew/etc/clang                            DIR: 55 entries: .keepme aarch64-apple-darwin.cfg aarch64-apple-darwin19.cfg aarch64-apple-darwin20.cfg aarch64-apple-darwin21.cfg aarch64-apple-darwin22.cfg aarch64-apple-darwi
+/Users/gmcas/.config/clang                         (absent)
+/opt/homebrew/lib/python3.14/site-packages         DIR: 7 entries: _yaml pip pip-26.2.1.dist-info pyyaml-6.0.3.dist-info wheel wheel-0.47.0.dist-info yaml 
+
+== regression-workflows.sh: how it invokes python / yaml ==
+55:if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+66:verdict=$(EXPECTED_WORKFLOWS="${EXPECTED_WORKFLOWS}" python3 - "${repo}" "${work}" <<'EXTRACT'
+67:import os, re, sys, yaml
+73:files = sorted(f for f in os.listdir(wfdir) if f.endswith(('.yml', '.yaml')))
+93:        doc = yaml.safe_load(open(path, encoding='utf-8').read())
+
+== other selftest/regression scripts invoking python ==
+cpp/selftest/regression-271.sh:39:python3 - "${work}/nibdup.bin" <<'PY'
+cpp/selftest/regression-chisquare.sh:32:python3 - "${work}" <<'PY'
+cpp/selftest/regression-constants.sh:59:command -v python3 >/dev/null 2>&1 || {
+cpp/selftest/regression-constants.sh:60:    echo "regression-constants: python3 not on PATH; cannot read the constants" >&2
+cpp/selftest/regression-constants.sh:70:      WANT_DIGEST_LINES="${EXPECT_DIGEST_LINES}" python3 - <<'PY'
+cpp/selftest/regression-deadguard.sh:29:command -v python3 >/dev/null 2>&1 || {
+cpp/selftest/regression-deadguard.sh:30:    echo "regression-deadguard: python3 not on PATH; the detectors cannot run" >&2
+cpp/selftest/regression-deadguard.sh:41:SP="${work}" python3 "${repo}/audits/2026-10-11-independent-audit/deadguard.py" > "${work}/dg.out" 2>&1 || {
+cpp/selftest/regression-deadguard.sh:66:python3 - "${work}/deadguard.json" > "${work}/flags.txt" <<'PY'
+cpp/selftest/regression-docs.sh:308:    want_s=$(python3 -c "print('%.2f' % (${rate_row} / 400000 * 1000))")
+cpp/selftest/regression-docs.sh:380:hit=$(python3 - "${DOCS_ALL}" "${STALE_CLAIMS[@]}" <<'PY'
+cpp/selftest/regression-docs.sh:467:nistsrc=$(python3 - <<'PY'
+cpp/selftest/regression-docs.sh:535:RETIRED_AT_OC="${RETIRED_AT_OC}" python3 - "${repo}" <<'FLOORPY'
+cpp/selftest/regression-docs.sh:604:RETIRED_AT_OC="${RETIRED_AT_OC}" python3 - "${DOCS_ALL}" <<'ASSERTPY'
+cpp/selftest/regression-docs.sh:668:ghbad=$(python3 - "${DOCS_ALL}" <<'GHPY'
+cpp/selftest/regression-docs.sh:754:    wvbad=$(python3 - "${WVREG}" <<'WVPY'
+cpp/selftest/regression-docs.sh:927:python3 - "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" <<'ORACLEPY'
+cpp/selftest/regression-docs.sh:996:python3 - "${repo}" <<'PY'
+cpp/selftest/regression-estimator-guards.sh:110:python3 - "${work}" <<'PY'
+cpp/selftest/regression-estimator-guards.sh:171:python3 -c "open('${work}/d256.bin','wb').write(bytes(range(256)))"   # every byte once
+cpp/selftest/regression-estimator-guards.sh:172:python3 -c "open('${work}/b3.bin','wb').write(bytes([0,1,0]))"        # binary, L=3
+cpp/selftest/regression-estimator-guards.sh:174:	python3 -c "
+cpp/selftest/regression-estimator-guards.sh:283:elif python3 -c "
+cpp/selftest/regression-estimator-guards.sh:77:	python3 -c "
+cpp/selftest/regression-estimator-guards.sh:93:python3 -c "
+cpp/selftest/regression-iid-failclosed.sh:123:if [ "${restart_rc}" -eq 1 ] && python3 - "${work}/restart.json" <<'PY'
+cpp/selftest/regression-iid-failclosed.sh:155:    if [ "${rc}" -eq 0 ] && python3 - "${report}" <<'PY'
+cpp/selftest/regression-iid-failclosed.sh:26:python3 - "${work}" <<'PY'
+cpp/selftest/regression-iid-failclosed.sh:62:    if python3 - "${report}" "${log}" "${width}" <<'PY'
+cpp/selftest/regression-iid-json.sh:37:field() { python3 -c "
+cpp/selftest/regression-iid-json.sh:59:if python3 - "${work}/bin.json" <<'PY'
+cpp/selftest/regression-iid-json.sh:80:python3 -c "open('$work/cond-dependent.bin','wb').write(bytes((0 if i & 1 else 255) for i in range(1000000)))"
+cpp/selftest/regression-iid-json.sh:95:if [ -n "${text}" ] && python3 -c "
+cpp/selftest/regression-input-identity.sh:23:python3 - "$work/a.bin" "$work/b.bin" <<'PY'
+cpp/selftest/regression-input-identity.sh:63:if ! python3 - "$work/result.json" "$a_hash" "$b_hash" "$(hash_file "$work/input.bin")" <<'PY'
+cpp/selftest/regression-minsize.sh:104:if python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get('nonCompliantShortDataset') is True else 1)" "${work}/esc.json" 2>/dev/null; 
+cpp/selftest/regression-minsize.sh:62:	   python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get('errorLevel',0)!=0 and d.get('errorMessage') else 1)" "${work}/${name}.json";
+cpp/selftest/regression-multimmc.sh:103:want=$(python3 - "${work}/bits.bin" <<'PY'
+cpp/selftest/regression-multimmc.sh:56:( cd "${work}" && python3 f09gen.py 3 300 f09b.bin >/dev/null 2>&1 )
+cpp/selftest/regression-multimmc.sh:90:python3 - "${work}" <<'PY'
+cpp/selftest/regression-nonregular.sh:70:		if python3 - "${work}/nf.json" <<'PY'
+cpp/selftest/regression-notrun.sh:35:flags() { python3 -c "
+cpp/selftest/regression-notrun.sh:43:errlevel() { python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['errorLevel'])" "$1"; }
+cpp/selftest/regression-notrun.sh:48:if [ -f "${gen}" ] && python3 "${gen}" 100 11 "${work}/db100.bin" >/dev/null 2>&1; then
+cpp/selftest/regression-notrun.sh:82:python3 -c "
+cpp/selftest/regression-output.sh:108:		elif python3 - "${stale}" <<-'PY'
+cpp/selftest/regression-output.sh:147:	elif [ -s "${work}/c14-v-${t}.json" ] && python3 - "${work}/c14-v-${t}.json" <<-'PY'
+cpp/selftest/regression-output.sh:32:python3 -c "
+cpp/selftest/regression-outside-battery.sh:236:		if ! python3 "${gen}" "${work}" ${missing} >"${work}/generator.log" 2>&1; then
+cpp/selftest/regression-outside-battery.sh:407:			$(python3 - "${work}/${n}.ea" <<-'PY'
+cpp/selftest/regression-outside-battery.sh:495:				dverdict=$(python3 -c "
+cpp/selftest/regression-outside-battery.sh:513:			inrange=$(python3 -c "print(1 if 0.7700 <= ${value} <= 0.9667 else 0)")
+cpp/selftest/regression-outside-battery.sh:557:			meanverdict=$(python3 - "${comp_ok}" ${vals} <<'MEANPY'
+cpp/selftest/regression-outside-battery.sh:600:			share=$(python3 -c "print(1 if ${comp_binds} * 100 >= 80 * ${comp_ok} else 0)")
+cpp/selftest/regression-outside-battery.sh:95:command -v python3 >/dev/null 2>&1 || { echo "regression-outside-battery: no python3" >&2; exit 2; }
+cpp/selftest/regression-platform-deltas.sh:113:    PLAT_CC="${CC_ID}" python3 "${here}/check-platform-deltas.py" < "${genuine}" >/dev/null 2>&1
+cpp/selftest/regression-platform-deltas.sh:35:    python3 "${here}/check-platform-deltas.py" < "$1" > "${work}/out" 2>&1
+cpp/selftest/regression-restart.sh:107:python3 -c "open('$work/alternating.bin','wb').write(bytes(((i + i // 1000) & 1) for i in range(1000000)))"
+cpp/selftest/regression-restart.sh:110:if [ "${rc}" -ne 0 ] && python3 - "${work}/alternating.json" <<'PY'
+cpp/selftest/regression-restart.sh:189:	elif python3 - "${work}/err.json" <<'PY'
+
+== audit fix-branch worktree regression-workflows.sh python lines (fix/stale-report) ==
+55:if ! python3 -c 'import yaml' >/dev/null 2>&1; then
+66:verdict=$(EXPECTED_WORKFLOWS="${EXPECTED_WORKFLOWS}" python3 - "${repo}" "${work}" <<'EXTRACT'
+67:import os, re, sys, yaml
+73:files = sorted(f for f in os.listdir(wfdir) if f.endswith(('.yml', '.yaml')))
+93:        doc = yaml.safe_load(open(path, encoding='utf-8').read())
