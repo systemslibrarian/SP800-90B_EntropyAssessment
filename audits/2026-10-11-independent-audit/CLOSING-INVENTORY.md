@@ -122,7 +122,7 @@ before that rule existed (`OC-126`):
   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
   CAUGHT** over the undeclared repair-interaction pairs, the two named below;
 - `oracles/oracle-selftest.sh` (33 cases), each refusal against its own reason;
-- `cpp/selftest/regression-output-aliasing.sh` (46 checks), the input capture
+- `cpp/selftest/regression-output-aliasing.sh` (49 checks), the input capture
   shown preserved against every alias of its own path.
 
 And: a **measured floor** with every subtracted term named and its status
@@ -318,7 +318,7 @@ MARGIN (not a floor)` above it. The **aggregate** label at width 1 is
 expected-result manifest, with all four required failures demonstrated.
 
 `A05` and `A04` have left it, repaired in the previous round, with
-`cpp/selftest/regression-output-aliasing.sh` (46 checks) holding them and shown
+`cpp/selftest/regression-output-aliasing.sh` (49 checks) holding them and shown
 failing against a pre-fix build. `A07` and `A08` have left it too: this audit's
 own oracles were exiting 0 on malformed and unrelated input, and
 `oracles/oracle-selftest.sh` (33 cases) now holds each refusal against the

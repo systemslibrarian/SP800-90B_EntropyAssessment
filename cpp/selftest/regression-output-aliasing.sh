@@ -20,6 +20,17 @@
 # stale report, which is the fail-open C14 exists to prevent, reached through
 # the option parser instead of through an error path.
 #
+# C25 (OC-131). OC-121 made an unreadable random source a REFUSAL to write the
+# report's temporary; on Windows, where a native binary has no /dev/urandom,
+# that was every write, so no -o report was produced there and -- the half that
+# matters to a consumer -- a complete report from an EARLIER run survived
+# byte-identical at the -o path (OC-130). The repair reads the OS CSPRNG on
+# every platform (shared/os_random.h) and, when the claim still cannot be
+# written, REMOVES whatever is at the path so the exit status and the path
+# agree. The survivor arm below plants a genuine complete report (the control's
+# own output, asserted complete first -- rule 7) and asserts the refusal does
+# not leave it: the pre-fix binaries leave it byte-identical.
+#
 # REGRESSION_OUTPUT_BINDIR points the checks at another build, so they can be
 # shown FAILING against a build that predates the fix.
 
@@ -41,7 +52,7 @@ fails=0
 # declaration now lives here, is asserted against the tally below, and is read
 # from here by regression-docs.sh.
 cases=0
-DECLARED_CASES=46
+DECLARED_CASES=49
 pass() { cases=$((cases + 1)); printf '  %-52s PASS\n' "$1"; }
 fail() { cases=$((cases + 1)); printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
 
@@ -347,6 +358,34 @@ for tool in ea_non_iid ea_iid ea_restart; do
     else
         fail "${tool}: readable random source" "no report written"
     fi
+    # C25 (OC-131): the SURVIVOR arm. The report just written is the planted
+    # earlier report; it must be a complete one (rule 7: the baseline is
+    # asserted accepted, not assumed), and the refusal over the same path must
+    # not leave it there. Pre-fix binaries leave it byte-identical.
+    if [ -s "${work}/rand.json" ] && grep -q '"errorLevel" : 0' "${work}/rand.json"; then
+        planted=$(sha_of "${work}/rand.json")
+        before=$(sha_of "${work}/capture.bin")
+        ( cd "${work}" && EA_TEST_RANDOM_SOURCE=/nonexistent/no-random \
+            "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>rand2.err )
+        rc=$?
+        if [ "${rc}" -ne 0 ] \
+           && [ ! -e "${work}/rand.json" ] \
+           && grep -q 'cannot read randomness' "${work}/rand2.err" \
+           && [ "$(sha_of "${work}/capture.bin")" = "${before}" ] \
+           && [ "$(ls -1 "${work}" | grep -c '\.tmp\.')" -eq 0 ]; then
+            pass "${tool}: an earlier report does not survive the refusal"
+        elif [ -e "${work}/rand.json" ] && [ "$(sha_of "${work}/rand.json")" = "${planted}" ]; then
+            fail "${tool}: an earlier report does not survive the refusal" \
+                 "STALE -- the planted complete report survived byte-identical (rc ${rc})"
+        else
+            fail "${tool}: an earlier report does not survive the refusal" \
+                 "rc=${rc} report=$([ -e "${work}/rand.json" ] && echo present || echo absent) capture_identical=$([ "$(sha_of "${work}/capture.bin")" = "${before}" ] && echo yes || echo no)"
+        fi
+    else
+        fail "${tool}: an earlier report does not survive the refusal" \
+             "HARNESS: no complete report to plant (the readable-source control did not produce one)"
+    fi
+    rm -f "${work}/rand.json" "${work}/rand2.err"
 done
 
 ctl_assess "-o NAME still assesses"        -i -a -q -o f04ctl.json capture.bin 1

@@ -256,6 +256,34 @@ A second repair pass on the same date, working the remaining queue:
             SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
             against brute-force enumeration. -s is accepted and ignored.
             Audit C23, OC-30. Self-authored and unreviewed.
+2026-11-09  cpp/shared/os_random.h (new), cpp/shared/utils.h,
+            cpp/shared/TestRunUtils.h, cpp/non_iid_main.cpp, cpp/iid_main.cpp,
+            cpp/restart_main.cpp, cpp/Makefile: the two reads of operating-
+            system randomness -- seed() for the IID permutation tests, and the
+            report writer's temporary-file name -- go through one helper that
+            is /dev/urandom on POSIX (unchanged), BCryptGenRandom with the
+            system-preferred RNG under _WIN32 (bcrypt.h, -lbcrypt), and the
+            EA_TEST_RANDOM_SOURCE override on every platform. A native MinGW
+            binary has no /dev/urandom, so on Windows seed() killed ea_iid and
+            ea_restart (OC-42, measured OC-48) and, once OC-121 (2026-10-26)
+            removed the derivable fallback, the report writer refused every
+            -o write (C25, measured OC-130). Both reads stay fail-closed. And
+            a claim of the -o target that cannot be written now REMOVES
+            whatever is at that path before the nonzero exit -- never the
+            input capture (the A05 identity test applies first), never a
+            directory or a device -- because that refusal left an earlier
+            complete report byte-identical at the -o path: the 2026-10-19
+            entry's "It is never a stale success" was false under it, through
+            the test override on every platform and on Windows
+            unconditionally. Measured 2026-11-09 on Windows (CI) and macOS.
+            Regression: regression-output-aliasing.sh, three survivor cases
+            (49 declared). Repair-interaction pairs (rule 12): OC-121 (the
+            fallback stays removed, the source changes), C14 (its claim gains
+            the removal on the failure path), C08/C24 (the atomic writer's
+            suffix source), A05 (identity test reused before the removal),
+            OC-42/OC-60 (the seed() deferral ends). No estimator or cutoff
+            changes; a report written on a platform with /dev/urandom is
+            unchanged. Self-authored and unreviewed.
 2026-11-08  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
             the -o report target is also claimed from the argv prescan, as
             soon as the path is known and after the A05 identity refusal,

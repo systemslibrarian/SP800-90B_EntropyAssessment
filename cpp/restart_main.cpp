@@ -359,6 +359,9 @@ static bool claimReportTarget(const string &path, const string &type, const stri
     Json::StyledWriter writer;
     if (!writeJsonReport(path, writer.write(j))) {
         fprintf(stderr, "Error: the output path '%s' cannot be written; refusing to assess.\n", path.c_str());
+        // C25 (OC-131): a refused claim must not leave an earlier report at
+        // the path looking current. Removed, with the exit status nonzero.
+        removeStaleReportTarget(path);
         return false;
     }
     return true;
