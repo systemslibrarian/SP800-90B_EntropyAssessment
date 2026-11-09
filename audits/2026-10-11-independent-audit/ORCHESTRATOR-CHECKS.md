@@ -13477,3 +13477,161 @@ number. Evidence copied to `logs/c25/`: both runs' `verdict.log`,
 
 **Does not establish.** The x86-64 and c22c runs the push of this record
 fires; recorded, if at all, by the usual one-run lag. Nothing upstream.
+
+## OC-131 — `C25` and `seed()` repaired together: one reader of OS randomness, a refused `-o` claim removes the stale report, and Windows measured green
+
+`OC-130` left `C25` in the owner-decision bucket beside `seed()`. The owner
+decided the same day: ShannonPad must run on Windows and its Windows bundle
+will run these tools, so both were to be repaired on one branch,
+`fix/windows-random-source`, under four conditions — a real OS randomness
+source for both places that need one; still fail-closed, but a failed run
+must never leave an earlier complete report at the `-o` path looking current,
+on any platform, in a way the caller can see from the exit status, with a test
+for the byte-identical survivor; proof on the Windows runner with the `A05`
+gate green and the `C25` reproducer failing before and passing after; and a
+merge only once Windows, Linux and macOS are all green.
+
+### The source, chosen from primary documentation rather than memory
+
+Two research passes, each adversarially re-verified against the fetched
+sources (Microsoft Learn; the mingw-w64 headers and CRT at the commit MSYS2
+pins, `e3d18511f`), agreed: **`BCryptGenRandom(NULL, buf, n,
+BCRYPT_USE_SYSTEM_PREFERRED_RNG)`**. It is the API Microsoft's own
+`CryptGenRandom` and `RtlGenRandom` pages point to; it has a documented header,
+import library and DLL (`bcrypt.h`, `Bcrypt.lib`, `Bcrypt.dll`; Vista SP2 and
+later, far below MINGW64's default `_WIN32_WINNT` 0x0601); the system-preferred
+provider is an SP 800-90 `CTR_DRBG` by Microsoft's statement; and mingw-w64 at
+the pinned commit declares it, defines both flags and `BCRYPT_SUCCESS`, and
+ships `libbcrypt.a` from `lib-common/bcrypt.def`, installed by
+`mingw-w64-x86_64-crt`, a hard dependency of the gcc the job already installs
+— so **no new package**. The alternatives were examined and declined with
+reasons: `rand_s` on MINGW64 is not Microsoft's function but a mingw-w64
+emulation that resolves `SystemFunction036` at run time and yields four bytes
+a call; `CryptGenRandom` carries Microsoft's removal notice;
+`RtlGenRandom`/`SystemFunction036` links on mingw-w64 but is documented as
+liable to be altered or removed — "it linked" is a trap, not a licence; and
+`std::random_device` is refused for the reason `BUILDING.md` has given since
+`OC-60`. Pitfalls the research named and the code applies: `windows.h` must
+precede `bcrypt.h` (mingw-w64's `bcrypt.h` includes only `winapifamily.h`);
+the result is an `NTSTATUS` and success is the **sign** — comparing with
+`STATUS_SUCCESS` alone is the mistake Microsoft documents, and that constant is
+not even defined by `<windows.h>`+`<bcrypt.h>` on mingw-w64 — so the test is
+written out as `((LONG) st) < 0` rather than through a macro whose presence
+differs between SDKs; `hAlgorithm` must be `NULL` with that flag; `cbBuffer`
+is a 32-bit `ULONG`, so the helper range-checks `n` instead of truncating (the
+`C18` shape); and `<cerrno>` is included by the header itself rather than
+inherited from whoever included it first.
+
+### What changed (`7a51882`, then `a05fce7`)
+
+- **`cpp/shared/os_random.h`, new**: `eaReadOsRandom(buf, n, &why)` — the
+  `EA_TEST_RANDOM_SOURCE` override first, on every platform; else
+  `/dev/urandom` on POSIX, read exactly as before; else `BCryptGenRandom`
+  under `_WIN32`. True only when all `n` bytes were obtained; otherwise false
+  with a one-line reason, and **no weaker fallback of any kind**.
+- **`seed()`** (`utils.h`) reads it. Until now it opened `/dev/urandom` by
+  name and `exit(-1)`'d — on every Windows run (`OC-42`, `OC-48`). Still
+  fail-closed; the message now says what happened instead of announcing a
+  "reversion to a deterministic seed" that never took place.
+- **`writeJsonReport`** (`TestRunUtils.h`) draws the temporary's suffix
+  through it; a zero low word is redrawn rather than accepted (2^-32 per
+  draw, and it would leave the suffix derivable from `r1` alone).
+- **`removeStaleReportTarget`** (`TestRunUtils.h`), called by all three
+  tools' `claimReportTarget` when the claim cannot be written: the `A05`
+  identity test first (never the input capture, refused when identity is
+  uncertain); only a regular file or a symlink (`lstat`; `GetFileAttributes`
+  under `_WIN32`), never a directory or a device; `unlink` / `DeleteFile`,
+  which remove a link rather than follow it; the exit stays nonzero and the
+  message names the removal, or says the file must not be trusted if removal
+  failed. Removal rather than a placeholder written some other way, because
+  the only other way is a direct write without the random temporary — the
+  shape `F03` closed.
+- **`cpp/Makefile`**: `-lbcrypt` when `uname -s` is `MINGW*`, `MSYS*` or
+  `CYGWIN*`.
+- **`regression-output-aliasing.sh`**: three survivor cases (49 declared). The
+  readable-source control's own report is the planted earlier report,
+  asserted complete first (rule 7); the refusal over the same path must leave
+  the path empty, the capture intact, no `.tmp.` debris, exit nonzero. And
+  `skip()` now **counts** a skipped case: the skip sites printed a row without
+  counting it, so on a platform where `ln -s` copies the declared total could
+  never be met — the "46 declared, 40 ran" of `OC-130`'s run was this, not the
+  controls. Simulated with `SYMLINK_IS_ALIAS` forced to `no`: 6 `SKIP`, 49 of
+  49, `PASS`.
+- **`windows-facts.sh`**: the `seed()` gate inverts (a figure is the pass,
+  the death the failure); the report-write gate becomes a **positive gate on
+  the files** at the `-o` paths after pass 2b with their `errorLevel`, because
+  the old absence-of-message gate passed on a run that wrote nothing
+  (`OC-130`); the classifier learns `ea_restart`'s figure lines (`H_r`, `H_c`,
+  `min(H_r, H_c, H_I)`), which it had never met because `ea_restart` had
+  never got that far on Windows; and the `R-1` sweep harness, which includes
+  `utils.h` and so now reaches `BCryptGenRandom`, links `-lbcrypt`.
+- **`NOTICE`**: the dated entry, with its rule-12 pairs (`OC-121`, `C14`,
+  `C08`/`C24`, `A05`, `OC-42`/`OC-60`).
+
+### FAIL before, PASS after — three platforms
+
+**macOS arm64 (this host, Apple clang).** The survivor cases against the
+`a9b4ac1` binaries (built from `git archive` into a scratch directory):
+
+    ea_non_iid: an earlier report does not survive the refusal FAIL  STALE -- the planted complete report survived byte-identical (rc 255)
+    ea_iid:     (same)                                            FAIL  STALE -- ... (rc 255)
+    ea_restart: (same)                                            FAIL  STALE -- ... (rc 255)
+    regression-output-aliasing: 49 of 49 declared cases ran ... FAIL (3 case(s))      -- the other 46 PASS
+
+Against the repair: 49 of 49, `PASS`. The whole suite on the repaired build,
+in foreground batches: 27 of 27 regression scripts `PASS` (including
+`regression-docs`, `regression-deadguard` "flag set unchanged",
+`regression-stale-report` 29); `selftest` on the two known platform files
+with the checker reporting "8 expected platform delta(s), all within
+tolerance, on Darwin arm64"; `pin-check --prove-nonvacuous`;
+`harness-inventory-mutation-test` `PASS`. `logs/c25/macos-*`.
+
+**Windows (`windows-latest`, MSYS2 MINGW64, gcc 16.2.0).** Three runs tell
+the story in order:
+
+| run | tree | what it showed |
+|---|---|---|
+| `42551339098` | `7a21378` (before) | `C25`: all three tools exit 127 with `-o`, no file; `A05` gate red (`OC-130`) |
+| `42611465990` | `7a51882` (repair) | **`C25 REPAIRED`**: all three tools write complete `errorLevel 0` reports at a fresh path and over an existing one; `ea_iid` runs the permutation tests to a figure. Three gates red, **all instrument**: the `R-1` sweep did not link (`-lbcrypt` missing from its line), `ea_restart` "reached the test battery" (it had produced `min(H_r, H_c, H_I)`, which the classifier did not know), and the `A05` regression declared 49 and ran 43 (the six uncounted skips) |
+| `42614157033` | `a05fce7` (repair + instruments) | **every gate green but `libdivsufsort`**, the one expected failure; tally clean; `A05` 49 of 49 with 6 `SKIP` counted; `ea_iid` and `ea_restart` both to a figure; `R-1` 155 of 255 as before |
+
+Logs for all three in `logs/c25/` (`verdict`, `05-runtime`, `07-a05-aliasing`,
+and the failed `R-1` link). Pass 2b on the last run, the `C25` reproducer
+passing:
+
+    rep_non_iid.json: present, 2031 bytes, errorLevel 0
+    rep_iid.json:     present, 3642 bytes, errorLevel 0
+    rep_restart.json: present, 6459 bytes, errorLevel 0
+
+**Linux x86-64 (`ubuntu-latest`, glibc, GCC).** `42611469236` on `7a51882`
+and `42614160811` on `a05fce7`: both **green** — 20 gates `PASS` each, the full suite at `27 passed, 0 failed, 2 could not run` with the two expected abstentions, every reference dataset agreeing on glibc, the late-option refusals and the outside battery as before. `/dev/urandom` is the source there, as it always was: the Linux run establishes that the POSIX path is unchanged by the repair, not that the Windows path works.
+
+### What this does and does not establish
+
+**Establishes.** On Windows, for the first time, all three tools run to a
+figure and write their reports; `seed()`'s death (`OC-42`) is over; the `A05`
+guard's verdict on Windows is **established again** for the current tree,
+because the control that separates *refuses aliases* from *refuses
+everything* passes. On every platform, a refused `-o` claim leaves no file at
+the path: the exit status and the path now agree, which is the contract
+`C14`'s "never a stale success" meant and `OC-121` had silently broken.
+
+**Does not establish.** The quality of `BCryptGenRandom`'s output beyond
+Microsoft's statement — the Windows permutation p-values rest on it as the
+POSIX ones rest on `/dev/urandom`. UCRT64: measured on MINGW64 only; the
+headers and import library are the same mingw-w64 sources, so the claim is
+"should", not "does". `F03`'s symlink limbs on Windows stay NOT RUN (MSYS2
+copies; six counted skips). Bit-identity of Windows IID figures with macOS
+cannot be asked, by design: the permutation stage is freshly seeded every
+run. Removal and refusal are two events, not one: a reader between them sees
+the old file for an instant — before the exit status that tells it not to
+exists either. And the post-merge runs: the push of master fires x86-64 and
+the Windows job is dispatched by hand; recorded, if at all, by the usual
+one-run lag. Nothing upstream.
+
+**The record, corrected where it stands.** `C25` moves from the A.4 section
+created for it in `OC-130` into A.2 as REPAIRED, and A.4 is retired empty;
+`seed()` and `C25` leave the owner-decision bucket and the Windows question in
+that bucket is answered; the inventory's Windows paragraphs, staleness set and
+`BUILDING.md`'s Windows table and prose say what is now measured; the
+aliasing count is 49 everywhere the docs state it.
