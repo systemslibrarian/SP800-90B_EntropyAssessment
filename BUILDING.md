@@ -434,8 +434,8 @@ repository (`OC-93`). The full account is `OC-48` in
 | `sizeof(long)` | **4** — LLP64 confirmed |
 | `R-1` affected set | **155 of 255** alphabet sizes, the x87 prediction confirmed independently of Linux |
 | `ea_non_iid` at runtime | runs the **complete non-IID battery**, exit 0 |
-| `ea_iid`, `ea_restart` at runtime | **fail the §5.2.5 LRS test on valid data** — see `C18` below |
-| any `-o` report | **cannot be written at all** — `C24` below, repaired 2026-10-20; then `C25`, from 2026-10-26, measured 2026-11-09 |
+| `ea_iid`, `ea_restart` at runtime | **fail the §5.2.5 LRS test on valid data** — see `C18` below. Since 2026-11-09 both run the permutation tests to a figure (`seed()` repaired, `OC-131`) |
+| any `-o` report | **cannot be written at all** — `C24` below, repaired 2026-10-20; then `C25`, from 2026-10-26, measured and repaired 2026-11-09. **Written** since |
 | build state | establishable; the probe needs the full symbol listing here, since `nm -u` is blind on PE/COFF |
 
 **Two defects make this route unusable as it stands**, and both are
@@ -466,29 +466,43 @@ report with `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)` under `_WIN32`
 (`OC-57`). After both, on Windows: `Pr(X >= 1) = 0.365370`, **exactly macOS's
 figure**, and every tool puts its report in place.
 
-**And since 2026-10-26 no report is written there again — `C25`, measured
-2026-11-09 (`OC-130`).** `OC-121` removed the report writer's derivable
-fallback: if `/dev/urandom` cannot be read to name the temporary, the write is
-refused with its reason named. A native MinGW binary has no `/dev/urandom` —
-the same fact that stops `seed()` — so the refusal fires on every `-o` write,
-all three tools exit before assessing, and nothing is written: not the
-placeholder, not the report. A previous report at that path **survives**. The
-2026-10-21 Windows run predates `OC-121`; the 2026-11-09 run is the first
-since, and it is the run that found this. Fail-closed by exit status. The
-repair is the same platform entropy source `seed()` needs (below), applied to
-the temporary's name as well — and the test seam `EA_TEST_RANDOM_SOURCE` must
-stay, because it is the only way the refusal is ever exercised on a host that
-has `/dev/urandom`. **Not repaired**; owner decision.
+**Then from 2026-10-26 no report was written there again — `C25`, measured
+2026-11-09 (`OC-130`) and repaired the same day (`OC-131`).** `OC-121` removed
+the report writer's derivable fallback: if `/dev/urandom` cannot be read to
+name the temporary, the write is refused with its reason named. A native MinGW
+binary has no `/dev/urandom` — the same fact that stopped `seed()` — so the
+refusal fired on every `-o` write, all three tools exited before assessing,
+and nothing was written: not the placeholder, not the report; a previous
+report at that path **survived**. The 2026-10-21 Windows run predated
+`OC-121`; the 2026-11-09 run was the first since, and found it. The repair is
+one reader of OS randomness for both `seed()` and the report writer
+(`cpp/shared/os_random.h`): `/dev/urandom` on POSIX unchanged,
+`BCryptGenRandom(NULL, …, BCRYPT_USE_SYSTEM_PREFERRED_RNG)` under `_WIN32`
+(`bcrypt.h` after `windows.h`, `-lbcrypt` — the import library ships with
+mingw-w64's CRT, so no new package), and `EA_TEST_RANDOM_SOURCE` as the test
+override on every platform, because it is the only way the refusal is ever
+exercised on a host that has `/dev/urandom`. And a claim of the `-o` target
+that cannot be written now **removes** whatever is at that path before the
+nonzero exit (never the input capture; never a directory or a device). Measured
+on `windows-latest` (run `WINRUN2`): all three tools write complete reports at
+a fresh path and over an existing one.
 
 **What Windows can and cannot do today.** All three tools build and link, with
 OpenMP. `ea_non_iid` runs the complete non-IID battery and produces a figure,
 exit 0. `ea_iid` and `ea_restart` run through chi square, the §5.2.5 LRS test
 and — for `ea_restart` — the restart sanity check, **all passing**, and then
-exit at `seed()`, which opens `/dev/urandom`; and none of the three writes an
-`-o` report (`C25`, above). **That is not "Windows is
+— since 2026-11-09 (`OC-131`) — run the permutation tests to a figure, `seed()`
+reading the Windows system CSPRNG; and all three write their `-o` reports.
+**That is not "Windows is
 unsupported" and should not be summarised as such.**
 
-`seed()` is **deferred, not blocking** (`OC-60`): the owner's vendor reference
+**`seed()` repaired 2026-11-09 (`OC-131`)**, with `BCryptGenRandom` as the
+paragraph below proposed and `std::random_device` refused for the reason it
+gives; the deferral ended when the owner decided that ShannonPad's Windows
+bundle runs these tools. The paragraph stands as the record of the decision it
+superseded.
+
+`seed()` was **deferred, not blocking** (`OC-60`): the owner's vendor reference
 qualification means no NIST binary runs on a user's machine, so `seed()` sits
 only on the expert-opt-in self-assertion path, for which macOS and Linux are
 sufficient. If revisited, the fix is a **platform entropy source**
@@ -504,13 +518,21 @@ printed with `%ld` in many places and `int64_t` would make that wrong on LLP64.
 Far above anything this project assesses, but a **live** limit rather than an
 absent one: an input that large would be wrong on Windows rather than refused.
 
-**One prediction remains untested here rather than refuted.** `OC-42` says
-`ea_iid` and `ea_restart` die at `seed()`. They do not reach it: `seed()` is
+**One prediction remained untested here rather than refuted — then confirmed,
+then ended.** `OC-42` said `ea_iid` and `ea_restart` die at `seed()`; with
+`C18` repaired they did (2026-10-21), and since `OC-131` they do not. As
+written on 2026-10-20: They do not reach it: `seed()` is
 called in the permutation stage, and `C18` fails the LRS test first, so the
 permutation stage is unreachable on Windows for any standards-sized input. The
 `ea_non_iid` half of that prediction is confirmed.
 
 ### Route: MSYS2 UCRT64 (MinGW-w64 GCC) — recommended
+
+**Superseded 2026-11-09 (`OC-131`):** the source change this correction said
+was needed has been made — `seed()` and the report writer read
+`BCryptGenRandom` under `_WIN32` — so the route works for all three tools.
+Measured on MINGW64 (run `WINRUN2`), not on UCRT64, whose headers and import
+library are the same mingw-w64 sources.
 
 **Correction (2026-10-19, `OC-42`), itself narrowed on 2026-10-20 by `OC-48`:
 the reasoning below is sound but UNTESTED on Windows, because `C18` stops both

@@ -1,0 +1,2 @@
+C:/msys64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/16.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\msys64\tmp\ccVW7xNo.o:r1_pcol_sweep.cpp:(.text+0xf82): undefined reference to `BCryptGenRandom'
+collect2.exe: error: ld returned 1 exit status

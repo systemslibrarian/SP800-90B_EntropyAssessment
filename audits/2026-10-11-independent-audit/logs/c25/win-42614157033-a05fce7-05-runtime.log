@@ -1,0 +1,269 @@
+===== ea_non_iid [pass 1: no report]: ./cpp/ea_non_iid.exe -i -a -v /tmp/w1.bin 1
+exit=0
+Loaded file: 'C:/msys64/tmp/w1.bin' (SHA-256 hash ff65facdd27726b0dec8eb2914b5f242731b53f612cdb75aae76b6d9ab2280e4 of assessed bytes)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+
+Running non-IID tests...
+
+Running Most Common Value Estimate...
+Literal MCV Estimate: mode = 500164, p-hat = 0.50016400000000005, p_u = 0.50145191522645272
+	Most Common Value Estimate = 0.995817 / 1 bit(s)
+
+Running Entropic Statistic Estimates (bit strings only)...
+Literal Collision Estimate: X-bar = 2.5003750562584388, sigma-hat = 0.50000048442754352, p = 0.52882247669343629
+	Collision Test Estimate = 0.919145 / 1 bit(s)
+Literal Markov Estimate: P_0 = 0.50016400000000005, P_1 = 0.49983599999999995, P_0,0 = 0.49957813837061443, P_0,1 = 0.50042186162938562, P_1,0 = 0.50074924725159298, P_1,1 = 0.49925075274840702, p_max = 3.4096766895654456e-39
+	Markov Test Estimate = 0.998325 / 1 bit(s)
+Literal Compression Estimate: X-bar = 5.2170871350641193, sigma-hat = 1.0161477377938533, p = 0.029813248825215855
+	Compression Test Estimate = 0.844650 / 1 bit(s)
+
+Running Tuple Estimates...
+Literal t-Tuple Estimate: t = 16, p-hat_max = 0.5275569070895033270104, p_u = 0.5288428648552972063902
+Literal LRS Estimate: u = 17, v = 40, p-hat = 0.51020649795350425, p_u = 0.51149414489030685
+	T-Tuple Test Estimate = 0.919089 / 1 bit(s)
+	LRS Test Estimate = 0.967210 / 1 bit(s)
+
+Running Predictor Estimates...
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.50131445753481763 (C = 499995) Plocal can't affect result (r = 21)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate = 0.996212 / 1 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.50105241556133429 (C = 499764) Plocal can't affect result (r = 19)
+	Lag Prediction Test Estimate = 0.996967 / 1 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.50043991303534674 (C = 499151) Plocal can't affect result (r = 21)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate = 0.998731 / 1 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.50080341740184586 (C = 499507) Plocal can't affect result (r = 21)
+	LZ78Y Prediction Test Estimate = 0.997684 / 1 bit(s)
+
+H_original: 0.844650
+  ... last 20 lines ...
+Literal Compression Estimate: X-bar = 5.2170871350641193, sigma-hat = 1.0161477377938533, p = 0.029813248825215855
+	Compression Test Estimate = 0.844650 / 1 bit(s)
+
+Running Tuple Estimates...
+Literal t-Tuple Estimate: t = 16, p-hat_max = 0.5275569070895033270104, p_u = 0.5288428648552972063902
+Literal LRS Estimate: u = 17, v = 40, p-hat = 0.51020649795350425, p_u = 0.51149414489030685
+	T-Tuple Test Estimate = 0.919089 / 1 bit(s)
+	LRS Test Estimate = 0.967210 / 1 bit(s)
+
+Running Predictor Estimates...
+Literal MultiMCW Prediction Estimate: N = 999937, Pglobal' = 0.50131445753481763 (C = 499995) Plocal can't affect result (r = 21)
+	Multi Most Common in Window (MultiMCW) Prediction Test Estimate = 0.996212 / 1 bit(s)
+Literal Lag Prediction Estimate: N = 999999, Pglobal' = 0.50105241556133429 (C = 499764) Plocal can't affect result (r = 19)
+	Lag Prediction Test Estimate = 0.996967 / 1 bit(s)
+Literal MultiMMC Prediction Estimate: N = 999998, Pglobal' = 0.50043991303534674 (C = 499151) Plocal can't affect result (r = 21)
+	Multi Markov Model with Counting (MultiMMC) Prediction Test Estimate = 0.998731 / 1 bit(s)
+Literal LZ78Y Prediction Estimate: N = 999983, Pglobal' = 0.50080341740184586 (C = 499507) Plocal can't affect result (r = 21)
+	LZ78Y Prediction Test Estimate = 0.997684 / 1 bit(s)
+
+H_original: 0.844650
+how far: produced a figure
+
+===== ea_iid [pass 1: no report]: ./cpp/ea_iid.exe -i -v /tmp/w1.bin 1
+exit=0
+Loaded file: 'C:/msys64/tmp/w1.bin' (SHA-256 hash ff65facdd27726b0dec8eb2914b5f242731b53f612cdb75aae76b6d9ab2280e4 of assessed bytes)
+Loaded 1000000 samples of 2 distinct 1-bit-wide symbols
+Calculating baseline statistics...
+	Raw Mean: 0.499836
+	Translated Symbol Index Median: 0.500000
+	Binary: true
+
+Literal MCV Estimate: mode = 500164, p-hat = 0.50016400000000005, p_u = 0.50145191522645272
+Chi square independence
+	score = 2047.364725
+	degrees of freedom = 2046
+	p-value = 0.487335
+
+Chi square goodness of fit
+	score = 4.758977
+	degrees of freedom = 9
+	p-value = 0.854792
+
+** Passed chi square tests
+
+Literal Longest Repeated Substring results
+	P_col: 0.500000
+	Length of LRS: 40
+	Pr(X >= 1): 0.365370
+** Passed length of longest repeated substring test
+
+Beginning initial tests...
+
+Initial test results
+              excursion: 361.196
+     numDirectionalRuns: 79689
+     lenDirectionalRuns: 12
+  numIncreasesDecreases: 74914
+          numRunsMedian: 500586
+          lenRunsMedian: 20
+           avgCollision: 20.6672
+           maxCollision: 69
+         periodicity(1): 24697
+         periodicity(2): 24387
+         periodicity(8): 24595
+        periodicity(16): 24318
+        periodicity(32): 24593
+          covariance(1): 1.99732e+06
+          covariance(2): 1.9994e+06
+          covariance(8): 1.99803e+06
+  ... last 20 lines ...
+            numRunsMedian       6       0      37
+            lenRunsMedian       9       1       5
+             avgCollision      17       0       6
+             maxCollision       3       3      15
+           periodicity(1)       6       0      29
+           periodicity(2)      43       0       6
+           periodicity(8)       6       0      13
+          periodicity(16)     152       0       6
+          periodicity(32)       6       0      11
+            covariance(1)     151       0       6
+            covariance(2)       6       0      24
+            covariance(8)      24       0       6
+           covariance(16)      13       0       6
+           covariance(32)       6       0      42
+              compression      40       1       5
+(* denotes failed test)
+
+** Passed IID permutation tests
+
+H_original: 0.995817
+how far: produced a figure
+
+===== ea_restart [pass 1: no report]: ./cpp/ea_restart.exe -i -v /tmp/w1.bin 1 0.9
+exit=0
+Loaded file: 'C:/msys64/tmp/w1.bin' (SHA-256 hash ff65facdd27726b0dec8eb2914b5f242731b53f612cdb75aae76b6d9ab2280e4 of assessed bytes)
+Loaded 1000000 samples made up of 2 distinct 1-bit-wide symbols.
+H_I: 0.900000
+ALPHA: 5.0000000000000004e-06, X_cutoff: 605 (exact distribution of the multinomial maximum, the statistic 3.1.4.3 forms)
+X_cutoff_printed_binomial: 605 (SP 800-90B 3.1.4.3 step 5 as printed; conformance figure, not the verdict -- it rejects correctly-operating sources, see OC-30)
+X_max: 552
+
+Restart Sanity Check Passed...
+Calculating baseline statistics...
+
+Running IID tests...
+
+Running Most Common Value Estimate...
+Literal MCV Estimate: mode = 500164, p-hat = 0.50016400000000005, p_u = 0.50145191522645272
+	Most Common Value Estimate (Rows) = 0.995817 / 1 bit(s)
+Literal MCV Estimate: mode = 500164, p-hat = 0.50016400000000005, p_u = 0.50145191522645272
+	Most Common Value Estimate (Cols) = 0.995817 / 1 bit(s)
+Chi square independence
+	score = 2047.364725
+	degrees of freedom = 2046
+	p-value = 0.487335
+
+Chi square goodness of fit
+	score = 4.758977
+	degrees of freedom = 9
+	p-value = 0.854792
+
+Chi square independence
+	score = 2010.470334
+	degrees of freedom = 2046
+	p-value = 0.708234
+
+Chi square goodness of fit
+	score = 11.308817
+	degrees of freedom = 9
+	p-value = 0.255134
+
+** Passed chi square tests
+
+Rows Longest Repeated Substring results
+	P_col: 0.500000
+	Length of LRS: 40
+	Pr(X >= 1): 0.365370
+Columns Longest Repeated Substring results
+	P_col: 0.500000
+  ... last 20 lines ...
+          periodicity(16)       6       0       7
+          periodicity(32)       6       0       8
+            covariance(1)       6       0       6
+            covariance(2)      11       0       6
+            covariance(8)       8       0       6
+           covariance(16)       6       0      66
+           covariance(32)       6       0      13
+              compression       6       0      14
+(* denotes failed test)
+
+** Passed IID permutation tests
+
+
+H_r: 0.995817
+H_c: 0.995817
+H_I: 0.900000
+
+Validation Test Passed...
+
+min(H_r, H_c, H_I): 0.900000
+how far: produced a figure
+
+===== pass 2: the atomic report write, twice over the same path =====
+===== ea_non_iid [pass 2a: fresh path]: ./cpp/ea_non_iid.exe -i -a -q -o rep_non_iid.json /tmp/w1.bin 1
+exit=0
+
+  ... last 20 lines ...
+
+how far: nothing recognisable
+
+===== ea_non_iid [pass 2b: path exists]: ./cpp/ea_non_iid.exe -i -a -q -o rep_non_iid.json /tmp/w1.bin 1
+exit=0
+
+  ... last 20 lines ...
+
+how far: nothing recognisable
+
+    -rw-r--r-- 1 runneradmin None 2031 Nov  9 12:08 rep_non_iid.json
+===== ea_iid [pass 2a: fresh path]: ./cpp/ea_iid.exe -i -q -o rep_iid.json /tmp/w1.bin 1
+exit=0
+
+  ... last 20 lines ...
+
+how far: nothing recognisable
+
+===== ea_iid [pass 2b: path exists]: ./cpp/ea_iid.exe -i -q -o rep_iid.json /tmp/w1.bin 1
+exit=0
+
+  ... last 20 lines ...
+
+how far: nothing recognisable
+
+    -rw-r--r-- 1 runneradmin None 3642 Nov  9 12:08 rep_iid.json
+===== ea_restart [pass 2a: fresh path]: ./cpp/ea_restart.exe -i -q -o rep_restart.json /tmp/w1.bin 1 0.9
+exit=0
+H_I: 0.900000
+  ... last 20 lines ...
+H_I: 0.900000
+how far: nothing recognisable
+
+===== ea_restart [pass 2b: path exists]: ./cpp/ea_restart.exe -i -q -o rep_restart.json /tmp/w1.bin 1 0.9
+exit=0
+H_I: 0.900000
+  ... last 20 lines ...
+H_I: 0.900000
+how far: nothing recognisable
+
+    -rw-r--r-- 1 runneradmin None 6459 Nov  9 12:08 rep_restart.json
+===== C18: the sign of Pr(X >= 1) =====
+  	Pr(X >= 1): 0.365370
+  ===== C18: the sign of Pr(X >= 1) =====
+===== rename(2) semantics on this platform =====
+C:/msys64/tmp/seq.cpp:9:9: warning: 'NOMINMAX' redefined
+    9 | #define NOMINMAX
+      |         ^~~~~~~~
+In file included from C:/msys64/mingw64/include/c++/16.2.0/x86_64-w64-mingw32/bits/c++config.h:733,
+                 from C:/msys64/mingw64/include/c++/16.2.0/cstdio:46,
+                 from C:/msys64/tmp/seq.cpp:1:
+C:/msys64/mingw64/include/c++/16.2.0/x86_64-w64-mingw32/bits/os_defines.h:45:9: note: this is the location of the previous definition
+   45 | #define NOMINMAX 1
+      |         ^~~~~~~~
+1. fresh path, first write (the C14 placeholder): OK errno=0 (No error)
+2. same path, second write (every later report):  OK errno=0 (No error)
+3. fresh path again, single write only:           OK errno=0 (No error)
+4. OLD writer, fresh path (the C14 placeholder):  OK errno=0 (No error)
+5. OLD writer, second write over it:              FAILED errno=17 (File exists)
+destination absent     rename rc=0 errno=0 (ok)
+destination EXISTS     rename rc=-1 errno=17 (File exists)
+===== pass 2b: what is at each -o path =====
+  rep_non_iid.json: present, 2031 bytes, errorLevel 0
+  rep_iid.json: present, 3642 bytes, errorLevel 0
+  rep_restart.json: present, 6459 bytes, errorLevel 0

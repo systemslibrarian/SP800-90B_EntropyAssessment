@@ -1,0 +1,55 @@
+[build-state] ea_non_iid                         asserts=LIVE    sha256=800b53ee0268540e
+[build-state] ea_iid                             asserts=LIVE    sha256=5d0f9ccdbb2e295a
+[build-state] ea_restart                         asserts=LIVE    sha256=23dd4e6f678ff724
+  platform link semantics: hard link aliases=yes  symlink aliases=no
+  ea_non_iid -o capture.bin  refused, capture intact   PASS
+  ea_non_iid -o ./capture.bin  refused, capture intact PASS
+  ea_non_iid -o /tmp/ea-alias.Nhn1k6/capture.bin  refused, capture intact PASS
+  ea_non_iid -o sub/../capture.bin  refused, capture intact PASS
+  ea_non_iid -o hardlink.bin  refused, capture intact  PASS
+  ea_non_iid -o symlink.bin                            SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  ea_iid -o capture.bin  refused, capture intact       PASS
+  ea_iid -o ./capture.bin  refused, capture intact     PASS
+  ea_iid -o /tmp/ea-alias.Nhn1k6/capture.bin  refused, capture intact PASS
+  ea_iid -o sub/../capture.bin  refused, capture intact PASS
+  ea_iid -o hardlink.bin  refused, capture intact      PASS
+  ea_iid -o symlink.bin                                SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  ea_restart -o capture.bin  refused, capture intact   PASS
+  ea_restart -o ./capture.bin  refused, capture intact PASS
+  ea_restart -o /tmp/ea-alias.Nhn1k6/capture.bin  refused, capture intact PASS
+  ea_restart -o sub/../capture.bin  refused, capture intact PASS
+  ea_restart -o hardlink.bin  refused, capture intact  PASS
+  ea_restart -o symlink.bin                            SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  control: a distinct -o path still assesses           PASS
+  control: the capture is untouched by a successful run PASS
+  F03 temp-path symlink                                SKIP  ln -s does not alias here (MSYS2 copies)
+  ea_non_iid -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid -vo --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid -qo --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid -Z --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -vo --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -qo --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -Z --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -vo --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -qo --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -Z --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid: unreadable random source refused, nothing written PASS
+  ea_non_iid: readable random source still writes      PASS
+  ea_non_iid: an earlier report does not survive the refusal PASS
+  ea_iid: unreadable random source refused, nothing written PASS
+  ea_iid: readable random source still writes          PASS
+  ea_iid: an earlier report does not survive the refusal PASS
+  ea_restart: unreadable random source refused, nothing written PASS
+  ea_restart: readable random source still writes      PASS
+  ea_restart: an earlier report does not survive the refusal PASS
+  control: -o NAME still assesses  assessed, no banner PASS
+  control: -oNAME (attached) still assesses  assessed, no banner PASS
+  control: -vo NAME (cluster) still assesses  assessed, no banner PASS
+  control: -qo NAME (cluster) still assesses  assessed, no banner PASS
+  control: a real --version still prints the banner    PASS
+  the declared case count                              FAIL  declared 49, ran 43
+regression-output-aliasing: 43 of 49 declared cases ran
+regression-output-aliasing: FAIL (1 case(s))
+ls -i on a built binary (st_ino as the shell sees it): 281474976712483 cpp/ea_iid.exe

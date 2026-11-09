@@ -68,8 +68,19 @@ name its temporary when `/dev/urandom` cannot be read, Windows has no
 report of any kind is written there now, the `A05` controls therefore fail,
 and the Windows `A05` verdict is **NOT ESTABLISHED** for the current tree.
 Fail-closed by exit status, **not** by the `-o` path: an earlier complete
-report survives the refusal byte-identical. Owner-decision bucket, beside
-`seed()`.
+report survives the refusal byte-identical.
+
+**Repaired the same day (`OC-131`, `fix/windows-random-source`, `FIXSHA`).**
+The owner answered the Windows question — ShannonPad's Windows bundle will run
+these tools — so `C25` and `seed()` were repaired together: one reader of
+OS randomness (`cpp/shared/os_random.h`: `/dev/urandom` on POSIX unchanged,
+`BCryptGenRandom` under `_WIN32`, `EA_TEST_RANDOM_SOURCE` everywhere), and a
+refused `-o` claim now removes the stale report. Windows run `WINRUN2`: every
+gate green but `libdivsufsort`, all three tools writing complete reports,
+`ea_iid` and `ea_restart` running the permutation tests to a figure, the
+`A05` regression 49 of 49 with its six platform skips counted. x86-64
+`X86RUN2` green; the macOS suite green; the survivor cases FAIL against the
+`a9b4ac1` binaries and PASS against the repair.
 
 ## What the campaign established
 
@@ -122,11 +133,11 @@ before that rule existed (`OC-126`):
   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
   CAUGHT** over the undeclared repair-interaction pairs, the two named below;
 - `oracles/oracle-selftest.sh` (33 cases), each refusal against its own reason;
-- `cpp/selftest/regression-output-aliasing.sh` (46 checks), the input capture
+- `cpp/selftest/regression-output-aliasing.sh` (49 checks), the input capture
   shown preserved against every alias of its own path.
 
 And: a **measured floor** with every subtracted term named and its status
-printed; `C18` and `C24` repaired and **measured on Windows**; `R-1` live on
+printed; `C18`, `C24`, `C25` and `seed()` repaired and **measured on Windows**; `R-1` live on
 x86-64 via CI; and the standard's own blind spot quantified — **an AES-CTR
 stream with an all-zero key, entropy exactly zero, is assessed at 7.145 of 8
 bits** (`OC-109`), which is why provenance and not estimator agreement is the
@@ -318,7 +329,7 @@ MARGIN (not a floor)` above it. The **aggregate** label at width 1 is
 expected-result manifest, with all four required failures demonstrated.
 
 `A05` and `A04` have left it, repaired in the previous round, with
-`cpp/selftest/regression-output-aliasing.sh` (46 checks) holding them and shown
+`cpp/selftest/regression-output-aliasing.sh` (49 checks) holding them and shown
 failing against a pre-fix build. `A07` and `A08` have left it too: this audit's
 own oracles were exiting 0 on malformed and unrelated input, and
 `oracles/oracle-selftest.sh` (33 cases) now holds each refusal against the
@@ -355,12 +366,13 @@ sanity check, all passing, then exit at `seed()`; reports are written correctly
 **DEFERRED** rather than blocking, because the owner's vendor reference
 qualification means no NIST binary runs on a user's machine (`OC-60`).
 
-**Corrected 2026-11-09 (`OC-130`).** "Reports are written correctly" above was
-true of `c2eb519` and is **false of the current tree**: since `OC-121` no `-o`
-report is written on Windows at all (`C25`). The rest of the sentence stands —
-build, battery, chi square, LRS, restart sanity check, `seed()` — and so does
-the instruction not to summarise it as "unsupported": it is one more
-`/dev/urandom` read on a platform that has none, awaiting the same decision.
+**Corrected 2026-11-09 (`OC-130`, then `OC-131`).** "Reports are written
+correctly" above was true of `c2eb519`, **false** of the tree from `OC-121` to
+`a9b4ac1` (`C25`: no `-o` report at all), and true again since
+`fix/windows-random-source` — and "then exit at `seed()`" is no longer what
+happens: `ea_iid` and `ea_restart` run the permutation tests to a figure on
+Windows, `seed()` reading the system CSPRNG. The instruction not to summarise
+Windows as "unsupported" stands, with less to qualify it.
 
 **The remaining Windows facts.** With `C18`
 repaired, `ea_iid` and `ea_restart` pass chi square **and** the §5.2.5 LRS test
@@ -418,13 +430,17 @@ claims about instruments, never about sources.
 
 ## Needs a decision from the owner
 
+**`seed()` and `C25` have left this bucket: repaired 2026-11-09 (`OC-131`)**,
+once the owner answered the Windows question below. One reader of OS randomness
+serves both (`cpp/shared/os_random.h`), the test override `EA_TEST_RANDOM_SOURCE`
+stays on every platform, and `std::random_device` was refused as this bucket
+said it must be.
+
 | question | why it is a decision and not a task |
 |---|---|
 | **Upstream issue #253 is still open.** | `F01` was withdrawn and the PR closed, but closing the issue was never authorised. With "nothing upstream" standing, it stays open indefinitely unless the owner says otherwise. |
 | **Force POSIX argument order.** Still a decision, now with its facts measured, and **the mechanism this row used to recommend is wrong** (`OC-96`). GNU getopt permutes and BSD does not, so an option after the filename is consumed differently on Linux and macOS (`OC-40`). **Measured on Darwin arm64:** `-i -a data.bin 1 -q -o out.json` exits **255** and writes no report — the five trailing words are read as operands. **Measured in this tree:** **0 of 16** real invocations put an option after an operand, so enforcing the documented order costs nothing here. **NOT the one-character change this row recommended:** a leading `+` in the optstring means *stop permuting* on glibc but is **accepted as an option character** on macOS — measured, `-+` taken as a valid option — so `+ab` would silently add a `-+` option to all three tools. The portable enforcement is a **prescan refusal** of an option after the first operand, which the tools already have a prescan to carry and which behaves identically everywhere. **The Linux half is now MEASURED** (`OC-102`, run `40241103943`): glibc **does** permute — `-i -a data.bin 1 -q -o out.json` exits **0 and assesses** there and exits **255 assessing nothing** on Darwin, so the same command line is valid on one supported platform and a usage error on the other. And a permuted `-o` **is** invisible to the early identity prescan — but `writeJsonReport`'s own guard caught the alias anyway, exit 255 with the capture's SHA-256 unchanged, which is the choke-point design working on the platform where the entry-point check failed. Both platforms refuse bad input, so this remains reproducibility rather than safety. |
-| **Does TruePad's harness ever invoke these tools on a user's Windows machine?** | The question has **changed shape** now that Windows is measured (`OC-48`). It no longer decides whether to *measure* Windows; it decides whether to *repair* what the measurement found. If yes: **`C18` must be repaired** — the §5.2.5 LRS test fails unconditionally there on any standards-sized input — and `C24` with it. If no: both close as will-not-be-done, and the measurement is still worth having, because it is what turned `C18` from a reading into a fact. Not answerable from this repository — it is a question about TruePad's deployment. |
-| **`seed()`: a Windows entropy source — DEFERRED, not a blocker.** | **The owner adopted a vendor reference qualification as the default path, under which no NIST binary runs on a user's machine**, so `seed()` is not on the product's path; it matters only for the expert-opt-in self-assertion path, for which macOS and Linux suffice (`OC-60`). The fix is small and well understood: a **platform entropy source** (`BCryptGenRandom` or `RtlGenRandom`) under `_WIN32`. **`std::random_device` must be refused** — on MinGW libstdc++ it has historically been deterministic, which would make the permutation tests' p-values meaningless while every surface indication said the tool worked. Previously described here as the measured blocker; With `C18` repaired, `ea_iid` and `ea_restart` pass chi square and the §5.2.5 LRS test on Windows and then die at `seed()`, which opens `/dev/urandom` and calls `exit(-1)`; `OC-42` is **CONFIRMED for both tools** rather than predicted (`OC-53`). The change is `BCryptGenRandom` (or `RtlGenRandom`) under `_WIN32`, keeping `/dev/urandom` elsewhere. **`std::random_device` must be refused** as the portable shortcut: on MinGW libstdc++ it has historically been a deterministic PRNG, which would silently make the permutation tests' p-values mean nothing. The seed feeds the xoshiro256** state used to shuffle, so the bar is behavioural: POSIX byte-identical, two Windows runs must differ in `permutationTestResults` as two macOS runs do, the failure path stays fail-closed, and the IID verdicts on the pinned fixtures must match LP64's. One function, two branches, one library on one platform, and a nondeterminism control that is already written. |
-| **`C25`: the report writer's random source on Windows.** | The same decision as `seed()`, reached by a second route (`OC-130`). `OC-121` made an unreadable `/dev/urandom` a refusal to write; on Windows that is every write, so no `-o` report is produced there and a previous one survives. The repair is a platform entropy source for the temporary's name — `BCryptGenRandom`/`RtlGenRandom` under `_WIN32` or `RAND_bytes` from the libcrypto already linked — keeping `EA_TEST_RANDOM_SOURCE` so the refusal stays observable. Deferred under the same vendor-qualification reasoning as `seed()` unless the owner says Windows reports matter. |
+| **Does TruePad's harness ever invoke these tools on a user's Windows machine?** | The question has **changed shape** now that Windows is measured (`OC-48`). It no longer decides whether to *measure* Windows; it decides whether to *repair* what the measurement found. If yes: **`C18` must be repaired** — the §5.2.5 LRS test fails unconditionally there on any standards-sized input — and `C24` with it. If no: both close as will-not-be-done, and the measurement is still worth having, because it is what turned `C18` from a reading into a fact. Not answerable from this repository — it is a question about TruePad's deployment. **Answered 2026-11-09: yes.** ShannonPad's Windows bundle runs these tools, so `C25` and `seed()` were repaired (`OC-131`); `C18` and `C24` already were. |
 | **`F10`/`C01`: correct MultiMMC's chained prefix lookup.** | §6.3.9 step 4.b.i requires an independent lookup of M_d at every depth; the code looks up depth d only if depth d−1 hit, and the `MAX_ENTRIES` cap then suppresses all depth ≥ d predictions for a recurring context (`OC-55`). **Unreachable at width 1 by proof**, so it changes nothing for this device, and the floor oracle excludes it there. Above width 1 it is an evaluated margin rather than a bound, and the only way to make it a bound is to correct the algorithm — which is estimator numerics, and therefore the owner's call, not a task. |
 | **Hill's third proposal.** | `OC-30` implements the exact multinomial maximum. Hill also proposes a *corrected binomial* restart check — count one fixed symbol, chosen from the whole dataset — which is easier to model but has less statistical power. Adopting it, or offering it, is a design choice. |
 | **Whether the fork's figure is ever reported alone.** | The standing rule is two figures, always. Relaxing it would be an owner decision, and nothing in the audit supports relaxing it. |
@@ -553,8 +569,8 @@ Read the Windows job's `verdict.log` first. A `GATE FAIL` there is a measured
 finding, not a broken job: as of 2026-10-20 the expected failures are
 `libdivsufsort` having no package, `C18`, and the three `C24` gates. Anything
 else failing is new.
-As of 2026-11-09 (`OC-130`) the expected set is `libdivsufsort` and the `A05`
-gate — the latter is `C25`, not the guard — with `C18` and `C24` passing.
+As of 2026-11-09 (`OC-131`) the expected set is **`libdivsufsort` alone**:
+`C18`, `C24`, `C25` and `seed()` all pass there (run `WINRUN2`).
 
 A mutation harness that reports `MUTATION-DID-NOT-APPLY` is telling you the
 harness is broken, not the guard (`mutation-lib.sh`, `OC-33`). An item in the

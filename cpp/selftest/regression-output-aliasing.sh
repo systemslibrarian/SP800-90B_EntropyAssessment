@@ -20,6 +20,17 @@
 # stale report, which is the fail-open C14 exists to prevent, reached through
 # the option parser instead of through an error path.
 #
+# C25 (OC-131). OC-121 made an unreadable random source a REFUSAL to write the
+# report's temporary; on Windows, where a native binary has no /dev/urandom,
+# that was every write, so no -o report was produced there and -- the half that
+# matters to a consumer -- a complete report from an EARLIER run survived
+# byte-identical at the -o path (OC-130). The repair reads the OS CSPRNG on
+# every platform (shared/os_random.h) and, when the claim still cannot be
+# written, REMOVES whatever is at the path so the exit status and the path
+# agree. The survivor arm below plants a genuine complete report (the control's
+# own output, asserted complete first -- rule 7) and asserts the refusal does
+# not leave it: the pre-fix binaries leave it byte-identical.
+#
 # REGRESSION_OUTPUT_BINDIR points the checks at another build, so they can be
 # shown FAILING against a build that predates the fix.
 
@@ -41,9 +52,17 @@ fails=0
 # declaration now lives here, is asserted against the tally below, and is read
 # from here by regression-docs.sh.
 cases=0
-DECLARED_CASES=46
+DECLARED_CASES=49
 pass() { cases=$((cases + 1)); printf '  %-52s PASS\n' "$1"; }
 fail() { cases=$((cases + 1)); printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
+# OC-131: a SKIP is a declared case that could not be put on this platform. It
+# is COUNTED and named, not scored -- the same rule the Windows job states for
+# its own gates. Until now the skip sites printed a row without counting it, so
+# on Windows (no symlink alias: three alias cases and the three F03 plants) the
+# declared total could never be met and the count check failed there for a
+# reason that had nothing to do with the guard. A skipped case must still be
+# ONE case, so the F03 block skips once per tool, as it would have run.
+skip() { cases=$((cases + 1)); printf '  %-52s SKIP  %s\n' "$1" "$2"; }
 
 # A 1-bit input the tools accept, so a refusal cannot be confused with an input
 # rejection. splitmix64 bit 0: no short period, and it passes the required
@@ -111,9 +130,9 @@ for tool in ea_non_iid ea_iid ea_restart; do
         # writing through one name and reading through the other.
         case "${alias}" in
             hardlink.bin) [ "${HARDLINK_IS_ALIAS}" = yes ] || {
-                printf '  %-52s SKIP  ln does not alias on this platform\n' "${tool} -o ${alias}"; continue; } ;;
+                skip "${tool} -o ${alias}" "ln does not alias on this platform"; continue; } ;;
             symlink.bin)  [ "${SYMLINK_IS_ALIAS}" = yes ] || {
-                printf '  %-52s SKIP  ln -s does not alias on this platform (MSYS2 copies)\n' "${tool} -o ${alias}"; continue; } ;;
+                skip "${tool} -o ${alias}" "ln -s does not alias on this platform (MSYS2 copies)"; continue; } ;;
         esac
         run_tool "${tool}" "${alias}"; rc=$?
         now=$(sha_of "${work}/capture.bin")
@@ -141,8 +160,7 @@ elif grep -q 'could not put the report in place' "${work}/control.out"; then
     # That is a separately tracked defect, not this guard refusing a legitimate
     # run, and the distinction is read off the tool's own message rather than
     # guessed from the platform.
-    printf '  %-52s SKIP  C24: no report can be written on this platform\n' \
-        "control: a distinct -o path still assesses"
+    skip "control: a distinct -o path still assesses" "C24: no report can be written on this platform"
 else
     fail "control: a distinct -o path still assesses" "the guard refuses a legitimate run"
 fi
@@ -224,10 +242,14 @@ PLANTEOF
         rm -f "${work}/f03.json" "${work}"/f03.json.tmp.*
         "${work}/gen" > "${work}/capture.bin"
     else
-        printf '  %-52s SKIP  no symlink() on this platform\n' "F03 temp-path symlink"
+        for tool in ea_non_iid ea_iid ea_restart; do
+            skip "${tool} symlink planted at the temp path" "no symlink() on this platform"
+        done
     fi
 else
-    printf '  %-52s SKIP  ln -s does not alias here (MSYS2 copies)\n' "F03 temp-path symlink"
+    for tool in ea_non_iid ea_iid ea_restart; do
+        skip "${tool} symlink planted at the temp path" "ln -s does not alias here (MSYS2 copies)"
+    done
 fi
 
 # ---- A04 / F04: a --version that is really -o's ARGUMENT, in every spelling ----
@@ -295,7 +317,7 @@ ctl_assess() { # ctl_assess <label> <args...>
         fail "control: ${label}" "printed the version banner"
     elif [ "${rc}" -ne 0 ]; then
         if printf '%s' "${out}" | grep -q 'could not put the report in place'; then
-            printf '  %-52s SKIP  C24: no report can be written on this platform\n' "control: ${label}"
+            skip "control: ${label}" "C24: no report can be written on this platform"
         else
             fail "control: ${label}" "exit ${rc}"
         fi
@@ -347,6 +369,34 @@ for tool in ea_non_iid ea_iid ea_restart; do
     else
         fail "${tool}: readable random source" "no report written"
     fi
+    # C25 (OC-131): the SURVIVOR arm. The report just written is the planted
+    # earlier report; it must be a complete one (rule 7: the baseline is
+    # asserted accepted, not assumed), and the refusal over the same path must
+    # not leave it there. Pre-fix binaries leave it byte-identical.
+    if [ -s "${work}/rand.json" ] && grep -q '"errorLevel" : 0' "${work}/rand.json"; then
+        planted=$(sha_of "${work}/rand.json")
+        before=$(sha_of "${work}/capture.bin")
+        ( cd "${work}" && EA_TEST_RANDOM_SOURCE=/nonexistent/no-random \
+            "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>rand2.err )
+        rc=$?
+        if [ "${rc}" -ne 0 ] \
+           && [ ! -e "${work}/rand.json" ] \
+           && grep -q 'cannot read randomness' "${work}/rand2.err" \
+           && [ "$(sha_of "${work}/capture.bin")" = "${before}" ] \
+           && [ "$(ls -1 "${work}" | grep -c '\.tmp\.')" -eq 0 ]; then
+            pass "${tool}: an earlier report does not survive the refusal"
+        elif [ -e "${work}/rand.json" ] && [ "$(sha_of "${work}/rand.json")" = "${planted}" ]; then
+            fail "${tool}: an earlier report does not survive the refusal" \
+                 "STALE -- the planted complete report survived byte-identical (rc ${rc})"
+        else
+            fail "${tool}: an earlier report does not survive the refusal" \
+                 "rc=${rc} report=$([ -e "${work}/rand.json" ] && echo present || echo absent) capture_identical=$([ "$(sha_of "${work}/capture.bin")" = "${before}" ] && echo yes || echo no)"
+        fi
+    else
+        fail "${tool}: an earlier report does not survive the refusal" \
+             "HARNESS: no complete report to plant (the readable-source control did not produce one)"
+    fi
+    rm -f "${work}/rand.json" "${work}/rand2.err"
 done
 
 ctl_assess "-o NAME still assesses"        -i -a -q -o f04ctl.json capture.bin 1
