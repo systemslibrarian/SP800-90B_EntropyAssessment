@@ -1,6 +1,6 @@
 # TRIAGE -- AFL++ campaign crashes and hangs, 2026-11-07 aggressive audit
 
-- date_utc: 2026-11-09T00:14:34Z
+- date_utc: 2026-11-09T00:17:15Z
 - fuzz_dir: `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz`; inputs triaged: 55; unique keys: 5
 - every re-run: OMP_NUM_THREADS=2, EA_ALLOW_SHORT_DATASET=1 (except the tiled compliant-size runs), caps 30 s (crashes) / 90 s (hangs); stdout/stderr/rc per run under `logs/fuzz/triage/<T>/<kind>/`
 
@@ -22,11 +22,11 @@
 
 | key | count | targets | first input | fuzz build | san build | production | tiled to 10^6, no escape | reachable with a compliant file? |
 |---|---|---|---|---|---|---|---|---|
-| `ASSERT@periodicity@permutation_tests.h:256` | 20 | T6 T7 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/default/crashes/id:000006,sig:06,src:000000,time:7471,execs:59,op:dry_run,pos:0,orig:rnd-00015.bin` | ASSERT | ASSERT | ASSERT | not run | not run |
-| `UBSAN:division by zero@chi_square_tests.h:439:45` | 15 | T6 T7 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/default/crashes/id:000000,sig:06,src:000000,time:5591,execs:53,op:dry_run,pos:0,orig:rnd-00003.bin` | ASSERT | UBSAN:division by zero | ASSERT | not run | not run |
-| `EXIT:255` | 11 | T6 T7 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/seed-crashes/rnd-00003.bin.out` |  --version: Prints tool version information' | EXIT:255 | not reproduced (exit 255 = the tool's refusal status); last stdout line: ' | not run | not run |
-| `EXIT:1` | 6 | T6 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/default/hangs/id:000000,src:000001,time:24388,execs:1362,op:havoc,rep:2` | EXIT:1 | EXIT:1 | EXIT:1 | not run | not run |
-| `UBSAN:implicit conversion from type 'int' of value 256 (32-bit, si@lag_test.h:111:21` | 3 | T2 T4 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T2/default/hangs/id:000000,src:000025,time:338641,execs:21115,op:havoc,rep:2` | EXIT:0 | UBSAN:implicit conversion from type 'int' of value 256 (32-bit, si | EXIT:0 | not run | not run |
+| `ASSERT@periodicity@permutation_tests.h:256` | 20 | T6 T7 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/default/crashes/id:000006,sig:06,src:000000,time:7471,execs:59,op:dry_run,pos:0,orig:rnd-00015.bin` | ASSERT | ASSERT | ASSERT | EXIT:1 -- san build, tiled to 1,000,000 bytes, no escape, cap 300s: not reproduced (exit 1); last stdout line: 'IID test suite failed: no IID min-entropy estimate was awarded.' | NOT SHOWN (tiled run: EXIT:1) |
+| `UBSAN:division by zero@chi_square_tests.h:439:45` | 15 | T6 T7 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/default/crashes/id:000000,sig:06,src:000000,time:5591,execs:53,op:dry_run,pos:0,orig:rnd-00003.bin` | ASSERT | UBSAN:division by zero | ASSERT | EXIT:1 -- san build, tiled to 1,000,000 bytes, no escape, cap 300s: not reproduced (exit 1); last stdout line: 'IID test suite failed: no IID min-entropy estimate was awarded.' | NOT SHOWN (tiled run: EXIT:1) |
+| `EXIT:255` | 11 | T6 T7 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/seed-crashes/rnd-00003.bin.out` |  --version: Prints tool version information' | EXIT:255 | not reproduced (exit 255 = the tool's refusal status); last stdout line: ' | not run -- key is not a crash | not run |
+| `EXIT:1` | 6 | T6 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T6/default/hangs/id:000000,src:000001,time:24388,execs:1362,op:havoc,rep:2` | EXIT:1 | EXIT:1 | EXIT:1 | not run -- key is not a crash | not run |
+| `UBSAN:implicit conversion from type 'int' of value 256 (32-bit, si@lag_test.h:111:21` | 3 | T2 T4 | `/private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/fuzz/out/T2/default/hangs/id:000000,src:000025,time:338641,execs:21115,op:havoc,rep:2` | EXIT:0 | UBSAN:implicit conversion from type 'int' of value 256 (32-bit, si | EXIT:0 | not run -- --max-compliant 2 reached | not run |
 
 ## every input
 
@@ -103,7 +103,7 @@ collision_test.h:47 (v < 2), compression_test.h:128 (num_blocks < 1002), multi_m
 - A crash that depends on the exact input LENGTH or period: tiling to 1,000,000 bytes changes both, so NOT SHOWN is not NOT REACHABLE.
 - A T6 crash that depends on the permutation shuffle (seed() reads /dev/urandom): it may not replay from the input alone; three re-runs were made, not thirty.
 - UB classes the fuzz build traps without a message (AFL_USE_UBSAN is trap-on-error); only the san build names them.
-- Anything beyond the 30/90 s caps, or beyond --max-compliant 6 tiled runs.
+- Anything beyond the 30/90 s caps, or beyond --max-compliant 2 tiled runs.
 - If the san build was NOT FOUND, every san column is NA and the fuzz key stands in for it; re-run triage.sh --san-dir once harness/sanitizers has built.
 
 ## next

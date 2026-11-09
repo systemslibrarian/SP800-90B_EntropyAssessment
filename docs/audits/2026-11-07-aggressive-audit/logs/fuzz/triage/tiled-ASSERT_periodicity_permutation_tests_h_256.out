@@ -1,0 +1,8 @@
+Calculating baseline statistics...
+** Failed chi square tests
+
+** Failed length of longest repeated substring test
+
+** Skipped IID permutation tests after an earlier required IID test failure
+
+IID test suite failed: no IID min-entropy estimate was awarded.

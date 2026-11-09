@@ -1,2 +1,2 @@
 Assertion failed: (n>=p), function periodicity, file permutation_tests.h, line 256.
-/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/fuzz/fuzz_common.sh: line 46: 41591 Abort trap: 6              timeout -k 5 "$secs" "$@"
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/fuzz/fuzz_common.sh: line 46: 55411 Abort trap: 6              timeout -k 5 "$secs" "$@"

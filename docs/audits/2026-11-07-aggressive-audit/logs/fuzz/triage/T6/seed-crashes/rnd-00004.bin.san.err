@@ -1,9 +1,9 @@
 iid/chi_square_tests.h:439:45: runtime error: division by zero
-    #0 0x000102690124 in calc_T(std::__1::vector<double, std::__1::allocator<double>> const&, std::__1::vector<int, std::__1::allocator<int>> const&) chi_square_tests.h:439
-    #1 0x000102695d50 in goodness_of_fit(unsigned char const*, double&, int&, int, int) chi_square_tests.h:639
-    #2 0x00010269656c in chi_square_tests(unsigned char const*, int, int, int) chi_square_tests.h:705
-    #3 0x000102697a94 in main iid_main.cpp:480
+    #0 0x0001005b4124 in calc_T(std::__1::vector<double, std::__1::allocator<double>> const&, std::__1::vector<int, std::__1::allocator<int>> const&) chi_square_tests.h:439
+    #1 0x0001005b9d50 in goodness_of_fit(unsigned char const*, double&, int&, int, int) chi_square_tests.h:639
+    #2 0x0001005ba56c in chi_square_tests(unsigned char const*, int, int, int) chi_square_tests.h:705
+    #3 0x0001005bba94 in main iid_main.cpp:480
     #4 0x0001880ec4e0 in start+0x1b4c (dyld:arm64e+0x204e0)
 
 SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior iid/chi_square_tests.h:439:45 
-/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/fuzz/fuzz_common.sh: line 46: 45637 Abort trap: 6              timeout -k 5 "$secs" "$@"
+/Users/gmcas/repos/SP800-90B_EntropyAssessment/docs/audits/2026-11-07-aggressive-audit/harness/fuzz/fuzz_common.sh: line 46: 65229 Abort trap: 6              timeout -k 5 "$secs" "$@"

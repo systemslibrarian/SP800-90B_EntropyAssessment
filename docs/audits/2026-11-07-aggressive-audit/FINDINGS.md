@@ -1,9 +1,9 @@
 # Aggressive security and correctness audit — findings
 
-**Status: IN PROGRESS (this file is rewritten as phases complete; the final version is the one on the
-tip of `audit/2026-11-07`).** Date begun 2026-11-07; host Darwin arm64 (macOS 25.6.0), Apple clang 21.0.0,
-Homebrew libomp, jsoncpp 1.9.8, Python 3.14.7 / numpy 2.5.4 (venv), AFL++ 5.03c (installed for this
-audit from the Homebrew bottle — see AA-15 for the side effect that install had on the build).
+**Status: FINAL for this audit (2026-11-08).** Everything below is on the tip of `audit/2026-11-07`; the four fix
+branches are pushed to the fork and unmerged. Date begun 2026-11-07; host Darwin arm64 (macOS 25.6.0), Apple clang
+21.0.0, Homebrew libomp, jsoncpp 1.9.8, Python 3.14.7 / numpy 2.5.4 (venv), AFL++ 5.03c (installed for this audit
+from the Homebrew bottle — see AA-04 for the two side effects that install had on the host).
 
 Subject: this fork of NIST's SP 800-90B Entropy Assessment, `master` at `04c1ccc` (audit branch
 `audit/2026-11-07` carries only `docs/audits/2026-11-07-aggressive-audit/`). Production binaries
@@ -71,7 +71,7 @@ pulled in OpenSSL 4 and Python 3.15; the binaries you build now link `libcrypto.
 fixed on `fix/openssl-pin`) and `regression-workflows.sh` cannot find PyYAML under the new default `python3`
 (`brew unlink python@3.15` or run it with `python3.14` first on `PATH`).
 
-**Fuzzing:** _(§4.8 — filled in when the slices complete)_
+**Fuzzing:** eight AFL++ targets × 8 minutes, 489 k executions, every saved crash or hang triaged under ASan: **no new crash class** — only the known escape-only tiny-input assert and division, tool refusals, and timing artefacts; the two sanitizer classes do not reproduce at 1,000,000 bytes without the escape (§4.8).
 
 
 ---
@@ -370,7 +370,33 @@ own count/inventory checks are covered by `regression-docs.sh`, which passes on 
 within tolerance (`check-platform-deltas.py` exit 0 in each worktree). None of the four is merged; none touches
 `master`.
 
-**4.8 Fuzzing (AFL++)** — _(foreground slices; filled in when complete)_
+**4.8 Fuzzing (AFL++ 5.03c, `afl-clang-fast++` plain build) — no new crash class.** Eight targets, 8 minutes
+each (the host could not hold a longer background campaign; see §5), every run under `EA_ALLOW_SHORT_DATASET=1`
+so inputs reach the estimators (`logs/fuzz/RUN-RECORD.md`, `slice-T*.log`, `TRIAGE.md`):
+
+| target | execs | edges | stability | crashes | hangs |
+|---|---:|---:|---:|---:|---:|
+| T1 `ea_non_iid -i -a @@` (inferred width) | 44,076 | 821 | 100 % | 0 | 0 |
+| T2 `ea_non_iid -i -a @@ 8` | 21,465 | 822 | 99.6 % | 0 | 2 |
+| T3 `ea_non_iid -i -a @@ 1` | 117,198 | 594 | 100 % | 0 | 0 |
+| T4 `ea_non_iid -c -a @@ 8` | 41,828 | 607 | 100 % | 0 | 1 |
+| T5 `ea_non_iid -l 1,17 -i @@` | 108,798 | 705 | 100 % | 0 | 0 |
+| T6 `ea_iid -i -a @@ 4` | 30,036 | 738 | 72.5 % | 20 | 6 |
+| T7 argv driver (three tools, `H_I` grammar) | 27,291 | 1,981 | 85.2 % | 6 | 0 |
+| T8 `ea_restart` file path | 98,076 | 137 | 100 % | 0 | 0 |
+
+Triage of all 55 saved inputs under the ASan+UBSan build, the AFL build and the production binary, deduplicated
+by sanitizer class + top frame: **5 unique keys, none new** — (i) `assert(n>=p)` in `periodicity`
+(`permutation_tests.h:256`, 20 inputs, T6/T7): the PROV-24 escape-only abort on < 32 samples; (ii) float division
+by zero at `chi_square_tests.h:439` (15, T6/T7): the zero-expected-bin case on tiny inputs (§4.5); (iii) `EXIT:255`
+(11, T7): the tools' own refusals, counted by the argv driver, not crashes; (iv) `EXIT:1` (6, T6 "hangs"): IID
+batteries that failed normally but exceeded AFL's 2-second budget under instrumentation; (v) the Lag `uint8_t` wrap
+(3, T2/T4 "hangs"): those inputs run in **0.06 s** on the production binary. **Reachability without the escape:**
+the two sanitizer classes tiled to 1,000,000 bytes and run with no `EA_ALLOW_SHORT_DATASET` do **not** reproduce
+(exit 1, "IID test suite failed" — the normal statistical outcome). T6's 72 % stability is the live `/dev/urandom`
+seed, not a race (§4.6). Cannot see: anything beyond 8 minutes per target on a plain (non-ASan) instrumented build;
+`ea_restart`'s estimators (its 1,000,000-sample matrix rule has no escape, so file fuzzing reaches only its
+intake and argument grammar — T7/T8); libFuzzer-style in-process coverage (not shipped with Apple clang).
 
 ## 5. Method, instruments, and their known blind spots
 

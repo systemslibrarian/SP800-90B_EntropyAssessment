@@ -1,0 +1,5 @@
+ASSERT@periodicity@permutation_tests.h:256	EXIT:1	san build, tiled to 1,000,000 bytes, no escape, cap 300s: not reproduced (exit 1); last stdout line: 'IID test suite failed: no IID min-entropy estimate was awarded.'
+UBSAN:division by zero@chi_square_tests.h:439:45	EXIT:1	san build, tiled to 1,000,000 bytes, no escape, cap 300s: not reproduced (exit 1); last stdout line: 'IID test suite failed: no IID min-entropy estimate was awarded.'
+EXIT:255	not run	key is not a crash
+EXIT:1	not run	key is not a crash
+UBSAN:implicit conversion from type 'int' of value 256 (32-bit, si@lag_test.h:111:21	not run	--max-compliant 2 reached
