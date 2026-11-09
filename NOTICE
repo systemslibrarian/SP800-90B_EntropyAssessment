@@ -256,6 +256,22 @@ A second repair pass on the same date, working the remaining queue:
             SP 800-90B (final) v1.9, 2019-12-12, Table 3, and validated
             against brute-force enumeration. -s is accepted and ignored.
             Audit C23, OC-30. Self-authored and unreviewed.
+2026-11-08  cpp/non_iid_main.cpp, cpp/iid_main.cpp, cpp/restart_main.cpp:
+            the -o report target is also claimed from the argv prescan, as
+            soon as the path is known and after the A05 identity refusal,
+            not only when getopt reaches -o. The 2026-10-19 claim was bound
+            to getopt's traversal order, so an option error parsed EARLIER
+            in argv -- an unknown option, a malformed -l or -s value --
+            exited 255 on the usage path without claiming, and the previous
+            run's complete report survived byte-identical at the -o path:
+            the 2026-10-19 entry's "can no longer leave the previous run's
+            report in place" was false for that ordering. Measured
+            2026-11-07 on all three tools (aggressive audit, PROV-01). The
+            claim at -o itself stays, for the value getopt actually
+            produced. Repair-interaction pairs (rule 12): C14, A05, C08,
+            A04. Regression: regression-stale-report.sh, whose
+            REGRESSION_STALE_REPORT_BINDIR points it at a pre-fix build.
+            Self-authored and unreviewed.
 2026-09-30  cpp/restart_main.cpp: a read failure is recorded on the
             report that is actually written. Commit 23dca69.
 2026-09-30  cpp/restart_main.cpp: an estimate that could not be computed

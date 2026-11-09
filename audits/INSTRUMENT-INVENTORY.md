@@ -76,7 +76,7 @@ them was being invoked **then**. So:
 
 | set | rule that applies | count |
 |---|---|---:|
-| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **87** at `a5422cf`, 2026-10-27 |
+| **LIVE** | behaviour, present tense: is it run, sourced, compiled, or a workflow **now** | **88** at `04c1ccc` with `cpp/selftest/regression-stale-report.sh` staged, 2026-11-08 |
 | **FROZEN** | historical: was it an instrument when the evidence was dated | **79**, and fixed: dated evidence does not grow |
 
 Counting frozen by the live rule would silently retire 47 artefacts that were
@@ -89,6 +89,12 @@ validation), `oracles/c22c_derive.py` (the slow re-derivation),
 `.github/workflows/c22c-source-check.yml`. The count is checked against
 `audits/enum-instruments.sh` by `regression-docs.sh`, which is how this
 document was found to be four behind rather than by anyone remembering.
+
+**87 -> 88 at `04c1ccc` with one file staged (PROV-01, 2026-11-08).** The
+instrument is `cpp/selftest/regression-stale-report.sh`, the regression for
+the stale-report ordering defect in the three tools' `-o` claim. Counted
+while staged and before its commit existed, which is what the index rule
+above is for: the number was read from the enumerator, not predicted.
 
 Three consequences the rule settles, each of which was got wrong once:
 
@@ -116,7 +122,7 @@ thing an extension-matched glob missed.
 
 | set | count | what it is |
 |---|---:|---|
-| **LIVE** | **87** at `a5422cf`, 2026-10-27 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
+| **LIVE** | **88** at `04c1ccc` with `cpp/selftest/regression-stale-report.sh` staged, 2026-11-08 | `cpp/selftest`, `tools`, `.github`, `audits/2026-10-11-independent-audit`, `audits/2026-10-09-independent-audit`, `repairs/*/rerun.sh` — anything a sweep must cover today |
 | **FROZEN** | **79**, fixed | `audits/2026-09-30`, `audits/2026-10-01-re-audit`, `audits/2026-10-02-doc-review` — **dated evidence**, N/A to a live sweep. Re-running them would not re-date them, and changing them would destroy the evidence. |
 
 Reproduce both counts with `sh audits/enum-instruments.sh .`; add `--list` for
