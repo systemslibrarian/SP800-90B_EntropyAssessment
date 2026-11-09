@@ -84,12 +84,14 @@ script that declares it by `cpp/selftest/regression-docs.sh`, or is dated and
 attributed, because hand-typed counts in this document drifted six times
 before that rule existed (`OC-126`):
 
-- `cpp/selftest/run-all-checks.sh` runs 25 regression scripts
-  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 27 passed, 0 failed);
-- `audits/enum-instruments.sh` prints **88 live instruments** (measured
-  2026-11-08 at `04c1ccc` with `cpp/selftest/regression-stale-report.sh`
-  staged, up one for that script, PROV-01; 87 at `a5422cf`, `OC-128`; the
-  count has a hand-reviewed limb, `OC-126`);
+- `cpp/selftest/run-all-checks.sh` runs 26 regression scripts
+  (`./run-all-checks.sh --allow-known-platform-deltas` — expect 28 passed, 0 failed);
+- `audits/enum-instruments.sh` prints **89 live instruments** (measured
+  2026-11-08 on the merged tree, `04c1ccc` with `c8b0bc6` and `7d647e6`
+  merged, up two on `OC-128`'s 87 at `a5422cf`: one each for
+  `cpp/selftest/regression-stale-report.sh` (PROV-01) and
+  `cpp/selftest/regression-openssl-pin.sh` (PROV-15); the count has a
+  hand-reviewed limb, `OC-126`);
 - three mutation harnesses — `harness-inventory-mutation-test.sh`,
   `outside-battery-mutation-test.sh`, and the band-1 pair battery
   `band1-pair-mutations.sh`, which on 2026-10-27 measured **12 CAUGHT, 2 NOT
@@ -478,7 +480,7 @@ the merge, and two entries were wrong when it was. The checks are cheap:
 
 ```sh
 cd cpp && make non_iid iid restart && cd selftest
-./run-all-checks.sh --allow-known-platform-deltas   # expect 27 passed, 0 failed
+./run-all-checks.sh --allow-known-platform-deltas   # expect 28 passed, 0 failed
 ./harness-inventory-mutation-test.sh                # expect 5 of 5 mutations landed
 ./outside-battery-mutation-test.sh                  # expect 9 of 9 mutations landed
 ./regression-docs.sh                                # the prose claims that can be checked
