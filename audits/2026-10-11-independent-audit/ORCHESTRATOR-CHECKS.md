@@ -13342,3 +13342,138 @@ build is merge 2's `-I`/`-L` order.
 **Does not establish.** Windows and x86-64 are measured by the CI runs the
 push of this master fires, recorded afterwards by the usual one-run lag.
 
+
+## OC-130 — the platform findings for the merged master: c22c green, x86-64 green, Windows RED at one gate — and the red is `C25`, a refusal `OC-121` wrote and Windows was the first host to reach
+
+`OC-129` left the platform findings to the CI runs the push of `7a21378` would
+fire. Three ran on that commit:
+
+| workflow | run | result |
+|---|---|---|
+| `c22c-source-check` | `42551339864` | green |
+| `x86-64-platform-facts` (fires on push) | `42551339811` | green — 20 gates `PASS`; the full suite at `N-2` passed, 0 failed, 2 could not run with `N` read from `run-all-checks.sh`, "the two abstentions are the expected ones"; all 11 reference datasets ran and agree on glibc; R-1 completes at all five symbol counts |
+| `windows-platform-facts` (manual only; dispatched by hand with `-R`) | `42551339098` | **RED** — step 8 "Tally" fails on one unexpected gate |
+
+### What Windows said, against what it said last time
+
+The Windows job's `verdict.log` for `7a21378` is **identical line for line** to
+the one from `39597373023` on `c2eb519` (2026-10-21, `OC-48`'s successor runs)
+except for one gate. `libdivsufsort` has no package (expected, counted);
+all three tools compile and link with OpenMP; x87 80-bit; LLP64; `R-1` 155 of
+255; `Pr(X >= 1)` non-negative (`C18` holds); the `C24` writer probe replaces
+an existing report and the old bare-rename writer still fails beside it;
+`ea_non_iid` produces a figure without `-o`; `ea_iid` and `ea_restart` die at
+`seed()` as `OC-42` predicted; the build-state probe gives a real verdict. The
+one changed line:
+
+    2026-10-21  GATE PASS  A05 guard holds on Windows: every alias refused, the capture intact, and a distinct -o path still assesses
+    2026-11-09  GATE FAIL  the A05 regression failed on Windows for a reason other than destruction -- read logs/07-a05-aliasing.log; nothing is concluded about the guard
+
+`07-a05-aliasing.log`: the fifteen alias rows still `PASS` ("refused, capture
+intact"), the three symlink rows `SKIP` as before, and **every control that
+needs a report written fails** — "a distinct `-o` path still assesses" `FAIL`,
+"readable random source" `FAIL no report written` for all three tools, and the
+four `-o NAME` / `-oNAME` / `-vo NAME` / `-qo NAME` controls `FAIL exit 127` —
+so the declared case count fails too (46 declared, 40 ran), `FAIL (9 case(s))`.
+The two controls that pass need no report: "the capture is untouched by a
+successful run" (there was no successful run; the capture's digest is simply
+unchanged) and "a real `--version` still prints the banner".
+
+### The mechanism, read off the tool's own stderr
+
+`05-runtime.log`, pass 2 (`-o` into the working directory, fresh path then
+existing path), all three tools, both passes:
+
+    exit=127
+    Error: cannot read randomness from '/dev/urandom' to name a temporary file
+           beside the report 'rep_non_iid.json'. Refusing to write: the fallback name
+           would be derivable from the clock and the process id, and a
+           predictable temporary path is the defect F03 closed. Nothing
+           has been written; the input is untouched.
+    Error: the output path 'rep_non_iid.json' cannot be written; refusing to assess.
+    ls: cannot access 'rep_non_iid.json': No such file or directory
+
+That text is `cpp/shared/TestRunUtils.h`'s `OC-121` refusal: the temporary's
+suffix takes its second half from `g_randomSourcePath`, which is
+`EA_TEST_RANDOM_SOURCE` if set and otherwise `/dev/urandom`; if the read fails
+the write is refused and `claimReportTarget` returns false, so `main` exits
+before assessing — through the `-o` claim at `getopt` and, since merge 1,
+through the prescan claim as well. A native MinGW binary has no `/dev/urandom`.
+That is the fact `OC-42` recorded for `seed()`, now met one layer earlier, on
+every `-o` invocation. The 2026-10-21 run shows the before: `ea_non_iid` pass 2a
+exit 0 with a 2,031-byte report, and `ea_iid`/`ea_restart` leaving their
+476/492-byte `C14` placeholders when `seed()` killed them. The exit status is
+127 as every `exit(-1)` has been under this shell (`OC-48` recorded it without
+explaining it; still not explained, still not claimed).
+
+### Dated by ancestry: this is not the merges
+
+`b53ff5d` (`OC-121`, 2026-10-26) is an ancestor of `5f79f74`, the master the
+three 2026-11-08 merges were made onto, and is **not** an ancestor of
+`c2eb519`, the last tree the Windows job had measured (53 commits between). The
+Windows job is manual-only and was not run between those two dates. So the
+regression is in pre-merge master, exposed by the first Windows run since
+`OC-121` — which is the run `OC-129` asked for. `OC-121` itself said the
+condition "was unreachable for testing on any host with a working
+`/dev/urandom`"; Windows is the host without one.
+
+Merge 1 (`fix/stale-report`) changes nothing this run can see: its prescan
+claim exits through the same refusal the `getopt`-time claim would have reached
+a few lines later. Nothing more is claimed for the merges on Windows than that.
+
+### `C25`, and what it does and does not do
+
+Named `C25`, the next id in this record's series, entered with its five fields
+in `FORK-DIVERGENCE-AND-TRUST.md` as section **A.4 — introduced by this fork,
+NOT repaired** (a section that did not exist, because until now every defect
+the fork introduced had been repaired).
+
+**Fail-closed by exit status.** Nonzero exit, nothing assessed, nothing written,
+input untouched — the posture `OC-121` chose, taken every time.
+
+**Not fail-closed by the `-o` path.** A complete `errorLevel 0` report from an
+earlier run at that path survives byte-identical, because the `C14` placeholder
+that would have replaced it goes through the same refused writer. That is
+`AA-02`/`PROV-01`'s symptom — a harness that reads `-o` without reading the exit
+status reads a stale success — by a route that on Windows needs no argv
+ordering at all. Demonstrated here on macOS arm64 through the test seam, since
+the seam exercises exactly the limb Windows takes:
+
+    cap1.bin: 1,000,000 one-bit samples, sha256 d7ee63bbea6efeb4…
+    ea_non_iid -i -a -q -o stale.json cap1.bin 1                      exit=0   errorLevel 0   sha256 87df39f14ff0a27c…
+    EA_TEST_RANDOM_SOURCE=/nonexistent/no-random  (same command)     exit=255 stale.json UNCHANGED, still errorLevel 0
+    control, fresh path, same seam:                                   exit=255 no report, "cannot read randomness" ×1, no .tmp. file
+
+**What the run does NOT establish.** Anything about the `A05` guard on Windows
+for `7a21378`. The fifteen alias rows are refusals, but the control that
+separates *refuses aliases* from *refuses everything* fails, so they are the
+shape rule 7 was written against — several refusals for one accidental reason
+— and the Windows `A05` verdict is **NOT ESTABLISHED** for the current tree.
+The 2026-10-21 `PASS` stands for `c2eb519`. The job's own gate text says this
+correctly: "nothing is concluded about the guard".
+
+### Where it goes
+
+Owner-decision bucket, beside `seed()`, because one decision answers both: a
+Windows entropy source — `BCryptGenRandom`/`RtlGenRandom` under `_WIN32`, or
+`RAND_bytes` from the libcrypto every tool already links — used for the
+temporary's name as well as for seeding. Two constraints on any repair, both
+from this record: `EA_TEST_RANDOM_SOURCE` must stay, because it is the only way
+the refusal is ever exercised on a host that has `/dev/urandom`; and
+`std::random_device` is refused on MinGW for the reason `BUILDING.md` gives.
+Not repaired here: the owner's 2026-10-20 reasoning for deferring `seed()` —
+no NIST binary runs on a user's machine under the vendor-qualification path —
+covers this defect exactly, and widening the 2026-11-08 merge set was not what
+was asked.
+
+**Statements this makes false on the current tree, corrected where they
+stand:** `CLOSING-INVENTORY.md` "reports are written correctly (`C24`
+repaired)" and its staleness note's expected-failure set; `BUILDING.md` "every
+tool puts its report in place" and its Windows table row; the divergence
+document's `C24` and `F03` DOES-NOT-ESTABLISH fields ("Windows is NOT RUN for
+`F03`" — its refusal limb now is). Each carries the date and this entry's
+number. Evidence copied to `logs/c25/`: both runs' `verdict.log`,
+`05-runtime.log` and `07-a05-aliasing.log`, and the macOS seam transcript.
+
+**Does not establish.** The x86-64 and c22c runs the push of this record
+fires; recorded, if at all, by the usual one-run lag. Nothing upstream.

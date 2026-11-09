@@ -1,0 +1,14 @@
+OC-130 / C25 — the OC-121 refusal limb exercised on macOS arm64 through the test seam, 2026-11-08 (local clock)
+tool: cpp/ea_non_iid built from master 7a21378 (Apple clang, cpp/Makefile); capture cap1.bin = 1,000,000 one-bit samples from os.urandom, sha256 d7ee63bbea6efeb4e82018da111e90d9cdd37e9d9606b28b8c276c04494e4842
+
+1. control, default source (/dev/urandom readable):
+   ea_non_iid -i -a -q -o rep.json cap1.bin 1          -> exit 0, rep.json present, "errorLevel" : 0
+2. the refusal, fresh path:
+   EA_TEST_RANDOM_SOURCE=/nonexistent/no-random ea_non_iid -i -a -q -o rep.json cap1.bin 1
+                                                       -> exit 255, rep.json ABSENT, stderr = macos-seam-refusal.stderr (1 x "cannot read randomness"), 0 .tmp. files left
+3. stale survival, same path:
+   ea_non_iid -i -a -q -o stale.json cap1.bin 1        -> exit 0, "errorLevel" : 0, sha256(stale.json) = 87df39f14ff0a27c... (recorded before)
+   EA_TEST_RANDOM_SOURCE=/nonexistent/no-random ea_non_iid -i -a -q -o stale.json cap1.bin 1
+                                                       -> exit 255, sha256(stale.json) UNCHANGED, still "errorLevel" : 0; stderr = macos-seam-stale-survival.stderr
+
+Reading: the limb Windows takes unconditionally (no /dev/urandom there) is the limb the seam takes here. Exit 255 here is exit 127 under the MSYS2 shell (OC-48).

@@ -21,6 +21,14 @@ strongest thing that can be said for this tool and the second is the strongest
 thing that must be said against relying on it alone. Neither is complete without
 the other.
 
+**Revised 2026-11-08 and 2026-11-09, after the aggressive audit.** Two changes
+of substance, each dated where it stands: A.1's `C01`/`F10` margin is
+re-measured at ±0.08 bit at width 8 and stays NOT REPAIRED by decision
+(`OC-129`); and **section A.4 is new** — `C25`, the first defect this fork
+introduced and has not repaired, found by the first Windows run since
+`OC-121` (`OC-130`), with the `C24` and `F03` fields and §4 updated to match.
+The counts headed "measured at `34ceb59`" are not re-taken by either.
+
 ## How to read this
 
 The fork is **a patched fork of NIST's SP 800-90B reference implementation**. It
@@ -405,6 +413,10 @@ of creating defects as of removing them.
   **SOURCE-CONFIRMED, not executed** — a wrong `st_uid` cannot be arranged at a
   path whose name is unpredictable by design, which is the repair working
   against its own test.
+  **2026-11-09 (`OC-130`):** the symlink limbs stay NOT RUN there, but the
+  refusal limb `OC-121` added to this writer — no derivable fallback when the
+  random source cannot be read — IS now RUN on Windows, where it fires on
+  every write: `C25`, A.4.
 
 #### `C24` — no report could be written on Windows at all
 
@@ -421,6 +433,9 @@ of creating defects as of removing them.
 - **DOES NOT ESTABLISH.** That the Windows path is otherwise sound. The job
   measures what it measures; the ten `cmd` blocks in that workflow are checked
   by **no syntax tool**, because `cmd` has no `-n` equivalent available here.
+  **Measured 2026-11-09 (`OC-130`): it is not otherwise sound.** The same job,
+  on the first tree run there since `OC-121`, shows no `-o` report can be
+  written on Windows again — for a different reason, `C25`, A.4.
 
 #### `F04` — the `--version` prescan covered one spelling of the same request
 
@@ -553,6 +568,62 @@ it was not a defect that it existed, and it is not a repair that it is gone.
   unchanged, deliberately, because refusing `-1` with *"put every option before
   the file"* would be a wrong message about a value the operator meant as a
   value.
+
+## A.4 — Introduced by this fork, NOT repaired
+
+**One entry.** A.2 is what this fork broke and mended; this is what it broke
+and has, so far, decided not to mend. It is kept apart from A.2 so that
+section's heading stays true, and apart from A.1 because upstream never had the
+code that carries it.
+
+#### `C25` — no `-o` report can be written on Windows, again, and the refusal leaves a previous report in place
+
+- **DEFECT.** On Windows no report reaches the `-o` path — not the `C14`
+  placeholder, not the completed report. `writeJsonReport` names its temporary
+  with a suffix drawn from `/dev/urandom` and, since `OC-121`, **refuses to
+  write** when that source cannot be read rather than fall back to a name
+  derivable from the clock and the pid. A native MinGW binary has no
+  `/dev/urandom` (the same fact `OC-42` recorded for `seed()`), so the refusal
+  fires on **every** write there: `claimReportTarget` returns false and the
+  tool exits before assessing. Fail-closed by **exit status**: nonzero, nothing
+  assessed, nothing written. **Not fail-closed by the `-o` path:** a complete
+  `errorLevel 0` report from an earlier run at that path **survives
+  byte-identical**, because the placeholder that would have replaced it goes
+  through the same refused writer. That is `AA-02`/`PROV-01`'s symptom by a
+  different route — and on Windows it is unconditional, not an argv ordering.
+- **ORIGIN.** **INTRODUCED BY THIS FORK**, by `OC-121`'s repair (`b53ff5d`,
+  2026-10-26): the removal of the derivable fallback. Neither half is wrong
+  alone — refusing an unreadable random source is the right posture, and
+  Windows lacking a POSIX device is not a defect — but the only source
+  consulted is a POSIX device, so on that platform the right posture is taken
+  every time.
+- **EVIDENCE.** **EXECUTED on Windows MinGW** via CI, 2026-11-09 (run
+  `42551339098` on `7a21378`): all three tools, `-o` to a fresh path and to an
+  existing one, exit 127 (the shell's rendering of `exit(-1)`, as in `OC-48`),
+  `Error: cannot read randomness from '/dev/urandom' …`, no file at the path —
+  where the 2026-10-21 run on `c2eb519`, the last tree measured there before
+  `OC-121`, left a file for all three (a complete report for `ea_non_iid`, the
+  `C14` placeholder for the two `seed()` then killed). The stale-survival half
+  is **EXECUTED on macOS
+  arm64** through the test seam (`EA_TEST_RANDOM_SOURCE=/nonexistent`): a
+  complete report, then the refusal over the same path, exit 255, the file
+  byte-identical and still `errorLevel 0`. Dated by ancestry: `b53ff5d` is in
+  `5f79f74` (the master before the 2026-11-08 merges) and not in `c2eb519`, so
+  this predates the merges and is not their regression.
+- **STATUS.** **NOT REPAIRED.** In the owner-decision bucket beside `seed()`,
+  because the same decision answers both: a Windows entropy source —
+  `BCryptGenRandom`/`RtlGenRandom` under `_WIN32`, or `RAND_bytes` from the
+  libcrypto every tool already links. `EA_TEST_RANDOM_SOURCE` must survive any
+  repair, since it is the only way the refusal is ever observed; and
+  `std::random_device` is refused for the reason `BUILDING.md` gives.
+- **DOES NOT ESTABLISH.** Anything about the `A05` guard on Windows for the
+  current tree. Every alias row in that job still reads "refused, capture
+  intact", but the control that separates *refuses aliases* from *refuses
+  everything* now fails, so those rows are rule 7's shape — refusals for one
+  accidental reason — and the Windows `A05` verdict is **NOT ESTABLISHED for
+  `7a21378`**; the 2026-10-21 `PASS` stands for `c2eb519` only. Nor that the
+  three merges are Windows-clean beyond what this run can see: merge 1's
+  prescan claim exits through the same refusal.
 
 ---
 
@@ -1021,6 +1092,11 @@ unresolved.**
   (`e3b0c442...`) — `SHAPE-03` in the instrument built to find `SHAPE-03`. The
   suite is immune because `OC-95` made the provenance line a precondition; a
   human running it by hand is not.
+- **`C25` — no `-o` report on Windows, and a previous report survives the
+  refusal** (`OC-130`, 2026-11-09; section A.4). Introduced by `OC-121`, which
+  said its refusal "was unreachable for testing on any host with a working
+  `/dev/urandom`"; Windows is the host without one, and the first run there
+  since that commit reached it on every write. Owner decision, with `seed()`.
 
 ### Open because it stopped reproducing without being understood
 

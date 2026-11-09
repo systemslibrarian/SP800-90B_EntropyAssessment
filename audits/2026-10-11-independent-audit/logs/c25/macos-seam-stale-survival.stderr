@@ -1,0 +1,6 @@
+Error: cannot read randomness from '/nonexistent/no-random' to name a temporary file
+       beside the report 'stale.json'. Refusing to write: the fallback name
+       would be derivable from the clock and the process id, and a
+       predictable temporary path is the defect F03 closed. Nothing
+       has been written; the input is untouched.
+Error: the output path 'stale.json' cannot be written; refusing to assess.

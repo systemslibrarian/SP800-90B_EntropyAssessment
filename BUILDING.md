@@ -435,7 +435,7 @@ repository (`OC-93`). The full account is `OC-48` in
 | `R-1` affected set | **155 of 255** alphabet sizes, the x87 prediction confirmed independently of Linux |
 | `ea_non_iid` at runtime | runs the **complete non-IID battery**, exit 0 |
 | `ea_iid`, `ea_restart` at runtime | **fail the §5.2.5 LRS test on valid data** — see `C18` below |
-| any `-o` report | **cannot be written at all** — see `C24` below |
+| any `-o` report | **cannot be written at all** — `C24` below, repaired 2026-10-20; then `C25`, from 2026-10-26, measured 2026-11-09 |
 | build state | establishable; the probe needs the full symbol listing here, since `nm -u` is blind on PE/COFF |
 
 **Two defects make this route unusable as it stands**, and both are
@@ -466,11 +466,26 @@ report with `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING)` under `_WIN32`
 (`OC-57`). After both, on Windows: `Pr(X >= 1) = 0.365370`, **exactly macOS's
 figure**, and every tool puts its report in place.
 
+**And since 2026-10-26 no report is written there again — `C25`, measured
+2026-11-09 (`OC-130`).** `OC-121` removed the report writer's derivable
+fallback: if `/dev/urandom` cannot be read to name the temporary, the write is
+refused with its reason named. A native MinGW binary has no `/dev/urandom` —
+the same fact that stops `seed()` — so the refusal fires on every `-o` write,
+all three tools exit before assessing, and nothing is written: not the
+placeholder, not the report. A previous report at that path **survives**. The
+2026-10-21 Windows run predates `OC-121`; the 2026-11-09 run is the first
+since, and it is the run that found this. Fail-closed by exit status. The
+repair is the same platform entropy source `seed()` needs (below), applied to
+the temporary's name as well — and the test seam `EA_TEST_RANDOM_SOURCE` must
+stay, because it is the only way the refusal is ever exercised on a host that
+has `/dev/urandom`. **Not repaired**; owner decision.
+
 **What Windows can and cannot do today.** All three tools build and link, with
 OpenMP. `ea_non_iid` runs the complete non-IID battery and produces a figure,
 exit 0. `ea_iid` and `ea_restart` run through chi square, the §5.2.5 LRS test
 and — for `ea_restart` — the restart sanity check, **all passing**, and then
-exit at `seed()`, which opens `/dev/urandom`. **That is not "Windows is
+exit at `seed()`, which opens `/dev/urandom`; and none of the three writes an
+`-o` report (`C25`, above). **That is not "Windows is
 unsupported" and should not be summarised as such.**
 
 `seed()` is **deferred, not blocking** (`OC-60`): the owner's vendor reference

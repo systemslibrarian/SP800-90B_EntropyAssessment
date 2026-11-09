@@ -1,0 +1,30 @@
+[build-state] ea_non_iid                         asserts=LIVE    sha256=a04a8db92055c7b4
+[build-state] ea_iid                             asserts=LIVE    sha256=fc40915444caa815
+[build-state] ea_restart                         asserts=LIVE    sha256=8e376fb03b730d36
+  platform link semantics: hard link aliases=yes  symlink aliases=no
+  ea_non_iid -o capture.bin  refused, capture intact   PASS
+  ea_non_iid -o ./capture.bin  refused, capture intact PASS
+  ea_non_iid -o /tmp/ea-alias.w9afQ9/capture.bin  refused, capture intact PASS
+  ea_non_iid -o sub/../capture.bin  refused, capture intact PASS
+  ea_non_iid -o hardlink.bin  refused, capture intact  PASS
+  ea_non_iid -o symlink.bin                            SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  ea_iid -o capture.bin  refused, capture intact       PASS
+  ea_iid -o ./capture.bin  refused, capture intact     PASS
+  ea_iid -o /tmp/ea-alias.w9afQ9/capture.bin  refused, capture intact PASS
+  ea_iid -o sub/../capture.bin  refused, capture intact PASS
+  ea_iid -o hardlink.bin  refused, capture intact      PASS
+  ea_iid -o symlink.bin                                SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  ea_restart -o capture.bin  refused, capture intact   PASS
+  ea_restart -o ./capture.bin  refused, capture intact PASS
+  ea_restart -o /tmp/ea-alias.w9afQ9/capture.bin  refused, capture intact PASS
+  ea_restart -o sub/../capture.bin  refused, capture intact PASS
+  ea_restart -o hardlink.bin  refused, capture intact  PASS
+  ea_restart -o symlink.bin                            SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  control: a distinct -o path still assesses           PASS
+  control: the capture is untouched by a successful run PASS
+  ea_non_iid -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -o --version absent-data  refused (exit 127), no version banner PASS
+  control: a real --version still prints the banner    PASS
+regression-output-aliasing: PASS
+ls -i on a built binary (st_ino as the shell sees it): 281474976712415 cpp/ea_iid.exe
