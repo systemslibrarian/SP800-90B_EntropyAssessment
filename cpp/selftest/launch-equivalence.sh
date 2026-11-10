@@ -172,12 +172,16 @@ ALWAYS_EXCL=".dateTimeStamp .commandline"
 # permutation groups and nothing else.
 seed_in="${work}/corpus/gen_bit.bin"
 export EA_ALLOW_SHORT_DATASET=1
-( cd "${work}" && "${work}/base/cpp/ea_iid" -i -q -o seed1.json "${seed_in}" 1 >/dev/null 2>&1 && "${work}/base/cpp/ea_iid" -i -q -o seed2.json "${seed_in}" 1 >/dev/null 2>&1 )
+if ! ( cd "${work}" && "${work}/base/cpp/ea_iid" -i -q -o seed1.json "${seed_in}" 1 >/dev/null 2>&1 && "${work}/base/cpp/ea_iid" -i -q -o seed2.json "${seed_in}" 1 >/dev/null 2>&1 ); then
+    hfault "the two base ea_iid runs for the seeded-set measurement did not both succeed" ""
+fi
 # reduce each differing leaf to the test-case field that holds it
 # (.testCases[0].permutationTestResults[2].compression -> .testCases[0].permutationTestResults)
 reduce_seeded() { grep -vE '^\.(dateTimeStamp|commandline)$' | sed -E 's/^(\.testCases\[[0-9]+\]\.[A-Za-z0-9_]+)([\.\[].*)?$/\1/' | sort -u | tr '\n' ' '; }
 IID_SEEDED=$(python3 "${work}/leaves.py" "${work}/seed1.json" "${work}/seed2.json" | reduce_seeded)
-( cd "${work}" && "${work}/base/cpp/ea_restart" -i -q -o rseed1.json "${seed_in}" 1 0.9 >/dev/null 2>&1 && "${work}/base/cpp/ea_restart" -i -q -o rseed2.json "${seed_in}" 1 0.9 >/dev/null 2>&1 )
+if ! ( cd "${work}" && "${work}/base/cpp/ea_restart" -i -q -o rseed1.json "${seed_in}" 1 0.9 >/dev/null 2>&1 && "${work}/base/cpp/ea_restart" -i -q -o rseed2.json "${seed_in}" 1 0.9 >/dev/null 2>&1 ); then
+    hfault "the two base ea_restart runs for the seeded-set measurement did not both succeed" ""
+fi
 RS_SEEDED=$(python3 "${work}/leaves.py" "${work}/rseed1.json" "${work}/rseed2.json" | reduce_seeded)
 say "ea_iid fields the OS seed changes (measured)" "${IID_SEEDED:-NONE}"
 say "ea_restart fields the OS seed changes (measured)" "${RS_SEEDED:-NONE}"
@@ -191,11 +195,18 @@ done
 [ "${harness}" -eq 0 ] || { echo "launch-equivalence: REFUSED (${harness} harness fault(s))"; exit 2; }
 
 # ---------------------------------------------------------------- the live check
-python3 "${work}/perturb.py" "${work}/seed1.json" "${work}/seed1p.json" > "${work}/perturbed-field.txt"
-if python3 "${work}/cmp.py" "${work}/seed1.json" "${work}/seed1p.json" ${ALWAYS_EXCL} ${IID_SEEDED} > "${work}/live.txt" 2>&1; then
-    hfault "the comparator is NOT live" "a 1e-15 perturbation of $(cat "${work}/perturbed-field.txt") was not reported"
+if ! python3 "${work}/perturb.py" "${work}/seed1.json" "${work}/seed1p.json" > "${work}/perturbed-field.txt" 2>&1; then
+    hfault "the perturbation could not be made" "$(head -1 "${work}/perturbed-field.txt")"
+fi
+pfield=$(cat "${work}/perturbed-field.txt")
+python3 "${work}/cmp.py" "${work}/seed1.json" "${work}/seed1p.json" ${ALWAYS_EXCL} ${IID_SEEDED} > "${work}/live.txt" 2>&1
+liverc=$?
+# exit 1 AND the perturbed field named: an exception in the comparator (exit
+# 2, a traceback) must not pass for a reported difference
+if [ "${liverc}" -eq 1 ] && grep -q "differs: .testCases\[0\].${pfield} " "${work}/live.txt"; then
+    ok "comparator live" "a 1e-15 perturbation of ${pfield} is reported"
 else
-    ok "comparator live" "a 1e-15 perturbation of $(cat "${work}/perturbed-field.txt") is reported"
+    hfault "the comparator is NOT live" "exit ${liverc}; a 1e-15 perturbation of ${pfield} was not reported by name: $(head -1 "${work}/live.txt")"
 fi
 [ "${harness}" -eq 0 ] || { echo "launch-equivalence: REFUSED (${harness} harness fault(s))"; exit 2; }
 
@@ -274,7 +285,9 @@ for f in "${work}"/corpus/*.bin; do
         fb=$(python3 "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" "${work}/out-base/${name}.nonIID.json" 2>&1 | grep -vE 'dateTimeStamp|\.json' )
         fh=$(python3 "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" "${work}/out-head/${name}.nonIID.json" 2>&1 | grep -vE 'dateTimeStamp|\.json' )
         n_cmp=$((n_cmp + 1))
-        if [ "${fb}" = "${fh}" ]; then n_same=$((n_same + 1)); ok "${name}: entropy floor identical" "$(printf '%s' "${fb}" | grep -E 'FLOOR|MARGIN|floor' | head -1 | cut -c1-60)"
+        if ! printf '%s' "${fb}" | grep -qE 'MEASURED FLOOR|EVALUATED MARGIN|FLOOR'; then
+            bad "${name}: entropy floor did not evaluate on the base report" "$(printf '%s' "${fb}" | head -1 | cut -c1-80)"
+        elif [ "${fb}" = "${fh}" ]; then n_same=$((n_same + 1)); ok "${name}: entropy floor identical" "$(printf '%s' "${fb}" | grep -E 'FLOOR|MARGIN|floor' | head -1 | cut -c1-60)"
         else bad "${name}: entropy floor DIFFERS" ""; fi
     elif [ ! -s "${work}/out-base/${name}.nonIID.json" ]; then
         say "${name}: ea_non_iid report" "neither build wrote a report (rc ${rc}); exit status agreed"
