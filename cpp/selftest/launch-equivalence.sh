@@ -133,7 +133,9 @@ def walk(x, p, out):
 a = {}; b = {}
 walk(json.load(open(sys.argv[1])), "", a); walk(json.load(open(sys.argv[2])), "", b)
 excl = sys.argv[3:]
-def excluded(p): return any(p == e or p.startswith(e + ".") or p.startswith(e + "[") for e in excl)
+def excluded(p):
+    if p.endswith(".#len"): return False   # a seeded group's SIZE is not seeded: always compared
+    return any(p == e or p.startswith(e + ".") or p.startswith(e + "[") for e in excl)
 diff = [p for p in sorted(set(a) | set(b)) if not excluded(p) and a.get(p, "<absent>") != b.get(p, "<absent>")]
 for p in diff: print("  differs: %s  %r != %r" % (p, a.get(p, "<absent>"), b.get(p, "<absent>")))
 sys.exit(1 if diff else 0)
@@ -171,9 +173,12 @@ ALWAYS_EXCL=".dateTimeStamp .commandline"
 seed_in="${work}/corpus/gen_bit.bin"
 export EA_ALLOW_SHORT_DATASET=1
 ( cd "${work}" && "${work}/base/cpp/ea_iid" -i -q -o seed1.json "${seed_in}" 1 >/dev/null 2>&1 && "${work}/base/cpp/ea_iid" -i -q -o seed2.json "${seed_in}" 1 >/dev/null 2>&1 )
-IID_SEEDED=$(python3 "${work}/leaves.py" "${work}/seed1.json" "${work}/seed2.json" | grep -vE '^\.(dateTimeStamp|commandline)$' | sed -E 's/\[[0-9]+\].*$//' | sort -u | tr '\n' ' ')
+# reduce each differing leaf to the test-case field that holds it
+# (.testCases[0].permutationTestResults[2].compression -> .testCases[0].permutationTestResults)
+reduce_seeded() { grep -vE '^\.(dateTimeStamp|commandline)$' | sed -E 's/^(\.testCases\[[0-9]+\]\.[A-Za-z0-9_]+)([\.\[].*)?$/\1/' | sort -u | tr '\n' ' '; }
+IID_SEEDED=$(python3 "${work}/leaves.py" "${work}/seed1.json" "${work}/seed2.json" | reduce_seeded)
 ( cd "${work}" && "${work}/base/cpp/ea_restart" -i -q -o rseed1.json "${seed_in}" 1 0.9 >/dev/null 2>&1 && "${work}/base/cpp/ea_restart" -i -q -o rseed2.json "${seed_in}" 1 0.9 >/dev/null 2>&1 )
-RS_SEEDED=$(python3 "${work}/leaves.py" "${work}/rseed1.json" "${work}/rseed2.json" | grep -vE '^\.(dateTimeStamp|commandline)$' | sed -E 's/\[[0-9]+\].*$//' | sort -u | tr '\n' ' ')
+RS_SEEDED=$(python3 "${work}/leaves.py" "${work}/rseed1.json" "${work}/rseed2.json" | reduce_seeded)
 say "ea_iid fields the OS seed changes (measured)" "${IID_SEEDED:-NONE}"
 say "ea_restart fields the OS seed changes (measured)" "${RS_SEEDED:-NONE}"
 case " ${IID_SEEDED} " in *permutationTestResults*) ;; *) hfault "the seeded-field measurement did not find the permutation groups for ea_iid" "${IID_SEEDED:-nothing differed}" ;; esac
