@@ -13763,3 +13763,23 @@ runtime invocations and the probe do not reach; MINGW64-vs-UCRT64 identity on
 inputs other than `w1.bin` (one input, one width — the identity is of the
 code path those exercise, and the selftest's eleven reference files are not
 run in the Windows job). Nothing upstream.
+
+## OC-134 — the lag record: the probe gates measured under both environments; x86-64 red once, on the scan's own record, and green on its fix
+
+| workflow | run | tree | result |
+|---|---|---|---|
+| `x86-64-platform-facts` (on push) | `42732114088` | `01db092` | **RED** — `regression-docs: FAIL (1 checks)`: the placeholder scan `OC-132` added fired on `OC-132`'s own prose, which quoted the forbidden token names in backticks (`ORCHESTRATOR-CHECKS.md:13655`); the suite otherwise 26 passed, 1 failed, 2 could not run. The cause was found and unquoted in `afe86ab` (`OC-133`) before this run finished; nothing else was wrong |
+| `windows-platform-facts` matrix | `42733299413` | `afe86ab` | both jobs green — 23 `PASS` each, the one expected `libdivsufsort` `FAIL`, tallies clean. **The new gates measured:** `long double PRINTS correctly from C++ by both printf and iostream (LDBL_EPSILON 1.0842e-19)` `PASS` in **both** environments, `1/3` to 22 digits `0.3333333333333333333424` in both; the C-`printf` platform fact reads "prints long double correctly" under MINGW64 and "does NOT print long double on this CRT (`3.46778e-312`)" under UCRT64 — the garbage value differs from the first run's `1.40785e-312`, as reading an 80-bit value through a 64-bit format does. The two verdict logs differ in that one line and nowhere else |
+| `x86-64-platform-facts` (on push) | `42733300122` | `afe86ab` | green — 20 gates, suite `27 passed, 0 failed, 2 could not run`, `regression-docs: PASS` with "no unfilled placeholder token in the docs" |
+
+So the ship-toolchain decision of `OC-133` stands on a measurement, not an
+inference: the tools' language prints `long double` correctly under UCRT64,
+and the one difference between the two environments is confined to C
+`printf`, which nothing this fork ships uses for a `long double`. Logs:
+`logs/windows/matrix-42733299413-afe86ab-*`.
+
+A red Linux run on a record-only commit is still a red run, and it is
+recorded as one: the instrument caught its author within the hour of being
+written, which is what it is for, and the fix was in the next commit. The
+push of this entry fires x86-64 again; recorded, if at all, by the usual lag.
+Nothing upstream.
