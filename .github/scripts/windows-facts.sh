@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-# Windows platform facts, run inside the MSYS2 MINGW64 shell by
+# Windows platform facts, run inside an MSYS2 shell by
 # .github/workflows/windows-platform-facts.yml. CHANGES NO SOURCE.
+#
+# OC-132: THE ENVIRONMENT IS A PARAMETER, NOT A CONSTANT. This job ran under
+# MINGW64 only (msvcrt). MSYS2's default, and the shipping desktop build's
+# candidate, is UCRT64 (the Universal CRT), whose packages carry the
+# mingw-w64-ucrt-x86_64- prefix and whose root is /ucrt64. Everything below
+# that named a package prefix or a root now reads it from MSYSTEM, so the same
+# gate set runs under both and the two verdict logs can be compared line for
+# line. Nothing else changes.
 #
 # Every question records whether it passed or failed into logs/verdict.log, and
 # each step's detail into its own log. A step that cannot run says so rather
@@ -25,8 +33,13 @@ note() { printf '  %s\n' "$*"; }
 #             -lcrypto                 -> openssl
 #   COND_LIB  -lmpfr -lgmp             -> NOT NEEDED: ea_conditioning is not a
 #                                        supported target (SUPPORTED_TARGETS)
-PKGS="mingw-w64-x86_64-gcc make mingw-w64-x86_64-bzip2 mingw-w64-x86_64-jsoncpp mingw-w64-x86_64-openssl"
-DIVSUF_CANDIDATES="mingw-w64-x86_64-libdivsufsort mingw-w64-x86_64-divsufsort libdivsufsort divsufsort"
+case "${MSYSTEM:-MINGW64}" in
+  UCRT64)  PFX=mingw-w64-ucrt-x86_64; ROOT=/ucrt64 ;;
+  MINGW64) PFX=mingw-w64-x86_64;      ROOT=/mingw64 ;;
+  *) echo "windows-facts.sh: MSYSTEM='${MSYSTEM:-unset}' is not an environment this job measures (MINGW64, UCRT64)" >&2; exit 2 ;;
+esac
+PKGS="${PFX}-gcc make ${PFX}-bzip2 ${PFX}-jsoncpp ${PFX}-openssl"
+DIVSUF_CANDIDATES="${PFX}-libdivsufsort ${PFX}-divsufsort libdivsufsort divsufsort"
 
 # THE SERIAL SHIM (a labelled DEVIATION, and no source is touched).
 #
@@ -125,12 +138,12 @@ deps)
   echo "  the test is a LINK test: compile and link a tiny -fopenmp program." >> "$L"
   echo "  (run 4 used a file glob and matched only /mingw64/lib/libgomp.spec," >> "$L"
   echo "   a spec file, and so reported an OpenMP runtime that does not link.)" >> "$L"
-  find /mingw64 -name 'libgomp*' 2>/dev/null | sed 's/^/    file: /' >> "$L"
+  find "$ROOT" -name 'libgomp*' 2>/dev/null | sed 's/^/    file: /' >> "$L"
   if have_libgomp; then
     gate PASS "the OpenMP runtime LINKS: -fopenmp produces a working executable"
   else
     echo "  -lgomp does NOT link; asking pacman which package would provide it" >> "$L"
-    for pk in mingw-w64-x86_64-openmp mingw-w64-x86_64-gcc-libs mingw-w64-x86_64-libgomp; do
+    for pk in ${PFX}-openmp ${PFX}-gcc-libs ${PFX}-libgomp; do
       if pacman -Si "$pk" >/dev/null 2>&1; then
         printf '  candidate %-36s AVAILABLE -- installing\n' "$pk" >> "$L"
         pacman -S --noconfirm --needed "$pk" >> "$L" 2>&1 || true
@@ -157,7 +170,7 @@ deps)
   else
     echo >> "$L"
     echo "=== DEVIATION: building libdivsufsort from source (BUILDING.md's route) ===" >> "$L"
-    pacman -S --noconfirm --needed mingw-w64-x86_64-cmake mingw-w64-x86_64-make git >> "$L" 2>&1 || true
+    pacman -S --noconfirm --needed ${PFX}-cmake ${PFX}-make git >> "$L" 2>&1 || true
     ( set -x
       rm -rf /tmp/divsufsort
       git clone --depth 1 https://github.com/y-256/libdivsufsort /tmp/divsufsort
@@ -175,7 +188,7 @@ deps)
       cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBUILD_SHARED_LIBS=OFF -DBUILD_DIVSUFSORT64=ON \
-            -DCMAKE_INSTALL_PREFIX=/mingw64 .
+            -DCMAKE_INSTALL_PREFIX="$ROOT" .
       cmake --build . --target install
     ) >> "$L" 2>&1 \
       && gate PASS "libdivsufsort built and installed from source (DEVIATION, not a package)" \
@@ -255,6 +268,41 @@ EOF
   else
     gate FAIL "NOT x87 80-bit: $(sed -n 's/^LDBL_MANT_DIG *= *//p' "$L") -- every R-1 prediction below is about THIS format"
   fi
+  # OC-133: THE FORMAT IS ONE QUESTION; PRINTING IT IS ANOTHER. The first UCRT64
+  # run printed LDBL_MIN, LDBL_TRUE_MIN and LDBL_EPSILON above as the same
+  # 1.40785e-312 -- UCRT's own printf formats a long double as a 64-bit double
+  # -- while the gate above passed on the integer LDBL_MANT_DIG. The tools are
+  # C++, and g++ on mingw-w64 routes stdio through mingw's own printf
+  # (__USE_MINGW_ANSI_STDIO), so the tools' 22-digit long double figures were
+  # IDENTICAL under both environments; but that was inferred from the runtime
+  # log, and the question deserves its own probe in the tools' language. Both
+  # the printf and the iostream route are measured, with the defaults the
+  # Makefile uses (no -D__USE_MINGW_ANSI_STDIO either way).
+  cat > /tmp/fpxx.cpp <<'EOF'
+#include <cstdio>
+#include <cfloat>
+#include <iostream>
+#include <iomanip>
+int main(){
+  long double third = 1.0L / 3.0L;
+  std::printf("C++ printf   LDBL_EPSILON = %Lg\n", LDBL_EPSILON);
+  std::cout << "C++ iostream LDBL_EPSILON = " << std::setprecision(5) << LDBL_EPSILON << "\n";
+  std::printf("C++ printf   1/3 to 22 digits = %.22Lg\n", third);
+  return 0;
+}
+EOF
+  { echo "=== the same values printed from C++, the tools' language ==="; g++ -std=c++11 -O0 -o /tmp/fpxx.exe /tmp/fpxx.cpp && /tmp/fpxx.exe; } >> "$L" 2>&1
+  sed -n '/^=== the same values/,$p' "$L"
+  if grep -q 'C++ printf   LDBL_EPSILON = 1.0842e-19' "$L" && grep -q 'C++ iostream LDBL_EPSILON = 1.0842e-19' "$L"; then
+    gate PASS "long double PRINTS correctly from C++ by both printf and iostream (LDBL_EPSILON 1.0842e-19) -- the tools' figures are not truncated to double by the CRT"
+  else
+    gate FAIL "long double does NOT print correctly from C++ here -- every long double figure the tools print on this toolchain is suspect; read $L"
+  fi
+  if grep -q 'LDBL_EPSILON    = 1.0842e-19' "$L"; then
+    gate PASS "platform fact: C printf %Lg prints long double correctly on this CRT"
+  else
+    gate PASS "platform fact: C printf %Lg does NOT print long double on this CRT ($(sed -n 's/^LDBL_EPSILON *= *//p' "$L" | head -1)) -- a C helper on this toolchain must not print long double through the CRT; the tools are C++ and the gate above measures them directly"
+  fi
   if grep -qE 'sizeof\(long\) *= *4' "$L"; then
     gate PASS "LLP64 confirmed (long is 32-bit) -- this is the C18 precondition"
   else
@@ -274,7 +322,9 @@ r1)
   if g++ -std=c++11 $OMPFLAGS -ffloat-store -O2 -Icpp/shared -Icpp/non_iid \
         audits/2026-10-11-independent-audit/reproducers/r1_pcol_sweep.cpp \
         -o /tmp/r1sweep.exe $OMPLIB -lbz2 -lpthread -ldivsufsort -ldivsufsort64 \
-        -ljsoncpp -lcrypto >> "$L" 2>&1; then
+        -ljsoncpp -lcrypto -lbcrypt >> "$L" 2>&1; then
+        # -lbcrypt: the sweep includes shared/utils.h, which since C25 reaches
+        # BCryptGenRandom through shared/os_random.h (OC-131); same as the Makefile
     /tmp/r1sweep.exe >> "$L" 2>&1
     grep -E 'sizeof|aborting alphabet|^aborting k|powers of two|width 1|still aborting' "$L"
     n=$(sed -n 's/^aborting alphabet sizes at exact balance: \([0-9]*\) of 255/\1/p' "$L" | head -1)
@@ -337,11 +387,15 @@ EOF
     printf '%s' "$out" | grep -q 'Loaded'            && far="loaded the input"
     printf '%s' "$out" | grep -q 'Calculating base'  && far="reached baseline statistics"
     printf '%s' "$out" | grep -qE '^\*\* (Passed|Failed)' && far="reached the test battery"
-    printf '%s' "$out" | grep -qE 'H_original|H_bitstring|H_assessed|Assessed min entropy|min entropy' \
+    # ea_restart's figure lines are H_r / H_c / min(H_r, H_c, H_I); until C25
+    # it never got this far on Windows, so the classifier had never met them
+    # and read a completed restart run as "reached the test battery" (OC-131)
+    printf '%s' "$out" | grep -qE 'H_original|H_bitstring|H_assessed|Assessed min entropy|min entropy|^H_r:|min\(H_r' \
                                                      && far="produced a figure"
-    # the exact text of the predicted death: utils.h:796
-    #   perror("Can't open random source. Reverting to a deterministic seed.")
-    printf '%s' "$out" | grep -qi "open random source" && far="DIED at seed(): no /dev/urandom"
+    # the death at seed(): upstream's text ("Can't open random source.
+    # Reverting to a deterministic seed.") before C25, and the fail-closed
+    # message os_random.h's seed() prints since (OC-131)
+    printf '%s' "$out" | grep -qiE "open random source|cannot read .*random source" && far="DIED at seed(): the random source could not be read"
     printf 'how far: %s\n\n' "${far}" >> "$L"
     printf '  %-34s exit=%-4s %s\n' "${label}" "${rc}" "${far}"
   }
@@ -549,10 +603,35 @@ SEQEOF
   else
     gate FAIL "could not measure rename() semantics; the report-write failure stays undiagnosed"
   fi
+  # C25 (OC-131): A POSITIVE GATE ON THE FILES, not on the absence of a message.
+  # The previous gate here read "every tool put its report in place" from the
+  # absence of C24's error text, and PASSED on the 2026-11-09 run in which no
+  # tool wrote any report at all (OC-130) -- the absence rule this script warns
+  # about, in this script. What proves the writes is what is at the -o path
+  # after pass 2b: a file, and for the complete runs an errorLevel of 0.
+  echo "===== pass 2b: what is at each -o path =====" >> "$L"
+  written=0; complete=0
+  for t in non_iid iid restart; do
+    if [ -s "rep_${t}.json" ]; then
+      written=$((written + 1))
+      if grep -q '"errorLevel" : 0' "rep_${t}.json"; then complete=$((complete + 1)); fi
+      printf '  rep_%s.json: present, %s bytes, errorLevel %s\n' "$t" "$(wc -c < "rep_${t}.json")" \
+             "$(grep -o '"errorLevel" : [-0-9]*' "rep_${t}.json" | grep -oE '[-0-9]+$')" | tee -a "$L"
+    else
+      printf '  rep_%s.json: ABSENT\n' "$t" | tee -a "$L"
+    fi
+  done
+  if [ "$written" -eq 3 ] && [ "$complete" -eq 3 ]; then
+    gate PASS "C25 REPAIRED: all three tools wrote a complete (errorLevel 0) -o report on Windows, the temporary named through the system CSPRNG"
+  elif [ "$written" -eq 0 ]; then
+    gate FAIL "C25: NO -o report was written by any tool in pass 2 -- the report writer's random source does not work here; read $L"
+  else
+    gate FAIL "C25: ${written} of 3 tools wrote a -o report and ${complete} of them are complete -- read $L"
+  fi
   if grep -q 'could not put the report in place' "$L"; then
     gate FAIL "a tool still could not put its report in place -- C24 is NOT repaired on this platform; read $L"
   else
-    gate PASS "every tool put its report in place: C24's symptom is gone (no 'could not put the report in place')"
+    gate PASS "C24's own symptom is absent (no 'could not put the report in place'); the write itself is proved by the file gate above, not by this absence"
   fi
 
   # ABSENCE RULE (OC-36), which the first version of this gate broke in the very
@@ -592,9 +671,14 @@ SEQEOF
     # permutation stage reaches.
     for t in iid restart; do
       f=$(far_of "$t")
+      # C25 (OC-131) INVERTED THIS GATE. Until 2026-11-09 the PASS here was the
+      # death: seed() opened /dev/urandom by name and OC-42 predicted the exit,
+      # confirmed on every run since OC-48. seed() now reads the Windows system
+      # CSPRNG (shared/os_random.h), so the death is the FAILURE and a figure --
+      # the permutation tests run and the battery completes -- is the pass.
       case "$f" in
-        *"DIED at seed"*) gate PASS "ea_${t} DIED at seed(): no /dev/urandom -- OC-42 CONFIRMED for this tool" ;;
-        *figure*)         gate FAIL "ea_${t} produced a figure where seed() was predicted to kill it -- OC-42 is BROKEN for this tool, and /dev/urandom evidently resolves here" ;;
+        *figure*)         gate PASS "ea_${t} ran the permutation tests and produced a figure: seed() has a Windows random source (OC-42's death repaired, C25/OC-131)" ;;
+        *"DIED at seed"*) gate FAIL "ea_${t} DIED at seed(): the Windows random source is NOT working -- OC-42's death is back; read $L" ;;
         *)                # the same blank-line range bug, in the one place it
                           # survived the first fix: use the tool's own block.
                           if awk -v m="ea_${t} [pass 1" 'index($0,m){f=1;next} f&&/^===== /{exit} f' "$L" \

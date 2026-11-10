@@ -20,6 +20,17 @@
 # stale report, which is the fail-open C14 exists to prevent, reached through
 # the option parser instead of through an error path.
 #
+# C25 (OC-131). OC-121 made an unreadable random source a REFUSAL to write the
+# report's temporary; on Windows, where a native binary has no /dev/urandom,
+# that was every write, so no -o report was produced there and -- the half that
+# matters to a consumer -- a complete report from an EARLIER run survived
+# byte-identical at the -o path (OC-130). The repair reads the OS CSPRNG on
+# every platform (shared/os_random.h) and, when the claim still cannot be
+# written, REMOVES whatever is at the path so the exit status and the path
+# agree. The survivor arm below plants a genuine complete report (the control's
+# own output, asserted complete first -- rule 7) and asserts the refusal does
+# not leave it: the pre-fix binaries leave it byte-identical.
+#
 # REGRESSION_OUTPUT_BINDIR points the checks at another build, so they can be
 # shown FAILING against a build that predates the fix.
 
@@ -33,8 +44,25 @@ bs_print "${bindir}/ea_non_iid" "${bindir}/ea_iid" "${bindir}/ea_restart"
 work=$(mktemp -d "${TMPDIR:-/tmp}/ea-alias.XXXXXX") || exit 2
 trap 'rm -rf "${work}"' EXIT HUP INT TERM
 fails=0
-pass() { printf '  %-52s PASS\n' "$1"; }
-fail() { printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
+# OC-126: every verdict is counted, and the total is declared.
+#
+# This script printed a PASS per case and counted only failures, so nothing
+# knew how many cases it had. CLOSING-INVENTORY.md stated "(27 checks)" and was
+# measured at 47 -- the fifth hand-typed count in this repository to drift. The
+# declaration now lives here, is asserted against the tally below, and is read
+# from here by regression-docs.sh.
+cases=0
+DECLARED_CASES=49
+pass() { cases=$((cases + 1)); printf '  %-52s PASS\n' "$1"; }
+fail() { cases=$((cases + 1)); printf '  %-52s FAIL  %s\n' "$1" "${2:-}"; fails=$((fails + 1)); }
+# OC-131: a SKIP is a declared case that could not be put on this platform. It
+# is COUNTED and named, not scored -- the same rule the Windows job states for
+# its own gates. Until now the skip sites printed a row without counting it, so
+# on Windows (no symlink alias: three alias cases and the three F03 plants) the
+# declared total could never be met and the count check failed there for a
+# reason that had nothing to do with the guard. A skipped case must still be
+# ONE case, so the F03 block skips once per tool, as it would have run.
+skip() { cases=$((cases + 1)); printf '  %-52s SKIP  %s\n' "$1" "$2"; }
 
 # A 1-bit input the tools accept, so a refusal cannot be confused with an input
 # rejection. splitmix64 bit 0: no short period, and it passes the required
@@ -102,9 +130,9 @@ for tool in ea_non_iid ea_iid ea_restart; do
         # writing through one name and reading through the other.
         case "${alias}" in
             hardlink.bin) [ "${HARDLINK_IS_ALIAS}" = yes ] || {
-                printf '  %-52s SKIP  ln does not alias on this platform\n' "${tool} -o ${alias}"; continue; } ;;
+                skip "${tool} -o ${alias}" "ln does not alias on this platform"; continue; } ;;
             symlink.bin)  [ "${SYMLINK_IS_ALIAS}" = yes ] || {
-                printf '  %-52s SKIP  ln -s does not alias on this platform (MSYS2 copies)\n' "${tool} -o ${alias}"; continue; } ;;
+                skip "${tool} -o ${alias}" "ln -s does not alias on this platform (MSYS2 copies)"; continue; } ;;
         esac
         run_tool "${tool}" "${alias}"; rc=$?
         now=$(sha_of "${work}/capture.bin")
@@ -132,8 +160,7 @@ elif grep -q 'could not put the report in place' "${work}/control.out"; then
     # That is a separately tracked defect, not this guard refusing a legitimate
     # run, and the distinction is read off the tool's own message rather than
     # guessed from the platform.
-    printf '  %-52s SKIP  C24: no report can be written on this platform\n' \
-        "control: a distinct -o path still assesses"
+    skip "control: a distinct -o path still assesses" "C24: no report can be written on this platform"
 else
     fail "control: a distinct -o path still assesses" "the guard refuses a legitimate run"
 fi
@@ -215,10 +242,14 @@ PLANTEOF
         rm -f "${work}/f03.json" "${work}"/f03.json.tmp.*
         "${work}/gen" > "${work}/capture.bin"
     else
-        printf '  %-52s SKIP  no symlink() on this platform\n' "F03 temp-path symlink"
+        for tool in ea_non_iid ea_iid ea_restart; do
+            skip "${tool} symlink planted at the temp path" "no symlink() on this platform"
+        done
     fi
 else
-    printf '  %-52s SKIP  ln -s does not alias here (MSYS2 copies)\n' "F03 temp-path symlink"
+    for tool in ea_non_iid ea_iid ea_restart; do
+        skip "${tool} symlink planted at the temp path" "ln -s does not alias here (MSYS2 copies)"
+    done
 fi
 
 # ---- A04 / F04: a --version that is really -o's ARGUMENT, in every spelling ----
@@ -286,7 +317,7 @@ ctl_assess() { # ctl_assess <label> <args...>
         fail "control: ${label}" "printed the version banner"
     elif [ "${rc}" -ne 0 ]; then
         if printf '%s' "${out}" | grep -q 'could not put the report in place'; then
-            printf '  %-52s SKIP  C24: no report can be written on this platform\n' "control: ${label}"
+            skip "control: ${label}" "C24: no report can be written on this platform"
         else
             fail "control: ${label}" "exit ${rc}"
         fi
@@ -296,6 +327,78 @@ ctl_assess() { # ctl_assess <label> <args...>
         fail "control: ${label}" "exit 0 but no completed report"
     fi
 }
+# ---- OC-121: an unreadable random source is a REFUSAL, not a weaker suffix --
+#
+# F03 gave the temporary an unpredictable suffix. The second half came from
+# /dev/urandom, and if that could not be read the code fell back to
+# `r2 = (attempt * 2654435761) ^ r1`, which at attempt 0 is `0 ^ r1 = r1`
+# EXACTLY -- so the suffix became `.tmp.<r1><r1>` with
+# r1 = time(NULL) ^ (getpid() << 16), fully derivable from the clock and the
+# pid. That was the ONE condition in which O_EXCL was load-bearing rather than
+# redundant with O_NOFOLLOW, and it was unreachable for testing on any host
+# with a working /dev/urandom -- which is why OC-117 could not build the case.
+#
+# The condition was REMOVED rather than left untested. EA_TEST_RANDOM_SOURCE
+# exists only so this case can observe the refusal.
+for tool in ea_non_iid ea_iid ea_restart; do
+    case "${tool}" in
+        ea_restart) rtail="1 0.9" ;;
+        *)          rtail="1" ;;
+    esac
+    rm -f "${work}/rand.json"
+    before=$(sha_of "${work}/capture.bin")
+    ( cd "${work}" && EA_TEST_RANDOM_SOURCE=/nonexistent/no-random \
+        "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>rand.err )
+    rc=$?
+    if [ "${rc}" -ne 0 ] \
+       && [ ! -e "${work}/rand.json" ] \
+       && grep -q 'cannot read randomness' "${work}/rand.err" \
+       && [ "$(sha_of "${work}/capture.bin")" = "${before}" ] \
+       && [ "$(ls -1 "${work}" | grep -c '\.tmp\.')" -eq 0 ]; then
+        pass "${tool}: unreadable random source refused, nothing written"
+    else
+        fail "${tool}: unreadable random source" \
+             "rc=${rc} report=$([ -e "${work}/rand.json" ] && echo present || echo absent) named=$(grep -qc 'cannot read randomness' "${work}/rand.err" 2>/dev/null || echo no)"
+    fi
+    # and the control: a READABLE source still writes, so the refusal above is
+    # not just "this tool never writes a report".
+    rm -f "${work}/rand.json"
+    ( cd "${work}" && "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>&1 )
+    if [ -s "${work}/rand.json" ]; then
+        pass "${tool}: readable random source still writes"
+    else
+        fail "${tool}: readable random source" "no report written"
+    fi
+    # C25 (OC-131): the SURVIVOR arm. The report just written is the planted
+    # earlier report; it must be a complete one (rule 7: the baseline is
+    # asserted accepted, not assumed), and the refusal over the same path must
+    # not leave it there. Pre-fix binaries leave it byte-identical.
+    if [ -s "${work}/rand.json" ] && grep -q '"errorLevel" : 0' "${work}/rand.json"; then
+        planted=$(sha_of "${work}/rand.json")
+        before=$(sha_of "${work}/capture.bin")
+        ( cd "${work}" && EA_TEST_RANDOM_SOURCE=/nonexistent/no-random \
+            "${bindir}/${tool}" -i -q -o rand.json capture.bin ${rtail} >/dev/null 2>rand2.err )
+        rc=$?
+        if [ "${rc}" -ne 0 ] \
+           && [ ! -e "${work}/rand.json" ] \
+           && grep -q 'cannot read randomness' "${work}/rand2.err" \
+           && [ "$(sha_of "${work}/capture.bin")" = "${before}" ] \
+           && [ "$(ls -1 "${work}" | grep -c '\.tmp\.')" -eq 0 ]; then
+            pass "${tool}: an earlier report does not survive the refusal"
+        elif [ -e "${work}/rand.json" ] && [ "$(sha_of "${work}/rand.json")" = "${planted}" ]; then
+            fail "${tool}: an earlier report does not survive the refusal" \
+                 "STALE -- the planted complete report survived byte-identical (rc ${rc})"
+        else
+            fail "${tool}: an earlier report does not survive the refusal" \
+                 "rc=${rc} report=$([ -e "${work}/rand.json" ] && echo present || echo absent) capture_identical=$([ "$(sha_of "${work}/capture.bin")" = "${before}" ] && echo yes || echo no)"
+        fi
+    else
+        fail "${tool}: an earlier report does not survive the refusal" \
+             "HARNESS: no complete report to plant (the readable-source control did not produce one)"
+    fi
+    rm -f "${work}/rand.json" "${work}/rand2.err"
+done
+
 ctl_assess "-o NAME still assesses"        -i -a -q -o f04ctl.json capture.bin 1
 ctl_assess "-oNAME (attached) still assesses" -i -a -q -of04ctl.json capture.bin 1
 ctl_assess "-vo NAME (cluster) still assesses" -i -a -q -vo f04ctl.json capture.bin 1
@@ -309,6 +412,12 @@ else
     fail "control: a real --version still prints the banner" "the option was broken, not fixed"
 fi
 
+if [ "${cases}" -ne "${DECLARED_CASES}" ]; then
+    printf '  %-52s FAIL  declared %s, ran %s\n' "the declared case count" "${DECLARED_CASES}" "${cases}"
+    fails=$((fails + 1))
+fi
+
+printf 'regression-output-aliasing: %d of %d declared cases ran\n' "${cases}" "${DECLARED_CASES}"
 if [ "${fails}" -eq 0 ]; then
     echo "regression-output-aliasing: PASS"
     exit 0

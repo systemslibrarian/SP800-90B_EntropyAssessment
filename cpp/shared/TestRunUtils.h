@@ -60,6 +60,7 @@ using namespace std;
 #include <cerrno>
 #include <fcntl.h>   // O_CREAT|O_EXCL|O_NOFOLLOW for the temp write (F03)
 #include <ctime>
+#include "os_random.h"   // the temporary's random suffix (F03 / OC-121 / C25; launch backport)
 
 enum FileIdentity { FILES_DISTINCT, FILES_SAME, FILES_UNDETERMINED };
 
@@ -126,6 +127,74 @@ static FileIdentity sameFileIdentity(const char *outPath, const char *inPath) {
 static string g_protectedInputPath;
 
 static void protectInputPath(const string &path) { g_protectedInputPath = path; }
+
+// C25 (OC-131, backported to the launch branch): A REFUSED CLAIM MUST NOT
+// LEAVE AN EARLIER REPORT LOOKING CURRENT.
+//
+// C14 claims the -o path with a fail-closed placeholder the moment it is known,
+// so that whatever happens next the path holds either this run's report or a
+// report saying the run did not complete. OC-121 added a way for that claim to
+// FAIL: if the random source cannot be read, the writer refuses, nothing is
+// written -- and a complete errorLevel-0 report from an earlier run survives
+// byte-identical at the path. Measured on Windows (OC-130) and on macOS through
+// the test seam. So when the claim cannot be written, whatever is at the path
+// is REMOVED, and the run exits nonzero as before: the caller sees a failing
+// exit status and no file. unlink does not follow a symlink, so a planted link
+// is removed rather than followed.
+//
+// WHAT IT WILL NOT TOUCH. The input capture (A05): the same identity test every
+// write target gets, refused when identity is uncertain. A directory or a
+// device: only a regular file or a symlink is removed. If removal fails the
+// message says the file must not be trusted, and the exit status is still
+// nonzero.
+static bool removeStaleReportTarget(const string &path) {
+    if (!g_protectedInputPath.empty()
+        && sameFileIdentity(path.c_str(), g_protectedInputPath.c_str()) != FILES_DISTINCT) {
+        fprintf(stderr,
+            "Error: not removing '%s': it is the same file as the input '%s' (or that\n"
+            "       cannot be ruled out).\n", path.c_str(), g_protectedInputPath.c_str());
+        return false;
+    }
+#ifdef _WIN32
+    DWORD attrs = GetFileAttributesA(path.c_str());
+    if (attrs == INVALID_FILE_ATTRIBUTES) {
+        DWORD e = GetLastError();
+        if (e == ERROR_FILE_NOT_FOUND || e == ERROR_PATH_NOT_FOUND) return true;   // nothing there
+        fprintf(stderr, "Error: cannot examine '%s' (Win32 error %lu); if a file is there it must not\n"
+                        "       be read as this run's report.\n", path.c_str(), (unsigned long) e);
+        return false;
+    }
+    if (attrs & FILE_ATTRIBUTE_DIRECTORY) {
+        fprintf(stderr, "Error: not removing '%s': it is a directory.\n", path.c_str());
+        return false;
+    }
+    if (!DeleteFileA(path.c_str())) {
+        fprintf(stderr, "Error: an earlier file at '%s' could not be removed (Win32 error %lu); it MUST\n"
+                        "       NOT be read as this run's report.\n", path.c_str(), (unsigned long) GetLastError());
+        return false;
+    }
+#else
+    struct stat st;
+    if (lstat(path.c_str(), &st) != 0) {
+        if (errno == ENOENT) return true;   // nothing there
+        fprintf(stderr, "Error: cannot examine '%s' (%s); if a file is there it must not be read as\n"
+                        "       this run's report.\n", path.c_str(), strerror(errno));
+        return false;
+    }
+    if (!S_ISREG(st.st_mode) && !S_ISLNK(st.st_mode)) {
+        fprintf(stderr, "Error: not removing '%s': it is not a regular file or a symlink.\n", path.c_str());
+        return false;
+    }
+    if (unlink(path.c_str()) != 0) {
+        fprintf(stderr, "Error: an earlier file at '%s' could not be removed (%s); it MUST NOT be read\n"
+                        "       as this run's report.\n", path.c_str(), strerror(errno));
+        return false;
+    }
+#endif
+    fprintf(stderr, "Note: the earlier file at '%s' has been removed so it cannot be mistaken for\n"
+                    "      this run's report.\n", path.c_str());
+    return true;
+}
 
 // Find the -o value and the first operand the way getopt will, so the identity
 // check can run before anything is written. Handles clusters ("-vo out"),
@@ -347,12 +416,32 @@ bool writeJsonReport(const string &path, const string &json) {
         char suffix[24];
         unsigned long r1 = (unsigned long) time(NULL) ^ ((unsigned long) getpid() << 16);
         // a second, independent draw so two processes in the same second differ
+        // OC-121 (backported to the launch branch): NO DERIVABLE FALLBACK. IF
+        // THE RANDOM SOURCE CANNOT BE READ, REFUSE TO WRITE. This fell back to
+        // `r2 = (attempt * 2654435761) ^ r1`, which at attempt 0 is `r1`
+        // EXACTLY -- a suffix fully predictable from the clock and the pid --
+        // and on a native Windows binary, which has no /dev/urandom, that was
+        // EVERY write. C25 (OC-131): the read goes through os_random.h --
+        // /dev/urandom on POSIX as before, the Windows system CSPRNG under
+        // _WIN32, the EA_TEST_RANDOM_SOURCE override everywhere -- and when the
+        // read fails the caller that claims the -o target removes whatever is
+        // there (removeStaleReportTarget), so a refused claim cannot leave an
+        // earlier report looking current.
         unsigned long r2 = 0;
-        {
-            FILE *rf = fopen("/dev/urandom", "rb");
-            if (rf) { if (fread(&r2, sizeof(r2), 1, rf) != 1) r2 = 0; fclose(rf); }
+        std::string why;
+        if (!eaReadOsRandom(&r2, sizeof(r2), &why)) {
+            fprintf(stderr,
+                "Error: cannot read randomness from '%s' to name a temporary file\n"
+                "       beside the report '%s' (%s). Refusing to write: the fallback name\n"
+                "       would be derivable from the clock and the process id, and a\n"
+                "       predictable temporary path is the defect F03 closed. Nothing\n"
+                "       has been written; the input is untouched.\n",
+                eaRandomSourceName(), path.c_str(), why.c_str());
+            return false;
         }
-        if (r2 == 0) r2 = (unsigned long) (attempt * 2654435761UL) ^ r1;
+        // a zero low word would leave the suffix derivable from r1 alone
+        // (probability 2^-32 per draw); draw again rather than accept it
+        if ((r2 & 0xffffffffUL) == 0) continue;
         snprintf(suffix, sizeof(suffix), ".tmp.%08lx%08lx",
                  (unsigned long)(r1 & 0xffffffffUL), (unsigned long)(r2 & 0xffffffffUL));
         tmp = path + suffix;

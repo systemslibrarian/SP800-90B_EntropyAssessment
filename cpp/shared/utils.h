@@ -34,6 +34,7 @@
 #include <signal.h>
 #endif
 #include "test_run_base.h"
+#include "os_random.h"   // seed(): the OS CSPRNG on every platform (C25, OC-131; launch backport)
 
 #define SWAP(x, y) do { int s = x; x = y; y = s; } while(0)
 #define INOPENINTERVAL(x, a, b) (((a)>(b))?(((x)>(b))&&((x)<(a))):(((x)>(a))&&((x)<(b))))
@@ -788,24 +789,23 @@ void xoshiro_jump(unsigned int jump_count, uint64_t *xoshiro256starstarState) {
 	}
 }
 
-//This seeds using an external source
-//We use /dev/urandom here. 
-//We could alternately use the RdRand (or some other OS or HW source of pseudo-random numbers)
+//This seeds using an external source.
+//
+// OC-42 / C25 (OC-131, backported to the launch branch): this opened
+// /dev/urandom by name and exit(-1)'d when it could not, which on a native
+// MinGW binary is always -- measured on Windows, OC-48: ea_iid and ea_restart
+// passed every required test and then died here. The read now goes through
+// os_random.h, which is /dev/urandom on POSIX (unchanged), the Windows system
+// CSPRNG under _WIN32, and the EA_TEST_RANDOM_SOURCE override everywhere.
+// Still fail-closed: a source that cannot be read exits rather than seeding
+// deterministically, and the message says so instead of announcing a
+// reversion that never happened.
 void seed(uint64_t *xoshiro256starstarState){
-	FILE *infp;
-
-	if((infp=fopen("/dev/urandom", "rb"))==NULL) {
-		perror("Can't open random source. Reverting to a deterministic seed.");
-		exit(-1);
-	} 
-
-	if(fread(xoshiro256starstarState, sizeof(uint64_t), 4, infp)!=4) {
-		perror("Can't read random seed");
-		exit(-1);
-	}
-
-	if(fclose(infp)!=0) {
-		perror("Couldn't close random source");
+	std::string why;
+	if(!eaReadOsRandom(xoshiro256starstarState, 4 * sizeof(uint64_t), &why)) {
+		fprintf(stderr, "Error: cannot read 32 bytes from the random source (%s) to seed the permutation\n"
+		                "       tests: %s. Refusing to continue with a deterministic seed; the\n"
+		                "       permutation tests were not run.\n", eaRandomSourceName(), why.c_str());
 		exit(-1);
 	}
 }

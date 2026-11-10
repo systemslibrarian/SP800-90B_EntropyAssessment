@@ -37,7 +37,17 @@ endif
 #CXXFLAGS = -g -Wno-padded -Wno-disabled-macro-expansion -Wno-gnu-statement-expression -Wno-bad-function-cast -fopenmp -O1 -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fdenormal-fp-math=ieee -msse2 -march=native -I/usr/include/jsoncpp
 #static analysis in clang using
 #scan-build-15 --use-c++=/usr/bin/clang++-15 make
-LIB = -lbz2 -lpthread -ldivsufsort -ldivsufsort64 $(OPENMP_LIB)
+# C25 (OC-131, launch backport): on Windows the OS randomness both seed() and
+# the report writer read comes from BCryptGenRandom in bcrypt.dll
+# (shared/os_random.h). Its import library ships with mingw-w64's CRT, so this
+# adds no package beyond the toolchain. uname -s in an MSYS2 shell is
+# MINGW64_NT-... in both the MINGW64 and UCRT64 shells, MSYS_NT-... in msys.
+ifneq (,$(findstring MINGW,$(UNAME_S))$(findstring MSYS,$(UNAME_S))$(findstring CYGWIN,$(UNAME_S)))
+PLATFORM_LIB = -lbcrypt
+else
+PLATFORM_LIB =
+endif
+LIB = -lbz2 -lpthread -ldivsufsort -ldivsufsort64 $(OPENMP_LIB) $(PLATFORM_LIB)
 COND_LIB = -lmpfr -lgmp
 SHARED_LIB = -ljsoncpp -lcrypto
 INC =
