@@ -1,0 +1,58 @@
+name: launch equivalence (Linux x86-64)
+
+# The launch branch's measurement that its tools and the base commit's tools
+# produce byte-identical deterministic figures on Linux x86-64 -- NIST's
+# reference platform. Dispatched by hand on the launch branch; the macOS half
+# of the same measurement is run on the owner's host with the same script.
+# Nothing here changes a source file.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  equivalence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # the base commit must be present to build
+
+      - name: Install build dependencies (as x86-64-platform-facts does)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libbz2-dev libdivsufsort-dev \
+                                  libjsoncpp-dev libssl-dev python3
+          mkdir -p logs
+
+      - name: Measure base against head on the corpus
+        run: |
+          LAUNCH_EQ_WORK=/tmp/ea-eq bash cpp/selftest/launch-equivalence.sh 2>&1 | tee logs/launch-equivalence.log
+          test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Keep the compared artefacts
+        if: always()
+        run: |
+          mkdir -p logs/out-base logs/out-head
+          cp /tmp/ea-eq/out-base/* logs/out-base/ 2>/dev/null || true
+          cp /tmp/ea-eq/out-head/* logs/out-head/ 2>/dev/null || true
+          cp /tmp/ea-eq/seed*.json /tmp/ea-eq/rseed*.json /tmp/ea-eq/live.txt logs/ 2>/dev/null || true
+          ( cd /tmp/ea-eq && sha256sum base/cpp/ea_* head/cpp/ea_* ) > logs/binaries.sha256 2>/dev/null || true
+
+      - name: The branch's own suite, informational (the pin's suite, with the aliasing regression at its current declaration)
+        if: always()
+        run: |
+          sudo apt-get install -y python3-yaml clang libomp-dev >/dev/null 2>&1 || true
+          ( cd cpp && make -B non_iid iid restart ) > logs/build-head.log 2>&1
+          ( cd cpp/selftest && ./run-all-checks.sh --allow-known-platform-deltas ) > logs/run-all-checks.log 2>&1 || true
+          tail -3 logs/run-all-checks.log
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: launch-equivalence-linux
+          path: logs/
+          retention-days: 90
