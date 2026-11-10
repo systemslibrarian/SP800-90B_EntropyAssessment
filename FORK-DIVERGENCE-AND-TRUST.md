@@ -465,7 +465,7 @@ of creating defects as of removing them.
   path and to an existing one, exit 127 (`exit(-1)` under the MSYS2 shell,
   `OC-48`), `Error: cannot read randomness from '/dev/urandom' …`, no file;
   where the 2026-10-21 run on `c2eb519` had left a file for all three. The
-  repair: run `WINRUN2` on `FIXSHA` — all three tools write a complete
+  repair: run `42614157033` on `a05fce7` — all three tools write a complete
   `errorLevel 0` report at a fresh path and over an existing one, `ea_iid` and
   `ea_restart` run the permutation tests to a figure (so `seed()`'s death,
   `OC-42`, ended with it), and the `A05` regression passes 49 of 49 declared
@@ -473,7 +473,7 @@ of creating defects as of removing them.
   **EXECUTED on macOS arm64** through the test seam: against the `a9b4ac1`
   binaries the three survivor cases FAIL "STALE -- the planted complete report
   survived byte-identical (rc 255)" with every other case passing; against the
-  repair, 49 of 49. x86-64 `X86RUN2` green. Dated by ancestry: `b53ff5d` is in
+  repair, 49 of 49. x86-64 `42614160811` green. Dated by ancestry: `b53ff5d` is in
   `5f79f74` and not in `c2eb519`, so the defect predated the 2026-11-08 merges.
 - **STATUS.** **REPAIRED** (`OC-131`, `fix/windows-random-source`). One reader
   of operating-system randomness, `cpp/shared/os_random.h`: `/dev/urandom` on
@@ -1044,7 +1044,7 @@ unresolved.**
   and the first run there since that commit reached it on every write. One
   OS-randomness reader now serves `seed()` and the report writer on every
   platform (section A.2), and a refused `-o` claim removes the stale report.
-  Measured on Windows before and after (runs `42551339098`, `WINRUN2`).
+  Measured on Windows before and after (runs `42551339098`, `42614157033`).
 
 - **`C22c`'s two copies — CLOSED (`OC-125`, 2026-10-26).** The six family
   ceilings now live only in
@@ -1187,7 +1187,7 @@ consequences are larger than the first decision's:
 - Every *"independent verification remains"* note in
   `audits/2026-09-30/FINDINGS-TRACKER.md` — including `C-01`'s, which is
   otherwise fixed — **resolves here and nowhere else.**
-- The four defects in **section A.2** were introduced by this fork's own repairs,
+- The five defects in **section A.2** (four until `C25`, 2026-11-09) were introduced by this fork's own repairs,
   three of them by one repair interacting with another. **The mechanism that
   produces those is reviewed by nobody but its author**, and rule 12 — declare
   the pair, test the pair — is the whole of the mitigation.

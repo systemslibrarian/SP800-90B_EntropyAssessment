@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-# Windows platform facts, run inside the MSYS2 MINGW64 shell by
+# Windows platform facts, run inside an MSYS2 shell by
 # .github/workflows/windows-platform-facts.yml. CHANGES NO SOURCE.
+#
+# OC-132: THE ENVIRONMENT IS A PARAMETER, NOT A CONSTANT. This job ran under
+# MINGW64 only (msvcrt). MSYS2's default, and the shipping desktop build's
+# candidate, is UCRT64 (the Universal CRT), whose packages carry the
+# mingw-w64-ucrt-x86_64- prefix and whose root is /ucrt64. Everything below
+# that named a package prefix or a root now reads it from MSYSTEM, so the same
+# gate set runs under both and the two verdict logs can be compared line for
+# line. Nothing else changes.
 #
 # Every question records whether it passed or failed into logs/verdict.log, and
 # each step's detail into its own log. A step that cannot run says so rather
@@ -25,8 +33,13 @@ note() { printf '  %s\n' "$*"; }
 #             -lcrypto                 -> openssl
 #   COND_LIB  -lmpfr -lgmp             -> NOT NEEDED: ea_conditioning is not a
 #                                        supported target (SUPPORTED_TARGETS)
-PKGS="mingw-w64-x86_64-gcc make mingw-w64-x86_64-bzip2 mingw-w64-x86_64-jsoncpp mingw-w64-x86_64-openssl"
-DIVSUF_CANDIDATES="mingw-w64-x86_64-libdivsufsort mingw-w64-x86_64-divsufsort libdivsufsort divsufsort"
+case "${MSYSTEM:-MINGW64}" in
+  UCRT64)  PFX=mingw-w64-ucrt-x86_64; ROOT=/ucrt64 ;;
+  MINGW64) PFX=mingw-w64-x86_64;      ROOT=/mingw64 ;;
+  *) echo "windows-facts.sh: MSYSTEM='${MSYSTEM:-unset}' is not an environment this job measures (MINGW64, UCRT64)" >&2; exit 2 ;;
+esac
+PKGS="${PFX}-gcc make ${PFX}-bzip2 ${PFX}-jsoncpp ${PFX}-openssl"
+DIVSUF_CANDIDATES="${PFX}-libdivsufsort ${PFX}-divsufsort libdivsufsort divsufsort"
 
 # THE SERIAL SHIM (a labelled DEVIATION, and no source is touched).
 #
@@ -125,12 +138,12 @@ deps)
   echo "  the test is a LINK test: compile and link a tiny -fopenmp program." >> "$L"
   echo "  (run 4 used a file glob and matched only /mingw64/lib/libgomp.spec," >> "$L"
   echo "   a spec file, and so reported an OpenMP runtime that does not link.)" >> "$L"
-  find /mingw64 -name 'libgomp*' 2>/dev/null | sed 's/^/    file: /' >> "$L"
+  find "$ROOT" -name 'libgomp*' 2>/dev/null | sed 's/^/    file: /' >> "$L"
   if have_libgomp; then
     gate PASS "the OpenMP runtime LINKS: -fopenmp produces a working executable"
   else
     echo "  -lgomp does NOT link; asking pacman which package would provide it" >> "$L"
-    for pk in mingw-w64-x86_64-openmp mingw-w64-x86_64-gcc-libs mingw-w64-x86_64-libgomp; do
+    for pk in ${PFX}-openmp ${PFX}-gcc-libs ${PFX}-libgomp; do
       if pacman -Si "$pk" >/dev/null 2>&1; then
         printf '  candidate %-36s AVAILABLE -- installing\n' "$pk" >> "$L"
         pacman -S --noconfirm --needed "$pk" >> "$L" 2>&1 || true
@@ -157,7 +170,7 @@ deps)
   else
     echo >> "$L"
     echo "=== DEVIATION: building libdivsufsort from source (BUILDING.md's route) ===" >> "$L"
-    pacman -S --noconfirm --needed mingw-w64-x86_64-cmake mingw-w64-x86_64-make git >> "$L" 2>&1 || true
+    pacman -S --noconfirm --needed ${PFX}-cmake ${PFX}-make git >> "$L" 2>&1 || true
     ( set -x
       rm -rf /tmp/divsufsort
       git clone --depth 1 https://github.com/y-256/libdivsufsort /tmp/divsufsort
@@ -175,7 +188,7 @@ deps)
       cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DBUILD_SHARED_LIBS=OFF -DBUILD_DIVSUFSORT64=ON \
-            -DCMAKE_INSTALL_PREFIX=/mingw64 .
+            -DCMAKE_INSTALL_PREFIX="$ROOT" .
       cmake --build . --target install
     ) >> "$L" 2>&1 \
       && gate PASS "libdivsufsort built and installed from source (DEVIATION, not a package)" \

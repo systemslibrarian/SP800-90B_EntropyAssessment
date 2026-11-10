@@ -70,16 +70,16 @@ and the Windows `A05` verdict is **NOT ESTABLISHED** for the current tree.
 Fail-closed by exit status, **not** by the `-o` path: an earlier complete
 report survives the refusal byte-identical.
 
-**Repaired the same day (`OC-131`, `fix/windows-random-source`, `FIXSHA`).**
+**Repaired the same day (`OC-131`, `fix/windows-random-source`, `a05fce7`).**
 The owner answered the Windows question — ShannonPad's Windows bundle will run
 these tools — so `C25` and `seed()` were repaired together: one reader of
 OS randomness (`cpp/shared/os_random.h`: `/dev/urandom` on POSIX unchanged,
 `BCryptGenRandom` under `_WIN32`, `EA_TEST_RANDOM_SOURCE` everywhere), and a
-refused `-o` claim now removes the stale report. Windows run `WINRUN2`: every
+refused `-o` claim now removes the stale report. Windows run `42614157033`: every
 gate green but `libdivsufsort`, all three tools writing complete reports,
 `ea_iid` and `ea_restart` running the permutation tests to a figure, the
 `A05` regression 49 of 49 with its six platform skips counted. x86-64
-`X86RUN2` green; the macOS suite green; the survivor cases FAIL against the
+`42614160811` green; the macOS suite green; the survivor cases FAIL against the
 `a9b4ac1` binaries and PASS against the repair.
 
 ## What the campaign established
@@ -149,8 +149,9 @@ defence.
   none. **REPAIRED is not REVIEWED, and on this project it never becomes
   REVIEWED.** The consequence is stated rather than implied: **the verdict is
   partially established, PERMANENTLY.** That is the ceiling, not a waypoint.
-  Every repair, every instrument, and every one of the four defects this
-  fork's own repairs introduced (`FORK-DIVERGENCE-AND-TRUST.md` section A.2)
+  Every repair, every instrument, and every one of the five defects this
+  fork's own repairs introduced (`FORK-DIVERGENCE-AND-TRUST.md` section A.2;
+  four until `C25` joined them on 2026-11-09)
   is reviewed by nobody but its author. Rule 12 — the repair-interaction
   declaration — is the whole of the mitigation.
 - **Nothing is reported upstream**, including the strongest findings the
@@ -162,8 +163,23 @@ defence.
   `mutation-lib`'s own landing contract, and the `O_EXCL` atomic write whose
   load-bearing condition has been eliminated (`OC-117`, `OC-126`).
 - **`F10`/`C01`** is unreachable at width 1 by proof and is estimator numerics
-  above it; **`seed()`** is deferred under the vendor reference qualification.
-  Both are owner decisions, not tasks.
+  above it; an owner decision, not a task. (**`seed()`** stood here as
+  deferred under the vendor reference qualification until 2026-11-09, when
+  the owner's decision that ShannonPad's Windows bundle runs these tools
+  repaired it, `OC-131`.)
+- **`F03`'s symlink limbs are unestablished on Windows, and stay so by
+  decision** (`OC-132`). The regression plants a symlink where the report
+  writer's temporary will be created and asserts the writer does not follow
+  it; on `windows-latest` `ln -s` under MSYS2 **copies** the file instead of
+  linking it (`winsymlinks` unset), so the premise cannot be arranged and the
+  six cases are counted as `SKIP`, not run. Native Windows symlinks need
+  Developer Mode or administrator rights on the runner, and building that is
+  declined: the limb is `O_EXCL` on a path an attacker cannot predict, and
+  what the Windows runs DO establish is the half that matters for the
+  shipped behaviour — `removeStaleReportTarget`'s `_WIN32` path is exercised
+  there by the three survivor cases, which **PASS on every Windows run since
+  the repair** (`42614157033`, `42619734831`): a planted complete report is
+  removed by the refusal, the capture untouched, no `.tmp.` debris.
 
 ## What waits on the device
 
@@ -570,7 +586,7 @@ finding, not a broken job: as of 2026-10-20 the expected failures are
 `libdivsufsort` having no package, `C18`, and the three `C24` gates. Anything
 else failing is new.
 As of 2026-11-09 (`OC-131`) the expected set is **`libdivsufsort` alone**:
-`C18`, `C24`, `C25` and `seed()` all pass there (run `WINRUN2`).
+`C18`, `C24`, `C25` and `seed()` all pass there (run `42614157033`).
 
 A mutation harness that reports `MUTATION-DID-NOT-APPLY` is telling you the
 harness is broken, not the guard (`mutation-lib.sh`, `OC-33`). An item in the

@@ -13635,3 +13635,60 @@ created for it in `OC-130` into A.2 as REPAIRED, and A.4 is retired empty;
 that bucket is answered; the inventory's Windows paragraphs, staleness set and
 `BUILDING.md`'s Windows table and prose say what is now measured; the
 aliasing count is 49 everywhere the docs state it.
+
+## OC-132 — the merged master measured (one-run lag); three placeholders that reached master, and the scan that now forbids them; `F03`'s Windows limbs named as unestablished; the Windows job becomes a MINGW64/UCRT64 matrix
+
+### The runs the merge fired, recorded
+
+| workflow | run | tree | result |
+|---|---|---|---|
+| `x86-64-platform-facts` (on push) | `42619736593` | `e3719d2` | green — 20 gates `PASS`, suite `27 passed, 0 failed, 2 could not run` |
+| `windows-platform-facts` (dispatched by hand, MINGW64) | `42619734831` | `e3719d2` | green — 21 `PASS`, the one `FAIL` is `libdivsufsort has NO mingw-w64 package` (expected, listed); tally clean; `A05` 49 of 49 with six skips counted; all three tools write complete reports (`rep_iid.json` 3,644 bytes, `rep_restart.json` 6,459); the three survivor cases `PASS` |
+
+Nothing red beyond the expected gate, so nothing to diagnose. The merged
+master's platform findings are therefore the same as the branch head's
+(`OC-131`), as they should be: the merge commit changed no file.
+
+### Three placeholders reached master
+
+The `OC-131` record was applied by an edit script that carried the run ids as
+variables and the prose as literals, so `WINRUN2`, `FIXSHA` and `X86RUN2`
+(unquoted here, so that the scan below does not fire on its own account) stood
+in **eight places** in `BUILDING.md`, `FORK-DIVERGENCE-AND-TRUST.md` and
+`CLOSING-INVENTORY.md` where `42614157033`, `a05fce7` and `42614160811`
+belonged — and `regression-docs` passed, because nothing read for them. A
+placeholder is a claim with no content, which is the shape this record exists
+to refuse. Filled here, and `regression-docs.sh` gains check 10b: a backticked
+token from the vocabulary that has leaked once, or an obvious generic
+(`PLACEHOLDER`, `TODO`, `TBD`, `XXX`), fails the docs check; a grep that did
+not run fails it too rather than reporting "none". The list is extended the
+next time a new name leaks, not reasoned about.
+
+### `F03`'s symlink limbs on Windows: unestablished, and staying so
+
+Recorded in `CLOSING-INVENTORY.md`'s "What remains permanently open". The
+regression plants a symlink at the temporary's exact path and asserts the
+writer does not follow it; on `windows-latest`, MSYS2's `ln -s` **copies**
+(`winsymlinks` unset), so the premise cannot be arranged and the six cases
+are counted as `SKIP`. Native symlinks need Developer Mode or administrator
+rights on the runner; building that is **declined** by the owner. What the
+Windows runs do establish is the half the shipped behaviour depends on:
+`removeStaleReportTarget`'s `_WIN32` path (`GetFileAttributesA`,
+`DeleteFileA`) is exercised by the three survivor cases, `PASS` on every
+Windows run since the repair (`42614157033`, `42619734831`) — a planted
+complete report removed by the refusal, the capture untouched, no `.tmp.`
+debris.
+
+### The Windows job now runs under both MSYS2 environments
+
+The desktop build will ship this binary, so which MSYS2 environment it is
+built under has to be settled by measurement, not by `BUILDING.md`'s
+recommendation (which has said UCRT64 since 2026-09-30 while every run was
+MINGW64). `windows-facts.sh` now reads `MSYSTEM` and derives the package
+prefix and root (`mingw-w64-x86_64-`/`/mingw64`; `mingw-w64-ucrt-x86_64-`/
+`/ucrt64`; anything else is refused), and the workflow is a two-element
+matrix with one artefact per environment. The gate set is identical; the
+decision — UCRT64 as the ship target if green, MINGW64 kept if it differs —
+and the comparison of the two verdict logs and runtime figures are the next
+entry's. **Does not establish**, yet, anything about UCRT64: the dispatch of
+this commit is the first run.

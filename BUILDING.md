@@ -484,7 +484,7 @@ override on every platform, because it is the only way the refusal is ever
 exercised on a host that has `/dev/urandom`. And a claim of the `-o` target
 that cannot be written now **removes** whatever is at that path before the
 nonzero exit (never the input capture; never a directory or a device). Measured
-on `windows-latest` (run `WINRUN2`): all three tools write complete reports at
+on `windows-latest` (run `42614157033`): all three tools write complete reports at
 a fresh path and over an existing one.
 
 **What Windows can and cannot do today.** All three tools build and link, with
@@ -531,7 +531,7 @@ permutation stage is unreachable on Windows for any standards-sized input. The
 **Superseded 2026-11-09 (`OC-131`):** the source change this correction said
 was needed has been made — `seed()` and the report writer read
 `BCryptGenRandom` under `_WIN32` — so the route works for all three tools.
-Measured on MINGW64 (run `WINRUN2`), not on UCRT64, whose headers and import
+Measured on MINGW64 (run `42614157033`), not on UCRT64, whose headers and import
 library are the same mingw-w64 sources.
 
 **Correction (2026-10-19, `OC-42`), itself narrowed on 2026-10-20 by `OC-48`:

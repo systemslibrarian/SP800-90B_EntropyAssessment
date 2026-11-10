@@ -63,6 +63,16 @@ env:
 
 jobs:
   windows-facts:
+    # OC-132: the same gate set under both MSYS2 environments this fork could
+    # ship from -- MINGW64 (msvcrt), measured since OC-48, and UCRT64 (the
+    # Universal CRT), MSYS2's default. windows-facts.sh reads MSYSTEM and
+    # derives the package prefix and root; each environment is its own job
+    # with its own artefact, so the two verdict logs can be compared.
+    strategy:
+      fail-fast: false
+      matrix:
+        msystem: [MINGW64, UCRT64]
+    name: windows-facts (${{ matrix.msystem }})
     runs-on: windows-latest
     timeout-minutes: 240
     defaults:
@@ -97,7 +107,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh deps" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: 2. Build each supported tool separately
@@ -105,7 +115,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh build" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: 3. The float environment, printed
@@ -113,7 +123,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh floats" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: "4. R-1 affected set (prediction: 155 of 255 if x87 80-bit)"
@@ -121,7 +131,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh r1" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: "5. Runtime behaviour of all three tools (prediction: seed kills two)"
@@ -129,7 +139,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh runtime" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: "5b. A05: the Win32 file-identity guard, run on Windows"
@@ -137,7 +147,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh a05" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: 6. The build-state probe on a platform it has never met
@@ -145,7 +155,7 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh probe" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - name: 7. Verdict
@@ -167,12 +177,12 @@ jobs:
         run: |
           "%MSYS2_ROOT%\usr\bin\bash.exe" -lc "cd '%CD:\=/%' && bash .github/scripts/windows-facts.sh tally" 2>&1
         env:
-          MSYSTEM: MINGW64
+          MSYSTEM: ${{ matrix.msystem }}
           CHERE_INVOKING: 1
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: windows-platform-facts
+          name: windows-platform-facts-${{ matrix.msystem }}
           path: logs/
           retention-days: 90

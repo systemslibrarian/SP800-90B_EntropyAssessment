@@ -456,6 +456,21 @@ if [ "${DOCS_N}" -lt 10 ]; then
     bad "the stale-claim scan's document list is implausibly small:" "${DOCS_N} file(s)"
 fi
 
+# ------------------------------- 10b. unfilled record placeholders (OC-132)
+# The OC-131 revision reached master with three edit-script placeholders --
+# WINRUN2, FIXSHA, X86RUN2 -- standing in eight places where a run id or a
+# commit belonged: the script carried them as variables and the prose as
+# literals, and nothing here read for them. A placeholder is a claim with no
+# content. The scan fails on the vocabulary that has leaked once and on the
+# obvious generic names, in backticks, which is how a record quotes an id; the
+# list is extended, not reasoned about, the next time a new name leaks.
+echo
+ph=$(grep -nE -m 3 '`(WINRUN|X86RUN|FIXSHA|MERGESHA|X86VERDICT|X86RESULT|PLACEHOLDER|TODO|TBD|XXX)[0-9]*`' ${DOCS_ALL} 2>/dev/null)
+phrc=$?
+if [ "${phrc}" -gt 1 ]; then bad "the placeholder scan did not run (grep exit ${phrc}):" "its silence means nothing"
+elif [ -z "${ph}" ]; then note "no unfilled placeholder token in the docs:" "none, over ${DOCS_N} file(s)"
+else bad "unfilled placeholder tokens in the record:" "${ph}"; fi
+
 # ------------------------------- 11. NIST attributions in cpp/ comments
 # Every reply on this fork's upstream issues and pull requests came from
 # @joshuaehill, who is not a NIST account and who deferred to "the NIST folks"
