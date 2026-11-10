@@ -268,6 +268,41 @@ EOF
   else
     gate FAIL "NOT x87 80-bit: $(sed -n 's/^LDBL_MANT_DIG *= *//p' "$L") -- every R-1 prediction below is about THIS format"
   fi
+  # OC-133: THE FORMAT IS ONE QUESTION; PRINTING IT IS ANOTHER. The first UCRT64
+  # run printed LDBL_MIN, LDBL_TRUE_MIN and LDBL_EPSILON above as the same
+  # 1.40785e-312 -- UCRT's own printf formats a long double as a 64-bit double
+  # -- while the gate above passed on the integer LDBL_MANT_DIG. The tools are
+  # C++, and g++ on mingw-w64 routes stdio through mingw's own printf
+  # (__USE_MINGW_ANSI_STDIO), so the tools' 22-digit long double figures were
+  # IDENTICAL under both environments; but that was inferred from the runtime
+  # log, and the question deserves its own probe in the tools' language. Both
+  # the printf and the iostream route are measured, with the defaults the
+  # Makefile uses (no -D__USE_MINGW_ANSI_STDIO either way).
+  cat > /tmp/fpxx.cpp <<'EOF'
+#include <cstdio>
+#include <cfloat>
+#include <iostream>
+#include <iomanip>
+int main(){
+  long double third = 1.0L / 3.0L;
+  std::printf("C++ printf   LDBL_EPSILON = %Lg\n", LDBL_EPSILON);
+  std::cout << "C++ iostream LDBL_EPSILON = " << std::setprecision(5) << LDBL_EPSILON << "\n";
+  std::printf("C++ printf   1/3 to 22 digits = %.22Lg\n", third);
+  return 0;
+}
+EOF
+  { echo "=== the same values printed from C++, the tools' language ==="; g++ -std=c++11 -O0 -o /tmp/fpxx.exe /tmp/fpxx.cpp && /tmp/fpxx.exe; } >> "$L" 2>&1
+  sed -n '/^=== the same values/,$p' "$L"
+  if grep -q 'C++ printf   LDBL_EPSILON = 1.0842e-19' "$L" && grep -q 'C++ iostream LDBL_EPSILON = 1.0842e-19' "$L"; then
+    gate PASS "long double PRINTS correctly from C++ by both printf and iostream (LDBL_EPSILON 1.0842e-19) -- the tools' figures are not truncated to double by the CRT"
+  else
+    gate FAIL "long double does NOT print correctly from C++ here -- every long double figure the tools print on this toolchain is suspect; read $L"
+  fi
+  if grep -q 'LDBL_EPSILON    = 1.0842e-19' "$L"; then
+    gate PASS "platform fact: C printf %Lg prints long double correctly on this CRT"
+  else
+    gate PASS "platform fact: C printf %Lg does NOT print long double on this CRT ($(sed -n 's/^LDBL_EPSILON *= *//p' "$L" | head -1)) -- a C helper on this toolchain must not print long double through the CRT; the tools are C++ and the gate above measures them directly"
+  fi
   if grep -qE 'sizeof\(long\) *= *4' "$L"; then
     gate PASS "LLP64 confirmed (long is 32-bit) -- this is the C18 precondition"
   else

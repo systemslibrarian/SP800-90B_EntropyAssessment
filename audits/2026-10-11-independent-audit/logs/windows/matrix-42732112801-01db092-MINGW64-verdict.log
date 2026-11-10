@@ -1,0 +1,22 @@
+GATE FAIL   libdivsufsort has NO mingw-w64 package -- this is THE dependency finding
+GATE PASS   every other Makefile dependency is packaged
+GATE PASS   toolchain and packaged libraries installed
+GATE PASS   the OpenMP runtime LINKS after installing a candidate package
+GATE PASS   libdivsufsort built and installed from source (DEVIATION, not a package)
+GATE PASS   compiles and links: ea_non_iid
+GATE PASS   compiles and links: ea_iid
+GATE PASS   compiles and links: ea_restart
+GATE PASS   x87 80-bit long double, as predicted for MinGW
+GATE PASS   LLP64 confirmed (long is 32-bit) -- this is the C18 precondition
+GATE PASS   R-1 affected set is 155 of 255 -- the Linux x87 prediction CONFIRMED
+GATE PASS   Pr(X >= 1) is non-negative in every run here -- no C18 overflow at this input size
+GATE PASS   C24 REPAIRED: the current writer replaces an existing report on this platform (case 2 OK)
+GATE PASS   and the OLD bare-rename writer still FAILS here, which is why C24 needed a platform primitive
+GATE PASS   platform fact: rename(2) here REFUSES an existing destination (errno 17), which is why the writer uses MoveFileEx under _WIN32
+GATE PASS   C25 REPAIRED: all three tools wrote a complete (errorLevel 0) -o report on Windows, the temporary named through the system CSPRNG
+GATE PASS   C24's own symptom is absent (no 'could not put the report in place'); the write itself is proved by the file gate above, not by this absence
+GATE PASS   ea_non_iid runs the whole non-IID battery and produces a figure -- the half of OC-42 that predicted this is CONFIRMED
+GATE PASS   ea_iid ran the permutation tests and produced a figure: seed() has a Windows random source (OC-42's death repaired, C25/OC-131)
+GATE PASS   ea_restart ran the permutation tests and produced a figure: seed() has a Windows random source (OC-42's death repaired, C25/OC-131)
+GATE PASS   A05 guard holds on Windows: every alias refused, the capture intact, and a distinct -o path still assesses
+GATE PASS   probe calibrated on Windows and gave a real verdict

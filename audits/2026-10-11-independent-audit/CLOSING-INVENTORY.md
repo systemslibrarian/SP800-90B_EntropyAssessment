@@ -358,7 +358,7 @@ reason it is supposed to fail for.
 | job | host | trigger |
 |---|---|---|
 | `.github/workflows/x86-64-platform-facts.yml` | `ubuntu-latest` — x86-64 glibc, x87 80-bit `long double` | every push to `master` and every PR |
-| `.github/workflows/windows-platform-facts.yml` | `windows-latest` — MSYS2 MINGW64, x87 80-bit, **LLP64** | manual only; it answers questions and gates nothing |
+| `.github/workflows/windows-platform-facts.yml` | `windows-latest` — MSYS2 **UCRT64 (the ship toolchain, `OC-133`) and MINGW64**, a two-job matrix; x87 80-bit, **LLP64** | manual only; it answers questions and gates nothing |
 
 Everything that was in this bucket has left it:
 

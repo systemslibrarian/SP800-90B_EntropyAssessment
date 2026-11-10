@@ -1,0 +1,9 @@
+gcc.exe (Rev6, Built by MSYS2 project) 16.2.0
+sizeof(long double) = 16
+LDBL_MANT_DIG   = 64
+LDBL_MIN_EXP    = -16381
+LDBL_MIN        = 3.3621e-4932
+LDBL_TRUE_MIN   = 3.6452e-4951
+LDBL_EPSILON    = 1.0842e-19
+FLT_EVAL_METHOD = 0
+sizeof(long)    = 4   (LLP64 on Windows: expect 4)

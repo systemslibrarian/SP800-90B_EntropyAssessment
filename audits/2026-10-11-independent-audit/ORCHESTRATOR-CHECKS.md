@@ -13652,7 +13652,7 @@ master's platform findings are therefore the same as the branch head's
 ### Three placeholders reached master
 
 The `OC-131` record was applied by an edit script that carried the run ids as
-variables and the prose as literals, so `WINRUN2`, `FIXSHA` and `X86RUN2`
+variables and the prose as literals, so WINRUN2, FIXSHA and X86RUN2
 (unquoted here, so that the scan below does not fire on its own account) stood
 in **eight places** in `BUILDING.md`, `FORK-DIVERGENCE-AND-TRUST.md` and
 `CLOSING-INVENTORY.md` where `42614157033`, `a05fce7` and `42614160811`
@@ -13660,7 +13660,7 @@ belonged — and `regression-docs` passed, because nothing read for them. A
 placeholder is a claim with no content, which is the shape this record exists
 to refuse. Filled here, and `regression-docs.sh` gains check 10b: a backticked
 token from the vocabulary that has leaked once, or an obvious generic
-(`PLACEHOLDER`, `TODO`, `TBD`, `XXX`), fails the docs check; a grep that did
+(PLACEHOLDER, TODO, TBD, XXX), fails the docs check; a grep that did
 not run fails it too rather than reporting "none". The list is extended the
 next time a new name leaks, not reasoned about.
 
@@ -13692,3 +13692,74 @@ decision — UCRT64 as the ship target if green, MINGW64 kept if it differs —
 and the comparison of the two verdict logs and runtime figures are the next
 entry's. **Does not establish**, yet, anything about UCRT64: the dispatch of
 this commit is the first run.
+
+## OC-133 — the ship toolchain is MSYS2 UCRT64: the same gate set under UCRT64 and MINGW64, identical to every printed digit, and the one difference measured and fenced
+
+### The matrix run
+
+`42732112801` on `01db092`, dispatched by hand, two jobs: `windows-facts
+(MINGW64)` and `windows-facts (UCRT64)`, both `success`. The two `verdict.log`
+files are **byte-identical** — 21 `PASS`, the one `FAIL` the expected
+`libdivsufsort has NO mingw-w64 package`; both tallies clean. The toolchains:
+`mingw-w64-x86_64-gcc 16.2.0-6` and `mingw-w64-ucrt-x86_64-gcc 16.2.0-6`;
+`uname -s` reports `MINGW64_NT-10.0-26100` in **both** shells, so the
+Makefile's `-lbcrypt` rule applies to both without change. The R-1 sweep logs
+are identical (155 of 255). The A05 regression: 49 of 49 in both, the same
+six skips. All three tools write complete reports in both.
+
+**Every printed runtime figure is identical between the two environments**:
+every `Literal … Estimate:` line at full precision — including the t-Tuple
+`p-hat_max = 0.5275569070895033270104`, a `long double` printed to 22 digits —
+`Pr(X >= 1)` for rows and columns, `H_original`, `H_r`, `H_c`, `H_I`,
+`min(H_r, H_c, H_I)`, every `** Passed` line, `X_cutoff`, `X_max`. The only
+diff in the extracted figures is one byte in `rep_restart.json`'s length
+(6,459 against 6,458): the permutation-test counters inside it differ run to
+run by design, since `seed()` draws fresh randomness. Logs:
+`logs/windows/matrix-42732112801-01db092-{MINGW64,UCRT64}-*`.
+
+### The one difference, and why it does not reach the tools
+
+`03-float-environment.log` differs in three lines. The C probe prints
+`LDBL_MIN`, `LDBL_TRUE_MIN` and `LDBL_EPSILON` with `%Lg`; under MINGW64 they
+are `3.3621e-4932`, `3.6452e-4951`, `1.0842e-19`, and under UCRT64 **all
+three are `1.40785e-312`**. `LDBL_MANT_DIG = 64` and `sizeof(long double) =
+16` are the same in both: the format is x87 80-bit in both environments, and
+what differs is **UCRT's own `printf`, which formats a `long double` as a
+64-bit double**. The x87 gate passed in both because it reads the integer, not
+the printed value — correct, but it meant the printing question was never
+asked. It matters because this fork's figures are `long double` in places and
+are printed at up to 22 digits.
+
+The tools are C++, and g++ on mingw-w64 routes `printf` and `iostream`
+through mingw's own formatting (`__USE_MINGW_ANSI_STDIO`), which is why the
+22-digit figures above are identical. That was **inferred** from the runtime
+log; the `floats` stage now **measures** it: a C++ probe compiled by `g++`
+with the Makefile's defaults prints `LDBL_EPSILON` by `printf` and by
+`iostream` and `1/3` to 22 digits, and a gate fails unless both routes print
+`1.0842e-19`. A second gate records the C-`printf` fact as a platform fact in
+either direction (`PASS` with different text, never `FAIL`, because it is not
+a defect in anything this fork ships). The first run of those gates is the
+dispatch of this commit, recorded next by the one-run lag.
+
+### The decision
+
+**MSYS2 UCRT64 is the one ship toolchain** — green on the identical gate set,
+identical figures, and MSYS2's default. **MINGW64 is measured and green and
+is not the ship target.** `BUILDING.md` now says exactly that at the head of
+its Windows section and in the UCRT64 route's heading, and adds two fences
+from the difference above: no C helper that prints `long double` through the
+CRT, and `__USE_MINGW_ANSI_STDIO` never defined to 0. `CLOSING-INVENTORY.md`'s
+job table names both environments and the ship target.
+
+### Also in this entry
+
+The placeholder scan `OC-132` added fired first on `OC-132`'s own prose, which
+quoted the token names in backticks two sentences after saying it would not;
+unquoted, and the check passes. The x86-64 run `01db092` fired,
+`42732114088`, was in progress at the time of writing and is recorded next.
+
+**Does not establish.** Anything about the long double path that the three
+runtime invocations and the probe do not reach; MINGW64-vs-UCRT64 identity on
+inputs other than `w1.bin` (one input, one width — the identity is of the
+code path those exercise, and the selftest's eleven reference files are not
+run in the Windows job). Nothing upstream.

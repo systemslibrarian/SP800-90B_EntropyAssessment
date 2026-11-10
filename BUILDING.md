@@ -421,7 +421,28 @@ and `gh` with no `-R` resolves to **upstream** — measured: a bare
 repository (`OC-93`). The full account is `OC-48` in
 `audits/2026-10-11-independent-audit/ORCHESTRATOR-CHECKS.md`.
 
-**What is measured** (MSYS2 MINGW64, gcc 16.2.0):
+**Ship toolchain: MSYS2 UCRT64** (decided 2026-11-10, `OC-133`). The job
+runs the identical gate set under both MSYS2 environments this fork could
+ship from, as a two-job matrix. Run `42732112801` on `01db092`: **UCRT64 and
+MINGW64 produced identical verdict logs** (21 `PASS`, the one expected
+`libdivsufsort` `FAIL`), identical R-1 sweeps, and **identical runtime figures
+to every printed digit** — every estimator line, `Pr(X >= 1)`, the 22-digit
+long double `p-hat_max`, `H_r`/`H_c`/`min(H_r, H_c, H_I)` — on the same input;
+both write all three reports and pass the `A05` regression 49 of 49. The one
+measured difference is in the **C** float probe: UCRT's own `printf` formats a
+`long double` as a 64-bit double (`LDBL_EPSILON` printed as `1.40785e-312`
+where MINGW64's msvcrt route printed `1.0842e-19`), while the integer
+`LDBL_MANT_DIG = 64` and the tools' 22-digit figures are the same. The tools
+are C++, and g++ on mingw-w64 routes stdio through mingw's own `printf`; a
+C++ probe now measures that directly on every run. **UCRT64 is the one ship
+toolchain** (it is also MSYS2's default). **MINGW64 is measured, green, and
+not the ship target.** Build the shipped binary from the UCRT64 shell as the
+route below says; do not add a C helper that prints `long double` through the
+CRT, and do not define `__USE_MINGW_ANSI_STDIO` to 0.
+
+**What is measured** (MSYS2 MINGW64 since 2026-10-20 and UCRT64 since
+2026-11-10, gcc 16.2.0 in both; the table is the MINGW64 snapshot of
+2026-10-20 with its later corrections):
 
 | | |
 |---|---|
@@ -526,13 +547,15 @@ called in the permutation stage, and `C18` fails the LRS test first, so the
 permutation stage is unreachable on Windows for any standards-sized input. The
 `ea_non_iid` half of that prediction is confirmed.
 
-### Route: MSYS2 UCRT64 (MinGW-w64 GCC) — recommended
+### Route: MSYS2 UCRT64 (MinGW-w64 GCC) — THE SHIP TOOLCHAIN, measured 2026-11-10
 
 **Superseded 2026-11-09 (`OC-131`):** the source change this correction said
 was needed has been made — `seed()` and the report writer read
 `BCryptGenRandom` under `_WIN32` — so the route works for all three tools.
-Measured on MINGW64 (run `42614157033`), not on UCRT64, whose headers and import
-library are the same mingw-w64 sources.
+Measured on MINGW64 (run `42614157033`) and, since 2026-11-10, on UCRT64 too
+(run `42732112801`, `OC-133`): identical verdicts and figures. `uname -s` in the
+UCRT64 shell is `MINGW64_NT-…`, so the Makefile's `-lbcrypt` applies there
+without change.
 
 **Correction (2026-10-19, `OC-42`), itself narrowed on 2026-10-20 by `OC-48`:
 the reasoning below is sound but UNTESTED on Windows, because `C18` stops both

@@ -1,0 +1,56 @@
+[build-state] ea_non_iid                         asserts=LIVE    sha256=855b7d1a465526e3
+[build-state] ea_iid                             asserts=LIVE    sha256=c03ff5210f62e194
+[build-state] ea_restart                         asserts=LIVE    sha256=0a0fb3c069cb0336
+  platform link semantics: hard link aliases=yes  symlink aliases=no
+  ea_non_iid -o capture.bin  refused, capture intact   PASS
+  ea_non_iid -o ./capture.bin  refused, capture intact PASS
+  ea_non_iid -o /tmp/ea-alias.mUxC6T/capture.bin  refused, capture intact PASS
+  ea_non_iid -o sub/../capture.bin  refused, capture intact PASS
+  ea_non_iid -o hardlink.bin  refused, capture intact  PASS
+  ea_non_iid -o symlink.bin                            SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  ea_iid -o capture.bin  refused, capture intact       PASS
+  ea_iid -o ./capture.bin  refused, capture intact     PASS
+  ea_iid -o /tmp/ea-alias.mUxC6T/capture.bin  refused, capture intact PASS
+  ea_iid -o sub/../capture.bin  refused, capture intact PASS
+  ea_iid -o hardlink.bin  refused, capture intact      PASS
+  ea_iid -o symlink.bin                                SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  ea_restart -o capture.bin  refused, capture intact   PASS
+  ea_restart -o ./capture.bin  refused, capture intact PASS
+  ea_restart -o /tmp/ea-alias.mUxC6T/capture.bin  refused, capture intact PASS
+  ea_restart -o sub/../capture.bin  refused, capture intact PASS
+  ea_restart -o hardlink.bin  refused, capture intact  PASS
+  ea_restart -o symlink.bin                            SKIP  ln -s does not alias on this platform (MSYS2 copies)
+  control: a distinct -o path still assesses           PASS
+  control: the capture is untouched by a successful run PASS
+  ea_non_iid symlink planted at the temp path          SKIP  ln -s does not alias here (MSYS2 copies)
+  ea_iid symlink planted at the temp path              SKIP  ln -s does not alias here (MSYS2 copies)
+  ea_restart symlink planted at the temp path          SKIP  ln -s does not alias here (MSYS2 copies)
+  ea_non_iid -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid -vo --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid -qo --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid -Z --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -vo --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -qo --version absent-data  refused (exit 127), no version banner PASS
+  ea_iid -Z --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -o --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -vo --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -qo --version absent-data  refused (exit 127), no version banner PASS
+  ea_restart -Z --version absent-data  refused (exit 127), no version banner PASS
+  ea_non_iid: unreadable random source refused, nothing written PASS
+  ea_non_iid: readable random source still writes      PASS
+  ea_non_iid: an earlier report does not survive the refusal PASS
+  ea_iid: unreadable random source refused, nothing written PASS
+  ea_iid: readable random source still writes          PASS
+  ea_iid: an earlier report does not survive the refusal PASS
+  ea_restart: unreadable random source refused, nothing written PASS
+  ea_restart: readable random source still writes      PASS
+  ea_restart: an earlier report does not survive the refusal PASS
+  control: -o NAME still assesses  assessed, no banner PASS
+  control: -oNAME (attached) still assesses  assessed, no banner PASS
+  control: -vo NAME (cluster) still assesses  assessed, no banner PASS
+  control: -qo NAME (cluster) still assesses  assessed, no banner PASS
+  control: a real --version still prints the banner    PASS
+regression-output-aliasing: 49 of 49 declared cases ran
+regression-output-aliasing: PASS
+ls -i on a built binary (st_ino as the shell sees it): 281474976712483 cpp/ea_iid.exe
