@@ -284,11 +284,17 @@ for f in "${work}"/corpus/*.bin; do
         n_same=$((n_same + 1)); ok "${name}: ea_non_iid report identical" "(rc ${rc})"
         fb=$(python3 "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" "${work}/out-base/${name}.nonIID.json" 2>&1 | grep -vE 'dateTimeStamp|\.json' )
         fh=$(python3 "${repo}/audits/2026-10-11-independent-audit/oracles/entropy_floor.py" "${work}/out-head/${name}.nonIID.json" 2>&1 | grep -vE 'dateTimeStamp|\.json' )
-        n_cmp=$((n_cmp + 1))
         if ! printf '%s' "${fb}" | grep -qE 'MEASURED FLOOR|EVALUATED MARGIN|FLOOR'; then
-            bad "${name}: entropy floor did not evaluate on the base report" "$(printf '%s' "${fb}" | head -1 | cut -c1-80)"
-        elif [ "${fb}" = "${fh}" ]; then n_same=$((n_same + 1)); ok "${name}: entropy floor identical" "$(printf '%s' "${fb}" | grep -E 'FLOOR|MARGIN|floor' | head -1 | cut -c1-60)"
-        else bad "${name}: entropy floor DIFFERS" ""; fi
+            # the oracle refused (a short, non-compliant input): two identical
+            # refusals are not a floor comparison and are not counted as one;
+            # two DIFFERENT refusals are a difference
+            if [ "${fb}" = "${fh}" ]; then say "${name}: entropy floor" "the oracle refused identically on both reports -- no floor to compare: $(printf '%s' "${fb}" | head -1 | cut -c1-70)"
+            else bad "${name}: entropy floor: the oracle's refusal DIFFERS between the builds" ""; fi
+        else
+            n_cmp=$((n_cmp + 1))
+            if [ "${fb}" = "${fh}" ]; then n_same=$((n_same + 1)); ok "${name}: entropy floor identical" "$(printf '%s' "${fb}" | grep -E 'FLOOR|MARGIN|floor' | head -1 | cut -c1-60)"
+            else bad "${name}: entropy floor DIFFERS" ""; fi
+        fi
     elif [ ! -s "${work}/out-base/${name}.nonIID.json" ]; then
         say "${name}: ea_non_iid report" "neither build wrote a report (rc ${rc}); exit status agreed"
     else
