@@ -1,0 +1,83 @@
+launch-equivalence: base b63aff1, head 4df5cd9, host Linux x86_64, c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+  built b63aff1 (base)                                         PASS
+  built HEAD (this tree)                                       PASS
+  sha256 ea_non_iid                                            base a0ac41a5623717bd  head 2ecfddfc0200572d
+  sha256 ea_iid                                                base bc08e204ca2e520a  head 1151b0db69ccb629
+  sha256 ea_restart                                            base f90153d21939dc43  head 50b2a0cf0a8b9135
+  generated gen_bit.bin                                        sha256 ff65facdd27726b0
+  generated gen_byte.bin                                       sha256 0992bd9565efd2b3
+  generated gen_biased.bin                                     sha256 f67335aad73721de
+  corpus                                                       14 inputs
+  ea_iid fields the OS seed changes (measured)                 .testCases[0].permutationTestResults 
+  ea_restart fields the OS seed changes (measured)             .testCases[0].permutationTestResults 
+  comparator live                                              PASS  a 1e-15 perturbation of hOriginal is reported
+  biased-random-bits: ea_non_iid -vv transcript identical      PASS  (rc 0, 67 lines)
+  biased-random-bits: ea_non_iid report identical              PASS  (rc 0)
+  biased-random-bits: entropy floor identical                  PASS    MEASURED FLOOR (C22a), literal  0.014406571036457113   (h'
+  biased-random-bits: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  biased-random-bits: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  biased-random-bytes: ea_non_iid -vv transcript identical     PASS  (rc 0, 111 lines)
+  biased-random-bytes: ea_non_iid report identical             PASS  (rc 0)
+  biased-random-bytes: entropy floor identical                 PASS    C01/F10 MultiMMC chained lookup          3.690e-04    EVAL
+  biased-random-bytes: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  biased-random-bytes: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  data.pi: ea_non_iid -vv transcript identical                 PASS  (rc 0, 67 lines)
+  data.pi: ea_non_iid report identical                         PASS  (rc 0)
+  data.pi: entropy floor identical                             PASS    MEASURED FLOOR (C22a), literal  0.56617758403918961   (h' 
+  data.pi: ea_iid report identical outside the seeded groups   PASS  (rc 1)
+  gen_biased: ea_non_iid -vv transcript identical              PASS  (rc 0, 111 lines)
+  gen_biased: ea_non_iid report identical                      PASS  (rc 0)
+  gen_biased: entropy floor identical                          PASS    C01/F10 MultiMMC chained lookup          3.690e-04    EVAL
+  gen_biased: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  gen_biased: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  gen_bit: ea_non_iid -vv transcript identical                 PASS  (rc 0, 67 lines)
+  gen_bit: ea_non_iid report identical                         PASS  (rc 0)
+  gen_bit: entropy floor identical                             PASS    MEASURED FLOOR (C22a), literal  0.84129042387787445   (h' 
+  gen_bit: ea_iid report identical outside the seeded groups   PASS  (rc 0)
+  gen_bit: ea_restart report identical outside the seeded groups PASS  (rc 0)
+  gen_byte: ea_non_iid -vv transcript identical                PASS  (rc 0, 111 lines)
+  gen_byte: ea_non_iid report identical                        PASS  (rc 0)
+  gen_byte: entropy floor identical                            PASS    C01/F10 MultiMMC chained lookup          3.690e-04    EVAL
+  gen_byte: ea_iid report identical outside the seeded groups  PASS  (rc 0)
+  gen_byte: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  normal: ea_non_iid -vv transcript identical                  PASS  (rc 0, 113 lines)
+  normal: ea_non_iid report identical                          PASS  (rc 0)
+  normal: entropy floor identical                              PASS    C01/F10 MultiMMC chained lookup          3.690e-04    EVAL
+  normal: ea_iid report identical outside the seeded groups    PASS  (rc 0)
+  normal: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  rand1_short: ea_non_iid -vv transcript identical             PASS  (rc 0, 72 lines)
+  rand1_short: ea_non_iid report identical                     PASS  (rc 0)
+  rand1_short: entropy floor identical                         PASS
+  rand1_short: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  rand4_short: ea_non_iid -vv transcript identical             PASS  (rc 0, 116 lines)
+  rand4_short: ea_non_iid report identical                     PASS  (rc 0)
+  rand4_short: entropy floor identical                         PASS
+  rand4_short: ea_iid: exit status seeded on this input        base 1 then 0, head 0 -- the verdict flips run to run
+  rand4_short: ea_iid report identical outside what the seed changes ON THIS INPUT PASS  base differs from itself in: .IID .errorClass .errorLevel .errorMessage .testCases[0].hAssessed .testCases[0].passedIidPermutationTests .testCases[0].permutationTestResults 
+  rand8_short: ea_non_iid -vv transcript identical             PASS  (rc 0, 116 lines)
+  rand8_short: ea_non_iid report identical                     PASS  (rc 0)
+  rand8_short: entropy floor identical                         PASS
+  rand8_short: ea_iid report identical outside the seeded groups PASS  (rc 1)
+  ringOsc-nist: ea_non_iid -vv transcript identical            PASS  (rc 0, 67 lines)
+  ringOsc-nist: ea_non_iid report identical                    PASS  (rc 0)
+  ringOsc-nist: entropy floor identical                        PASS    MEASURED FLOOR (C22a), literal  0.1230857281160406   (h' -
+  ringOsc-nist: ea_iid report identical outside the seeded groups PASS  (rc 1)
+  ringOsc-nist: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  truerand_1bit: ea_non_iid -vv transcript identical           PASS  (rc 0, 67 lines)
+  truerand_1bit: ea_non_iid report identical                   PASS  (rc 0)
+  truerand_1bit: entropy floor identical                       PASS    MEASURED FLOOR (C22a), literal  0.82631707515410624   (h' 
+  truerand_1bit: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  truerand_1bit: ea_restart report identical outside the seeded groups PASS  (rc 0)
+  truerand_4bit: ea_non_iid -vv transcript identical           PASS  (rc 0, 111 lines)
+  truerand_4bit: ea_non_iid report identical                   PASS  (rc 0)
+  truerand_4bit: entropy floor identical                       PASS    C01/F10 MultiMMC chained lookup          3.690e-04    EVAL
+  truerand_4bit: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  truerand_4bit: ea_restart report identical outside the seeded groups PASS  (rc 255)
+  truerand_8bit: ea_non_iid -vv transcript identical           PASS  (rc 0, 111 lines)
+  truerand_8bit: ea_non_iid report identical                   PASS  (rc 0)
+  truerand_8bit: entropy floor identical                       PASS    C01/F10 MultiMMC chained lookup          3.690e-04    EVAL
+  truerand_8bit: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  truerand_8bit: ea_restart report identical outside the seeded groups PASS  (rc 255)
+
+launch-equivalence: 66 of 66 comparisons identical; base b63aff1, head 4df5cd9; seeded fields excluded: .testCases[0].permutationTestResults .testCases[0].permutationTestResults 
+launch-equivalence: PASS

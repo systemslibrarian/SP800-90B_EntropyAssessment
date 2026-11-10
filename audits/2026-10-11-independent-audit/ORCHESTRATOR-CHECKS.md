@@ -13783,3 +13783,90 @@ recorded as one: the instrument caught its author within the hour of being
 written, which is what it is for, and the fix was in the next commit. The
 push of this entry fires x86-64 again; recorded, if at all, by the usual lag.
 Nothing upstream.
+
+## OC-135 — `launch/b63aff1-windows`: ShannonPad's launch pin made to run on native Windows, with every figure measured unchanged; and master's own Linux red (the divergence document 41 commits stale) re-measured
+
+### Why a branch off the pin
+
+ShannonPad pins `b63aff1` (2026-10-21) for launch and will not take master,
+because master changes the `C22a` floor (`76875b5`, `76a21a6`) and other
+figures (`7a21378`'s `C01` margin, `745b396`'s `hAssessed` field). At
+`b63aff1`, `ea_iid` and `ea_restart` die at `seed()` on native Windows
+(`OC-42`, measured `OC-48`), so a Windows bundle built from the pin cannot
+produce evidence. The owner asked for a branch carrying ONLY the repairs the
+three tools need to run correctly on Windows under MSYS2 UCRT64 — nothing
+that changes a computed figure — with "nothing changes" proved by
+measurement on Linux x86-64 and macOS, and the Windows gates green under
+UCRT64. Not merged into master; never to be.
+
+### What the pin already had, and what was backported
+
+`b63aff1` already carries `C18` (`int64_t` `n_choose_2`), `C24` (`MoveFileEx`),
+`A05`'s Win32 identity path and `F03`'s guarded temporary (the Windows run of
+2026-10-21 on `c2eb519`, seven commits before it, measured those). What it
+lacked: `seed()` opened `/dev/urandom` by name, and the report writer's
+temporary-name randomness read `/dev/urandom` with a derivable fallback that
+on Windows was every write. Backported (branch commit `8087899`), each with
+its source on master: `cpp/shared/os_random.h` (`7a51882`, hardened
+`a05fce7`); `seed()` in `utils.h` (`7a51882`); `TestRunUtils.h` — `OC-121`'s
+refusal hunk from `b53ff5d` (that file's hunk only) and `7a51882`'s read via
+`os_random.h` and `removeStaleReportTarget`; the three mains' one-line
+removal call (`7a51882`); the Makefile's `-lbcrypt` rule (`7a51882`) with the
+pin's `CXXFLAGS` untouched; master's `regression-output-aliasing.sh`
+(`b53ff5d`, `1f8c768`, `7a51882`, `a05fce7`: 49 declared) and master's
+Windows job (`a05fce7`, `01db092`, `afe86ab`). Not taken: `OC-104`, `PROV-01`,
+`AA-04`, `PROV-15`, `OC-121`'s Makefile and oracle hunks, every `C22a`/`C22c`/
+`C01` change, everything under `audits/`. Two independent derivations from
+the git history, each adversarially re-verified, produced the same list; the
+one refinement they added is recorded in the branch's `LAUNCH-BRANCH.md`
+(the pin's own `run-all-checks.sh` tally carries `F11`'s `OC-92` defect, so its
+summary on Linux is not evidence; the equivalence measurement is).
+
+### "Nothing changes" — measured
+
+`cpp/selftest/launch-equivalence.sh` (on the branch) builds `b63aff1` and the
+branch head side by side on the host, runs the eleven `bin/` inputs plus three
+seeded generated streams through all three tools with both builds, and
+compares: `ea_non_iid`'s `-vv` transcript byte for byte and its JSON report;
+`ea_iid`'s and `ea_restart`'s reports with the fields the **same binary
+changes between two of its own runs** set aside — measured each run,
+printed, and required to be `.testCases[0].permutationTestResults` and
+nothing else (the `OC-53` method); the pin's own entropy-floor oracle on both
+reports; every exit status; and the comparator shown live (a 1e-15
+perturbation must be reported **by name**, or the script refuses). The pin's
+dead-guard detector flagged the first version for a verification status
+never read, and the flag was right: a crashed comparator would have passed
+for "live", and an oracle refusing on both builds for "floor identical" —
+both fixed (`c509822`, `c198614`).
+
+| platform | result |
+|---|---|
+| Linux x86-64 (`ubuntu-latest`, GCC 13.3), run `42766135452` on `c198614` | **63 of 63 identical, `PASS`** (earlier `42762513870` on `4df5cd9`: 66 of 66 with the three short-input oracle refusals still counted) |
+| macOS arm64 (this host, Apple clang 21), five foreground pieces at `c198614` | **63 of 63 identical** (11 + 18 + 10 + 10 + 14), same seeded set, same one seeded verdict (`rand4_short`'s IID verdict flips between two runs of the *base* binary) |
+| Windows (`windows-latest`, UCRT64 and MINGW64), run `42764657869` on `4df5cd9` (tool sources identical to the head; `42761417112` on `8087899` before it) | every gate green but the expected `libdivsufsort`; `A05` 49 of 49 with the three survivor cases `PASS`; the C++ `long double` print probe `PASS`; all three tools to a figure and a complete `errorLevel 0` report at a fresh path and over an existing one |
+
+The `C22a` floor printed identical on both builds on each host, with the
+pin's oracle: `0.84129042387787445` (`gen_bit`), `0.82631707515410624`
+(`truerand_1bit`), `0.56617758403918961` (`data.pi`), `0.1230857281160406`
+(`ringOsc-nist`); `biased-random-bits` `0.014406571036456107` on macOS and
+`…457113` on Linux — the known last-digit platform delta, identical in both
+builds on each host. Logs: `logs/launch/`.
+
+**Branch head `4e0b472`**, tree `0b0a27f1…`, `cpp/` tree
+`5ec0ebbce5f475ec26a417bc950d6cb38e88adfc`, `sha256(cpp/)`
+`eb2f54c3073b467752e25d6ecb93eb6ea6486301990fa627afc9fd0ac53b9de9` (over the
+tracked `cpp/` sources in path order). The `cpp/` difference from the pin is
+nine paths: the eight of the backport and `selftest/launch-equivalence.sh`.
+
+### Master's own red, re-measured
+
+The push of `OC-134` (`a3e37e2`) fired x86-64 `42738666505`, red on
+`regression-docs`: "the divergence document is stale: measured 41 commits
+behind HEAD (threshold 40)" — the rule `OC-91` wrote firing on time passing,
+not on a wrong figure. Re-measured at `a3e37e2` with
+`tools/measure-divergence.sh` and rewritten where it stands: 238 commits
+ahead; production 23 files, 2,778 insertions, 468 deletions; harness 58 /
+9,680 / 7; CI 5 / 1,643; evidence 1,008 / 109,853; docs 8 / 3,098 / 4; total
+1,102 / 127,052 / 479; executable churn 3,246 lines across 23 files; 86 % of
+the insertions are evidence. The push of this entry fires x86-64 again,
+recorded by the usual lag. Nothing upstream.

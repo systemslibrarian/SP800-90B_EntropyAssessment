@@ -1,6 +1,6 @@
 # Fork divergence and external trust
 
-**Measured at commit `34ceb59`, 2026-10-25.** Every count in this document
+**Measured at commit `a3e37e2`, 2026-11-09.** Every count in this document
 names the commit and date it was taken at. Reproduce them with
 `sh tools/measure-divergence.sh`; `cpp/selftest/regression-docs.sh` re-runs that
 script and fails if the figures below disagree with it.
@@ -141,24 +141,26 @@ existing entries are unchanged by this pass except for the additions named in
 
 ## §1 — Quantified divergence
 
-Measured at `11207ca`, **2026-10-25**, against upstream base
+Measured at `a3e37e2`, **2026-11-09**, against upstream base
 `87c104d0ed4cbc96103e7b8b38d6f2c7e0a6b289` (2026-05-26), which is the common
 ancestor. The fork is **0 commits behind**, so `base..HEAD` is the whole
-divergence.
+divergence. (Re-measured from `11207ca`, 2026-10-25, when the staleness check
+fired at 41 commits behind HEAD; the growth since is the aggressive audit's
+three repairs, `C25`/`seed()` and their instruments, and their records.)
 
 | Category | Files | Insertions | Deletions |
 |---|---:|---:|---:|
-| Production C++ and build | 21 | 2,337 | 450 |
-| Self-tests and regression harness | 53 | 7,951 | 7 |
-| CI workflows and scripts | 4 | 1,467 | — |
-| Audit and repair evidence | 951 | 99,218 | — |
-| Other documentation | 8 | 2,270 | 4 |
-| **total (text)** | **1,037** | **113,243** | **461** |
+| Production C++ and build | 23 | 2,778 | 468 |
+| Self-tests and regression harness | 58 | 9,680 | 7 |
+| CI workflows and scripts | 5 | 1,643 | — |
+| Audit and repair evidence | 1,008 | 109,853 | — |
+| Other documentation | 8 | 3,098 | 4 |
+| **total (text)** | **1,102** | **127,052** | **479** |
 | Binary reference artefacts | 2 | — | — |
 
-**197 commits ahead.** The headline is dominated by evidence: 88 % of the
-insertions are audit and repair records. **The executable delta is 2,787 lines
-of churn across 21 files** — not a cosmetic fork, and not a rewrite of the
+**238 commits ahead.** The headline is dominated by evidence: 86 % of the
+insertions are audit and repair records. **The executable delta is 3,246 lines
+of churn across 23 files** — not a cosmetic fork, and not a rewrite of the
 estimators.
 
 **That binary count read 36 four commits ago, and the discrepancy was a

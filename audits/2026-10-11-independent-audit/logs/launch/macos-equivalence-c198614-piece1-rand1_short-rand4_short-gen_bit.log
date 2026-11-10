@@ -1,0 +1,28 @@
+launch-equivalence: base b63aff1, head c198614, host Darwin arm64, Apple clang version 21.0.0 (clang-2100.4.1.1)
+  builds                                                       reused from /private/tmp/claude-501/-Users-gmcas-repos-SP800-90B-EntropyAssessment/204b56c2-3645-487d-aa86-fccec9fd2701/scratchpad/eqwork (LAUNCH_EQ_REUSE=1)
+  sha256 ea_non_iid                                            base 5ec355f2478e9f28  head 4d21295767264ad9
+  sha256 ea_iid                                                base 7ec195a7d2ec424b  head ec752ba01ae442c2
+  sha256 ea_restart                                            base 03b2cf72c35173a9  head 109fa68cacb79964
+  generated gen_bit.bin                                        sha256 ff65facdd27726b0
+  generated gen_byte.bin                                       sha256 0992bd9565efd2b3
+  generated gen_biased.bin                                     sha256 f67335aad73721de
+  corpus                                                       14 inputs
+  ea_iid fields the OS seed changes (measured)                 .testCases[0].permutationTestResults 
+  ea_restart fields the OS seed changes (measured)             .testCases[0].permutationTestResults 
+  comparator live                                              PASS  a 1e-15 perturbation of hOriginal is reported
+  gen_bit: ea_non_iid -vv transcript identical                 PASS  (rc 0, 67 lines)
+  gen_bit: ea_non_iid report identical                         PASS  (rc 0)
+  gen_bit: entropy floor identical                             PASS    MEASURED FLOOR (C22a), literal  0.84129042387787445   (h' 
+  gen_bit: ea_iid report identical outside the seeded groups   PASS  (rc 0)
+  gen_bit: ea_restart report identical outside the seeded groups PASS  (rc 0)
+  rand1_short: ea_non_iid -vv transcript identical             PASS  (rc 0, 72 lines)
+  rand1_short: ea_non_iid report identical                     PASS  (rc 0)
+  rand1_short: entropy floor                                   the oracle refused identically on both reports -- no floor to compare: 
+  rand1_short: ea_iid report identical outside the seeded groups PASS  (rc 0)
+  rand4_short: ea_non_iid -vv transcript identical             PASS  (rc 0, 116 lines)
+  rand4_short: ea_non_iid report identical                     PASS  (rc 0)
+  rand4_short: entropy floor                                   the oracle refused identically on both reports -- no floor to compare: 
+  rand4_short: ea_iid report identical outside the seeded groups PASS  (rc 0)
+
+launch-equivalence: 11 of 11 comparisons identical; base b63aff1, head c198614; seeded fields excluded: .testCases[0].permutationTestResults .testCases[0].permutationTestResults 
+launch-equivalence: PARTIAL (rand1_short rand4_short gen_bit); 0 difference(s) -- a PASS needs the whole corpus in one run
