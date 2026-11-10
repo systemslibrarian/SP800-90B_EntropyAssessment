@@ -200,15 +200,58 @@ fi
 [ "${harness}" -eq 0 ] || { echo "launch-equivalence: REFUSED (${harness} harness fault(s))"; exit 2; }
 
 # ---------------------------------------------------------------- the runs
-run_both() { # run_both <label> <outname> <tool> <args...>  (args use INPUT placeholder resolved by caller)
+run_both() { # run_both <label> <outname> <tool> <args...>; sets RC (agreed exit status) or returns 1 after a FAIL
+    # No command substitution around this: a FAIL printed inside $(...) would
+    # be captured into the variable instead of shown, and its count lost in
+    # the subshell -- which is exactly what happened to the first version.
     local label=$1 out=$2 tool=$3; shift 3
     local rc_b rc_h
     ( cd "${work}/out-base" && "${work}/base/cpp/${tool}" "$@" > "${out}.txt" 2>&1 ); rc_b=$?
     ( cd "${work}/out-head" && "${work}/head/cpp/${tool}" "$@" > "${out}.txt" 2>&1 ); rc_h=$?
-    if [ "${rc_b}" -ne "${rc_h}" ]; then bad "${label}: exit status" "base ${rc_b} head ${rc_h}"; return 1; fi
-    printf '%s' "${rc_b}"
+    if [ "${rc_b}" -ne "${rc_h}" ]; then
+        # THE BASELINE-AGAINST-ITSELF CONTROL (OC-53). ea_iid and ea_restart's
+        # exit status carries the permutation verdict, which the OS seed can
+        # flip on a marginal input. Before calling a difference a difference,
+        # run the BASE binary again on the same input: if it disagrees with
+        # itself, the status is seeded on this input and is noted, not failed.
+        case "${tool}" in
+            ea_iid|ea_restart)
+                local rc_b2
+                ( cd "${work}/out-base2" && "${work}/base/cpp/${tool}" "$@" > "${out}.txt" 2>&1 ); rc_b2=$?
+                if [ "${rc_b2}" -ne "${rc_b}" ]; then
+                    say "${label}: exit status seeded on this input" "base ${rc_b} then ${rc_b2}, head ${rc_h} -- the verdict flips run to run"
+                    RC="${rc_b}/${rc_b2}/${rc_h}"; return 0
+                fi ;;
+        esac
+        bad "${label}: exit status" "base ${rc_b} head ${rc_h}"; return 1
+    fi
+    RC=${rc_b}
 }
-mkdir -p "${work}/out-base" "${work}/out-head"
+# compare_seeded <label> <base.json> <head.json> <base2-rerun: tool args...>
+# The report comparison with the measured seeded fields excluded; if a
+# difference remains, the base binary is run again and the difference is
+# accepted only if the base differs from ITSELF in exactly those fields.
+compare_seeded() {
+    local label=$1 bj=$2 hj=$3 out=$4 tool=$5 seeded=$6; shift 6
+    if python3 "${work}/cmp.py" "${bj}" "${hj}" ${ALWAYS_EXCL} ${seeded} > "${work}/${out}.diff" 2>&1; then
+        n_same=$((n_same + 1)); ok "${label} identical outside the seeded groups" "(rc ${RC})"; return 0
+    fi
+    ( cd "${work}/out-base2" && "${work}/base/cpp/${tool}" "$@" > "${out}.rerun.txt" 2>&1 )
+    local bj2="${work}/out-base2/$(basename "${bj}")"
+    if [ -s "${bj2}" ]; then
+        local dh db2 extra
+        dh=$(python3 "${work}/leaves.py" "${bj}" "${hj}" | reduce_seeded)
+        db2=$(python3 "${work}/leaves.py" "${bj}" "${bj2}" | reduce_seeded)
+        extra=""
+        for p in ${dh}; do case " ${db2} " in *" ${p} "*) ;; *) extra="${extra} ${p}" ;; esac; done
+        if [ -z "${extra}" ]; then
+            n_same=$((n_same + 1)); ok "${label} identical outside what the seed changes ON THIS INPUT" "base differs from itself in:${dh:+ ${dh}}"; return 0
+        fi
+        bad "${label} DIFFERS beyond the seed" "${extra} (base-vs-head: ${dh}; base-vs-base: ${db2:-none})"; return 1
+    fi
+    bad "${label} DIFFERS" "$(head -2 "${work}/${out}.diff" | tr '\n' ' ')"; return 1
+}
+mkdir -p "${work}/out-base" "${work}/out-head" "${work}/out-base2"
 for f in "${work}"/corpus/*.bin; do
     name=$(basename "${f}" .bin)
     if [ -n "${LAUNCH_EQ_INPUTS:-}" ]; then
@@ -216,7 +259,7 @@ for f in "${work}"/corpus/*.bin; do
     fi
     nbytes=$(wc -c < "${f}" | tr -d ' ')
     # ---- ea_non_iid, -vv text (the selftest's artefact), byte for byte
-    rc=$(run_both "${name}: ea_non_iid -vv" "${name}.nonIID.vv" ea_non_iid -vv "${f}") || continue
+    run_both "${name}: ea_non_iid -vv" "${name}.nonIID.vv" ea_non_iid -vv "${f}" || continue; rc=${RC}
     n_cmp=$((n_cmp + 1))
     if cmp -s "${work}/out-base/${name}.nonIID.vv.txt" "${work}/out-head/${name}.nonIID.vv.txt"; then
         n_same=$((n_same + 1)); ok "${name}: ea_non_iid -vv transcript identical" "(rc ${rc}, $(wc -l < "${work}/out-base/${name}.nonIID.vv.txt" | tr -d ' ') lines)"
@@ -224,7 +267,7 @@ for f in "${work}"/corpus/*.bin; do
         bad "${name}: ea_non_iid -vv transcript DIFFERS" "$(diff "${work}/out-base/${name}.nonIID.vv.txt" "${work}/out-head/${name}.nonIID.vv.txt" | head -3 | tr '\n' ' ')"
     fi
     # ---- ea_non_iid JSON (-i -a), and the floor on it
-    rc=$(run_both "${name}: ea_non_iid json" "${name}.nonIID.json.run" ea_non_iid -i -a -q -o "${name}.nonIID.json" "${f}") || continue
+    run_both "${name}: ea_non_iid json" "${name}.nonIID.json.run" ea_non_iid -i -a -q -o "${name}.nonIID.json" "${f}" || continue; rc=${RC}
     n_cmp=$((n_cmp + 1))
     if [ -s "${work}/out-base/${name}.nonIID.json" ] && python3 "${work}/cmp.py" "${work}/out-base/${name}.nonIID.json" "${work}/out-head/${name}.nonIID.json" ${ALWAYS_EXCL} > "${work}/${name}.nonIID.diff" 2>&1; then
         n_same=$((n_same + 1)); ok "${name}: ea_non_iid report identical" "(rc ${rc})"
@@ -239,25 +282,21 @@ for f in "${work}"/corpus/*.bin; do
         bad "${name}: ea_non_iid report DIFFERS" "$(head -2 "${work}/${name}.nonIID.diff" | tr '\n' ' ')"
     fi
     # ---- ea_iid JSON, seeded fields excluded by measurement
-    rc=$(run_both "${name}: ea_iid" "${name}.iid.run" ea_iid -i -q -o "${name}.iid.json" "${f}") || continue
+    run_both "${name}: ea_iid" "${name}.iid.run" ea_iid -i -q -o "${name}.iid.json" "${f}" || continue; rc=${RC}
     n_cmp=$((n_cmp + 1))
-    if [ -s "${work}/out-base/${name}.iid.json" ] && python3 "${work}/cmp.py" "${work}/out-base/${name}.iid.json" "${work}/out-head/${name}.iid.json" ${ALWAYS_EXCL} ${IID_SEEDED} > "${work}/${name}.iid.diff" 2>&1; then
-        n_same=$((n_same + 1)); ok "${name}: ea_iid report identical outside the seeded groups" "(rc ${rc})"
-    elif [ ! -s "${work}/out-base/${name}.iid.json" ]; then
-        say "${name}: ea_iid report" "neither build wrote a report (rc ${rc}); exit status agreed"
+    if [ -s "${work}/out-base/${name}.iid.json" ]; then
+        compare_seeded "${name}: ea_iid report" "${work}/out-base/${name}.iid.json" "${work}/out-head/${name}.iid.json" "${name}.iid" ea_iid "${IID_SEEDED}" -i -q -o "${name}.iid.json" "${f}"
     else
-        bad "${name}: ea_iid report DIFFERS" "$(head -2 "${work}/${name}.iid.diff" | tr '\n' ' ')"
+        say "${name}: ea_iid report" "neither build wrote a report (rc ${rc}); exit status agreed"
     fi
     # ---- ea_restart JSON, only where the input is a 1000x1000 matrix (1,000,000 samples)
     if [ "${nbytes}" -eq 1000000 ]; then
-        rc=$(run_both "${name}: ea_restart" "${name}.rs.run" ea_restart -i -q -o "${name}.rs.json" "${f}" 0.9) || continue
+        run_both "${name}: ea_restart" "${name}.rs.run" ea_restart -i -q -o "${name}.rs.json" "${f}" 0.9 || continue; rc=${RC}
         n_cmp=$((n_cmp + 1))
-        if [ -s "${work}/out-base/${name}.rs.json" ] && python3 "${work}/cmp.py" "${work}/out-base/${name}.rs.json" "${work}/out-head/${name}.rs.json" ${ALWAYS_EXCL} ${RS_SEEDED} > "${work}/${name}.rs.diff" 2>&1; then
-            n_same=$((n_same + 1)); ok "${name}: ea_restart report identical outside the seeded groups" "(rc ${rc})"
-        elif [ ! -s "${work}/out-base/${name}.rs.json" ]; then
-            say "${name}: ea_restart report" "neither build wrote a report (rc ${rc}); exit status agreed"
+        if [ -s "${work}/out-base/${name}.rs.json" ]; then
+            compare_seeded "${name}: ea_restart report" "${work}/out-base/${name}.rs.json" "${work}/out-head/${name}.rs.json" "${name}.rs" ea_restart "${RS_SEEDED}" -i -q -o "${name}.rs.json" "${f}" 0.9
         else
-            bad "${name}: ea_restart report DIFFERS" "$(head -2 "${work}/${name}.rs.diff" | tr '\n' ' ')"
+            say "${name}: ea_restart report" "neither build wrote a report (rc ${rc}); exit status agreed"
         fi
     fi
 done
