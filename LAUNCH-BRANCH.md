@@ -60,8 +60,12 @@ from fixed seeds through all three tools with both builds, and compares:
   be reported, or the script refuses (exit 2).
 
 **macOS arm64 (Apple clang 21), host run, five pieces** (the host could not
-hold the whole corpus in one run; the pieces cover all 14 inputs once):
-17 + 15 + 10 + 10 + 14 = **66 comparisons, 66 identical, 0 differences**.
+hold the whole corpus in one run; the pieces cover all 14 inputs once, with
+the final script at `c198614`): 11 + 18 + 10 + 10 + 14 = **63 comparisons,
+63 identical, 0 differences**. On the three 10,000-sample inputs the pin's
+oracle refuses identically on both builds' reports, which is noted and not
+counted as a floor comparison (an earlier script version had counted those
+three as "identical", which was true of two refusals and not of a floor).
 The one seeded verdict: `rand4_short` (a 10,000-sample, non-compliant test
 input) flips its IID verdict between two runs of the *base* binary.
 The `C22a` floor figures printed identical, e.g. `0.84129042387787445`
@@ -69,12 +73,15 @@ The `C22a` floor figures printed identical, e.g. `0.84129042387787445`
 `0.014406571036456107` (`biased-random-bits`), `0.56617758403918961`
 (`data.pi`).
 
-**Linux x86-64 (ubuntu-latest, GCC), one run over the whole corpus:**
-run `42762513870` on this head — **66 comparisons, 66 identical, `launch-equivalence: PASS`**,
-the same measured seeded set (`.testCases[0].permutationTestResults`), the
-same live check, the same one seeded verdict on `rand4_short`. The floor
-figures agree with macOS to the known platform deltas and not beyond (e.g.
-`biased-random-bits` `0.014406571036457113` on Linux against
+**Linux x86-64 (ubuntu-latest, GCC 13.3), one run over the whole corpus:**
+run `42766135452` on `c198614` (the tool sources and the script of this
+head) — **63 comparisons, 63 identical, `launch-equivalence: PASS`**: the
+same measured seeded set (`.testCases[0].permutationTestResults`), the same
+live check, the same three oracle refusals on the short inputs, the same one
+seeded verdict on `rand4_short`. (An earlier run, `42762513870` on `4df5cd9`,
+passed 66 of 66 with the script version that counted the three refusals.)
+The floor figures agree with macOS to the known platform deltas and not
+beyond (e.g. `biased-random-bits` `0.014406571036457113` on Linux against
 `…456107` on macOS — a last-digit platform difference the fork documents,
 present identically in both builds on each host).
 
