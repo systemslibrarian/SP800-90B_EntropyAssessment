@@ -7,6 +7,11 @@ name: launch equivalence (Linux x86-64)
 # Nothing here changes a source file.
 
 on:
+  # A workflow that exists only on a branch cannot be dispatched by name (the
+  # API resolves names against the default branch), so it also fires on every
+  # push to a launch/* branch. It does not exist on master and must not.
+  push:
+    branches: ['launch/**']
   workflow_dispatch:
 
 permissions:
